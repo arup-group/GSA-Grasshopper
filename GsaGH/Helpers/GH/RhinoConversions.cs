@@ -24,8 +24,7 @@ namespace GsaGH.Helpers.GH {
       plane.Origin = plane.ClosestPoint(new Point3d(0, 0, 0));
       int dig = UnitsHelper.SignificantDigits;
       plane.Normal.Unitize();
-      if (Math.Abs(Math.Round(plane.Normal.Z, dig)) == 1) // if normal's z direction is close to vertical
-      {
+      if (Math.Abs(Math.Round(plane.Normal.Z, dig)) == 1) {
         plane.XAxis = Vector3d.XAxis;
         plane.YAxis = Vector3d.YAxis;
       }
@@ -112,12 +111,11 @@ namespace GsaGH.Helpers.GH {
       }
       else {
         if (tolerance < 0)
-          tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
+          tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
         if (curve.SpanCount == 1 && curve.Degree > 2) {
           curve = curve.ToPolyline(tolerance, 2, 0, 0);
         }
-        if (curve.SpanCount > 1) // polyline (or assumed polyline, we will take controlpoints)
-        {
+        if (curve.SpanCount > 1) {
           polyCurve = new PolyCurve();
 
           if (!curve.IsPolyline())
@@ -127,8 +125,7 @@ namespace GsaGH.Helpers.GH {
 
           Curve[] segments = curve.DuplicateSegments();
 
-          foreach (Curve segment in segments)
-          {
+          foreach (Curve segment in segments) {
             crvType.Add("");
             point3ds.Add(segment.PointAtStart);
             polyCurve.Append(segment);
@@ -136,8 +133,7 @@ namespace GsaGH.Helpers.GH {
           crvType.Add("");
           point3ds.Add(segments[segments.Length - 1].PointAtEnd);
         }
-        else // single line segment
-        {
+        else {
           crvType.Add("");
           crvType.Add("");
 
@@ -154,7 +150,7 @@ namespace GsaGH.Helpers.GH {
 
     public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve curve, double tolerance = -1) {
       if (tolerance < 0)
-        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
+        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
 
       PolyCurve polyCurve = curve.ToArcsAndLines(tolerance, 2, 0, 0);
       Curve[] segments = polyCurve != null
@@ -170,8 +166,7 @@ namespace GsaGH.Helpers.GH {
       var crvType = new List<string>();
       var point3ds = new List<Point3d>();
 
-      foreach (Curve segment in segments)
-      {
+      foreach (Curve segment in segments) {
         point3ds.Add(segment.PointAtStart);
         crvType.Add("");
         if (!segment.IsArc()) {
@@ -213,8 +208,7 @@ namespace GsaGH.Helpers.GH {
 
       Curve outer = null;
       var inner = new List<Curve>();
-      foreach (BrepLoop brepLoop in brep.Loops)
-      {
+      foreach (BrepLoop brepLoop in brep.Loops) {
         if (brepLoop.LoopType == BrepLoopType.Outer) {
           outer = brepLoop.To3dCurve();
         }
@@ -308,8 +302,7 @@ namespace GsaGH.Helpers.GH {
 
       Curve outer = null;
       var inner = new List<Curve>();
-      foreach (BrepLoop brepLoop in brep.Loops)
-      {
+      foreach (BrepLoop brepLoop in brep.Loops) {
         if (brepLoop.LoopType == BrepLoopType.Outer)
           outer = brepLoop.To3dCurve();
         else
@@ -382,7 +375,7 @@ namespace GsaGH.Helpers.GH {
 
     public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1) {
       if (tolerance < 0)
-        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set units
+        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
 
       var curves = new CurveList { externalEdge, };
       if (voidCurves != null)
@@ -421,17 +414,14 @@ namespace GsaGH.Helpers.GH {
       var topoInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
-      foreach (List<int> topo in ngons.Select(ngon => ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList()))
-      {
-        switch (topo.Count)
-        {
+      foreach (List<int> topo in ngons.Select(ngon => ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList())) {
+        switch (topo.Count) {
           case 3:
           case 4:
             topoInts.Add(topo);
             break;
-          case 6:
-          {
-            var topo6 = new List<int> {
+          case 6: {
+              var topo6 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -439,12 +429,11 @@ namespace GsaGH.Helpers.GH {
               topo[3],
               topo[5],
             };
-            topoInts.Add(topo6);
-            break;
-          }
-          case 8:
-          {
-            var topo8 = new List<int> {
+              topoInts.Add(topo6);
+              break;
+            }
+          case 8: {
+              var topo8 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -454,9 +443,9 @@ namespace GsaGH.Helpers.GH {
               topo[5],
               topo[7],
             };
-            topoInts.Add(topo8);
-            break;
-          }
+              topoInts.Add(topo8);
+              break;
+            }
         }
       }
 
@@ -468,81 +457,76 @@ namespace GsaGH.Helpers.GH {
       var topoInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
-      foreach (MeshNgon ngon in ngons)
-      {
+      foreach (MeshNgon ngon in ngons) {
         var elem = new Element();
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
-        switch (topo.Count)
-        {
-          case 3 when createQuadraticElements:
-          {
-            var pt3 = new Point3d(
-              (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
-              (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
-              (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt3);
-            var pt4 = new Point3d(
-              (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
-              (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
-              (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt4);
-            var pt5 = new Point3d(
-              (topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
-              (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
-              (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt5);
+        switch (topo.Count) {
+          case 3 when createQuadraticElements: {
+              var pt3 = new Point3d(
+                (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt3);
+              var pt4 = new Point3d(
+                (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt4);
+              var pt5 = new Point3d(
+                (topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
+                (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
+                (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt5);
 
-            elem.Type = ElementType.TRI6;
-            topoInts.Add(topo);
-            break;
-          }
+              elem.Type = ElementType.TRI6;
+              topoInts.Add(topo);
+              break;
+            }
           case 3:
             elem.Type = ElementType.TRI3;
             topoInts.Add(topo);
             break;
-          case 4 when createQuadraticElements:
-          {
-            var pt3 = new Point3d(
-              (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
-              (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
-              (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt3);
-            var pt4 = new Point3d(
-              (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
-              (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
-              (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt4);
-            var pt5 = new Point3d(
-              (topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
-              (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
-              (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt5);
-            var pt6 = new Point3d(
-              (topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
-              (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
-              (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt6);
+          case 4 when createQuadraticElements: {
+              var pt3 = new Point3d(
+                (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt3);
+              var pt4 = new Point3d(
+                (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt4);
+              var pt5 = new Point3d(
+                (topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
+                (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
+                (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt5);
+              var pt6 = new Point3d(
+                (topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
+                (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
+                (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt6);
 
-            elem.Type = ElementType.QUAD8;
-            topoInts.Add(topo);
-            break;
-          }
+              elem.Type = ElementType.QUAD8;
+              topoInts.Add(topo);
+              break;
+            }
           case 4:
             elem.Type = ElementType.QUAD4;
             topoInts.Add(topo);
             break;
-          case 6:
-          {
-            elem.Type = ElementType.TRI6;
-            var topo6 = new List<int> {
+          case 6: {
+              elem.Type = ElementType.TRI6;
+              var topo6 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -550,13 +534,12 @@ namespace GsaGH.Helpers.GH {
               topo[3],
               topo[5],
             };
-            topoInts.Add(topo6);
-            break;
-          }
-          case 8:
-          {
-            elem.Type = ElementType.QUAD8;
-            var topo8 = new List<int> {
+              topoInts.Add(topo6);
+              break;
+            }
+          case 8: {
+              elem.Type = ElementType.QUAD8;
+              var topo8 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -566,9 +549,9 @@ namespace GsaGH.Helpers.GH {
               topo[5],
               topo[7],
             };
-            topoInts.Add(topo8);
-            break;
-          }
+              topoInts.Add(topo8);
+              break;
+            }
         }
 
         elem.Property = prop;
@@ -585,13 +568,11 @@ namespace GsaGH.Helpers.GH {
       var faceInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
-      foreach (MeshNgon ngon in ngons)
-      {
+      foreach (MeshNgon ngon in ngons) {
         var elem = new Element();
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
-        switch (topo.Count)
-        {
+        switch (topo.Count) {
           case 4:
             elem.Type = ElementType.TETRA4;
             break;

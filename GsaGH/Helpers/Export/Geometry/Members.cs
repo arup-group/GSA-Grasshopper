@@ -46,8 +46,7 @@ namespace GsaGH.Helpers.Export {
 
       string topo = CreateTopology(member1d.Topology, member1d.TopologyType, ref existingNodes, unit);
       if (topo != "") {
-        try //GsaAPI will perform check on topology list
-        {
+        try {
           apiMember.Topology = string.Copy(topo.Replace("  ", " "));
         }
         catch (Exception) {
@@ -73,9 +72,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       member1ds = member1ds.OrderByDescending(x => x.Id).ToList();
-      for (int i = 0; i < member1ds.Count; i++)
-        if (member1ds[i] != null)
-          ConvertMember1D(member1ds[i], ref apiMembers, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      foreach (GsaMember1d member in member1ds.Where(member => member != null))
+        ConvertMember1D(member, ref apiMembers, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
     }
     #endregion
 
@@ -96,11 +94,9 @@ namespace GsaGH.Helpers.Export {
       if (member2d.IncLinesTopology != null)
         for (int i = 0; i < member2d.IncLinesTopology.Count; i++)
           topo += " L(" + CreateTopology(member2d.IncLinesTopology[i], member2d.IncLinesTopologyType[i], ref existingNodes, unit) + ")";
-      ;
 
       if (member2d.InclusionPoints != null)
         topo += " P(" + CreateTopology(member2d.InclusionPoints, null, ref existingNodes, unit) + ")";
-      ;
 
       try {
         apiMember.Topology = string.Copy(topo.Replace("( ", "(").Replace("  ", " "));
@@ -124,9 +120,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
-      for (int i = 0; i < member2ds.Count; i++)
-        if (member2ds[i] != null)
-          ConvertMember2D(member2ds[i], ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
+      foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null))
+        ConvertMember2D(member2d, ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
     }
     #endregion
 
@@ -162,9 +157,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       member3ds = member3ds.OrderByDescending(x => x.Id).ToList();
-      for (int i = 0; i < member3ds.Count; i++)
-        if (member3ds[i] != null)
-          ConvertMember3D(member3ds[i], ref apiMembers, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
+      foreach (GsaMember3d member3d in member3ds.Where(member3d => member3d != null))
+        ConvertMember3D(member3d, ref apiMembers, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
     }
     #endregion
   }

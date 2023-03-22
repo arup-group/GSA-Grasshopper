@@ -15,9 +15,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       nodes = nodes.OrderByDescending(n => n.Id).ToList();
-      for (int i = 0; i < nodes.Count; i++)
-        if (nodes[i] != null)
-          ConvertNode(nodes[i], ref existingNodes, ref existingAxes, modelUnit);
+      foreach (GsaNode node in nodes.Where(node => node != null))
+        ConvertNode(node, ref existingNodes, ref existingAxes, modelUnit);
     }
 
     /// <summary>

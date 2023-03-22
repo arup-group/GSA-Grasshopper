@@ -92,8 +92,7 @@ namespace GsaGH.Helpers.Export {
 
         case GsaLoad.LoadTypes.GridPoint:
           PostHog.Load(load.LoadType, ReferenceType.None);
-          if (load.PointLoad.GridPlaneSurface == null) // if gridsurface id has been set
-          {
+          if (load.PointLoad.GridPlaneSurface == null) {
             gridPointLoads.Add(load.PointLoad.GridPointLoad);
             break;
           }
@@ -115,8 +114,7 @@ namespace GsaGH.Helpers.Export {
 
         case GsaLoad.LoadTypes.GridLine:
           PostHog.Load(load.LoadType, ReferenceType.None);
-          if (load.LineLoad.GridPlaneSurface == null) // if gridsurface id has been set
-          {
+          if (load.LineLoad.GridPlaneSurface == null) {
             gridLineLoads.Add(load.LineLoad.GridLineLoad);
             break;
           }
@@ -141,8 +139,7 @@ namespace GsaGH.Helpers.Export {
           if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON)
             load.AreaLoad.GridAreaLoad.PolyLineDefinition += "(" + Length.GetAbbreviation(unit) + ")";
 
-          if (load.AreaLoad.GridPlaneSurface == null) // if gridsurface id has been set
-          {
+          if (load.AreaLoad.GridPlaneSurface == null) {
             gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
             break;
           }

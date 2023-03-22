@@ -54,8 +54,7 @@ namespace GsaGH.Helpers.Export {
     /// <param name="gridplaneidcounter"></param>
     /// <param name="gridsurfaceidcounter"></param>
     internal static void GetGridPlaneSurfaceCounters(List<GsaGridPlaneSurface> gridPlaneSurfaces, ref int gridplaneidcounter, ref int gridsurfaceidcounter) {
-      foreach (GsaGridPlaneSurface gps in gridPlaneSurfaces)
-      {
+      foreach (GsaGridPlaneSurface gps in gridPlaneSurfaces) {
         if (gps.GridPlaneId > 0)
           gridplaneidcounter = Math.Max(gridplaneidcounter, gps.GridPlaneId + 1);
         if (gps.GridSurfaceId > 0)
@@ -70,8 +69,7 @@ namespace GsaGH.Helpers.Export {
     /// <param name="gridplaneidcounter"></param>
     /// <param name="gridsurfaceidcounter"></param>
     internal static void GetGridPlaneSurfaceCounters(List<GsaLoad> loads, ref int gridplaneidcounter, ref int gridsurfaceidcounter) {
-      foreach (GsaLoad gsaLoad in loads)
-      {
+      foreach (GsaLoad gsaLoad in loads) {
         if (gsaLoad != null) {
           GsaLoad load = gsaLoad;
 
@@ -175,8 +173,7 @@ namespace GsaGH.Helpers.Export {
             }
           }
         }
-        else if (gpGuid.ContainsKey(gridplanesurface.GridPlaneGUID)) // check if grid plane has already been added to model by other loads
-        {
+        else if (gpGuid.ContainsKey(gridplanesurface.GridPlaneGUID)) {
           gpGuid.TryGetValue(gridplanesurface.GridPlaneGUID, out int id);
           return id;
         }
@@ -265,8 +262,7 @@ namespace GsaGH.Helpers.Export {
             }
           }
         }
-        else if (gsGuid.ContainsKey(gridplanesurface.GridSurfaceGUID)) // check if grid surface has already been added to model by other loads
-        {
+        else if (gsGuid.ContainsKey(gridplanesurface.GridSurfaceGUID)) {
           gsGuid.TryGetValue(gridplanesurface.GridSurfaceGUID, out int id);
           return id;
         }
@@ -312,8 +308,7 @@ namespace GsaGH.Helpers.Export {
 
       GetGridPlaneSurfaceCounters(gridPlaneSurfaces, ref gridplaneidcounter, ref gridsurfaceidcounter);
 
-      foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces)
-      {
+      foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces) {
         if (gridPlaneSurface == null) {
           continue;
         }

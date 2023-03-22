@@ -9,7 +9,6 @@ namespace GsaGH.Helpers.Graphics {
   /// 
   /// </summary>
   public class Colours {
-    // General colour scheme
     public static Color GsaGreen {
       get { return Color.FromArgb(255, 48, 170, 159); }
     }
@@ -42,7 +41,6 @@ namespace GsaGH.Helpers.Graphics {
       get { return Color.FromArgb(255, 255, 183, 0); }
     }
 
-    //Set colours for Component UI
     public static Brush ButtonColour {
       get { return new SolidBrush(GsaDarkBlue); }
     }
@@ -113,7 +111,6 @@ namespace GsaGH.Helpers.Graphics {
           (int)(ratio * overlay.B + (1 - ratio) * original.B));
     }
 
-    //Set colours for custom geometry
     public static Color Node {
       get { return GsaGreen; }
     }
@@ -216,7 +213,7 @@ namespace GsaGH.Helpers.Graphics {
     public static DisplayMaterial FaceCustom(Color colour) {
       var material = new DisplayMaterial() {
         Diffuse = Color.FromArgb(50, colour.R, colour.G, colour.B),
-        Emission = Color.White, // Color.FromArgb(50, 190, 190, 190),
+        Emission = Color.White,
         Transparency = 0.1,
       };
       return material;
@@ -263,7 +260,7 @@ namespace GsaGH.Helpers.Graphics {
       get {
         var material = new DisplayMaterial {
           Diffuse = Color.FromArgb(1, 143, 143, 143),
-          Emission = Color.White, //Color.FromArgb(1, 45, 45, 45),
+          Emission = Color.White,
           Transparency = 0.9,
         };
         return material;
