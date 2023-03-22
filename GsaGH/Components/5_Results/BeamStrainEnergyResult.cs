@@ -33,8 +33,8 @@ namespace GsaGH.Components {
       "Element1D Strain Energy Density result values",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -84,10 +84,8 @@ namespace GsaGH.Components {
         return;
       }
 
-      foreach (GH_ObjectWrapper ghTyp in ghTypes)
-      {
-        switch (ghTyp?.Value)
-        {
+      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
+        switch (ghTyp?.Value) {
           case null:
             this.AddRuntimeWarning("Input is null");
             return;
@@ -136,7 +134,7 @@ namespace GsaGH.Components {
     private bool _average = true;
     private EnergyUnit _energyUnit = DefaultUnits.EnergyUnit;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Energy Unit",
           "Settings",
@@ -145,7 +143,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Energy
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Energy)));
       SelectedItems.Add(Energy.GetAbbreviation(_energyUnit));
 

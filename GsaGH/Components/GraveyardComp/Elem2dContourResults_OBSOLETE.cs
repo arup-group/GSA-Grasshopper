@@ -252,8 +252,7 @@ namespace GsaGH.Components {
       var verticies = new ConcurrentDictionary<int, List<Point3d>>();
       verticies.AsParallel().AsOrdered();
 
-      Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
-      {
+      Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
         if (element.Topology.Count < 3) {
           return;
@@ -392,7 +391,7 @@ namespace GsaGH.Components {
               IQuantity length = new Length(0, _lengthUnit);
               string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
               _legendValues.Add(new Force(t, DefaultUnits.ForceUnit).ToString("s" + significantDigits) + lengthunitAbbreviation + "/" + lengthunitAbbreviation);
-              var moment = new Moment(t, DefaultUnits.MomentUnit); // this is technically moment per length
+              var moment = new Moment(t, DefaultUnits.MomentUnit);
               ts.Add(new GH_UnitNumber(moment));
               break;
             }
@@ -497,15 +496,12 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // type
       DropDownItems.Add(_type);
       SelectedItems.Add(DropDownItems[0][0]);
 
-      // component
       DropDownItems.Add(_displacement);
       SelectedItems.Add(DropDownItems[1][3]);
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
@@ -571,7 +567,7 @@ namespace GsaGH.Components {
               case 2: {
                   if (DropDownItems[1] != _stress) {
                     if (DropDownItems.Count < 4) {
-                      DropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
+                      DropDownItems.Insert(2, _layer);
                       SpacerDescriptions.Insert(2, "Layer");
                     }
 

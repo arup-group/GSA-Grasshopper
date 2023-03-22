@@ -21,8 +21,8 @@ namespace GsaGH.Components {
       "Create a " + GsaAnalysisCaseGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat4()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output

@@ -142,13 +142,13 @@ namespace GsaGH.Components {
       var ghgrp = new GH_Integer();
       if (da.GetData(4, ref ghgrp)) {
         if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-          elem.Group = grp; //elem.Element.Group = grp;
+          elem.Group = grp;
       }
 
       var ghinteg = new GH_Integer();
       if (da.GetData(5, ref ghinteg)) {
         if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-          elem.Type = (ElementType)type; //elem.Element.Type = (ElementType)type; // Util.Gsa.GsaToModel.Element1dType(type);
+          elem.Type = (ElementType)type;
       }
 
       var offset = new GsaOffset();

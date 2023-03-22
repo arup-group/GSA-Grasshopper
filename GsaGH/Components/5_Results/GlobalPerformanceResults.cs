@@ -30,8 +30,8 @@ namespace GsaGH.Components {
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -70,21 +70,19 @@ namespace GsaGH.Components {
       }
 
       #region Inputs
-      switch (ghTyp?.Value)
-      {
+      switch (ghTyp?.Value) {
         case null:
           this.AddRuntimeWarning("Input is null");
           return;
-        case GsaResultGoo goo:
-        {
-          result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination) {
-            this.AddRuntimeError("Global Result only available for Analysis Cases");
-            return;
-          }
+        case GsaResultGoo goo: {
+            result = goo.Value;
+            if (result.Type == GsaResult.CaseType.Combination) {
+              this.AddRuntimeError("Global Result only available for Analysis Cases");
+              return;
+            }
 
-          break;
-        }
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -172,7 +170,7 @@ namespace GsaGH.Components {
         _forcePerLengthUnit = ForcePerLengthUnit.KilopoundForcePerFoot;
       }
 
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Mass Unit",
           "Inertia Unit",

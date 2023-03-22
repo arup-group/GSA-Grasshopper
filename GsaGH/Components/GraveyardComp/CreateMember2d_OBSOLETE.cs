@@ -74,8 +74,7 @@ namespace GsaGH.Components {
       var point3ds = new List<Point3d>();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
-        foreach (GH_Point point in ghpts)
-        {
+        foreach (GH_Point point in ghpts) {
           var pt = new Point3d();
           if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both))
             point3ds.Add(pt);
@@ -85,8 +84,7 @@ namespace GsaGH.Components {
       var curves = new List<Curve>();
       var ghCurves = new List<GH_Curve>();
       if (da.GetDataList(2, ghCurves)) {
-        foreach (GH_Curve curve in ghCurves)
-        {
+        foreach (GH_Curve curve in ghCurves) {
           Curve crv = null;
           if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both))
             curves.Add(crv);
@@ -122,7 +120,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -130,7 +128,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

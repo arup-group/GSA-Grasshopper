@@ -26,7 +26,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output
@@ -138,8 +138,8 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[0].Optional = _fileName != null; //filename can have input from user input
-      Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
+      Params.Input[0].Optional = _fileName != null;
+      Params.Input[0].ClearRuntimeMessages();
     }
     public void OpenFile() {
       var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
@@ -148,44 +148,25 @@ namespace GsaGH.Components {
       if (!res)
         return;
 
-      // == DialogResult.OK)
       _fileName = fdi.FileName;
 
-      // instantiate  new panel
       var panel = new Grasshopper.Kernel.Special.GH_Panel();
       panel.CreateAttributes();
-
-      // set the location relative to the open component on the canvas
       panel.Attributes.Pivot = new PointF(Attributes.DocObject.Attributes.Bounds.Left -
                                           panel.Attributes.Bounds.Width - 30, Params.Input[0].Attributes.Pivot.Y - panel.Attributes.Bounds.Height / 2);
 
-      // check for existing input
       while (Params.Input[0].Sources.Count > 0) {
         IGH_Param input = Params.Input[0].Sources[0];
-        // check if input is the one we automatically create below
         if (Params.Input[0].Sources[0].InstanceGuid == _panelGuid) {
-          // update the UserText in existing panel
-          //RecordUndoEvent("Changed OpenGSA Component input");
           panel = input as Grasshopper.Kernel.Special.GH_Panel;
           panel.UserText = _fileName;
-          panel.ExpireSolution(true); // update the display of the panel
+          panel.ExpireSolution(true);
         }
-
-        // remove input
         Params.Input[0].RemoveSource(input);
       }
-
-      //populate panel with our own content
       panel.UserText = _fileName;
-
-      // record the panel's GUID if new, so that we can update it on change
       _panelGuid = panel.InstanceGuid;
-
-      //Until now, the panel is a hypothetical object.
-      // This command makes it 'real' and adds it to the canvas.
       Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
-
-      //Connect the new slider to this component
       Params.Input[0].AddSource(panel);
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

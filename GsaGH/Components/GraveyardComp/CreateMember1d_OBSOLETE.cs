@@ -81,7 +81,6 @@ namespace GsaGH.Components {
       };
       mem.ReleaseEnd = rel2;
 
-      // 1 section
       var ghTyp = new GH_ObjectWrapper();
       var section = new GsaSection();
       if (da.GetData(1, ref ghTyp)) {

@@ -21,8 +21,8 @@ namespace GsaGH.Components {
       "Create GSA Gravity Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region input and output
@@ -45,15 +45,12 @@ namespace GsaGH.Components {
     #endregion
     protected override void SolveInstance(IGH_DataAccess da) {
       var gravityLoad = new GsaGravityLoad();
-
-      //Load case
-      int lc = 1;
+      int loadCase = 1;
       var ghLc = new GH_Integer();
       if (da.GetData(0, ref ghLc))
-        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
-      gravityLoad.GravityLoad.Case = lc;
+        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      gravityLoad.GravityLoad.Case = loadCase;
 
-      // element/member list
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
         gravityLoad.GravityLoad.Elements = "";
@@ -111,14 +108,12 @@ namespace GsaGH.Components {
       else
         gravityLoad.GravityLoad.Elements = "All";
 
-      // 2 Name
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           gravityLoad.GravityLoad.Name = name;
       }
 
-      //factor
       var vect = new Vector3d(0, 0, -1);
       var ghFactor = new GH_Vector();
       if (da.GetData(3, ref ghFactor))

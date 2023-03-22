@@ -33,8 +33,8 @@ namespace GsaGH.Components {
       "Element1D Force and Moment result values",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -100,10 +100,8 @@ namespace GsaGH.Components {
 
       var results = new List<GsaResult>();
 
-      foreach (GH_ObjectWrapper ghTyp in ghTypes)
-      {
-        switch (ghTyp?.Value)
-        {
+      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
+        switch (ghTyp?.Value) {
           case null:
             this.AddRuntimeWarning("Input is null");
             return;
@@ -132,46 +130,45 @@ namespace GsaGH.Components {
           }
           Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
           {
-            switch (thread)
-            {
+            switch (thread) {
               case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) { continue; }
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) { continue; }
 
-                  var path = new GH_Path(
-                    result.CaseId,
-                    result.SelectedPermutationIds == null
-                      ? 0
-                      : perm, elementId);
+                    var path = new GH_Path(
+                      result.CaseId,
+                      result.SelectedPermutationIds == null
+                        ? 0
+                        : perm, elementId);
 
-                  outTransX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))), path); // use ToUnit to capture changes in dropdown
-                  outTransY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))), path);
-                  outTransZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))), path);
-                  outTransXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_forceUnit))), path);
+                    outTransX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))), path); // use ToUnit to capture changes in dropdown
+                    outTransY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))), path);
+                    outTransZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))), path);
+                    outTransXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_forceUnit))), path);
+                  }
+                  break;
                 }
-                break;
-              }
               case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) { continue; }
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) { continue; }
 
-                  var path = new GH_Path(
-                    result.CaseId,
-                    result.SelectedPermutationIds == null
-                      ? 0
-                      : perm, elementId);
+                    var path = new GH_Path(
+                      result.CaseId,
+                      result.SelectedPermutationIds == null
+                        ? 0
+                        : perm, elementId);
 
-                  outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))), path); // always use [rad] units
-                  outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))), path);
-                  outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
-                  outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_momentUnit))), path);
+                    outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))), path); // always use [rad] units
+                    outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))), path);
+                    outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
+                    outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_momentUnit))), path);
+                  }
+                  break;
                 }
-                break;
-              }
             }
           });
         }
@@ -193,7 +190,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Force Unit", "Moment Unit",
         });
@@ -201,11 +198,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // force
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      // moment
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
       SelectedItems.Add(Moment.GetAbbreviation(_momentUnit));
 
@@ -214,8 +209,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
-      switch (i)
-      {
+      switch (i) {
         case 0:
           _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[i]);
           break;

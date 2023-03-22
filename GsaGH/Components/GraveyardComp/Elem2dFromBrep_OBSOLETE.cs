@@ -71,8 +71,7 @@ namespace GsaGH.Components {
       var point3ds = new List<Point3d>();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
-        foreach (GH_ObjectWrapper objectWrapper in ghTypes)
-        {
+        foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           var point3d = new Point3d();
           if (objectWrapper.Value is GsaNodeGoo) {
             var gsanode = new GsaNode();
@@ -96,8 +95,7 @@ namespace GsaGH.Components {
       var crvs = new List<Curve>();
       var mem1ds = new List<GsaMember1d>();
       if (da.GetDataList(2, ghTypes)) {
-        foreach (GH_ObjectWrapper objectWrapper in ghTypes)
-        {
+        foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           Curve crv = null;
           if (objectWrapper.Value is GsaMember1dGoo) {
             var gsamem1d = new GsaMember1d();
@@ -164,7 +162,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

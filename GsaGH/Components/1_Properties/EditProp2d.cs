@@ -23,7 +23,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("dfb17a0f-a856-4a54-ae5c-d794961f3c52");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -35,7 +34,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output
@@ -84,15 +83,12 @@ namespace GsaGH.Components {
       }
 
       if (prop != null) {
-        // #### inputs ####
-        // 1 ID
         var ghId = new GH_Integer();
         if (da.GetData(1, ref ghId)) {
           if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
             prop.Id = id;
         }
 
-        // 2 Material
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
           var material = new GsaMaterial();
@@ -110,37 +106,32 @@ namespace GsaGH.Components {
           }
         }
 
-        // 3 Thickness
         if (Params.Input[3].SourceCount > 0)
           prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
 
-        // 4 Axis
-        var ghax = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghax)) {
+        var ghObjectWrapper = new GH_ObjectWrapper();
+        if (da.GetData(4, ref ghObjectWrapper)) {
           var pln = new Plane();
-          if (ghax.Value.GetType() == typeof(GH_Plane)) {
-            if (GH_Convert.ToPlane(ghax.Value, ref pln, GH_Conversion.Both))
+          if (ghObjectWrapper.Value.GetType() == typeof(GH_Plane)) {
+            if (GH_Convert.ToPlane(ghObjectWrapper.Value, ref pln, GH_Conversion.Both))
               prop.LocalAxis = pln;
           }
-          else if (GH_Convert.ToInt32(ghax.Value, out int axis, GH_Conversion.Both))
+          else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both))
             prop.AxisProperty = axis;
         }
 
-        // 5 name
-        var ghnm = new GH_String();
-        if (da.GetData(5, ref ghnm)) {
-          if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+        var ghString = new GH_String();
+        if (da.GetData(5, ref ghString)) {
+          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
             prop.Name = name;
         }
 
-        // 6 Colour
-        var ghcol = new GH_Colour();
-        if (da.GetData(6, ref ghcol)) {
-          if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+        var ghColour = new GH_Colour();
+        if (da.GetData(6, ref ghColour)) {
+          if (GH_Convert.ToColor(ghColour, out System.Drawing.Color col, GH_Conversion.Both))
             prop.Colour = col;
         }
 
-        // 7 type
         var ghType = new GH_ObjectWrapper();
         if (da.GetData(7, ref ghType)) {
           if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
@@ -149,7 +140,6 @@ namespace GsaGH.Components {
             prop.Type = GsaProp2d.PropTypeFromString(type);
         }
 
-        //#### outputs ####
         int ax = (prop.API_Prop2d == null) ? 0 : prop.AxisProperty;
         string nm = (prop.API_Prop2d == null) ? "--" : prop.Name;
         ValueType colour = prop.API_Prop2d?.Colour;

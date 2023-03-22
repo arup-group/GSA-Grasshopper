@@ -30,7 +30,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output
@@ -89,10 +89,9 @@ namespace GsaGH.Components {
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 4, thermalExpansionUnit, true).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
       };
 
-      material.GradeProperty = 0; //will be ignored
+      material.GradeProperty = 0;
 
       switch (_mode) {
-        // element type (picked in dropdown)
         case FoldMode.Generic:
           material.MaterialType = GsaMaterial.MatType.Generic;
           break;
@@ -151,19 +150,15 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(CreateMaterial.MaterialTypes);
       SelectedItems.Add(_mode.ToString());
 
-      // Stress unit
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
       SelectedItems.Add(Pressure.GetAbbreviation(_stressUnit));
 
-      // Density unit
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
       SelectedItems.Add(Density.GetAbbreviation(_densityUnit));
 
-      // Temperature unit
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
       SelectedItems.Add(Temperature.GetAbbreviation(_temperatureUnit));
 
@@ -173,8 +168,7 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
 
-      if (i == 0) // change is made to the first dropdown list
-      {
+      if (i == 0) {
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
       }
       else {
@@ -213,7 +207,6 @@ namespace GsaGH.Components {
       Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
       i++;
       Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
-
     }
     #endregion
   }

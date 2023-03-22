@@ -25,8 +25,8 @@ namespace GsaGH.Components {
       "Get Analysis or Combination Case IDs from a GSA model with Results",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -41,7 +41,7 @@ namespace GsaGH.Components {
     }
     #endregion
 
-    private Guid _modelGuid; // chache model to 
+    private Guid _modelGuid;
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new GsaModel();
       var ghTyp = new GH_ObjectWrapper();
@@ -53,8 +53,7 @@ namespace GsaGH.Components {
         var inModel = new GsaModel();
         ghTyp.CastTo(ref inModel);
         if (_modelGuid == new Guid()) {
-          if (inModel.Guid != _modelGuid) // only get results if GUID is not similar
-          {
+          if (inModel.Guid != _modelGuid) {
             model = inModel;
             ClearData();
           }

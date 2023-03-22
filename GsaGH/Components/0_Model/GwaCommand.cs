@@ -28,8 +28,8 @@ namespace GsaGH.Components {
       "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
 
     #endregion
 

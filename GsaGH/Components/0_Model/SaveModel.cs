@@ -27,8 +27,8 @@ namespace GsaGH.Components {
       "Saves your GSA model from this parametric nightmare",
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -45,9 +45,11 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       Message = "";
-      if (!da.GetData(0, ref ghTyp)) return;
+      if (!da.GetData(0, ref ghTyp))
+        return;
 
-      if (ghTyp == null) return;
+      if (ghTyp == null)
+        return;
 
       var gsaModel = new GsaModel();
       if (ghTyp.Value is GsaModelGoo) {
@@ -94,35 +96,25 @@ namespace GsaGH.Components {
     }
 
     internal void SaveButtonClick() {
-      // trigger rerunning the component
       UpdateUI();
     }
 
     internal void SaveAsButtonClick() {
       var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*" };
       bool res = fdi.ShowSaveDialog();
-      if (!res) return;
-      // == DialogResult.OK)
-      //add panel input with string
-      //delete existing inputs if any
+      if (!res)
+        return;
       while (Params.Input[2].Sources.Count > 0)
         Grasshopper.Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
 
-      //instantiate  new panel
       var panel = new Grasshopper.Kernel.Special.GH_Panel();
       panel.CreateAttributes();
 
       panel.Attributes.Pivot = new PointF(Attributes.DocObject.Attributes.Bounds.Left -
                                           panel.Attributes.Bounds.Width - 40, Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
-
-      //populate value list with our own data
       panel.UserText = fdi.FileName;
-
-      //Until now, the panel is a hypothetical object.
-      // This command makes it 'real' and adds it to the canvas.
       Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
 
-      //Connect the new slider to this component
       Params.Input[2].AddSource(panel);
       Params.OnParametersChanged();
       ExpireSolution(true);

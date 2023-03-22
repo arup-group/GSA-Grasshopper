@@ -21,8 +21,8 @@ namespace GsaGH.Components {
       "Create a Profile that tapers along its length from start and end profiles",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -35,14 +35,11 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Tapered Profile", "Pf", "Profile tapering along the length of its element", GH_ParamAccess.item);
     }
     #endregion
-
     protected override void SolveInstance(IGH_DataAccess da) {
-      // start
       var ghProfile = new GH_String();
       da.GetData(0, ref ghProfile);
       GH_Convert.ToString(ghProfile, out string start, GH_Conversion.Both);
 
-      // end
       ghProfile = new GH_String();
       da.GetData(1, ref ghProfile);
       GH_Convert.ToString(ghProfile, out string end, GH_Conversion.Both);

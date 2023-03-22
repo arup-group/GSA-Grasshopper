@@ -26,8 +26,8 @@ namespace GsaGH.Components {
       "Create GSA Beam Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
     #endregion
 
@@ -71,14 +71,12 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var beamLoad = new GsaBeamLoad();
 
-      // 0 Load case
-      int lc = 1;
+      int loadCase = 1;
       var ghLc = new GH_Integer();
       if (da.GetData(0, ref ghLc))
-        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
-      beamLoad.BeamLoad.Case = lc;
+        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      beamLoad.BeamLoad.Case = loadCase;
 
-      // 1 element/beam list
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
@@ -109,14 +107,12 @@ namespace GsaGH.Components {
         }
       }
 
-      // 2 Name
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           beamLoad.BeamLoad.Name = name;
       }
 
-      // 3 axis
       beamLoad.BeamLoad.AxisProperty = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
       var ghAx = new GH_Integer();
       if (da.GetData(3, ref ghAx)) {
@@ -125,7 +121,6 @@ namespace GsaGH.Components {
           beamLoad.BeamLoad.AxisProperty = axis;
       }
 
-      // 4 direction
       string dir = "Z";
       Direction direc = Direction.Z;
 
@@ -153,14 +148,12 @@ namespace GsaGH.Components {
 
       beamLoad.BeamLoad.Direction = direc;
 
-      // 5 projection
       bool prj = false;
       var ghPrj = new GH_Boolean();
       if (da.GetData(5, ref ghPrj))
         GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
       beamLoad.BeamLoad.IsProjected = prj;
 
-      // 6 value (1)
       var load1 = (ForcePerLength)Input.UnitNumber(this, da, 6, _forcePerLengthUnit);
 
       switch (_mode) {
@@ -262,11 +255,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(_loadTypeOptions);
       SelectedItems.Add(_mode.ToString());
 
-      // ForcePerLength
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
       SelectedItems.Add(ForcePerLength.GetAbbreviation((_forcePerLengthUnit)));
 
@@ -276,8 +267,7 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
 
-      if (i == 0) // change is made to the first dropdown list
-      {
+      if (i == 0) {
         switch (SelectedItems[0]) {
           case "Point":
             Mode1Clicked();

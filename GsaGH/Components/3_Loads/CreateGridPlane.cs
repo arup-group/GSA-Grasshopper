@@ -87,11 +87,9 @@ namespace GsaGH.Components {
           var xform = Transform.Translation(vec);
           pln.Transform(xform);
           gps.Plane = pln;
-          // note this wont move the Grid Plane Axis gps.Axis
         }
       }
 
-      // 3 Name
       var ghString = new GH_String();
       if (da.GetData(3, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
@@ -102,8 +100,6 @@ namespace GsaGH.Components {
         gps.GridPlane.IsStoreyType = false;
       else {
         gps.GridPlane.IsStoreyType = true;
-
-        // 4 tolerance above
         ghTyp = new GH_ObjectWrapper();
         if (da.GetData(4, ref ghTyp)) {
           string tolIn = ghTyp.Value.ToString();
@@ -121,7 +117,6 @@ namespace GsaGH.Components {
           }
         }
 
-        // 5 tolerance below
         ghTyp = new GH_ObjectWrapper();
         if (da.GetData(5, ref ghTyp)) {
           string tolIn = ghTyp.Value.ToString();
@@ -165,7 +160,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(_type);
       SelectedItems.Add(_mode.ToString());
 

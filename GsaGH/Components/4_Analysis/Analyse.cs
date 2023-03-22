@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -21,7 +20,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class GhAnalyse : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -32,8 +30,8 @@ namespace GsaGH.Components {
       "Assemble and Analyse a GSA Model",
       CategoryName.Name(),
       SubCategoryName.Cat4()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region input and output
@@ -80,7 +78,6 @@ namespace GsaGH.Components {
           List<GsaCombinationCase> combinationCases)
         = Helpers.Export.GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      // manually add a warning if no input is set, as all inputs are optional
       if (models is null & nodes is null & elem1ds is null & elem2ds is null &
           mem1ds is null & mem2ds is null & mem3ds is null & sections is null
           & prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
@@ -123,11 +120,13 @@ namespace GsaGH.Components {
         ReadOnlyDictionary<int, Element> apielems = model.Model.Elements();
         bool tryAnalyse = true;
         foreach (int key in apielems.Keys) {
-          if (apielems[key].Property == 0 && !apielems[key].IsDummy) {
-            {
-              this.AddRuntimeError("Unable to analyse model. Element ID " + key + " has no property set!");
-              tryAnalyse = false;
-            }
+          if (apielems[key].Property != 0 || apielems[key].IsDummy) {
+            continue;
+          }
+
+          {
+            this.AddRuntimeError("Unable to analyse model. Element ID " + key + " has no property set!");
+            tryAnalyse = false;
           }
         }
 
@@ -179,7 +178,7 @@ namespace GsaGH.Components {
     }
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
           "Settings",
@@ -188,7 +187,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

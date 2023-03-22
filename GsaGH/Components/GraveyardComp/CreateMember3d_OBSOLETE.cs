@@ -79,30 +79,28 @@ namespace GsaGH.Components {
       ghTyp = new GH_ObjectWrapper();
       var prop3d = new GsaProp3d();
       if (da.GetData(1, ref ghTyp)) {
-        switch (ghTyp.Value)
-        {
+        switch (ghTyp.Value) {
           case GsaProp3dGoo _:
             ghTyp.CastTo(ref prop3d);
             mem.Prop3d = prop3d;
             break;
-          case GsaMaterialGoo _:
-          {
-            var mat = new GsaMaterial();
-            ghTyp.CastTo(ref mat);
-            prop3d = new GsaProp3d(mat);
-            mem.Prop3d = prop3d;
-            break;
-          }
-          default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
-              mem.Prop3d = new GsaProp3d(id);
-            else {
-              this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
-              return;
+          case GsaMaterialGoo _: {
+              var mat = new GsaMaterial();
+              ghTyp.CastTo(ref mat);
+              prop3d = new GsaProp3d(mat);
+              mem.Prop3d = prop3d;
+              break;
             }
+          default: {
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+                mem.Prop3d = new GsaProp3d(id);
+              else {
+                this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 
@@ -116,7 +114,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -124,7 +122,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

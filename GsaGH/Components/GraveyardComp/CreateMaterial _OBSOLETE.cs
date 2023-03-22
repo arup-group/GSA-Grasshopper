@@ -21,7 +21,7 @@ namespace GsaGH.Components {
         CategoryName.Name(),
         SubCategoryName.Cat1()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;

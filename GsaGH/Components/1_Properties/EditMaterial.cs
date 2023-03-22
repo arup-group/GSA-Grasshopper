@@ -24,7 +24,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output
@@ -63,15 +63,12 @@ namespace GsaGH.Components {
       }
 
       if (material != null) {
-        // #### inputs ####
-        // 1 Analysis Property
         var ghId = new GH_Integer();
         if (da.GetData(1, ref ghId)) {
           if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
             material.AnalysisProperty = id;
         }
 
-        // 2 Material type
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
           MaterialType materialType = MaterialType.GENERIC;
@@ -146,13 +143,11 @@ namespace GsaGH.Components {
           }
         }
 
-        // 3 grade
         int grd = 0;
         if (da.GetData(3, ref grd)) {
           material.GradeProperty = grd;
         }
 
-        //#### outputs ####
         da.SetData(0, new GsaMaterialGoo(material));
         da.SetData(1, material.AnalysisProperty);
         string mate = material.MaterialType.ToString();

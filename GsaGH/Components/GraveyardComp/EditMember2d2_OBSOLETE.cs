@@ -117,7 +117,7 @@ namespace GsaGH.Components {
           mem.Id = id;
       }
 
-      Brep brep = mem.Brep; //existing brep
+      Brep brep = mem.Brep;
       var ghBrep = new GH_Brep();
       var curveList = new CurveList(mem.InclusionLines ?? new List<PolyCurve>());
       var curves = curveList.ToList();

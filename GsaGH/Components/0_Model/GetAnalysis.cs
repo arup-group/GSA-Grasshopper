@@ -12,7 +12,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class GetAnalysis : GH_OasysComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("566a94d2-a022-4f12-a645-0366deb1476c");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -23,12 +22,8 @@ namespace GsaGH.Components {
       "Get Analysis Tasks and their Cases from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
-    #endregion
-
-    #region Custom UI
-    //This region overrides the typical component layout
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -45,7 +40,8 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) return;
+      if (!da.GetData(0, ref gsaModel))
+        return;
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(gsaModel);
 

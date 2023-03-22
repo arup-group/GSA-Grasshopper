@@ -31,8 +31,8 @@ namespace GsaGH.Components {
       "Modify GSA Section Modifier",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -210,9 +210,7 @@ namespace GsaGH.Components {
       if (Params.Input[8].SourceCount > 0) {
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(8, ref ghTyp)) {
-          // try cast directly to quantity type
           if (ghTyp.Value is GH_UnitNumber unitNumber) {
-            // check that unit is of right type
             if (unitNumber.Value.QuantityInfo.UnitType != typeof(LinearDensityUnit)) {
               this.AddRuntimeError("Error in " + Params.Input[8].NickName + " input: Wrong unit type"
                                    + Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be LinearDensity");
@@ -221,11 +219,9 @@ namespace GsaGH.Components {
 
             modifier.AdditionalMass = (LinearDensity)unitNumber.Value;
           }
-          // try cast to double
           else if (GH_Convert.ToDouble(ghTyp.Value, out double val, GH_Conversion.Both)) {
             modifier.AdditionalMass = new LinearDensity(val, _linearDensityUnit);
           }
-          // try cast to string
           else if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
             if (LinearDensity.TryParse(txt, out LinearDensity res))
               modifier.AdditionalMass = res;
@@ -250,8 +246,7 @@ namespace GsaGH.Components {
       var obj = new GH_ObjectWrapper();
       if (da.GetData(11, ref obj)) {
         if (GH_Convert.ToInt32(obj.Value, out int stress, GH_Conversion.Both)) {
-          switch (stress)
-          {
+          switch (stress) {
             case 0:
               modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
               break;
@@ -332,8 +327,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); })
-        {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
           Enabled = true,
         };

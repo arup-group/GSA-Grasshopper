@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components.GraveyardComp;
@@ -88,23 +87,22 @@ namespace GsaGH.Components {
         this.AddRuntimeRemark("Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
       }
 
-      // 1 Points
       var ghTypes = new List<GH_ObjectWrapper>();
       var pts = new List<Point3d>();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
-        for (int i = 0; i < ghTypes.Count; i++) {
+        foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
           var pt = new Point3d();
-          if (ghTypes[i].Value is GsaNodeGoo) {
+          if (ghObjectWrapper.Value is GsaNodeGoo) {
             var gsanode = new GsaNode();
-            ghTypes[i].CastTo(ref gsanode);
+            ghObjectWrapper.CastTo(ref gsanode);
             nodes.Add(gsanode.Duplicate(true));
           }
-          else if (GH_Convert.ToPoint3d(ghTypes[i].Value, ref pt, GH_Conversion.Both)) {
+          else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           }
           else {
-            string type = ghTypes[i].Value.GetType().ToString();
+            string type = ghObjectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
             this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type " +
@@ -113,57 +111,49 @@ namespace GsaGH.Components {
         }
       }
 
-      // 2 Curves
       ghTypes = new List<GH_ObjectWrapper>();
       var crvs = new List<Curve>();
       var elem1ds = new List<GsaElement1d>();
       var mem1ds = new List<GsaMember1d>();
       if (da.GetDataList(2, ghTypes)) {
-        foreach (GH_ObjectWrapper ghType in ghTypes)
-        {
+        foreach (GH_ObjectWrapper ghType in ghTypes) {
           Curve crv = null;
-          switch (ghType.Value)
-          {
-            case GsaElement1dGoo _:
-            {
-              var gsaelem1d = new GsaElement1d();
-              ghType.CastTo(ref gsaelem1d);
-              elem1ds.Add(gsaelem1d.Duplicate(true));
-              break;
-            }
-            case GsaMember1dGoo _:
-            {
-              var gsamem1d = new GsaMember1d();
-              ghType.CastTo(ref gsamem1d);
-              mem1ds.Add(gsamem1d.Duplicate(true));
-              break;
-            }
+          switch (ghType.Value) {
+            case GsaElement1dGoo _: {
+                var gsaelem1d = new GsaElement1d();
+                ghType.CastTo(ref gsaelem1d);
+                elem1ds.Add(gsaelem1d.Duplicate(true));
+                break;
+              }
+            case GsaMember1dGoo _: {
+                var gsamem1d = new GsaMember1d();
+                ghType.CastTo(ref gsamem1d);
+                mem1ds.Add(gsamem1d.Duplicate(true));
+                break;
+              }
             default: {
-              if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
-                crvs.Add(crv.DuplicateCurve());
-              }
-              else {
-                string type = ghType.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", "");
-                type = type.Replace("Goo", "");
-                this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type " +
-                                     type + " to curve or 1D Member");
-              }
+                if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
+                  crvs.Add(crv.DuplicateCurve());
+                }
+                else {
+                  string type = ghType.Value.GetType().ToString();
+                  type = type.Replace("GsaGH.Parameters.", "");
+                  type = type.Replace("Goo", "");
+                  this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type " +
+                                       type + " to curve or 1D Member");
+                }
 
-              break;
-            }
+                break;
+              }
           }
         }
       }
 
-      // 4 mesh size
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
 
-      // build new element2d with brep, crv and pts
       Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple = GsaElement2d.GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds, meshSize.As(_lengthUnit), _lengthUnit, _tolerance);
       GsaElement2d elem2d = tuple.Item1;
 
-      // 3 section
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
@@ -205,7 +195,7 @@ namespace GsaGH.Components {
     }
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -213,7 +203,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
@@ -282,15 +271,13 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       if (reader.ChunkExists("ParameterData"))
         return base.Read(reader);
-      else {
-        BaseReader.Read(reader, this);
-        IsInitialised = true;
-        UpdateUIFromSelectedItems();
-        GH_IReader attributes = reader.FindChunk("Attributes");
-        Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
-        Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
-        return true;
-      }
+      BaseReader.Read(reader, this);
+      IsInitialised = true;
+      UpdateUIFromSelectedItems();
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
+      Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
+      return true;
     }
     #endregion
   }

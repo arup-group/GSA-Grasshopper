@@ -23,8 +23,8 @@ namespace GsaGH.Components {
       "Create a " + GsaAnalysisTaskGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat4()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -88,7 +88,7 @@ namespace GsaGH.Components {
     private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Solver",
         });
@@ -96,7 +96,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(new List<string>() { GsaAnalysisTask.AnalysisType.Static.ToString() });
       SelectedItems.Add(_analtype.ToString());
 

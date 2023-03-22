@@ -35,7 +35,7 @@ namespace GsaGH.Components {
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-      Hidden = true; // sets the initial state of the component to hidden
+      Hidden = true;
     }
     #endregion
 

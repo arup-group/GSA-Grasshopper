@@ -33,8 +33,8 @@ namespace GsaGH.Components {
       "Node Translation and Rotation result values",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -91,10 +91,8 @@ namespace GsaGH.Components {
         return;
       }
 
-      foreach (GH_ObjectWrapper ghTyp in ghTypes)
-      {
-        switch (ghTyp?.Value)
-        {
+      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
+        switch (ghTyp?.Value) {
           case null:
             this.AddRuntimeWarning("Input is null");
             return;
@@ -127,33 +125,30 @@ namespace GsaGH.Components {
 
           Parallel.For(0, 2, item => // split into two tasks
           {
-            switch (item)
-            {
+            switch (item) {
               case 0: {
-                foreach (int id in sortedIDs)
-                {
-                  ids.Add(id);
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xyzResults[id];
-                  GsaResultQuantity values = res[0]; // there is only one result per node
-                  transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit))); // use ToUnit to capture changes in dropdown
-                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
-                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_lengthUnit)));
-                  transXyz.Add(new GH_UnitNumber(values.XYZ.ToUnit(_lengthUnit)));
-                }
+                  foreach (int id in sortedIDs) {
+                    ids.Add(id);
+                    ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xyzResults[id];
+                    GsaResultQuantity values = res[0]; // there is only one result per node
+                    transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit))); // use ToUnit to capture changes in dropdown
+                    transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
+                    transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_lengthUnit)));
+                    transXyz.Add(new GH_UnitNumber(values.XYZ.ToUnit(_lengthUnit)));
+                  }
 
-                break;
-              }
+                  break;
+                }
               case 1: {
-                foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1].xxyyzzResults[id]).Select(res => res[0]))
-                {
-                  rotX.Add(new GH_UnitNumber(values.X));
-                  rotY.Add(new GH_UnitNumber(values.Y));
-                  rotZ.Add(new GH_UnitNumber(values.Z));
-                  rotXyz.Add(new GH_UnitNumber(values.XYZ));
-                }
+                  foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1].xxyyzzResults[id]).Select(res => res[0])) {
+                    rotX.Add(new GH_UnitNumber(values.X));
+                    rotY.Add(new GH_UnitNumber(values.Y));
+                    rotZ.Add(new GH_UnitNumber(values.Z));
+                    rotXyz.Add(new GH_UnitNumber(values.XYZ));
+                  }
 
-                break;
-              }
+                  break;
+                }
             }
           });
 
@@ -185,7 +180,7 @@ namespace GsaGH.Components {
     #region Custom UI
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -193,7 +188,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

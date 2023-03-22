@@ -28,8 +28,8 @@ namespace GsaGH.Components {
       "Create GSA Grid Line Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -67,16 +67,13 @@ namespace GsaGH.Components {
     #endregion
     protected override void SolveInstance(IGH_DataAccess da) {
       var gridlineload = new GsaGridLineLoad();
-
-      // 0 Load case
-      int lc = 1;
+      int loadCase = 1;
       var ghLc = new GH_Integer();
       if (da.GetData(0, ref ghLc))
-        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
-      gridlineload.GridLineLoad.Case = lc;
+        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      gridlineload.GridLineLoad.Case = loadCase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
-      // 2 Plane 
       Plane plane = Plane.WorldXY;
       bool planeSet = false;
       var gridPlaneSurface = new GsaGridPlaneSurface();
@@ -113,7 +110,6 @@ namespace GsaGH.Components {
       }
 
       // we wait setting the gridplanesurface until we have run the polyline input
-
       var ghCurve = new GH_Curve();
       if (da.GetData(1, ref ghCurve)) {
         Curve curve = null;
@@ -158,7 +154,6 @@ namespace GsaGH.Components {
           gridlineload.GridPlaneSurface = gridPlaneSurface;
       }
 
-      // 3 direction
       string dir = "Z";
       Direction direc = Direction.Z;
 
@@ -177,7 +172,6 @@ namespace GsaGH.Components {
 
       gridlineload.GridLineLoad.Direction = direc;
 
-      // 4 Axis
       gridlineload.GridLineLoad.AxisProperty = 0;
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
@@ -186,7 +180,6 @@ namespace GsaGH.Components {
           gridlineload.GridLineLoad.AxisProperty = axis;
       }
 
-      // 5 Projected
       var ghProj = new GH_Boolean();
       if (da.GetData(5, ref ghProj)) {
         if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both))
@@ -223,7 +216,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // ForcePerLength
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
       SelectedItems.Add(ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
 

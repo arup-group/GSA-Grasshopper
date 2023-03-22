@@ -22,8 +22,9 @@ namespace GsaGH.Components {
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
+
     #endregion
 
     #region Input and output
@@ -97,7 +98,8 @@ namespace GsaGH.Components {
         update = true;
       }
 
-      if (update) ReDrawComponent();
+      if (update)
+        ReDrawComponent();
 
       da.SetData(0, new GsaBool6Goo(bool6));
     }

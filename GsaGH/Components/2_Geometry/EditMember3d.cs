@@ -76,15 +76,12 @@ namespace GsaGH.Components {
         return;
       }
 
-      // #### inputs ####
-      // 1 ID
       var ghId = new GH_Integer();
       if (da.GetData(1, ref ghId)) {
         if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
           mem.Id = id;
       }
 
-      // 2 geometry
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         var brep = new Brep();
@@ -99,7 +96,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 3 prop3d
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var prop3d = new GsaProp3d();
@@ -116,13 +112,11 @@ namespace GsaGH.Components {
         mem.Prop3d = prop3d;
       }
 
-      // 4 mesh size
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
         mem.MeshSize = meshSize;
       }
 
-      // 5 mesh with others
       var ghbool = new GH_Boolean();
       if (da.GetData(5, ref ghbool)) {
         if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both)) {
@@ -131,35 +125,30 @@ namespace GsaGH.Components {
         }
       }
 
-      // 6 name
       var ghnm = new GH_String();
       if (da.GetData(6, ref ghnm)) {
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
           mem.Name = name;
       }
 
-      // 7 Group
       var ghgrp = new GH_Integer();
       if (da.GetData(7, ref ghgrp)) {
         if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
           mem.Group = grp;
       }
 
-      // 8 Colour
       var ghcol = new GH_Colour();
       if (da.GetData(8, ref ghcol)) {
         if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
           mem.Colour = col;
       }
 
-      // 9 Dummy
       var ghdum = new GH_Boolean();
       if (da.GetData(9, ref ghdum)) {
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           mem.IsDummy = dum;
       }
 
-      // #### outputs ####
       da.SetData(0, new GsaMember3dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.SolidMesh);

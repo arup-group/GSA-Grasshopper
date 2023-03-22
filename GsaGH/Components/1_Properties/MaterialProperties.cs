@@ -18,7 +18,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("7504a99f-a4e2-4e30-8251-de31ea83e8cb");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -29,8 +28,8 @@ namespace GsaGH.Components {
       "Get GSA Material Properties for Elastic Isotropic material type",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -101,7 +100,7 @@ namespace GsaGH.Components {
         stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var densityUnitsMenu = new ToolStripMenuItem("Density") {Enabled = true};
+      var densityUnitsMenu = new ToolStripMenuItem("Density") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateDensity(unit); }) {
           Checked = unit == Density.GetAbbreviation(_densityUnit),

@@ -28,7 +28,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output
@@ -75,7 +75,6 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var nodeLoad = new GsaNodeLoad();
 
-      // Node load type
       switch (_mode) {
         case FoldMode.NodeForce:
         case FoldMode.NodeMoment:
@@ -212,11 +211,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(_type);
       SelectedItems.Add(_mode.ToString().Replace('_', ' '));
 
-      // Force
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
@@ -226,8 +223,7 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
 
-      if (i == 0) // change is made to the first dropdown list
-      {
+      if (i == 0) {
         switch (SelectedItems[0]) {
           case "Node Force":
             _mode = FoldMode.NodeForce;

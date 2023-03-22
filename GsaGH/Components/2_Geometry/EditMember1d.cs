@@ -120,15 +120,12 @@ namespace GsaGH.Components {
         return;
       }
 
-      // #### inputs ####
-      // 1 ID
       var ghId = new GH_Integer();
       if (da.GetData(1, ref ghId)) {
         if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
           mem.Id = id;
       }
 
-      // 2 curve
       var ghcrv = new GH_Curve();
       if (da.GetData(2, ref ghcrv)) {
         Curve crv = null;
@@ -142,7 +139,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 3 section
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
@@ -159,14 +155,12 @@ namespace GsaGH.Components {
         mem.Section = section;
       }
 
-      // 4 Group
       var ghgrp = new GH_Integer();
       if (da.GetData(4, ref ghgrp)) {
         if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
           mem.Group = grp;
       }
 
-      // 5 member type
       var ghstring = new GH_String();
       if (da.GetData(5, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
@@ -181,7 +175,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 6 element type
       ghstring = new GH_String();
       if (da.GetData(6, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
@@ -196,32 +189,27 @@ namespace GsaGH.Components {
         }
       }
 
-      // 7 offset
       var offset = new GsaOffset();
       if (da.GetData(7, ref offset)) {
         mem.Offset = offset;
       }
 
-      // 8 start release
       var start = new GsaBool6();
       if (da.GetData(8, ref start)) {
         mem.ReleaseStart = start;
       }
 
-      // 9 end release
       var end = new GsaBool6();
       if (da.GetData(9, ref end)) {
         mem.ReleaseEnd = end;
       }
 
-      // 10 orientation angle
       var ghangle = new GH_Number();
       if (da.GetData(10, ref ghangle)) {
         if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
           mem.OrientationAngle = new Angle(angle, _angleUnit);
       }
 
-      // 11 orientation node
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(11, ref ghTyp)) {
         var node = new GsaNode();
@@ -234,13 +222,11 @@ namespace GsaGH.Components {
         }
       }
 
-      // 12 mesh size
       double meshSize = 0;
       if (da.GetData(12, ref meshSize)) {
         mem.MeshSize = meshSize;
       }
 
-      // 13 mesh with others
       var ghbool = new GH_Boolean();
       if (da.GetData(13, ref ghbool)) {
         if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both)) {
@@ -249,7 +235,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 14 buckling length factors
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(14, ref ghTyp)) {
         var fls = new GsaBucklingLengthFactors();
@@ -264,28 +249,24 @@ namespace GsaGH.Components {
         }
       }
 
-      // 15 name
       var ghnm = new GH_String();
       if (da.GetData(15, ref ghnm)) {
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
           mem.Name = name;
       }
 
-      // 16 Colour
       var ghcol = new GH_Colour();
       if (da.GetData(16, ref ghcol)) {
         if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
           mem.Colour = col;
       }
 
-      // 17 Dummy
       var ghdum = new GH_Boolean();
       if (da.GetData(17, ref ghdum)) {
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           mem.IsDummy = dum;
       }
 
-      // #### outputs ####
       da.SetData(0, new GsaMember1dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);
@@ -293,22 +274,15 @@ namespace GsaGH.Components {
       da.SetData(4, mem.Group);
       da.SetData(5, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
       da.SetData(6, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
-
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
-
       da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
       da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
-
       da.SetData(10, mem.OrientationAngle.Radians);
       da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
-
       da.SetData(12, mem.MeshSize);
       da.SetData(13, mem.MeshWithOthers);
-
       da.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
-
       da.SetData(15, mem.Name);
-
       da.SetData(16, mem.Colour);
       da.SetData(17, mem.IsDummy);
       da.SetData(18, mem.ApiMember.Topology);

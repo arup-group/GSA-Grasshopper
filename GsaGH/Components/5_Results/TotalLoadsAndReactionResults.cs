@@ -30,8 +30,8 @@ namespace GsaGH.Components {
       "Get Total Loads and Reaction Results from a GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -70,21 +70,19 @@ namespace GsaGH.Components {
       }
 
       #region Inputs
-      switch (ghTyp?.Value)
-      {
+      switch (ghTyp?.Value) {
         case null:
           this.AddRuntimeWarning("Input is null");
           return;
-        case GsaResultGoo goo:
-        {
-          result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination) {
-            this.AddRuntimeError("Global Result only available for Analysis Cases");
-            return;
-          }
+        case GsaResultGoo goo: {
+            result = goo.Value;
+            if (result.Type == GsaResult.CaseType.Combination) {
+              this.AddRuntimeError("Global Result only available for Analysis Cases");
+              return;
+            }
 
-          break;
-        }
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -127,7 +125,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Force Unit", "Moment Unit",
         });
@@ -135,11 +133,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // force
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      // moment
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
       SelectedItems.Add(Moment.GetAbbreviation(_momentUnit));
 
@@ -148,8 +144,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
-      switch (i)
-      {
+      switch (i) {
         case 0:
           _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[i]);
           break;

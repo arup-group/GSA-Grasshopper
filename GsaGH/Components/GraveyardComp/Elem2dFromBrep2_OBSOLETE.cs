@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components.GraveyardComp;
@@ -74,8 +73,7 @@ namespace GsaGH.Components {
       var pts = new List<Point3d>();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
-        foreach (GH_ObjectWrapper objectWrapper in ghTypes)
-        {
+        foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           var pt = new Point3d();
           if (objectWrapper.Value is GsaNodeGoo) {
             var gsanode = new GsaNode();
@@ -99,8 +97,7 @@ namespace GsaGH.Components {
       var curves = new List<Curve>();
       var member1ds = new List<GsaMember1d>();
       if (da.GetDataList(2, ghTypes)) {
-        foreach (GH_ObjectWrapper objectWrapper in ghTypes)
-        {
+        foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           Curve crv = null;
           if (objectWrapper.Value is GsaMember1dGoo) {
             var gsamem1d = new GsaMember1d();
@@ -159,7 +156,7 @@ namespace GsaGH.Components {
     }
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -167,7 +164,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

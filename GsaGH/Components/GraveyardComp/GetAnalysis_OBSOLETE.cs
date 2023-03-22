@@ -20,8 +20,8 @@ namespace GsaGH.Components {
       : base("Get Model Analysis", "GetAnalysis", "Get Analysis Cases and Tasks from GSA model",
         CategoryName.Name(),
         SubCategoryName.Cat0()) {
-          Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.GetAnalysisTask;

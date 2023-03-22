@@ -21,7 +21,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditElement1d : GH_OasysComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -121,16 +120,12 @@ namespace GsaGH.Components {
       if (elem == null) {
         return;
       }
-
-      // #### inputs ####
-      // 1 ID
       var ghId = new GH_Integer();
       if (da.GetData(1, ref ghId)) {
         if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
           elem.Id = id;
       }
 
-      // 2 curve
       var ghcrv = new GH_Line();
       if (da.GetData(2, ref ghcrv)) {
         var crv = new Line();
@@ -140,7 +135,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 3 section
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
@@ -158,14 +152,12 @@ namespace GsaGH.Components {
         elem.Section = section;
       }
 
-      // 4 Group
       var ghGrp = new GH_Integer();
       if (da.GetData(4, ref ghGrp)) {
         if (GH_Convert.ToInt32(ghGrp, out int grp, GH_Conversion.Both))
           elem.Group = grp;
       }
 
-      // 5 type
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
@@ -180,32 +172,27 @@ namespace GsaGH.Components {
         }
       }
 
-      // 6 offset
       var offset = new GsaOffset();
       if (da.GetData(6, ref offset)) {
         elem.Offset = offset;
       }
 
-      // 7 start release
       var start = new GsaBool6();
       if (da.GetData(7, ref start)) {
         elem.ReleaseStart = start;
       }
 
-      // 8 end release
       var end = new GsaBool6();
       if (da.GetData(8, ref end)) {
         elem.ReleaseEnd = end;
       }
 
-      // 9 orientation angle
       var ghangle = new GH_Number();
       if (da.GetData(9, ref ghangle)) {
         if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
           elem.OrientationAngle = new Angle(angle, _angleUnit);
       }
 
-      // 10 orientation node
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(10, ref ghTyp)) {
         var node = new GsaNode();
@@ -218,34 +205,30 @@ namespace GsaGH.Components {
         }
       }
 
-      // 11 name
-      var ghnm = new GH_String();
-      if (da.GetData(11, ref ghnm)) {
-        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+      var ghName = new GH_String();
+      if (da.GetData(11, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           elem.Name = name;
       }
 
-      // 12 Colour
-      var ghcol = new GH_Colour();
-      if (da.GetData(12, ref ghcol)) {
-        if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+      var ghColour = new GH_Colour();
+      if (da.GetData(12, ref ghColour)) {
+        if (GH_Convert.ToColor(ghColour, out System.Drawing.Color col, GH_Conversion.Both))
           elem.Colour = col;
       }
 
-      // 13 Dummy
       var ghdum = new GH_Boolean();
       if (da.GetData(13, ref ghdum)) {
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           elem.IsDummy = dum;
       }
 
-      // #### outputs ####
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
       da.SetData(4, elem.Group);
-      da.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+      da.SetData(5, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));

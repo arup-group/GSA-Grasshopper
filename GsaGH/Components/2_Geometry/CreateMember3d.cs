@@ -81,37 +81,33 @@ namespace GsaGH.Components {
         return;
       }
 
-      // 1 prop3d to be implemented GsaAPI
       ghTyp = new GH_ObjectWrapper();
       var prop3d = new GsaProp3d();
       if (da.GetData(1, ref ghTyp)) {
-        switch (ghTyp.Value)
-        {
+        switch (ghTyp.Value) {
           case GsaProp3dGoo _:
             ghTyp.CastTo(ref prop3d);
             mem.Prop3d = prop3d;
             break;
-          case GsaMaterialGoo _:
-          {
-            var mat = new GsaMaterial();
-            ghTyp.CastTo(ref mat);
-            prop3d = new GsaProp3d(mat);
-            mem.Prop3d = prop3d;
-            break;
-          }
-          default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
-              mem.Prop3d = new GsaProp3d(id);
-            else {
-              this.AddRuntimeWarning("Unable to convert PA input to a 2D Property of reference integer");
+          case GsaMaterialGoo _: {
+              var mat = new GsaMaterial();
+              ghTyp.CastTo(ref mat);
+              prop3d = new GsaProp3d(mat);
+              mem.Prop3d = prop3d;
+              break;
             }
+          default: {
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+                mem.Prop3d = new GsaProp3d(id);
+              else {
+                this.AddRuntimeWarning("Unable to convert PA input to a 2D Property of reference integer");
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 
-      // 2 mesh size
       double meshSize = 0;
       if (da.GetData(2, ref meshSize))
         mem.MeshSize = meshSize;

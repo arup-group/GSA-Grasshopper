@@ -25,8 +25,8 @@ namespace GsaGH.Components {
       "Get properties of a GSA Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and Output
@@ -55,7 +55,6 @@ namespace GsaGH.Components {
       ForcePerLengthUnit forcePerLengthUnit = UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit);
       PressureUnit forcePerAreaUnit = UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit);
 
-      // Get Loads input
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
@@ -164,7 +163,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Force Unit",
           "Length Unit",
@@ -173,12 +172,10 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Force
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      DropDownItems[0].RemoveAt(DropDownItems[0].Count - 1); // remove Tonneforce
+      DropDownItems[0].RemoveAt(DropDownItems[0].Count - 1);
       SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

@@ -19,7 +19,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateModel : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("326aa021-10b3-45a0-8286-eefb3dc3e2e1");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -31,7 +30,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region input and output
@@ -79,7 +78,6 @@ namespace GsaGH.Components {
           List<GsaCombinationCase> combinationCases)
         = Helpers.Export.GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      // manually add a warning if no input is set, as all inputs are optional
       if (models is null & nodes is null & elem1ds is null & elem2ds is null &
           mem1ds is null & mem2ds is null & mem3ds is null & sections is null &
           prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
@@ -138,7 +136,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

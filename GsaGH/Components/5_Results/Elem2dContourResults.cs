@@ -334,8 +334,7 @@ namespace GsaGH.Components {
       else
         _lengthUnit = lengthUnit;
 
-      Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
-      {
+      Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
         if (element.Topology.Count < 3) {
           return;
@@ -510,7 +509,7 @@ namespace GsaGH.Components {
             }
           case FoldMode.Force: {
               _legendValues.Add(new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString("s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
-              var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)); // this is technically moment per length
+              var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
               ts.Add(new GH_UnitNumber(moment));
               Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)) + "/" + Length.GetAbbreviation(lengthUnit);
               break;
@@ -639,11 +638,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // type
       DropDownItems.Add(_type);
       SelectedItems.Add(DropDownItems[0][0]);
 
-      // component
       DropDownItems.Add(_displacement);
       SelectedItems.Add(DropDownItems[1][3]);
 

@@ -21,8 +21,8 @@ namespace GsaGH.Components {
       "Modify GSA Bool6 or just get information about existing",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -56,7 +56,6 @@ namespace GsaGH.Components {
         myBool = gsaBool.Duplicate();
 
       if (myBool != null) {
-        //inputs
         bool x = new bool();
         if (da.GetData(1, ref x))
           myBool.X = x;
@@ -76,7 +75,6 @@ namespace GsaGH.Components {
         if (da.GetData(6, ref zz))
           myBool.ZZ = zz;
 
-        //outputs
         da.SetData(0, new GsaBool6Goo(myBool));
         da.SetData(1, myBool.X);
         da.SetData(2, myBool.Y);

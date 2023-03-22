@@ -24,8 +24,8 @@ namespace GsaGH.Components {
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Custom UI
@@ -101,7 +101,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghBolX = new GH_Boolean();
       if (da.GetData(0, ref ghBolX))
-        GH_Convert.ToBoolean(ghBolX, out _x, GH_Conversion.Both); //use Grasshopper to convert, these methods covers many cases and are consistent
+        GH_Convert.ToBoolean(ghBolX, out _x, GH_Conversion.Both);
       var ghBolY = new GH_Boolean();
       if (da.GetData(1, ref ghBolY))
         GH_Convert.ToBoolean(ghBolY, out _y, GH_Conversion.Both);
@@ -125,7 +125,7 @@ namespace GsaGH.Components {
         YY = _yy,
         ZZ = _zz,
       };
-      da.SetData(0, new GsaBool6Goo(bool6.Duplicate())); // output as Goo-type for consistency. 
+      da.SetData(0, new GsaBool6Goo(bool6.Duplicate()));
     }
   }
 }

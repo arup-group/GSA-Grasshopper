@@ -26,21 +26,19 @@ namespace GsaGH.Components {
       : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
         CategoryName.Name(),
         SubCategoryName.Cat1()) {
-          Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProp2d;
     #endregion
 
     #region Custom UI
-    //This region overrides the typical component layout
     public override void CreateAttributes() {
       if (_first) {
         _dropDownItems = new List<List<string>>();
         _selectedItems = new List<string>();
 
-        // length
         _dropDownItems.Add(_dropdownTopList);
         _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
 
@@ -59,37 +57,36 @@ namespace GsaGH.Components {
     public void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      if (i == 0) // if change is made to the first list
-      {
+      if (i == 0) {
         switch (_selectedItems[i]) {
           case "Plane Stress":
             if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
             Mode1Clicked();
             break;
           case "Fabric":
             if (_dropDownItems.Count > 1)
-              _dropDownItems.RemoveAt(1); // remove length unit dropdown
+              _dropDownItems.RemoveAt(1);
             Mode2Clicked();
             break;
           case "Flat Plate":
             if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
             Mode3Clicked();
             break;
           case "Shell":
             if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
             Mode4Clicked();
             break;
           case "Curved Shell":
             if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              _dropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
             Mode5Clicked();
             break;
           case "Load Panel":
             if (_dropDownItems.Count > 1)
-              _dropDownItems.RemoveAt(1); // remove length unit dropdown
+              _dropDownItems.RemoveAt(1);
             Mode6Clicked();
             break;
         }
@@ -113,7 +110,7 @@ namespace GsaGH.Components {
     #endregion
 
     #region Input and output
-    private readonly List<string> _dropdownTopList = new List<string>(new []
+    private readonly List<string> _dropdownTopList = new List<string>(new[]
     {
             "Plane Stress",
             "Fabric",
@@ -399,7 +396,7 @@ namespace GsaGH.Components {
 
         i++;
         Params.Input[i].NickName = "Thk";
-        Params.Input[i].Name = "Thickness [" + _unitAbbreviation + "]"; // "Thickness [m]";
+        Params.Input[i].Name = "Thickness [" + _unitAbbreviation + "]";
         Params.Input[i].Description = "Section thickness";
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;

@@ -28,8 +28,8 @@ namespace GsaGH.Components {
       "Modify GSA Offset or just get information about existing",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -63,7 +63,8 @@ namespace GsaGH.Components {
         offset = gsaoffset.Duplicate();
       }
 
-      if (offset == null) return;
+      if (offset == null)
+        return;
 
       int inp = 1;
       if (Params.Input[inp].SourceCount != 0)
@@ -78,7 +79,6 @@ namespace GsaGH.Components {
       if (Params.Input[inp].SourceCount != 0)
         offset.Z = (Length)Input.UnitNumber(this, da, inp, _lengthUnit, true);
 
-      //outputs
       int outp = 0;
       da.SetData(outp++, new GsaOffsetGoo(offset));
 

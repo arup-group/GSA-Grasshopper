@@ -17,7 +17,6 @@ namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class EditElement2d_OBSOLETE : GH_OasysComponent {
     #region Name and Ribbon Layout
-    // This  handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

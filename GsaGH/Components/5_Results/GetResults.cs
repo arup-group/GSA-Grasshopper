@@ -27,8 +27,8 @@ namespace GsaGH.Components {
       "Get AnalysisCase or Combination Result from an analysed GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -47,7 +47,7 @@ namespace GsaGH.Components {
     }
     #endregion
 
-    private Guid _modelGuid; // chache model to 
+    private Guid _modelGuid;
     private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
     private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
     private int _tempNodeId;
@@ -63,8 +63,7 @@ namespace GsaGH.Components {
         var inModel = new GsaModel();
         ghTyp.CastTo(ref inModel);
         if (_modelGuid == new Guid()) {
-          if (inModel.Guid != _modelGuid) // only get results if GUID is not similar
-          {
+          if (inModel.Guid != _modelGuid) {
             model = inModel;
             _result = new Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>();
             _analysisCaseResults = null;

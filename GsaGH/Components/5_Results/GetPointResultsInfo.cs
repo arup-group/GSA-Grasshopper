@@ -19,8 +19,8 @@ namespace GsaGH.Components {
       "Get Node Contour Result values",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output

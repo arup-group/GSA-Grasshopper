@@ -24,8 +24,8 @@ namespace GsaGH.Components {
         "Modify GSA Section",
         CategoryName.Name(),
         SubCategoryName.Cat1()) {
-          Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -91,7 +91,7 @@ namespace GsaGH.Components {
           }
         }
       }
-      int pool = 0; //prop.Prop2d.Thickness;
+      int pool = 0;
       if (da.GetData(4, ref pool)) {
         gsaSection.Pool = pool;
       }
@@ -116,7 +116,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaSectionGoo(gsaSection));
       da.SetData(1, gsaSection.Id);
       da.SetData(2, prof);
-      da.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection))); // to implemented GsaMaterial
+      da.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection)));
       da.SetData(4, poo);
       da.SetData(5, nm);
       da.SetData(6, colour);

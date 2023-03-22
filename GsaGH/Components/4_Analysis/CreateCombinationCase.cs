@@ -21,8 +21,8 @@ namespace GsaGH.Components {
       "Create a new GSA Combination Case",
       CategoryName.Name(),
       SubCategoryName.Cat4()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -42,10 +42,8 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       string name = "";
       da.GetData(0, ref name);
-
       string desc = "";
       da.GetData(1, ref desc);
-
       da.SetData(0, new GsaCombinationCaseGoo(new GsaCombinationCase(name, desc)));
     }
   }

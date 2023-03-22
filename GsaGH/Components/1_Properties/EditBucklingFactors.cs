@@ -13,7 +13,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditBucklingFactors : GH_OasysComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6440b34e-d787-48cc-8e95-c07c6217e40a");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -24,8 +23,8 @@ namespace GsaGH.Components {
       "Modify GSA Buckling Length Factors",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -57,7 +56,6 @@ namespace GsaGH.Components {
       }
 
       if (fls != null) {
-        // #### inputs ####
         var y = new GH_Number();
         if (da.GetData(1, ref y)) {
           if (GH_Convert.ToDouble(y, out double yy, GH_Conversion.Both))
@@ -76,7 +74,6 @@ namespace GsaGH.Components {
             fls.LateralTorsionalBucklingFactor = ltb;
         }
 
-        //#### outputs ####
         da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
         da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
         da.SetData(2, fls.MomentAmplificationFactorWeakAxis);

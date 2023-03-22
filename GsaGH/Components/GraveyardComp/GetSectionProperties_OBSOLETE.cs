@@ -29,8 +29,8 @@ namespace GsaGH.Components {
       "Get GSA Section Properties",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output

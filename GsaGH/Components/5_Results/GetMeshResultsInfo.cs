@@ -23,7 +23,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
         Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output

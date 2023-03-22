@@ -547,15 +547,12 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // type
       DropDownItems.Add(_type);
       SelectedItems.Add(DropDownItems[0][0]);
 
-      // component
       DropDownItems.Add(_displacement);
       SelectedItems.Add(DropDownItems[1][3]);
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

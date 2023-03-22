@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -67,7 +66,6 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       #region inputs
-      // Get Member1d input
       var ghTyp = new GH_ObjectWrapper();
       var ghTypes = new List<GH_ObjectWrapper>();
 
@@ -107,7 +105,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // Get Member2d input
       ghTypes = new List<GH_ObjectWrapper>();
       var inMem2ds = new List<GsaMember2d>();
       if (da.GetDataList(2, ghTypes)) {
@@ -127,7 +124,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // Get Member3d input
       ghTypes = new List<GH_ObjectWrapper>();
       var inMem3ds = new List<GsaMember3d>();
       if (da.GetDataList(3, ghTypes)) {
@@ -156,23 +152,18 @@ namespace GsaGH.Components {
       }
       #endregion
 
-      // Assemble model
       Model gsa = Helpers.Export.AssembleModel.Assemble(null, inNodes, null, null, null, inMem1ds, inMem2ds, inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
 
       UpdateMessage();
 
-      // extract nodes from model
       ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(gsa.Nodes(), _lengthUnit);
 
-      // populate local axes dictionary
       ReadOnlyDictionary<int, Element> elementDict = gsa.Elements();
       var elementLocalAxesDict = elementDict.Keys.ToDictionary(id => id, id => gsa.ElementDirectionCosine(id));
 
-      // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
           = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
-      // expose internal model if anyone wants to use it
       var outModel = new GsaModel {
         Model = gsa,
         ModelUnit = _lengthUnit,
@@ -184,7 +175,6 @@ namespace GsaGH.Components {
       da.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
-      // custom display settings for element2d mesh
       _element2ds = elementTuple.Item2;
     }
 
@@ -255,7 +245,7 @@ namespace GsaGH.Components {
     }
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -263,7 +253,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
@@ -297,8 +286,8 @@ namespace GsaGH.Components {
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
       var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units) {
-      Enabled = true,
-      ImageScaling = ToolStripItemImageScaling.SizeToFit,
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
       toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {

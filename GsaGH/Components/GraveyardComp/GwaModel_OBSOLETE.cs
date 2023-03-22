@@ -24,8 +24,8 @@ namespace GsaGH.Components {
       : base("Create GWA Model", "GWA", "Create a model from a GWA string.",
         CategoryName.Name(),
         SubCategoryName.Cat0()) {
-          Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -43,7 +43,8 @@ namespace GsaGH.Components {
       m.NewFile();
       string gwa = "";
       var strings = new List<string>();
-      if (da.GetDataList(0, strings)) gwa = strings.Aggregate(gwa, (current, s) => current + (s + "\n"));
+      if (da.GetDataList(0, strings))
+        gwa = strings.Aggregate(gwa, (current, s) => current + (s + "\n"));
 
       m.GwaCommand(gwa);
       string temp = Path.GetTempPath() + Guid.NewGuid() + ".gwb";

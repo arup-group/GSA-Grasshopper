@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
@@ -20,6 +21,7 @@ namespace GsaGH.Components {
   /// <summary>
   /// Component to edit a Prop2d and ouput the information
   /// </summary>
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class EditProp2d3_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6f18fffc-e03c-45cd-9d4c-b02bb6e2d10a");
@@ -33,7 +35,7 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
-    } // sets the initial state of the component to hidden
+    }
     #endregion
 
     #region Input and output

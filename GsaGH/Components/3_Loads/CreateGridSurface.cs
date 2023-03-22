@@ -84,7 +84,8 @@ namespace GsaGH.Components {
                 GridSurface = {
                   GridPlane = id
                 },
-                GridPlane = null };
+                GridPlane = null
+              };
               idSet = true;
             }
             else {
@@ -99,13 +100,11 @@ namespace GsaGH.Components {
         gps = new GsaGridPlaneSurface(plane);
       }
 
-      // record if changes has been made from default type
       bool changeGs = false;
-      var gs = new GridSurface(); // new GridSurface to make changes to, set it back to GPS in the end
+      var gs = new GridSurface();
       if (idSet)
         gs.GridPlane = gps.GridSurface.GridPlane;
 
-      // 1 ID
       var ghInteger = new GH_Integer();
       if (da.GetData(1, ref ghInteger)) {
         GH_Convert.ToInt32(ghInteger, out int id, GH_Conversion.Both);
@@ -119,58 +118,50 @@ namespace GsaGH.Components {
           gps.RefObjectGuid = element1dGoo.Value.Guid;
           gps.ReferenceType = ReferenceType.Element;
         }
-        switch (ghTyp.Value)
-        {
-          case GsaElement2dGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Element;
-            break;
-          }
-          case GsaMember1dGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Member;
-            this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
-          case GsaMember2dGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Member;
-            this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
-          case GsaMember3dGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Member;
-            this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
-          case GsaSectionGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Section;
-            break;
-          }
-          case GsaProp2dGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Prop2d;
-            break;
-          }
-          case GsaProp3dGoo value:
-          {
-            gps.RefObjectGuid = value.Value.Guid;
-            gps.ReferenceType = ReferenceType.Prop3d;
-            break;
-          }
+        switch (ghTyp.Value) {
+          case GsaElement2dGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Element;
+              break;
+            }
+          case GsaMember1dGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Member;
+              this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaMember2dGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Member;
+              this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaMember3dGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Member;
+              this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaSectionGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Section;
+              break;
+            }
+          case GsaProp2dGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Prop2d;
+              break;
+            }
+          case GsaProp3dGoo value: {
+              gps.RefObjectGuid = value.Value.Guid;
+              gps.ReferenceType = ReferenceType.Prop3d;
+              break;
+            }
           default: {
-            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
-              gps.GridSurface.Elements = elemList;
-            break;
-          }
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
+                gps.GridSurface.Elements = elemList;
+              break;
+            }
         }
       }
       else
@@ -184,7 +175,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 4 Tolerance
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(4, ref ghTyp)) {
         string tolIn = ghTyp.Value.ToString();
@@ -213,7 +203,7 @@ namespace GsaGH.Components {
             var direction = new Angle(dir, _angleUnit);
 
             if (direction.Degrees > 180 || direction.Degrees < -180)
-              this.AddRuntimeWarning("Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
+              this.AddRuntimeWarning("Angle value must be between -180 and 180 degrees");
             gs.Direction = direction.Degrees;
             if (dir != 0.0)
               changeGs = true;
@@ -229,8 +219,7 @@ namespace GsaGH.Components {
           if (da.GetData(5, ref ghexp))
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
           gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
-          switch (exp)
-          {
+          switch (exp) {
             case 1:
               gs.ExpansionType = GridSurfaceExpansionType.PLANE_SMOOTH;
               break;
@@ -269,7 +258,7 @@ namespace GsaGH.Components {
       TwoDimensional,
     }
 
-    private readonly List<string> _type = new List<string>(new []
+    private readonly List<string> _type = new List<string>(new[]
     {
       "1D, One-way span",
       "1D, Two-way span",
@@ -279,7 +268,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.OneDimensionalOneWay;
     private bool _duringLoad = false;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Type",
         });
@@ -287,7 +276,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(_type);
       SelectedItems.Add(_type[0]);
 
@@ -332,8 +320,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      switch (_mode)
-      {
+      switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
           Params.Input[5].NickName = "Dir";
           Params.Input[5].Name = "Span Direction";
@@ -385,11 +372,9 @@ namespace GsaGH.Components {
       RecordUndoEvent("1D, two-way Parameters");
       _mode = FoldMode.OneDimensionalTwoWay;
 
-      //remove input parameters
       while (Params.Input.Count > 5)
         Params.UnregisterInputParameter(Params.Input[5], true);
 
-      //add input parameters
       Params.RegisterInputParam(new Param_Integer());
       Params.RegisterInputParam(new Param_Boolean());
     }
@@ -402,7 +387,6 @@ namespace GsaGH.Components {
       RecordUndoEvent("2D Parameters");
       _mode = FoldMode.TwoDimensional;
 
-      //remove input parameters
       while (Params.Input.Count > 5)
         Params.UnregisterInputParameter(Params.Input[5], true);
     }

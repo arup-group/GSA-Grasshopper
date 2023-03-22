@@ -125,7 +125,7 @@ namespace GsaGH.Components {
     public override void InitialiseDropdowns() {
       SpacerDescriptions = new List<string>(new[]
       {
-        "Component"
+        "Component",
       });
 
       DropDownItems = new List<List<string>> { _reactionStringList };

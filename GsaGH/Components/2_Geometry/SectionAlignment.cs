@@ -152,7 +152,7 @@ namespace GsaGH.Components {
 
         if (oneD) {
           string[] parts = profile.Split(' ');
-          LengthUnit unit = LengthUnit.Millimeter; // default unit for sections is mm
+          LengthUnit unit = LengthUnit.Millimeter;
           string[] type = parts[1].Split('(', ')');
           if (type.Length > 1) {
             UnitParser parser = UnitParser.Default;

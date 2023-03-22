@@ -23,8 +23,8 @@ namespace GsaGH.Components {
       "Create GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -41,10 +41,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaSection = new GsaSection();
-
-      // profile
       var ghProfile = new GH_String();
-      if (!da.GetData(0, ref ghProfile)) return;
+      if (!da.GetData(0, ref ghProfile))
+        return;
 
       if (GH_Convert.ToString(ghProfile, out string profile, GH_Conversion.Both)) {
         if (GsaSection.ValidProfile(profile))
@@ -54,11 +53,9 @@ namespace GsaGH.Components {
           return;
         }
 
-        // 3 Material
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(1, ref ghTyp))
-        {
-	        var material = new GsaMaterial();
+        if (da.GetData(1, ref ghTyp)) {
+          var material = new GsaMaterial();
           if (ghTyp.Value is GsaMaterialGoo) {
             ghTyp.CastTo(ref material);
             gsaSection.Material = material ?? new GsaMaterial();
@@ -73,7 +70,7 @@ namespace GsaGH.Components {
           }
         }
         else
-          gsaSection.Material = new GsaMaterial(7); // because Timber
+          gsaSection.Material = new GsaMaterial(7);
       }
 
       da.SetData(0, new GsaSectionGoo(gsaSection));

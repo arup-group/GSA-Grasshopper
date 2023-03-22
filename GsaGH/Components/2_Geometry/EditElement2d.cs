@@ -18,7 +18,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditElement2d : GH_OasysComponent {
     #region Name and Ribbon Layout
-    // This  handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("0b4ecb0e-ef8f-4b42-bcf2-de940594fada");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

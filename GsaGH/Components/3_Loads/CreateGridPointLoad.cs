@@ -27,8 +27,8 @@ namespace GsaGH.Components {
       "Create GSA Grid Point Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -62,13 +62,11 @@ namespace GsaGH.Components {
     #endregion
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaGridPointLoad = new GsaGridPointLoad();
-
-      // 0 Load case
-      int lc = 1;
+      int loadCase = 1;
       var ghLoadCase = new GH_Integer();
       if (da.GetData(0, ref ghLoadCase))
-        GH_Convert.ToInt32(ghLoadCase, out lc, GH_Conversion.Both);
-      gsaGridPointLoad.GridPointLoad.Case = lc;
+        GH_Convert.ToInt32(ghLoadCase, out loadCase, GH_Conversion.Both);
+      gsaGridPointLoad.GridPointLoad.Case = loadCase;
 
       var point3d = new Point3d();
       var ghPt = new GH_Point();
@@ -81,35 +79,32 @@ namespace GsaGH.Components {
       Plane plane = Plane.WorldXY;
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
-        switch (ghTyp.Value)
-        {
-          case GsaGridPlaneSurfaceGoo _:
-          {
-            var temppln = new GsaGridPlaneSurface();
-            ghTyp.CastTo(ref temppln);
-            gridPlaneSurface = temppln.Duplicate();
-            gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
-            break;
-          }
+        switch (ghTyp.Value) {
+          case GsaGridPlaneSurfaceGoo _: {
+              var temppln = new GsaGridPlaneSurface();
+              ghTyp.CastTo(ref temppln);
+              gridPlaneSurface = temppln.Duplicate();
+              gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+              break;
+            }
           case Plane _:
             ghTyp.CastTo(ref plane);
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
             break;
-          default:
-          {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gsaGridPointLoad.GridPointLoad.GridSurface = id;
-              gsaGridPointLoad.GridPlaneSurface = null;
-            }
-            else {
-              this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                                   Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
-              return;
-            }
+          default: {
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gsaGridPointLoad.GridPointLoad.GridSurface = id;
+                gsaGridPointLoad.GridPlaneSurface = null;
+              }
+              else {
+                this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+                                     Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
       else {
@@ -126,8 +121,7 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref ghDir))
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
       dir = dir.ToUpper();
-      switch (dir)
-      {
+      switch (dir) {
         case "X":
           direc = Direction.X;
           break;
@@ -162,7 +156,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -170,7 +164,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Force
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
 

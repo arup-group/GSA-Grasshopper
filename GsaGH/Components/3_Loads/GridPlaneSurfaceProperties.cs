@@ -67,7 +67,7 @@ namespace GsaGH.Components {
       da.SetData(0, gsaGridPlaneSurface == null ? Plane.Unset : gsaGridPlaneSurface.Plane);
       da.SetData(1, gsaGridPlaneSurface.GridPlane == null ? 0 : gsaGridPlaneSurface.GridPlaneId);
       da.SetData(2, gsaGridPlaneSurface.GridPlane?.Name);
-      da.SetData(3, gsaGridPlaneSurface.GridPlane == null ? false : gsaGridPlaneSurface.GridPlane.IsStoreyType);
+      da.SetData(3, gsaGridPlaneSurface.GridPlane?.IsStoreyType ?? false);
       var axis = new Plane();
       if (gsaGridPlaneSurface.GridPlane != null) {
         axis = new Plane(gsaGridPlaneSurface.Plane);
@@ -88,7 +88,6 @@ namespace GsaGH.Components {
       da.SetData(6, gsaGridPlaneSurface.GridPlane == null ? "0" : gsaGridPlaneSurface.Elevation);
       da.SetData(7, gsaGridPlaneSurface.GridPlane == null ? "" : gsaGridPlaneSurface.StoreyToleranceAbove);
       da.SetData(8, gsaGridPlaneSurface.GridPlane == null ? "" : gsaGridPlaneSurface.StoreyToleranceBelow);
-
       da.SetData(9, gsaGridPlaneSurface.GridSurfaceId);
       da.SetData(10, gsaGridPlaneSurface.GridSurface.Name);
       da.SetData(11, gsaGridPlaneSurface.GridSurface.Elements);
@@ -114,17 +113,17 @@ namespace GsaGH.Components {
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units){
+      var unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }){
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
-          Enabled = true, 
-      };
+          Enabled = true,
+        };
 
-      unitsMenu.DropDownItems.Add(toolStripMenuItem);
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
       menu.Items.Add(unitsMenu);
 

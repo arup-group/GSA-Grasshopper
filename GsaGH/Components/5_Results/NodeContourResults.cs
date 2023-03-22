@@ -115,7 +115,7 @@ namespace GsaGH.Components {
         nodeList = "All";
 
       var ghColours = new List<GH_Colour>();
-      var colors = new List<System.Drawing.Color>();
+      var colors = new List<Color>();
       if (da.GetDataList(2, ghColours)) {
         foreach (GH_Colour t in ghColours) {
           GH_Convert.ToColor(t, out Color color, GH_Conversion.Both);
@@ -506,11 +506,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // type
       DropDownItems.Add(_type);
       SelectedItems.Add(DropDownItems[0][0]);
 
-      // component
       DropDownItems.Add(_displacement);
       SelectedItems.Add(DropDownItems[1][3]);
 

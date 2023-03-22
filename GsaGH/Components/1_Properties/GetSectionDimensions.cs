@@ -32,8 +32,8 @@ namespace GsaGH.Components {
       "Get GSA Section Dimensions",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -59,14 +59,12 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp))
-      {
-	      var gsaSection = new GsaSection();
+      if (da.GetData(0, ref ghTyp)) {
+        var gsaSection = new GsaSection();
         if (ghTyp.Value is GsaSectionGoo && ghTyp.CastTo(ref gsaSection)) {
         }
-        else
-        {
-	        string profileIn = string.Empty;
+        else {
+          string profileIn = string.Empty;
           ghTyp.CastTo(ref profileIn);
           if (GsaSection.ValidProfile(profileIn))
             gsaSection = new GsaSection(profileIn);
@@ -84,7 +82,7 @@ namespace GsaGH.Components {
 
         string[] parts = profile.Split(' ');
 
-        LengthUnit unit = LengthUnit.Millimeter; // default unit for sections is mm
+        LengthUnit unit = LengthUnit.Millimeter;
         string[] type = parts[1].Split('(', ')');
         if (type.Length > 1) {
           UnitParser parser = UnitParser.Default;
@@ -456,10 +454,10 @@ namespace GsaGH.Components {
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-      };
-      unitsMenu.DropDownItems.Add(toolStripMenuItem);
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true,
+        };
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
       menu.Items.Add(unitsMenu);

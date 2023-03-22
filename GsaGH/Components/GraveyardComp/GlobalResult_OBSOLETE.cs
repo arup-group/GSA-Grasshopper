@@ -21,8 +21,8 @@ namespace GsaGH.Components {
       : base("Global Results", "GlobalResult", "Get Global Results from GSA model",
         CategoryName.Name(),
         SubCategoryName.Cat5()) {
-          Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.ResultGlobal;

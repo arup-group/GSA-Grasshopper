@@ -72,12 +72,6 @@ namespace GsaGH.Components {
       }
       GsaElement3d elem = gsaElement3d.Duplicate(true);
 
-      // #### inputs ####
-
-      // no good way of updating location of mesh on the fly // 
-      // suggest users re-create from scratch //
-
-      // 1 ID
       var ghId = new List<GH_Integer>();
       var inIds = new List<int>();
       if (da.GetDataList(1, ghId)) {
@@ -103,7 +97,6 @@ namespace GsaGH.Components {
       }
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      // 2 Prop3d
       if (da.GetDataList(2, ghTypes)) {
         var prop3Ds = new List<GsaProp3d>();
         for (int i = 0; i < ghTypes.Count; i++) {
@@ -127,7 +120,6 @@ namespace GsaGH.Components {
         elem.Properties = prop3Ds;
       }
 
-      // 3 Group
       var ghgrp = new List<GH_Integer>();
       if (da.GetDataList(3, ghgrp)) {
         var inGroups = new List<int>();
@@ -142,37 +134,34 @@ namespace GsaGH.Components {
         elem.Groups = inGroups;
       }
 
-      // 4 name
-      var ghnm = new List<GH_String>();
-      if (da.GetDataList(4, ghnm)) {
+      var ghStrings = new List<GH_String>();
+      if (da.GetDataList(4, ghStrings)) {
         var inNames = new List<string>();
-        for (int i = 0; i < ghnm.Count; i++) {
+        for (int i = 0; i < ghStrings.Count; i++) {
           if (i > elem.API_Elements.Count) {
             this.AddRuntimeWarning("Name input List Length is longer than number of elements." + Environment.NewLine + "Excess Names have been ignored");
             continue;
           }
-          if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both))
+          if (GH_Convert.ToString(ghStrings[i], out string name, GH_Conversion.Both))
             inNames.Add(name);
         }
         elem.Names = inNames;
       }
 
-      // 5 Colour
-      var ghcol = new List<GH_Colour>();
-      if (da.GetDataList(5, ghcol)) {
+      var ghColours = new List<GH_Colour>();
+      if (da.GetDataList(5, ghColours)) {
         var inColours = new List<System.Drawing.Color>();
-        for (int i = 0; i < ghcol.Count; i++) {
+        for (int i = 0; i < ghColours.Count; i++) {
           if (i > elem.API_Elements.Count) {
             this.AddRuntimeWarning("Colour input List Length is longer than number of elements." + Environment.NewLine + "Excess Colours have been ignored");
             continue;
           }
-          if (GH_Convert.ToColor(ghcol[i], out System.Drawing.Color col, GH_Conversion.Both))
+          if (GH_Convert.ToColor(ghColours[i], out System.Drawing.Color col, GH_Conversion.Both))
             inColours.Add(col);
         }
         elem.Colours = inColours;
       }
 
-      // 6 Dummy
       var ghdum = new List<GH_Boolean>();
       if (da.GetDataList(6, ghdum)) {
         var inDummies = new List<bool>();
@@ -187,21 +176,16 @@ namespace GsaGH.Components {
         elem.IsDummies = inDummies;
       }
 
-      // #### outputs ####
-
-      // convert mesh to output meshes
       var outMeshes = new List<Mesh>();
       Mesh x = elem.NgonMesh;
 
       var ngons = x.GetNgonAndFacesEnumerable().ToList();
 
-      foreach (MeshNgon ngon in ngons)
-      {
+      foreach (MeshNgon ngon in ngons) {
         var m = new Mesh();
         m.Vertices.AddVertices(x.Vertices.ToList());
         var faceindex = ngon.FaceIndexList().Select(u => (int)u).ToList();
-        foreach (int index in faceindex)
-        {
+        foreach (int index in faceindex) {
           m.Faces.AddFace(x.Faces[index]);
         }
         m.Vertices.CullUnused();

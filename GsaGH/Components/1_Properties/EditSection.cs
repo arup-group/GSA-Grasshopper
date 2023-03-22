@@ -12,7 +12,6 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditSection : GH_OasysComponent {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("28dcadbd-4735-4110-8c30-931b37ec5f5a");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -23,8 +22,8 @@ namespace GsaGH.Components {
       "Modify GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -62,25 +61,19 @@ namespace GsaGH.Components {
       }
 
       if (gsaSection != null) {
-        // #### input ####
-
-        // 1 ID
         var ghId = new GH_Integer();
         if (da.GetData(1, ref ghId)) {
           if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
             gsaSection.Id = id;
         }
 
-        // 2 profile
         string profile = "";
         if (da.GetData(2, ref profile))
           gsaSection.Profile = profile;
 
-        // 3 Material
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(3, ref ghTyp))
-        {
-	        var material = new GsaMaterial();
+        if (da.GetData(3, ref ghTyp)) {
+          var material = new GsaMaterial();
           if (ghTyp.Value is GsaMaterialGoo) {
             ghTyp.CastTo(ref material);
             gsaSection.Material = material ?? new GsaMaterial();
@@ -95,38 +88,32 @@ namespace GsaGH.Components {
           }
         }
 
-        // 4 Section modifier
         ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghTyp))
-        {
-	        var modifier = new GsaSectionModifier();
+        if (da.GetData(4, ref ghTyp)) {
+          var modifier = new GsaSectionModifier();
           if (ghTyp.Value is GsaSectionModifierGoo) {
-            ghTyp.CastTo( ref modifier);
+            ghTyp.CastTo(ref modifier);
             gsaSection.Modifier = modifier ?? new GsaSectionModifier();
           }
         }
 
-        // 5 section pool
-        int pool = 0; //prop.Prop2d.Thickness;
+        int pool = 0;
         if (da.GetData(5, ref pool)) {
           gsaSection.Pool = pool;
         }
 
-        // 6 name
-        var ghnm = new GH_String();
-        if (da.GetData(6, ref ghnm)) {
-          if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+        var ghString = new GH_String();
+        if (da.GetData(6, ref ghString)) {
+          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
             gsaSection.Name = name;
         }
 
-        // 7 Colour
-        var ghcol = new GH_Colour();
-        if (da.GetData(7, ref ghcol)) {
-          if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+        var ghColour = new GH_Colour();
+        if (da.GetData(7, ref ghColour)) {
+          if (GH_Convert.ToColor(ghColour, out System.Drawing.Color col, GH_Conversion.Both))
             gsaSection.Colour = col;
         }
 
-        // #### outputs ####
         string prof = (gsaSection.API_Section == null) ? "--" : gsaSection.Profile;
         int poo = (gsaSection.API_Section == null) ? 0 : gsaSection.Pool;
         string nm = (gsaSection.API_Section == null) ? "--" : gsaSection.Name;
@@ -135,7 +122,7 @@ namespace GsaGH.Components {
         da.SetData(0, new GsaSectionGoo(gsaSection));
         da.SetData(1, gsaSection.Id);
         da.SetData(2, prof);
-        da.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection))); // to implemented GsaMaterial
+        da.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection)));
         da.SetData(4, new GsaSectionModifierGoo(gsaSection.Modifier));
         da.SetData(5, poo);
         da.SetData(6, nm);

@@ -23,8 +23,8 @@ namespace GsaGH.Components {
       "Get Sections, 2D Properties and Springs from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -41,7 +41,8 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) return;
+      if (!da.GetData(0, ref gsaModel))
+        return;
 
       Model model = gsaModel.Model;
 

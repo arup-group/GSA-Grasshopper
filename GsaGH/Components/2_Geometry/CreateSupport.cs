@@ -109,7 +109,6 @@ namespace GsaGH.Components {
 
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer) {
-      // we need to save all the items that we want to reappear when a GH file is saved and re-opened
       writer.SetBoolean("x", _x);
       writer.SetBoolean("y", _y);
       writer.SetBoolean("z", _z);
@@ -120,7 +119,6 @@ namespace GsaGH.Components {
     }
 
     public override bool Read(GH_IO.Serialization.GH_IReader reader) {
-      // when a GH file is opened we need to read in the data that was previously set by user
       _x = reader.GetBoolean("x");
       _y = reader.GetBoolean("y");
       _z = reader.GetBoolean("z");

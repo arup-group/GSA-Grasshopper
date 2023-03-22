@@ -22,8 +22,8 @@ namespace GsaGH.Components {
       "Create GSA 3D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -39,9 +39,8 @@ namespace GsaGH.Components {
       var prop = new GsaProp3d();
 
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp))
-      {
-	      var material = new GsaMaterial();
+      if (da.GetData(0, ref ghTyp)) {
+        var material = new GsaMaterial();
         if (ghTyp.Value is GsaMaterialGoo) {
           ghTyp.CastTo(ref material);
           prop.Material = material ?? new GsaMaterial();

@@ -622,11 +622,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // type
       DropDownItems.Add(_type);
       SelectedItems.Add(DropDownItems[0][0]);
 
-      // component
       DropDownItems.Add(_displacement);
       SelectedItems.Add(DropDownItems[1][3]);
 
@@ -965,7 +963,7 @@ namespace GsaGH.Components {
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
 
-      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient(null);
+      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient();
       gradient.Gradient.NormalizeGrips();
       gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
       gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);
@@ -975,7 +973,7 @@ namespace GsaGH.Components {
 
       gradient.Attributes.Pivot = new PointF(Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50, Params.Input[3].Attributes.Bounds.Y - gradient.Attributes.Bounds.Height / 4 - 6);
 
-      Grasshopper.Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      Instances.ActiveCanvas.Document.AddObject(gradient, false);
       Params.Input[3].RemoveAllSources();
       Params.Input[3].AddSource(gradient.Params.Output[0]);
 

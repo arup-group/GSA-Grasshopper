@@ -78,7 +78,6 @@ namespace GsaGH.Components {
       };
       mem.ReleaseEnd = rel2;
 
-      // 1 section
       var ghTyp = new GH_ObjectWrapper();
       var section = new GsaSection();
       if (da.GetData(1, ref ghTyp)) {
@@ -95,7 +94,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 2 mesh size
       double meshSize = 0;
       if (da.GetData(2, ref meshSize)) {
         mem.MeshSize = meshSize;
@@ -144,7 +142,6 @@ namespace GsaGH.Components {
 
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer) {
-      // we need to save all the items that we want to reappear when a GH file is saved and re-opened
       writer.SetBoolean("x1", _x1);
       writer.SetBoolean("y1", _y1);
       writer.SetBoolean("z1", _z1);
@@ -160,7 +157,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader) {
-      // when a GH file is opened we need to read in the data that was previously set by user
       _x1 = reader.GetBoolean("x1");
       _y1 = reader.GetBoolean("y1");
       _z1 = reader.GetBoolean("z1");

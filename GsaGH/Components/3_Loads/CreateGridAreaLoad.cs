@@ -29,8 +29,8 @@ namespace GsaGH.Components {
       "Create GSA Grid Area Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region input and output
@@ -69,16 +69,13 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gridareaload = new GsaGridAreaLoad();
-
-      // 0 Load case
-      int lc = 1;
+      int loadCase = 1;
       var ghLc = new GH_Integer();
       if (da.GetData(0, ref ghLc))
-        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
-      gridareaload.GridAreaLoad.Case = lc;
+        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      gridareaload.GridAreaLoad.Case = loadCase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
-      // 2 Plane 
       Plane plane = Plane.WorldXY;
       bool planeSet = false;
       var gridPlaneSurface = new GsaGridPlaneSurface();
@@ -116,7 +113,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 1 Polyline
       var brep = new Brep();
 
       var ghBrep = new GH_Brep();
@@ -128,10 +124,8 @@ namespace GsaGH.Components {
         Curve curve = edges[0];
 
         if (curve.TryGetPolyline(out Polyline polyline)) {
-          // get control points
           var ctrlPts = polyline.ToList();
 
-          // plane
           if (!planeSet) {
             plane = RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrlPts);
 
@@ -181,7 +175,6 @@ namespace GsaGH.Components {
           gridareaload.GridPlaneSurface = gridPlaneSurface;
       }
 
-      // 3 direction
       string dir = "Z";
       Direction direc = Direction.Z;
 
@@ -199,8 +192,6 @@ namespace GsaGH.Components {
       }
 
       gridareaload.GridAreaLoad.Direction = direc;
-
-      // 4 Axis
       gridareaload.GridAreaLoad.AxisProperty = 0;
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
@@ -209,7 +200,6 @@ namespace GsaGH.Components {
           gridareaload.GridAreaLoad.AxisProperty = axis;
       }
 
-      // 5 Projected
       var ghProj = new GH_Boolean();
       if (da.GetData(5, ref ghProj)) {
         if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both))
@@ -251,7 +241,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // ForcePerArea
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
       SelectedItems.Add(Pressure.GetAbbreviation(_forcePerAreaUnit));
 

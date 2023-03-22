@@ -61,40 +61,34 @@ namespace GsaGH.Components {
         return;
       }
 
-      // 1 Points
-      var pts = new List<Point3d>();
+      var points = new List<Point3d>();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
-        foreach (GH_Point point in ghpts)
-        {
+        foreach (GH_Point point in ghpts) {
           var pt = new Point3d();
           if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both))
-            pts.Add(pt);
+            points.Add(pt);
         }
       }
 
-      // 2 Curves
       var crvs = new List<Curve>();
       var ghcrvs = new List<GH_Curve>();
       if (da.GetDataList(2, ghcrvs)) {
-        foreach (GH_Curve curve in ghcrvs)
-        {
+        foreach (GH_Curve curve in ghcrvs) {
           Curve crv = null;
           if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both))
             crvs.Add(crv);
         }
       }
 
-      // build new member with brep, crv and pts
       var mem = new GsaMember2d();
       try {
-        mem = new GsaMember2d(brep, crvs, pts);
+        mem = new GsaMember2d(brep, crvs, points);
       }
       catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
       }
 
-      // 3 section
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
@@ -111,7 +105,6 @@ namespace GsaGH.Components {
         }
       }
 
-      // 4 mesh size
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
         mem.MeshSize = meshSize;

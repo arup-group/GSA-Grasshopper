@@ -95,17 +95,17 @@ namespace GsaGH.Components {
     private string _search = "";
 
     private readonly Tuple<List<string>, List<int>> _cataloguedata;
-    private List<int> _catalogueNumbers = new List<int>(); // internal db catalogue numbers
-    private List<string> _catalogueNames = new List<string>(); // list of displayed catalogues
+    private List<int> _catalogueNumbers = new List<int>();
+    private List<string> _catalogueNames = new List<string>();
     private bool _inclSs;
 
     private Tuple<List<string>, List<int>> _typedata;
-    private List<int> _typeNumbers = new List<int>(); //  internal db type numbers
-    private List<string> _typeNames = new List<string>(); // list of displayed types
+    private List<int> _typeNumbers = new List<int>();
+    private List<string> _typeNames = new List<string>();
 
     private List<string> _sectionList;
 
-    private int _catalogueIndex = -1; //-1 is all
+    private int _catalogueIndex = -1;
     private int _typeIndex = -1;
 
     private bool _lastInputWasSecant;
@@ -121,7 +121,7 @@ namespace GsaGH.Components {
       "Create Profile text-string for a GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-      Hidden = true; // sets the initial state of the component to hidden
+      Hidden = true;
       _cataloguedata = MicrosoftSQLiteReader.Instance.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
       _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
       _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
@@ -150,7 +150,6 @@ namespace GsaGH.Components {
 
       list.Add(item);
       return true;
-
     }
 
     private static Tuple<List<string>, List<int>> GetTypesDataFromSqLite(int catalogueIndex, string filePath, bool inclSuperseeded) {
@@ -281,8 +280,7 @@ namespace GsaGH.Components {
       if (_mode != FoldMode.Other) {
         return;
       }
-
-      {
+      else {
         string unit = "(" + Length.GetAbbreviation(_lengthUnit, new CultureInfo("en")) + ") ";
         string profile = "STD ";
         switch (_type) {
@@ -601,8 +599,7 @@ namespace GsaGH.Components {
       while (Params.Input.Count > inputs)
         Params.UnregisterInputParameter(Params.Input[inputs], true);
 
-      if (isSecantPile) // add two less generic than input says
-      {
+      if (isSecantPile) {
         while (Params.Input.Count > inputs + 2)
           Params.UnregisterInputParameter(Params.Input[inputs + 2], true);
         inputs -= 2;
@@ -610,8 +607,7 @@ namespace GsaGH.Components {
       while (Params.Input.Count < inputs)
         Params.RegisterInputParam(new Param_GenericObject());
 
-      if (isSecantPile) // finally add int and bool param if secant
-      {
+      if (isSecantPile) {
         Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_Boolean());
         _lastInputWasSecant = true;
@@ -764,7 +760,7 @@ namespace GsaGH.Components {
           _typeNumbers = _typedata.Item2;
 
           var types = _typeNumbers.ToList();
-          types.RemoveAt(0); // remove -1 from beginning of list
+          types.RemoveAt(0);
           _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           SelectedItems[2] = _typeNames[0];
@@ -778,13 +774,12 @@ namespace GsaGH.Components {
           SelectedItems[2] = _typeNames[j];
 
           List<int> types;
-          if (_typeIndex == -1) // if all
-          {
-            types = _typeNumbers.ToList(); // use current selected list of type numbers
-            types.RemoveAt(0); // remove -1 from beginning of list
+          if (_typeIndex == -1) {
+            types = _typeNumbers.ToList();
+            types.RemoveAt(0);
           }
           else
-            types = new List<int> { _typeIndex }; // create empty list and add the single selected type 
+            types = new List<int> { _typeIndex };
 
           _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
@@ -803,7 +798,7 @@ namespace GsaGH.Components {
         base.UpdateUI();
       }
       else {
-        SpacerDescriptions[1] = "Measure";// = new List<string>(new string[]
+        SpacerDescriptions[1] = "Measure";
 
         if (_mode != FoldMode.Other) {
           while (DropDownItems.Count > 1)
@@ -1424,7 +1419,7 @@ namespace GsaGH.Components {
               Params.Input[i].Access = GH_ParamAccess.item;
               Params.Input[i].Optional = false;
 
-              if (Params.Input.Count == 1) // handle backwards compatability
+              if (Params.Input.Count == 1)
                 Params.RegisterInputParam(new Param_Plane());
 
               i++;

@@ -28,8 +28,8 @@ namespace GsaGH.Components {
       "Get Loads and Grid Planes/Surfaces from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -96,7 +96,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 

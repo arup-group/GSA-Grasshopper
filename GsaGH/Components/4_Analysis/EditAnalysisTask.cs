@@ -24,8 +24,8 @@ namespace GsaGH.Components {
       "Modify GSA Analysis Tasks",
       CategoryName.Name(),
       SubCategoryName.Cat4()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output

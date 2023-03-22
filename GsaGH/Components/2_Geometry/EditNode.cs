@@ -62,10 +62,12 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Spring Property", "SP", "Get Spring Property reference", GH_ParamAccess.item);
       pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
-      if (_mode == FoldMode.GetConnected) {
-        pManager.AddIntegerParameter("Connected Elements", "El", "Connected Element IDs in Model that Node once belonged to", GH_ParamAccess.list);
-        pManager.AddIntegerParameter("Connected Members", "Me", "Connected Member IDs in Model that Node once belonged to", GH_ParamAccess.list);
+      if (_mode != FoldMode.GetConnected) {
+        return;
       }
+
+      pManager.AddIntegerParameter("Connected Elements", "El", "Connected Element IDs in Model that Node once belonged to", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Connected Members", "Me", "Connected Member IDs in Model that Node once belonged to", GH_ParamAccess.list);
     }
     #endregion
 
@@ -95,8 +97,6 @@ namespace GsaGH.Components {
           this.AddRuntimeRemark("New node created at {0, 0, 0}");
       }
 
-      // #### inputs ####
-      // 2 Point
       var ghPt = new GH_Point();
       if (da.GetData(2, ref ghPt)) {
         var pt = new Point3d();
@@ -112,7 +112,6 @@ namespace GsaGH.Components {
           node.Id = id;
       }
 
-      // 3 plane
       var ghPln = new GH_Plane();
       if (da.GetData(3, ref ghPln)) {
         var pln = new Plane();
@@ -121,48 +120,41 @@ namespace GsaGH.Components {
         }
       }
 
-      // 4 Restraint
       var restraint = new GsaBool6();
       if (da.GetData(4, ref restraint)) {
         node.Restraint = restraint;
       }
 
-      // 5 Damper Property
       ghInt = new GH_Integer();
       if (da.GetData(5, ref ghInt)) {
         if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both))
           node.DamperProperty = prop;
       }
 
-      // 6 Mass Property
       ghInt = new GH_Integer();
       if (da.GetData(6, ref ghInt)) {
         if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both))
           node.MassProperty = prop;
       }
 
-      // 7 Spring Property
       ghInt = new GH_Integer();
       if (da.GetData(7, ref ghInt)) {
         if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both))
           node.SpringProperty = prop;
       }
 
-      // 8 Name
       var ghStr = new GH_String();
       if (da.GetData(8, ref ghStr)) {
         if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
           node.Name = name;
       }
 
-      // 9 Colour
       var ghcol = new GH_Colour();
       if (da.GetData(9, ref ghcol)) {
         if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
           node.Colour = col;
       }
 
-      // #### outputs ####
       da.SetData(0, new GsaNodeGoo(node));
       da.SetData(1, node.Id);
       da.SetData(2, node.Point);
@@ -209,18 +201,14 @@ namespace GsaGH.Components {
     private void FlipMode(object sender, EventArgs e) {
       RecordUndoEvent("GetConnected Parameters");
       if (_mode == FoldMode.GetConnected) {
-        //flip mode
         _mode = FoldMode.DoNotGetConnected;
 
-        //remove input parameters
         while (Params.Output.Count > 10)
           Params.UnregisterOutputParameter(Params.Output[10], true);
       }
       else {
-        // flip mode
         _mode = FoldMode.GetConnected;
 
-        // add output parameters
         Params.RegisterOutputParam(new Param_Integer());
         Params.RegisterOutputParam(new Param_Integer());
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -244,17 +232,19 @@ namespace GsaGH.Components {
     #endregion
 
     public void VariableParameterMaintenance() {
-      if (_mode == FoldMode.GetConnected) {
-        Params.Output[10].NickName = "El";
-        Params.Output[10].Name = "Connected Elements";
-        Params.Output[10].Description = "Connected Element IDs in Model that Node once belonged to";
-        Params.Output[10].Access = GH_ParamAccess.list;
-
-        Params.Output[11].NickName = "Me";
-        Params.Output[11].Name = "Connected Members";
-        Params.Output[11].Description = "Connected Member IDs in Model that Node once belonged to";
-        Params.Output[11].Access = GH_ParamAccess.list;
+      if (_mode != FoldMode.GetConnected) {
+        return;
       }
+
+      Params.Output[10].NickName = "El";
+      Params.Output[10].Name = "Connected Elements";
+      Params.Output[10].Description = "Connected Element IDs in Model that Node once belonged to";
+      Params.Output[10].Access = GH_ParamAccess.list;
+
+      Params.Output[11].NickName = "Me";
+      Params.Output[11].Name = "Connected Members";
+      Params.Output[11].Description = "Connected Member IDs in Model that Node once belonged to";
+      Params.Output[11].Access = GH_ParamAccess.list;
     }
 
     #region IGH_variable parameter null implementation

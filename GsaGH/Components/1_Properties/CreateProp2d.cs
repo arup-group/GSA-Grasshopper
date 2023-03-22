@@ -30,8 +30,8 @@ namespace GsaGH.Components {
       "Create GSA 2D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -46,8 +46,6 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProp2d();
-
-      // element type (picked in dropdown)
       switch (_mode) {
         case FoldMode.PlaneStress:
           prop.Type = Property2D_Type.PL_STRESS;
@@ -82,10 +80,7 @@ namespace GsaGH.Components {
         prop.AxisProperty = 0;
 
         if (_mode != FoldMode.Fabric) {
-          // 0 Thickness
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
-
-          // 1 Material
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
             var material = new GsaMaterial();
@@ -114,7 +109,7 @@ namespace GsaGH.Components {
     }
 
     #region Custom UI
-    private readonly List<string> _dropdownTopLevel = new List<string>(new []
+    private readonly List<string> _dropdownTopLevel = new List<string>(new[]
     {
       "Plane Stress",
       "Fabric",
@@ -127,7 +122,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Type", "Unit",
         });
@@ -135,11 +130,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(_dropdownTopLevel);
       SelectedItems.Add(_dropdownTopLevel[3]);
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
@@ -149,8 +142,7 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
 
-      if (i == 0) // if change is made to the first list
-      {
+      if (i == 0) {
         switch (SelectedItems[i]) {
           case "Plane Stress":
             if (DropDownItems.Count < 2)
@@ -159,7 +151,7 @@ namespace GsaGH.Components {
             break;
           case "Fabric":
             if (DropDownItems.Count > 1)
-              DropDownItems.RemoveAt(1); // remove length unit dropdown
+              DropDownItems.RemoveAt(1);
             Mode2Clicked();
             break;
           case "Flat Plate":
@@ -179,7 +171,7 @@ namespace GsaGH.Components {
             break;
           case "Load Panel":
             if (DropDownItems.Count > 1)
-              DropDownItems.RemoveAt(1); // remove length unit dropdown
+              DropDownItems.RemoveAt(1);
             Mode6Clicked();
             break;
         }
@@ -199,7 +191,7 @@ namespace GsaGH.Components {
           break;
         case "Fabric":
           if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1); // remove length unit dropdown
+            DropDownItems.RemoveAt(1);
           Mode2Clicked();
           break;
         case "Flat Plate":
@@ -219,7 +211,7 @@ namespace GsaGH.Components {
           break;
         case "Load Panel":
           if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1); // remove length unit dropdown
+            DropDownItems.RemoveAt(1);
           Mode6Clicked();
           break;
       }
@@ -245,11 +237,9 @@ namespace GsaGH.Components {
 
       RecordUndoEvent("Plane Stress Parameters");
       if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        //remove input parameters
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
-        //register input parameter
         Params.RegisterInputParam(new Param_GenericObject());
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
@@ -263,11 +253,9 @@ namespace GsaGH.Components {
       RecordUndoEvent("Fabric Parameters");
       _mode = FoldMode.Fabric;
 
-      //remove input parameters
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
 
-      //register input parameter
       Params.RegisterInputParam(new Param_GenericObject());
     }
     private void Mode3Clicked() {
@@ -276,11 +264,9 @@ namespace GsaGH.Components {
 
       RecordUndoEvent("Flat Plate Parameters");
       if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        //remove input parameters
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
-        //register input parameter
         Params.RegisterInputParam(new Param_GenericObject());
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
@@ -294,11 +280,9 @@ namespace GsaGH.Components {
 
       RecordUndoEvent("Shell Parameters");
       if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        //remove input parameters
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
-        //register input parameter
         Params.RegisterInputParam(new Param_GenericObject());
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
@@ -312,11 +296,9 @@ namespace GsaGH.Components {
 
       RecordUndoEvent("Curved Shell Parameters");
       if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        //remove input parameters
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
-        //register input parameter
         Params.RegisterInputParam(new Param_GenericObject());
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
@@ -331,7 +313,6 @@ namespace GsaGH.Components {
       RecordUndoEvent("Load Panel Parameters");
       _mode = FoldMode.LoadPanel;
 
-      //remove input parameters
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
     }
@@ -341,7 +322,7 @@ namespace GsaGH.Components {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
         int i = 0;
         Params.Input[i].NickName = "Thk";
-        Params.Input[i].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]"; // "Thickness [m]";
+        Params.Input[i].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
         Params.Input[i].Description = "Section thickness";
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = false;

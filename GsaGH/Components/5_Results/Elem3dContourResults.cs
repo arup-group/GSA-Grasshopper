@@ -261,8 +261,7 @@ namespace GsaGH.Components {
       else
         _lengthUnit = lengthUnit;
 
-      Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
-      {
+      Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
         if (element.Topology.Count < 5) {
           return;
@@ -373,7 +372,7 @@ namespace GsaGH.Components {
       var cs = new List<Color>();
 
       for (int i = 0; i < ghGradient.GripCount; i++) {
-        double t = dmin + (dmax - dmin) / ((double)ghGradient.GripCount - 1) * (double)i;
+        double t = dmin + (dmax - dmin) / ((double)ghGradient.GripCount - 1) * i;
         if (t > 1) {
           double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
           scl = Math.Max(scl, 1);
@@ -491,11 +490,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // type
       DropDownItems.Add(_type);
       SelectedItems.Add(DropDownItems[0][0]);
 
-      // component
       DropDownItems.Add(_displacement);
       SelectedItems.Add(DropDownItems[1][3]);
 

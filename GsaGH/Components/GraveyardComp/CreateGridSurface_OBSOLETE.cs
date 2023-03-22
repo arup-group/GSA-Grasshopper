@@ -29,7 +29,7 @@ namespace GsaGH.Components {
       "GridSurface",
       "Create GSA Grid Surface",
       CategoryName.Name(),
-      SubCategoryName.Cat3()) { } // sets the initial state of the component to hidden
+      SubCategoryName.Cat3()) { }
     #endregion
 
     #region Input and output
@@ -111,7 +111,7 @@ namespace GsaGH.Components {
       }
 
       bool changeGs = false;
-      var gs = new GridSurface(); // new GridSurface to make changes to, set it back to GPS in the end
+      var gs = new GridSurface();
       if (idSet)
         gs.GridPlane = gsaGridPlaneSurface.GridSurface.GridPlane;
 
@@ -180,8 +180,7 @@ namespace GsaGH.Components {
           if (da.GetData(5, ref ghexp))
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
           gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
-          switch (exp)
-          {
+          switch (exp) {
             case 1:
               gs.ExpansionType = GridSurfaceExpansionType.PLANE_SMOOTH;
               break;
@@ -220,7 +219,7 @@ namespace GsaGH.Components {
       TwoDimensional,
     }
 
-    private readonly List<string> _type = new List<string>(new []
+    private readonly List<string> _type = new List<string>(new[]
     {
       "1D, One-way span",
       "1D, Two-way span",
@@ -230,7 +229,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.OneDimensionalOneWay;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Type", "Unit",
         });
@@ -238,11 +237,9 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Type
       DropDownItems.Add(_type);
       SelectedItems.Add(_type[0]);
 
-      // Length
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
@@ -287,8 +284,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      switch (_mode)
-      {
+      switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
           Params.Input[5].NickName = "Dir";
           Params.Input[5].Name = "Span Direction";
@@ -333,8 +329,7 @@ namespace GsaGH.Components {
       Params.RegisterInputParam(_angleInputParam);
     }
     private void Mode2Clicked() {
-      switch (_mode)
-      {
+      switch (_mode) {
         case FoldMode.OneDimensionalTwoWay:
           return;
         case FoldMode.OneDimensionalOneWay:
@@ -352,8 +347,7 @@ namespace GsaGH.Components {
       Params.RegisterInputParam(new Param_Boolean());
     }
     private void Mode3Clicked() {
-      switch (_mode)
-      {
+      switch (_mode) {
         case FoldMode.TwoDimensional:
           return;
         case FoldMode.OneDimensionalOneWay:

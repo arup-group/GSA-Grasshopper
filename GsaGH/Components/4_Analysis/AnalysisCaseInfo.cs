@@ -22,8 +22,8 @@ namespace GsaGH.Components {
       "Get information about the properties of a GSA Analysis Case (Load Case or Combination)",
       CategoryName.Name(),
       SubCategoryName.Cat4()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output

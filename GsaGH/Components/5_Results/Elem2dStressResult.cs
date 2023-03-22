@@ -33,8 +33,8 @@ namespace GsaGH.Components {
       "2D Projected Stress result values",
       CategoryName.Name(),
       SubCategoryName.Cat5()) {
-        Hidden = true;
-    } // sets the initial state of the component to hidden
+      Hidden = true;
+    }
     #endregion
 
     #region Input and output
@@ -97,10 +97,8 @@ namespace GsaGH.Components {
         return;
       }
 
-      foreach (GH_ObjectWrapper ghTyp in ghTypes)
-      {
-        switch (ghTyp?.Value)
-        {
+      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
+        switch (ghTyp?.Value) {
           case null:
             this.AddRuntimeWarning("Input is null");
             return;
@@ -126,48 +124,47 @@ namespace GsaGH.Components {
           }
           Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
           {
-            switch (thread)
-            {
+            switch (thread) {
               case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) { continue; }
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) { continue; }
 
-                  var path = new GH_Path(
-                    result.CaseId,
-                    result.SelectedPermutationIds == null
-                      ? 0
-                      : perm,
-                    elementId);
+                    var path = new GH_Path(
+                      result.CaseId,
+                      result.SelectedPermutationIds == null
+                        ? 0
+                        : perm,
+                      elementId);
 
-                  outXx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_stresshUnit))), path); // use ToUnit to capture changes in dropdown
-                  outYy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_stresshUnit))), path);
-                  outZz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_stresshUnit))), path);
+                    outXx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_stresshUnit))), path); // use ToUnit to capture changes in dropdown
+                    outYy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_stresshUnit))), path);
+                    outZz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_stresshUnit))), path);
+                  }
+
+                  break;
                 }
-
-                break;
-              }
               case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) { continue; }
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) { continue; }
 
-                  var path = new GH_Path(
-                    result.CaseId,
-                    result.SelectedPermutationIds == null
-                      ? 0
-                      : perm,
-                    elementId);
+                    var path = new GH_Path(
+                      result.CaseId,
+                      result.SelectedPermutationIds == null
+                        ? 0
+                        : perm,
+                      elementId);
 
-                  outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_stresshUnit))), path); // always use [rad] units
-                  outYz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_stresshUnit))), path);
-                  outZx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_stresshUnit))), path);
+                    outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_stresshUnit))), path); // always use [rad] units
+                    outYz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_stresshUnit))), path);
+                    outZx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_stresshUnit))), path);
+                  }
+
+                  break;
                 }
-
-                break;
-              }
             }
           });
         }
@@ -186,7 +183,7 @@ namespace GsaGH.Components {
     #region Custom UI
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Unit",
         });
@@ -194,7 +191,6 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      // Stress
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
       SelectedItems.Add(_stresshUnit.ToString());
 
