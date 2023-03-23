@@ -62,7 +62,7 @@ namespace GsaGH.Components {
 
       GsaModel gsaGh = GsaComHelper.GetGsaGhModel();
       da.SetData(0, new GsaModelGoo(gsaGh));
-      PostHog.GWA(gwa, Params.Input.Count > 0);
+      PostHog.Gwa(gwa, Params.Input.Count > 0);
     }
   }
 }

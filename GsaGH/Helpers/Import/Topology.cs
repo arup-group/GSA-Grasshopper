@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace GsaGH.Helpers.Import
-{
+namespace GsaGH.Helpers.Import {
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
-  internal class Topology
-  {
+  internal class Topology {
     /// <summary>
     /// Method to split/untangle a topology list from GSA into separate lists for
     /// Topology, Voids, Inclusion lines and Inclusion points with corrosponding list for topology type.
@@ -35,29 +33,25 @@ namespace GsaGH.Helpers.Import
     /// Points: (20, 19, 21, 22)
     /// 
     /// </summary>
-    /// <param name="gsa_topology"></param>
+    /// <param name="gsaTopology"></param>
     /// <returns></returns>
     internal static Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
-        Tuple<List<List<int>>, List<List<string>>>, List<int>> Topology_detangler(string gsa_topology)
-    {
-      List<string> voids = new List<string>();
-      List<string> lines = new List<string>();
-      List<string> points = new List<string>();
+        Tuple<List<List<int>>, List<List<string>>>, List<int>> Topology_detangler(string gsaTopology) {
+      var voids = new List<string>();
+      var lines = new List<string>();
+      var points = new List<string>();
       //string gsa_topology = "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84";
-      gsa_topology = gsa_topology.ToUpper();
+      gsaTopology = gsaTopology.ToUpper();
       char[] spearator = { '(', ')' };
 
-      String[] strlist = gsa_topology.Split(spearator);
-      List<String> topos = new List<String>(strlist);
+      string[] strlist = gsaTopology.Split(spearator);
+      var topos = new List<string>(strlist);
 
       // first split out anything in brackets and put them into lists for V, L or P
       // also remove those lines so that they dont appear twice in the end
-      for (int i = 0; i < topos.Count(); i++)
-      {
-        if (topos[i].Length > 1)
-        {
-          if (topos[i].Substring(topos[i].Length - 1, 1) == "V")
-          {
+      for (int i = 0; i < topos.Count; i++) {
+        if (topos[i].Length > 1) {
+          if (topos[i].Substring(topos[i].Length - 1, 1) == "V") {
             topos[i] = topos[i].Substring(0, topos[i].Length - 1);
             voids.Add(topos[i + 1]);
             topos.RemoveAt(i + 1);
@@ -65,10 +59,8 @@ namespace GsaGH.Helpers.Import
           }
         }
 
-        if (topos[i].Length > 1)
-        {
-          if (topos[i].Substring(topos[i].Length - 1, 1) == "L")
-          {
+        if (topos[i].Length > 1) {
+          if (topos[i].Substring(topos[i].Length - 1, 1) == "L") {
             topos[i] = topos[i].Substring(0, topos[i].Length - 1);
             lines.Add(topos[i + 1]);
             topos.RemoveAt(i + 1);
@@ -76,145 +68,124 @@ namespace GsaGH.Helpers.Import
           }
         }
 
-        if (topos[i].Length > 1)
-        {
-          if (topos[i].Substring(topos[i].Length - 1, 1) == "P")
-          {
-            topos[i] = topos[i].Substring(0, topos[i].Length - 1);
-            points.Add(topos[i + 1]);
-            topos.RemoveAt(i + 1);
-            continue;
-          }
+        if (topos[i].Length <= 1) {
+          continue;
         }
+
+        if (topos[i].Substring(topos[i].Length - 1, 1) != "P") {
+          continue;
+        }
+
+        topos[i] = topos[i].Substring(0, topos[i].Length - 1);
+        points.Add(topos[i + 1]);
+        topos.RemoveAt(i + 1);
       }
 
       // then split list with whitespace
-      List<String> topolos = new List<String>();
-      for (int i = 0; i < topos.Count(); i++)
-      {
-        List<String> temptopos = new List<String>(topos[i].Split(' '));
+      var topolos = new List<string>();
+      foreach (List<string> temptopos in topos.Select(topo => new List<string>(topo.Split(' ')))) {
         topolos.AddRange(temptopos);
       }
 
       // also split list of points by whitespace as they go to single list
-      List<String> pts = new List<String>();
-      for (int i = 0; i < points.Count(); i++)
-      {
-        List<String> temppts = new List<String>(points[i].Split(' '));
+      var pts = new List<string>();
+      foreach (List<string> temppts in points.Select(t => new List<string>(t.Split(' ')))) {
         pts.AddRange(temppts);
       }
 
       // voids and lines needs to be made into list of lists
-      List<List<int>> void_topo = new List<List<int>>();
-      List<List<String>> void_topoType = new List<List<String>>();
-      for (int i = 0; i < voids.Count(); i++)
-      {
-        List<String> tempvoids = new List<String>(voids[i].Split(' '));
-        List<int> tmpvds = new List<int>();
-        List<String> tmpType = new List<String>();
-        for (int j = 0; j < tempvoids.Count(); j++)
-        {
-          if (tempvoids[j] == "A")
-          {
+      var voidTopo = new List<List<int>>();
+      var voidTopoType = new List<List<string>>();
+      foreach (string t in voids) {
+        var tempvoids = new List<string>(t.Split(' '));
+        var tmpvds = new List<int>();
+        var tmpType = new List<string>();
+        for (int j = 0; j < tempvoids.Count; j++) {
+          if (tempvoids[j] == "A") {
             tmpType.Add("A");
             tempvoids.RemoveAt(j);
           }
           else
             tmpType.Add(" ");
-          int tpt = Int32.Parse(tempvoids[j]);
+          int tpt = int.Parse(tempvoids[j]);
           tmpvds.Add(tpt);
         }
-        void_topo.Add(tmpvds);
-        void_topoType.Add(tmpType);
+        voidTopo.Add(tmpvds);
+        voidTopoType.Add(tmpType);
       }
-      List<List<int>> incLines_topo = new List<List<int>>();
-      List<List<String>> inclLines_topoType = new List<List<String>>();
-      for (int i = 0; i < lines.Count(); i++)
-      {
-        List<String> templines = new List<String>(lines[i].Split(' '));
-        List<int> tmplns = new List<int>();
-        List<String> tmpType = new List<String>();
-        for (int j = 0; j < templines.Count(); j++)
-        {
-          if (templines[j] == "A")
-          {
+      var incLinesTopo = new List<List<int>>();
+      var inclLinesTopoType = new List<List<string>>();
+      foreach (string line in lines) {
+        var templines = new List<string>(line.Split(' '));
+        var tmplns = new List<int>();
+        var tmpType = new List<string>();
+        for (int j = 0; j < templines.Count; j++) {
+          if (templines[j] == "A") {
             tmpType.Add("A");
             templines.RemoveAt(j);
           }
           else
             tmpType.Add(" ");
-          int tpt = Int32.Parse(templines[j]);
+          int tpt = int.Parse(templines[j]);
           tmplns.Add(tpt);
         }
-        incLines_topo.Add(tmplns);
-        inclLines_topoType.Add(tmpType);
+        incLinesTopo.Add(tmplns);
+        inclLinesTopoType.Add(tmpType);
       }
 
       // then remove empty entries
-      for (int i = 0; i < topolos.Count(); i++)
-      {
-        if (topolos[i] == null)
-        {
+      for (int i = 0; i < topolos.Count; i++) {
+        if (topolos[i] == null) {
           topolos.RemoveAt(i);
           i -= 1;
           continue;
         }
-        if (topolos[i].Length < 1)
-        {
-          topolos.RemoveAt(i);
-          i -= 1;
+
+        if (topolos[i].Length >= 1) {
           continue;
         }
+
+        topolos.RemoveAt(i);
+        i -= 1;
       }
 
       // Find any single inclusion points not in brackets
-      for (int i = 0; i < topolos.Count(); i++)
-      {
-        if (topolos[i] == "P")
-        {
+      for (int i = 0; i < topolos.Count; i++) {
+        if (topolos[i] == "P") {
           pts.Add(topolos[i + 1]);
           topolos.RemoveAt(i + 1);
           topolos.RemoveAt(i);
           i -= 1;
           continue;
         }
-        if (topolos[i].Length < 1)
-        {
-          topolos.RemoveAt(i);
-          i -= 1;
+
+        if (topolos[i].Length >= 1) {
           continue;
         }
+
+        topolos.RemoveAt(i);
+        i -= 1;
       }
-      List<int> inclpoint = new List<int>();
-      for (int i = 0; i < pts.Count(); i++)
-      {
-        if (pts[i] != "")
-        {
-          int tpt = Int32.Parse(pts[i]);
-          inclpoint.Add(tpt);
-        }
-      }
+      var inclpoint = (from t in pts where t != "" select int.Parse(t)).ToList();
 
       // write out topology type (A) to list
-      List<int> topoint = new List<int>();
-      List<String> topoType = new List<String>();
-      for (int i = 0; i < topolos.Count(); i++)
-      {
-        if (topolos[i] == "A")
-        {
+      var topoint = new List<int>();
+      var topoType = new List<string>();
+      for (int i = 0; i < topolos.Count; i++) {
+        if (topolos[i] == "A") {
           topoType.Add("A");
-          int tptA = Int32.Parse(topolos[i + 1]);
+          int tptA = int.Parse(topolos[i + 1]);
           topoint.Add(tptA);
           i += 1;
           continue;
         }
         topoType.Add(" ");
-        int tpt = Int32.Parse(topolos[i]);
+        int tpt = int.Parse(topolos[i]);
         topoint.Add(tpt);
       }
-      Tuple<List<int>, List<string>> topoTuple = new Tuple<List<int>, List<string>>(topoint, topoType);
-      Tuple<List<List<int>>, List<List<string>>> voidTuple = new Tuple<List<List<int>>, List<List<string>>>(void_topo, void_topoType);
-      Tuple<List<List<int>>, List<List<string>>> lineTuple = new Tuple<List<List<int>>, List<List<string>>>(incLines_topo, inclLines_topoType);
+      var topoTuple = new Tuple<List<int>, List<string>>(topoint, topoType);
+      var voidTuple = new Tuple<List<List<int>>, List<List<string>>>(voidTopo, voidTopoType);
+      var lineTuple = new Tuple<List<List<int>>, List<List<string>>>(incLinesTopo, inclLinesTopoType);
 
       return new Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
       Tuple<List<List<int>>, List<List<string>>>, List<int>>(topoTuple, voidTuple, lineTuple, inclpoint);
@@ -224,52 +195,32 @@ namespace GsaGH.Helpers.Import
     /// Method to convert a topology string from a 3D Member
     /// into a list of 3 verticies
     /// </summary>
-    /// <param name="gsa_topology">Topology list as string</param>
+    /// <param name="gsaTopology">Topology list as string</param>
     /// <returns></returns>
-    internal static List<List<int>> Topology_detangler_Mem3d(string gsa_topology)
-    {
+    internal static List<List<int>> Topology_detangler_Mem3d(string gsaTopology) {
       // Example input string ‘1 2 4 3; 5 6 8 7; 1 5 2 6 3 7 4 8 1 5’ 
       // we want to create a triangular mesh for Member3D SolidMesh
-      List<List<int>> topolist = new List<List<int>>();
+      var topolist = new List<List<int>>();
 
-      // first split the string by ";"
       char spearator = ';';
+      string[] strlist = gsaTopology.Split(spearator);
 
-      String[] strlist = gsa_topology.Split(spearator);
-
-      // loop through all face lists
-      foreach (string stripe in strlist)
-      {
-        // trim and split list by white space
+      foreach (string stripe in strlist) {
         string trimmedstripe = stripe.Trim();
-        List<String> verticiesString = new List<String>(trimmedstripe.Split(' '));
+        var verticiesString = new List<string>(trimmedstripe.Split(' '));
 
-        // convert string to int
-        List<int> tempverticies = new List<int>();
-        foreach (string vert in verticiesString)
-        {
-          int tpt = Int32.Parse(vert);
-          tempverticies.Add(tpt);
-        }
+        var tempverticies = verticiesString.Select(int.Parse).ToList();
 
-        while (tempverticies.Count > 2)
-        {
+        while (tempverticies.Count > 2) {
           // add the first triangle
-          List<int> templist1 = new List<int>();
-          templist1.Add(tempverticies[0]);
-          templist1.Add(tempverticies[1]);
-          templist1.Add(tempverticies[2]);
+          var templist1 = new List<int> { tempverticies[0], tempverticies[1], tempverticies[2] };
 
           // add the list to the main list
           topolist.Add(templist1);
 
-          if (tempverticies.Count > 3)
-          {
+          if (tempverticies.Count > 3) {
             // add the second triangle the other way round
-            List<int> templist2 = new List<int>();
-            templist2.Add(tempverticies[1]);
-            templist2.Add(tempverticies[3]);
-            templist2.Add(tempverticies[2]);
+            var templist2 = new List<int> { tempverticies[1], tempverticies[3], tempverticies[2] };
 
             // add the list to the main list
             topolist.Add(templist2);

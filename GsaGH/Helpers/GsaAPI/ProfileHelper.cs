@@ -5,7 +5,7 @@ using Rhino.Geometry;
 namespace GsaGH.Helpers.GsaAPI {
   /// <summary>
   /// Profile class holds information about a profile
-  /: Standard, Catalogue or Geometric
+  ///: Standard, Catalogue or Geometric
   /// ShapeOptions for Standard type
   /// Isection units
   /// </summary>

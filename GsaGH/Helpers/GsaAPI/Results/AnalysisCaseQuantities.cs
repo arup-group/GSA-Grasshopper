@@ -28,8 +28,7 @@ namespace GsaGH.Helpers.GsaAPI {
         xyzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Double3> transVals = elementResults.Displacement;
-        Parallel.For(1, transVals.Count, i => //foreach (Double3 val in trans_vals)
-        {
+        Parallel.For(1, transVals.Count, i => {
           xyzRes[i] = GetQuantityResult(transVals[i], resultLengthUnit);
         });
         xyzRes[transVals.Count] = GetQuantityResult(transVals[0], resultLengthUnit); // add centre point at the end
@@ -59,8 +58,7 @@ namespace GsaGH.Helpers.GsaAPI {
         xxyyzzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Tensor3> stressVals = elementResults.Stress;
-        Parallel.For(1, stressVals.Count * 2, i => // (Tensor3 val in stress_vals)
-        {
+        Parallel.For(1, stressVals.Count * 2, i => {
           if (i == stressVals.Count)
             return;
           if (i < stressVals.Count)
@@ -98,8 +96,7 @@ namespace GsaGH.Helpers.GsaAPI {
         xxyyzzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Tensor3> stresses = elementResults.Stress;
-        Parallel.For(1, stresses.Count * 2, i => // (Tensor3 stress in stresses)
-        {
+        Parallel.For(1, stresses.Count * 2, i => {
           if (i == stresses.Count)
             return;
           if (i < stresses.Count)
@@ -137,8 +134,7 @@ namespace GsaGH.Helpers.GsaAPI {
         xxyyzzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Vector2> shears = elementResults.Shear;
-        Parallel.For(1, shears.Count, i => // (Vector2 shear in shears)
-        {
+        Parallel.For(1, shears.Count, i => {
           xyzRes[i] = GetQuantityResult(shears[i], forceUnit);
         });
         xyzRes[shears.Count] = GetQuantityResult(shears[0], forceUnit); // add centre point at the end
@@ -172,8 +168,7 @@ namespace GsaGH.Helpers.GsaAPI {
 
         ReadOnlyCollection<Tensor2> forces = elementResults.Force;
         ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
-        Parallel.For(1, forces.Count + moments.Count, i => // (Tensor2 force in forces)
-        {
+        Parallel.For(1, forces.Count + moments.Count, i => {
           if (i == forces.Count)
             return;
           if (i < forces.Count)
@@ -186,14 +181,14 @@ namespace GsaGH.Helpers.GsaAPI {
 
         Parallel.ForEach(xxyyzzRes.Keys, i => {
           xyzRes[i].XYZ = new Force(
-                    xxyyzzRes[i].X.Value              // Mx
-                    + Math.Sign(xxyyzzRes[i].X.Value) // + sign(Mx)
-                    * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                    xxyyzzRes[i].X.Value
+                    + Math.Sign(xxyyzzRes[i].X.Value)
+                    * Math.Abs(xxyyzzRes[i].Z.Value),
                     momentUnit);
           xxyyzzRes[i].XYZ = new Force(
-                    xxyyzzRes[i].Y.Value              // Mx
-                    + Math.Sign(xxyyzzRes[i].Y.Value) // + sign(Mx)
-                    * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                    xxyyzzRes[i].Y.Value
+                    + Math.Sign(xxyyzzRes[i].Y.Value)
+                    * Math.Abs(xxyyzzRes[i].Z.Value),
                     momentUnit);
         });
 
@@ -224,8 +219,7 @@ namespace GsaGH.Helpers.GsaAPI {
         xxyyzzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Double6> disp = elementResults.Displacement;
-        Parallel.For(1, disp.Count * 2, i => // (Double6 val in values)
-        {
+        Parallel.For(1, disp.Count * 2, i => {
           if (i == disp.Count)
             return;
           if (i < disp.Count)
@@ -351,16 +345,16 @@ namespace GsaGH.Helpers.GsaAPI {
         LengthUnit resultLengthUnit) {
       var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Force };
 
-      Parallel.ForEach(globalResults.Keys, nodeID => {
-        NodeResult result = globalResults[nodeID];
+      Parallel.ForEach(globalResults.Keys, nodeId => {
+        NodeResult result = globalResults[nodeId];
         Double6 values = result.Displacement;
 
         var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
-        r.xyzResults.TryAdd(nodeID, xyz);
+        r.xyzResults.TryAdd(nodeId, xyz);
         var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
-        r.xxyyzzResults.TryAdd(nodeID, xxyyzz);
+        r.xxyyzzResults.TryAdd(nodeId, xxyyzz);
       });
 
       r.UpdateMinMax();

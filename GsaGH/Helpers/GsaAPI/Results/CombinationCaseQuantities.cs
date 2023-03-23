@@ -26,8 +26,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Displacement };
 
@@ -68,8 +67,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Stress };
 
@@ -114,8 +112,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Stress };
 
@@ -136,8 +133,8 @@ namespace GsaGH.Helpers.GsaAPI {
             xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
           });
           xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit)); // add centre point last
-          xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit, true)); // add centre point last
-                                                                                          // add the vector list to the out tree
+          xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit, true));
+
           r.xyzResults.TryAdd(key, xyzRes);
           r.xxyyzzResults.TryAdd(key, xxyyzzRes);
         });
@@ -163,8 +160,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Shear };
 
@@ -207,8 +203,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Force };
 
@@ -230,18 +225,18 @@ namespace GsaGH.Helpers.GsaAPI {
             xxyyzzRes.TryAdd(i, GetQuantityResult(momentValues[i], momentUnit));
           });
           xyzRes.TryAdd(forceValues.Count, GetQuantityResult(forceValues[0], forceUnit)); // add centre point last
-          xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit)); // add centre point last
+          xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit));
 
           Parallel.ForEach(xxyyzzRes.Keys, i => {
             xyzRes[i].XYZ = new Force(
-                      xxyyzzRes[i].X.Value              // Mx
-                      + Math.Sign(xxyyzzRes[i].X.Value) // + sign(Mx)
-                      * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                      xxyyzzRes[i].X.Value
+                      + Math.Sign(xxyyzzRes[i].X.Value)
+                      * Math.Abs(xxyyzzRes[i].Z.Value),
                       momentUnit);
             xxyyzzRes[i].XYZ = new Force(
-                      xxyyzzRes[i].Y.Value              // Mx
-                      + Math.Sign(xxyyzzRes[i].Y.Value) // + sign(Mx)
-                      * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                      xxyyzzRes[i].Y.Value
+                      + Math.Sign(xxyyzzRes[i].Y.Value)
+                      * Math.Abs(xxyyzzRes[i].Z.Value),
                       momentUnit);
           });
           r.xyzResults.TryAdd(key, xyzRes);
@@ -269,8 +264,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Displacement };
 
@@ -291,8 +285,7 @@ namespace GsaGH.Helpers.GsaAPI {
             xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
           });
           xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], resultLengthUnit)); // add centre point last
-          xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], AngleUnit.Radian)); // add centre point last
-                                                                                          // add the vector list to the out tree
+          xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], AngleUnit.Radian));
           r.xyzResults.TryAdd(key, xyzRes);
           r.xxyyzzResults.TryAdd(key, xxyyzzRes);
         });
@@ -319,8 +312,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Force };
 
@@ -366,8 +358,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.StrainEnergy };
 
@@ -415,8 +406,7 @@ namespace GsaGH.Helpers.GsaAPI {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
       int permutationCount = permutations.Count;
 
-      Parallel.For(0, permutationCount, index => // loop through permutations
-      {
+      Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
         var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Displacement };
 

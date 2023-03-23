@@ -1,50 +1,43 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.Import
-{
+namespace GsaGH.Helpers.Import {
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
-  internal class Analyses
-  {
-    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel)
-    {
+  internal class Analyses {
+    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel) {
       return GetAnalysisTasksAndCombinations(gsaModel.Model);
     }
-    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(Model model)
-    {
+    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(Model model) {
       ReadOnlyDictionary<int, AnalysisTask> tasks = model.AnalysisTasks();
 
-      List<GsaAnalysisTaskGoo> tasksList = new List<GsaAnalysisTaskGoo>();
-      List<GsaAnalysisCaseGoo> caseList = new List<GsaAnalysisCaseGoo>();
-      List<int> caseIDs = new List<int>();
+      var tasksList = new List<GsaAnalysisTaskGoo>();
+      var caseList = new List<GsaAnalysisCaseGoo>();
+      var caseIDs = new List<int>();
 
-      foreach (KeyValuePair<int, AnalysisTask> item in tasks)
-      {
-        GsaAnalysisTask task = new GsaAnalysisTask(item.Key, item.Value, model);
+      foreach (KeyValuePair<int, AnalysisTask> item in tasks) {
+        var task = new GsaAnalysisTask(item.Key, item.Value, model);
         tasksList.Add(new GsaAnalysisTaskGoo(task));
-        foreach (GsaAnalysisCase acase in task.Cases)
-        {
-          caseIDs.Add(acase.ID);
-        }
+        caseIDs.AddRange(task.Cases.Select(acase => acase.ID));
       }
       ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
       caseIDs.AddRange(gravities.Select(x => x.Case));
 
-      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType)))
-      {
+      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
         ReadOnlyCollection<NodeLoad> nodeLoads;
         try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
         {
           nodeLoads = model.NodeLoads(typ);
           caseIDs.AddRange(nodeLoads.Select(x => x.Case));
         }
-        catch (Exception) { }
+        catch (Exception) {
+          // ignored
+        }
       }
 
       ReadOnlyCollection<BeamLoad> beamLoads = model.BeamLoads();
@@ -64,15 +57,14 @@ namespace GsaGH.Helpers.Import
 
       caseIDs = caseIDs.GroupBy(x => x).Select(y => y.First()).ToList();
 
-      foreach (int caseID in caseIDs)
-      {
-        string caseName = model.AnalysisCaseName(caseID);
+      foreach (int caseId in caseIDs) {
+        string caseName = model.AnalysisCaseName(caseId);
         if (caseName == "")
-          caseName = "Case " + caseID.ToString();
-        string caseDescription = model.AnalysisCaseDescription(caseID);
+          caseName = "Case " + caseId;
+        string caseDescription = model.AnalysisCaseDescription(caseId);
         if (caseDescription == "")
-          caseDescription = "L" + caseID.ToString();
-        caseList.Add(new GsaAnalysisCaseGoo(new GsaAnalysisCase(caseID, caseName, caseDescription)));
+          caseDescription = "L" + caseId;
+        caseList.Add(new GsaAnalysisCaseGoo(new GsaAnalysisCase(caseId, caseName, caseDescription)));
       }
 
       return new Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>(tasksList, caseList);

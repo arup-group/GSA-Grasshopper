@@ -79,7 +79,6 @@ namespace GsaGH.Helpers.GsaAPI {
           }
         }
         catch (Exception ex2) {
-          // try again with codeBasePath
           AppDomain ad3 = CreateAppDomain("SQLite AppDomain", codeBasePath);
           ad3.UnhandledException += UEHandler;
 
@@ -186,7 +185,7 @@ namespace GsaGH.Helpers.GsaAPI {
       if (catalogue_number == -1) {
         Tuple<List<string>, List<int>> catalogueData = GetCataloguesDataFromSQLite(filePath);
         catNumbers = catalogueData.Item2;
-        catNumbers.RemoveAt(0); // remove -1 from beginning of list
+        catNumbers.RemoveAt(0);
       }
       else
         catNumbers.Add(catalogue_number);
@@ -227,7 +226,7 @@ namespace GsaGH.Helpers.GsaAPI {
       if (type_numbers[0] == -1) {
         Tuple<List<string>, List<int>> typeData = GetTypesDataFromSQLite(-1, filePath, inclSuperseeded);
         types = typeData.Item2;
-        types.RemoveAt(0); // remove -1 from beginning of list
+        types.RemoveAt(0);
       }
       else
         types = type_numbers;
