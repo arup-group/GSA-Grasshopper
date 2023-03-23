@@ -1,13 +1,13 @@
 name: Issue opened or modified
 
-on: 
-  issues: 
-    types: [opened, edited]
-    
+on:
+    issues:
+        types: [opened, edited]
+        
 jobs:
-  What-Event-Contain:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "GitHub event content"
-      run: echo '${{ toJSON(github.event) }}' | jq
-      shell: bash
+    What-Event-Contain:
+        runs-on: ubuntu-latest
+        steps: 
+          - name: "GitHub event content"
+            run: echo '${{ toJSON(github.event) }}' | jq
+            shell: bash
