@@ -7,7 +7,7 @@ on:
 jobs:
     What-Event-Contain:
         runs-on: ubuntu-latest
-        steps: 
+        steps:
           - name: "GitHub event content"
             run: echo '${{ toJSON(github.event) }}' | jq
             shell: bash
