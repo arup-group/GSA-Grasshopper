@@ -2,13 +2,13 @@ name: Issue opened
 
 on:
     issues:
-        types: [opened, edited]
+        types: [opened]
         
 jobs:
     What-Event-Contain:
         runs-on: ubuntu-latest
         steps: 
-            -name: GitHub event content
+          - name: GitHub event content
             run: echo '${{ toJSON(github.event) }}' | jq
             shell: bash
         
@@ -16,7 +16,7 @@ jobs:
     Auto-comment:
         runs-on: ubuntu-latest
         steps:
-            -name: Create comment
+          - name: Create comment
             uses: peter-evans/create-or-update-comment@v2
             with:
                 issue-number: ${{ github.event.issue.number }}
@@ -26,4 +26,4 @@ jobs:
                     - Created by [create-or-update-comment][1]
         
                     [1]: https://github.com/peter-evans/create-or-update-comment
-                reactions: '+1'
+                reactions: heart
