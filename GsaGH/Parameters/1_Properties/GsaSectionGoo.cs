@@ -1,19 +1,13 @@
-﻿using System;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using OasysGH;
 using OasysGH.Parameters;
-using OasysGH.Units;
-using OasysUnits;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaSection"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaSectionGoo : GH_OasysGoo<GsaSection>
-  {
+  public class GsaSectionGoo : GH_OasysGoo<GsaSection> {
     public static string Name => "Section";
     public static string NickName => "PB";
     public static string Description => "GSA Beam Property";
@@ -21,22 +15,19 @@ namespace GsaGH.Parameters
 
     public GsaSectionGoo(GsaSection item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaSectionGoo(this.Value);
+    public override IGH_Goo Duplicate() => new GsaSectionGoo(Value);
 
-    public override bool CastTo<Q>(ref Q target)
-    {
-      if (base.CastTo<Q>(ref target))
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (base.CastTo(ref target))
         return true;
 
-      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
-      {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null)
           target = default;
-        else
-        {
-          GH_Integer ghint = new GH_Integer();
+        else {
+          var ghint = new GH_Integer();
           if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
-            target = (Q)(object)ghint;
+            target = (TQ)(object)ghint;
           else
             target = default;
         }
@@ -47,32 +38,26 @@ namespace GsaGH.Parameters
       return false;
     }
 
-    public override bool CastFrom(object source)
-    {
+    public override bool CastFrom(object source) {
       if (source == null)
         return false;
 
       if (base.CastFrom(source))
         return true;
 
-      // Cast from string
-      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
-      {
-        if (GsaSection.ValidProfile(name))
-        {
+      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both)) {
+        if (GsaSection.ValidProfile(name)) {
           Value = new GsaSection(name);
           return true;
         }
       }
 
-      // Cast from integer
-      if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
-      {
-        Value.Id = idd;
-        return true;
+      if (!GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both)) {
+        return false;
       }
 
-      return false;
+      Value.Id = idd;
+      return true;
     }
   }
 }

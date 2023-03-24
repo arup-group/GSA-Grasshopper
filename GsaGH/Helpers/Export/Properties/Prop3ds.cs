@@ -9,16 +9,16 @@ namespace GsaGH.Helpers.Export {
       Materials.AddMaterial(ref prop, ref apiMaterials);
 
       if (prop.Id <= 0) {
-        return apiProp3d.AddValue(prop.Guid, prop.API_Prop3d);
+        return apiProp3d.AddValue(prop.Guid, prop.ApiProp3d);
       }
 
-      apiProp3d.SetValue(prop.Id, prop.Guid, prop.API_Prop3d);
+      apiProp3d.SetValue(prop.Id, prop.Guid, prop.ApiProp3d);
       return prop.Id;
     }
 
     internal static int ConvertProp3d(GsaProp3d prop3d, ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       if (prop3d == null) { return 0; }
-      if (prop3d.IsReferencedByID || prop3d.API_Prop3d == null) { return prop3d.Id; }
+      if (prop3d.IsReferencedById || prop3d.ApiProp3d == null) { return prop3d.Id; }
       return AddProp3d(prop3d, ref apiProp3ds, ref apiMaterials);
     }
 

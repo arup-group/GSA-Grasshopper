@@ -61,9 +61,9 @@ namespace GsaGH.Components {
         X = _x1,
         Y = _y1,
         Z = _z1,
-        XX = _xx1,
-        YY = _yy1,
-        ZZ = _zz1,
+        Xx = _xx1,
+        Yy = _yy1,
+        Zz = _zz1,
       };
 
       mem.ReleaseStart = rel1;
@@ -72,9 +72,9 @@ namespace GsaGH.Components {
         X = _x2,
         Y = _y2,
         Z = _z2,
-        XX = _xx2,
-        YY = _yy2,
-        ZZ = _zz2,
+        Xx = _xx2,
+        Yy = _yy2,
+        Zz = _zz2,
       };
       mem.ReleaseEnd = rel2;
 

@@ -15,7 +15,7 @@ namespace GsaGH.Parameters {
       MidRight,
       BottomLeft,
       BottomCentre,
-      BottomRight
+      BottomRight,
     }
 
     #region properties

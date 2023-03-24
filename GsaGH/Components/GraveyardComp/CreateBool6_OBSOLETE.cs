@@ -121,9 +121,9 @@ namespace GsaGH.Components {
         X = _x,
         Y = _y,
         Z = _z,
-        XX = _xx,
-        YY = _yy,
-        ZZ = _zz,
+        Xx = _xx,
+        Yy = _yy,
+        Zz = _zz,
       };
       da.SetData(0, new GsaBool6Goo(bool6.Duplicate()));
     }

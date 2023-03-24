@@ -27,18 +27,18 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void AddMaterial(ref GsaSection section, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (section.API_Section.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)
-        section.API_Section.MaterialAnalysisProperty = ConvertCustomMaterial(section.Material, ref apiMaterials);
+      if (section.ApiSection.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)
+        section.ApiSection.MaterialAnalysisProperty = ConvertCustomMaterial(section.Material, ref apiMaterials);
     }
 
     internal static void AddMaterial(ref GsaProp2d prop2d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (prop2d.API_Prop2d.MaterialAnalysisProperty != 0 && prop2d.Material != null && prop2d.Material.AnalysisMaterial != null)
-        prop2d.API_Prop2d.MaterialAnalysisProperty = ConvertCustomMaterial(prop2d.Material, ref apiMaterials);
+      if (prop2d.ApiProp2d.MaterialAnalysisProperty != 0 && prop2d.Material != null && prop2d.Material.AnalysisMaterial != null)
+        prop2d.ApiProp2d.MaterialAnalysisProperty = ConvertCustomMaterial(prop2d.Material, ref apiMaterials);
     }
 
     internal static void AddMaterial(ref GsaProp3d prop3d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (prop3d.API_Prop3d.MaterialAnalysisProperty != 0 && prop3d.Material != null && prop3d.Material.AnalysisMaterial != null)
-        prop3d.API_Prop3d.MaterialAnalysisProperty = ConvertCustomMaterial(prop3d.Material, ref apiMaterials);
+      if (prop3d.ApiProp3d.MaterialAnalysisProperty != 0 && prop3d.Material != null && prop3d.Material.AnalysisMaterial != null)
+        prop3d.ApiProp3d.MaterialAnalysisProperty = ConvertCustomMaterial(prop3d.Material, ref apiMaterials);
     }
   }
 }

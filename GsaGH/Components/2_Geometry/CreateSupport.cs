@@ -62,9 +62,9 @@ namespace GsaGH.Components {
         _x = bool6.X;
         _y = bool6.Y;
         _z = bool6.Z;
-        _xx = bool6.XX;
-        _yy = bool6.YY;
-        _zz = bool6.ZZ;
+        _xx = bool6.Xx;
+        _yy = bool6.Yy;
+        _zz = bool6.Zz;
       }
 
       var node = new GsaNode(pt) {
@@ -73,9 +73,9 @@ namespace GsaGH.Components {
           X = _x,
           Y = _y,
           Z = _z,
-          XX = _xx,
-          YY = _yy,
-          ZZ = _zz,
+          Xx = _xx,
+          Yy = _yy,
+          Zz = _zz,
         },
       };
 

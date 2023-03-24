@@ -34,16 +34,16 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (prop.Id <= 0) {
-        return apiProp2ds.AddValue(prop.Guid, prop.API_Prop2d);
+        return apiProp2ds.AddValue(prop.Guid, prop.ApiProp2d);
       }
 
-      apiProp2ds.SetValue(prop.Id, prop.Guid, prop.API_Prop2d);
+      apiProp2ds.SetValue(prop.Id, prop.Guid, prop.ApiProp2d);
       return prop.Id;
     }
 
     internal static int ConvertProp2d(GsaProp2d prop2d, ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
       if (prop2d == null) { return 0; }
-      if (prop2d.IsReferencedByID || prop2d.API_Prop2d == null) { return prop2d.Id; }
+      if (prop2d.IsReferencedById || prop2d.ApiProp2d == null) { return prop2d.Id; }
       return AddProp2d(prop2d, ref apiProp2ds, ref apiMaterials, ref existingAxes, unit);
     }
 

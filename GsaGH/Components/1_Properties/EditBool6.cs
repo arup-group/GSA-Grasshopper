@@ -67,21 +67,21 @@ namespace GsaGH.Components {
           myBool.Z = z;
         bool xx = new bool();
         if (da.GetData(4, ref xx))
-          myBool.XX = xx;
+          myBool.Xx = xx;
         bool yy = new bool();
         if (da.GetData(5, ref yy))
-          myBool.YY = yy;
+          myBool.Yy = yy;
         bool zz = new bool();
         if (da.GetData(6, ref zz))
-          myBool.ZZ = zz;
+          myBool.Zz = zz;
 
         da.SetData(0, new GsaBool6Goo(myBool));
         da.SetData(1, myBool.X);
         da.SetData(2, myBool.Y);
         da.SetData(3, myBool.Z);
-        da.SetData(4, myBool.XX);
-        da.SetData(5, myBool.YY);
-        da.SetData(6, myBool.ZZ);
+        da.SetData(4, myBool.Xx);
+        da.SetData(5, myBool.Yy);
+        da.SetData(6, myBool.Zz);
       }
       else
         this.AddRuntimeError("Bool6 is Null");

@@ -397,7 +397,7 @@ namespace GsaGH.Parameters
 				{
 						if (_rel1 != null & _rel2 != null)
 						{
-								if (_rel1.X || _rel1.Y || _rel1.Z || _rel1.XX || _rel1.YY || _rel1.ZZ || _rel2.X || _rel2.Y || _rel2.Z || _rel2.XX || _rel2.YY || _rel2.ZZ)
+								if (_rel1.X || _rel1.Y || _rel1.Z || _rel1.Xx || _rel1.Yy || _rel1.Zz || _rel2.X || _rel2.Y || _rel2.Z || _rel2.Xx || _rel2.Yy || _rel2.Zz)
 								{
 										Tuple<List<Line>, List<Line>> previewCurves = Helpers.Graphics.Display.Preview1D(_crv, ApiMember.OrientationAngle * Math.PI / 180.0, _rel1, _rel2);
 										PreviewGreenLines = previewCurves.Item1;

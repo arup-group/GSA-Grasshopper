@@ -98,7 +98,7 @@ namespace GsaGH.Components {
           }
           else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-              prop.MaterialID = idd;
+              prop.MaterialId = idd;
             else {
               this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
@@ -136,15 +136,15 @@ namespace GsaGH.Components {
             prop.Type = GsaProp2d.PropTypeFromString(type);
         }
 
-        int ax = (prop.API_Prop2d == null) ? 0 : prop.AxisProperty;
-        string nm = (prop.API_Prop2d == null) ? "--" : prop.Name;
-        ValueType colour = prop.API_Prop2d?.Colour;
+        int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
+        string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+        ValueType colour = prop.ApiProp2d?.Colour;
 
         da.SetData(0, new GsaProp2dGoo(prop));
         da.SetData(1, prop.Id);
         da.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
         da.SetData(3,
-          prop.API_Prop2d?.Description == ""
+          prop.ApiProp2d?.Description == ""
             ? new GH_UnitNumber(Length.Zero)
             : new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
         da.SetData(4, ax);

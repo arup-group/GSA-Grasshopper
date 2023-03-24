@@ -72,7 +72,7 @@ namespace GsaGH.Components {
           }
           else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-              prop.MaterialID = idd;
+              prop.MaterialId = idd;
             else {
               this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
@@ -99,9 +99,9 @@ namespace GsaGH.Components {
             prop.Colour = col;
         }
 
-        int ax = (prop.API_Prop3d == null) ? 0 : prop.AxisProperty;
-        string nm = (prop.API_Prop3d == null) ? "--" : prop.Name;
-        ValueType colour = prop.API_Prop3d?.Colour;
+        int ax = (prop.ApiProp3d == null) ? 0 : prop.AxisProperty;
+        string nm = (prop.ApiProp3d == null) ? "--" : prop.Name;
+        ValueType colour = prop.ApiProp3d?.Colour;
 
         da.SetData(0, new GsaProp3dGoo(prop));
         da.SetData(1, prop.Id);

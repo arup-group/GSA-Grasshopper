@@ -316,7 +316,7 @@ namespace GsaGH.Helpers.Graphics {
       }
       #endregion
       #region rotation start
-      if (start.XX) {
+      if (start.Xx) {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
@@ -335,7 +335,7 @@ namespace GsaGH.Helpers.Graphics {
       else
         redLines10.Add(Line.Unset);
 
-      if (start.YY) {
+      if (start.Yy) {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
@@ -372,7 +372,7 @@ namespace GsaGH.Helpers.Graphics {
         redLines10.Add(Line.Unset);
       }
 
-      if (start.ZZ) {
+      if (start.Zz) {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
@@ -410,7 +410,7 @@ namespace GsaGH.Helpers.Graphics {
       }
       #endregion
       #region rotation end
-      if (end.XX) {
+      if (end.Xx) {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
@@ -432,7 +432,7 @@ namespace GsaGH.Helpers.Graphics {
       else
         redLines10.Add(Line.Unset);
 
-      if (end.YY) {
+      if (end.Yy) {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
@@ -471,7 +471,7 @@ namespace GsaGH.Helpers.Graphics {
         redLines10.Add(Line.Unset);
       }
 
-      if (end.ZZ) {
+      if (end.Zz) {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
@@ -515,7 +515,7 @@ namespace GsaGH.Helpers.Graphics {
 
     public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text) {
       if (restraint.X & restraint.Y & restraint.Z &
-          !restraint.XX & !restraint.YY & !restraint.ZZ) {
+          !restraint.Xx & !restraint.Yy & !restraint.Zz) {
         Plane plane = localAxis.Clone();
         if (!plane.IsValid) { plane = Plane.WorldXY; }
         plane.Origin = pt;
@@ -523,7 +523,7 @@ namespace GsaGH.Helpers.Graphics {
         support = pin.ToBrep(true);
       }
       else if (restraint.X & restraint.Y & restraint.Z &
-              restraint.XX & restraint.YY & restraint.ZZ) {
+              restraint.Xx & restraint.Yy & restraint.Zz) {
         Plane plane = localAxis.Clone();
         if (!plane.IsValid) { plane = Plane.WorldXY; }
         plane.Origin = pt;
@@ -541,11 +541,11 @@ namespace GsaGH.Helpers.Graphics {
           rest += "Y";
         if (restraint.Z)
           rest += "Z";
-        if (restraint.XX)
+        if (restraint.Xx)
           rest += "XX";
-        if (restraint.YY)
+        if (restraint.Yy)
           rest += "YY";
-        if (restraint.ZZ)
+        if (restraint.Zz)
           rest += "ZZ";
         text = new Text3d(rest, plane, 0.3) {
           HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Left,

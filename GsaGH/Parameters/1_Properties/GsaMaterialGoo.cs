@@ -17,28 +17,30 @@ namespace GsaGH.Parameters {
 
     public override IGH_Goo Duplicate() => new GsaMaterialGoo(Value);
 
-    public override bool CastTo<Q>(ref Q target) {
-      if (base.CastTo<Q>(ref target))
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (base.CastTo(ref target))
         return true;
 
-      if (typeof(Q).IsAssignableFrom(typeof(GsaProp3d))) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GsaProp3d))) {
         if (Value == null)
           target = default;
         else {
-          target = (Q)(object)new GsaProp3d(Value);
-        }
-        return true;
-      }
-      if (typeof(Q).IsAssignableFrom(typeof(GsaProp3dGoo))) {
-        if (Value == null)
-          target = default;
-        else {
-          target = (Q)(object)new GsaProp3dGoo(new GsaProp3d(Value));
+          target = (TQ)(object)new GsaProp3d(Value);
         }
         return true;
       }
 
-      return false;
+      if (!typeof(TQ).IsAssignableFrom(typeof(GsaProp3dGoo))) {
+        return false;
+      }
+
+      if (Value == null)
+        target = default;
+      else {
+        target = (TQ)(object)new GsaProp3dGoo(new GsaProp3d(Value));
+      }
+      return true;
+
     }
 
     public override bool CastFrom(object source) {
@@ -48,45 +50,38 @@ namespace GsaGH.Parameters {
       if (base.CastFrom(source))
         return true;
 
-      // Cast from string
       if (GH_Convert.ToString(source, out string mat, GH_Conversion.Both)) {
-        if (mat.ToUpper() == "STEEL") {
-          Value.MaterialType = GsaMaterial.MatType.Steel;
-          return true;
+        switch (mat.ToUpper()) {
+          case "STEEL":
+            Value.MaterialType = GsaMaterial.MatType.Steel;
+            return true;
+          case "CONCRETE":
+            Value.MaterialType = GsaMaterial.MatType.Concrete;
+            return true;
+          case "FRP":
+            Value.MaterialType = GsaMaterial.MatType.Frp;
+            return true;
+          case "ALUMINIUM":
+            Value.MaterialType = GsaMaterial.MatType.Aluminium;
+            return true;
+          case "TIMBER":
+            Value.MaterialType = GsaMaterial.MatType.Timber;
+            return true;
+          case "GLASS":
+            Value.MaterialType = GsaMaterial.MatType.Glass;
+            return true;
+          case "FABRIC":
+            Value.MaterialType = GsaMaterial.MatType.Fabric;
+            return true;
+          case "GENERIC":
+            Value.MaterialType = GsaMaterial.MatType.Generic;
+            return true;
+          default:
+            return false;
         }
-        else if (mat.ToUpper() == "CONCRETE") {
-          Value.MaterialType = GsaMaterial.MatType.Concrete;
-          return true;
-        }
-        else if (mat.ToUpper() == "FRP") {
-          Value.MaterialType = GsaMaterial.MatType.Frp;
-          return true;
-        }
-        else if (mat.ToUpper() == "ALUMINIUM") {
-          Value.MaterialType = GsaMaterial.MatType.Aluminium;
-          return true;
-        }
-        else if (mat.ToUpper() == "TIMBER") {
-          Value.MaterialType = GsaMaterial.MatType.Timber;
-          return true;
-        }
-        else if (mat.ToUpper() == "GLASS") {
-          Value.MaterialType = GsaMaterial.MatType.Glass;
-          return true;
-        }
-        else if (mat.ToUpper() == "FABRIC") {
-          Value.MaterialType = GsaMaterial.MatType.Fabric;
-          return true;
-        }
-        else if (mat.ToUpper() == "GENERIC") {
-          Value.MaterialType = GsaMaterial.MatType.Generic;
-          return true;
-        }
-        return false;
       }
 
-      // Cast from integer
-      else if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both)) {
+      if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both)) {
         Value.GradeProperty = idd;
       }
 

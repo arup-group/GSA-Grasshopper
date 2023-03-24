@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     #endregion
 
     #region Input and output
-    private string _fileName = null;
+    private string _fileName;
     private Guid _panelGuid = Guid.NewGuid();
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." +
@@ -109,7 +109,7 @@ namespace GsaGH.Components {
     }
 
     private void GetTitles(Model model) {
-      Titles.GetTitlesFromGSA(model);
+      Titles.GetTitlesFromGsa(model);
       string mes = Path.GetFileName(_fileName);
       mes = mes.Substring(0, mes.Length - 4);
       Message = mes;

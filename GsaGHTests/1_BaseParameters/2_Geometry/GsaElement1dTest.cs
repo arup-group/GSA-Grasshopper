@@ -6,18 +6,15 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaElement1dTest
-  {
+  public class GsaElement1dTest {
     [Fact]
-    public void CloneApiObjectTest()
-    {
+    public void CloneApiObjectTest() {
       // Arrange
-      GsaSection section = new GsaSection();
+      var section = new GsaSection();
       section.Name = "Name";
-      GsaElement1d element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
+      var element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
       element1d.Name = "Name";
       Element original = element1d.ApiElement;
 
@@ -29,12 +26,11 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void DuplicateTest()
-    {
+    public void DuplicateTest() {
       // Arrange
-      GsaSection section = new GsaSection();
+      var section = new GsaSection();
       section.Name = "Name";
-      GsaElement1d original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
+      var original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
       original.Name = "Name";
 
       // Act
@@ -45,13 +41,12 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestCreateGsaElem1dFromLn()
-    {
+    public void TestCreateGsaElem1dFromLn() {
       // create new line
-      Line ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
+      var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
       // create element
-      GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
+      var elem = new GsaElement1d(new LineCurve(ln));
 
       // set some element class members
       elem.Id = 66;
@@ -61,7 +56,7 @@ namespace GsaGHTests.Parameters
       elem.Group = 4;
       elem.IsDummy = true;
       elem.Name = "EltonJohn";
-      GsaOffset offset = new GsaOffset(0, 0, 14.3, 0);
+      var offset = new GsaOffset(0, 0, 14.3, 0);
       elem.Offset = offset;
       elem.OrientationAngle = new Angle(90, AngleUnit.Degree);
       elem.Section.Id = 3;
@@ -87,13 +82,12 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestDuplicateElem1d()
-    {
+    public void TestDuplicateElem1d() {
       // create new line
-      Line ln = new Line(new Point3d(2, -1, 0), new Point3d(2, -1, 4));
+      var ln = new Line(new Point3d(2, -1, 0), new Point3d(2, -1, 4));
 
       // create element
-      GsaElement1d orig = new GsaElement1d(new LineCurve(ln));
+      var orig = new GsaElement1d(new LineCurve(ln));
 
       // set some element class members
       orig.Id = 3;
@@ -103,7 +97,7 @@ namespace GsaGHTests.Parameters
       orig.Group = 1;
       orig.IsDummy = false;
       orig.Name = "Tilman";
-      GsaOffset offset = new GsaOffset(0, 0, 2.9, 0);
+      var offset = new GsaOffset(0, 0, 2.9, 0);
       orig.Offset = offset;
       orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
@@ -118,7 +112,7 @@ namespace GsaGHTests.Parameters
       orig.Group = 2;
       orig.IsDummy = true;
       orig.Name = "Hugh";
-      GsaOffset offset2 = new GsaOffset(0, 0, -0.991, 0, LengthUnit.Meter);
+      var offset2 = new GsaOffset(0, 0, -0.991, 0, LengthUnit.Meter);
       orig.Offset = offset2;
       orig.OrientationAngle = new Angle(0, AngleUnit.Radian);
 
@@ -156,21 +150,20 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestCreateGsaElem1dGetReleases()
-    {
+    public void TestCreateGsaElem1dGetReleases() {
       // create new line
-      Line ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
+      var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
       // create element
-      GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
+      var elem = new GsaElement1d(new LineCurve(ln));
 
       GsaBool6 rel1 = elem.ReleaseStart;
       Assert.False(rel1.X);
       Assert.False(rel1.Y);
       Assert.False(rel1.Z);
-      Assert.False(rel1.XX);
-      Assert.False(rel1.YY);
-      Assert.False(rel1.ZZ);
+      Assert.False(rel1.Xx);
+      Assert.False(rel1.Yy);
+      Assert.False(rel1.Zz);
     }
   }
 }

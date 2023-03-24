@@ -112,9 +112,9 @@ namespace GsaGH.Parameters
           X = value.X,
           Y = value.Y,
           Z = value.Z,
-          XX = value.XX,
-          YY = value.YY,
-          ZZ = value.ZZ,
+          XX = value.Xx,
+          YY = value.Yy,
+          ZZ = value.Zz,
         };
         this.UpdatePreview();
       }

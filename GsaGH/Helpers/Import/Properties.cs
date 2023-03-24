@@ -26,9 +26,9 @@ namespace GsaGH.Helpers.Import {
           continue;
         }
 
-        var sect = new GsaSection(key) { API_Section = apisection };
-        if (sect.API_Section.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(sect.API_Section.MaterialAnalysisProperty))
+        var sect = new GsaSection(key) { ApiSection = apisection };
+        if (sect.ApiSection.MaterialAnalysisProperty != 0) {
+          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty))
             sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
         }
         if (modDict.Keys.Contains(key))
@@ -54,16 +54,16 @@ namespace GsaGH.Helpers.Import {
           continue;
         }
 
-        var prop = new GsaProp2d(key) { API_Prop2d = apisection };
-        if (prop.API_Prop2d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.API_Prop2d.MaterialAnalysisProperty))
+        var prop = new GsaProp2d(key) { ApiProp2d = apisection };
+        if (prop.ApiProp2d.MaterialAnalysisProperty != 0) {
+          if (analysisMaterials.ContainsKey(prop.ApiProp2d.MaterialAnalysisProperty))
             prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
         }
 
         // Axis property 0 = Global, -1 = Topological
-        if (prop.API_Prop2d.AxisProperty > 0) {
-          if (axDict != null && axDict.ContainsKey(prop.API_Prop2d.AxisProperty)) {
-            Axis ax = axDict[prop.API_Prop2d.AxisProperty];
+        if (prop.ApiProp2d.AxisProperty > 0) {
+          if (axDict != null && axDict.ContainsKey(prop.ApiProp2d.AxisProperty)) {
+            Axis ax = axDict[prop.ApiProp2d.AxisProperty];
             prop.LocalAxis = new Plane(new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
               new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
               new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z)
@@ -84,9 +84,9 @@ namespace GsaGH.Helpers.Import {
         }
 
         var prop = new GsaProp3d(key);
-        prop.API_Prop3d = apisection;
-        if (prop.API_Prop3d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.API_Prop3d.MaterialAnalysisProperty))
+        prop.ApiProp3d = apisection;
+        if (prop.ApiProp3d.MaterialAnalysisProperty != 0) {
+          if (analysisMaterials.ContainsKey(prop.ApiProp3d.MaterialAnalysisProperty))
             prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
         }
         prop2ds.Add(new GsaProp3dGoo(prop));

@@ -61,11 +61,11 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref input))
         bool6.Z = input;
       if (da.GetData(3, ref input))
-        bool6.XX = input;
+        bool6.Xx = input;
       if (da.GetData(4, ref input))
-        bool6.YY = input;
+        bool6.Yy = input;
       if (da.GetData(5, ref input))
-        bool6.ZZ = input;
+        bool6.Zz = input;
 
       bool update = false;
       if (bool6.X != uiSet.X) {
@@ -83,18 +83,18 @@ namespace GsaGH.Components {
         update = true;
       }
 
-      if (bool6.XX != uiSet.XX) {
-        _xx = bool6.XX;
+      if (bool6.Xx != uiSet.Xx) {
+        _xx = bool6.Xx;
         update = true;
       }
 
-      if (bool6.YY != uiSet.YY) {
-        _yy = bool6.YY;
+      if (bool6.Yy != uiSet.Yy) {
+        _yy = bool6.Yy;
         update = true;
       }
 
-      if (bool6.ZZ != uiSet.ZZ) {
-        _zz = bool6.ZZ;
+      if (bool6.Zz != uiSet.Zz) {
+        _zz = bool6.Zz;
         update = true;
       }
 

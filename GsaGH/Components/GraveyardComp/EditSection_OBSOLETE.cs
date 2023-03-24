@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         }
         else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-            gsaSection.MaterialID = idd;
+            gsaSection.MaterialId = idd;
           else {
             this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
             return;
@@ -108,10 +108,10 @@ namespace GsaGH.Components {
           gsaSection.Colour = col;
       }
 
-      string prof = (gsaSection.API_Section == null) ? "--" : gsaSection.Profile;
-      int poo = (gsaSection.API_Section == null) ? 0 : gsaSection.Pool;
-      string nm = (gsaSection.API_Section == null) ? "--" : gsaSection.Name;
-      ValueType colour = gsaSection.API_Section?.Colour;
+      string prof = (gsaSection.ApiSection == null) ? "--" : gsaSection.Profile;
+      int poo = (gsaSection.ApiSection == null) ? 0 : gsaSection.Pool;
+      string nm = (gsaSection.ApiSection == null) ? "--" : gsaSection.Name;
+      ValueType colour = gsaSection.ApiSection?.Colour;
 
       da.SetData(0, new GsaSectionGoo(gsaSection));
       da.SetData(1, gsaSection.Id);

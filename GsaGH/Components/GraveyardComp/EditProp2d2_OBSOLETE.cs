@@ -23,7 +23,7 @@ namespace GsaGH.Components {
       : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
         CategoryName.Name(),
         SubCategoryName.Cat1()) {
-          Hidden = true;
+      Hidden = true;
     }
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -83,7 +83,7 @@ namespace GsaGH.Components {
         }
         else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-            prop.MaterialID = idd;
+            prop.MaterialId = idd;
           else {
             this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
             return;
@@ -113,23 +113,23 @@ namespace GsaGH.Components {
           prop.Colour = col;
       }
 
-      int ax = (prop.API_Prop2d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.API_Prop2d == null) ? "--" : prop.Name;
-      ValueType colour = prop.API_Prop2d?.Colour;
+      int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
+      string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+      ValueType colour = prop.ApiProp2d?.Colour;
 
       da.SetData(0, new GsaProp2dGoo(prop));
       da.SetData(1, prop.Id);
       da.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
       da.SetData(3,
-        prop.API_Prop2d?.Description == ""
+        prop.ApiProp2d?.Description == ""
           ? new GH_UnitNumber(Length.Zero)
           : new GH_UnitNumber(prop.Thickness));
       da.SetData(4, ax);
       da.SetData(5, nm);
       da.SetData(6, colour);
 
-      string str = (prop.API_Prop2d == null) ? "--" : prop.Type.ToString();
-      if (prop.API_Prop2d == null)
+      string str = (prop.ApiProp2d == null) ? "--" : prop.Type.ToString();
+      if (prop.ApiProp2d == null)
         str = char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
       da.SetData(7, str);
     }

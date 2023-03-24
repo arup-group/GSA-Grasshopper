@@ -80,7 +80,7 @@ namespace GsaGHTests.Parameters {
       var orig = new GsaSection(profile);
 
       // set other properties in section
-      orig.MaterialID = 1;
+      orig.MaterialId = 1;
       orig.Material.GradeProperty = 2;
       orig.Material.MaterialType = GsaMaterial.MatType.Steel;
       orig.Name = "mariam";

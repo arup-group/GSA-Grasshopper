@@ -3,17 +3,13 @@ using GsaGHTests.Helpers;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaNodeTest
-
-  {
+  public class GsaNodeTest {
     [Fact]
-    public void GsaNodeEqualsTest()
-    {
+    public void GsaNodeEqualsTest() {
       // Arrange
-      GsaNode original = new GsaNode();
+      var original = new GsaNode();
 
       // Act
       GsaNode duplicate = original.Duplicate();
@@ -23,9 +19,8 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestCreateGsaNodeFromPt()
-    {
-      GsaNode node = new GsaNode(new Point3d(10, 15, 7.8));
+    public void TestCreateGsaNodeFromPt() {
+      var node = new GsaNode(new Point3d(10, 15, 7.8));
 
       Assert.Equal(10, node.Point.X);
       Assert.Equal(15, node.Point.Y);
@@ -38,21 +33,19 @@ namespace GsaGHTests.Parameters
     }
     [Fact]
 
-    public void TestCreateGsaNodeRestrained()
-    {
+    public void TestCreateGsaNodeRestrained() {
       // create new Bool6
-      GsaBool6 bool6 = new GsaBool6
-      {
+      var bool6 = new GsaBool6 {
         X = true,
         Y = false,
         Z = true,
-        XX = false,
-        YY = true,
-        ZZ = false
+        Xx = false,
+        Yy = true,
+        Zz = false
       };
 
       // create new node from point with bool6 restraint
-      GsaNode node = new GsaNode(new Point3d(5.3, 9.9, 2017));
+      var node = new GsaNode(new Point3d(5.3, 9.9, 2017));
       node.Restraint = bool6;
 
       Assert.Equal(5.3, node.Point.X);
@@ -61,23 +54,21 @@ namespace GsaGHTests.Parameters
       Assert.True(node.Restraint.X);
       Assert.False(node.Restraint.Y);
       Assert.True(node.Restraint.Z);
-      Assert.False(node.Restraint.XX);
-      Assert.True(node.Restraint.YY);
-      Assert.False(node.Restraint.ZZ);
+      Assert.False(node.Restraint.Xx);
+      Assert.True(node.Restraint.Yy);
+      Assert.False(node.Restraint.Zz);
     }
 
     [Fact]
-    public void TestCreateGsaNodeIdRestrainLocAxis()
-    {
+    public void TestCreateGsaNodeIdRestrainLocAxis() {
       // create new Bool6
-      GsaBool6 bool6 = new GsaBool6
-      {
+      var bool6 = new GsaBool6 {
         X = false,
         Y = true,
         Z = false,
-        XX = true,
-        YY = false,
-        ZZ = true
+        Xx = true,
+        Yy = false,
+        Zz = true
       };
       // create new rhino plane for local axis
       Plane pln = Plane.WorldZX;
@@ -86,7 +77,7 @@ namespace GsaGHTests.Parameters
       int id = 44;
 
       // create new node from point with id, bool6 restraint and plane local axis:
-      GsaNode node = new GsaNode(new Point3d(-40, -3.654, -99));
+      var node = new GsaNode(new Point3d(-40, -3.654, -99));
       node.Restraint = bool6;
       pln.Origin = node.Point;
       node.LocalAxis = pln;
@@ -101,9 +92,9 @@ namespace GsaGHTests.Parameters
       Assert.False(node.Restraint.X);
       Assert.True(node.Restraint.Y);
       Assert.False(node.Restraint.Z);
-      Assert.True(node.Restraint.XX);
-      Assert.False(node.Restraint.YY);
-      Assert.True(node.Restraint.ZZ);
+      Assert.True(node.Restraint.Xx);
+      Assert.False(node.Restraint.Yy);
+      Assert.True(node.Restraint.Zz);
 
       // the local plane origin point should be moved to the node position
       Assert.Equal(-40, node.LocalAxis.OriginX);
@@ -115,10 +106,9 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestDuplicateNode()
-    {
+    public void TestDuplicateNode() {
       // create new node with some properties
-      GsaNode node = new GsaNode(new Point3d(-3.3, 0, 1.5));
+      var node = new GsaNode(new Point3d(-3.3, 0, 1.5));
       node.Colour = System.Drawing.Color.Red;
       node.LocalAxis = Plane.WorldYZ;
       node.Id = 3;
@@ -142,7 +132,6 @@ namespace GsaGHTests.Parameters
       Assert.Equal(node.Id, duplicate.Id);
       Assert.Equal(node.Colour, duplicate.Colour);
       Assert.Equal(node.Name, duplicate.Name);
-
 
       // make changes to original node
       node.Point = new Point3d(3.3, 1, -1.5);
