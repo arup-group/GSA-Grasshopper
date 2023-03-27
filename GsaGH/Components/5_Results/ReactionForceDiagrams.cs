@@ -43,9 +43,8 @@ namespace GsaGH.Components {
       if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject))
         return;
 
-      gsaResult = ((GsaResultGoo)ghObject.Value).Value;
+      gsaResult = (ghObject.Value as GsaResultGoo).Value;
       string filteredNodes = GetNodeFilters(dataAccess);
-      double scale = GetScalarValue(dataAccess);
 
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
         = gsaResult.NodeReactionForceValues(filteredNodes, _forceUnit, _momentUnit);
@@ -57,6 +56,10 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes
         = Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
+
+      double scale = 1;
+      if (!dataAccess.GetData(2, ref scale))
+        scale = ComputeScale(forceValues, gsaResult.Model.BoundingBox);
 
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes,
@@ -81,6 +84,24 @@ namespace GsaGH.Components {
 
       foreach (KeyValuePair<int, VectorResultGoo> force in _reactionForceVectors)
         force.Value.ShowText(_showText);
+    }
+
+    #endregion
+
+    #region Inputs ReactionForceVector methods
+
+    private static string GetNodeFilters(IGH_DataAccess dataAccess) {
+      string nodeList = string.Empty;
+      var ghNoList = new GH_String();
+      if (dataAccess.GetData(1, ref ghNoList))
+        nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both)
+          ? tempNodeList
+          : string.Empty;
+
+      if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList))
+        nodeList = "All";
+
+      return nodeList;
     }
 
     #endregion
@@ -151,9 +172,8 @@ namespace GsaGH.Components {
         "All");
       pManager.AddNumberParameter("Scalar",
         "x:X",
-        "Scale the result display size",
-        GH_ParamAccess.item,
-        1);
+        "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
+        GH_ParamAccess.item);
       pManager[1]
         .Optional = true;
       pManager[2]
@@ -335,37 +355,11 @@ namespace GsaGH.Components {
 
     #endregion
 
-    #region Inputs ReactionForceVector methods
-
-    private static double GetScalarValue(IGH_DataAccess dataAccess) {
-      var ghScale = new GH_Number();
-      dataAccess.GetData(2, ref ghScale);
-      return GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both)
-        ? scale
-        : 0.0d;
-    }
-
-    private static string GetNodeFilters(IGH_DataAccess dataAccess) {
-      string nodeList = string.Empty;
-      var ghNoList = new GH_String();
-      if (dataAccess.GetData(1, ref ghNoList))
-        nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both)
-          ? tempNodeList
-          : string.Empty;
-
-      if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList))
-        nodeList = "All";
-
-      return nodeList;
-    }
-
-    #endregion
-
     #region solvingInstance helpers
 
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject) {
       bool valid = false;
-      if (ghObject?.Value == null)
+      if (ghObject == null || ghObject.Value == null)
         this.AddRuntimeWarning("Input is null");
       else if (!(ghObject.Value is GsaResultGoo))
         this.AddRuntimeError("Error converting input to GSA Result");
@@ -385,10 +379,50 @@ namespace GsaGH.Components {
       lengthUnit = _lengthUnit;
       this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. "
         + "The geometry has been scaled to be in "
-        + lengthUnit
+        + lengthUnit.ToString()
         + ". This can be changed by right-clicking the component -> 'Select Units'");
 
       return lengthUnit;
+    }
+
+    private double ComputeScale(GsaResultsValues forceValues, BoundingBox bbox) {
+      var values = new List<double>(8);
+      switch (_selectedDisplayValue) {
+        case (DisplayValue.X):
+        case (DisplayValue.Y):
+        case (DisplayValue.Z):
+        case (DisplayValue.ResXyz):
+          values = new List<double>() {
+            forceValues.DmaxX.As(_forceUnit),
+            forceValues.DmaxY.As(_forceUnit),
+            forceValues.DmaxZ.As(_forceUnit),
+            forceValues.DmaxXyz.As(_forceUnit),
+            forceValues.DminXyz.As(_forceUnit),
+            Math.Abs(forceValues.DminX.As(_forceUnit)),
+            Math.Abs(forceValues.DminY.As(_forceUnit)),
+            Math.Abs(forceValues.DminZ.As(_forceUnit)),
+          };
+          break;
+
+        case (DisplayValue.Xx):
+        case (DisplayValue.Yy):
+        case (DisplayValue.Zz):
+        case (DisplayValue.ResXxyyzz):
+          values = new List<double>() {
+            forceValues.DmaxXx.As(_momentUnit),
+            forceValues.DmaxYy.As(_momentUnit),
+            forceValues.DmaxZz.As(_momentUnit),
+            forceValues.DmaxXxyyzz.As(_momentUnit),
+            forceValues.DminXxyyzz.As(_momentUnit),
+            Math.Abs(forceValues.DminXx.As(_momentUnit)),
+            Math.Abs(forceValues.DminYy.As(_momentUnit)),
+            Math.Abs(forceValues.DminZz.As(_momentUnit)),
+          };
+          break;
+      }
+
+      double factor = 0.000001;
+      return bbox.Area * values.Max() * factor;
     }
 
     private VectorResultGoo GenerateReactionForceVector(
