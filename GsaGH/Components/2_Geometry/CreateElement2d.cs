@@ -1,54 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
   /// <summary>
-  /// Component to create new 2D Element
+  ///   Component to create new 2D Element
   /// </summary>
   public class CreateElement2d : GH_OasysComponent {
-    #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateElem2d;
-
-    public CreateElement2d() : base("Create 2D Element",
-      "Elem2D",
-      "Create GSA 2D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-    #endregion
-
-    #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp2dParameter());
-      pManager[1].Optional = true;
-      pManager.HideParameter(0);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaElement2dParameter());
-    #endregion
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghmesh = new GH_Mesh();
-      if (!da.GetData(0, ref ghmesh)) {
+      if (!da.GetData(0, ref ghmesh))
         return;
-      }
 
-      if (ghmesh == null) { this.AddRuntimeWarning("Mesh input is null"); }
+      if (ghmesh == null)
+        this.AddRuntimeWarning("Mesh input is null");
       var mesh = new Mesh();
-      if (!GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both)) {
+      if (!GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both))
         return;
-      }
 
       var elem = new GsaElement2d(mesh);
 
@@ -72,5 +48,35 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaElement2dGoo(elem));
     }
+
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateElem2d;
+
+    public CreateElement2d() : base("Create 2D Element",
+      "Elem2D",
+      "Create GSA 2D Element",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp2dParameter());
+      pManager[1]
+        .Optional = true;
+      pManager.HideParameter(0);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaElement2dParameter());
+
+    #endregion
   }
 }

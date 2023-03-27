@@ -44,6 +44,7 @@ namespace GsaGH.Helpers.Export {
           axisidcounter++;
         }
       }
+
       return axisId;
     }
 
@@ -126,8 +127,10 @@ namespace GsaGH.Helpers.Export {
           if (double.TryParse(gridplanesurface.Elevation, out double elev))
             elevation = new Length(elev, modelUnit);
         }
+
         gridplanesurface.GridPlane.Elevation = elevation.Meters;
       }
+
       if (gridplanesurface.StoreyToleranceAbove != "auto") {
         var tolerance = new Length();
         try {
@@ -137,8 +140,10 @@ namespace GsaGH.Helpers.Export {
           if (double.TryParse(gridplanesurface.StoreyToleranceAbove, out double tol))
             tolerance = new Length(tol, modelUnit);
         }
+
         gridplanesurface.GridPlane.ToleranceAbove = tolerance.Meters;
       }
+
       if (gridplanesurface.StoreyToleranceBelow != "auto") {
         var tolerance = new Length();
         try {
@@ -148,6 +153,7 @@ namespace GsaGH.Helpers.Export {
           if (double.TryParse(gridplanesurface.StoreyToleranceBelow, out double tol))
             tolerance = new Length(tol, modelUnit);
         }
+
         gridplanesurface.GridPlane.ToleranceBelow = tolerance.Meters;
       }
 
@@ -183,8 +189,10 @@ namespace GsaGH.Helpers.Export {
         if (gridplanesurface.GridPlaneGuid != new Guid()) {
           gpGuid.Add(gridplanesurface.GridPlaneGuid, gridplaneidcounter);
         }
+
         gridplaneidcounter++;
       }
+
       return gpId;
     }
 
@@ -225,6 +233,7 @@ namespace GsaGH.Helpers.Export {
         if (double.TryParse(gridplanesurface.Tolerance, out double tol))
           tolerance = new Length(tol, modelUnit);
       }
+
       gridplanesurface.GridSurface.Tolerance = tolerance.Meters;
 
       if (model != null && gridplanesurface._referenceType != ReferenceType.None) {
@@ -272,8 +281,10 @@ namespace GsaGH.Helpers.Export {
         if (gridplanesurface.GridSurfaceGuid != new Guid()) {
           gsGuid.Add(gridplanesurface.GridSurfaceGuid, gsId);
         }
+
         gridsurfaceidcounter++;
       }
+
       return gsId;
     }
 
@@ -312,12 +323,14 @@ namespace GsaGH.Helpers.Export {
         if (gridPlaneSurface == null) {
           continue;
         }
+
         GsaGridPlaneSurface gps = gridPlaneSurface;
 
         if (gps.GridPlane != null) {
           gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter, unit);
           gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
         }
+
         SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
       }
     }

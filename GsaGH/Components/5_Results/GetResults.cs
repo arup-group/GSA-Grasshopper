@@ -1,63 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysUnits;
 
 namespace GsaGH.Components {
   /// <summary>
-  /// Component to select results from a GSA Model
+  ///   Component to select results from a GSA Model
   /// </summary>
   public class GetResult : GH_OasysComponent {
-    #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.GetResults;
-
-    public GetResult() : base("Get Results",
-      "GetRes",
-      "Get AnalysisCase or Combination Result from an analysed GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
-    #endregion
-
-    #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
-      pManager.AddTextParameter("Result Type", "T", "Result type. " +
-          Environment.NewLine + "Accepted inputs are: " +
-          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item, "A");
-      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item, 1);
-      pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases).", GH_ParamAccess.list);
-      pManager[3].Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-    }
-    #endregion
-
-    private Guid _modelGuid;
     private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
     private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
+
+    private Guid _modelGuid;
+
+    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
+      _result; // this is the cache object!
+
     private int _tempNodeId;
-    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult> _result; // this is the cache object!
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new GsaModel();
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
+      if (!da.GetData(0, ref ghTyp))
         return;
-      }
 
       if (ghTyp.Value is GsaModelGoo) {
         var inModel = new GsaModel();
@@ -77,26 +51,31 @@ namespace GsaGH.Components {
         }
       }
       else {
-        this.AddRuntimeError("Error converting input " + Params.Input[0].NickName + " to GSA Model");
+        this.AddRuntimeError("Error converting input "
+          + Params.Input[0]
+            .NickName
+          + " to GSA Model");
         return;
       }
 
       GsaResult.CaseType resultType = GsaResult.CaseType.AnalysisCase;
       var ghType = new GH_String();
-      if (da.GetData(1, ref ghType)) {
+      if (da.GetData(1, ref ghType))
         if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
-          if (type.ToUpper().StartsWith("A")) {
+          if (type.ToUpper()
+            .StartsWith("A"))
             resultType = GsaResult.CaseType.AnalysisCase;
-          }
-          else if (type.ToUpper().StartsWith("C")) {
+          else if (type.ToUpper()
+            .StartsWith("C"))
             resultType = GsaResult.CaseType.Combination;
-          }
           else {
-            this.AddRuntimeError("Error converting input " + Params.Input[1].NickName + " to 'Analysis' or 'Combination'");
+            this.AddRuntimeError("Error converting input "
+              + Params.Input[1]
+                .NickName
+              + " to 'Analysis' or 'Combination'");
             return;
           }
         }
-      }
 
       int caseId = 1;
       var aCase = new GH_Integer();
@@ -104,7 +83,10 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(aCase, out int analCase, GH_Conversion.Both))
           caseId = analCase;
         if (caseId < 1) {
-          this.AddRuntimeError("Input " + Params.Input[2].NickName + " must be above 0");
+          this.AddRuntimeError("Input "
+            + Params.Input[2]
+              .NickName
+            + " must be above 0");
           return;
         }
       }
@@ -112,15 +94,22 @@ namespace GsaGH.Components {
       var permutationIDs = new List<int>();
       if (resultType != GsaResult.CaseType.AnalysisCase) {
         var ghPerms = new List<int>();
-        if (da.GetDataList(3, ghPerms)) {
+        if (da.GetDataList(3, ghPerms))
           permutationIDs = ghPerms;
-        }
         else {
           this.AddRuntimeRemark("By default, all permutations have been selected.");
-          permutationIDs = new List<int>() { -1 };
+          permutationIDs = new List<int>() {
+            -1,
+          };
         }
       }
-      if (Params.Input[1].SourceCount == 0 && Params.Input[2].SourceCount == 0)
+
+      if (Params.Input[1]
+          .SourceCount
+        == 0
+        && Params.Input[2]
+          .SourceCount
+        == 0)
         this.AddRuntimeRemark("By default, Analysis Case 1 has been selected.");
 
       switch (resultType) {
@@ -138,10 +127,10 @@ namespace GsaGH.Components {
             return;
           }
 
-          if (!_result.ContainsKey(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseId))) {
+          if (!_result.ContainsKey(
+            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseId)))
             _result.Add(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseId),
               new GsaResult(model, _analysisCaseResults[caseId], caseId));
-          }
           break;
 
         case GsaResult.CaseType.Combination:
@@ -158,29 +147,90 @@ namespace GsaGH.Components {
             return;
           }
 
-          if (_tempNodeId == 0) {
-            _tempNodeId = model.Model.Nodes().Keys.First();
-          }
+          if (_tempNodeId == 0)
+            _tempNodeId = model.Model.Nodes()
+              .Keys.First();
 
-          IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult = _combinationCaseResults[caseId].NodeResults(_tempNodeId.ToString());
-          int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
+          IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
+            = _combinationCaseResults[caseId]
+              .NodeResults(_tempNodeId.ToString());
+          int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()]
+            .Count;
           if (permutationIDs.Count == 1 && permutationIDs[0] == -1)
-            permutationIDs = Enumerable.Range(1, nP).ToList();
+            permutationIDs = Enumerable.Range(1, nP)
+              .ToList();
           else {
             if (permutationIDs.Max() > nP) {
-              this.AddRuntimeError("Combination Case C" + caseId + " only contains " + nP + " permutations but the highest permutation in input is " + permutationIDs.Max());
+              this.AddRuntimeError("Combination Case C"
+                + caseId
+                + " only contains "
+                + nP
+                + " permutations but the highest permutation in input is "
+                + permutationIDs.Max());
               return;
             }
           }
 
-          if (!_result.ContainsKey(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseId))) {
+          if (!_result.ContainsKey(
+            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseId)))
             _result.Add(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseId),
               new GsaResult(model, _combinationCaseResults[caseId], caseId, permutationIDs));
-          }
           break;
       }
 
-      da.SetData(0, new GsaResultGoo(_result[new Tuple<GsaResult.CaseType, int>(resultType, caseId)]));
+      da.SetData(0,
+        new GsaResultGoo(_result[new Tuple<GsaResult.CaseType, int>(resultType, caseId)]));
     }
+
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GetResults;
+
+    public GetResult() : base("Get Results",
+      "GetRes",
+      "Get AnalysisCase or Combination Result from an analysed GSA model",
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+        "GSA Model",
+        "GSA",
+        "GSA model containing some results",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Result Type",
+        "T",
+        "Result type. "
+        + Environment.NewLine
+        + "Accepted inputs are: "
+        + Environment.NewLine
+        + "'AnalysisCase' or 'Combination'",
+        GH_ParamAccess.item,
+        "A");
+      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item, 1);
+      pManager.AddIntegerParameter("Permutation",
+        "P",
+        "Permutations (only applicable for combination cases).",
+        GH_ParamAccess.list);
+      pManager[3]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
+
+    #endregion
   }
 }

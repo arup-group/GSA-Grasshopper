@@ -24,8 +24,10 @@ namespace GsaGH.Helpers.Export {
               topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
           }
         }
+
         topo += Nodes.AddNode(ref existingNodes, topology[j], unit) + " ";
       }
+
       return topo.Trim();
     }
     #endregion

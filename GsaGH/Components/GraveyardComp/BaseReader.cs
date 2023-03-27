@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components.GraveyardComp {
   internal class BaseReader {
-    internal static bool Read(GH_IReader reader, GH_Component owner, bool ignoreParamCountOverspill = false) {
+    internal static bool Read(
+      GH_IReader reader,
+      GH_Component owner,
+      bool ignoreParamCountOverspill = false) {
       string mName = "";
       reader.TryGetString("Name", ref mName);
       owner.Name = mName;
@@ -35,16 +39,16 @@ namespace GsaGH.Components.GraveyardComp {
           break;
       }
 
-      if (reader.ItemExists("IconOverride")) {
+      if (reader.ItemExists("IconOverride"))
         owner.SetIconOverride(reader.GetDrawingBitmap("IconOverride"));
-      }
 
       if (owner.Attributes != null) {
         GH_IReader ghIReader2 = reader.FindChunk("Attributes");
         if (ghIReader2 != null)
           owner.Attributes.Read(ghIReader2);
         else
-          reader.AddMessage("Attributes chunk is missing. Could be a hint something's wrong.", GH_Message_Type.info);
+          reader.AddMessage("Attributes chunk is missing. Could be a hint something's wrong.",
+            GH_Message_Type.info);
       }
 
       if (owner is IGH_PreviewObject previewObject) {
@@ -57,6 +61,7 @@ namespace GsaGH.Components.GraveyardComp {
             previewObject.Hidden = !value2;
         }
       }
+
       owner.PrincipalParameterIndex = -1;
       if (reader.ItemExists("PrincipalIndex"))
         owner.PrincipalParameterIndex = reader.GetInt32("PrincipalIndex");
@@ -77,14 +82,18 @@ namespace GsaGH.Components.GraveyardComp {
         GH_IReader ghIReader = reader.FindChunk("param_input", i);
         if (ghIReader == null) {
           if (!ignoreParamCountOverspill)
-            reader.AddMessage("Input parameter chunk is missing. Archive is corrupt.", GH_Message_Type.error);
+            reader.AddMessage("Input parameter chunk is missing. Archive is corrupt.",
+              GH_Message_Type.error);
           continue;
         }
 
-        GH_ParamAccess access = owner.Params.Input[i].Access;
-        owner.Params.Input[i].Read(ghIReader);
+        GH_ParamAccess access = owner.Params.Input[i]
+          .Access;
+        owner.Params.Input[i]
+          .Read(ghIReader);
         if (!(owner.Params.Input[i] is Param_ScriptVariable))
-          owner.Params.Input[i].Access = access;
+          owner.Params.Input[i]
+            .Access = access;
       }
 
       int num2 = owner.Params.Output.Count - 1;
@@ -92,22 +101,27 @@ namespace GsaGH.Components.GraveyardComp {
         GH_IReader ghIReader2 = reader.FindChunk("param_output", j);
         if (ghIReader2 == null) {
           if (!ignoreParamCountOverspill)
-            reader.AddMessage("Output parameter chunk is missing. Archive is corrupt.", GH_Message_Type.error);
+            reader.AddMessage("Output parameter chunk is missing. Archive is corrupt.",
+              GH_Message_Type.error);
           continue;
         }
 
-        GH_ParamAccess access2 = owner.Params.Output[j].Access;
-        owner.Params.Output[j].Read(ghIReader2);
-        owner.Params.Output[j].Access = access2;
+        GH_ParamAccess access2 = owner.Params.Output[j]
+          .Access;
+        owner.Params.Output[j]
+          .Read(ghIReader2);
+        owner.Params.Output[j]
+          .Access = access2;
       }
 
       GH_IReader attributes = reader.FindChunk("Attributes");
-      if (owner.Attributes == null) {
+      if (owner.Attributes == null)
         return true;
-      }
 
-      owner.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
-      owner.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
+      owner.Attributes.Bounds = (RectangleF)attributes.Items[0]
+        .InternalData;
+      owner.Attributes.Pivot = (PointF)attributes.Items[1]
+        .InternalData;
 
       return true;
     }

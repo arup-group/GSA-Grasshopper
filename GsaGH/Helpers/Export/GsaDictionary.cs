@@ -11,9 +11,7 @@ namespace GsaGH.Helpers.Export {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
 
-    internal GsaIntDictionary(ReadOnlyDictionary<int, T> dictionary) {
-      _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-    }
+    internal GsaIntDictionary(ReadOnlyDictionary<int, T> dictionary) => _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
     internal int AddValue(T value) {
       while (_dictionary.ContainsKey(_firstEmptyKey))
@@ -22,9 +20,7 @@ namespace GsaGH.Helpers.Export {
       return _firstEmptyKey;
     }
 
-    internal void SetValue(int key, T value) {
-      _dictionary[key] = value;
-    }
+    internal void SetValue(int key, T value) => _dictionary[key] = value;
   }
 
   internal class GsaGuidDictionary<T> {
@@ -82,6 +78,7 @@ namespace GsaGH.Helpers.Export {
         _dictionary[_firstEmptyKey] = value;
         _guidDictionary[guid] = new Collection<int>() { _firstEmptyKey };
       }
+
       return _firstEmptyKey;
     }
 

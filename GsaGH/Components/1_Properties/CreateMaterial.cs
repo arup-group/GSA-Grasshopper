@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
-  /// Component to create a new Material
+  ///   Component to create a new Material
   /// </summary>
   public class CreateMaterial : GH_OasysDropDownComponent {
     public static List<string> MaterialTypes = new List<string>() {
@@ -22,32 +24,6 @@ namespace GsaGH.Components {
       "Glass",
       "Fabric",
     };
-
-    #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
-
-    public CreateMaterial() : base(
-      "Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
-      Hidden = true;
-    }
-    #endregion
-
-    #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddIntegerParameter("Grade", "Grd", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Standard Material (reference)", GH_ParamAccess.item);
-    }
-    #endregion
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var material = new GsaMaterial();
@@ -88,9 +64,46 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaMaterialGoo(material));
     }
 
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMaterial;
+
+    public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
+      GsaMaterialGoo.Name.Replace(" ", string.Empty),
+      "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+      => pManager.AddIntegerParameter("Grade",
+        "Grd",
+        "Material Grade (default = 1)",
+        GH_ParamAccess.item,
+        1);
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaMaterialParameter(),
+        "Material",
+        "Mat",
+        "GSA Standard Material (reference)",
+        GH_ParamAccess.item);
+
+    #endregion
+
     #region Custom UI
+
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] { "Material type" });
+      SpacerDescriptions = new List<string>(new[] {
+        "Material type",
+      });
 
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
@@ -105,6 +118,7 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
       base.UpdateUI();
     }
+
     #endregion
   }
 }

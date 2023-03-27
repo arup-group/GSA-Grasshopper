@@ -1,60 +1,31 @@
 ﻿using System;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
-  /// Component to select results from a GSA Model
+  ///   Component to select results from a GSA Model
   /// </summary>
   public class FootfallResults : GH_OasysComponent {
-    #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.Footfall;
-
-    public FootfallResults() : base("Footfall Result",
-      "Footfall",
-      "Get the maximum response factor for a footfall analysis case",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-        Hidden = true;
-    }
-    #endregion
-
-    #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
-          "Node list should take the form:" + Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
-          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddNumberParameter("Resonant Response Factor", "RRF", "Maximum resonant response factor", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Transient Response Factor", "TRF", "Maximum transient response factor", GH_ParamAccess.item);
-    }
-    #endregion
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
+      if (!da.GetData(0, ref ghTyp))
         return;
-      }
 
-      switch (ghTyp?.Value)
-      {
+      switch (ghTyp?.Value) {
         case null:
           this.AddRuntimeWarning("Input is null");
           return;
-        case GsaResultGoo goo:
-        {
+        case GsaResultGoo goo: {
           result = goo.Value;
           if (result.Type == GsaResult.CaseType.Combination) {
             this.AddRuntimeError("Footfall Result only available for Analysis Cases");
@@ -70,21 +41,70 @@ namespace GsaGH.Components {
 
       string nodeList = "All";
       var ghNoList = new GH_String();
-      if (da.GetData(1, ref ghNoList)) {
+      if (da.GetData(1, ref ghNoList))
         if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both))
           nodeList = tempnodeList;
-      }
 
       if (nodeList.ToLower() == "all" || nodeList == "")
         nodeList = "All";
 
-      GsaResultsValues res = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Resonant);
-      GsaResultsValues tra = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Transient);
+      GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
+      GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);
 
       da.SetData(0, res.DmaxX.Value);
       da.SetData(1, tra.DmaxX.Value);
 
-      Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
     }
+
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Footfall;
+
+    public FootfallResults() : base("Footfall Result",
+      "Footfall",
+      "Get the maximum response factor for a footfall analysis case",
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Node filter list",
+        "No",
+        "Filter results by list."
+        + Environment.NewLine
+        + "Node list should take the form:"
+        + Environment.NewLine
+        + " 1 11 to 72 step 2 not (XY3 31 to 45)"
+        + Environment.NewLine
+        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        GH_ParamAccess.item,
+        "All");
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddNumberParameter("Resonant Response Factor",
+        "RRF",
+        "Maximum resonant response factor",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Transient Response Factor",
+        "TRF",
+        "Maximum transient response factor",
+        GH_ParamAccess.item);
+    }
+
+    #endregion
   }
 }

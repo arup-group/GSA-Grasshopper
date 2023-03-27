@@ -48,6 +48,7 @@ namespace GsaGH.Helpers.Export {
           apiNode.AxisProperty = Axes.AddAxis(ref existingAxes, ax);
         }
       }
+
       if (node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         existingNodes.SetValue(node.Id, apiNode);
       else
@@ -69,11 +70,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) {
-      return existNodes.AddValue(NodeFromPoint(testPoint, unit));
-    }
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) {
-      return existNodes.AddValue(node);
-    }
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) => existNodes.AddValue(NodeFromPoint(testPoint, unit));
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) => existNodes.AddValue(node);
   }
 }

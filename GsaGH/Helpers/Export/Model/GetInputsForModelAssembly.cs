@@ -13,7 +13,11 @@ namespace GsaGH.Helpers.Export {
         var inModels = new List<GsaModel>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
-          if (ghTyp == null) { owner.AddRuntimeWarning("Model input (index: " + i + ") is null and has been ignored"); continue; }
+          if (ghTyp == null) {
+            owner.AddRuntimeWarning("Model input (index: " + i + ") is null and has been ignored");
+            continue;
+          }
+
           if (ghTyp.Value is GsaModelGoo) {
             var inModel = new GsaModel();
             ghTyp.CastTo(ref inModel);
@@ -28,11 +32,14 @@ namespace GsaGH.Helpers.Export {
             return null;
           }
         }
+
         return inModels;
       }
-      else if (!isOptional) {
+
+      if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
+
       return null;
     }
 
@@ -78,6 +85,7 @@ namespace GsaGH.Helpers.Export {
               }
           }
         }
+
         if (!(inSect.Count > 0))
           inSect = null;
         if (!(inProp2d.Count > 0))
@@ -90,6 +98,7 @@ namespace GsaGH.Helpers.Export {
       if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
+
       return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(null, null, null);
     }
 
@@ -161,6 +170,7 @@ namespace GsaGH.Helpers.Export {
               }
           }
         }
+
         if (!(inNodes.Count > 0))
           inNodes = null;
         if (!(inElem1ds.Count > 0))
@@ -177,9 +187,11 @@ namespace GsaGH.Helpers.Export {
           inMem3ds = null;
         return new Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>, List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(inNodes, inElem1ds, inElem2ds, inElem3ds, inMem1ds, inMem2ds, inMem3ds);
       }
+
       if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
+
       return new Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>, List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null, null, null, null, null);
     }
 
@@ -223,6 +235,7 @@ namespace GsaGH.Helpers.Export {
               }
           }
         }
+
         if (!(inMem1ds.Count > 0))
           inMem1ds = null;
         if (!(inMem2ds.Count > 0))
@@ -231,9 +244,11 @@ namespace GsaGH.Helpers.Export {
           inMem3ds = null;
         return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(inMem1ds, inMem2ds, inMem3ds);
       }
-      else if (!isOptional) {
+
+      if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
+
       return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null);
     }
 
@@ -269,6 +284,7 @@ namespace GsaGH.Helpers.Export {
               }
           }
         }
+
         if (!(inLoads.Count > 0))
           inLoads = null;
         if (!(inGps.Count > 0))
@@ -278,6 +294,7 @@ namespace GsaGH.Helpers.Export {
       else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
+
       return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(null, null);
     }
 
@@ -307,15 +324,18 @@ namespace GsaGH.Helpers.Export {
               }
           }
         }
+
         if (!(inTasks.Count > 0))
           inTasks = null;
         if (!(inComb.Count > 0))
           inComb = null;
         return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(inTasks, inComb);
       }
+
       if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
+
       return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(null, null);
     }
   }

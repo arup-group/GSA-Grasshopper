@@ -1,56 +1,26 @@
 ﻿using System;
+using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
 
 namespace GsaGH.Components {
   /// <summary>
-  /// Component to create a new Bool6
+  ///   Component to create a new Bool6
   /// </summary>
   public class CreateBool6 : GH_OasysDropDownComponent {
-    #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateBool6;
-
-    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-      GsaBool6Goo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBool6Goo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
-      Hidden = true;
-    }
-
-    #endregion
-
-    #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
-
-      pManager[0].Optional = true;
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
-      pManager[4].Optional = true;
-      pManager[5].Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaBool6Parameter());
-    }
-    #endregion
-
     protected override void SolveInstance(IGH_DataAccess da) {
-      var uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
+      var uiSet = new GsaBool6(_x,
+        _y,
+        _z,
+        _xx,
+        _yy,
+        _zz);
       GsaBool6 bool6 = uiSet.Duplicate();
 
       bool input = false;
@@ -104,7 +74,53 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaBool6Goo(bool6));
     }
 
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateBool6;
+
+    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
+      GsaBool6Goo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaBool6Goo.Description,
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
+
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager[5]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaBool6Parameter());
+
+    #endregion
+
     #region Custom UI
+
     private bool _x;
     private bool _y;
     private bool _z;
@@ -113,11 +129,25 @@ namespace GsaGH.Components {
     private bool _zz;
     public override void SetSelected(int i, int j) { }
     public override void InitialiseDropdowns() { }
-    public override void CreateAttributes() {
-      m_attributes = new Bool6ComponentAttributes(this, SetBool, "Set 6 DOF", _x, _y, _z, _xx, _yy, _zz);
-    }
 
-    public void SetBool(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz) {
+    public override void CreateAttributes()
+      => m_attributes = new Bool6ComponentAttributes(this,
+        SetBool,
+        "Set 6 DOF",
+        _x,
+        _y,
+        _z,
+        _xx,
+        _yy,
+        _zz);
+
+    public void SetBool(
+      bool resx,
+      bool resy,
+      bool resz,
+      bool resxx,
+      bool resyy,
+      bool reszz) {
       _x = resx;
       _y = resy;
       _z = resz;
@@ -127,16 +157,18 @@ namespace GsaGH.Components {
     }
 
     private void ReDrawComponent() {
-      var pivot = new System.Drawing.PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
+      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
       CreateAttributes();
       Attributes.Pivot = pivot;
       Attributes.ExpireLayout();
       Attributes.PerformLayout();
     }
+
     #endregion
 
     #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer) {
+
+    public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("x", _x);
       writer.SetBoolean("y", _y);
       writer.SetBoolean("z", _z);
@@ -146,7 +178,8 @@ namespace GsaGH.Components {
 
       return base.Write(writer);
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader) {
+
+    public override bool Read(GH_IReader reader) {
       _x = reader.GetBoolean("x");
       _y = reader.GetBoolean("y");
       _z = reader.GetBoolean("z");
@@ -156,7 +189,7 @@ namespace GsaGH.Components {
 
       return base.Read(reader);
     }
+
     #endregion
   }
 }
-

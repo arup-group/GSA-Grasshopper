@@ -32,6 +32,7 @@ namespace GsaGH.Helpers.Export {
            )
           return key;
       }
+
       return 0;
     }
 

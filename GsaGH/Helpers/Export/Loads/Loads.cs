@@ -51,6 +51,7 @@ namespace GsaGH.Helpers.Export {
               break;
             }
           }
+
           gravityLoads.Add(load.GravityLoad.GravityLoad);
           break;
 
@@ -69,6 +70,7 @@ namespace GsaGH.Helpers.Export {
               break;
             }
           }
+
           beamLoads.Add(load.BeamLoad.BeamLoad);
           break;
 
@@ -87,6 +89,7 @@ namespace GsaGH.Helpers.Export {
               break;
             }
           }
+
           faceLoads.Add(load.FaceLoad.FaceLoad);
           break;
 
@@ -96,6 +99,7 @@ namespace GsaGH.Helpers.Export {
             gridPointLoads.Add(load.PointLoad.GridPointLoad);
             break;
           }
+
           GsaGridPointLoad gridptref = load.PointLoad;
           GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
 
@@ -109,6 +113,7 @@ namespace GsaGH.Helpers.Export {
             gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
             gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
+
           gridPointLoads.Add(gridptref.GridPointLoad);
           break;
 
@@ -118,6 +123,7 @@ namespace GsaGH.Helpers.Export {
             gridLineLoads.Add(load.LineLoad.GridLineLoad);
             break;
           }
+
           GsaGridLineLoad gridlnref = load.LineLoad;
           gridplnsrf = gridlnref.GridPlaneSurface;
 
@@ -131,6 +137,7 @@ namespace GsaGH.Helpers.Export {
             gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
             gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
+
           gridLineLoads.Add(gridlnref.GridLineLoad);
           break;
 
@@ -157,6 +164,7 @@ namespace GsaGH.Helpers.Export {
             gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
             gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
+
           gridAreaLoads.Add(gridarref.GridAreaLoad);
           break;
       }
