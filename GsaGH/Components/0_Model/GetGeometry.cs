@@ -263,7 +263,7 @@ namespace GsaGH.Components {
         var element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
         Parallel.ForEach(_element2ds, elem => {
           try {
-            int parent = elem.Value.API_Elements[0].ParentMember.Member;
+            int parent = elem.Value.ApiElements[0].ParentMember.Member;
             if (parent > 0 && memberKeys.Contains(parent))
               element2dsShaded.Add(elem);
             else
@@ -294,7 +294,7 @@ namespace GsaGH.Components {
         var element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
         Parallel.ForEach(_element3ds, elem => {
           try {
-            int parent = elem.Value.API_Elements[0].ParentMember.Member;
+            int parent = elem.Value.ApiElements[0].ParentMember.Member;
             if (parent > 0 && memberKeys.Contains(parent))
               element3dsShaded.Add(elem);
             else
@@ -435,17 +435,17 @@ namespace GsaGH.Components {
               args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, col);
             }
 
-            if (node.Value.previewSupportSymbol != null)
-              args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbol);
-            if (node.Value.previewText != null)
-              args.Display.Draw3dText(node.Value.previewText, Helpers.Graphics.Colours.Support);
+            if (node.Value._previewSupportSymbol != null)
+              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbol);
+            if (node.Value._previewText != null)
+              args.Display.Draw3dText(node.Value._previewText, Helpers.Graphics.Colours.Support);
           }
           else {
             args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, Helpers.Graphics.Colours.NodeSelected);
-            if (node.Value.previewSupportSymbol != null)
-              args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbolSelected);
-            if (node.Value.previewText != null)
-              args.Display.Draw3dText(node.Value.previewText, Helpers.Graphics.Colours.NodeSelected);
+            if (node.Value._previewSupportSymbol != null)
+              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbolSelected);
+            if (node.Value._previewText != null)
+              args.Display.Draw3dText(node.Value._previewText, Helpers.Graphics.Colours.NodeSelected);
           }
 
           if (!(node.Value.LocalAxis != Plane.WorldXY & node.Value.LocalAxis != new Plane() &
@@ -453,9 +453,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          args.Display.DrawLine(node.Value.previewXaxis, System.Drawing.Color.FromArgb(255, 244, 96, 96), 1);
-          args.Display.DrawLine(node.Value.previewYaxis, System.Drawing.Color.FromArgb(255, 96, 244, 96), 1);
-          args.Display.DrawLine(node.Value.previewZaxis, System.Drawing.Color.FromArgb(255, 96, 96, 234), 1);
+          args.Display.DrawLine(node.Value._previewXaxis, System.Drawing.Color.FromArgb(255, 244, 96, 96), 1);
+          args.Display.DrawLine(node.Value._previewYaxis, System.Drawing.Color.FromArgb(255, 96, 244, 96), 1);
+          args.Display.DrawLine(node.Value._previewZaxis, System.Drawing.Color.FromArgb(255, 96, 96, 234), 1);
         }
     }
     #endregion
@@ -671,21 +671,13 @@ namespace GsaGH.Components {
     #endregion
 
     #region variable component null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
 
     internal static GH_IWriter WriteDropDownComponents(ref GH_IWriter writer, List<List<string>> dropDownItems, List<string> selectedItems, List<string> spacerDescriptions) {

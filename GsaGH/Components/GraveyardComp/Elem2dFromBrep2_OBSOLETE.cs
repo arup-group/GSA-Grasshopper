@@ -52,9 +52,8 @@ namespace GsaGH.Components {
       pManager.HideParameter(2);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -136,7 +135,7 @@ namespace GsaGH.Components {
       else
         prop2d.Id = 0;
       var prop2Ds = new List<GsaProp2d>();
-      for (int i = 0; i < elem2d.API_Elements.Count; i++)
+      for (int i = 0; i < elem2d.ApiElements.Count; i++)
         prop2Ds.Add(prop2d);
       elem2d.Properties = prop2Ds;
 
@@ -180,9 +179,8 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
-    }
+    public override void VariableParameterMaintenance()
+      => Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
 

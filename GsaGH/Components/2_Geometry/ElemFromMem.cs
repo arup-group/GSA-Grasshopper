@@ -188,9 +188,8 @@ namespace GsaGH.Components {
       }
 
       foreach (GsaElement2dGoo element in _element2ds) {
-        if (element == null
-            || element.Value.Mesh == null
-            || element.Value.API_Elements[0].ParentMember.Member > 0) {
+        if (element?.Value.Mesh == null
+          || element.Value.ApiElements[0].ParentMember.Member > 0) {
           continue;
         }
 
@@ -214,7 +213,7 @@ namespace GsaGH.Components {
           continue;
         }
 
-        if (element.Value.API_Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
+        if (element.Value.ApiElements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
         {
           for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
             if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)

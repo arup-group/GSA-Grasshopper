@@ -56,7 +56,7 @@ namespace GsaGH.Helpers.Export {
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes) {
       List<Point3d> meshVerticies = element2d.Topology;
 
-      for (int i = 0; i < element2d.API_Elements.Count; i++) {
+      for (int i = 0; i < element2d.ApiElements.Count; i++) {
         Element apiMeshElement = element2d.GetApiObjectClone(i);
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
@@ -93,7 +93,7 @@ namespace GsaGH.Helpers.Export {
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       List<Point3d> meshVerticies = element3d.Topology;
 
-      for (int i = 0; i < element3d.API_Elements.Count; i++) {
+      for (int i = 0; i < element3d.ApiElements.Count; i++) {
         Element apiMeshElement = element3d.GetApiObjectClone(i);
         List<int> meshVertexIndex = element3d.TopoInt[i];
 

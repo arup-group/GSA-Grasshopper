@@ -386,7 +386,7 @@ namespace GsaGH.Helpers.GH {
         return brep[0];
       }
 
-      tolerance = tolerance * 2;
+      tolerance *= 2;
       brep = Brep.CreatePlanarBreps(curves, tolerance);
       if (brep != null) {
         return brep[0];
@@ -727,7 +727,7 @@ namespace GsaGH.Helpers.GH {
 
       List<GsaNode> outNodes = null;
       if (nodes != null && nodes.Count > 0) {
-        Member mem2d = model.Members()[elem2dgoo[0].Value.API_Elements[0].ParentMember.Member];
+        Member mem2d = model.Members()[elem2dgoo[0].Value.ApiElements[0].ParentMember.Member];
         List<int> topoInts = Topology.Topology_detangler(mem2d.Topology).Item4;
         int add = points?.Count ?? 0;
         outNodes = new List<GsaNode>();

@@ -171,7 +171,7 @@ namespace GsaGH.Components {
       else
         prop2d.Id = 0;
       var prop2Ds = new List<GsaProp2d>();
-      for (int i = 0; i < elem2d.API_Elements.Count; i++)
+      for (int i = 0; i < elem2d.ApiElements.Count; i++)
         prop2Ds.Add(prop2d);
       elem2d.Properties = prop2Ds;
 
@@ -219,9 +219,8 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
-    }
+    public override void VariableParameterMaintenance()
+      => Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
 

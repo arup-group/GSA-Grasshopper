@@ -34,9 +34,8 @@ namespace GsaGH.Components {
       pManager.HideParameter(0);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement2dParameter());
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaElement2dParameter());
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -66,7 +65,7 @@ namespace GsaGH.Components {
         }
 
         var prop2Ds = new List<GsaProp2d>();
-        for (int i = 0; i < elem.API_Elements.Count; i++)
+        for (int i = 0; i < elem.ApiElements.Count; i++)
           prop2Ds.Add(prop2d);
         elem.Properties = prop2Ds;
       }

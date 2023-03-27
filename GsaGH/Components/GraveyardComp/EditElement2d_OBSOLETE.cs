@@ -80,7 +80,7 @@ namespace GsaGH.Components {
       var inIds = new List<int>();
       if (da.GetDataList(1, ghId)) {
         for (int i = 0; i < ghId.Count; i++) {
-          if (i > elem.API_Elements.Count - 1) {
+          if (i > elem.ApiElements.Count - 1) {
             this.AddRuntimeWarning("ID input List Length is longer than number of elements." + Environment.NewLine + "Excess ID's have been ignored");
             continue;
           }
@@ -104,7 +104,7 @@ namespace GsaGH.Components {
       if (da.GetDataList(2, ghTypes)) {
         var prop2Ds = new List<GsaProp2d>();
         for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.API_Elements.Count)
+          if (i > elem.ApiElements.Count)
             this.AddRuntimeWarning("PA input List Length is longer than number of elements." + Environment.NewLine + "Excess PA's have been ignored");
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var prop2d = new GsaProp2d();
@@ -128,7 +128,7 @@ namespace GsaGH.Components {
       if (da.GetDataList(3, ghGroups)) {
         var inGroups = new List<int>();
         for (int i = 0; i < ghGroups.Count; i++) {
-          if (i > elem.API_Elements.Count) {
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Group input List Length is longer than number of elements." + Environment.NewLine + "Excess Group numbers have been ignored");
             continue;
           }
@@ -142,7 +142,7 @@ namespace GsaGH.Components {
       if (da.GetDataList(4, ghTypes)) {
         var inOffsets = new List<GsaOffset>();
         for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.API_Elements.Count)
+          if (i > elem.ApiElements.Count)
             this.AddRuntimeWarning("Offset input List Length is longer than number of elements." + Environment.NewLine + "Excess Offsets have been ignored");
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var offset = new GsaOffset();
@@ -169,7 +169,7 @@ namespace GsaGH.Components {
       if (da.GetDataList(5, ghStrings)) {
         var inNames = new List<string>();
         for (int i = 0; i < ghStrings.Count; i++) {
-          if (i > elem.API_Elements.Count) {
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Name input List Length is longer than number of elements." + Environment.NewLine + "Excess Names have been ignored");
             continue;
           }
@@ -183,7 +183,7 @@ namespace GsaGH.Components {
       if (da.GetDataList(6, ghColours)) {
         var inColours = new List<System.Drawing.Color>();
         for (int i = 0; i < ghColours.Count; i++) {
-          if (i > elem.API_Elements.Count) {
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Colour input List Length is longer than number of elements." + Environment.NewLine + "Excess Colours have been ignored");
             continue;
           }
@@ -198,7 +198,7 @@ namespace GsaGH.Components {
       if (da.GetDataList(7, ghDummy)) {
         var inDummies = new List<bool>();
         for (int i = 0; i < ghDummy.Count; i++) {
-          if (i > elem.API_Elements.Count) {
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Dummy input List Length is longer than number of elements." + Environment.NewLine + "Excess Dummy booleans have been ignored");
             continue;
           }
