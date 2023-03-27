@@ -24,7 +24,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestSaveModel() {
       var m = new GsaModel();
-      string file = GsaFile.Steel_Design_Simple;
+      string file = GsaFile.SteelDesignSimple;
       m.Model.Open(file);
 
       string tempfilename = Path.GetTempPath() + "GSA-Grasshopper_temp.gwb";
@@ -49,7 +49,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestCreateModelFromModel() {
       var original = new GsaModel();
-      original.Model.Open(GsaFile.Steel_Design_Simple);
+      original.Model.Open(GsaFile.SteelDesignSimple);
 
       var assembled = new GsaModel {
         Model = AssembleModel.Assemble(original,
@@ -81,7 +81,7 @@ namespace GsaGHTests.Parameters {
     [InlineData(LengthUnit.Foot, 452027.734035)]
     public void TestGetBoundingBox(LengthUnit modelUnit, double expectedVolume) {
       var model = new GsaModel();
-      model.Model.Open(GsaFile.Steel_Design_Complex);
+      model.Model.Open(GsaFile.SteelDesignComplex);
       model.ModelUnit = modelUnit;
       BoundingBox bbox = model.BoundingBox;
 

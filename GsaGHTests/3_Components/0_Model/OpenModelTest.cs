@@ -16,7 +16,7 @@ namespace GsaGHTests.Model {
       var comp = new OpenModel();
       comp.CreateAttributes();
 
-      string file = GsaFile.Steel_Design_Simple;
+      string file = GsaFile.SteelDesignSimple;
       ComponentTestHelper.SetInput(comp, file);
 
       return comp;
@@ -30,7 +30,7 @@ namespace GsaGHTests.Model {
       var model = new GsaModel();
       output.CastTo(ref model);
 
-      Assert.Equal(GsaFile.Steel_Design_Simple, model.FileNameAndPath);
+      Assert.Equal(GsaFile.SteelDesignSimple, model.FileNameAndPath);
       Assert.NotEqual(new Guid(), model.Guid);
     }
   }
