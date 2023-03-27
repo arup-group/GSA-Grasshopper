@@ -25,13 +25,31 @@ namespace GsaGHTests.Helpers.Export {
       mem1d.Value.Group = 4;
       mem1d.Value.Name = "name Name Name";
       mem1d.Value.OrientationAngle = new Angle(45, AngleUnit.Degree);
-      mem1d.Value.ReleaseEnd = new GsaBool6(true, true, true, false, false, true);
-      mem1d.Value.ReleaseStart = new GsaBool6(false, false, false, false, false, false);
+      mem1d.Value.ReleaseEnd = new GsaBool6(true,
+        true,
+        true,
+        false,
+        false,
+        true);
+      mem1d.Value.ReleaseStart = new GsaBool6(false,
+        false,
+        false,
+        false,
+        false,
+        false);
       mem1d.Value.Type = MemberType.COLUMN;
       mem1d.Value.Type1D = ElementType.BEAM;
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() { mem1d }, null, null, ModelUnit.M));
+        CreateModelTest.CreateModelFromGeometry(null,
+          null,
+          null,
+          new List<GsaMember1dGoo>() {
+            mem1d,
+          },
+          null,
+          null,
+          ModelUnit.M));
 
       TestMember1d(mem1d.Value, LengthUnit.Meter, 1, modelGoo.Value);
     }
@@ -49,7 +67,16 @@ namespace GsaGHTests.Helpers.Export {
       GsaMember1dGoo mem1d2 = Member1d(crv2, section2);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() { mem1d1, mem1d2 }, null, null, ModelUnit.Cm));
+        CreateModelTest.CreateModelFromGeometry(null,
+          null,
+          null,
+          new List<GsaMember1dGoo>() {
+            mem1d1,
+            mem1d2,
+          },
+          null,
+          null,
+          ModelUnit.Cm));
 
       TestMember1d(mem1d1.Value, LengthUnit.Centimeter, 1, modelGoo.Value);
       TestMember1d(mem1d2.Value, LengthUnit.Centimeter, 2, modelGoo.Value);
@@ -59,11 +86,23 @@ namespace GsaGHTests.Helpers.Export {
     public void AssembleModelWithMember2dTest() {
       var thickness = new Length(200, LengthUnit.Millimeter);
       GsaProp2dGoo prop = Prop2d(thickness, true);
-      var brep = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0), new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1));
+      var brep = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0),
+        new Point3d(10, 0, 0),
+        new Point3d(10, 10, 0),
+        new Point3d(0, 10, 0),
+        1));
       GsaMember2dGoo mem2d = Member2d(brep, prop);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, null, new List<GsaMember2dGoo>() { mem2d }, null, ModelUnit.M));
+        CreateModelTest.CreateModelFromGeometry(null,
+          null,
+          null,
+          null,
+          new List<GsaMember2dGoo>() {
+            mem2d,
+          },
+          null,
+          ModelUnit.M));
 
       TestMember2d(mem2d.Value, LengthUnit.Meter, 1, modelGoo.Value);
     }
@@ -72,16 +111,33 @@ namespace GsaGHTests.Helpers.Export {
     public void AssembleModelWithMember2dsTest() {
       var thickness1 = new Length(200, LengthUnit.Millimeter);
       GsaProp2dGoo prop1 = Prop2d(thickness1, true);
-      var brep1 = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0), new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1));
+      var brep1 = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0),
+        new Point3d(10, 0, 0),
+        new Point3d(10, 10, 0),
+        new Point3d(0, 10, 0),
+        1));
       GsaMember2dGoo mem2d1 = Member2d(brep1, prop1);
 
       var thickness2 = new Length(2, LengthUnit.Centimeter);
       GsaProp2dGoo prop2 = Prop2d(thickness2, false);
-      var brep2 = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 5, -5), new Point3d(10, 5, -5), new Point3d(10, 5, 5), new Point3d(0, 5, 5), 1));
+      var brep2 = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 5, -5),
+        new Point3d(10, 5, -5),
+        new Point3d(10, 5, 5),
+        new Point3d(0, 5, 5),
+        1));
       GsaMember2dGoo mem2d2 = Member2d(brep2, prop2);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, null, new List<GsaMember2dGoo>() { mem2d1, mem2d2 }, null, ModelUnit.Ft));
+        CreateModelTest.CreateModelFromGeometry(null,
+          null,
+          null,
+          null,
+          new List<GsaMember2dGoo>() {
+            mem2d1,
+            mem2d2,
+          },
+          null,
+          ModelUnit.Ft));
 
       TestMember2d(mem2d1.Value, LengthUnit.Foot, 1, modelGoo.Value);
       TestMember2d(mem2d2.Value, LengthUnit.Foot, 2, modelGoo.Value);
@@ -98,7 +154,15 @@ namespace GsaGHTests.Helpers.Export {
       GsaMember3dGoo mem3d = Member3d(brep, prop);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, null, null, new List<GsaMember3dGoo>() { mem3d }, ModelUnit.M));
+        CreateModelTest.CreateModelFromGeometry(null,
+          null,
+          null,
+          null,
+          null,
+          new List<GsaMember3dGoo>() {
+            mem3d,
+          },
+          ModelUnit.M));
 
       TestMember3d(mem3d.Value, LengthUnit.Meter, 1, modelGoo.Value);
     }
@@ -122,7 +186,16 @@ namespace GsaGHTests.Helpers.Export {
       GsaMember3dGoo mem3d2 = Member3d(brep2, prop2);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, null, null, new List<GsaMember3dGoo>() { mem3d1, mem3d2 }, ModelUnit.Mm));
+        CreateModelTest.CreateModelFromGeometry(null,
+          null,
+          null,
+          null,
+          null,
+          new List<GsaMember3dGoo>() {
+            mem3d1,
+            mem3d2,
+          },
+          ModelUnit.Mm));
 
       TestMember3d(mem3d1.Value, LengthUnit.Millimeter, 1, modelGoo.Value);
       TestMember3d(mem3d2.Value, LengthUnit.Millimeter, 2, modelGoo.Value);
