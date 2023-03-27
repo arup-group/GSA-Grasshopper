@@ -26,9 +26,7 @@ namespace GsaGH.Components {
       "FaceLoad",
       "Create GSA Face Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat3()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -59,9 +57,7 @@ namespace GsaGH.Components {
       pManager[4].Optional = true;
       pManager[5].Optional = true;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaLoadParameter(), "Face Load", "Ld", "GSA Face Load", GH_ParamAccess.item);
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) => pManager.AddParameter(new GsaLoadParameter(), "Face Load", "Ld", "GSA Face Load", GH_ParamAccess.item);
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -76,13 +72,13 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaElement2dGoo value: {
-              faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.ReferenceType = ReferenceType.Element;
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Element;
               break;
             }
           case GsaMember2dGoo value: {
-              faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.ReferenceType = ReferenceType.Member;
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Member;
               if (_mode != FoldMode.Uniform)
                 this.AddRuntimeWarning("Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
               else
@@ -90,8 +86,8 @@ namespace GsaGH.Components {
               break;
             }
           case GsaProp2dGoo value: {
-              faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.ReferenceType = ReferenceType.Prop2d;
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Prop2d;
               break;
             }
           default: {

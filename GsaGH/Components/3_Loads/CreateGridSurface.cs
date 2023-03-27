@@ -47,9 +47,7 @@ namespace GsaGH.Components {
       pManager[3].Optional = true;
       pManager[4].Optional = true;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) => pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
@@ -115,46 +113,46 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         gps.GridSurface.Elements = "";
         if (ghTyp.Value is GsaElement1dGoo element1dGoo) {
-          gps.RefObjectGuid = element1dGoo.Value.Guid;
-          gps.ReferenceType = ReferenceType.Element;
+          gps._refObjectGuid = element1dGoo.Value.Guid;
+          gps._referenceType = ReferenceType.Element;
         }
         switch (ghTyp.Value) {
           case GsaElement2dGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Element;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Element;
               break;
             }
           case GsaMember1dGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Member;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Member;
               this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               break;
             }
           case GsaMember2dGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Member;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Member;
               this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               break;
             }
           case GsaMember3dGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Member;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Member;
               this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               break;
             }
           case GsaSectionGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Section;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Section;
               break;
             }
           case GsaProp2dGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Prop2d;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Prop2d;
               break;
             }
           case GsaProp3dGoo value: {
-              gps.RefObjectGuid = value.Value.Guid;
-              gps.ReferenceType = ReferenceType.Prop3d;
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Prop3d;
               break;
             }
           default: {

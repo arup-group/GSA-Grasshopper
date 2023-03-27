@@ -26,9 +26,7 @@ namespace GsaGH.Components {
       "NodeLoad",
       "Create GSA Node Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat3()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -67,9 +65,7 @@ namespace GsaGH.Components {
       pManager[3].Optional = true;
 
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaLoadParameter(), "Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) => pManager.AddParameter(new GsaLoadParameter(), "Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -98,10 +94,10 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         var refPt = new Point3d();
         if (ghTyp.Value is GsaNodeGoo goo) {
-          nodeLoad.RefPoint = goo.Value.Point;
+          nodeLoad._refPoint = goo.Value.Point;
         }
         else if (GH_Convert.ToPoint3d(ghTyp.Value, ref refPt, GH_Conversion.Both)) {
-          nodeLoad.RefPoint = refPt;
+          nodeLoad._refPoint = refPt;
           this.AddRuntimeRemark("Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
         else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both))
@@ -266,10 +262,7 @@ namespace GsaGH.Components {
     }
     public override void UpdateUIFromSelectedItems() {
       string md = SelectedItems[0].Replace(' ', '_');
-      if (md.ToLower() == "node")
-        _mode = FoldMode.NodeForce;
-      else
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
+      _mode = md.ToLower() == "node" ? FoldMode.NodeForce : (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
 
       switch (_mode) {
         case FoldMode.NodeForce:

@@ -157,7 +157,7 @@ namespace GsaGH.Helpers.Export {
         existingGridPlanes[gpId] = gridplanesurface.GridPlane;
       }
       else {
-        if (gridplanesurface.GridPlaneGUID == new Guid()) {
+        if (gridplanesurface.GridPlaneGuid == new Guid()) {
           int axisId = Axes.GetExistingAxisId(existingAxes, gridplanesurface.GetAxis(modelUnit));
 
           if (axisId > 0) {
@@ -173,15 +173,15 @@ namespace GsaGH.Helpers.Export {
             }
           }
         }
-        else if (gpGuid.ContainsKey(gridplanesurface.GridPlaneGUID)) {
-          gpGuid.TryGetValue(gridplanesurface.GridPlaneGUID, out int id);
+        else if (gpGuid.ContainsKey(gridplanesurface.GridPlaneGuid)) {
+          gpGuid.TryGetValue(gridplanesurface.GridPlaneGuid, out int id);
           return id;
         }
 
         existingGridPlanes.Add(gridplaneidcounter, gridplanesurface.GridPlane);
         gpId = gridplaneidcounter;
-        if (gridplanesurface.GridPlaneGUID != new Guid()) {
-          gpGuid.Add(gridplanesurface.GridPlaneGUID, gridplaneidcounter);
+        if (gridplanesurface.GridPlaneGuid != new Guid()) {
+          gpGuid.Add(gridplanesurface.GridPlaneGuid, gridplaneidcounter);
         }
         gridplaneidcounter++;
       }
@@ -227,7 +227,7 @@ namespace GsaGH.Helpers.Export {
       }
       gridplanesurface.GridSurface.Tolerance = tolerance.Meters;
 
-      if (model != null && gridplanesurface.ReferenceType != ReferenceType.None) {
+      if (model != null && gridplanesurface._referenceType != ReferenceType.None) {
         if (memberElementRelationship == null)
           memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
         gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(gridplanesurface, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
@@ -237,7 +237,7 @@ namespace GsaGH.Helpers.Export {
         existingGridSurfaces[gsId] = gridplanesurface.GridSurface;
       }
       else {
-        if (gridplanesurface.GridSurfaceGUID == new Guid()) {
+        if (gridplanesurface.GridSurfaceGuid == new Guid()) {
           int axisId = Axes.GetExistingAxisId(existingAxes, gridplanesurface.GetAxis(modelUnit));
 
           if (axisId > 0) {
@@ -262,15 +262,15 @@ namespace GsaGH.Helpers.Export {
             }
           }
         }
-        else if (gsGuid.ContainsKey(gridplanesurface.GridSurfaceGUID)) {
-          gsGuid.TryGetValue(gridplanesurface.GridSurfaceGUID, out int id);
+        else if (gsGuid.ContainsKey(gridplanesurface.GridSurfaceGuid)) {
+          gsGuid.TryGetValue(gridplanesurface.GridSurfaceGuid, out int id);
           return id;
         }
 
         existingGridSurfaces.Add(gridsurfaceidcounter, gridplanesurface.GridSurface);
         gsId = gridsurfaceidcounter;
-        if (gridplanesurface.GridSurfaceGUID != new Guid()) {
-          gsGuid.Add(gridplanesurface.GridSurfaceGUID, gsId);
+        if (gridplanesurface.GridSurfaceGuid != new Guid()) {
+          gsGuid.Add(gridplanesurface.GridSurfaceGuid, gsId);
         }
         gridsurfaceidcounter++;
       }

@@ -25,9 +25,7 @@ namespace GsaGH.Components {
       "BeamLoad",
       "Create GSA Beam Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat3()) => Hidden = true;
     public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
     #endregion
 
@@ -64,9 +62,7 @@ namespace GsaGH.Components {
 
       _mode = FoldMode.Uniform;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaLoadParameter(), "Beam Load", "Ld", "GSA Beam Load", GH_ParamAccess.item);
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) => pManager.AddParameter(new GsaLoadParameter(), "Beam Load", "Ld", "GSA Beam Load", GH_ParamAccess.item);
     #endregion
     protected override void SolveInstance(IGH_DataAccess da) {
       var beamLoad = new GsaBeamLoad();
@@ -81,13 +77,13 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaElement1dGoo value: {
-              beamLoad.RefObjectGuid = value.Value.Guid;
-              beamLoad.ReferenceType = ReferenceType.Element;
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Element;
               break;
             }
           case GsaMember1dGoo value: {
-              beamLoad.RefObjectGuid = value.Value.Guid;
-              beamLoad.ReferenceType = ReferenceType.Member;
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Member;
               if (_mode != FoldMode.Uniform)
                 this.AddRuntimeWarning("Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
               else
@@ -95,8 +91,8 @@ namespace GsaGH.Components {
               break;
             }
           case GsaSectionGoo value: {
-              beamLoad.RefObjectGuid = value.Value.Guid;
-              beamLoad.ReferenceType = ReferenceType.Section;
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Section;
               break;
             }
           default: {
