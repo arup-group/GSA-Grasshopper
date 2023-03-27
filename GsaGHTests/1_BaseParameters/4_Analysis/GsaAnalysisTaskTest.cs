@@ -9,10 +9,8 @@ namespace GsaGHTests.Parameters {
   public class GsaAnalysisTaskTest {
     [Fact]
     public void EmptyConstructorTest() {
-      // Act
       var task = new GsaAnalysisTask();
 
-      // Assert
       Assert.Equal(0, task.Id);
       Assert.Null(task.Name);
       Assert.Equal(AnalysisType.Static, task.Type);
@@ -21,16 +19,12 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateTest() {
-      // Arrange
       var original = new GsaAnalysisTask();
 
-      // Act
       GsaAnalysisTask duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
 
-      // make some changes to duplicate
       duplicate.Id = 1;
       duplicate.Name = "name";
       duplicate.Type = AnalysisType.Buckling;

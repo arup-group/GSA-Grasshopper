@@ -7,17 +7,12 @@ namespace GsaGHTests.Parameters {
   public class GsaMaterialTest {
     [Fact]
     public void DuplicateTest() {
-      // Arrange
-      var original = new GsaMaterial();
-      original.MaterialType = GsaMaterial.MatType.Aluminium;
+      var original = new GsaMaterial {
+        MaterialType = GsaMaterial.MatType.Aluminium,
+      };
 
-      // Act
       GsaMaterial duplicate = original.Duplicate();
-
       Duplicates.AreEqual(original, duplicate);
-
-      // make some changes to duplicate
-      // todo
     }
   }
 }

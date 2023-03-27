@@ -7,10 +7,8 @@ namespace GsaGHTests.Parameters {
   public class GsaCombinationCaseTest {
     [Fact]
     public void EmptyConstructorTest() {
-      // Act
       var combinationCase = new GsaCombinationCase();
 
-      // Assert
       Assert.Equal(0, combinationCase.Id);
       Assert.Null(combinationCase.Name);
       Assert.Null(combinationCase.Description);
@@ -20,10 +18,8 @@ namespace GsaGHTests.Parameters {
     [InlineData(0, "name", "description")]
     [InlineData(100, "name", "description")]
     public void ConstructorTest1(int id, string name, string description) {
-      // Act
       var combinationCase = new GsaCombinationCase(id, name, description);
 
-      // Assert
       Assert.Equal(id, combinationCase.Id);
       Assert.Equal(name, combinationCase.Name);
       Assert.Equal(description, combinationCase.Description);
@@ -32,10 +28,8 @@ namespace GsaGHTests.Parameters {
     [Theory]
     [InlineData("name", "description")]
     public void ConstructorTest2(string name, string description) {
-      // Act
       var combinationCase = new GsaCombinationCase(name, description);
 
-      // Assert
       Assert.Equal(0, combinationCase.Id);
       Assert.Equal(name, combinationCase.Name);
       Assert.Equal(description, combinationCase.Description);
@@ -43,16 +37,12 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateTest() {
-      // Arrange
       var original = new GsaCombinationCase(1, "name", "description");
 
-      // Act
       GsaCombinationCase duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
 
-      // make some changes to duplicate
       duplicate.Id = 0;
       duplicate.Name = "";
       duplicate.Description = "";

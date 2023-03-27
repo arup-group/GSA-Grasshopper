@@ -1,4 +1,5 @@
-﻿using GsaAPI;
+﻿using System.Drawing;
+using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
@@ -11,57 +12,52 @@ namespace GsaGHTests.Parameters {
   public class GsaElement1dTest {
     [Fact]
     public void CloneApiObjectTest() {
-      // Arrange
-      var section = new GsaSection();
-      section.Name = "Name";
-      var element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
-      element1d.Name = "Name";
+      var section = new GsaSection {
+        Name = "Name",
+      };
+      var element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode()) {
+        Name = "Name",
+      };
       Element original = element1d.ApiElement;
 
-      // Act
       Element duplicate = element1d.GetApiElementClone();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
     }
 
     [Fact]
     public void DuplicateTest() {
-      // Arrange
-      var section = new GsaSection();
-      section.Name = "Name";
-      var original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
-      original.Name = "Name";
+      var section = new GsaSection {
+        Name = "Name",
+      };
+      var original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode()) {
+        Name = "Name",
+      };
 
-      // Act
       GsaElement1d duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
     }
 
     [Fact]
     public void TestCreateGsaElem1dFromLn() {
-      // create new line
       var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
-      // create element
-      var elem = new GsaElement1d(new LineCurve(ln));
-
-      // set some element class members
-      elem.Id = 66;
-      elem.Section = new GsaSection();
-      elem.Section.Id = 2;
-      elem.Colour = System.Drawing.Color.Yellow;
-      elem.Group = 4;
-      elem.IsDummy = true;
-      elem.Name = "EltonJohn";
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 66,
+        Section = new GsaSection {
+          Id = 2,
+        },
+        Colour = Color.Yellow,
+        Group = 4,
+        IsDummy = true,
+        Name = "EltonJohn",
+      };
       var offset = new GsaOffset(0, 0, 14.3, 0);
       elem.Offset = offset;
       elem.OrientationAngle = new Angle(90, AngleUnit.Degree);
       elem.Section.Id = 3;
 
-      // check the line end points are correct
       Assert.Equal(1, elem.Line.PointAtStart.X);
       Assert.Equal(4, elem.Line.PointAtStart.Y);
       Assert.Equal(6, elem.Line.PointAtStart.Z);
@@ -69,10 +65,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(3, elem.Line.PointAtEnd.Y);
       Assert.Equal(-5, elem.Line.PointAtEnd.Z);
 
-      // check other members are valid
       Assert.Equal(66, elem.Id);
       Assert.Equal(3, elem.Section.Id);
-      Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 255, 0), elem.Colour);
+      Assert.Equal(Color.FromArgb(255, 255, 255, 0), elem.Colour);
       Assert.Equal(4, elem.Group);
       Assert.True(elem.IsDummy);
       Assert.Equal("EltonJohn", elem.Name);
@@ -83,32 +78,28 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestDuplicateElem1d() {
-      // create new line
       var ln = new Line(new Point3d(2, -1, 0), new Point3d(2, -1, 4));
 
-      // create element
-      var orig = new GsaElement1d(new LineCurve(ln));
-
-      // set some element class members
-      orig.Id = 3;
-      orig.Section = new GsaSection();
-      orig.Section.Id = 7;
-      orig.Colour = System.Drawing.Color.Aqua;
-      orig.Group = 1;
-      orig.IsDummy = false;
-      orig.Name = "Tilman";
+      var orig = new GsaElement1d(new LineCurve(ln)) {
+        Id = 3,
+        Section = new GsaSection {
+          Id = 7,
+        },
+        Colour = Color.Aqua,
+        Group = 1,
+        IsDummy = false,
+        Name = "Tilman",
+      };
       var offset = new GsaOffset(0, 0, 2.9, 0);
       orig.Offset = offset;
       orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
-      // duplicate original
       GsaElement1d dup = orig.Duplicate();
 
-      // make some changes to original
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
       orig.Id = 5;
       orig.Section.Id = 9;
-      orig.Colour = System.Drawing.Color.Red;
+      orig.Colour = Color.Red;
       orig.Group = 2;
       orig.IsDummy = true;
       orig.Name = "Hugh";
@@ -125,7 +116,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(4, dup.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(3, dup.Id);
       Assert.Equal(7, dup.Section.Id);
-      Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 255, 255), dup.Colour);
+      Assert.Equal(Color.FromArgb(255, 0, 255, 255), dup.Colour);
       Assert.Equal(1, dup.Group);
       Assert.False(dup.IsDummy);
       Assert.Equal("Tilman", dup.Name);
@@ -141,7 +132,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, orig.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(5, orig.Id);
       Assert.Equal(9, orig.Section.Id);
-      Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 0, 0), orig.Colour);
+      Assert.Equal(Color.FromArgb(255, 255, 0, 0), orig.Colour);
       Assert.Equal(2, orig.Group);
       Assert.True(orig.IsDummy);
       Assert.Equal("Hugh", orig.Name);
@@ -151,10 +142,8 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestCreateGsaElem1dGetReleases() {
-      // create new line
       var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
-      // create element
       var elem = new GsaElement1d(new LineCurve(ln));
 
       GsaBool6 rel1 = elem.ReleaseStart;
