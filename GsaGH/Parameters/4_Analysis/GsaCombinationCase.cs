@@ -1,43 +1,41 @@
-﻿namespace GsaGH.Parameters
-{
-  public class GsaCombinationCase
-  {
-    internal int ID { get; set; } = 0;
+﻿namespace GsaGH.Parameters {
+  public class GsaCombinationCase {
+    public GsaCombinationCase() { }
+
+    internal GsaCombinationCase(int id, string name, string description) {
+      Id = id;
+      Name = name;
+      Description = description;
+    }
+
+    public GsaCombinationCase(string name, string description) {
+      Name = name;
+      Description = description;
+    }
+
+    internal int Id { get; set; } = 0;
     public string Name { get; set; }
     public string Description { get; set; }
 
-    public GsaCombinationCase()
-    {
-    }
-
-    internal GsaCombinationCase(int id, string name, string description)
-    {
-      this.ID = id;
-      this.Name = name;
-      this.Description = description;
-    }
-
-    public GsaCombinationCase(string name, string description)
-    {
-      this.Name = name;
-      this.Description = description;
-    }
-
     #region methods
-    public GsaCombinationCase Duplicate()
-    {
-      return new GsaCombinationCase(ID, Name, Description);
+
+    public GsaCombinationCase Duplicate() => new GsaCombinationCase(Id, Name, Description);
+
+    public override string ToString() {
+      string s = "";
+      if (Name != null)
+        s += " '" + Name.ToString() + "'";
+      if (Description != null)
+        s += " " + Description.ToString();
+      return string.Join(" ",
+          (Id > 0
+            ? "ID:" + Id
+            : "").Trim(),
+          s.Trim())
+        .Trim()
+        .Replace("  ", " ");
     }
 
-    public override string ToString()
-    {
-      string s = "";
-      if (this.Name != null)
-        s += " '" + this.Name.ToString() + "'";
-      if (this.Description != null)
-        s += " " + this.Description.ToString();
-      return string.Join(" ", (this.ID > 0 ? "ID:" + this.ID : "").Trim(), s.Trim()).Trim().Replace("  ", " ");
-    }
     #endregion
   }
 }

@@ -10,9 +10,7 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Analyses {
-    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel) {
-      return GetAnalysisTasksAndCombinations(gsaModel.Model);
-    }
+    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel) => GetAnalysisTasksAndCombinations(gsaModel.Model);
     internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(Model model) {
       ReadOnlyDictionary<int, AnalysisTask> tasks = model.AnalysisTasks();
 
@@ -23,7 +21,7 @@ namespace GsaGH.Helpers.Import {
       foreach (KeyValuePair<int, AnalysisTask> item in tasks) {
         var task = new GsaAnalysisTask(item.Key, item.Value, model);
         tasksList.Add(new GsaAnalysisTaskGoo(task));
-        caseIDs.AddRange(task.Cases.Select(acase => acase.ID));
+        caseIDs.AddRange(task.Cases.Select(acase => acase.Id));
       }
       ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
       caseIDs.AddRange(gravities.Select(x => x.Case));

@@ -2,19 +2,16 @@
 using GsaGHTests.Helpers;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaAnalysisCaseTest
-  {
+  public class GsaAnalysisCaseTest {
     [Fact]
-    public void EmptyConstructorTest()
-    {
+    public void EmptyConstructorTest() {
       // Act
-      GsaAnalysisCase analysisCase = new GsaAnalysisCase();
+      var analysisCase = new GsaAnalysisCase();
 
       // Assert
-      Assert.Equal(0, analysisCase.ID);
+      Assert.Equal(0, analysisCase.Id);
       Assert.Null(analysisCase.Name);
       Assert.Null(analysisCase.Description);
     }
@@ -22,22 +19,20 @@ namespace GsaGHTests.Parameters
     [Theory]
     [InlineData(0, "name", "description")]
     [InlineData(100, "name", "description")]
-    public void ConstructorTest(int id, string name, string description)
-    {
+    public void ConstructorTest(int id, string name, string description) {
       // Act
-      GsaAnalysisCase analysisCase = new GsaAnalysisCase(id, name, description);
+      var analysisCase = new GsaAnalysisCase(id, name, description);
 
       // Assert
-      Assert.Equal(id, analysisCase.ID);
+      Assert.Equal(id, analysisCase.Id);
       Assert.Equal(name, analysisCase.Name);
       Assert.Equal(description, analysisCase.Description);
     }
 
     [Fact]
-    public void DuplicateTest()
-    {
+    public void DuplicateTest() {
       // Arrange
-      GsaAnalysisCase original = new GsaAnalysisCase(1, "name", "description");
+      var original = new GsaAnalysisCase(1, "name", "description");
 
       // Act
       GsaAnalysisCase duplicate = original.Duplicate();
@@ -46,11 +41,11 @@ namespace GsaGHTests.Parameters
       Duplicates.AreEqual(original, duplicate);
 
       // make some changes to duplicate
-      duplicate.ID = 0;
+      duplicate.Id = 0;
       duplicate.Name = "";
       duplicate.Description = "";
 
-      Assert.Equal(1, original.ID);
+      Assert.Equal(1, original.Id);
       Assert.Equal("name", original.Name);
       Assert.Equal("description", original.Description);
     }

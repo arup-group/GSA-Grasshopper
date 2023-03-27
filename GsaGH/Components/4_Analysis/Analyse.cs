@@ -29,9 +29,7 @@ namespace GsaGH.Components {
       "Analyse",
       "Assemble and Analyse a GSA Model",
       CategoryName.Name(),
-      SubCategoryName.Cat4()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat4()) => Hidden = true;
     #endregion
 
     #region input and output
@@ -47,9 +45,7 @@ namespace GsaGH.Components {
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter());
-    }
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) => pManager.AddParameter(new GsaModelParameter());
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -103,7 +99,7 @@ namespace GsaGH.Components {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
         if (gsaTasks.Count < 1) {
           var task = new GsaAnalysisTask {
-            ID = model.Model.AddAnalysisTask()
+            Id = model.Model.AddAnalysisTask()
           };
           task.CreateDefaultCases(model.Model);
           if (task.Cases == null || task.Cases.Count == 0)
@@ -111,7 +107,7 @@ namespace GsaGH.Components {
           else {
             this.AddRuntimeRemark("Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases)
-              model.Model.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
+              model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
             gsaTasks = model.Model.AnalysisTasks();
           }
         }
@@ -154,6 +150,7 @@ namespace GsaGH.Components {
               this.AddRuntimeError(e.Message);
             }
           }
+
           model.Guid = Guid.NewGuid();
         }
       }
@@ -213,9 +210,7 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance() {
-      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
-    }
+    public override void VariableParameterMaintenance() => Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -259,6 +254,7 @@ namespace GsaGH.Components {
           return;
         }
       }
+
       _tolerance = _tolerance.ToUnit(_lengthUnit);
       Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
       if (_tolerance.Meters < 0.001)

@@ -23,9 +23,7 @@ namespace GsaGH.Components {
       "EditTask",
       "Modify GSA Analysis Tasks",
       CategoryName.Name(),
-      SubCategoryName.Cat4()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat4()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -83,7 +81,7 @@ namespace GsaGH.Components {
         else
           da.SetData(2, null);
         da.SetData(3, gsaTask.Type.ToString());
-        da.SetData(4, gsaTask.ID);
+        da.SetData(4, gsaTask.Id);
       }
       else {
         string type = ghTyp.Value.GetType().ToString();

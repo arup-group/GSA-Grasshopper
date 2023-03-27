@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Section class, this class defines the basic properties and methods for any Gsa Section
+  ///   Section class, this class defines the basic properties and methods for any Gsa Section
   /// </summary>
   public class GsaAnalysisTask {
     public enum AnalysisType {
@@ -30,63 +31,69 @@ namespace GsaGH.Parameters {
     }
 
     #region fields
-    private int m_idd = 0;
+
+    private int _id = 0;
+
     #endregion
 
     #region properties
+
     public List<GsaAnalysisCase> Cases { get; set; } = null;
-    public string Name {
-      get; set;
+
+    public string Name { get; set; }
+
+    public AnalysisType Type { get; set; }
+
+    public int Id {
+      get => _id;
+      set => _id = value;
     }
-    public AnalysisType Type {
-      get; set;
-    }
-    public int ID {
-      get {
-        return m_idd;
-      }
-      set {
-        m_idd = value;
-      }
-    }
+
     #endregion
 
     #region constructors
+
     public GsaAnalysisTask() {
-      m_idd = 0;
+      _id = 0;
       Cases = new List<GsaAnalysisCase>();
       Type = AnalysisType.Static;
     }
 
-    internal GsaAnalysisTask(int ID, AnalysisTask task, Model model) {
-      m_idd = ID;
+    internal GsaAnalysisTask(int id, AnalysisTask task, Model model) {
+      _id = id;
       Cases = new List<GsaAnalysisCase>();
-      foreach (int caseID in task.Cases) {
-        string caseName = model.AnalysisCaseName(caseID);
-        string caseDescription = model.AnalysisCaseDescription(caseID);
-        Cases.Add(new GsaAnalysisCase(caseID, caseName, caseDescription));
+      foreach (int caseId in task.Cases) {
+        string caseName = model.AnalysisCaseName(caseId);
+        string caseDescription = model.AnalysisCaseDescription(caseId);
+        Cases.Add(new GsaAnalysisCase(caseId, caseName, caseDescription));
       }
+
       Type = (AnalysisType)task.Type;
       Name = task.Name;
     }
+
     #endregion
 
     #region methods
+
     internal void CreateDefaultCases(Model model) {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(model);
-      Cases = tuple.Item2.Select(x => x.Value).ToList();
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
+        = Analyses.GetAnalysisTasksAndCombinations(model);
+      Cases = tuple.Item2.Select(x => x.Value)
+        .ToList();
     }
+
     internal void CreateDeafultCases(GsaModel gsaModel) {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(gsaModel);
-      Cases = tuple.Item2.Select(x => x.Value).ToList();
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
+        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
+      Cases = tuple.Item2.Select(x => x.Value)
+        .ToList();
     }
 
     public GsaAnalysisTask Duplicate() {
-      if (this == null) {
-        return null;
-      }
-      var dup = new GsaAnalysisTask();
-      dup.m_idd = m_idd;
+      var dup = new GsaAnalysisTask {
+        _id = _id,
+      };
       if (Cases != null)
         dup.Cases = Cases.ToList();
       dup.Type = Type;
@@ -94,9 +101,17 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    public override string ToString() {
-      return (ID > 0 ? "ID:" + ID : "" + " '" + Name + "' " + Type.ToString().Replace("_", " ")).Trim().Replace("  ", " ");
-    }
+    public override string ToString()
+      => (Id > 0
+          ? "ID:" + Id
+          : ""
+          + " '"
+          + Name
+          + "' "
+          + Type.ToString()
+            .Replace("_", " ")).Trim()
+        .Replace("  ", " ");
+
     #endregion
   }
 }

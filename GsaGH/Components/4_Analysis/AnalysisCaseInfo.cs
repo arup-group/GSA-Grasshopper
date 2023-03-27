@@ -21,15 +21,11 @@ namespace GsaGH.Components {
       "CaseInfo",
       "Get information about the properties of a GSA Analysis Case (Load Case or Combination)",
       CategoryName.Name(),
-      SubCategoryName.Cat4()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat4()) => Hidden = true;
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaAnalysisCaseParameter());
-    }
+    protected override void RegisterInputParams(GH_InputParamManager pManager) => pManager.AddParameter(new GsaAnalysisCaseParameter());
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Analysis Case Name", GH_ParamAccess.item);
@@ -48,7 +44,7 @@ namespace GsaGH.Components {
         GsaAnalysisCase gsaCase = goo.Value.Duplicate();
         da.SetData(0, gsaCase.Name);
         da.SetData(1, gsaCase.Description);
-        da.SetData(2, gsaCase.ID);
+        da.SetData(2, gsaCase.Id);
       }
       else {
         string type = ghTyp.Value.GetType().ToString();

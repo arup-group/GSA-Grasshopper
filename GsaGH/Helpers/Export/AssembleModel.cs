@@ -127,6 +127,7 @@ namespace GsaGH.Helpers.Export {
               initialNodeCount -= difference;
             }
           }
+
           if (elem3ds != null && elem3ds.Count > 0) {
             foreach (GsaElement3d e3d in elem3ds) {
               int expectedCollapsedNodeCount = e3d.NgonMesh.TopologyVertices.Count;
@@ -135,6 +136,7 @@ namespace GsaGH.Helpers.Export {
               initialNodeCount -= difference;
             }
           }
+
           double nodeSurvivalRate = newNodeCount / (double)initialNodeCount;
 
           int elemCount = apiElemDict.Count;
@@ -210,8 +212,8 @@ namespace GsaGH.Helpers.Export {
       if (analysisTasks != null) {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = gsa.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
-          if (!existingTasks.Keys.Contains(task.ID))
-            task.ID = gsa.AddAnalysisTask();
+          if (!existingTasks.Keys.Contains(task.Id))
+            task.Id = gsa.AddAnalysisTask();
 
           if (task.Cases == null || task.Cases.Count == 0)
             task.CreateDefaultCases(gsa);
@@ -221,7 +223,7 @@ namespace GsaGH.Helpers.Export {
           }
 
           foreach (GsaAnalysisCase ca in task.Cases)
-            gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
+            gsa.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
         }
       }
 

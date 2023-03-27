@@ -4,29 +4,25 @@ using GsaGHTests.Helpers;
 using Xunit;
 using static GsaGH.Parameters.GsaAnalysisTask;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaAnalysisTaskTest
-  {
+  public class GsaAnalysisTaskTest {
     [Fact]
-    public void EmptyConstructorTest()
-    {
+    public void EmptyConstructorTest() {
       // Act
-      GsaAnalysisTask task = new GsaAnalysisTask();
+      var task = new GsaAnalysisTask();
 
       // Assert
-      Assert.Equal(0, task.ID);
+      Assert.Equal(0, task.Id);
       Assert.Null(task.Name);
       Assert.Equal(AnalysisType.Static, task.Type);
       Assert.Empty(task.Cases);
     }
 
     [Fact]
-    public void DuplicateTest()
-    {
+    public void DuplicateTest() {
       // Arrange
-      GsaAnalysisTask original = new GsaAnalysisTask();
+      var original = new GsaAnalysisTask();
 
       // Act
       GsaAnalysisTask duplicate = original.Duplicate();
@@ -35,12 +31,12 @@ namespace GsaGHTests.Parameters
       Duplicates.AreEqual(original, duplicate);
 
       // make some changes to duplicate
-      duplicate.ID = 1;
+      duplicate.Id = 1;
       duplicate.Name = "name";
       duplicate.Type = AnalysisType.Buckling;
       duplicate.Cases = new List<GsaAnalysisCase>();
 
-      Assert.Equal(0, original.ID);
+      Assert.Equal(0, original.Id);
       Assert.Null(original.Name);
       Assert.Equal(AnalysisType.Static, original.Type);
       Assert.Empty(original.Cases);
