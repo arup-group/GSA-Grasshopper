@@ -32,9 +32,7 @@ namespace GsaGH.Components {
       "BeamDisp",
       "Element1D Translation and Rotation result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat5()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -96,10 +94,11 @@ namespace GsaGH.Components {
       }
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        if (ghTyp == null || ghTyp.Value == null) {
+        if (ghTyp?.Value == null) {
           this.AddRuntimeWarning("Input is null");
           return;
         }
+
         if (ghTyp.Value is GsaResultGoo goo) {
           result = goo.Value;
         }
@@ -118,8 +117,8 @@ namespace GsaGH.Components {
 
         // loop through all permutations (analysis case will just have one)
         foreach (int perm in permutations) {
-          if (vals[perm - 1].xyzResults.Count == 0
-              & vals[perm - 1].xxyyzzResults.Count == 0) {
+          if (vals[perm - 1].XyzResults.Count == 0
+              & vals[perm - 1].XxyyzzResults.Count == 0) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
             continue;
@@ -128,7 +127,7 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].XyzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                     if (res.Count == 0) { continue; }
@@ -142,13 +141,13 @@ namespace GsaGH.Components {
                     outTransX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))), path); // use ToUnit to capture changes in dropdown
                     outTransY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
                     outTransZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-                    outTransXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_lengthUnit))), path);
+                    outTransXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
                   }
 
                   break;
                 }
               case 1: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].XxyyzzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                     if (res.Count == 0) { continue; }
@@ -162,7 +161,7 @@ namespace GsaGH.Components {
                     outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), path); // always use [rad] units
                     outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
                     outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
-                    outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ)), path);
+                    outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
                   }
 
                   break;

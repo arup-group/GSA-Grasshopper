@@ -155,8 +155,8 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
 
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.XxyyzzResults;
 
       Enum xyzunit = _lengthResultUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
@@ -290,7 +290,7 @@ namespace GsaGH.Components {
                 translation.Z = xyzResults[nodeId][0].Z.As(lengthUnit) * _defScale;
                 break;
               case (DisplayValue.ResXyz):
-                t = xyzResults[nodeId][0].XYZ.ToUnit(_lengthResultUnit);
+                t = xyzResults[nodeId][0].Xyz.ToUnit(_lengthResultUnit);
                 translation.X = xyzResults[nodeId][0].X.As(lengthUnit) * _defScale;
                 translation.Y = xyzResults[nodeId][0].Y.As(lengthUnit) * _defScale;
                 translation.Z = xyzResults[nodeId][0].Z.As(lengthUnit) * _defScale;
@@ -305,7 +305,7 @@ namespace GsaGH.Components {
                 t = xxyyzzResults[nodeId][0].Z.ToUnit(AngleUnit.Radian);
                 break;
               case (DisplayValue.ResXxyyzz):
-                t = xxyyzzResults[nodeId][0].XYZ.ToUnit(AngleUnit.Radian);
+                t = xxyyzzResults[nodeId][0].Xyz.ToUnit(AngleUnit.Radian);
                 break;
             }
             def.Transform(Transform.Translation(translation));
@@ -322,7 +322,7 @@ namespace GsaGH.Components {
                 t = xyzResults[nodeId][0].Z.ToUnit(_forceUnit);
                 break;
               case (DisplayValue.ResXyz):
-                t = xyzResults[nodeId][0].XYZ.ToUnit(_forceUnit);
+                t = xyzResults[nodeId][0].Xyz.ToUnit(_forceUnit);
                 break;
               case (DisplayValue.Xx):
                 t = xxyyzzResults[nodeId][0].X.ToUnit(_momentUnit);
@@ -334,7 +334,7 @@ namespace GsaGH.Components {
                 t = xxyyzzResults[nodeId][0].Z.ToUnit(_momentUnit);
                 break;
               case (DisplayValue.ResXxyyzz):
-                t = xxyyzzResults[nodeId][0].XYZ.ToUnit(_momentUnit);
+                t = xxyyzzResults[nodeId][0].Xyz.ToUnit(_momentUnit);
                 break;
             }
             break;
@@ -567,9 +567,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public void SetVal(double value) {
-      _defScale = value;
-    }
+    public void SetVal(double value) => _defScale = value;
 
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
@@ -676,14 +674,14 @@ namespace GsaGH.Components {
 
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
           Enabled = true,
         };
@@ -694,7 +692,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateForce(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
           Checked = unit == Force.GetAbbreviation(_forceUnit),
           Enabled = true,
         };
@@ -705,7 +703,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateMoment(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
           Checked = unit == Moment.GetAbbreviation(_momentUnit),
           Enabled = true,
         };
@@ -719,7 +717,7 @@ namespace GsaGH.Components {
           Enabled = true,
         };
         foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); }) {
+          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
             Checked = unit == Length.GetAbbreviation(_lengthUnit),
             Enabled = true,
           };

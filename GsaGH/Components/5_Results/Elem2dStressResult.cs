@@ -32,9 +32,7 @@ namespace GsaGH.Components {
       "Stress2D",
       "2D Projected Stress result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat5()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -117,7 +115,7 @@ namespace GsaGH.Components {
           permutations = Enumerable.Range(1, vals.Count).ToList();
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0) {
+          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
             continue;
@@ -126,7 +124,7 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].XyzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                     if (res.Count == 0) { continue; }
@@ -146,7 +144,7 @@ namespace GsaGH.Components {
                   break;
                 }
               case 1: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].XxyyzzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                     if (res.Count == 0) { continue; }

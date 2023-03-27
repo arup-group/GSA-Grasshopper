@@ -29,15 +29,11 @@ namespace GsaGH.Components {
       "TotalResults",
       "Get Total Loads and Reaction Results from a GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat5()) => Hidden = true;
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-    }
+    protected override void RegisterInputParams(GH_InputParamManager pManager) => pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
@@ -98,25 +94,25 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(f.X));
       da.SetData(i++, new GH_UnitNumber(f.Y));
       da.SetData(i++, new GH_UnitNumber(f.Z));
-      da.SetData(i++, new GH_UnitNumber(f.XYZ));
+      da.SetData(i++, new GH_UnitNumber(f.Xyz));
 
       GsaResultQuantity m = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _momentUnit);
       da.SetData(i++, new GH_UnitNumber(m.X));
       da.SetData(i++, new GH_UnitNumber(m.Y));
       da.SetData(i++, new GH_UnitNumber(m.Z));
-      da.SetData(i++, new GH_UnitNumber(m.XYZ));
+      da.SetData(i++, new GH_UnitNumber(m.Xyz));
 
       GsaResultQuantity rf = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _forceUnit);
       da.SetData(i++, new GH_UnitNumber(rf.X));
       da.SetData(i++, new GH_UnitNumber(rf.Y));
       da.SetData(i++, new GH_UnitNumber(rf.Z));
-      da.SetData(i++, new GH_UnitNumber(rf.XYZ));
+      da.SetData(i++, new GH_UnitNumber(rf.Xyz));
 
       GsaResultQuantity rm = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _momentUnit);
       da.SetData(i++, new GH_UnitNumber(rm.X));
       da.SetData(i++, new GH_UnitNumber(rm.Y));
       da.SetData(i++, new GH_UnitNumber(rm.Z));
-      da.SetData(i, new GH_UnitNumber(rm.XYZ));
+      da.SetData(i, new GH_UnitNumber(rm.Xyz));
 
       Helpers.PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
     }

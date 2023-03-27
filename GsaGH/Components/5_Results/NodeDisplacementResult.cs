@@ -32,9 +32,7 @@ namespace GsaGH.Components {
       "NodeDisp",
       "Node Translation and Rotation result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat5()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -129,22 +127,22 @@ namespace GsaGH.Components {
               case 0: {
                   foreach (int id in sortedIDs) {
                     ids.Add(id);
-                    ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xyzResults[id];
+                    ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].XyzResults[id];
                     GsaResultQuantity values = res[0]; // there is only one result per node
                     transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit))); // use ToUnit to capture changes in dropdown
                     transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
                     transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_lengthUnit)));
-                    transXyz.Add(new GH_UnitNumber(values.XYZ.ToUnit(_lengthUnit)));
+                    transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_lengthUnit)));
                   }
 
                   break;
                 }
               case 1: {
-                  foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1].xxyyzzResults[id]).Select(res => res[0])) {
+                  foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1].XxyyzzResults[id]).Select(res => res[0])) {
                     rotX.Add(new GH_UnitNumber(values.X));
                     rotY.Add(new GH_UnitNumber(values.Y));
                     rotZ.Add(new GH_UnitNumber(values.Z));
-                    rotXyz.Add(new GH_UnitNumber(values.XYZ));
+                    rotXyz.Add(new GH_UnitNumber(values.Xyz));
                   }
 
                   break;

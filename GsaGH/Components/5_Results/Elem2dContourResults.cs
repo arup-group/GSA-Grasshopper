@@ -154,8 +154,8 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
 
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = (_isShear) ? resShear.xyzResults : res.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = (_isShear) ? resShear.XyzResults : res.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.XxyyzzResults;
 
       Enum xyzunit = _lengthResultUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
@@ -375,7 +375,7 @@ namespace GsaGH.Components {
             break;
 
           case (DisplayValue.ResXyz):
-            vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(_mode == FoldMode.Force ? xxyyzzunit : xyzunit)).ToList();
+            vals = xyzResults[key].Select(item => item.Value.Xyz.ToUnit(_mode == FoldMode.Force ? xxyyzzunit : xyzunit)).ToList();
             if (_mode == FoldMode.Displacement)
               transformation = xyzResults[key].Select(item => new Vector3d(
                 item.Value.X.As(lengthUnit) * _defScale,
@@ -393,7 +393,7 @@ namespace GsaGH.Components {
             vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
             break;
           case (DisplayValue.ResXxyyzz):
-            vals = xxyyzzResults[key].Select(item => item.Value.XYZ.ToUnit(xxyyzzunit)).ToList();
+            vals = xxyyzzResults[key].Select(item => item.Value.Xyz.ToUnit(xxyyzzunit)).ToList();
             break;
         }
 
@@ -428,18 +428,16 @@ namespace GsaGH.Components {
           for (int i = 0; i < tempmesh.Vertices.Count; i++)
             tempmesh.VertexColors.SetColor(i, col);
 
-          if (tempmesh.Ngons.Count == 0) {
-            verticies[key] = new List<Point3d>()
+          verticies[key] = tempmesh.Ngons.Count == 0
+            ? new List<Point3d>()
             {
               new Point3d(
                 tempmesh.Vertices.Select(pt => pt.X).Average(),
                 tempmesh.Vertices.Select(pt => pt.Y).Average(),
                 tempmesh.Vertices.Select(pt => pt.Z).Average()
               ),
-            };
-          }
-          else {
-            verticies[key] = new List<Point3d>()
+            }
+            : new List<Point3d>()
             {
               new Point3d(
                 tempmesh.Vertices.Last().X,
@@ -447,7 +445,6 @@ namespace GsaGH.Components {
                 tempmesh.Vertices.Last().Z
               )
             };
-          }
         }
         else
           verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
@@ -804,9 +801,7 @@ namespace GsaGH.Components {
       }
       base.UpdateUI();
     }
-    public void SetVal(double value) {
-      _defScale = value;
-    }
+    public void SetVal(double value) => _defScale = value;
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
       _minValue = min;
@@ -853,10 +848,9 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          if ((int)_disp < 4)
-            Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
-          else
-            Message = Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/" + Length.GetAbbreviation(_lengthUnit);
+          Message = (int)_disp < 4
+            ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit)
+            : Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/" + Length.GetAbbreviation(_lengthUnit);
           break;
 
         case FoldMode.Stress:
@@ -933,14 +927,14 @@ namespace GsaGH.Components {
 
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
           Enabled = true,
         };
@@ -951,7 +945,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateForce(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
           Checked = unit == ForcePerLength.GetAbbreviation(_forcePerLengthUnit),
           Enabled = true,
         };
@@ -962,7 +956,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateMoment(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
           Checked = unit == Force.GetAbbreviation(_forceUnit),
           Enabled = true,
         };
@@ -973,7 +967,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateStress(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
           Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
           Enabled = true,
         };
@@ -987,7 +981,7 @@ namespace GsaGH.Components {
           Enabled = true,
         };
         foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); }) {
+          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
             Checked = unit == Length.GetAbbreviation(_lengthUnit),
             Enabled = true,
           };

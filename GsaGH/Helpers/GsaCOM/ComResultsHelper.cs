@@ -32,23 +32,19 @@ namespace GsaGH.Helpers.GsaAPI {
         var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         var ff = new Ratio((double)gsa.Output_Extract(nodeId, 0), RatioUnit.DecimalFraction);
         var res = new GsaResultQuantity() {
-          X = ff
+          X = ff,
         };
         xyzRes.TryAdd(0, res);
-        r.xyzResults.TryAdd(nodeId, xyzRes);
+        r.XyzResults.TryAdd(nodeId, xyzRes);
       }
       r.UpdateMinMax();
 
       return r;
     }
 
-    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) {
-      return GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
-    }
+    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
 
-    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) {
-      return GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
-    }
+    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
     private enum ElementDimension {
       _1D,
       _2D,
@@ -73,7 +69,7 @@ namespace GsaGH.Helpers.GsaAPI {
         var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         for (int i = 0; i < elements[elemId].Topology.Count; i++) {
           int nodeId = elements[elemId].Topology[i];
-          GsaResultQuantity nodeResult = nodeFootfallResultValues.xyzResults[nodeId][0];
+          GsaResultQuantity nodeResult = nodeFootfallResultValues.XyzResults[nodeId][0];
           xyzRes.TryAdd(i, nodeResult);
         }
         if (typ == ElementDimension._2D) {
@@ -84,7 +80,7 @@ namespace GsaGH.Helpers.GsaAPI {
           xyzRes.TryAdd(elements[elemId].Topology.Count, new GsaResultQuantity() { X = average });
         }
 
-        r.xyzResults.TryAdd(elemId, xyzRes);
+        r.XyzResults.TryAdd(elemId, xyzRes);
       }
       r.UpdateMinMax();
 

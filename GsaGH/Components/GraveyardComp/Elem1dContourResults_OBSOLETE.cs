@@ -152,8 +152,8 @@ namespace GsaGH.Components {
       var elems = new ConcurrentDictionary<int, Element>(result.Model.Model.Elements(elementlist));
       var nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes());
 
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.XxyyzzResults;
 
       Enum xyzunit = _lengthUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
@@ -301,8 +301,8 @@ namespace GsaGH.Components {
                   endTranslation.Z = t2.Value * _defScale;
                   break;
                 case (DisplayValue.ResXyz):
-                  t1 = xyzResults[key][i].XYZ.ToUnit(_lengthUnit);
-                  t2 = xyzResults[key][i + 1].XYZ.ToUnit(_lengthUnit);
+                  t1 = xyzResults[key][i].Xyz.ToUnit(_lengthUnit);
+                  t2 = xyzResults[key][i + 1].Xyz.ToUnit(_lengthUnit);
                   startTranslation.X = xyzResults[key][i].X.As(_lengthUnit) * _defScale;
                   startTranslation.Y = xyzResults[key][i].Y.As(_lengthUnit) * _defScale;
                   startTranslation.Z = xyzResults[key][i].Z.As(_lengthUnit) * _defScale;
@@ -323,8 +323,8 @@ namespace GsaGH.Components {
                   t2 = xxyyzzResults[key][i + 1].Z.ToUnit(AngleUnit.Radian);
                   break;
                 case (DisplayValue.ResXxyyzz):
-                  t1 = xxyyzzResults[key][i].XYZ.ToUnit(AngleUnit.Radian);
-                  t2 = xxyyzzResults[key][i + 1].XYZ.ToUnit(AngleUnit.Radian);
+                  t1 = xxyyzzResults[key][i].Xyz.ToUnit(AngleUnit.Radian);
+                  t2 = xxyyzzResults[key][i + 1].Xyz.ToUnit(AngleUnit.Radian);
                   break;
               }
               start.Transform(Transform.Translation(startTranslation));
@@ -345,8 +345,8 @@ namespace GsaGH.Components {
                   t2 = xyzResults[key][i + 1].Z.ToUnit(DefaultUnits.ForceUnit);
                   break;
                 case (DisplayValue.ResXyz):
-                  t1 = xyzResults[key][i].XYZ.ToUnit(DefaultUnits.ForceUnit);
-                  t2 = xyzResults[key][i + 1].XYZ.ToUnit(DefaultUnits.ForceUnit);
+                  t1 = xyzResults[key][i].Xyz.ToUnit(DefaultUnits.ForceUnit);
+                  t2 = xyzResults[key][i + 1].Xyz.ToUnit(DefaultUnits.ForceUnit);
                   break;
                 case (DisplayValue.Xx):
                   t1 = xxyyzzResults[key][i].X.ToUnit(DefaultUnits.MomentUnit);
@@ -361,8 +361,8 @@ namespace GsaGH.Components {
                   t2 = xxyyzzResults[key][i + 1].Z.ToUnit(DefaultUnits.MomentUnit);
                   break;
                 case (DisplayValue.ResXxyyzz):
-                  t1 = xxyyzzResults[key][i].XYZ.ToUnit(DefaultUnits.MomentUnit);
-                  t2 = xxyyzzResults[key][i + 1].XYZ.ToUnit(DefaultUnits.MomentUnit);
+                  t1 = xxyyzzResults[key][i].Xyz.ToUnit(DefaultUnits.MomentUnit);
+                  t2 = xxyyzzResults[key][i + 1].Xyz.ToUnit(DefaultUnits.MomentUnit);
                   break;
               }
               break;
@@ -648,9 +648,7 @@ namespace GsaGH.Components {
 
       base.UpdateUI();
     }
-    public void SetVal(double value) {
-      _defScale = value;
-    }
+    public void SetVal(double value) => _defScale = value;
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
       _minValue = min;
@@ -663,20 +661,16 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       if (_mode == FoldMode.Displacement) {
-        if ((int)_disp < 4)
-          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(_lengthUnit) + "]";
-        else
-          Params.Output[2].Name = "Values [rad]";
+        Params.Output[2].Name = (int)_disp < 4 ? "Values [" + Length.GetAbbreviation(_lengthUnit) + "]" : "Values [rad]";
       }
 
       if (_mode != FoldMode.Force) {
         return;
       }
 
-      if ((int)_disp < 4)
-        Params.Output[2].Name = "Legend Values [" + Force.GetAbbreviation(DefaultUnits.ForceUnit) + "]";
-      else
-        Params.Output[2].Name = "Legend Values [" + Moment.GetAbbreviation(DefaultUnits.MomentUnit) + "]";
+      Params.Output[2].Name = (int)_disp < 4
+        ? "Legend Values [" + Force.GetAbbreviation(DefaultUnits.ForceUnit) + "]"
+        : "Legend Values [" + Moment.GetAbbreviation(DefaultUnits.MomentUnit) + "]";
     }
     #endregion
 
@@ -730,7 +724,7 @@ namespace GsaGH.Components {
 
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
       Menu_AppendSeparator(menu);
     }

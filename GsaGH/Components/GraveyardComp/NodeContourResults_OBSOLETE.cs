@@ -136,8 +136,8 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
 
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.XxyyzzResults;
 
       Enum xyzunit = _lengthUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
@@ -250,7 +250,7 @@ namespace GsaGH.Components {
                 translation.Z = t.Value * _defScale;
                 break;
               case (DisplayValue.ResXyz):
-                t = xyzResults[nodeId][0].XYZ.ToUnit(_lengthUnit);
+                t = xyzResults[nodeId][0].Xyz.ToUnit(_lengthUnit);
                 translation.X = xyzResults[nodeId][0].X.As(_lengthUnit) * _defScale;
                 translation.Y = xyzResults[nodeId][0].Y.As(_lengthUnit) * _defScale;
                 translation.Z = xyzResults[nodeId][0].Z.As(_lengthUnit) * _defScale;
@@ -265,7 +265,7 @@ namespace GsaGH.Components {
                 t = xxyyzzResults[nodeId][0].Z.ToUnit(AngleUnit.Radian);
                 break;
               case (DisplayValue.ResXxyyzz):
-                t = xxyyzzResults[nodeId][0].XYZ.ToUnit(AngleUnit.Radian);
+                t = xxyyzzResults[nodeId][0].Xyz.ToUnit(AngleUnit.Radian);
                 break;
             }
             def.Transform(Transform.Translation(translation));
@@ -282,7 +282,7 @@ namespace GsaGH.Components {
                 t = xyzResults[nodeId][0].Z.ToUnit(DefaultUnits.ForceUnit);
                 break;
               case (DisplayValue.ResXyz):
-                t = xyzResults[nodeId][0].XYZ.ToUnit(DefaultUnits.ForceUnit);
+                t = xyzResults[nodeId][0].Xyz.ToUnit(DefaultUnits.ForceUnit);
                 break;
               case (DisplayValue.Xx):
                 t = xxyyzzResults[nodeId][0].X.ToUnit(DefaultUnits.MomentUnit);
@@ -294,7 +294,7 @@ namespace GsaGH.Components {
                 t = xxyyzzResults[nodeId][0].Z.ToUnit(DefaultUnits.MomentUnit);
                 break;
               case (DisplayValue.ResXxyyzz):
-                t = xxyyzzResults[nodeId][0].XYZ.ToUnit(DefaultUnits.MomentUnit);
+                t = xxyyzzResults[nodeId][0].Xyz.ToUnit(DefaultUnits.MomentUnit);
                 break;
             }
             break;
@@ -494,9 +494,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public void SetVal(double value) {
-      _defScale = value;
-    }
+    public void SetVal(double value) => _defScale = value;
 
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
@@ -574,7 +572,7 @@ namespace GsaGH.Components {
 
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
       Menu_AppendSeparator(menu);
     }

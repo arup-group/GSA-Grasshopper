@@ -180,11 +180,9 @@ namespace GsaGH.Components {
     #endregion
 
     #region menu override
-    protected override void BeforeSolveInstance() {
-      Message = (int)_selectedDisplayValue < 4
+    protected override void BeforeSolveInstance() => Message = (int)_selectedDisplayValue < 4
         ? Force.GetAbbreviation(_forceUnit)
         : Moment.GetAbbreviation(_momentUnit);
-    }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -239,8 +237,7 @@ namespace GsaGH.Components {
       foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force).Select(unit => new ToolStripMenuItem(
                  unit,
                  null,
-                 (s, e) => { UpdateForce(unit); }
-               ) {
+                 (s, e) => UpdateForce(unit)) {
         Checked = unit == Force.GetAbbreviation(_forceUnit),
         Enabled = true,
       })) {
@@ -255,8 +252,7 @@ namespace GsaGH.Components {
       foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment).Select(unit => new ToolStripMenuItem(
                  unit,
                  null,
-                 (s, e) => { UpdateMoment(unit); }
-               ) {
+                 (s, e) => UpdateMoment(unit)) {
         Checked = unit == Moment.GetAbbreviation(_momentUnit),
         Enabled = true,
       })) {
@@ -268,10 +264,11 @@ namespace GsaGH.Components {
 
     private ToolStripMenuItem GenerateModelGeometryUnitsMenu(string menuTitle) {
       var modelUnitsMenu = new ToolStripMenuItem(menuTitle) { Enabled = true };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length).Select(unit => new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); }) {
-        Checked = unit == Length.GetAbbreviation(_lengthUnit),
-        Enabled = true,
-      })) {
+      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)
+        .Select(unit => new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true,
+        })) {
         modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
@@ -335,8 +332,8 @@ namespace GsaGH.Components {
 
     private VectorResultGoo GenerateReactionForceVector(KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
       int nodeId = node.Key;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = forceValues.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = forceValues.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = forceValues.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = forceValues.XxyyzzResults;
 
       if (!xyzResults.ContainsKey(nodeId))
         return null;
@@ -366,7 +363,7 @@ namespace GsaGH.Components {
             xyzResults[nodeId][0].X.As(_forceUnit) * scale,
             xyzResults[nodeId][0].Y.As(_forceUnit) * scale,
             xyzResults[nodeId][0].Z.As(_forceUnit) * scale);
-          forceValue = xyzResults[nodeId][0].XYZ.ToUnit(_forceUnit);
+          forceValue = xyzResults[nodeId][0].Xyz.ToUnit(_forceUnit);
           break;
         case (DisplayValue.Xx):
           isForce = false;
@@ -392,16 +389,15 @@ namespace GsaGH.Components {
             xxyyzzResults[nodeId][0].X.As(_momentUnit) * scale,
             xxyyzzResults[nodeId][0].Y.As(_momentUnit) * scale,
             xxyyzzResults[nodeId][0].Z.As(_momentUnit) * scale);
-          forceValue = xxyyzzResults[nodeId][0].XYZ.ToUnit(_momentUnit);
+          forceValue = xxyyzzResults[nodeId][0].Xyz.ToUnit(_momentUnit);
           break;
       }
 
       var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue, nodeId);
 
-      if (isForce)
-        return vectorResult;
-
-      return vectorResult.SetColor(Helpers.Graphics.Colours.GsaGold)
+      return isForce
+        ? vectorResult
+        : vectorResult.SetColor(Helpers.Graphics.Colours.GsaGold)
           .DrawArrowHead(true);
     }
 

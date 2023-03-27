@@ -33,9 +33,7 @@ namespace GsaGH.Components {
       "Forces2D",
       "2D Projected Force and Moment result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat5()) => Hidden = true;
     #endregion
 
     #region Input and output
@@ -120,7 +118,7 @@ namespace GsaGH.Components {
           permutations = Enumerable.Range(1, vals.Count).ToList();
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0) {
+          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
             continue;
@@ -129,7 +127,7 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].XyzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                     if (res.Count == 0) { continue; }
@@ -145,12 +143,12 @@ namespace GsaGH.Components {
                     outY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))), path);
                     outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))), path);
                     // Wood-Armer moment M*x is stored in .XYZ
-                    outWaxx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_momentUnit))), path);
+                    outWaxx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
                   }
                   break;
                 }
               case 1: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].XxyyzzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                     if (res.Count == 0) { continue; }
@@ -166,12 +164,12 @@ namespace GsaGH.Components {
                     outYy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))), path);
                     outXxyy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
                     // Wood-Armer moment M*y 
-                    outWayy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_momentUnit))), path);
+                    outWayy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
                   }
                   break;
                 }
               case 2: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[perm - 1].xyzResults) {
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[perm - 1].XyzResults) {
                     int elementId = kvp.Key;
                     ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 

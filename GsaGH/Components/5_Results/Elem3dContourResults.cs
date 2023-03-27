@@ -138,8 +138,8 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
 
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.XxyyzzResults;
 
       Enum xyzunit = _lengthResultUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
@@ -302,7 +302,7 @@ namespace GsaGH.Components {
             break;
 
           case (DisplayValue.ResXyz):
-            vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(xyzunit)).ToList();
+            vals = xyzResults[key].Select(item => item.Value.Xyz.ToUnit(xyzunit)).ToList();
             if (_mode == FoldMode.Displacement)
               transformation = xyzResults[key].Select(item => new Vector3d(
                 item.Value.X.As(lengthUnit) * _defScale,
@@ -320,7 +320,7 @@ namespace GsaGH.Components {
             vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
             break;
           case (DisplayValue.ResXxyyzz):
-            vals = xxyyzzResults[key].Select(item => item.Value.XYZ.ToUnit(xxyyzzunit)).ToList();
+            vals = xxyyzzResults[key].Select(item => item.Value.Xyz.ToUnit(xxyyzzunit)).ToList();
             break;
         }
 
@@ -550,10 +550,7 @@ namespace GsaGH.Components {
               _disp = (DisplayValue)j;
             }
             else {
-              if (j < 3)
-                _disp = (DisplayValue)j;
-              else
-                _disp = (DisplayValue)(j + 1);
+              _disp = j < 3 ? (DisplayValue)j : (DisplayValue)(j + 1);
             }
 
             if (redraw)
@@ -563,9 +560,7 @@ namespace GsaGH.Components {
       }
       base.UpdateUI();
     }
-    public void SetVal(double value) {
-      _defScale = value;
-    }
+    public void SetVal(double value) => _defScale = value;
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
       _minValue = min;
@@ -645,14 +640,14 @@ namespace GsaGH.Components {
 
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
           Enabled = true,
         };
@@ -663,7 +658,7 @@ namespace GsaGH.Components {
         Enabled = true,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateStress(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
           Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
           Enabled = true,
         };
@@ -677,7 +672,7 @@ namespace GsaGH.Components {
           Enabled = true,
         };
         foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); }) {
+          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
             Checked = unit == Length.GetAbbreviation(_lengthUnit),
             Enabled = true,
           };

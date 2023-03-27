@@ -29,15 +29,11 @@ namespace GsaGH.Components {
       "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) {
-      Hidden = true;
-    }
+      SubCategoryName.Cat5()) => Hidden = true;
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-    }
+    protected override void RegisterInputParams(GH_InputParamManager pManager) => pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string massUnitAbbreviation = Mass.GetAbbreviation(_massUnit);
@@ -99,14 +95,14 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(mass.X));
       da.SetData(i++, new GH_UnitNumber(mass.Y));
       da.SetData(i++, new GH_UnitNumber(mass.Z));
-      da.SetData(i++, new GH_UnitNumber(mass.XYZ));
+      da.SetData(i++, new GH_UnitNumber(mass.Xyz));
 
       if (analysisCaseResult.Global.EffectiveInertia != null) {
         GsaResultQuantity stiff = ResultHelper.GetQuantityResult(analysisCaseResult.Global.EffectiveInertia, _inertiaUnit);
         da.SetData(i++, new GH_UnitNumber(stiff.X));
         da.SetData(i++, new GH_UnitNumber(stiff.Y));
         da.SetData(i++, new GH_UnitNumber(stiff.Z));
-        da.SetData(i++, new GH_UnitNumber(stiff.XYZ));
+        da.SetData(i++, new GH_UnitNumber(stiff.Xyz));
       }
       else {
         da.SetData(i++, null);

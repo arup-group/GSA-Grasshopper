@@ -131,8 +131,8 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
 
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = (_isShear) ? resShear.xyzResults : res.xyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = (_isShear) ? resShear.XyzResults : res.XyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.XxyyzzResults;
 
       Enum xyzunit = _lengthUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
@@ -284,7 +284,7 @@ namespace GsaGH.Components {
             break;
 
           case (DisplayValue.ResXyz):
-            vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(xyzunit)).ToList();
+            vals = xyzResults[key].Select(item => item.Value.Xyz.ToUnit(xyzunit)).ToList();
             if (_mode == FoldMode.Displacement)
               transformation = xyzResults[key].Select(item => new Vector3d(
                 item.Value.X.As(xyzunit) * _defScale,
@@ -302,7 +302,7 @@ namespace GsaGH.Components {
             vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
             break;
           case (DisplayValue.ResXxyyzz):
-            vals = xxyyzzResults[key].Select(item => item.Value.XYZ.ToUnit(xxyyzzunit)).ToList();
+            vals = xxyyzzResults[key].Select(item => item.Value.Xyz.ToUnit(xxyyzzunit)).ToList();
             break;
         }
 
@@ -652,9 +652,7 @@ namespace GsaGH.Components {
 
       base.UpdateUI();
     }
-    public void SetVal(double value) {
-      _defScale = value;
-    }
+    public void SetVal(double value) => _defScale = value;
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
       _minValue = min;
@@ -738,7 +736,7 @@ namespace GsaGH.Components {
 
       var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
       Menu_AppendSeparator(menu);
     }

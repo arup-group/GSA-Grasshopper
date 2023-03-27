@@ -28,11 +28,9 @@ namespace GsaGH.Helpers.GsaAPI {
         xyzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Double3> transVals = elementResults.Displacement;
-        Parallel.For(1, transVals.Count, i => {
-          xyzRes[i] = GetQuantityResult(transVals[i], resultLengthUnit);
-        });
+        Parallel.For(1, transVals.Count, i => xyzRes[i] = GetQuantityResult(transVals[i], resultLengthUnit));
         xyzRes[transVals.Count] = GetQuantityResult(transVals[0], resultLengthUnit); // add centre point at the end
-        r.xyzResults.TryAdd(key, xyzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
       });
 
       r.UpdateMinMax();
@@ -69,8 +67,8 @@ namespace GsaGH.Helpers.GsaAPI {
         xyzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit); // add centre point at the end
         xxyyzzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit, true);
 
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -107,8 +105,8 @@ namespace GsaGH.Helpers.GsaAPI {
         xyzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit); // add centre point at the end
         xxyyzzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit, true);
 
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -134,13 +132,11 @@ namespace GsaGH.Helpers.GsaAPI {
         xxyyzzRes.AsParallel().AsOrdered();
 
         ReadOnlyCollection<Vector2> shears = elementResults.Shear;
-        Parallel.For(1, shears.Count, i => {
-          xyzRes[i] = GetQuantityResult(shears[i], forceUnit);
-        });
+        Parallel.For(1, shears.Count, i => xyzRes[i] = GetQuantityResult(shears[i], forceUnit));
         xyzRes[shears.Count] = GetQuantityResult(shears[0], forceUnit); // add centre point at the end
 
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -180,20 +176,20 @@ namespace GsaGH.Helpers.GsaAPI {
         xxyyzzRes[moments.Count] = GetQuantityResult(moments[0], momentUnit);
 
         Parallel.ForEach(xxyyzzRes.Keys, i => {
-          xyzRes[i].XYZ = new Force(
+          xyzRes[i].Xyz = new Force(
                     xxyyzzRes[i].X.Value
                     + Math.Sign(xxyyzzRes[i].X.Value)
                     * Math.Abs(xxyyzzRes[i].Z.Value),
                     momentUnit);
-          xxyyzzRes[i].XYZ = new Force(
+          xxyyzzRes[i].Xyz = new Force(
                     xxyyzzRes[i].Y.Value
                     + Math.Sign(xxyyzzRes[i].Y.Value)
                     * Math.Abs(xxyyzzRes[i].Z.Value),
                     momentUnit);
         });
 
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -230,8 +226,8 @@ namespace GsaGH.Helpers.GsaAPI {
         xyzRes[disp.Count] = GetQuantityResult(disp[0], resultLengthUnit); // add centre point at the end
         xxyyzzRes[disp.Count - disp.Count] = GetQuantityResult(disp[0], AngleUnit.Radian);
 
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -263,8 +259,8 @@ namespace GsaGH.Helpers.GsaAPI {
           xyzRes[i] = GetQuantityResult(result, forceUnit, true);
           xxyyzzRes[i] = GetQuantityResult(result, momentUnit, true);
         });
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -291,14 +287,12 @@ namespace GsaGH.Helpers.GsaAPI {
 
         if (average) {
           xyzRes[0] = GetQuantityResult(elementResults.AverageStrainEnergyDensity, energyUnit);
-          r.xyzResults.TryAdd(key, xyzRes);
+          r.XyzResults.TryAdd(key, xyzRes);
         }
         else {
           ReadOnlyCollection<double> values = elementResults.StrainEnergyDensity;
-          Parallel.For(0, values.Count, i => {
-            xyzRes[i] = GetQuantityResult(values[i], energyUnit);
-          });
-          r.xyzResults.TryAdd(key, xyzRes);
+          Parallel.For(0, values.Count, i => xyzRes[i] = GetQuantityResult(values[i], energyUnit));
+          r.XyzResults.TryAdd(key, xyzRes);
         }
       });
 
@@ -328,8 +322,8 @@ namespace GsaGH.Helpers.GsaAPI {
           xyzRes[i] = GetQuantityResult(result, resultLengthUnit);
           xxyyzzRes[i] = GetQuantityResult(result, AngleUnit.Radian);
         });
-        r.xyzResults.TryAdd(key, xyzRes);
-        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
@@ -351,10 +345,10 @@ namespace GsaGH.Helpers.GsaAPI {
 
         var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
-        r.xyzResults.TryAdd(nodeId, xyz);
+        r.XyzResults.TryAdd(nodeId, xyz);
         var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
-        r.xxyyzzResults.TryAdd(nodeId, xxyyzz);
+        r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
       });
 
       r.UpdateMinMax();
@@ -385,10 +379,10 @@ namespace GsaGH.Helpers.GsaAPI {
 
         var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
-        r.xyzResults.TryAdd(nodeId, xyz);
+        r.XyzResults.TryAdd(nodeId, xyz);
         var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
-        r.xxyyzzResults.TryAdd(nodeId, xxyyzz);
+        r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
       });
 
       r.UpdateMinMax();
@@ -418,10 +412,10 @@ namespace GsaGH.Helpers.GsaAPI {
 
         var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
-        r.xyzResults.TryAdd(nodeId, xyz);
+        r.XyzResults.TryAdd(nodeId, xyz);
         var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
-        r.xxyyzzResults.TryAdd(nodeId, xxyyzz);
+        r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
       });
 
       r.UpdateMinMax();
