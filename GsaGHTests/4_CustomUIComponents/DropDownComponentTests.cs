@@ -1,17 +1,14 @@
-﻿using GsaGH.Components;
+﻿using System;
+using GsaGH.Components;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using System;
 using Xunit;
 
-namespace GsaGHTests.CustomComponent
-{
+namespace GsaGHTests.CustomComponent {
   [Collection("GrasshopperFixture collection")]
-  public class DropDownComponentTests
-  {
+  public class DropDownComponentTests {
     [Theory]
     [InlineData(typeof(CreateModel), true)]
-    //[InlineData(typeof(GetGeometry))] GetGeometry is GH_OasysTaskCapableComponent
     [InlineData(typeof(GetLoads))]
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
@@ -47,12 +44,9 @@ namespace GsaGHTests.CustomComponent
     [InlineData(typeof(NodeDisplacement))]
     [InlineData(typeof(ReactionForce))]
     [InlineData(typeof(ReactionForceDiagrams))]
-    //[InlineData(typeof(SelectResults))] SelectResults depends on input model to populate dropdown
     [InlineData(typeof(SpringReactionForce))]
     [InlineData(typeof(TotalLoadsAndReactionResults))]
-    public void DropDownComponentTest(Type t, bool ignoreSpacerDescriptionCount = false)
-    {
-      // ignore space description count for components that has more UI features than just the dropdown
+    public void DropDownComponentTest(Type t, bool ignoreSpacerDescriptionCount = false) {
       var comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.ChangeDropDownTest(comp, ignoreSpacerDescriptionCount);
     }
