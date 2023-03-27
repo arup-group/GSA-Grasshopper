@@ -19,7 +19,9 @@ namespace GsaGHTests.Components.Geometry {
       box.Y = new Interval(0, 10);
       box.Z = new Interval(0, 10);
       ComponentTestHelper.SetInput(comp, box, 0);
-      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateProp3dTests.ComponentMother()), 1);
+      ComponentTestHelper.SetInput(comp,
+        ComponentTestHelper.GetOutput(CreateProp3dTests.ComponentMother()),
+        1);
       ComponentTestHelper.SetInput(comp, 0.5, 2);
 
       return comp;
@@ -27,10 +29,8 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void CreateComponentTest() {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother();
 
-      // Assert
       var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(MatType.Concrete, output.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output.Value.MeshSize);

@@ -19,10 +19,8 @@ namespace GsaGHTests.Components.Properties {
 
     [Fact]
     public void CreateComponent() {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother();
 
-      // Assert
       var output = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(MatType.Concrete, output.Value.Material.MaterialType);
     }

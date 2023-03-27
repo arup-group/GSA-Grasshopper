@@ -15,17 +15,17 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new EditMember1d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()), 0);
+      ComponentTestHelper.SetInput(comp,
+        ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()),
+        0);
 
       return comp;
     }
 
     [Fact]
     public void CreateComponentTest1() {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother();
 
-      // Assert
       var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 2);
@@ -98,27 +98,43 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void CreateComponentTest2() {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 1, 1);
-      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)), 2);
+      ComponentTestHelper.SetInput(comp,
+        new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)),
+        2);
       ComponentTestHelper.SetInput(comp, "STD CH 10 20 30 40", 3);
       ComponentTestHelper.SetInput(comp, 7, 4);
       ComponentTestHelper.SetInput(comp, "Cantilever", 5);
       ComponentTestHelper.SetInput(comp, "Damper", 6);
       ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 7);
-      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 8);
-      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 9);
+      ComponentTestHelper.SetInput(comp,
+        new GsaBool6Goo(new GsaBool6(true,
+          true,
+          true,
+          true,
+          true,
+          true)),
+        8);
+      ComponentTestHelper.SetInput(comp,
+        new GsaBool6Goo(new GsaBool6(true,
+          true,
+          true,
+          true,
+          true,
+          true)),
+        9);
       ComponentTestHelper.SetInput(comp, Math.PI, 10);
       ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 11);
       ComponentTestHelper.SetInput(comp, 0.7, 12);
       ComponentTestHelper.SetInput(comp, false, 13);
-      ComponentTestHelper.SetInput(comp, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)), 14);
+      ComponentTestHelper.SetInput(comp,
+        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)),
+        14);
       ComponentTestHelper.SetInput(comp, "name", 15);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 16);
       ComponentTestHelper.SetInput(comp, true, 17);
 
-      // Assert
       var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 2);

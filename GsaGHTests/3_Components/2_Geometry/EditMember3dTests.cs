@@ -14,17 +14,17 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new EditMember3d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateMember3dTests.ComponentMother()), 0);
+      ComponentTestHelper.SetInput(comp,
+        ComponentTestHelper.GetOutput(CreateMember3dTests.ComponentMother()),
+        0);
 
       return comp;
     }
 
     [Fact]
     public void CreateComponentTest1() {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother();
 
-      // Assert
       var output0 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
@@ -55,7 +55,6 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void CreateComponentTest2() {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 7, 1);
       ComponentTestHelper.SetInput(comp, 0.7, 4);
@@ -65,7 +64,6 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 8);
       ComponentTestHelper.SetInput(comp, true, 9);
 
-      // Assert
       var output0 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
@@ -84,7 +82,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotNull(output2.Value);
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
       Assert.Equal(0.7, output4.Value);
-      Assert.True(output5.Value); // overridden by IsDummy
+      Assert.True(output5.Value);
       Assert.Equal("name", output6.Value);
       Assert.Equal(1, output7.Value);
       Assert.Equal(255, output8.Value.R);

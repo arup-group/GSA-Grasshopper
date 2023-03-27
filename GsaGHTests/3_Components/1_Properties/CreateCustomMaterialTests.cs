@@ -30,18 +30,22 @@ namespace GsaGHTests.Components.Properties {
 
     [Fact]
     public void CreateComponent() {
-      // Arrange & Act
       GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(1, output.Value.AnalysisProperty);
       Assert.Equal(0, output.Value.GradeProperty);
       Assert.Equal(MatType.Timber, output.Value.MaterialType);
-      Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal), output.Value.AnalysisMaterial.ElasticModulus);
+      Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal),
+        output.Value.AnalysisMaterial.ElasticModulus);
       Assert.Equal(2, output.Value.AnalysisMaterial.PoissonsRatio);
-      Assert.Equal(new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter), output.Value.AnalysisMaterial.Density);
-      Assert.Equal(new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius), output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
+      Assert.Equal(
+        new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter),
+        output.Value.AnalysisMaterial.Density);
+      Assert.Equal(
+        new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(
+          CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+        output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
     }
   }
 }

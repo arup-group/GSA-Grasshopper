@@ -6,26 +6,16 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Model
-{
+namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
-  public class ModelTests
-  {
+  public class ModelTests {
     public static GsaModelGoo GsaModelGooMother
-    {
-      get
-      {
-        return (GsaModelGoo)ComponentTestHelper.GetOutput(OpenModelComponentMother());
-      }
-    }
-    
-    public static GH_OasysComponent OpenModelComponentMother()
-    {
-      // create the component
+      => (GsaModelGoo)ComponentTestHelper.GetOutput(OpenModelComponentMother());
+
+    public static GH_OasysComponent OpenModelComponentMother() {
       var comp = new OpenModel();
       comp.CreateAttributes();
 
-      // input parameter
       string file = GsaFile.Steel_Design_Simple;
       ComponentTestHelper.SetInput(comp, file);
 
@@ -33,15 +23,11 @@ namespace GsaGHTests.Model
     }
 
     [Fact]
-    public void OpenComponentTest()
-    {
-      var comp = OpenModelComponentMother();
+    public void OpenComponentTest() {
+      GH_OasysComponent comp = OpenModelComponentMother();
+      var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
 
-      // Get output from component
-      GsaModelGoo output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-
-      // cast from -goo to Gsa-GH data type
-      GsaModel model = new GsaModel();
+      var model = new GsaModel();
       output.CastTo(ref model);
 
       Assert.Equal(GsaFile.Steel_Design_Simple, model.FileNameAndPath);

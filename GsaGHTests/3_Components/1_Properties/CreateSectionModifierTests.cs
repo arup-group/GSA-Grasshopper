@@ -6,13 +6,10 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Components.Properties
-{
+namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class CreateSectionModifierTests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
+  public class CreateSectionModifierTests {
+    public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateSectionModifier();
       comp.CreateAttributes();
 
@@ -35,13 +32,10 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponent()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponent() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
-      GsaSectionModifierGoo output = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0.1, output.Value.AreaModifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.2, output.Value.I11Modifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.3, output.Value.I22Modifier.As(RatioUnit.DecimalFraction));

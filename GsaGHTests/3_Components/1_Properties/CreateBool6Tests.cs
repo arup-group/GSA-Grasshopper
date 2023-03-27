@@ -23,10 +23,8 @@ namespace GsaGHTests.Components.Properties {
 
     [Fact]
     public void CreateComponent() {
-      // Arrange & Act
       GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
       var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp);
       Assert.True(output.Value.X);
       Assert.True(output.Value.Y);

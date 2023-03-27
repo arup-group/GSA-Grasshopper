@@ -12,7 +12,9 @@ namespace GsaGHTests.Components.Properties {
       var comp = new CreateSection();
       comp.CreateAttributes();
 
-      var material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(), 0);
+      var material
+        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(),
+          0);
 
       ComponentTestHelper.SetInput(comp, profile, 0);
       ComponentTestHelper.SetInput(comp, material, 1);
@@ -27,10 +29,8 @@ namespace GsaGHTests.Components.Properties {
     [InlineData("STD CH(ft) 40 30 2 1")]
     [InlineData("STD CH(in) 40 30 2 1")]
     public void CreateComponentTest1(string profile) {
-      // Arrange & Act
       GH_OasysComponent comp = ComponentMother(profile);
 
-      // Assert
       var output = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(profile, output.Value.Profile);
       Assert.Equal(MatType.Timber, output.Value.Material.MaterialType);
