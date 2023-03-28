@@ -68,7 +68,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("DefaultGpTolerance", "1cm")]
     public void TestDefaultGridPlane(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Theory]
@@ -78,7 +78,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("DefaultGsTolerance", "1cm")]
     public void TestDefaultGridSurface(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Theory]
@@ -88,7 +88,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("NumInputTolerance", "25cm")]
     public void TestNumInput(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Theory]
@@ -98,7 +98,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("TxtInputTolerance", "25cm")]
     public void TestTxtInput(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
   }
 }

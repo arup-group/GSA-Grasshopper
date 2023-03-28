@@ -65,7 +65,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("Mem2dTopo", "13 16 19 22 23 24 21 18 15 14 V(59 60 61 62) L(19 59) L(22 60)")]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Fact]

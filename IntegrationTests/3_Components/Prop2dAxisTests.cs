@@ -41,7 +41,7 @@ namespace IntegrationTests.Components {
     [InlineData("AxisRotationCheck", (int)0)]
     public void Test(string groupIdentifier, object expected, int tolerance = 6) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected, tolerance);
+      Helper.TestGhPrimitives(param, expected, tolerance);
     }
 
     [Theory]
@@ -61,7 +61,7 @@ namespace IntegrationTests.Components {
         expecteds.Add(expected);
 
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expecteds.ToArray(), tolerance);
+      Helper.TestGhPrimitives(param, expecteds.ToArray(), tolerance);
     }
   }
 }

@@ -43,7 +43,7 @@ namespace IntegrationTests.Components {
     [InlineData("ConcreteE", (double)18000)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Fact]

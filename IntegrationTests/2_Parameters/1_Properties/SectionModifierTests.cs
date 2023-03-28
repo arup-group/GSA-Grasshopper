@@ -99,7 +99,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("ModBYstressOption", 2)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Fact]
