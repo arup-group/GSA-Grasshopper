@@ -1,37 +1,31 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using Rhino.UI;
 using Xunit;
 
-namespace IntegrationTests.Parameters
-{
+namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GetGeometry_TrGen_10_Test
-  {
-    public static GH_Document Document
-    {
-      get
-      {
-        if (_document == null)
-          _document = OpenDocument();
-        return _document;
-      }
-    }
-    private static GH_Document _document = null;
-    private static GH_Document OpenDocument()
-    {
-      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+  [SuppressMessage("ReSharper", "InconsistentNaming")]
+  public class GetGeometry_TrGen_10_Test {
+    private static GH_Document s_document = null;
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("_Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "2_Geometry" });
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "2_Geometry",
+      });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
@@ -42,13 +36,22 @@ namespace IntegrationTests.Parameters
     [InlineData("MassProp", 0)]
     [InlineData("SpringProp", 0)]
     [InlineData("Elem1dCount", 98)]
-    [InlineData("Elem1dIDs", new bool[] { false, true })]
+    [InlineData("Elem1dIDs",
+      new bool[] {
+        false,
+        true,
+      })]
     [InlineData("Elem1dType", "Beam")]
     [InlineData("Elem1dGrp", 4)]
     [InlineData("RotationAngle", 30.0)]
     [InlineData("Elem1dTopo", 45)]
     [InlineData("Elem2dCount", 3)]
-    [InlineData("Elem2dsCount", new int[] { 574, 288, 87 })]
+    [InlineData("Elem2dsCount",
+      new int[] {
+        574,
+        288,
+        87,
+      })]
     [InlineData("Elem2dType", "QUAD8")]
     [InlineData("Elem2dTopo", 87)]
     [InlineData("Mem1dCount", 94)]
@@ -60,16 +63,13 @@ namespace IntegrationTests.Parameters
     [InlineData("Mem2dType", "Generic 2D")]
     [InlineData("Mem2dAnalysisType", "Linear")]
     [InlineData("Mem2dTopo", "13 16 19 22 23 24 21 18 15 14 V(59 60 61 62) L(19 59) L(22 60)")]
-    public void Test(string groupIdentifier, object expected)
-    {
+    public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGHPrimitives(param, expected);
     }
 
     [Fact]
     public void NoRuntimeErrorTest()
-    {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-    }
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
   }
 }

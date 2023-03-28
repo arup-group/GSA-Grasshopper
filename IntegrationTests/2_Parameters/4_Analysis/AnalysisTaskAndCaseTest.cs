@@ -8,38 +8,57 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GetCreateAnalysisTaskAndCaseTest {
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "4_Analysis" });
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "4_Analysis",
+      });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
     [Fact]
     public void OriginalTaskTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output = (GsaAnalysisTaskGoo)param.VolatileData.get_Branch(0)[0];
       GsaAnalysisTask gsaghobject = output.Value;
 
       Assert.Equal("Task 1", gsaghobject.Name);
       Assert.Equal(1, gsaghobject.Id);
       Assert.Equal(2, gsaghobject.Cases.Count);
-      Assert.Equal("DL", gsaghobject.Cases[0].Name);
-      Assert.Equal("LL", gsaghobject.Cases[1].Name);
-      Assert.Equal("L1", gsaghobject.Cases[0].Description);
-      Assert.Equal("L2", gsaghobject.Cases[1].Description);
+      Assert.Equal("DL",
+        gsaghobject.Cases[0]
+          .Name);
+      Assert.Equal("LL",
+        gsaghobject.Cases[1]
+          .Name);
+      Assert.Equal("L1",
+        gsaghobject.Cases[0]
+          .Description);
+      Assert.Equal("L2",
+        gsaghobject.Cases[1]
+          .Description);
       Assert.Equal(GsaAnalysisTask.AnalysisType.Static, gsaghobject.Type);
     }
 
     [Fact]
     public void OriginalTaskNameTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output = (GH_String)param.VolatileData.get_Branch(0)[0];
       string gsaghobject = output.Value;
 
@@ -48,7 +67,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void OriginalCaseNamesTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
 
@@ -58,7 +78,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void OriginalCaseDescriptionsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
 
@@ -68,7 +89,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void OriginalCaseIDsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
 
@@ -78,7 +100,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void OriginalTaskTypeTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output = (GH_String)param.VolatileData.get_Branch(0)[0];
       string gsaghobject = output.Value;
 
@@ -87,7 +110,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void OriginalTaskIdTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       int gsaghobject = output.Value;
 
@@ -96,7 +120,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void NewCaseNamesTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
 
@@ -106,7 +131,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void NewCaseDescriptionsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
 
@@ -116,7 +142,8 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void NewCaseIDsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod().Name.Replace("Test", string.Empty));
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
       var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
 
@@ -125,7 +152,8 @@ namespace IntegrationTests.Parameters {
     }
 
     [Fact]
-    public void NoRuntimeErrorTest() => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
     private IGH_Param TestHelper(string groupIdentifier) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
