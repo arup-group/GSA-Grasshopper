@@ -1,37 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
 using Xunit;
 
-namespace IntegrationTests.Components
-{
+namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
-  public class Prop2dAxisTests
-  {
-    public static GH_Document Document
-    {
-      get
-      {
-        if (_document == null)
-          _document = OpenDocument();
-        return _document;
-      }
-    }
-    private static GH_Document _document = null;
-    private static GH_Document OpenDocument()
-    {
-      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
+  public class Prop2dAxisTests {
+    private static GH_Document s_document = null;
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Components" });
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
@@ -46,8 +39,7 @@ namespace IntegrationTests.Components
     [InlineData("paZZ", 1.0)]
     [InlineData("RotationAngleCheck", (int)0)]
     [InlineData("AxisRotationCheck", (int)0)]
-    public void Test(string groupIdentifier, object expected, int tolerance = 6)
-    {
+    public void Test(string groupIdentifier, object expected, int tolerance = 6) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGHPrimitives(param, expected, tolerance);
     }
@@ -59,9 +51,12 @@ namespace IntegrationTests.Components
     [InlineData("elemZX", 0.0, 35, 1)]
     [InlineData("elemZY", 0.0, 35, 1)]
     [InlineData("elemZZ", 1.0, 35, 1)]
-    public void TestList(string groupIdentifier, double expected, int listLength, int tolerance = 6)
-    {
-      List<double> expecteds = new List<double>();
+    public void TestList(
+      string groupIdentifier,
+      double expected,
+      int listLength,
+      int tolerance = 6) {
+      var expecteds = new List<double>();
       for (int i = 0; i < listLength; i++)
         expecteds.Add(expected);
 
@@ -70,4 +65,3 @@ namespace IntegrationTests.Components
     }
   }
 }
-

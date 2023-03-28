@@ -7,15 +7,9 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GridPlaneSurfaceTest {
-    private static GH_Document _document = null;
+    private static GH_Document s_document = null;
 
-    public static GH_Document Document {
-      get {
-        if (_document == null)
-          _document = OpenDocument();
-        return _document;
-      }
-    }
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
