@@ -347,35 +347,35 @@ namespace GsaGH.Components {
         int starty = i * gripheight;
         int endy = starty + gripheight;
         for (int y = starty; y < endy; y++)
-        for (int x = 0; x < _legend.Width; x++)
-          _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+          for (int x = 0; x < _legend.Width; x++)
+            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-            Length displacement = new Length(t, _lengthUnit).ToUnit(_lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            break;
-          }
+              Length displacement = new Length(t, _lengthUnit).ToUnit(_lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
+            }
           case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            break;
-          }
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            }
           case FoldMode.Reaction when (int)_disp < 4: {
-            var reactionForce = new Force(t, DefaultUnits.ForceUnit);
-            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(reactionForce));
-            break;
-          }
+              var reactionForce = new Force(t, DefaultUnits.ForceUnit);
+              _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionForce));
+              break;
+            }
           case FoldMode.Reaction: {
-            var reactionMoment = new Moment(t, DefaultUnits.MomentUnit);
-            _legendValues.Add(t.ToString("F" + significantDigits)
-              + " "
-              + Moment.GetAbbreviation(DefaultUnits.MomentUnit));
-            ts.Add(new GH_UnitNumber(reactionMoment));
-            break;
-          }
+              var reactionMoment = new Moment(t, DefaultUnits.MomentUnit);
+              _legendValues.Add(t.ToString("F" + significantDigits)
+                + " "
+                + Moment.GetAbbreviation(DefaultUnits.MomentUnit));
+              ts.Add(new GH_UnitNumber(reactionMoment));
+              break;
+            }
         }
 
         if (Math.Abs(t) > 1)
@@ -564,31 +564,31 @@ namespace GsaGH.Components {
     public override void SetSelected(int dropdownlistidd, int selectedidd) {
       switch (dropdownlistidd) {
         case 0: {
-          switch (selectedidd) {
-            case 0: {
-              if (DropDownItems[1] != _displacement) {
-                DropDownItems[1] = _displacement;
-                SelectedItems[0] = DropDownItems[0][0];
-                SelectedItems[1] = DropDownItems[1][3];
-                Mode1Clicked();
-              }
+            switch (selectedidd) {
+              case 0: {
+                  if (DropDownItems[1] != _displacement) {
+                    DropDownItems[1] = _displacement;
+                    SelectedItems[0] = DropDownItems[0][0];
+                    SelectedItems[1] = DropDownItems[1][3];
+                    Mode1Clicked();
+                  }
 
-              break;
-            }
-            case 1: {
-              if (DropDownItems[1] != _reaction) {
-                DropDownItems[1] = _reaction;
-                SelectedItems[0] = DropDownItems[0][1];
-                SelectedItems[1] = DropDownItems[1][3];
-                Mode2Clicked();
-              }
+                  break;
+                }
+              case 1: {
+                  if (DropDownItems[1] != _reaction) {
+                    DropDownItems[1] = _reaction;
+                    SelectedItems[0] = DropDownItems[0][1];
+                    SelectedItems[1] = DropDownItems[1][3];
+                    Mode2Clicked();
+                  }
 
-              break;
+                  break;
+                }
             }
+
+            break;
           }
-
-          break;
-        }
         case 1:
           _disp = (DisplayValue)selectedidd;
           SelectedItems[1] = DropDownItems[1][selectedidd];
@@ -616,31 +616,31 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case FoldMode.Displacement when (int)_disp < 4: {
-          IQuantity length = new Length(0, _lengthUnit);
-          string lengthunitAbbreviation = string.Concat(length.ToString()
-            .Where(char.IsLetter));
-          Params.Output[2]
-            .Name = "Values [" + lengthunitAbbreviation + "]";
-          break;
-        }
+            IQuantity length = new Length(0, _lengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString()
+              .Where(char.IsLetter));
+            Params.Output[2]
+              .Name = "Values [" + lengthunitAbbreviation + "]";
+            break;
+          }
         case FoldMode.Displacement:
           Params.Output[2]
             .Name = "Values [rad]";
           break;
         case FoldMode.Reaction when (int)_disp < 4: {
-          IQuantity force = new Force(0, DefaultUnits.ForceUnit);
-          string forceunitAbbreviation = string.Concat(force.ToString()
-            .Where(char.IsLetter));
-          Params.Output[2]
-            .Name = "Values [" + forceunitAbbreviation + "]";
-          break;
-        }
+            IQuantity force = new Force(0, DefaultUnits.ForceUnit);
+            string forceunitAbbreviation = string.Concat(force.ToString()
+              .Where(char.IsLetter));
+            Params.Output[2]
+              .Name = "Values [" + forceunitAbbreviation + "]";
+            break;
+          }
         case FoldMode.Reaction: {
-          string momentunitAbbreviation = Moment.GetAbbreviation(DefaultUnits.MomentUnit);
-          Params.Output[2]
-            .Name = "Values [" + momentunitAbbreviation + "]";
-          break;
-        }
+            string momentunitAbbreviation = Moment.GetAbbreviation(DefaultUnits.MomentUnit);
+            Params.Output[2]
+              .Name = "Values [" + momentunitAbbreviation + "]";
+            break;
+          }
       }
     }
 
@@ -781,7 +781,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
-      writer.SetBoolean("_legend", _showLegend);
+      writer.SetBoolean("legend", _showLegend);
       return base.Write(writer);
     }
 
@@ -793,7 +793,7 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("_legend");
+      _showLegend = reader.GetBoolean("legend");
       return base.Read(reader);
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.Export;
@@ -233,6 +234,8 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
+      //only for init submenu
+      var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
       toleranceMenu.DropDownItems[1]
         .MouseUp += (s, e) => {
           UpdateMessage();

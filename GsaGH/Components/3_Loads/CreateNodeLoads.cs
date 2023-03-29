@@ -299,13 +299,10 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      string md = SelectedItems[0]
-        .Replace(' ', '_');
+      string md = SelectedItems[0].Replace(" ", "_").ToPascalCase();
       _mode = md.ToLower() == "node"
         ? FoldMode.NodeForce
-        : (FoldMode)Enum.Parse(typeof(FoldMode),
-          SelectedItems[0]
-            .Replace(' ', '_'));
+        : (FoldMode)Enum.Parse(typeof(FoldMode), md);
 
       switch (_mode) {
         case FoldMode.NodeForce:

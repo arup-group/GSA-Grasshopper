@@ -37,35 +37,35 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp))
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo _: {
-            var temppln = new GsaGridPlaneSurface();
-            ghTyp.CastTo(ref temppln);
-            gridPlaneSurface = temppln.Duplicate();
-            plane = gridPlaneSurface.Plane;
-            planeSet = true;
-            _expansionType = ExpansionType.UseGpsSettings;
-            UpdateMessage();
-            break;
-          }
+              var temppln = new GsaGridPlaneSurface();
+              ghTyp.CastTo(ref temppln);
+              gridPlaneSurface = temppln.Duplicate();
+              plane = gridPlaneSurface.Plane;
+              planeSet = true;
+              _expansionType = ExpansionType.UseGpsSettings;
+              UpdateMessage();
+              break;
+            }
           case Plane _:
             ghTyp.CastTo(ref plane);
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             planeSet = true;
             break;
           default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gridareaload.GridAreaLoad.GridSurface = id;
-              gridareaload.GridPlaneSurface = null;
-            }
-            else {
-              this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the brep's best-fit plane will be used");
-              return;
-            }
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gridareaload.GridAreaLoad.GridSurface = id;
+                gridareaload.GridPlaneSurface = null;
+              }
+              else {
+                this.AddRuntimeError(
+                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                  + Environment.NewLine
+                  + "If no input here then the brep's best-fit plane will be used");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
 
       var brep = new Brep();
@@ -373,13 +373,21 @@ namespace GsaGH.Components {
     #region deserialization
 
     public override bool Write(GH_IWriter writer) {
-      writer.SetString("Mode", _expansionType.ToString());
+      writer.SetInt32("Mode", (int)_expansionType);
       return base.Write(writer);
     }
 
     public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("Mode"))
-        _expansionType = (ExpansionType)Enum.Parse(typeof(ExpansionType), reader.GetString("Mode"));
+      //for obsolete string written value
+      try {
+        _expansionType = reader.TryGetEnum("Mode", typeof(ExpansionType), out int value)
+          ? (ExpansionType)value
+          : (ExpansionType)reader.GetInt32("Mode");
+      }
+      catch {
+        this.AddRuntimeError("Can't parse Mode field to the ExpansionType enum.");
+      }
+
       return base.Read(reader);
     }
 

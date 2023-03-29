@@ -54,25 +54,25 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning("Input is null");
           return;
         case GsaResultGoo goo: {
-          result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination
-            && result.SelectedPermutationIds.Count > 1) {
-            this.AddRuntimeWarning("Combination Case "
-              + result.CaseId
-              + " contains "
-              + result.SelectedPermutationIds.Count
-              + " permutations - only one permutation can be displayed at a time."
-              + Environment.NewLine
-              + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-          }
+            result = goo.Value;
+            if (result.Type == GsaResult.CaseType.Combination
+              && result.SelectedPermutationIds.Count > 1) {
+              this.AddRuntimeWarning("Combination Case "
+                + result.CaseId
+                + " contains "
+                + result.SelectedPermutationIds.Count
+                + " permutations - only one permutation can be displayed at a time."
+                + Environment.NewLine
+                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+            }
 
-          if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-          if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-          break;
-        }
+            if (result.Type == GsaResult.CaseType.Combination)
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+            if (result.Type == GsaResult.CaseType.AnalysisCase)
+              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -442,42 +442,42 @@ namespace GsaGH.Components {
         int starty = i * gripheight;
         int endy = starty + gripheight;
         for (int y = starty; y < endy; y++)
-        for (int x = 0; x < _legend.Width; x++)
-          _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+          for (int x = 0; x < _legend.Width; x++)
+            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-            var displacement = new Length(t, _lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            break;
-          }
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
+            }
           case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            break;
-          }
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            }
           case FoldMode.Reaction when (int)_disp < 4: {
-            var reactionForce = new Force(t, _forceUnit);
-            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(reactionForce));
-            Message = Force.GetAbbreviation(_forceUnit);
-            break;
-          }
+              var reactionForce = new Force(t, _forceUnit);
+              _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionForce));
+              Message = Force.GetAbbreviation(_forceUnit);
+              break;
+            }
           case FoldMode.Reaction: {
-            var reactionMoment = new Moment(t, _momentUnit);
-            _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(reactionMoment));
-            Message = Moment.GetAbbreviation(_momentUnit);
-            break;
-          }
+              var reactionMoment = new Moment(t, _momentUnit);
+              _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionMoment));
+              Message = Moment.GetAbbreviation(_momentUnit);
+              break;
+            }
           case FoldMode.Footfall: {
-            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            Message = "";
-            break;
-          }
+              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(responseFactor));
+              Message = "";
+              break;
+            }
         }
 
         if (Math.Abs(t) > 1)
@@ -684,41 +684,41 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       switch (i) {
         case 0: {
-          switch (j) {
-            case 0: {
-              if (DropDownItems[1] != _displacement) {
-                DropDownItems[1] = _displacement;
-                SelectedItems[0] = DropDownItems[0][0];
-                SelectedItems[1] = DropDownItems[1][3];
-                Mode1Clicked();
-              }
+            switch (j) {
+              case 0: {
+                  if (DropDownItems[1] != _displacement) {
+                    DropDownItems[1] = _displacement;
+                    SelectedItems[0] = DropDownItems[0][0];
+                    SelectedItems[1] = DropDownItems[1][3];
+                    Mode1Clicked();
+                  }
 
-              break;
-            }
-            case 1: {
-              if (DropDownItems[1] != _reaction) {
-                DropDownItems[1] = _reaction;
-                SelectedItems[0] = DropDownItems[0][1];
-                SelectedItems[1] = DropDownItems[1][3];
-                Mode2Clicked();
-              }
+                  break;
+                }
+              case 1: {
+                  if (DropDownItems[1] != _reaction) {
+                    DropDownItems[1] = _reaction;
+                    SelectedItems[0] = DropDownItems[0][1];
+                    SelectedItems[1] = DropDownItems[1][3];
+                    Mode2Clicked();
+                  }
 
-              break;
-            }
-            case 2: {
-              if (DropDownItems[1] != _footfall) {
-                DropDownItems[1] = _footfall;
-                SelectedItems[0] = DropDownItems[0][2];
-                SelectedItems[1] = DropDownItems[1][0];
-                Mode3Clicked();
-              }
+                  break;
+                }
+              case 2: {
+                  if (DropDownItems[1] != _footfall) {
+                    DropDownItems[1] = _footfall;
+                    SelectedItems[0] = DropDownItems[0][2];
+                    SelectedItems[1] = DropDownItems[1][0];
+                    Mode3Clicked();
+                  }
 
-              break;
+                  break;
+                }
             }
+
+            break;
           }
-
-          break;
-        }
         case 1:
           _disp = (DisplayValue)j;
           SelectedItems[1] = DropDownItems[1][j];
@@ -1036,7 +1036,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
-      writer.SetBoolean("_legend", _showLegend);
+      writer.SetBoolean("legend", _showLegend);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
@@ -1052,7 +1052,7 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("_legend");
+      _showLegend = reader.GetBoolean("legend");
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));

@@ -558,57 +558,57 @@ namespace GsaGH.Components {
         int starty = i * gripheight;
         int endy = starty + gripheight;
         for (int y = starty; y < endy; y++)
-        for (int x = 0; x < _legend.Width; x++)
-          _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+          for (int x = 0; x < _legend.Width; x++)
+            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-            var displacement = new Length(t, _lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            Message = Length.GetAbbreviation(_lengthResultUnit);
-            break;
-          }
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              Message = Length.GetAbbreviation(_lengthResultUnit);
+              break;
+            }
           case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            Message = Angle.GetAbbreviation(AngleUnit.Radian);
-            break;
-          }
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              Message = Angle.GetAbbreviation(AngleUnit.Radian);
+              break;
+            }
           case FoldMode.Force when (int)_disp < 4 | _isShear: {
-            var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-            _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(forcePerLength));
-            Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
-            break;
-          }
+              var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
+              _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(forcePerLength));
+              Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
+              break;
+            }
           case FoldMode.Force: {
-            _legendValues.Add(
-              new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
-                "s" + significantDigits)
-              + "/"
-              + Length.GetAbbreviation(lengthUnit));
-            var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
-            ts.Add(new GH_UnitNumber(moment));
-            Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
-              + "/"
-              + Length.GetAbbreviation(lengthUnit);
-            break;
-          }
+              _legendValues.Add(
+                new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
+                  "s" + significantDigits)
+                + "/"
+                + Length.GetAbbreviation(lengthUnit));
+              var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
+              ts.Add(new GH_UnitNumber(moment));
+              Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
+                + "/"
+                + Length.GetAbbreviation(lengthUnit);
+              break;
+            }
           case FoldMode.Stress: {
-            var stress = new Pressure(t, _stressUnitResult);
-            _legendValues.Add(stress.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(stress));
-            Message = Pressure.GetAbbreviation(_stressUnitResult);
-            break;
-          }
+              var stress = new Pressure(t, _stressUnitResult);
+              _legendValues.Add(stress.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(stress));
+              Message = Pressure.GetAbbreviation(_stressUnitResult);
+              break;
+            }
           case FoldMode.Footfall: {
-            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            Message = "";
-            break;
-          }
+              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(responseFactor));
+              Message = "";
+              break;
+            }
         }
 
         if (Math.Abs(t) > 1)
@@ -823,155 +823,155 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
       switch (i) {
         case 0: {
-          switch (j) {
-            case 0: {
-              if (DropDownItems[1] != _displacement) {
-                while (
-                  DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  DropDownItems.RemoveAt(2);
-                  SelectedItems.RemoveAt(2);
-                  SpacerDescriptions.RemoveAt(2);
+            switch (j) {
+              case 0: {
+                  if (DropDownItems[1] != _displacement) {
+                    while (
+                      DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                    {
+                      DropDownItems.RemoveAt(2);
+                      SelectedItems.RemoveAt(2);
+                      SpacerDescriptions.RemoveAt(2);
+                    }
+
+                    DropDownItems[1] = _displacement;
+                    SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
+
+                    _disp = (DisplayValue)3;
+                    _isShear = false;
+                    _flayer = 0;
+                    Mode1Clicked();
+                  }
+
+                  break;
                 }
+              case 1: {
+                  if (DropDownItems[1] != _force) {
+                    while (
+                      DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                    {
+                      DropDownItems.RemoveAt(2);
+                      SelectedItems.RemoveAt(2);
+                      SpacerDescriptions.RemoveAt(2);
+                    }
 
-                DropDownItems[1] = _displacement;
-                SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
+                    DropDownItems[1] = _force;
+                    SelectedItems[1] = DropDownItems[1][0];
 
-                _disp = (DisplayValue)3;
-                _isShear = false;
-                _flayer = 0;
-                Mode1Clicked();
-              }
+                    _disp = 0;
+                    _isShear = false;
+                    _flayer = 0;
+                    Mode2Clicked();
+                  }
 
-              break;
-            }
-            case 1: {
-              if (DropDownItems[1] != _force) {
-                while (
-                  DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  DropDownItems.RemoveAt(2);
-                  SelectedItems.RemoveAt(2);
-                  SpacerDescriptions.RemoveAt(2);
+                  break;
                 }
+              case 2: {
+                  if (DropDownItems[1] != _stress) {
+                    if (DropDownItems.Count < 3) {
+                      DropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
+                      SpacerDescriptions.Insert(2, "Layer");
+                    }
 
-                DropDownItems[1] = _force;
-                SelectedItems[1] = DropDownItems[1][0];
+                    DropDownItems[1] = _stress;
+                    SelectedItems[1] = DropDownItems[1][0];
 
-                _disp = 0;
-                _isShear = false;
-                _flayer = 0;
-                Mode2Clicked();
-              }
+                    if (SelectedItems.Count < 3)
+                      SelectedItems.Insert(2, DropDownItems[2][1]);
+                    else
+                      SelectedItems[2] = DropDownItems[2][1];
 
-              break;
-            }
-            case 2: {
-              if (DropDownItems[1] != _stress) {
-                if (DropDownItems.Count < 3) {
-                  DropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
-                  SpacerDescriptions.Insert(2, "Layer");
+                    _disp = 0;
+                    _isShear = false;
+                    Mode4Clicked();
+                  }
+
+                  break;
                 }
+              case 3: {
+                  if (DropDownItems[1] != _footfall) {
+                    while (
+                      DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                    {
+                      DropDownItems.RemoveAt(2);
+                      SelectedItems.RemoveAt(2);
+                      SpacerDescriptions.RemoveAt(2);
+                    }
 
-                DropDownItems[1] = _stress;
-                SelectedItems[1] = DropDownItems[1][0];
+                    DropDownItems[1] = _footfall;
+                    SelectedItems[1] = DropDownItems[1][0];
 
-                if (SelectedItems.Count < 3)
-                  SelectedItems.Insert(2, DropDownItems[2][1]);
-                else
-                  SelectedItems[2] = DropDownItems[2][1];
+                    _disp = 0;
+                    _isShear = false;
+                    _flayer = 0;
+                    Mode5Clicked();
+                  }
 
-                _disp = 0;
-                _isShear = false;
-                Mode4Clicked();
-              }
-
-              break;
-            }
-            case 3: {
-              if (DropDownItems[1] != _footfall) {
-                while (
-                  DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  DropDownItems.RemoveAt(2);
-                  SelectedItems.RemoveAt(2);
-                  SpacerDescriptions.RemoveAt(2);
+                  break;
                 }
-
-                DropDownItems[1] = _footfall;
-                SelectedItems[1] = DropDownItems[1][0];
-
-                _disp = 0;
-                _isShear = false;
-                _flayer = 0;
-                Mode5Clicked();
-              }
-
-              break;
             }
+
+            break;
           }
-
-          break;
-        }
         case 1: {
-          bool redraw = false;
-          SelectedItems[1] = DropDownItems[1][j];
-          if (_mode == FoldMode.Displacement) {
-            if ((int)_disp > 3 & j < 4) {
-              redraw = true;
-              _slider = true;
-            }
-
-            if ((int)_disp < 4 & j > 3) {
-              redraw = true;
-              _slider = false;
-            }
-          }
-
-          _disp = (DisplayValue)j;
-          if (DropDownItems[1] != _displacement) {
-            _isShear = false;
-            if (_mode == FoldMode.Force) {
-              if (j == 3 | j == 4) {
-                _disp = (DisplayValue)j - 3;
-                _isShear = true;
+            bool redraw = false;
+            SelectedItems[1] = DropDownItems[1][j];
+            if (_mode == FoldMode.Displacement) {
+              if ((int)_disp > 3 & j < 4) {
+                redraw = true;
+                _slider = true;
               }
-              else if (j > 4)
-                _disp = (DisplayValue)j - 1;
 
-              switch (j) {
-                case 8:
-                  _disp = DisplayValue.ResXyz;
-                  break;
-                case 9:
-                  _disp = DisplayValue.ResXxyyzz;
-                  break;
+              if ((int)_disp < 4 & j > 3) {
+                redraw = true;
+                _slider = false;
               }
             }
-            else if (_mode == FoldMode.Force || _mode == FoldMode.Stress)
-              if (j > 2)
-                _disp = (DisplayValue)j + 1;
-          }
 
-          if (redraw)
-            ReDrawComponent();
-          break;
-        }
+            _disp = (DisplayValue)j;
+            if (DropDownItems[1] != _displacement) {
+              _isShear = false;
+              if (_mode == FoldMode.Force) {
+                if (j == 3 | j == 4) {
+                  _disp = (DisplayValue)j - 3;
+                  _isShear = true;
+                }
+                else if (j > 4)
+                  _disp = (DisplayValue)j - 1;
+
+                switch (j) {
+                  case 8:
+                    _disp = DisplayValue.ResXyz;
+                    break;
+                  case 9:
+                    _disp = DisplayValue.ResXxyyzz;
+                    break;
+                }
+              }
+              else if (_mode == FoldMode.Force || _mode == FoldMode.Stress)
+                if (j > 2)
+                  _disp = (DisplayValue)j + 1;
+            }
+
+            if (redraw)
+              ReDrawComponent();
+            break;
+          }
         case 2 when _mode == FoldMode.Stress: {
-          switch (j) {
-            case 0:
-              _flayer = 1;
-              break;
-            case 1:
-              _flayer = 0;
-              break;
-            case 2:
-              _flayer = -1;
-              break;
-          }
+            switch (j) {
+              case 0:
+                _flayer = 1;
+                break;
+              case 1:
+                _flayer = 0;
+                break;
+              case 2:
+                _flayer = -1;
+                break;
+            }
 
-          break;
-        }
+            break;
+          }
       }
 
       base.UpdateUI();
@@ -1341,7 +1341,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
-      writer.SetBoolean("_legend", _showLegend);
+      writer.SetBoolean("legend", _showLegend);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
@@ -1359,7 +1359,7 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("_legend");
+      _showLegend = reader.GetBoolean("legend");
 
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit

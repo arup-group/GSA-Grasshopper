@@ -7,7 +7,7 @@ namespace GsaGH.Helpers.GsaAPI {
   /// Profile class holds information about a profile
   ///: Standard, Catalogue or Geometric
   /// ShapeOptions for Standard type
-  /// Isection units
+  /// Section units
   /// </summary>
   public class ProfileHelper {
     public enum ProfileTypes {
@@ -22,7 +22,7 @@ namespace GsaGH.Helpers.GsaAPI {
     public enum StdShapeOptions {
       [Description("Rectangle")] Rectangle,
       [Description("Circle")] Circle,
-      [Description("I section")] Isection,
+      [Description("Section")] Section,
       [Description("Tee")] Tee,
       [Description("Channel")] Channel,
       [Description("Angle")] Angle,
@@ -61,12 +61,12 @@ namespace GsaGH.Helpers.GsaAPI {
     public List<List<Point2d>> VoidPoints;
   }
   /// <summary>
-  /// Helper class for Profile/Isection conversions
+  /// Helper class for Profile/Section conversions
   /// </summary>
   public class ConvertSection {
     /// <summary>
     /// Method to convert a GsaProfile to a string that can be read by GSA
-    /// (in GsaAPI.Isection.Profile or GsaGH.Parameters.GsaSection.Isection.Profile)
+    /// (in GsaAPI.Section.Profile or GsaGH.Parameters.GsaSection.Section.Profile)
     /// 
     /// NOTE: 
     /// - Does not cover all profile types available in GSA (but all available in GsaProfile)
@@ -103,28 +103,22 @@ namespace GsaGH.Helpers.GsaAPI {
               case ProfileHelper.StdShapeOptions.Rectangle:
                 return "STD R" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############");
               case ProfileHelper.StdShapeOptions.Circle when gsaProfile.IsHollow: {
-                  if (gsaProfile.IsElliptical) {
-                    return "STD OVAL" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############");
-                  }
-                  else {
-                    return "STD CHS" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############");
-                  }
+                  return gsaProfile.IsElliptical
+                    ? "STD OVAL" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############")
+                    : "STD CHS" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############");
                 }
               case ProfileHelper.StdShapeOptions.Circle when gsaProfile.IsElliptical:
                 return "STD E" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " 2";
               case ProfileHelper.StdShapeOptions.Circle:
                 return "STD C" + unit + gsaProfile.D.ToString("0.############");
-              case ProfileHelper.StdShapeOptions.Isection when gsaProfile.IsGeneral: {
-                  if (gsaProfile.IsTapered) {
-                    return "STD TI" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.B2.ToString("0.############") + " "
-                           + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tw2.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############") + " " + gsaProfile.Tf2.ToString("0.############");
-                  }
-                  else {
-                    return "STD GI" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.B2.ToString("0.############") + " "
+              case ProfileHelper.StdShapeOptions.Section when gsaProfile.IsGeneral: {
+                  return gsaProfile.IsTapered
+                    ? "STD TI" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.B2.ToString("0.############") + " "
+                           + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tw2.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############") + " " + gsaProfile.Tf2.ToString("0.############")
+                    : "STD GI" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.B2.ToString("0.############") + " "
                            + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############") + " " + gsaProfile.Tf2.ToString("0.############");
-                  }
                 }
-              case ProfileHelper.StdShapeOptions.Isection:
+              case ProfileHelper.StdShapeOptions.Section:
                 return "STD I" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
               case ProfileHelper.StdShapeOptions.Tee when gsaProfile.IsTapered:
                 return "STD TT" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " "

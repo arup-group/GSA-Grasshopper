@@ -200,7 +200,7 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0)
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].ToPascalCase());
       else
         switch (i) {
           case 1:
@@ -219,7 +219,7 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].ToPascalCase());
       _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
       _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), SelectedItems[2]);
       _temperatureUnit

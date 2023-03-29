@@ -53,28 +53,28 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning("Input is null");
           return;
         case GsaResultGoo goo: {
-          result = goo.Value;
-          switch (result.Type) {
-            case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeWarning("Combination Case "
-                + result.CaseId
-                + " contains "
-                + result.SelectedPermutationIds.Count
-                + " permutations - only one permutation can be displayed at a time."
-                + Environment.NewLine
-                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-            case GsaResult.CaseType.Combination:
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-            case GsaResult.CaseType.AnalysisCase:
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-              break;
-          }
+            result = goo.Value;
+            switch (result.Type) {
+              case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+                this.AddRuntimeWarning("Combination Case "
+                  + result.CaseId
+                  + " contains "
+                  + result.SelectedPermutationIds.Count
+                  + " permutations - only one permutation can be displayed at a time."
+                  + Environment.NewLine
+                  + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+                break;
+              case GsaResult.CaseType.Combination:
+                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+                break;
+              case GsaResult.CaseType.AnalysisCase:
+                _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+                break;
+            }
 
-          break;
-        }
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -227,17 +227,17 @@ namespace GsaGH.Components {
       double dmin = 0;
       switch (_mode) {
         case FoldMode.StrainEnergy: {
-          dmax = dmaxX;
-          dmin = dminX;
-          if (_disp == DisplayValue.X)
-            _resType = "Strain Energy Density";
-          else {
-            positionsCount = 2;
-            _resType = "Average Strain E Dens.";
-          }
+            dmax = dmaxX;
+            dmin = dminX;
+            if (_disp == DisplayValue.X)
+              _resType = "Strain Energy Density";
+            else {
+              positionsCount = 2;
+              _resType = "Average Strain E Dens.";
+            }
 
-          break;
-        }
+            break;
+          }
         case FoldMode.Footfall:
           dmax = dmaxX;
           dmin = dminX;
@@ -591,46 +591,46 @@ namespace GsaGH.Components {
         int starty = i * gripheight;
         int endy = starty + gripheight;
         for (int y = starty; y < endy; y++)
-        for (int x = 0; x < _legend.Width; x++)
-          _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+          for (int x = 0; x < _legend.Width; x++)
+            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
 
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-            var displacement = new Length(t, _lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            break;
-          }
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
+            }
           case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            break;
-          }
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            }
           case FoldMode.Force when (int)_disp < 4: {
-            var force = new Force(t, _forceUnit);
-            _legendValues.Add(force.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(force));
-            break;
-          }
+              var force = new Force(t, _forceUnit);
+              _legendValues.Add(force.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(force));
+              break;
+            }
           case FoldMode.Force: {
-            var moment = new Moment(t, _momentUnit);
-            _legendValues.Add(moment.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(moment));
-            break;
-          }
+              var moment = new Moment(t, _momentUnit);
+              _legendValues.Add(moment.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(moment));
+              break;
+            }
           case FoldMode.StrainEnergy: {
-            var energy = new Energy(t, _energyResultUnit);
-            _legendValues.Add(energy.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(energy));
-            break;
-          }
+              var energy = new Energy(t, _energyResultUnit);
+              _legendValues.Add(energy.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(energy));
+              break;
+            }
           default: {
-            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            break;
-          }
+              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(responseFactor));
+              break;
+            }
         }
 
         if (Math.Abs(t) > 1)
@@ -849,89 +849,89 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       switch (i) {
         case 0: {
-          switch (j) {
-            case 0: {
-              if (DropDownItems[1] != _displacement) {
-                DropDownItems[1] = _displacement;
+            switch (j) {
+              case 0: {
+                  if (DropDownItems[1] != _displacement) {
+                    DropDownItems[1] = _displacement;
 
-                SelectedItems[0] = DropDownItems[0][0];
-                SelectedItems[1] = DropDownItems[1][3];
+                    SelectedItems[0] = DropDownItems[0][0];
+                    SelectedItems[1] = DropDownItems[1][3];
 
-                _disp = DisplayValue.ResXyz;
-                Mode1Clicked();
-              }
+                    _disp = DisplayValue.ResXyz;
+                    Mode1Clicked();
+                  }
 
-              break;
+                  break;
+                }
+              case 1: {
+                  if (DropDownItems[1] != _force) {
+                    DropDownItems[1] = _force;
+
+                    SelectedItems[0] = DropDownItems[0][1];
+                    SelectedItems[1] = DropDownItems[1][5]; // set Myy as default
+
+                    _disp = DisplayValue.Yy;
+                    Mode2Clicked();
+                  }
+
+                  break;
+                }
+              case 2: {
+                  if (DropDownItems[1] != _strainenergy) {
+                    DropDownItems[1] = _strainenergy;
+
+                    SelectedItems[0] = DropDownItems[0][2];
+                    SelectedItems[1] = DropDownItems[1][1]; // set average as default
+
+                    _disp = DisplayValue.Y;
+                    Mode3Clicked();
+                  }
+
+                  break;
+                }
+              case 3: {
+                  if (DropDownItems[1] != _footfall) {
+                    DropDownItems[1] = _footfall;
+
+                    SelectedItems[0] = DropDownItems[0][3];
+                    SelectedItems[1] = DropDownItems[1][0];
+
+                    _disp = DisplayValue.X;
+                    Mode4Clicked();
+                  }
+
+                  break;
+                }
             }
-            case 1: {
-              if (DropDownItems[1] != _force) {
-                DropDownItems[1] = _force;
 
-                SelectedItems[0] = DropDownItems[0][1];
-                SelectedItems[1] = DropDownItems[1][5]; // set Myy as default
-
-                _disp = DisplayValue.Yy;
-                Mode2Clicked();
-              }
-
-              break;
-            }
-            case 2: {
-              if (DropDownItems[1] != _strainenergy) {
-                DropDownItems[1] = _strainenergy;
-
-                SelectedItems[0] = DropDownItems[0][2];
-                SelectedItems[1] = DropDownItems[1][1]; // set average as default
-
-                _disp = DisplayValue.Y;
-                Mode3Clicked();
-              }
-
-              break;
-            }
-            case 3: {
-              if (DropDownItems[1] != _footfall) {
-                DropDownItems[1] = _footfall;
-
-                SelectedItems[0] = DropDownItems[0][3];
-                SelectedItems[1] = DropDownItems[1][0];
-
-                _disp = DisplayValue.X;
-                Mode4Clicked();
-              }
-
-              break;
-            }
+            break;
           }
-
-          break;
-        }
         case 1: {
-          bool redraw = false;
+            bool redraw = false;
 
-          if (j < 4) {
-            if ((int)_disp > 3) // chekc if we are coming from other half of display modes
-              if (_mode == FoldMode.Displacement) {
-                redraw = true;
-                _slider = true;
-              }
+            if (j < 4) {
+              if ((int)_disp > 3) // chekc if we are coming from other half of display modes
+                if (_mode == FoldMode.Displacement) {
+                  redraw = true;
+                  _slider = true;
+                }
+            }
+            else {
+              if ((int)_disp < 4) // chekc if we are coming from other half of display modes
+                if (_mode == FoldMode.Displacement) {
+                  redraw = true;
+                  _slider = false;
+                }
+            }
+
+            _disp = (DisplayValue)j;
+
+            SelectedItems[1] = DropDownItems[1][j];
+
+            if (redraw)
+              ReDrawComponent();
+            break;
           }
-          else {
-            if ((int)_disp < 4) // chekc if we are coming from other half of display modes
-              if (_mode == FoldMode.Displacement) {
-                redraw = true;
-                _slider = false;
-              }
-          }
-
-          _disp = (DisplayValue)j;
-
-          SelectedItems[1] = DropDownItems[1][j];
-
-          if (redraw)
-            ReDrawComponent();
-          break;
-        }
       }
 
       base.UpdateUI();
@@ -1283,7 +1283,7 @@ namespace GsaGH.Components {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
       writer.SetBoolean("slider", _slider);
-      writer.SetBoolean("_legend", _showLegend);
+      writer.SetBoolean("legend", _showLegend);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
@@ -1300,7 +1300,7 @@ namespace GsaGH.Components {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
       _slider = reader.GetBoolean("slider");
-      _showLegend = reader.GetBoolean("_legend");
+      _showLegend = reader.GetBoolean("legend");
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");

@@ -51,28 +51,28 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning("Input is null");
           return;
         case GsaResultGoo goo: {
-          result = goo.Value;
-          switch (result.Type) {
-            case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeWarning("Combination Case "
-                + result.CaseId
-                + " contains "
-                + result.SelectedPermutationIds.Count
-                + " permutations - only one permutation can be displayed at a time."
-                + Environment.NewLine
-                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-            case GsaResult.CaseType.Combination:
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-            case GsaResult.CaseType.AnalysisCase:
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-              break;
-          }
+            result = goo.Value;
+            switch (result.Type) {
+              case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+                this.AddRuntimeWarning("Combination Case "
+                  + result.CaseId
+                  + " contains "
+                  + result.SelectedPermutationIds.Count
+                  + " permutations - only one permutation can be displayed at a time."
+                  + Environment.NewLine
+                  + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+                break;
+              case GsaResult.CaseType.Combination:
+                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+                break;
+              case GsaResult.CaseType.AnalysisCase:
+                _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+                break;
+            }
 
-          break;
-        }
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -441,30 +441,30 @@ namespace GsaGH.Components {
         int starty = i * gripheight;
         int endy = starty + gripheight;
         for (int y = starty; y < endy; y++)
-        for (int x = 0; x < _legend.Width; x++)
-          _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+          for (int x = 0; x < _legend.Width; x++)
+            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-            var displacement = new Length(t, _lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            Message = Length.GetAbbreviation(_lengthResultUnit);
-            break;
-          }
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              Message = Length.GetAbbreviation(_lengthResultUnit);
+              break;
+            }
           case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            Message = Angle.GetAbbreviation(AngleUnit.Radian);
-            break;
-          }
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              Message = Angle.GetAbbreviation(AngleUnit.Radian);
+              break;
+            }
           case FoldMode.Stress: {
-            var stress = new Pressure(t, _stressUnitResult);
-            _legendValues.Add(stress.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(stress));
-            Message = Pressure.GetAbbreviation(_stressUnitResult);
-            break;
-          }
+              var stress = new Pressure(t, _stressUnitResult);
+              _legendValues.Add(stress.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(stress));
+              Message = Pressure.GetAbbreviation(_stressUnitResult);
+              break;
+            }
         }
 
         if (Math.Abs(t) > 1)
@@ -647,58 +647,58 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
       switch (i) {
         case 0: {
-          switch (j) {
-            case 0: {
-              if (DropDownItems[1] != _displacement) {
-                DropDownItems[1] = _displacement;
-                SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
+            switch (j) {
+              case 0: {
+                  if (DropDownItems[1] != _displacement) {
+                    DropDownItems[1] = _displacement;
+                    SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
 
-                _disp = (DisplayValue)3; // Resolved XYZ
-                DeformationModeClicked();
-              }
+                    _disp = (DisplayValue)3; // Resolved XYZ
+                    DeformationModeClicked();
+                  }
 
-              break;
+                  break;
+                }
+              case 1: {
+                  if (DropDownItems[1] != _stress) {
+                    DropDownItems[1] = _stress;
+                    SelectedItems[1] = DropDownItems[1][2];
+
+                    _disp = (DisplayValue)2;
+                    StressModeClicked();
+                  }
+
+                  break;
+                }
             }
-            case 1: {
-              if (DropDownItems[1] != _stress) {
-                DropDownItems[1] = _stress;
-                SelectedItems[1] = DropDownItems[1][2];
 
-                _disp = (DisplayValue)2;
-                StressModeClicked();
-              }
-
-              break;
-            }
+            break;
           }
-
-          break;
-        }
         case 1: {
-          bool redraw = false;
-          SelectedItems[1] = DropDownItems[1][j];
-          if (_mode == FoldMode.Displacement) {
-            if ((int)_disp > 3 & j < 4) {
-              redraw = true;
-              _slider = true;
-            }
+            bool redraw = false;
+            SelectedItems[1] = DropDownItems[1][j];
+            if (_mode == FoldMode.Displacement) {
+              if ((int)_disp > 3 & j < 4) {
+                redraw = true;
+                _slider = true;
+              }
 
-            if ((int)_disp < 4 & j > 3) {
-              redraw = true;
-              _slider = false;
-            }
+              if ((int)_disp < 4 & j > 3) {
+                redraw = true;
+                _slider = false;
+              }
 
-            _disp = (DisplayValue)j;
+              _disp = (DisplayValue)j;
+            }
+            else
+              _disp = j < 3
+                ? (DisplayValue)j
+                : (DisplayValue)(j + 1);
+
+            if (redraw)
+              ReDrawComponent();
+            break;
           }
-          else
-            _disp = j < 3
-              ? (DisplayValue)j
-              : (DisplayValue)(j + 1);
-
-          if (redraw)
-            ReDrawComponent();
-          break;
-        }
       }
 
       base.UpdateUI();
@@ -963,7 +963,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
-      writer.SetBoolean("_legend", _showLegend);
+      writer.SetBoolean("legend", _showLegend);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
@@ -978,7 +978,7 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("_legend");
+      _showLegend = reader.GetBoolean("legend");
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));

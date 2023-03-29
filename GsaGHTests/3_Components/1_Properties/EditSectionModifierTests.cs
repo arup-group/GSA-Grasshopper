@@ -45,6 +45,7 @@ namespace GsaGHTests.Properties {
       var k22Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var volOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var addMassOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
+      var isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       var isRefPtOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       var stressOptOut = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
 
@@ -58,6 +59,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(0.1, k22Out.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(0.8, volOut.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(5, addMassOut.Value.As(LinearDensityUnit.KilogramPerMeter), 6);
+      //Assert.True(isBending_out.Value); TO-DO GSA-6036
       Assert.False(isRefPtOut.Value);
       Assert.Equal(1, stressOptOut.Value);
       Assert.True(modifierdGoo.Value.IsModified);

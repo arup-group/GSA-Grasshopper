@@ -93,7 +93,7 @@ namespace GsaGH.Helpers.GsaAPI {
       { "1D", ElementType.ONE_D },
       { "2D", ElementType.TWO_D },
       { "3D", ElementType.THREE_D },
-      { "1D Isection", ElementType.ONE_D_SECT },
+      { "1D Section", ElementType.ONE_D_SECT },
       { "2D Finite Element", ElementType.TWO_D_FE },
       { "2D Load", ElementType.TWO_D_LOAD },
     };
@@ -124,29 +124,17 @@ namespace GsaGH.Helpers.GsaAPI {
       { "Generic 3D", MemberType.GENERIC_3D },
     };
 
-    internal static AlignmentType GetAlignmentType(string typestring) {
-      return (AlignmentType)GetValue(typestring, typeof(AlignmentType));
-    }
+    internal static AlignmentType GetAlignmentType(string typestring) => (AlignmentType)GetValue(typestring, typeof(AlignmentType));
 
-    internal static AnalysisOrder GetAnalysisOrder(string input) {
-      return (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));
-    }
+    internal static AnalysisOrder GetAnalysisOrder(string input) => (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));
 
-    internal static ElementType GetElementType(string typestring) {
-      return (ElementType)GetValue(typestring, typeof(ElementType));
-    }
+    internal static ElementType GetElementType(string typestring) => (ElementType)GetValue(typestring, typeof(ElementType));
 
-    internal static MatType GetMatType(string typestring) {
-      return (MatType)GetValue(typestring, typeof(MatType));
-    }
+    internal static MatType GetMatType(string typestring) => (MatType)GetValue(typestring, typeof(MatType));
 
-    internal static MemberType GetMemberType(string typestring) {
-      return (MemberType)GetValue(typestring, typeof(MemberType));
-    }
+    internal static MemberType GetMemberType(string typestring) => (MemberType)GetValue(typestring, typeof(MemberType));
 
-    internal static Property2D_Type GetProperty2D_Type(string typestring) {
-      return (Property2D_Type)GetValue(typestring, typeof(Property2D_Type));
-    }
+    internal static Property2D_Type GetProperty2D_Type(string typestring) => (Property2D_Type)GetValue(typestring, typeof(Property2D_Type));
 
     private static Enum GetValue(string key, Type t) {
       List<string> types;
@@ -197,8 +185,6 @@ namespace GsaGH.Helpers.GsaAPI {
       throw new ArgumentException();
     }
 
-    private static int GetIndex(string key, List<string> types) {
-      return types.Select(v => v.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty)).ToList().IndexOf(key.ToLower().Trim().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty));
-    }
+    private static int GetIndex(string key, List<string> types) => types.Select(v => v.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty)).ToList().IndexOf(key.ToLower().Trim().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty));
   }
 }
