@@ -8,39 +8,34 @@ using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Node class, this class defines the basic properties and methods for any Gsa Node
   /// </summary>
   public class GsaNode {
-    #region fields
 
-    internal Line _previewXaxis;
-    internal Line _previewYaxis;
-    internal Line _previewZaxis;
-    internal Brep _previewSupportSymbol;
-    internal Text3d _previewText;
+    #region Properties + Fields
+    public Color Colour {
+      get => (Color)_node.Colour;
+      set {
+        CloneApiObject();
+        _node.Colour = value;
+      }
+    }
 
-    private int _id = 0;
-    private Plane _plane;
-    private Node _node = new Node();
-
-    #endregion
-
-    #region properties
+    public int DamperProperty {
+      get => _node.DamperProperty;
+      set {
+        CloneApiObject();
+        _node.DamperProperty = value;
+      }
+    }
 
     public int Id {
       get => _id;
       set {
         CloneApiObject();
         _id = value;
-      }
-    }
-
-    public Plane LocalAxis {
-      get => _plane;
-      set {
-        _plane = value;
-        UpdatePreview();
       }
     }
 
@@ -51,6 +46,30 @@ namespace GsaGH.Parameters {
         || _node.Restraint.XX
         || _node.Restraint.YY
         || _node.Restraint.ZZ;
+
+    public Plane LocalAxis {
+      get => _plane;
+      set {
+        _plane = value;
+        UpdatePreview();
+      }
+    }
+
+    public int MassProperty {
+      get => _node.MassProperty;
+      set {
+        CloneApiObject();
+        _node.MassProperty = value;
+      }
+    }
+
+    public string Name {
+      get => _node.Name;
+      set {
+        CloneApiObject();
+        _node.Name = value;
+      }
+    }
 
     public Point3d Point {
       get
@@ -64,24 +83,6 @@ namespace GsaGH.Parameters {
         _node.Position.Y = value.Y;
         _node.Position.Z = value.Z;
         UpdatePreview();
-      }
-    }
-
-    #region GsaAPI.Node members
-
-    internal Node ApiNode {
-      get => _node;
-      set {
-        _node = value;
-        UpdatePreview();
-      }
-    }
-
-    public Color Colour {
-      get => (Color)_node.Colour;
-      set {
-        CloneApiObject();
-        _node.Colour = value;
       }
     }
 
@@ -107,30 +108,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public string Name {
-      get => _node.Name;
-      set {
-        CloneApiObject();
-        _node.Name = value;
-      }
-    }
-
-    public int DamperProperty {
-      get => _node.DamperProperty;
-      set {
-        CloneApiObject();
-        _node.DamperProperty = value;
-      }
-    }
-
-    public int MassProperty {
-      get => _node.MassProperty;
-      set {
-        CloneApiObject();
-        _node.MassProperty = value;
-      }
-    }
-
     public int SpringProperty {
       get => _node.SpringProperty;
       set {
@@ -139,14 +116,37 @@ namespace GsaGH.Parameters {
       }
     }
 
-    #endregion
+    internal Node ApiNode {
+      get => _node;
+      set {
+        _node = value;
+        UpdatePreview();
+      }
+    }
 
-    #endregion
+    internal Brep _previewSupportSymbol;
+    internal Text3d _previewText;
+    internal Line _previewXaxis;
+    internal Line _previewYaxis;
+    internal Line _previewZaxis;
+    private int _id = 0;
+    private Node _node = new Node();
+    private Plane _plane;
+    #endregion Properties + Fields
 
-    #region constructors
+    #region Public Constructors
+    public GsaNode() {
+    }
 
-    public GsaNode() { }
+    public GsaNode(Point3d position, int id = 0) {
+      Point = position;
+      Id = id;
+      UpdatePreview();
+    }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane()) {
       _node = node;
       CloneApiObject();
@@ -161,16 +161,9 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaNode(Point3d position, int id = 0) {
-      Point = position;
-      Id = id;
-      UpdatePreview();
-    }
+    #endregion Internal Constructors
 
-    #endregion
-
-    #region methods
-
+    #region Public Methods
     public GsaNode Duplicate(bool cloneApiNode = false) {
       var dup = new GsaNode {
         Id = Id,
@@ -181,19 +174,6 @@ namespace GsaGH.Parameters {
       dup._plane = _plane;
       dup.UpdatePreview();
       return dup;
-    }
-
-    public GsaNode Transform(Transform xform) {
-      if (Point == null)
-        return null;
-
-      GsaNode node = Duplicate(true);
-      node.Id = 0;
-      var pt = new Point3d(node.Point);
-      pt.Transform(xform);
-
-      node.Point = pt;
-      return node;
     }
 
     public GsaNode Morph(SpaceMorph xmorph) {
@@ -287,6 +267,30 @@ namespace GsaGH.Parameters {
         .Replace("  ", " ");
     }
 
+    public GsaNode Transform(Transform xform) {
+      if (Point == null)
+        return null;
+
+      GsaNode node = Duplicate(true);
+      node.Id = 0;
+      var pt = new Point3d(node.Point);
+      pt.Transform(xform);
+
+      node.Point = pt;
+      return node;
+    }
+
+    public void UpdateUnit(LengthUnit unit) {
+      if (unit == LengthUnit.Meter) // convert from meter to input unit if not meter
+        return;
+      ApiNode.Position.X = new Length(ApiNode.Position.X, LengthUnit.Meter).As(unit);
+      ApiNode.Position.Y = new Length(ApiNode.Position.Y, LengthUnit.Meter).As(unit);
+      ApiNode.Position.Z = new Length(ApiNode.Position.Z, LengthUnit.Meter).As(unit);
+    }
+
+    #endregion Public Methods
+
+    #region Internal Methods
     internal void CloneApiObject() {
       var node = new Node {
         AxisProperty = _node.AxisProperty,
@@ -350,14 +354,6 @@ namespace GsaGH.Parameters {
       return node;
     }
 
-    public void UpdateUnit(LengthUnit unit) {
-      if (unit == LengthUnit.Meter) // convert from meter to input unit if not meter
-        return;
-      ApiNode.Position.X = new Length(ApiNode.Position.X, LengthUnit.Meter).As(unit);
-      ApiNode.Position.Y = new Length(ApiNode.Position.Y, LengthUnit.Meter).As(unit);
-      ApiNode.Position.Z = new Length(ApiNode.Position.Z, LengthUnit.Meter).As(unit);
-    }
-
     internal void UpdatePreview() {
       if (_node.Restraint.X
         || _node.Restraint.Y
@@ -386,6 +382,6 @@ namespace GsaGH.Parameters {
       _previewZaxis = new Line(Point, local.ZAxis, 0.5);
     }
 
-    #endregion
+    #endregion Internal Methods
   }
 }

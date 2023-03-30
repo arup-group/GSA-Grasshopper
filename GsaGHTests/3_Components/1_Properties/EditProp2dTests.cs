@@ -12,8 +12,11 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Properties {
+
   [Collection("GrasshopperFixture collection")]
   public class EditProp2dTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditProp2d();
       comp.CreateAttributes();
@@ -47,6 +50,15 @@ namespace GsaGHTests.Properties {
       Assert.Equal("", name.Value);
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal("Shell", type.Value);
+    }
+
+    [Fact]
+    public void SetPlaneFromNewComponent() {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
+      var axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
     }
 
     [Fact]
@@ -106,13 +118,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal("Curved Shell", type.Value);
     }
 
-    [Fact]
-    public void SetPlaneFromNewComponent() {
-      GH_OasysComponent comp = ComponentMother();
-
-      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
-      var axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
-      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
-    }
+    #endregion Public Methods
   }
 }

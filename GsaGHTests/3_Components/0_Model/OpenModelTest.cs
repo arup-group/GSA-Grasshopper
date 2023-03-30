@@ -7,11 +7,17 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Model {
+
   [Collection("GrasshopperFixture collection")]
   public class ModelTests {
+
+    #region Properties + Fields
     public static GsaModelGoo GsaModelGooMother
       => (GsaModelGoo)ComponentTestHelper.GetOutput(OpenModelComponentMother());
 
+    #endregion Properties + Fields
+
+    #region Public Methods
     public static GH_OasysComponent OpenModelComponentMother() {
       var comp = new OpenModel();
       comp.CreateAttributes();
@@ -33,5 +39,7 @@ namespace GsaGHTests.Model {
       Assert.Equal(GsaFile.SteelDesignSimple, model.FileNameAndPath);
       Assert.NotEqual(new Guid(), model.Guid);
     }
+
+    #endregion Public Methods
   }
 }

@@ -3,9 +3,19 @@ using System.Linq;
 using System.Net;
 
 namespace GsaGHTests.Helper {
+
   internal static class GsaFile {
-    private static string s_steelDesignSimple = "";
-    private static string s_steelDesignComplex = "";
+
+    #region Properties + Fields
+    internal static string SteelDesignComplex {
+      get {
+        if (s_steelDesignComplex == "")
+          s_steelDesignComplex
+            = DownloadFile(
+              "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
+        return s_steelDesignComplex;
+      }
+    }
 
     internal static string SteelDesignSimple {
       get {
@@ -17,16 +27,11 @@ namespace GsaGHTests.Helper {
       }
     }
 
-    internal static string SteelDesignComplex {
-      get {
-        if (s_steelDesignComplex == "")
-          s_steelDesignComplex
-            = DownloadFile(
-              "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
-        return s_steelDesignComplex;
-      }
-    }
+    private static string s_steelDesignComplex = "";
+    private static string s_steelDesignSimple = "";
+    #endregion Properties + Fields
 
+    #region Private Methods
     private static string DownloadFile(string url) {
       string path = Path.GetTempPath();
       string fileName = url.Split('/')
@@ -35,5 +40,7 @@ namespace GsaGHTests.Helper {
       webClient.DownloadFile(url, path + fileName);
       return path + fileName;
     }
+
+    #endregion Private Methods
   }
 }

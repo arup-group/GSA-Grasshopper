@@ -4,19 +4,26 @@ using OasysGH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaBucklingLengthFactors"/> can be used in Grasshopper.
   /// </summary>
   public class GsaBucklingLengthFactorsGoo : GH_OasysGoo<GsaBucklingLengthFactors> {
+
+    #region Properties + Fields
+    public static string Description => "GSA Buckling Length Factors";
     public static string Name => "BucklingLengthFactors";
     public static string NickName => "fLs";
-    public static string Description => "GSA Buckling Length Factors";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    #endregion Properties + Fields
 
-    public GsaBucklingLengthFactorsGoo(GsaBucklingLengthFactors item) : base(item) { }
+    #region Public Constructors
+    public GsaBucklingLengthFactorsGoo(GsaBucklingLengthFactors item) : base(item) {
+    }
 
-    public override IGH_Goo Duplicate() => new GsaBucklingLengthFactorsGoo(Value);
+    #endregion Public Constructors
 
+    #region Public Methods
     public override bool CastFrom(object source) {
       if (source == null)
         return false;
@@ -32,7 +39,10 @@ namespace GsaGH.Parameters {
       Value.MomentAmplificationFactorStrongAxis = val;
       Value.MomentAmplificationFactorWeakAxis = val;
       return true;
-
     }
+
+    public override IGH_Goo Duplicate() => new GsaBucklingLengthFactorsGoo(Value);
+
+    #endregion Public Methods
   }
 }

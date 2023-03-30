@@ -6,8 +6,11 @@ using Xunit;
 using static GsaAPI.GridSurface;
 
 namespace GsaGHTests.Components.Loads {
+
   [Collection("GrasshopperFixture collection")]
   public class GridSurfaceTests {
+
+    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridSurface();
       comp.CreateAttributes();
@@ -41,5 +44,7 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal("99", gridSurface.Tolerance);
       Assert.Equal(Span_Type.ONE_WAY, gridSurface.GridSurface.SpanType);
     }
+
+    #endregion Public Methods
   }
 }

@@ -4,8 +4,11 @@ using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Helpers.GsaAPITests {
+
   [Collection("GrasshopperFixture collection")]
   public class MappingsTests {
+
+    #region Public Methods
     [Theory]
     [InlineData("Linear", 0)]
     [InlineData("Quadratic", 1)]
@@ -130,5 +133,7 @@ namespace GsaGHTests.Helpers.GsaAPITests {
 
       Assert.Equal(expected, (int)actual);
     }
+
+    #endregion Public Methods
   }
 }

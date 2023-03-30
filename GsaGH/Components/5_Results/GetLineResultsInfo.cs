@@ -9,22 +9,17 @@ using OasysGH.Components;
 using OasysGH.Parameters;
 
 namespace GsaGH.Components {
+
   public class GetLineResultsInfo : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      LineResultGoo res = null;
-      da.GetData(0, ref res);
-      da.SetData(0, res.Value);
-      da.SetData(1, new GH_UnitNumber(res.Result1));
-      da.SetData(2, new GH_UnitNumber(res.Result2));
-    }
 
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("89f754b4-48a1-4cb8-980b-9ac7c51e101e");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Result1dInfo;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public GetLineResultsInfo() : base("LineResultInfo",
       "LnResInfo",
       "Get Element 1D Contour Result values",
@@ -32,10 +27,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
-
+    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddGenericParameter("Result Line",
         "L",
@@ -54,6 +48,14 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      LineResultGoo res = null;
+      da.GetData(0, ref res);
+      da.SetData(0, res.Value);
+      da.SetData(1, new GH_UnitNumber(res.Result1));
+      da.SetData(2, new GH_UnitNumber(res.Result2));
+    }
+
+    #endregion Protected Methods
   }
 }

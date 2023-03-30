@@ -3,15 +3,28 @@ using OasysGH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaCombinationCase" /> can be used in Grasshopper.
   /// </summary>
   public class GsaCombinationCaseGoo : GH_OasysGoo<GsaCombinationCase> {
-    public GsaCombinationCaseGoo(GsaCombinationCase item) : base(item) { }
+
+    #region Properties + Fields
+    public static string Description => "GSA Combination Case";
     public static string Name => "Combination Case";
     public static string NickName => "ΣC";
-    public static string Description => "GSA Combination Case";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public GsaCombinationCaseGoo(GsaCombinationCase item) : base(item) {
+    }
+
+    #endregion Public Constructors
+
+    #region Public Methods
     public override IGH_Goo Duplicate() => new GsaCombinationCaseGoo(Value);
+
+    #endregion Public Methods
   }
 }

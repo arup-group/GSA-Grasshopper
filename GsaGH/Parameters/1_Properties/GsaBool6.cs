@@ -1,15 +1,13 @@
 ﻿using GsaAPI;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   /// Bool6 class, this class defines the basic properties and methods for any <see cref="GsaAPI.Bool6"/>
   /// </summary>
   public class GsaBool6 {
-    #region fields
-    internal Bool6 _bool6;
-    #endregion
 
-    #region properties
+    #region Properties + Fields
     public bool X {
       get {
         return _bool6.X;
@@ -18,22 +16,7 @@ namespace GsaGH.Parameters {
         _bool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
       }
     }
-    public bool Y {
-      get {
-        return _bool6.Y;
-      }
-      set {
-        _bool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
-      }
-    }
-    public bool Z {
-      get {
-        return _bool6.Z;
-      }
-      set {
-        _bool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
-      }
-    }
+
     public bool Xx {
       get {
         return _bool6.XX;
@@ -42,6 +25,16 @@ namespace GsaGH.Parameters {
         _bool6 = new Bool6(X, Y, Z, value, Yy, Zz);
       }
     }
+
+    public bool Y {
+      get {
+        return _bool6.Y;
+      }
+      set {
+        _bool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
+      }
+    }
+
     public bool Yy {
       get {
         return _bool6.YY;
@@ -50,6 +43,16 @@ namespace GsaGH.Parameters {
         _bool6 = new Bool6(X, Y, Z, Xx, value, Zz);
       }
     }
+
+    public bool Z {
+      get {
+        return _bool6.Z;
+      }
+      set {
+        _bool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
+      }
+    }
+
     public bool Zz {
       get {
         return _bool6.ZZ;
@@ -58,9 +61,11 @@ namespace GsaGH.Parameters {
         _bool6 = new Bool6(X, Y, Z, Xx, Yy, value);
       }
     }
-    #endregion
 
-    #region constructors
+    internal Bool6 _bool6;
+    #endregion Properties + Fields
+
+    #region Public Constructors
     public GsaBool6() {
       _bool6 = new Bool6(false, false, false, false, false, false);
     }
@@ -69,12 +74,16 @@ namespace GsaGH.Parameters {
       _bool6 = new Bool6(x, y, z, xx, yy, zz);
     }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaBool6(Bool6 bool6) {
       _bool6 = bool6;
     }
-    #endregion
 
-    #region methods
+    #endregion Internal Constructors
+
+    #region Public Methods
     public GsaBool6 Duplicate() {
       // create shallow copy
       var dup = new GsaBool6 {
@@ -139,6 +148,7 @@ namespace GsaGH.Parameters {
       else
         return state.Trim();
     }
-    #endregion
+
+    #endregion Public Methods
   }
 }

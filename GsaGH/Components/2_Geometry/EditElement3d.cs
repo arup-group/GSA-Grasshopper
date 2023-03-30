@@ -12,10 +12,105 @@ using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to edit a 3D Element
   /// </summary>
   public class EditElement3d : GH_OasysComponent {
+
+    #region Properties + Fields
+    public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditElem3d;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public EditElement3d() : base("Edit 3D Element",
+      "Elem3dEdit",
+      "Modify GSA 3D Element",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    #endregion Public Constructors
+
+    #region Protected Methods
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaElement3dParameter(),
+        GsaElement3dGoo.Name,
+        GsaElement3dGoo.NickName,
+        GsaElement3dGoo.Description + " to get or set information for.",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp3dParameter(),
+        "3D Property",
+        "PV",
+        "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Element3d Group",
+        "Gr",
+        "Set Element Group",
+        GH_ParamAccess.list);
+      pManager.AddTextParameter("Element3d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
+      pManager.AddColourParameter("Element3d Colour",
+        "Co",
+        "Set Element Colour",
+        GH_ParamAccess.list);
+      pManager.AddBooleanParameter("Dummy Element",
+        "Dm",
+        "Set Element to Dummy",
+        GH_ParamAccess.list);
+
+      for (int i = 1; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+
+      pManager.HideParameter(0);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaElement3dParameter(),
+        GsaElement3dGoo.Name,
+        GsaElement3dGoo.NickName,
+        GsaElement3dGoo.Description + " with applied changes.",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
+      pManager.AddMeshParameter("Analysis Mesh",
+        "M",
+        "Get Analysis Mesh. "
+        + Environment.NewLine
+        + "This will export a list of solid meshes representing each 3D element."
+        + Environment.NewLine
+        + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
+        GH_ParamAccess.item);
+      pManager.HideParameter(2);
+      pManager.AddParameter(new GsaProp2dParameter(),
+        "3D Property",
+        "PV",
+        "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
+      pManager.AddTextParameter("Element Type",
+        "eT",
+        "Get Element 3D Type."
+        + Environment.NewLine
+        + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8",
+        GH_ParamAccess.list);
+      pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
+      pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
+      pManager.AddBooleanParameter("Dummy Element",
+        "Dm",
+        "Get if Element is Dummy",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Parent Members",
+        "pM",
+        "Get Parent Member IDs in Model that Element was created from",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Topology",
+        "Tp",
+        "Get the Element's original topology list referencing node IDs in Model that Element was created from",
+        GH_ParamAccess.list);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaElement3d = new GsaElement3d();
       if (!da.GetData(0, ref gsaElement3d))
@@ -190,99 +285,6 @@ namespace GsaGH.Components {
       da.SetDataTree(10, elem.TopologyIDs);
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditElem3d;
-
-    public EditElement3d() : base("Edit 3D Element",
-      "Elem3dEdit",
-      "Modify GSA 3D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaElement3dParameter(),
-        GsaElement3dGoo.Name,
-        GsaElement3dGoo.NickName,
-        GsaElement3dGoo.Description + " to get or set information for.",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter(),
-        "3D Property",
-        "PV",
-        "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Element3d Group",
-        "Gr",
-        "Set Element Group",
-        GH_ParamAccess.list);
-      pManager.AddTextParameter("Element3d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
-      pManager.AddColourParameter("Element3d Colour",
-        "Co",
-        "Set Element Colour",
-        GH_ParamAccess.list);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Set Element to Dummy",
-        GH_ParamAccess.list);
-
-      for (int i = 1; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-
-      pManager.HideParameter(0);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement3dParameter(),
-        GsaElement3dGoo.Name,
-        GsaElement3dGoo.NickName,
-        GsaElement3dGoo.Description + " with applied changes.",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
-      pManager.AddMeshParameter("Analysis Mesh",
-        "M",
-        "Get Analysis Mesh. "
-        + Environment.NewLine
-        + "This will export a list of solid meshes representing each 3D element."
-        + Environment.NewLine
-        + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
-        GH_ParamAccess.item);
-      pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp2dParameter(),
-        "3D Property",
-        "PV",
-        "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
-      pManager.AddTextParameter("Element Type",
-        "eT",
-        "Get Element 3D Type."
-        + Environment.NewLine
-        + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8",
-        GH_ParamAccess.list);
-      pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
-      pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Get if Element is Dummy",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Parent Members",
-        "pM",
-        "Get Parent Member IDs in Model that Element was created from",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Topology",
-        "Tp",
-        "Get the Element's original topology list referencing node IDs in Model that Element was created from",
-        GH_ParamAccess.list);
-    }
-
-    #endregion
+    #endregion Protected Methods
   }
 }

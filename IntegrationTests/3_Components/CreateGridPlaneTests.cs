@@ -7,11 +7,31 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPlaneTests {
-    private static GH_Document s_document = null;
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
+    #region Properties + Fields
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
+
+    #region Public Methods
+    [Fact]
+    public void GridPlaneSurfaceTest() {
+      GH_Document doc = Document;
+      GH_Component comp = Helper.FindComponent(doc, "gps");
+      Assert.NotNull(comp);
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      GsaGridPlaneSurface gps = output.Value;
+      Assert.Equal(42, gps.GridPlaneId);
+      Assert.Equal("10", gps.Elevation);
+      Assert.Equal("test", gps.GridPlane.Name);
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;
@@ -30,16 +50,6 @@ namespace IntegrationTests.Components {
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
-    [Fact]
-    public void GridPlaneSurfaceTest() {
-      GH_Document doc = Document;
-      GH_Component comp = Helper.FindComponent(doc, "gps");
-      Assert.NotNull(comp);
-      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      GsaGridPlaneSurface gps = output.Value;
-      Assert.Equal(42, gps.GridPlaneId);
-      Assert.Equal("10", gps.Elevation);
-      Assert.Equal("test", gps.GridPlane.Name);
-    }
+    #endregion Private Methods
   }
 }

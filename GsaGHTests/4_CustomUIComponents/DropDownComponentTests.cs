@@ -5,8 +5,11 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.CustomComponent {
+
   [Collection("GrasshopperFixture collection")]
   public class DropDownComponentTests {
+
+    #region Public Methods
     [Theory]
     [InlineData(typeof(CreateModel), true)]
     [InlineData(typeof(GetLoads))]
@@ -50,5 +53,7 @@ namespace GsaGHTests.CustomComponent {
       var comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.ChangeDropDownTest(comp, ignoreSpacerDescriptionCount);
     }
+
+    #endregion Public Methods
   }
 }

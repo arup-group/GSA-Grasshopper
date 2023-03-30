@@ -4,20 +4,27 @@ using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   /// This class provides a parameter interface for the <see cref="GsaProp2dGoo"/> type.
   /// </summary>
   public class GsaProp2dParameter : GH_OasysPersistentParam<GsaProp2dGoo> {
+
+    #region Properties + Fields
+    public override Guid ComponentGuid => new Guid("05a034ad-683d-479b-9768-5c04379c0606");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override string InstanceDescription => m_data.DataCount == 0
-      ? "Empty " + GsaProp2dGoo.Name + " parameter"
+              ? "Empty " + GsaProp2dGoo.Name + " parameter"
       : base.InstanceDescription;
+
     public override string TypeName => SourceCount == 0
       ? GsaProp2dGoo.Name
       : base.TypeName;
-    public override Guid ComponentGuid => new Guid("05a034ad-683d-479b-9768-5c04379c0606");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.Prop2dParam;
 
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.Prop2dParam;
+    #endregion Properties + Fields
+
+    #region Public Constructors
     public GsaProp2dParameter() : base(new GH_InstanceDescription(
       GsaProp2dGoo.Name,
       GsaProp2dGoo.NickName,
@@ -25,6 +32,9 @@ namespace GsaGH.Parameters {
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
+    #endregion Public Constructors
+
+    #region Protected Methods
     protected override GsaProp2dGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaProp2d))
         return new GsaProp2dGoo((GsaProp2d)data);
@@ -36,5 +46,7 @@ namespace GsaGH.Parameters {
       var prop = new GsaProp2d(id);
       return new GsaProp2dGoo(prop);
     }
+
+    #endregion Protected Methods
   }
 }

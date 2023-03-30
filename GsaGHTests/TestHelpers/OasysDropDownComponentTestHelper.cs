@@ -5,7 +5,33 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Helpers {
+
   public class OasysDropDownComponentTestHelper {
+
+    #region Public Methods
+    public static void ChangeDropDownTest(
+      GH_OasysDropDownComponent comp,
+      bool ignoreSpacerDescriptionsCount = false) {
+      Assert.True(comp.IsInitialised);
+      if (!ignoreSpacerDescriptionsCount)
+        Assert.Equal(comp.DropDownItems.Count, comp.SpacerDescriptions.Count);
+      Assert.Equal(comp.DropDownItems.Count, comp.SelectedItems.Count);
+
+      for (int i = 0; i < comp.DropDownItems.Count; i++) {
+        comp.SetSelected(i, 0);
+
+        for (int j = 0;
+          j
+          < comp.DropDownItems[i]
+            .Count;
+          j++) {
+          comp.SetSelected(i, j);
+          TestDeserialize(comp);
+          Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);
+        }
+      }
+    }
+
     public static void TestDeserialize(GH_OasysComponent comp, string customIdentifier = "") {
       comp.CreateAttributes();
 
@@ -39,27 +65,6 @@ namespace GsaGHTests.Helpers {
       Duplicates.AreEqual(originalComponent, deserializedComponent, true);
     }
 
-    public static void ChangeDropDownTest(
-      GH_OasysDropDownComponent comp,
-      bool ignoreSpacerDescriptionsCount = false) {
-      Assert.True(comp.IsInitialised);
-      if (!ignoreSpacerDescriptionsCount)
-        Assert.Equal(comp.DropDownItems.Count, comp.SpacerDescriptions.Count);
-      Assert.Equal(comp.DropDownItems.Count, comp.SelectedItems.Count);
-
-      for (int i = 0; i < comp.DropDownItems.Count; i++) {
-        comp.SetSelected(i, 0);
-
-        for (int j = 0;
-          j
-          < comp.DropDownItems[i]
-            .Count;
-          j++) {
-          comp.SetSelected(i, j);
-          TestDeserialize(comp);
-          Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);
-        }
-      }
-    }
+    #endregion Public Methods
   }
 }

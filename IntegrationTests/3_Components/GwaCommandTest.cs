@@ -6,8 +6,11 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   public class GwaCommandTest {
+
+    #region Public Methods
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;
@@ -47,5 +50,7 @@ namespace IntegrationTests.Components {
       var newList = (GH_String)param4.VolatileData.get_Branch(0)[0];
       Assert.Equal("My list", newList.Value);
     }
+
+    #endregion Public Methods
   }
 }

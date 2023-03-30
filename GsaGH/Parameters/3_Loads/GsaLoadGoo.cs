@@ -6,18 +6,26 @@ using OasysGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaLoad" /> can be used in Grasshopper.
   /// </summary>
   public class GsaLoadGoo : GH_OasysGoo<GsaLoad> {
-    public GsaLoadGoo(GsaLoad item) : base(item) { }
+
+    #region Properties + Fields
+    public static string Description => "GSA Load";
     public static string Name => "Load";
     public static string NickName => "Ld";
-    public static string Description => "GSA Load";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    #endregion Properties + Fields
 
-    public override IGH_Goo Duplicate() => new GsaLoadGoo(Value);
+    #region Public Constructors
+    public GsaLoadGoo(GsaLoad item) : base(item) {
+    }
 
+    #endregion Public Constructors
+
+    #region Public Methods
     public override bool CastTo<TQ>(ref TQ target) {
       if (base.CastTo<TQ>(ref target))
         return true;
@@ -127,5 +135,9 @@ namespace GsaGH.Parameters {
       target = default;
       return false;
     }
+
+    public override IGH_Goo Duplicate() => new GsaLoadGoo(Value);
+
+    #endregion Public Methods
   }
 }

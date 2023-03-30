@@ -8,8 +8,11 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GsaElement2dTests {
+
+    #region Public Methods
     [Fact]
     public void DuplicateTest() {
       var original = new GsaElement2d(new Mesh());
@@ -270,5 +273,7 @@ namespace GsaGHTests.Parameters {
             .Z.Value);
       }
     }
+
+    #endregion Public Methods
   }
 }

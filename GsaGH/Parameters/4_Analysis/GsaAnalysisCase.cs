@@ -1,11 +1,15 @@
 ﻿namespace GsaGH.Parameters {
-  public class GsaAnalysisCase {
-    public GsaAnalysisCase() { }
 
-    internal GsaAnalysisCase(int id, string name, string description = "") {
-      Id = id;
-      Name = name;
-      Description = description;
+  public class GsaAnalysisCase {
+
+    #region Properties + Fields
+    public string Description { get; set; }
+    public string Name { get; set; }
+    internal int Id { get; set; } = 0;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public GsaAnalysisCase() {
     }
 
     public GsaAnalysisCase(string name, string description) {
@@ -13,12 +17,18 @@
       Description = description;
     }
 
-    internal int Id { get; set; } = 0;
-    public string Name { get; set; }
-    public string Description { get; set; }
+    #endregion Public Constructors
 
-    #region methods
+    #region Internal Constructors
+    internal GsaAnalysisCase(int id, string name, string description = "") {
+      Id = id;
+      Name = name;
+      Description = description;
+    }
 
+    #endregion Internal Constructors
+
+    #region Public Methods
     public GsaAnalysisCase Duplicate() => new GsaAnalysisCase(Id, Name, Description);
 
     public override string ToString() {
@@ -35,6 +45,6 @@
         .Replace("  ", " ");
     }
 
-    #endregion
+    #endregion Public Methods
   }
 }

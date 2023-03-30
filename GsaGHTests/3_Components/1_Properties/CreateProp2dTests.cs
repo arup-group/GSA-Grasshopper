@@ -8,8 +8,11 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateProp2dTests {
+
+    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateProp2d();
       comp.CreateAttributes();
@@ -31,5 +34,7 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(Property2D_Type.PLATE, output.Value.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Thickness);
     }
+
+    #endregion Public Methods
   }
 }

@@ -7,8 +7,11 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GsaMember2dTest {
+
+    #region Public Methods
     [Fact]
     public void TestCreateGsaMem2dFromBrep() {
       var pts = new List<Point3d> {
@@ -276,5 +279,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(AnalysisOrder.QUADRATIC, original.Type2D);
       Assert.Equal(MemberType.WALL, original.Type);
     }
+
+    #endregion Public Methods
   }
 }

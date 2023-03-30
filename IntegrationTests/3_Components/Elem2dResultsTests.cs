@@ -7,223 +7,16 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   public class Elem2dResultsTests {
-    private static GH_Document s_document = null;
+
+    #region Properties + Fields
     private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
-
-    [Fact]
-    public void Elem2dContourScaledDeformationTests() {
-      GH_Document doc = Document;
-      IGH_Param param1 = Helper.FindParameter(doc, "DeformedValue");
-      var output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
-      IGH_Param param2 = Helper.FindParameter(doc, "ContourValueScaled");
-      var output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
-      IGH_Param param3 = Helper.FindParameter(doc, "ResultScaled");
-      var output3 = (GH_Number)param3.VolatileData.get_Branch(0)[0];
-
-      Assert.Equal(output1.Value, output3.Value, 4);
-      Assert.Equal(output2.Value, output3.Value, 4);
-    }
-
-    [Theory]
-    [InlineData("Ux",
-      new double[] {
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-      },
-      1)]
-    [InlineData("Uy",
-      new double[] {
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-      },
-      1)]
-    [InlineData("Uz",
-      new double[] {
-        -0.7564,
-        -0.8108,
-        -0.8694,
-        -0.8108,
-        -0.7972,
-        -0.8548,
-        -0.8548,
-        -0.7972,
-        -0.8401,
-      },
-      4)]
-    [InlineData("U",
-      new double[] {
-        0.7564,
-        0.8108,
-        0.8694,
-        0.8108,
-        0.7972,
-        0.8548,
-        0.8548,
-        0.7972,
-        0.8401,
-      },
-      4)]
-    public void Elem2dDisplacementTests(string name, double[] expectedVals, int precision = 6) {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, name);
-      var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
-        Assert.Equal(expectedVals[i],
-          output[i]
-            .Value,
-          precision);
-    }
-
-    [Theory]
-    [InlineData("Nx",
-      new double[] {
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-      },
-      1)]
-    [InlineData("Ny",
-      new double[] {
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-      },
-      1)]
-    [InlineData("Nxy",
-      new double[] {
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-      },
-      1)]
-    [InlineData("Qx",
-      new double[] {
-        3.393,
-        2.756,
-        0.1455,
-        1.992,
-        3.075,
-        1.451,
-        1.069,
-        2.692,
-        2.072,
-      },
-      3)]
-    [InlineData("Qy",
-      new double[] {
-        -41.89,
-        -43.89,
-        -29.75,
-        -27.73,
-        -42.89,
-        -36.82,
-        -28.74,
-        -34.81,
-        -35.82,
-      },
-      2)]
-    [InlineData("Mx",
-      new double[] {
-        9.117,
-        9.704,
-        0.4307,
-        0.2494,
-        9.494,
-        5.474,
-        0.4240,
-        5.090,
-        5.366,
-      },
-      3)]
-    [InlineData("My",
-      new double[] {
-        46.94,
-        49.77,
-        15.16,
-        13.79,
-        48.77,
-        32.55,
-        14.89,
-        30.45,
-        31.92,
-      },
-      2)]
-    [InlineData("Mxy",
-      new double[] {
-        0.3305,
-        -0.1698,
-        0.1910,
-        3.3354,
-        0.08636,
-        0.08220,
-        1.7692,
-        1.9045,
-        0.9994,
-      },
-      4)]
-    public void Elem2dForcesTests(string name, double[] expectedVals, int precision = 6) {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, name);
-      var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
-        Assert.Equal(expectedVals[i],
-          output[i]
-            .Value,
-          precision);
-    }
-
+    #region Public Methods
     [Theory]
     [InlineData("MyContours",
       new double[] {
@@ -295,6 +88,20 @@ namespace IntegrationTests.Components {
     }
 
     [Fact]
+    public void Elem2dContourScaledDeformationTests() {
+      GH_Document doc = Document;
+      IGH_Param param1 = Helper.FindParameter(doc, "DeformedValue");
+      var output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
+      IGH_Param param2 = Helper.FindParameter(doc, "ContourValueScaled");
+      var output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
+      IGH_Param param3 = Helper.FindParameter(doc, "ResultScaled");
+      var output3 = (GH_Number)param3.VolatileData.get_Branch(0)[0];
+
+      Assert.Equal(output1.Value, output3.Value, 4);
+      Assert.Equal(output2.Value, output3.Value, 4);
+    }
+
+    [Fact]
     public void Elem2dContourStressTests() {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "yzTopContour");
@@ -319,33 +126,7 @@ namespace IntegrationTests.Components {
     }
 
     [Theory]
-    [InlineData("xx",
-      new double[] {
-        -218.8,
-        -232.9,
-        -10.34,
-        -5.987,
-        -227.9,
-        -131.4,
-        -10.17,
-        -122.2,
-        -128.8,
-      },
-      1)]
-    [InlineData("yy",
-      new double[] {
-        -1127,
-        -1194,
-        -363.8,
-        -330.9,
-        -1171,
-        -781.1,
-        -357.4,
-        -730.7,
-        -766.0,
-      },
-      0)]
-    [InlineData("zz",
+    [InlineData("Ux",
       new double[] {
         0.0,
         0.0,
@@ -358,46 +139,46 @@ namespace IntegrationTests.Components {
         0.0,
       },
       1)]
-    [InlineData("xy",
+    [InlineData("Uy",
       new double[] {
-        -7.932,
-        4.074,
-        -4.584,
-        -80.05,
-        -2.073,
-        -1.973,
-        -42.46,
-        -45.71,
-        -23.98,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
       },
-      2)]
-    [InlineData("yz",
+      1)]
+    [InlineData("Uz",
       new double[] {
-        -83.78,
-        -87.78,
-        -59.51,
-        -55.46,
-        -85.78,
-        -73.65,
-        -57.49,
-        -69.62,
-        -71.63,
+        -0.7564,
+        -0.8108,
+        -0.8694,
+        -0.8108,
+        -0.7972,
+        -0.8548,
+        -0.8548,
+        -0.7972,
+        -0.8401,
       },
-      2)]
-    [InlineData("zx",
+      4)]
+    [InlineData("U",
       new double[] {
-        6.785,
-        5.513,
-        0.2910,
-        3.983,
-        6.149,
-        2.902,
-        2.137,
-        5.384,
-        4.143,
+        0.7564,
+        0.8108,
+        0.8694,
+        0.8108,
+        0.7972,
+        0.8548,
+        0.8548,
+        0.7972,
+        0.8401,
       },
-      3)]
-    public void Elem2dStressTests(string name, double[] expectedVals, int precision = 6) {
+      4)]
+    public void Elem2dDisplacementTests(string name, double[] expectedVals, int precision = 6) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
@@ -549,5 +330,234 @@ namespace IntegrationTests.Components {
             .Value,
           precision);
     }
+
+    [Theory]
+    [InlineData("Nx",
+      new double[] {
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      },
+      1)]
+    [InlineData("Ny",
+      new double[] {
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      },
+      1)]
+    [InlineData("Nxy",
+      new double[] {
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      },
+      1)]
+    [InlineData("Qx",
+      new double[] {
+        3.393,
+        2.756,
+        0.1455,
+        1.992,
+        3.075,
+        1.451,
+        1.069,
+        2.692,
+        2.072,
+      },
+      3)]
+    [InlineData("Qy",
+      new double[] {
+        -41.89,
+        -43.89,
+        -29.75,
+        -27.73,
+        -42.89,
+        -36.82,
+        -28.74,
+        -34.81,
+        -35.82,
+      },
+      2)]
+    [InlineData("Mx",
+      new double[] {
+        9.117,
+        9.704,
+        0.4307,
+        0.2494,
+        9.494,
+        5.474,
+        0.4240,
+        5.090,
+        5.366,
+      },
+      3)]
+    [InlineData("My",
+      new double[] {
+        46.94,
+        49.77,
+        15.16,
+        13.79,
+        48.77,
+        32.55,
+        14.89,
+        30.45,
+        31.92,
+      },
+      2)]
+    [InlineData("Mxy",
+      new double[] {
+        0.3305,
+        -0.1698,
+        0.1910,
+        3.3354,
+        0.08636,
+        0.08220,
+        1.7692,
+        1.9045,
+        0.9994,
+      },
+      4)]
+    public void Elem2dForcesTests(string name, double[] expectedVals, int precision = 6) {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+      for (int i = 0; i < expectedVals.Length; i++)
+        Assert.Equal(expectedVals[i],
+          output[i]
+            .Value,
+          precision);
+    }
+
+    [Theory]
+    [InlineData("xx",
+      new double[] {
+        -218.8,
+        -232.9,
+        -10.34,
+        -5.987,
+        -227.9,
+        -131.4,
+        -10.17,
+        -122.2,
+        -128.8,
+      },
+      1)]
+    [InlineData("yy",
+      new double[] {
+        -1127,
+        -1194,
+        -363.8,
+        -330.9,
+        -1171,
+        -781.1,
+        -357.4,
+        -730.7,
+        -766.0,
+      },
+      0)]
+    [InlineData("zz",
+      new double[] {
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      },
+      1)]
+    [InlineData("xy",
+      new double[] {
+        -7.932,
+        4.074,
+        -4.584,
+        -80.05,
+        -2.073,
+        -1.973,
+        -42.46,
+        -45.71,
+        -23.98,
+      },
+      2)]
+    [InlineData("yz",
+      new double[] {
+        -83.78,
+        -87.78,
+        -59.51,
+        -55.46,
+        -85.78,
+        -73.65,
+        -57.49,
+        -69.62,
+        -71.63,
+      },
+      2)]
+    [InlineData("zx",
+      new double[] {
+        6.785,
+        5.513,
+        0.2910,
+        3.983,
+        6.149,
+        2.902,
+        2.137,
+        5.384,
+        4.143,
+      },
+      3)]
+    public void Elem2dStressTests(string name, double[] expectedVals, int precision = 6) {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+      for (int i = 0; i < expectedVals.Length; i++)
+        Assert.Equal(expectedVals[i],
+          output[i]
+            .Value,
+          precision);
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
+    #endregion Private Methods
   }
 }

@@ -9,8 +9,11 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
+
   [Collection("GrasshopperFixture collection")]
   public class EditNodeTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditNode();
       comp.CreateAttributes();
@@ -139,5 +142,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, output9.Value.G);
       Assert.Equal(255, output9.Value.B);
     }
+
+    #endregion Public Methods
   }
 }

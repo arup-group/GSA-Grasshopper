@@ -8,8 +8,11 @@ using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Geometry {
+
   [Collection("GrasshopperFixture collection")]
   public class EditMember3dTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditMember3d();
       comp.CreateAttributes();
@@ -91,5 +94,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.True(output9.Value);
       Assert.Equal("", output10.Value);
     }
+
+    #endregion Public Methods
   }
 }

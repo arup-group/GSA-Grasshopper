@@ -7,12 +7,44 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GlobalPerformance_BucklingTests {
-    private static GH_Document s_document = null;
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
+    #region Properties + Fields
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
+
+    #region Public Methods
+    [Fact]
+    public void LoadFactorTest() {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "LoadFactors");
+      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      Assert.Equal(-0.4183, output1.Value, 4);
+      Assert.Equal(-0.5784, output2.Value, 4);
+      Assert.Equal(-0.8993, output3.Value, 4);
+    }
+
+    [Fact]
+    public void ModesTest() {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "Modes");
+      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
+      var output3 = (GH_Integer)param.VolatileData.get_Branch(0)[2];
+      Assert.Equal(1, output1.Value);
+      Assert.Equal(2, output2.Value);
+      Assert.Equal(3, output3.Value);
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;
@@ -31,28 +63,6 @@ namespace IntegrationTests.Components {
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
-    [Fact]
-    public void ModesTest() {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, "Modes");
-      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Integer)param.VolatileData.get_Branch(0)[2];
-      Assert.Equal(1, output1.Value);
-      Assert.Equal(2, output2.Value);
-      Assert.Equal(3, output3.Value);
-    }
-
-    [Fact]
-    public void LoadFactorTest() {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, "LoadFactors");
-      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      Assert.Equal(-0.4183, output1.Value, 4);
-      Assert.Equal(-0.5784, output2.Value, 4);
-      Assert.Equal(-0.8993, output3.Value, 4);
-    }
+    #endregion Private Methods
   }
 }

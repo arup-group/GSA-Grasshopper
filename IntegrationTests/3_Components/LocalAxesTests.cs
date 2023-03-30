@@ -7,29 +7,16 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   public class LocalAxesTests {
-    private static GH_Document s_document = null;
+
+    #region Properties + Fields
     private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
-
+    #region Public Methods
     [Fact]
     public void LocalAxesTest() {
       GH_Document doc = Document;
@@ -97,5 +84,28 @@ namespace IntegrationTests.Components {
         Assert.Equal(outputZ3.Value.Z, outputZ4.Value.Z, 6);
       }
     }
+
+    #endregion Public Methods
+
+    #region Private Methods
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
+    #endregion Private Methods
   }
 }

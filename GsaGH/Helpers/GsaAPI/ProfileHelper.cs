@@ -3,72 +3,18 @@ using System.ComponentModel;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.GsaAPI {
-  /// <summary>
-  /// Profile class holds information about a profile
-  ///: Standard, Catalogue or Geometric
-  /// ShapeOptions for Standard type
-  /// Section units
-  /// </summary>
-  public class ProfileHelper {
-    public enum ProfileTypes {
-      [Description("Standard")] Standard,
-      [Description("Catalogue")] Catalogue,
-      [Description("Geometric")] Geometric,
-    }
-    public enum GeoTypes {
-      [Description("Perimeter")] Perim,
-    }
 
-    public enum StdShapeOptions {
-      [Description("Rectangle")] Rectangle,
-      [Description("Circle")] Circle,
-      [Description("Section")] Section,
-      [Description("Tee")] Tee,
-      [Description("Channel")] Channel,
-      [Description("Angle")] Angle,
-    }
-
-    public enum SectUnitOptions {
-      [Description("mm")] UMm,
-      [Description("cm")] UCm,
-      [Description("m")] Um,
-      [Description("ft")] UFt,
-      [Description("in")] UIn,
-    }
-
-    public ProfileTypes ProfileType;
-    public StdShapeOptions StdShape;
-    public GeoTypes GeoType;
-    public SectUnitOptions SectUnit = SectUnitOptions.UMm;
-
-    public string CatalogueProfileName = "";
-
-    public bool IsTapered;
-    public bool IsHollow;
-    public bool IsElliptical;
-    public bool IsGeneral;
-    public bool IsB2B;
-
-    public double D;
-    public double B1;
-    public double B2;
-    public double Tf1;
-    public double Tf2;
-    public double Tw1;
-    public double Tw2;
-
-    public List<Point2d> PerimeterPoints;
-    public List<List<Point2d>> VoidPoints;
-  }
   /// <summary>
   /// Helper class for Profile/Section conversions
   /// </summary>
   public class ConvertSection {
+
+    #region Public Methods
     /// <summary>
     /// Method to convert a GsaProfile to a string that can be read by GSA
     /// (in GsaAPI.Section.Profile or GsaGH.Parameters.GsaSection.Section.Profile)
-    /// 
-    /// NOTE: 
+    ///
+    /// NOTE:
     /// - Does not cover all profile types available in GSA (but all available in GsaProfile)
     /// - Geometric can handle custom profiles with voids. Origin/anchor to be implemented.
     /// - Catalogue profiles yet to be implemented
@@ -84,12 +30,15 @@ namespace GsaGH.Helpers.GsaAPI {
               case ProfileHelper.SectUnitOptions.UCm:
                 unit = "(cm) ";
                 break;
+
               case ProfileHelper.SectUnitOptions.Um:
                 unit = "(m) ";
                 break;
+
               case ProfileHelper.SectUnitOptions.UIn:
                 unit = "(in) ";
                 break;
+
               case ProfileHelper.SectUnitOptions.UFt:
                 unit = "(ft) ";
                 break;
@@ -98,10 +47,13 @@ namespace GsaGH.Helpers.GsaAPI {
             switch (gsaProfile.StdShape) {
               case ProfileHelper.StdShapeOptions.Rectangle when gsaProfile.IsTapered:
                 return "STD TR" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.B2.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Rectangle when gsaProfile.IsHollow:
                 return "STD RHS" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Rectangle:
                 return "STD R" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Circle when gsaProfile.IsHollow: {
                   return gsaProfile.IsElliptical
                     ? "STD OVAL" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############")
@@ -109,8 +61,10 @@ namespace GsaGH.Helpers.GsaAPI {
                 }
               case ProfileHelper.StdShapeOptions.Circle when gsaProfile.IsElliptical:
                 return "STD E" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " 2";
+
               case ProfileHelper.StdShapeOptions.Circle:
                 return "STD C" + unit + gsaProfile.D.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Section when gsaProfile.IsGeneral: {
                   return gsaProfile.IsTapered
                     ? "STD TI" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.B2.ToString("0.############") + " "
@@ -120,19 +74,26 @@ namespace GsaGH.Helpers.GsaAPI {
                 }
               case ProfileHelper.StdShapeOptions.Section:
                 return "STD I" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Tee when gsaProfile.IsTapered:
                 return "STD TT" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " "
                        + gsaProfile.Tw2.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Tee:
                 return "STD T" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Channel when gsaProfile.IsB2B:
                 return "STD DCH" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Channel:
                 return "STD CH" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Angle when gsaProfile.IsB2B:
                 return "STD D" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               case ProfileHelper.StdShapeOptions.Angle:
                 return "STD A" + unit + gsaProfile.D.ToString("0.############") + " " + gsaProfile.B1.ToString("0.############") + " " + gsaProfile.Tw1.ToString("0.############") + " " + gsaProfile.Tf1.ToString("0.############");
+
               default:
                 return "STD something else";
             }
@@ -153,15 +114,19 @@ namespace GsaGH.Helpers.GsaAPI {
               case ProfileHelper.SectUnitOptions.UMm:
                 unit = "(mm)";
                 break;
+
               case ProfileHelper.SectUnitOptions.UCm:
                 unit = "(cm)";
                 break;
+
               case ProfileHelper.SectUnitOptions.Um:
                 unit = "(m)";
                 break;
+
               case ProfileHelper.SectUnitOptions.UIn:
                 unit = "(in)";
                 break;
+
               case ProfileHelper.SectUnitOptions.UFt:
                 unit = "(ft)";
                 break;
@@ -206,9 +171,69 @@ namespace GsaGH.Helpers.GsaAPI {
           }
         case ProfileHelper.ProfileTypes.Geometric:
           return "GEO";
+
         default:
           return null;
       }
     }
+
+    #endregion Public Methods
+  }
+
+  /// <summary>
+  /// Profile class holds information about a profile
+  ///: Standard, Catalogue or Geometric
+  /// ShapeOptions for Standard type
+  /// Section units
+  /// </summary>
+  public class ProfileHelper {
+
+    #region Enums
+    public enum GeoTypes {
+      [Description("Perimeter")] Perim,
+    }
+    public enum ProfileTypes {
+      [Description("Standard")] Standard,
+      [Description("Catalogue")] Catalogue,
+      [Description("Geometric")] Geometric,
+    }
+    public enum SectUnitOptions {
+      [Description("mm")] UMm,
+      [Description("cm")] UCm,
+      [Description("m")] Um,
+      [Description("ft")] UFt,
+      [Description("in")] UIn,
+    }
+    public enum StdShapeOptions {
+      [Description("Rectangle")] Rectangle,
+      [Description("Circle")] Circle,
+      [Description("Section")] Section,
+      [Description("Tee")] Tee,
+      [Description("Channel")] Channel,
+      [Description("Angle")] Angle,
+    }
+    #endregion Enums
+
+    #region Properties + Fields
+    public double B1;
+    public double B2;
+    public string CatalogueProfileName = "";
+    public double D;
+    public GeoTypes GeoType;
+    public bool IsB2B;
+    public bool IsElliptical;
+    public bool IsGeneral;
+    public bool IsHollow;
+    public bool IsTapered;
+    public List<Point2d> PerimeterPoints;
+    public ProfileTypes ProfileType;
+    public SectUnitOptions SectUnit = SectUnitOptions.UMm;
+    public StdShapeOptions StdShape;
+    public double Tf1;
+    public double Tf2;
+    public double Tw1;
+    public double Tw2;
+    public List<List<Point2d>> VoidPoints;
+    #endregion Properties + Fields
   }
 }

@@ -5,12 +5,59 @@ using Grasshopper.Kernel;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GridPlaneSurfaceTest {
-    private static GH_Document s_document = null;
 
+    #region Properties + Fields
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
+    #region Public Methods
+    [Theory]
+    [InlineData("DefaultGpElevation", "0cm")]
+    [InlineData("DefaultGpTolAbove", "auto")]
+    [InlineData("DefaultGpTolBelow", "auto")]
+    [InlineData("DefaultGpTolerance", "1cm")]
+    public void TestDefaultGridPlane(string groupIdentifier, object expected) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      Helper.TestGhPrimitives(param, expected);
+    }
+
+    [Theory]
+    [InlineData("DefaultGsElevation", "0cm")]
+    [InlineData("DefaultGsTolAbove", "auto")]
+    [InlineData("DefaultGsTolBelow", "auto")]
+    [InlineData("DefaultGsTolerance", "1cm")]
+    public void TestDefaultGridSurface(string groupIdentifier, object expected) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      Helper.TestGhPrimitives(param, expected);
+    }
+
+    [Theory]
+    [InlineData("NumInputElevation", "1500cm")]
+    [InlineData("NumInputTolAbove", "11cm")]
+    [InlineData("NumInputTolBelow", "12cm")]
+    [InlineData("NumInputTolerance", "25cm")]
+    public void TestNumInput(string groupIdentifier, object expected) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      Helper.TestGhPrimitives(param, expected);
+    }
+
+    [Theory]
+    [InlineData("TxtInputElevation", "1500cm")]
+    [InlineData("TxtInputTolAbove", "11cm")]
+    [InlineData("TxtInputTolBelow", "12cm")]
+    [InlineData("TxtInputTolerance", "25cm")]
+    public void TestTxtInput(string groupIdentifier, object expected) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      Helper.TestGhPrimitives(param, expected);
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType
@@ -61,44 +108,6 @@ namespace IntegrationTests.Parameters {
       return io.Document;
     }
 
-    [Theory]
-    [InlineData("DefaultGpElevation", "0cm")]
-    [InlineData("DefaultGpTolAbove", "auto")]
-    [InlineData("DefaultGpTolBelow", "auto")]
-    [InlineData("DefaultGpTolerance", "1cm")]
-    public void TestDefaultGridPlane(string groupIdentifier, object expected) {
-      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected);
-    }
-
-    [Theory]
-    [InlineData("DefaultGsElevation", "0cm")]
-    [InlineData("DefaultGsTolAbove", "auto")]
-    [InlineData("DefaultGsTolBelow", "auto")]
-    [InlineData("DefaultGsTolerance", "1cm")]
-    public void TestDefaultGridSurface(string groupIdentifier, object expected) {
-      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected);
-    }
-
-    [Theory]
-    [InlineData("NumInputElevation", "1500cm")]
-    [InlineData("NumInputTolAbove", "11cm")]
-    [InlineData("NumInputTolBelow", "12cm")]
-    [InlineData("NumInputTolerance", "25cm")]
-    public void TestNumInput(string groupIdentifier, object expected) {
-      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected);
-    }
-
-    [Theory]
-    [InlineData("TxtInputElevation", "1500cm")]
-    [InlineData("TxtInputTolAbove", "11cm")]
-    [InlineData("TxtInputTolBelow", "12cm")]
-    [InlineData("TxtInputTolerance", "25cm")]
-    public void TestTxtInput(string groupIdentifier, object expected) {
-      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected);
-    }
+    #endregion Private Methods
   }
 }

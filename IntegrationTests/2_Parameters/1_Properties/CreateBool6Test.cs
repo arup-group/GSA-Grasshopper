@@ -7,12 +7,46 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateBool6Test {
-    private static GH_Document s_document = null;
 
+    #region Properties + Fields
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
+    #region Public Methods
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+
+    [Theory]
+    [InlineData("X", true)]
+    [InlineData("Y", false)]
+    [InlineData("Z", true)]
+    [InlineData("XX", false)]
+    [InlineData("YY", true)]
+    [InlineData("ZZ", false)]
+    [InlineData("Cast", true)]
+    public void OutputTest(string groupIdentifier, bool expected) {
+      GH_Document doc = Document;
+
+      IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
+
+      Assert.Equal(1, param.VolatileData.DataCount);
+      IEnumerator<IGH_Goo> data = param.VolatileData.AllData(true)
+        .GetEnumerator();
+      data.Reset();
+      data.MoveNext();
+      var b = (GH_Boolean)data.Current;
+
+      Assert.Equal(expected, b.Value);
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType
@@ -62,31 +96,6 @@ namespace IntegrationTests.Parameters {
       return io.Document;
     }
 
-    [Theory]
-    [InlineData("X", true)]
-    [InlineData("Y", false)]
-    [InlineData("Z", true)]
-    [InlineData("XX", false)]
-    [InlineData("YY", true)]
-    [InlineData("ZZ", false)]
-    [InlineData("Cast", true)]
-    public void OutputTest(string groupIdentifier, bool expected) {
-      GH_Document doc = Document;
-
-      IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-
-      Assert.Equal(1, param.VolatileData.DataCount);
-      IEnumerator<IGH_Goo> data = param.VolatileData.AllData(true)
-        .GetEnumerator();
-      data.Reset();
-      data.MoveNext();
-      var b = (GH_Boolean)data.Current;
-
-      Assert.Equal(expected, b.Value);
-    }
-
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    #endregion Private Methods
   }
 }

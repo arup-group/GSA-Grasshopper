@@ -20,13 +20,184 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to create a new Prop2d
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class CreateProp2d_OBSOLETE : GH_OasysComponent,
     IGH_VariableParameterComponent {
-    #region IGH_VariableParameterComponent null implementation
+
+    #region Enums
+    private enum FoldMode {
+      PlaneStress,
+      Fabric,
+      FlatPlate,
+      Shell,
+      CurvedShell,
+      LoadPanel,
+    }
+    #endregion Enums
+
+    #region Properties + Fields
+    public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateProp2d;
+
+    private readonly List<string> _dropdownTopList = new List<string>(new[] {
+      "Plane Stress",
+      "Fabric",
+      "Flat Plate",
+      "Shell",
+      "Curved Shell",
+      "Load Panel",
+    });
+
+    private List<List<string>> _dropDownItems;
+    private bool _first = true;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private FoldMode _mode = FoldMode.Shell;
+    private List<string> _selectedItems;
+
+    private List<string> _spacerDescriptions = new List<string>(new[] {
+      "Element Type",
+      "Unit",
+    });
+
+    private string _unitAbbreviation;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public CreateProp2d_OBSOLETE() : base("Create 2D Property",
+      "Prop2d",
+      "Create GSA 2D Property",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    #endregion Public Constructors
+
+    #region Public Methods
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+      => false;
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+      => false;
+
+    public override void CreateAttributes() {
+      if (_first) {
+        _dropDownItems = new List<List<string>>();
+        _selectedItems = new List<string>();
+
+        _dropDownItems.Add(_dropdownTopList);
+        _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+
+        _selectedItems.Add(_dropdownTopList[3]);
+        _selectedItems.Add(_lengthUnit.ToString());
+
+        IQuantity quantity = new Length(0, _lengthUnit);
+        _unitAbbreviation = string.Concat(quantity.ToString()
+          .Where(char.IsLetter));
+
+        _first = false;
+      }
+
+      m_attributes = new DropDownComponentAttributes(this,
+        SetSelected,
+        _dropDownItems,
+        _selectedItems,
+        _spacerDescriptions);
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+      => null;
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    public override bool Read(GH_IReader reader) {
+      try // if users has an old version of this component then dropdown menu wont read
+      {
+        ReadDropDownComponents(ref reader,
+          ref _dropDownItems,
+          ref _selectedItems,
+          ref _spacerDescriptions);
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode),
+          _selectedItems[0]
+            .Replace(" ", string.Empty));
+        _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[1]);
+      }
+      catch (Exception) {
+        _dropDownItems = new List<List<string>>();
+        _selectedItems = new List<string>();
+        _dropDownItems.Add(_dropdownTopList);
+        _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+
+        _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
+        _selectedItems.Add(reader.GetString("select")); // same
+        _selectedItems.Add(_lengthUnit.ToString());
+
+        _lengthUnit = LengthUnit.Meter;
+
+        IQuantity quantity = new Length(0, _lengthUnit);
+        _unitAbbreviation = string.Concat(quantity.ToString()
+          .Where(char.IsLetter));
+      }
+
+      UpdateUiFromSelectedItems();
+      _first = false;
+      return base.Read(reader);
+    }
+
+    public void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+
+      if (i == 0)
+        switch (_selectedItems[i]) {
+          case "Plane Stress":
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+            Mode1Clicked();
+            break;
+
+          case "Fabric":
+            if (_dropDownItems.Count > 1)
+              _dropDownItems.RemoveAt(1);
+            Mode2Clicked();
+            break;
+
+          case "Flat Plate":
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+            Mode3Clicked();
+            break;
+
+          case "Shell":
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+            Mode4Clicked();
+            break;
+
+          case "Curved Shell":
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+            Mode5Clicked();
+            break;
+
+          case "Load Panel":
+            if (_dropDownItems.Count > 1)
+              _dropDownItems.RemoveAt(1);
+            Mode6Clicked();
+            break;
+        }
+      else
+        _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[i]);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+      Params.OnParametersChanged();
+      OnDisplayExpired(true);
+    }
 
     void IGH_VariableParameterComponent.VariableParameterMaintenance() {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
@@ -97,8 +268,102 @@ namespace GsaGH.Components {
       }
     }
 
-    #endregion
+    public override bool Write(GH_IWriter writer) {
+      WriteDropDownComponents(ref writer, _dropDownItems, _selectedItems, _spacerDescriptions);
+      return base.Write(writer);
+    }
 
+    #endregion Public Methods
+
+    #region Internal Methods
+    internal static void ReadDropDownComponents(
+      ref GH_IReader reader,
+      ref List<List<string>> dropDownItems,
+      ref List<string> selectedItems,
+      ref List<string> spacerDescriptions) {
+      if (reader.ItemExists("dropdown")) {
+        int dropdownCount = reader.GetInt32("dropdownCount");
+        dropDownItems = new List<List<string>>();
+        for (int i = 0; i < dropdownCount; i++) {
+          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+          var tempcontent = new List<string>();
+          for (int j = 0; j < dropdowncontentsCount; j++)
+            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+          dropDownItems.Add(tempcontent);
+        }
+      }
+      else
+        throw new Exception("Component doesnt have 'dropdown' content stored");
+
+      if (reader.ItemExists("spacer")) {
+        int dropdownspacerCount = reader.GetInt32("spacerCount");
+        spacerDescriptions = new List<string>();
+        for (int i = 0; i < dropdownspacerCount; i++)
+          spacerDescriptions.Add(reader.GetString("spacercontents" + i));
+      }
+
+      if (!reader.ItemExists("select"))
+        return;
+
+      {
+        int selectionsCount = reader.GetInt32("selectionCount");
+        selectedItems = new List<string>();
+        for (int i = 0; i < selectionsCount; i++)
+          selectedItems.Add(reader.GetString("selectioncontents" + i));
+      }
+    }
+
+    internal static GH_IWriter WriteDropDownComponents(
+      ref GH_IWriter writer,
+      List<List<string>> dropDownItems,
+      List<string> selectedItems,
+      List<string> spacerDescriptions) {
+      bool dropdown = false;
+      if (dropDownItems != null) {
+        writer.SetInt32("dropdownCount", dropDownItems.Count);
+        for (int i = 0; i < dropDownItems.Count; i++) {
+          writer.SetInt32("dropdowncontentsCount" + i,
+            dropDownItems[i]
+              .Count);
+          for (int j = 0;
+            j
+            < dropDownItems[i]
+              .Count;
+            j++)
+            writer.SetString("dropdowncontents" + i + j, dropDownItems[i][j]);
+        }
+
+        dropdown = true;
+      }
+
+      writer.SetBoolean("dropdown", dropdown);
+
+      bool spacer = false;
+      if (spacerDescriptions != null) {
+        writer.SetInt32("spacerCount", spacerDescriptions.Count);
+        for (int i = 0; i < spacerDescriptions.Count; i++)
+          writer.SetString("spacercontents" + i, spacerDescriptions[i]);
+        spacer = true;
+      }
+
+      writer.SetBoolean("spacer", spacer);
+
+      bool select = false;
+      if (selectedItems != null) {
+        writer.SetInt32("selectionCount", selectedItems.Count);
+        for (int i = 0; i < selectedItems.Count; i++)
+          writer.SetString("selectioncontents" + i, selectedItems[i]);
+        select = true;
+      }
+
+      writer.SetBoolean("select", select);
+
+      return writer;
+    }
+
+    #endregion Internal Methods
+
+    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       Params.RegisterInputParam(new Param_GenericObject());
       Params.RegisterInputParam(new Param_Number());
@@ -177,228 +442,9 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaProp2dGoo(prop));
     }
 
-    internal static GH_IWriter WriteDropDownComponents(
-      ref GH_IWriter writer,
-      List<List<string>> dropDownItems,
-      List<string> selectedItems,
-      List<string> spacerDescriptions) {
-      bool dropdown = false;
-      if (dropDownItems != null) {
-        writer.SetInt32("dropdownCount", dropDownItems.Count);
-        for (int i = 0; i < dropDownItems.Count; i++) {
-          writer.SetInt32("dropdowncontentsCount" + i,
-            dropDownItems[i]
-              .Count);
-          for (int j = 0;
-            j
-            < dropDownItems[i]
-              .Count;
-            j++)
-            writer.SetString("dropdowncontents" + i + j, dropDownItems[i][j]);
-        }
+    #endregion Protected Methods
 
-        dropdown = true;
-      }
-
-      writer.SetBoolean("dropdown", dropdown);
-
-      bool spacer = false;
-      if (spacerDescriptions != null) {
-        writer.SetInt32("spacerCount", spacerDescriptions.Count);
-        for (int i = 0; i < spacerDescriptions.Count; i++)
-          writer.SetString("spacercontents" + i, spacerDescriptions[i]);
-        spacer = true;
-      }
-
-      writer.SetBoolean("spacer", spacer);
-
-      bool select = false;
-      if (selectedItems != null) {
-        writer.SetInt32("selectionCount", selectedItems.Count);
-        for (int i = 0; i < selectedItems.Count; i++)
-          writer.SetString("selectioncontents" + i, selectedItems[i]);
-        select = true;
-      }
-
-      writer.SetBoolean("select", select);
-
-      return writer;
-    }
-
-    internal static void ReadDropDownComponents(
-      ref GH_IReader reader,
-      ref List<List<string>> dropDownItems,
-      ref List<string> selectedItems,
-      ref List<string> spacerDescriptions) {
-      if (reader.ItemExists("dropdown")) {
-        int dropdownCount = reader.GetInt32("dropdownCount");
-        dropDownItems = new List<List<string>>();
-        for (int i = 0; i < dropdownCount; i++) {
-          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
-          var tempcontent = new List<string>();
-          for (int j = 0; j < dropdowncontentsCount; j++)
-            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
-          dropDownItems.Add(tempcontent);
-        }
-      }
-      else
-        throw new Exception("Component doesnt have 'dropdown' content stored");
-
-      if (reader.ItemExists("spacer")) {
-        int dropdownspacerCount = reader.GetInt32("spacerCount");
-        spacerDescriptions = new List<string>();
-        for (int i = 0; i < dropdownspacerCount; i++)
-          spacerDescriptions.Add(reader.GetString("spacercontents" + i));
-      }
-
-      if (!reader.ItemExists("select"))
-        return;
-
-      {
-        int selectionsCount = reader.GetInt32("selectionCount");
-        selectedItems = new List<string>();
-        for (int i = 0; i < selectionsCount; i++)
-          selectedItems.Add(reader.GetString("selectioncontents" + i));
-      }
-    }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
-
-    public CreateProp2d_OBSOLETE() : base("Create 2D Property",
-      "Prop2d",
-      "Create GSA 2D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp2d;
-
-    #endregion
-
-    #region Custom UI
-
-    public override void CreateAttributes() {
-      if (_first) {
-        _dropDownItems = new List<List<string>>();
-        _selectedItems = new List<string>();
-
-        _dropDownItems.Add(_dropdownTopList);
-        _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-
-        _selectedItems.Add(_dropdownTopList[3]);
-        _selectedItems.Add(_lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, _lengthUnit);
-        _unitAbbreviation = string.Concat(quantity.ToString()
-          .Where(char.IsLetter));
-
-        _first = false;
-      }
-
-      m_attributes = new DropDownComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        _spacerDescriptions);
-    }
-
-    public void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-
-      if (i == 0)
-        switch (_selectedItems[i]) {
-          case "Plane Stress":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-            Mode1Clicked();
-            break;
-          case "Fabric":
-            if (_dropDownItems.Count > 1)
-              _dropDownItems.RemoveAt(1);
-            Mode2Clicked();
-            break;
-          case "Flat Plate":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-            Mode3Clicked();
-            break;
-          case "Shell":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-            Mode4Clicked();
-            break;
-          case "Curved Shell":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-            Mode5Clicked();
-            break;
-          case "Load Panel":
-            if (_dropDownItems.Count > 1)
-              _dropDownItems.RemoveAt(1);
-            Mode6Clicked();
-            break;
-        }
-      else
-        _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[i]);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      OnDisplayExpired(true);
-    }
-
-    private void UpdateUiFromSelectedItems() {
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      OnDisplayExpired(true);
-    }
-
-    #endregion
-
-    #region Input and output
-
-    private readonly List<string> _dropdownTopList = new List<string>(new[] {
-      "Plane Stress",
-      "Fabric",
-      "Flat Plate",
-      "Shell",
-      "Curved Shell",
-      "Load Panel",
-    });
-
-    private List<List<string>> _dropDownItems;
-    private List<string> _selectedItems;
-
-    private List<string> _spacerDescriptions = new List<string>(new[] {
-      "Element Type",
-      "Unit",
-    });
-
-    private bool _first = true;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private string _unitAbbreviation;
-
-    #endregion
-
-    #region menu override
-
-    private enum FoldMode {
-      PlaneStress,
-      Fabric,
-      FlatPlate,
-      Shell,
-      CurvedShell,
-      LoadPanel,
-    }
-
-    private FoldMode _mode = FoldMode.Shell;
-
+    #region Private Methods
     private void Mode1Clicked() {
       if (_mode == FoldMode.PlaneStress)
         return;
@@ -511,60 +557,14 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      WriteDropDownComponents(ref writer, _dropDownItems, _selectedItems, _spacerDescriptions);
-      return base.Write(writer);
+    private void UpdateUiFromSelectedItems() {
+      CreateAttributes();
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+      Params.OnParametersChanged();
+      OnDisplayExpired(true);
     }
 
-    public override bool Read(GH_IReader reader) {
-      try // if users has an old version of this component then dropdown menu wont read
-      {
-        ReadDropDownComponents(ref reader,
-          ref _dropDownItems,
-          ref _selectedItems,
-          ref _spacerDescriptions);
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode),
-          _selectedItems[0]
-            .Replace(" ", string.Empty));
-        _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[1]);
-      }
-      catch (Exception) {
-        _dropDownItems = new List<List<string>>();
-        _selectedItems = new List<string>();
-        _dropDownItems.Add(_dropdownTopList);
-        _dropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-
-        _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
-        _selectedItems.Add(reader.GetString("select")); // same
-        _selectedItems.Add(_lengthUnit.ToString());
-
-        _lengthUnit = LengthUnit.Meter;
-
-        IQuantity quantity = new Length(0, _lengthUnit);
-        _unitAbbreviation = string.Concat(quantity.ToString()
-          .Where(char.IsLetter));
-      }
-
-      UpdateUiFromSelectedItems();
-      _first = false;
-      return base.Read(reader);
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-
-    #endregion
+    #endregion Private Methods
   }
 }

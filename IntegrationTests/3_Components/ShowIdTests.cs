@@ -8,27 +8,45 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   public class ShowIdTests {
-    private static GH_Document s_document = null;
+
+    #region Properties + Fields
     private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
+    #region Public Methods
+    [Fact]
+    public void TestGraftedShowIds() {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "Res1dIds");
+      for (int branch = 1; branch <= 18; branch++) {
+        int[] expectedVals = new int[] {
+          branch,
+          branch,
+          branch,
+          branch,
+          branch,
+        };
+        var output = (List<GH_Integer>)param.VolatileData.get_Branch(new GH_Path(branch));
+        for (int i = 0; i < expectedVals.Length; i++)
+          Assert.Equal(expectedVals[i],
+            output[i]
+              .Value);
+      }
+    }
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
+    [Fact]
+    public void TestNoWarningOrErrors() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "warning");
 
-      return Helper.CreateDocument(Path.Combine(path, fileName));
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "invalidTest");
+      var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
+      Assert.True(output.Value);
     }
 
     [Theory]
@@ -302,35 +320,27 @@ namespace IntegrationTests.Components {
             .Value);
     }
 
-    [Fact]
-    public void TestGraftedShowIds() {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, "Res1dIds");
-      for (int branch = 1; branch <= 18; branch++) {
-        int[] expectedVals = new int[] {
-          branch,
-          branch,
-          branch,
-          branch,
-          branch,
-        };
-        var output = (List<GH_Integer>)param.VolatileData.get_Branch(new GH_Path(branch));
-        for (int i = 0; i < expectedVals.Length; i++)
-          Assert.Equal(expectedVals[i],
-            output[i]
-              .Value);
-      }
+    #endregion Public Methods
+
+    #region Private Methods
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
-    [Fact]
-    public void TestNoWarningOrErrors() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "warning");
-
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, "invalidTest");
-      var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-      Assert.True(output.Value);
-    }
+    #endregion Private Methods
   }
 }

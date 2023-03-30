@@ -10,8 +10,11 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateMember2dTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateMember2d();
       comp.CreateAttributes();
@@ -41,5 +44,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Property.Thickness);
       Assert.Equal(0.5, output.Value.MeshSize);
     }
+
+    #endregion Public Methods
   }
 }

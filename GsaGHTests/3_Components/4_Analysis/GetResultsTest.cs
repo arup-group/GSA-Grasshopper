@@ -7,8 +7,11 @@ using GsaGHTests.Model;
 using Xunit;
 
 namespace GsaGHTests.Analysis {
+
   [Collection("GrasshopperFixture collection")]
   public class GetResultsTest {
+
+    #region Public Methods
     [Fact]
     public void TestAnalysisNoInputs() {
       var comp = new GetResult();
@@ -87,5 +90,7 @@ namespace GsaGHTests.Analysis {
         result.Value.SelectedPermutationIds);
       Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
     }
+
+    #endregion Public Methods
   }
 }

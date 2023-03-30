@@ -2,15 +2,20 @@
 using System.IO;
 
 namespace GsaGH.Helpers.GsaAPI {
+
   /// <summary>
   /// GsaPath class holding the path to the folder containing the GSA installation.
   /// Will be modified to account for different GSA versions etc.
   /// </summary>
   public class InstallationFolder {
+
+    #region Properties + Fields
     public static string GetPath {
       get {
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
       }
     }
+
+    #endregion Properties + Fields
   }
 }

@@ -10,30 +10,52 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D"/>
   /// </summary>
   public class GsaProp2d {
-    #region fields
-    private int _id;
-    private Guid _guid = Guid.NewGuid();
-    private GsaMaterial _material = new GsaMaterial();
-    private Prop2D _prop2d = new Prop2D();
-    private Plane _localAxis = Plane.Unset;
-    #endregion
 
-    #region properties
-    internal Prop2D ApiProp2d {
+    #region Properties + Fields
+    public int AxisProperty {
       get {
-        return _prop2d;
+        return _prop2d.AxisProperty;
       }
       set {
-        _guid = Guid.NewGuid();
-        _prop2d = value;
-        _material = new GsaMaterial(this);
+        CloneApiObject();
+        _prop2d.AxisProperty = value;
         IsReferencedById = false;
       }
     }
+
+    public Color Colour {
+      get {
+        return (Color)_prop2d.Colour;
+      }
+      set {
+        CloneApiObject();
+        _prop2d.Colour = value;
+        IsReferencedById = false;
+      }
+    }
+
+    public string Description {
+      get {
+        return _prop2d.Description.Replace("%", " ");
+      }
+      set {
+        CloneApiObject();
+        _prop2d.Description = value;
+        IsReferencedById = false;
+      }
+    }
+
+    public Guid Guid {
+      get {
+        return _guid;
+      }
+    }
+
     public int Id {
       get {
         return _id;
@@ -43,7 +65,19 @@ namespace GsaGH.Parameters {
         _id = value;
       }
     }
-    internal bool IsReferencedById { get; set; } = false;
+
+    public Plane LocalAxis {
+      get {
+        return _localAxis;
+      }
+      set {
+        _localAxis = value;
+        CloneApiObject();
+        _prop2d.AxisProperty = -2;
+        IsReferencedById = false;
+      }
+    }
+
     public GsaMaterial Material {
       get {
         return _material;
@@ -61,17 +95,7 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    #region GsaAPI members
-    public string Name {
-      get {
-        return _prop2d.Name;
-      }
-      set {
-        CloneApiObject();
-        _prop2d.Name = value;
-        IsReferencedById = false;
-      }
-    }
+
     public int MaterialId {
       get {
         return
@@ -84,6 +108,18 @@ namespace GsaGH.Parameters {
         _material.AnalysisProperty = _prop2d.MaterialAnalysisProperty;
       }
     }
+
+    public string Name {
+      get {
+        return _prop2d.Name;
+      }
+      set {
+        CloneApiObject();
+        _prop2d.Name = value;
+        IsReferencedById = false;
+      }
+    }
+
     public Length Thickness {
       get {
         if (_prop2d.Description.Length == 0)
@@ -108,26 +144,7 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public string Description {
-      get {
-        return _prop2d.Description.Replace("%", " ");
-      }
-      set {
-        CloneApiObject();
-        _prop2d.Description = value;
-        IsReferencedById = false;
-      }
-    }
-    public int AxisProperty {
-      get {
-        return _prop2d.AxisProperty;
-      }
-      set {
-        CloneApiObject();
-        _prop2d.AxisProperty = value;
-        IsReferencedById = false;
-      }
-    }
+
     public Property2D_Type Type {
       get {
         return _prop2d.Type;
@@ -138,36 +155,28 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public Color Colour {
-      get {
-        return (Color)_prop2d.Colour;
-      }
-      set {
-        CloneApiObject();
-        _prop2d.Colour = value;
-        IsReferencedById = false;
-      }
-    }
-    #endregion
-    public Guid Guid {
-      get {
-        return _guid;
-      }
-    }
-    public Plane LocalAxis {
-      get {
-        return _localAxis;
-      }
-      set {
-        _localAxis = value;
-        CloneApiObject();
-        _prop2d.AxisProperty = -2;
-        IsReferencedById = false;
-      }
-    }
-    #endregion
 
-    #region constructors
+    internal Prop2D ApiProp2d {
+      get {
+        return _prop2d;
+      }
+      set {
+        _guid = Guid.NewGuid();
+        _prop2d = value;
+        _material = new GsaMaterial(this);
+        IsReferencedById = false;
+      }
+    }
+
+    internal bool IsReferencedById { get; set; } = false;
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private Plane _localAxis = Plane.Unset;
+    private GsaMaterial _material = new GsaMaterial();
+    private Prop2D _prop2d = new Prop2D();
+    #endregion Properties + Fields
+
+    #region Public Constructors
     public GsaProp2d() {
     }
 
@@ -181,6 +190,9 @@ namespace GsaGH.Parameters {
       _id = id;
     }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaProp2d(IReadOnlyDictionary<int, Prop2D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) : this(id) {
       if (!pDict.ContainsKey(id))
         return;
@@ -203,10 +215,10 @@ namespace GsaGH.Parameters {
       }
       _material = new GsaMaterial(this);
     }
-    #endregion
 
-    #region methods
+    #endregion Internal Constructors
 
+    #region Public Methods
     public GsaProp2d Duplicate(bool cloneApiElement = false) {
       var dup = new GsaProp2d {
         _prop2d = _prop2d,
@@ -228,6 +240,10 @@ namespace GsaGH.Parameters {
       string pa = (Id > 0) ? "PA" + Id + " " : "";
       return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
+
+    #endregion Public Methods
+
+    #region Internal Methods
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
         return Mappings.GetProperty2D_Type(type);
@@ -242,6 +258,9 @@ namespace GsaGH.Parameters {
       }
     }
 
+    #endregion Internal Methods
+
+    #region Private Methods
     private void CloneApiObject() {
       _prop2d = GetApiObject();
       _guid = Guid.NewGuid();
@@ -264,6 +283,7 @@ namespace GsaGH.Parameters {
 
       return prop;
     }
-    #endregion
+
+    #endregion Private Methods
   }
 }

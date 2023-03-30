@@ -3,17 +3,11 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GsaCombinationCaseTest {
-    [Fact]
-    public void EmptyConstructorTest() {
-      var combinationCase = new GsaCombinationCase();
 
-      Assert.Equal(0, combinationCase.Id);
-      Assert.Null(combinationCase.Name);
-      Assert.Null(combinationCase.Description);
-    }
-
+    #region Public Methods
     [Theory]
     [InlineData(0, "name", "description")]
     [InlineData(100, "name", "description")]
@@ -51,5 +45,16 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("name", original.Name);
       Assert.Equal("description", original.Description);
     }
+
+    [Fact]
+    public void EmptyConstructorTest() {
+      var combinationCase = new GsaCombinationCase();
+
+      Assert.Equal(0, combinationCase.Id);
+      Assert.Null(combinationCase.Name);
+      Assert.Null(combinationCase.Description);
+    }
+
+    #endregion Public Methods
   }
 }

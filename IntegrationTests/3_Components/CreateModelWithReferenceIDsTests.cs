@@ -5,27 +5,20 @@ using Grasshopper.Kernel;
 using Xunit;
 
 namespace IntegrationTests.Components {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateModelWithReferenceIDsTests {
-    private static GH_Document s_document = null;
+
+    #region Properties + Fields
     private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
+    #region Public Methods
+    [Fact]
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
 
     [Theory]
@@ -46,10 +39,27 @@ namespace IntegrationTests.Components {
       Helper.TestGhPrimitives(param, expected);
     }
 
-    [Fact]
-    public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+    #endregion Public Methods
+
+    #region Private Methods
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
+
+    #endregion Private Methods
   }
 }

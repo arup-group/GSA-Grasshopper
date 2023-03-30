@@ -1,7 +1,10 @@
 ﻿using System.Linq;
 
 namespace GsaGH.Helpers.GH {
+
   public static class StringExtension {
+
+    #region Public Methods
     /// <summary>
     /// <b>make string pascal cased</b>
     /// <br></br>
@@ -20,5 +23,7 @@ namespace GsaGH.Helpers.GH {
               .ToUpper()
             + word.Substring(1)));
     }
+
+    #endregion Public Methods
   }
 }

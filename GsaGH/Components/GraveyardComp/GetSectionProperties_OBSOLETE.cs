@@ -16,50 +16,22 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to get geometric properties of a section
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class GetSectionProperties_OBSOLETE : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaSection = new GsaSection();
-      var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
-        return;
 
-      if (ghTyp.Value is GsaSectionGoo)
-        ghTyp.CastTo(ref gsaSection);
-      else {
-        string profile = "";
-        ghTyp.CastTo(ref profile);
-        gsaSection = new GsaSection(profile);
-      }
-
-      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
-      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
-
-      da.SetData(0, new GH_UnitNumber(new Area(gsaSection.Area.As(areaUnit), areaUnit)));
-      da.SetData(1,
-        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.Iyy.As(inertiaUnit), inertiaUnit)));
-      da.SetData(2,
-        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.Izz.As(inertiaUnit), inertiaUnit)));
-      da.SetData(3,
-        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.Iyz.As(inertiaUnit), inertiaUnit)));
-      da.SetData(4,
-        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.J.As(inertiaUnit), inertiaUnit)));
-      da.SetData(5, gsaSection.Ky);
-      da.SetData(6, gsaSection.Kz);
-      da.SetData(7, new GH_UnitNumber(gsaSection.SurfaceAreaPerLength));
-      da.SetData(8, new GH_UnitNumber(gsaSection.VolumePerLength));
-    }
-
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("6504a99f-a4e2-4e30-8251-de31ea83e8cb");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SectionProperties;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public GetSectionProperties_OBSOLETE() : base("Section Properties",
       "SectProp",
       "Get GSA Section Properties",
@@ -67,9 +39,51 @@ namespace GsaGH.Components {
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
+    #region Public Methods
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true,
+        };
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      if (reader.ItemExists("LengthUnit")) // = v0.9.33 => saved as IGH_Variableblabla
+      {
+        _lengthUnit
+          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & Params.ReadAllParameterData(reader);
+      }
+
+      _lengthUnit = DefaultUnits.LengthUnitSection;
+      return base.Read(reader);
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetString("LengthUnit", _lengthUnit.ToString());
+      return base.Write(writer);
+    }
+
+    #endregion Public Methods
+
+    #region Protected Methods
+    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaSectionParameter(),
@@ -124,58 +138,47 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaSection = new GsaSection();
+      var ghTyp = new GH_ObjectWrapper();
+      if (!da.GetData(0, ref ghTyp))
+        return;
 
-    #region Custom UI
-
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
-          Checked = unit == Length.GetAbbreviation(_lengthUnit),
-          Enabled = true,
-        };
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      if (ghTyp.Value is GsaSectionGoo)
+        ghTyp.CastTo(ref gsaSection);
+      else {
+        string profile = "";
+        ghTyp.CastTo(ref profile);
+        gsaSection = new GsaSection(profile);
       }
 
-      menu.Items.Add(unitsMenu);
+      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
+      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
-      Menu_AppendSeparator(menu);
+      da.SetData(0, new GH_UnitNumber(new Area(gsaSection.Area.As(areaUnit), areaUnit)));
+      da.SetData(1,
+        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.Iyy.As(inertiaUnit), inertiaUnit)));
+      da.SetData(2,
+        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.Izz.As(inertiaUnit), inertiaUnit)));
+      da.SetData(3,
+        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.Iyz.As(inertiaUnit), inertiaUnit)));
+      da.SetData(4,
+        new GH_UnitNumber(new AreaMomentOfInertia(gsaSection.J.As(inertiaUnit), inertiaUnit)));
+      da.SetData(5, gsaSection.Ky);
+      da.SetData(6, gsaSection.Kz);
+      da.SetData(7, new GH_UnitNumber(gsaSection.SurfaceAreaPerLength));
+      da.SetData(8, new GH_UnitNumber(gsaSection.VolumePerLength));
     }
 
+    #endregion Protected Methods
+
+    #region Private Methods
     private void Update(string unit) {
       _lengthUnit = Length.ParseUnit(unit);
       Message = unit;
       ExpireSolution(true);
     }
 
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("LengthUnit")) // = v0.9.33 => saved as IGH_Variableblabla
-      {
-        _lengthUnit
-          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-        bool flag = base.Read(reader);
-        return flag & Params.ReadAllParameterData(reader);
-      }
-
-      _lengthUnit = DefaultUnits.LengthUnitSection;
-      return base.Read(reader);
-    }
-
-    #endregion
+    #endregion Private Methods
   }
 }

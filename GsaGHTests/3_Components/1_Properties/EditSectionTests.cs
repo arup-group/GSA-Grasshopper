@@ -7,95 +7,15 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
+
   [Collection("GrasshopperFixture collection")]
   public class EditSectionTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditSection();
       comp.CreateAttributes();
       return comp;
-    }
-
-    [Fact]
-    public void TestId() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, 42, 1);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal(42, sectionGoo.Value.Id);
-      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
-      Assert.Equal(42, id.Value);
-    }
-
-    [Fact]
-    public void TestProfile() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, "STD I 300 400 10 20", 2);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal("STD I 300 400 10 20", sectionGoo.Value.Profile);
-      var profile = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
-      Assert.Equal("STD I 300 400 10 20", profile.Value);
-    }
-
-    [Fact]
-    public void TestMaterial() {
-      GH_OasysComponent comp = ComponentMother();
-      var material
-        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests
-          .ComponentMother());
-      ComponentTestHelper.SetInput(comp, material, 3);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Duplicates.AreEqual(material.Value, sectionGoo.Value.Material);
-      var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 3);
-      Duplicates.AreEqual(material.Value, mat.Value);
-    }
-
-    [Fact]
-    public void TestModifier() {
-      GH_OasysComponent comp = ComponentMother();
-      var modifier
-        = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(CreateSectionModifierTests
-          .ComponentMother());
-      ComponentTestHelper.SetInput(comp, modifier, 4);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Duplicates.AreEqual(modifier.Value, sectionGoo.Value.Modifier);
-      var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, 4);
-      Duplicates.AreEqual(modifier.Value, mod.Value);
-    }
-
-    [Fact]
-    public void TestPool() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, 99, 5);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal(99, sectionGoo.Value.Pool);
-      var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
-      Assert.Equal(99, pool.Value);
-    }
-
-    [Fact]
-    public void TestName() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, "John", 6);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal("John", sectionGoo.Value.Name);
-      var name = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
-      Assert.Equal("John", name.Value);
-    }
-
-    [Fact]
-    public void TestColour() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, Color.Blue, 7);
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-
-      Assert.Equal(Color.Blue.A, sectionGoo.Value.Colour.A);
-      Assert.Equal(Color.Blue.R, sectionGoo.Value.Colour.R);
-      Assert.Equal(Color.Blue.G, sectionGoo.Value.Colour.G);
-      Assert.Equal(Color.Blue.B, sectionGoo.Value.Colour.B);
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 7);
-      Assert.Equal(Color.Blue.A, colour.Value.A);
-      Assert.Equal(Color.Blue.R, colour.Value.R);
-      Assert.Equal(Color.Blue.G, colour.Value.G);
-      Assert.Equal(Color.Blue.B, colour.Value.B);
     }
 
     [Fact]
@@ -155,5 +75,90 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(Color.Red.G, colour.Value.G);
       Assert.Equal(Color.Red.B, colour.Value.B);
     }
+
+    [Fact]
+    public void TestColour() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, Color.Blue, 7);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+
+      Assert.Equal(Color.Blue.A, sectionGoo.Value.Colour.A);
+      Assert.Equal(Color.Blue.R, sectionGoo.Value.Colour.R);
+      Assert.Equal(Color.Blue.G, sectionGoo.Value.Colour.G);
+      Assert.Equal(Color.Blue.B, sectionGoo.Value.Colour.B);
+      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 7);
+      Assert.Equal(Color.Blue.A, colour.Value.A);
+      Assert.Equal(Color.Blue.R, colour.Value.R);
+      Assert.Equal(Color.Blue.G, colour.Value.G);
+      Assert.Equal(Color.Blue.B, colour.Value.B);
+    }
+
+    [Fact]
+    public void TestId() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, 42, 1);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Equal(42, sectionGoo.Value.Id);
+      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
+      Assert.Equal(42, id.Value);
+    }
+
+    [Fact]
+    public void TestMaterial() {
+      GH_OasysComponent comp = ComponentMother();
+      var material
+        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests
+          .ComponentMother());
+      ComponentTestHelper.SetInput(comp, material, 3);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Duplicates.AreEqual(material.Value, sectionGoo.Value.Material);
+      var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 3);
+      Duplicates.AreEqual(material.Value, mat.Value);
+    }
+
+    [Fact]
+    public void TestModifier() {
+      GH_OasysComponent comp = ComponentMother();
+      var modifier
+        = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(CreateSectionModifierTests
+          .ComponentMother());
+      ComponentTestHelper.SetInput(comp, modifier, 4);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Duplicates.AreEqual(modifier.Value, sectionGoo.Value.Modifier);
+      var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, 4);
+      Duplicates.AreEqual(modifier.Value, mod.Value);
+    }
+
+    [Fact]
+    public void TestName() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, "John", 6);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Equal("John", sectionGoo.Value.Name);
+      var name = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
+      Assert.Equal("John", name.Value);
+    }
+
+    [Fact]
+    public void TestPool() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, 99, 5);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Equal(99, sectionGoo.Value.Pool);
+      var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
+      Assert.Equal(99, pool.Value);
+    }
+
+    [Fact]
+    public void TestProfile() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, "STD I 300 400 10 20", 2);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Equal("STD I 300 400 10 20", sectionGoo.Value.Profile);
+      var profile = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
+      Assert.Equal("STD I 300 400 10 20", profile.Value);
+    }
+
+    #endregion Public Methods
   }
 }

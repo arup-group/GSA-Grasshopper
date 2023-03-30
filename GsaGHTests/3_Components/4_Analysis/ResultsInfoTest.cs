@@ -7,8 +7,11 @@ using GsaGHTests.Model;
 using Xunit;
 
 namespace GsaGHTests.Analysis {
+
   [Collection("GrasshopperFixture collection")]
   public class ResultsInfoTest {
+
+    #region Public Methods
     [Fact]
     public void TestOutputs() {
       var comp = new ResultsInfo();
@@ -36,5 +39,7 @@ namespace GsaGHTests.Analysis {
       var perm3 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2, path, 0);
       Assert.Equal(1, perm3.Value);
     }
+
+    #endregion Public Methods
   }
 }

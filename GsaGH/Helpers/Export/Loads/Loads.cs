@@ -11,7 +11,10 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
+
   internal partial class Loads {
+
+    #region Internal Methods
     internal static void ConvertLoad(List<GsaLoad> loads,
         ref List<GravityLoad> gravityLoads, ref List<BeamLoad> beamLoads, ref List<FaceLoad> faceLoads,
         ref List<GridPointLoad> gridPointLoads, ref List<GridLineLoad> gridLineLoads, ref List<GridAreaLoad> gridAreaLoads, ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
@@ -187,9 +190,11 @@ namespace GsaGH.Helpers.Export {
         case GsaNodeLoad.NodeLoadTypes.AppliedDisp:
           nodeLoadsDispl.Add(load.NodeLoad.NodeLoad);
           break;
+
         case GsaNodeLoad.NodeLoadTypes.NodeLoad:
           nodeLoadsNode.Add(load.NodeLoad.NodeLoad);
           break;
+
         case GsaNodeLoad.NodeLoadTypes.Settlement:
           nodeLoadsSettle.Add(load.NodeLoad.NodeLoad);
           break;
@@ -197,5 +202,7 @@ namespace GsaGH.Helpers.Export {
 
       PostHog.Load(load.NodeLoad._refPoint != Point3d.Unset, load.NodeLoad.Type.ToString());
     }
+
+    #endregion Internal Methods
   }
 }

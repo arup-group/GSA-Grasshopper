@@ -8,7 +8,52 @@ using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers {
+
   public class ComponentTestHelper {
+
+    #region Public Methods
+    public static object GetOutput(
+      GH_Component component,
+      int index = 0,
+      int branch = 0,
+      int item = 0,
+      bool forceUpdate = false) {
+      if (forceUpdate
+        || component.Params.Output[index]
+          .VolatileDataCount
+        == 0) {
+        component.ExpireSolution(true);
+        component.Params.Output[index]
+          .ExpireSolution(true);
+        component.Params.Output[index]
+          .CollectData();
+      }
+
+      return component.Params.Output[index]
+        .VolatileData.get_Branch(branch)[item];
+    }
+
+    public static object GetOutput(
+      GH_Component component,
+      int index,
+      GH_Path path,
+      int item = 0,
+      bool forceUpdate = false) {
+      if (forceUpdate
+        || component.Params.Output[index]
+          .VolatileDataCount
+        == 0) {
+        component.ExpireSolution(true);
+        component.Params.Output[index]
+          .ExpireSolution(true);
+        component.Params.Output[index]
+          .CollectData();
+      }
+
+      return component.Params.Output[index]
+        .VolatileData.get_Branch(path)[item];
+    }
+
     public static void SetInput(GH_Component component, string str, int index = 0) {
       var input = new Param_String();
       input.CreateAttributes();
@@ -86,46 +131,6 @@ namespace GsaGHTests.Helpers {
         .AddSource(input);
     }
 
-    public static object GetOutput(
-      GH_Component component,
-      int index = 0,
-      int branch = 0,
-      int item = 0,
-      bool forceUpdate = false) {
-      if (forceUpdate
-        || component.Params.Output[index]
-          .VolatileDataCount
-        == 0) {
-        component.ExpireSolution(true);
-        component.Params.Output[index]
-          .ExpireSolution(true);
-        component.Params.Output[index]
-          .CollectData();
-      }
-
-      return component.Params.Output[index]
-        .VolatileData.get_Branch(branch)[item];
-    }
-
-    public static object GetOutput(
-      GH_Component component,
-      int index,
-      GH_Path path,
-      int item = 0,
-      bool forceUpdate = false) {
-      if (forceUpdate
-        || component.Params.Output[index]
-          .VolatileDataCount
-        == 0) {
-        component.ExpireSolution(true);
-        component.Params.Output[index]
-          .ExpireSolution(true);
-        component.Params.Output[index]
-          .CollectData();
-      }
-
-      return component.Params.Output[index]
-        .VolatileData.get_Branch(path)[item];
-    }
+    #endregion Public Methods
   }
 }

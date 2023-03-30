@@ -5,8 +5,11 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateBucklingFactorsTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateBucklingFactors();
       comp.CreateAttributes();
@@ -28,5 +31,7 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(1.0, output.Value.LateralTorsionalBucklingFactor);
       Assert.False(output.Value.LengthIsSet);
     }
+
+    #endregion Public Methods
   }
 }

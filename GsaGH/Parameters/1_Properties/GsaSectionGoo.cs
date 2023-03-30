@@ -4,18 +4,47 @@ using OasysGH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaSection"/> can be used in Grasshopper.
   /// </summary>
   public class GsaSectionGoo : GH_OasysGoo<GsaSection> {
+
+    #region Properties + Fields
+    public static string Description => "GSA Beam Property";
     public static string Name => "Section";
     public static string NickName => "PB";
-    public static string Description => "GSA Beam Property";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    #endregion Properties + Fields
 
-    public GsaSectionGoo(GsaSection item) : base(item) { }
+    #region Public Constructors
+    public GsaSectionGoo(GsaSection item) : base(item) {
+    }
 
-    public override IGH_Goo Duplicate() => new GsaSectionGoo(Value);
+    #endregion Public Constructors
+
+    #region Public Methods
+    public override bool CastFrom(object source) {
+      if (source == null)
+        return false;
+
+      if (base.CastFrom(source))
+        return true;
+
+      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both)) {
+        if (GsaSection.ValidProfile(name)) {
+          Value = new GsaSection(name);
+          return true;
+        }
+      }
+
+      if (!GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both)) {
+        return false;
+      }
+
+      Value.Id = idd;
+      return true;
+    }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (base.CastTo(ref target))
@@ -38,26 +67,8 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override bool CastFrom(object source) {
-      if (source == null)
-        return false;
+    public override IGH_Goo Duplicate() => new GsaSectionGoo(Value);
 
-      if (base.CastFrom(source))
-        return true;
-
-      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both)) {
-        if (GsaSection.ValidProfile(name)) {
-          Value = new GsaSection(name);
-          return true;
-        }
-      }
-
-      if (!GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value.Id = idd;
-      return true;
-    }
+    #endregion Public Methods
   }
 }

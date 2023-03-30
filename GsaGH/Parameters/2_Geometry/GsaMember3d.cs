@@ -9,47 +9,13 @@ using GsaGH.Helpers.GsaAPI;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
   /// </summary>
   public class GsaMember3d {
-    #region fields
 
-    internal List<Polyline> _previewHiddenLines;
-    internal List<Line> _previewEdgeLines;
-    internal List<Point3d> _previewPts;
-
-    private int _id = 0;
-    private Guid _guid = Guid.NewGuid();
-    private Mesh _mesh = new Mesh();
-
-    #endregion
-
-    #region properties
-
-    internal Member ApiMember { get; set; } = new Member();
-
-    public int Id {
-      get => _id;
-      set {
-        CloneApiObject();
-        _id = value;
-      }
-    }
-
-    public double MeshSize { get; set; }
-
-    public GsaProp3d Prop3d { get; set; } = new GsaProp3d();
-
-    public Mesh SolidMesh {
-      get => _mesh;
-      set {
-        _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(value);
-        _guid = Guid.NewGuid();
-        UpdatePreview();
-      }
-    }
-
+    #region Properties + Fields
     public Color Colour {
       get => (Color)ApiMember.Colour;
       set {
@@ -66,11 +32,29 @@ namespace GsaGH.Parameters {
       }
     }
 
+    public Guid Guid => _guid;
+    public int Id {
+      get => _id;
+      set {
+        CloneApiObject();
+        _id = value;
+      }
+    }
+
     public bool IsDummy {
       get => ApiMember.IsDummy;
       set {
         CloneApiObject();
         ApiMember.IsDummy = value;
+      }
+    }
+
+    public double MeshSize { get; set; }
+    public bool MeshWithOthers {
+      get => ApiMember.IsIntersector;
+      set {
+        CloneApiObject();
+        ApiMember.IsIntersector = value;
       }
     }
 
@@ -82,20 +66,27 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public bool MeshWithOthers {
-      get => ApiMember.IsIntersector;
+    public GsaProp3d Prop3d { get; set; } = new GsaProp3d();
+    public Mesh SolidMesh {
+      get => _mesh;
       set {
-        CloneApiObject();
-        ApiMember.IsIntersector = value;
+        _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(value);
+        _guid = Guid.NewGuid();
+        UpdatePreview();
       }
     }
 
-    public Guid Guid => _guid;
+    internal Member ApiMember { get; set; } = new Member();
+    internal List<Line> _previewEdgeLines;
+    internal List<Polyline> _previewHiddenLines;
+    internal List<Point3d> _previewPts;
 
-    #endregion
+    private Guid _guid = Guid.NewGuid();
+    private int _id = 0;
+    private Mesh _mesh = new Mesh();
+    #endregion Properties + Fields
 
-    #region constructors
-
+    #region Public Constructors
     public GsaMember3d() => ApiMember.Type = MemberType.GENERIC_3D;
 
     public GsaMember3d(Mesh mesh) {
@@ -114,6 +105,9 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop, double meshSize) {
       ApiMember = member;
       _id = id;
@@ -123,10 +117,9 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    #endregion
+    #endregion Internal Constructors
 
-    #region methods
-
+    #region Public Methods
     public GsaMember3d Duplicate(bool cloneApiMember = false) {
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
@@ -140,31 +133,6 @@ namespace GsaGH.Parameters {
         dup.ApiMember = ApiMember;
       dup.Id = Id;
       dup.UpdatePreview();
-      return dup;
-    }
-
-    public GsaMember3d UpdateGeometry(Brep brep) {
-      GsaMember3d dup = Duplicate();
-      dup._mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
-      dup.UpdatePreview();
-      return dup;
-    }
-
-    public GsaMember3d UpdateGeometry(Mesh mesh) {
-      GsaMember3d dup = Duplicate();
-      dup._mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
-      dup.UpdatePreview();
-      return dup;
-    }
-
-    public GsaMember3d Transform(Transform xform) {
-      if (SolidMesh == null)
-        return null;
-
-      GsaMember3d dup = Duplicate(true);
-      dup.Id = 0;
-      dup.SolidMesh.Transform(xform);
-
       return dup;
     }
 
@@ -190,6 +158,34 @@ namespace GsaGH.Parameters {
         .Replace("  ", " ");
     }
 
+    public GsaMember3d Transform(Transform xform) {
+      if (SolidMesh == null)
+        return null;
+
+      GsaMember3d dup = Duplicate(true);
+      dup.Id = 0;
+      dup.SolidMesh.Transform(xform);
+
+      return dup;
+    }
+
+    public GsaMember3d UpdateGeometry(Brep brep) {
+      GsaMember3d dup = Duplicate();
+      dup._mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
+      dup.UpdatePreview();
+      return dup;
+    }
+
+    public GsaMember3d UpdateGeometry(Mesh mesh) {
+      GsaMember3d dup = Duplicate();
+      dup._mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
+      dup.UpdatePreview();
+      return dup;
+    }
+
+    #endregion Public Methods
+
+    #region Internal Methods
     internal void CloneApiObject() {
       ApiMember = GetAPI_MemberClone();
       _guid = Guid.NewGuid();
@@ -217,12 +213,15 @@ namespace GsaGH.Parameters {
       return mem;
     }
 
+    #endregion Internal Methods
+
+    #region Private Methods
     private void UpdatePreview()
       => Display.PreviewMem3d(ref _mesh,
         ref _previewHiddenLines,
         ref _previewEdgeLines,
         ref _previewPts);
 
-    #endregion
+    #endregion Private Methods
   }
 }

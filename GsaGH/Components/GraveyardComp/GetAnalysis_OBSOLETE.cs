@@ -10,11 +10,56 @@ using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class GetAnalysis_OBSOLETE : GH_OasysComponent {
+
+    #region Properties + Fields
+    public override Guid ComponentGuid => new Guid("fa497db7-8bdd-438d-888f-83a85d6cd48a");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GetAnalysisTask;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public GetAnalysis_OBSOLETE() : base("Get Model Analysis",
+      "GetAnalysis",
+      "Get Analysis Cases and Tasks from GSA model",
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
+      => Hidden = true;
+
+    #endregion Public Constructors
+
+    #region Protected Methods
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+      => pManager.AddGenericParameter("GSA Model",
+        "GSA",
+        "GSA model containing some Analysis Cases and Tasks",
+        GH_ParamAccess.item);
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("Analysis Tasks",
+        "Tasks",
+        "List of analysis tasks in model",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Analysis Case Names",
+        "Name",
+        "Analysis case name",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Load Case/Combination ID",
+        "LC",
+        "Load cases and combinations list",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Analysis Case Description",
+        "Desc",
+        "Analysis case description",
+        GH_ParamAccess.list);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
       if (!da.GetData(0, ref gsaModel))
@@ -46,50 +91,6 @@ namespace GsaGH.Components {
       da.SetDataList(2, analysisIdList);
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("fa497db7-8bdd-438d-888f-83a85d6cd48a");
-
-    public GetAnalysis_OBSOLETE() : base("Get Model Analysis",
-      "GetAnalysis",
-      "Get Analysis Cases and Tasks from GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
-
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetAnalysisTask;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("GSA Model",
-        "GSA",
-        "GSA model containing some Analysis Cases and Tasks",
-        GH_ParamAccess.item);
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Analysis Tasks",
-        "Tasks",
-        "List of analysis tasks in model",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Case Names",
-        "Name",
-        "Analysis case name",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Load Case/Combination ID",
-        "LC",
-        "Load cases and combinations list",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Case Description",
-        "Desc",
-        "Analysis case description",
-        GH_ParamAccess.list);
-    }
-
-    #endregion
+    #endregion Protected Methods
   }
 }

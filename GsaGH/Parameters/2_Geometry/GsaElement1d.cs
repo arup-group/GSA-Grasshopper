@@ -12,74 +12,13 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
   /// </summary>
   public class GsaElement1d {
-    #region fields
 
-    internal List<Line> _previewGreenLines;
-    internal List<Line> _previewRedLines;
-
-    private int _id;
-    private Guid _guid = Guid.NewGuid();
-    private LineCurve _line = new LineCurve();
-    private GsaBool6 _rel1;
-    private GsaBool6 _rel2;
-    private GsaNode _orientationNode;
-
-    #endregion
-
-    #region properties
-
-    public int Id {
-      get => _id;
-      set {
-        CloneApiObject();
-        _id = value;
-      }
-    }
-
-    internal GsaLocalAxes LocalAxes { get; set; } = null;
-
-    public LineCurve Line {
-      get => _line;
-      set {
-        _line = value;
-        _guid = Guid.NewGuid();
-        UpdatePreview();
-      }
-    }
-
-    public GsaBool6 ReleaseStart {
-      get
-        => new GsaBool6(ApiElement.GetEndRelease(0)
-          .Releases);
-      set {
-        _rel1 = value ?? new GsaBool6();
-
-        CloneApiObject();
-        ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
-        UpdatePreview();
-      }
-    }
-
-    public GsaBool6 ReleaseEnd {
-      get
-        => new GsaBool6(ApiElement.GetEndRelease(1)
-          .Releases);
-      set {
-        _rel2 = value ?? new GsaBool6();
-
-        CloneApiObject();
-        ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
-        UpdatePreview();
-      }
-    }
-
-    public GsaSection Section { get; set; } = new GsaSection();
-    internal Element ApiElement { get; set; } = new Element();
-
+    #region Properties + Fields
     public Color Colour {
       get => (Color)ApiElement.Colour;
       set {
@@ -96,11 +35,29 @@ namespace GsaGH.Parameters {
       }
     }
 
+    public Guid Guid => _guid;
+    public int Id {
+      get => _id;
+      set {
+        CloneApiObject();
+        _id = value;
+      }
+    }
+
     public bool IsDummy {
       get => ApiElement.IsDummy;
       set {
         CloneApiObject();
         ApiElement.IsDummy = value;
+      }
+    }
+
+    public LineCurve Line {
+      get => _line;
+      set {
+        _line = value;
+        _guid = Guid.NewGuid();
+        UpdatePreview();
       }
     }
 
@@ -144,7 +101,33 @@ namespace GsaGH.Parameters {
     }
 
     public int ParentMember => ApiElement.ParentMember.Member;
+    public GsaBool6 ReleaseEnd {
+      get
+        => new GsaBool6(ApiElement.GetEndRelease(1)
+          .Releases);
+      set {
+        _rel2 = value ?? new GsaBool6();
 
+        CloneApiObject();
+        ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
+        UpdatePreview();
+      }
+    }
+
+    public GsaBool6 ReleaseStart {
+      get
+        => new GsaBool6(ApiElement.GetEndRelease(0)
+          .Releases);
+      set {
+        _rel1 = value ?? new GsaBool6();
+
+        CloneApiObject();
+        ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
+        UpdatePreview();
+      }
+    }
+
+    public GsaSection Section { get; set; } = new GsaSection();
     public ElementType Type {
       get => ApiElement.Type;
       set {
@@ -153,13 +136,22 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public Guid Guid => _guid;
+    internal Element ApiElement { get; set; } = new Element();
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
 
-    #endregion
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private LineCurve _line = new LineCurve();
+    private GsaNode _orientationNode;
+    private GsaBool6 _rel1;
+    private GsaBool6 _rel2;
+    #endregion Properties + Fields
 
-    #region constructors
-
-    public GsaElement1d() { }
+    #region Public Constructors
+    public GsaElement1d() {
+    }
 
     public GsaElement1d(LineCurve line, int prop = 0, GsaNode orientationNode = null) {
       ApiElement = new Element {
@@ -172,6 +164,9 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaElement1d(
       Element elem,
       LineCurve line,
@@ -217,10 +212,9 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    #endregion
+    #endregion Internal Constructors
 
-    #region methods
-
+    #region Public Methods
     public GsaElement1d Duplicate(bool cloneApiElement = false) {
       var dup = new GsaElement1d {
         Id = Id,
@@ -244,18 +238,6 @@ namespace GsaGH.Parameters {
 
       UpdatePreview();
       return dup;
-    }
-
-    public GsaElement1d Transform(Transform xform) {
-      GsaElement1d elem = Duplicate(true);
-      elem.Id = 0;
-      elem.LocalAxes = null;
-
-      LineCurve xLn = elem.Line;
-      xLn.Transform(xform);
-      elem.Line = xLn;
-
-      return elem;
     }
 
     public GsaElement1d Morph(SpaceMorph xmorph) {
@@ -285,6 +267,21 @@ namespace GsaGH.Parameters {
         .Replace("  ", " ");
     }
 
+    public GsaElement1d Transform(Transform xform) {
+      GsaElement1d elem = Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    #endregion Public Methods
+
+    #region Internal Methods
     internal void CloneApiObject() {
       ApiElement = GetApiElementClone();
       _guid = Guid.NewGuid();
@@ -341,6 +338,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    #endregion
+    #endregion Internal Methods
   }
 }

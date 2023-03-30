@@ -7,29 +7,19 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class EditOffsetTest {
-    private static GH_Document s_document = null;
 
+    #region Properties + Fields
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+    #endregion Properties + Fields
 
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "1_Properties",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
+    #region Public Methods
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
     [Theory]
     [InlineData("Of",
@@ -55,8 +45,27 @@ namespace IntegrationTests.Parameters {
       Assert.Equal(new Length(expectedZ, expectedUnit), offset.Z);
     }
 
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    #endregion Public Methods
+
+    #region Private Methods
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "1_Properties",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
+    #endregion Private Methods
   }
 }

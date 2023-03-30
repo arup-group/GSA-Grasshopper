@@ -7,8 +7,11 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GsaProp2dTests {
+
+    #region Public Methods
     [Fact]
     public void DuplicateTest() {
       var original = new GsaProp2d {
@@ -100,5 +103,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Property2D_Type.CURVED_SHELL.ToString(), orig.Type.ToString());
       Assert.Equal(4, orig.Id);
     }
+
+    #endregion Public Methods
   }
 }

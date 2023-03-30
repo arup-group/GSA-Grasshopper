@@ -8,30 +8,20 @@ using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to create a new Buckling Length Factors
   /// </summary>
   public class CreateBucklingFactors : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var fls = new GsaBucklingLengthFactors();
-      double input = 1;
-      if (da.GetData(0, ref input))
-        fls.MomentAmplificationFactorStrongAxis = input;
-      double optional = input;
-      da.GetData(1, ref optional);
-      fls.MomentAmplificationFactorWeakAxis = optional;
-      da.GetData(2, ref input);
-      fls.LateralTorsionalBucklingFactor = input;
-      da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
-    }
 
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("0c32af28-5057-4649-bd56-0850541c954b");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBucklingLengthFactors;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public CreateBucklingFactors() : base(
       "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
       GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
@@ -40,10 +30,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
-
+    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddNumberParameter("Factor Lsy",
         "fLy",
@@ -66,6 +55,19 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var fls = new GsaBucklingLengthFactors();
+      double input = 1;
+      if (da.GetData(0, ref input))
+        fls.MomentAmplificationFactorStrongAxis = input;
+      double optional = input;
+      da.GetData(1, ref optional);
+      fls.MomentAmplificationFactorWeakAxis = optional;
+      da.GetData(2, ref input);
+      fls.LateralTorsionalBucklingFactor = input;
+      da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
+    }
+
+    #endregion Protected Methods
   }
 }

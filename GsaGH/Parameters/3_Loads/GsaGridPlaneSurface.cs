@@ -5,42 +5,69 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
   /// </summary>
   public class GsaGridPlaneSurface {
-    #region fields
 
-    private int _axisId;
+    #region Properties + Fields
+    public int AxisId {
+      get => _axisId;
+      set {
+        _gridPlnGuid = Guid.NewGuid();
+        _axisId = value;
+      }
+    }
 
-    private int _gridSrfId;
-    private Guid _gridSrfGuid = Guid.NewGuid();
-    private GridSurface _gridSrf = new GridSurface();
-
-    private int _gridPlnId = 0;
-    private Guid _gridPlnGuid = Guid.NewGuid();
-    private GridPlane _gridPln = new GridPlane();
-
-    private Plane _pln = Plane.WorldXY;
-
-    internal Guid _refObjectGuid;
-    internal ReferenceType _referenceType = ReferenceType.None;
-
-    #endregion
-
-    #region properties
-
+    public string AxisName { get; set; } = "";
     /// <summary>
     ///   String either in the format of a double (will be converted into Model Units)
     ///   or in the format of a OasysUnits.Length ('5 m')
     /// </summary>
     public string Elevation { get; set; } = "0";
 
-    /// <summary>
-    ///   String either in the format of a double (will be converted into Model Units)
-    ///   or in the format of a OasysUnits.Length ('5 m')
-    /// </summary>
-    public string Tolerance { get; set; } = "10 mm";
+    public GridPlane GridPlane {
+      get => _gridPln;
+      set {
+        _gridPlnGuid = Guid.NewGuid();
+        _gridPln = value;
+      }
+    }
+
+    public Guid GridPlaneGuid => _gridPlnGuid;
+    public int GridPlaneId {
+      get => _gridPlnId;
+      set {
+        _gridPlnGuid = Guid.NewGuid();
+        _gridPlnId = value;
+      }
+    }
+
+    public GridSurface GridSurface {
+      get => _gridSrf;
+      set {
+        _gridSrfGuid = Guid.NewGuid();
+        _gridSrf = value;
+      }
+    }
+
+    public Guid GridSurfaceGuid => _gridSrfGuid;
+    public int GridSurfaceId {
+      get => _gridSrfId;
+      set {
+        _gridSrfGuid = Guid.NewGuid();
+        _gridSrfId = value;
+      }
+    }
+
+    public Plane Plane {
+      get => _pln;
+      set {
+        _gridPlnGuid = Guid.NewGuid();
+        _pln = value;
+      }
+    }
 
     /// <summary>
     ///   String either in the format of a double (will be converted into Model Units)
@@ -54,63 +81,28 @@ namespace GsaGH.Parameters {
     /// </summary>
     public string StoreyToleranceBelow { get; set; } = "auto";
 
-    public string AxisName { get; set; } = "";
-    public Guid GridSurfaceGuid => _gridSrfGuid;
-    public Guid GridPlaneGuid => _gridPlnGuid;
+    /// <summary>
+    ///   String either in the format of a double (will be converted into Model Units)
+    ///   or in the format of a OasysUnits.Length ('5 m')
+    /// </summary>
+    public string Tolerance { get; set; } = "10 mm";
 
-    public int AxisId {
-      get => _axisId;
-      set {
-        _gridPlnGuid = Guid.NewGuid();
-        _axisId = value;
-      }
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal Guid _refObjectGuid;
+    private int _axisId;
+
+    private GridPlane _gridPln = new GridPlane();
+    private Guid _gridPlnGuid = Guid.NewGuid();
+    private int _gridPlnId = 0;
+    private GridSurface _gridSrf = new GridSurface();
+    private Guid _gridSrfGuid = Guid.NewGuid();
+    private int _gridSrfId;
+    private Plane _pln = Plane.WorldXY;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public GsaGridPlaneSurface() {
     }
-
-    public GridSurface GridSurface {
-      get => _gridSrf;
-      set {
-        _gridSrfGuid = Guid.NewGuid();
-        _gridSrf = value;
-      }
-    }
-
-    public int GridSurfaceId {
-      get => _gridSrfId;
-      set {
-        _gridSrfGuid = Guid.NewGuid();
-        _gridSrfId = value;
-      }
-    }
-
-    public GridPlane GridPlane {
-      get => _gridPln;
-      set {
-        _gridPlnGuid = Guid.NewGuid();
-        _gridPln = value;
-      }
-    }
-
-    public int GridPlaneId {
-      get => _gridPlnId;
-      set {
-        _gridPlnGuid = Guid.NewGuid();
-        _gridPlnId = value;
-      }
-    }
-
-    public Plane Plane {
-      get => _pln;
-      set {
-        _gridPlnGuid = Guid.NewGuid();
-        _pln = value;
-      }
-    }
-
-    #endregion
-
-    #region constructors
-
-    public GsaGridPlaneSurface() { }
 
     public GsaGridPlaneSurface(Plane plane, bool tryUseExisting = false) {
       _pln = plane;
@@ -130,6 +122,9 @@ namespace GsaGH.Parameters {
         : Guid.NewGuid(); // will create random guid
     }
 
+    #endregion Public Constructors
+
+    #region Public Methods
     public GsaGridPlaneSurface Duplicate() {
       var dup = new GsaGridPlaneSurface {
         Plane = (_gridPln == null)
@@ -171,10 +166,6 @@ namespace GsaGH.Parameters {
 
       return dup;
     }
-
-    #endregion
-
-    #region methods
 
     public override string ToString() {
       if (GridPlane == null && GridSurface == null)
@@ -250,6 +241,9 @@ namespace GsaGH.Parameters {
         .Replace("  ", " ");
     }
 
+    #endregion Public Methods
+
+    #region Internal Methods
     internal Axis GetAxis(LengthUnit modelUnit) {
       var axis = new Axis();
       axis.Origin.X = new Length(Plane.Origin.X, modelUnit).Meters;
@@ -278,6 +272,6 @@ namespace GsaGH.Parameters {
       return axis;
     }
 
-    #endregion
+    #endregion Internal Methods
   }
 }

@@ -24,13 +24,232 @@ using Elements = GsaGH.Helpers.Import.Elements;
 using Nodes = GsaGH.Helpers.Import.Nodes;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to edit a Node
   /// </summary>
   public class ElemFromMem : GH_OasysDropDownComponent {
+
+    #region Properties + Fields
+    public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateElemsFromMems;
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
 
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private Length _tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public ElemFromMem() : base("Elements from Members",
+      "ElemFromMem",
+      "Create Elements from Members",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    #endregion Public Constructors
+
+    #region Public Methods
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var tolerance = new ToolStripTextBox();
+      _toleranceTxt = _tolerance.ToUnit(_lengthUnit)
+        .ToString()
+        .Replace(" ", string.Empty);
+      tolerance.Text = _toleranceTxt;
+      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+
+      toleranceMenu.DropDownItems[1]
+        .MouseUp += (s, e) => {
+          UpdateMessage();
+          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+          ExpireSolution(true);
+        };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+    }
+
+    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
+      base.DrawViewportMeshes(args);
+
+      if (_element2ds == null)
+        return;
+
+      foreach (GsaElement2dGoo element in _element2ds) {
+        if (element?.Value.Mesh == null
+          || element.Value.ApiElements[0]
+            .ParentMember.Member
+          > 0)
+          continue;
+
+        args.Display.DrawMeshShaded(element.Value.Mesh,
+          Attributes.Selected
+            ? Colours.Element2dFaceSelected
+            : Colours.Element2dFace);
+      }
+    }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+
+      if (_element2ds == null)
+        return;
+
+      foreach (GsaElement2dGoo element in _element2ds) {
+        if (element == null || element.Value.Mesh == null)
+          continue;
+
+        if (element.Value.ApiElements[0]
+            .ParentMember.Member
+          > 0) // only draw mesh shading if no parent member exist.
+        {
+          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i)
+                .Length
+              > 1)
+              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
+                Color.FromArgb(255, 229, 229, 229),
+                1);
+        }
+        else {
+          if (Attributes.Selected)
+            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
+                Colours.Element2dEdgeSelected,
+                2);
+          else
+            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
+                Colours.Element2dEdge,
+                1);
+        }
+      }
+    }
+
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new[] {
+        "Unit",
+      });
+
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
+
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      IsInitialised = true;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+      if (reader.ItemExists("Tolerance")) {
+        double tol = reader.GetDouble("Tolerance");
+        _tolerance = new Length(tol, _lengthUnit);
+      }
+      else
+        _tolerance = DefaultUnits.Tolerance;
+
+      UpdateMessage();
+      return flag;
+    }
+
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+      UpdateMessage();
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      int i = 0;
+      Params.Input[i++]
+        .Name = "Nodes [" + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "1D Members [" + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "2D Members [" + unitAbbreviation + "]";
+      Params.Input[i]
+        .Name = "3D Members [" + unitAbbreviation + "]";
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetDouble("Tolerance", _tolerance.Value);
+      return base.Write(writer);
+    }
+
+    #endregion Public Methods
+
+    #region Protected Methods
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      UpdateMessage();
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]",
+        "No",
+        "Nodes to be included in meshing",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]",
+        "M1D",
+        "1D Members to create 1D Elements from",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]",
+        "M2D",
+        "2D Members to create 2D Elements from",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]",
+        "M3D",
+        "3D Members to create 3D Elements from",
+        GH_ParamAccess.list);
+
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+
+      pManager.HideParameter(0);
+      pManager.HideParameter(1);
+      pManager.HideParameter(2);
+      pManager.HideParameter(3);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
+      pManager.HideParameter(0);
+      pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
+      pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
+      pManager.AddGenericParameter("3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.item);
+      pManager.AddGenericParameter("GSA Model",
+        "GSA",
+        "GSA Model with Elements and Members",
+        GH_ParamAccess.item);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
+
       #region inputs
 
       var ghTyp = new GH_ObjectWrapper();
@@ -132,7 +351,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      #endregion
+      #endregion inputs
 
       Model gsa = AssembleModel.Assemble(null,
         inNodes,
@@ -189,205 +408,9 @@ namespace GsaGH.Components {
       _element2ds = elementTuple.Item2;
     }
 
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
-      base.DrawViewportMeshes(args);
+    #endregion Protected Methods
 
-      if (_element2ds == null)
-        return;
-
-      foreach (GsaElement2dGoo element in _element2ds) {
-        if (element?.Value.Mesh == null
-          || element.Value.ApiElements[0]
-            .ParentMember.Member
-          > 0)
-          continue;
-
-        args.Display.DrawMeshShaded(element.Value.Mesh,
-          Attributes.Selected
-            ? Colours.Element2dFaceSelected
-            : Colours.Element2dFace);
-      }
-    }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      if (_element2ds == null)
-        return;
-
-      foreach (GsaElement2dGoo element in _element2ds) {
-        if (element == null || element.Value.Mesh == null)
-          continue;
-
-        if (element.Value.ApiElements[0]
-            .ParentMember.Member
-          > 0) // only draw mesh shading if no parent member exist.
-        {
-          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i)
-                .Length
-              > 1)
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Color.FromArgb(255, 229, 229, 229),
-                1);
-        }
-        else {
-          if (Attributes.Selected)
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdgeSelected,
-                2);
-          else
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdge,
-                1);
-        }
-      }
-    }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromMems;
-
-    public ElemFromMem() : base("Elements from Members",
-      "ElemFromMem",
-      "Create Elements from Members",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]",
-        "No",
-        "Nodes to be included in meshing",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]",
-        "M1D",
-        "1D Members to create 1D Elements from",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]",
-        "M2D",
-        "2D Members to create 2D Elements from",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]",
-        "M3D",
-        "3D Members to create 3D Elements from",
-        GH_ParamAccess.list);
-
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
-      pManager.HideParameter(3);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
-      pManager.HideParameter(0);
-      pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.item);
-      pManager.AddGenericParameter("GSA Model",
-        "GSA",
-        "GSA Model with Elements and Members",
-        GH_ParamAccess.item);
-    }
-
-    #endregion
-
-    #region Custom UI
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
-
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-      UpdateMessage();
-    }
-
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Unit",
-      });
-
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
-      UpdateMessage();
-      base.UpdateUI();
-    }
-
-    public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      int i = 0;
-      Params.Input[i++]
-        .Name = "Nodes [" + unitAbbreviation + "]";
-      Params.Input[i++]
-        .Name = "1D Members [" + unitAbbreviation + "]";
-      Params.Input[i++]
-        .Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Input[i]
-        .Name = "3D Members [" + unitAbbreviation + "]";
-    }
-
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit)
-        .ToString()
-        .Replace(" ", string.Empty);
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      toleranceMenu.DropDownItems[1]
-        .MouseUp += (s, e) => {
-        UpdateMessage();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-    }
-
+    #region Private Methods
     private void MaintainText(ToolStripTextBox tolerance) {
       _toleranceTxt = tolerance.Text;
       tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)
@@ -417,29 +440,6 @@ namespace GsaGH.Components {
           "Set tolerance is quite large, you can change this by right-clicking the component.");
     }
 
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetDouble("Tolerance", _tolerance.Value);
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      bool flag = base.Read(reader);
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
-      if (reader.ItemExists("Tolerance")) {
-        double tol = reader.GetDouble("Tolerance");
-        _tolerance = new Length(tol, _lengthUnit);
-      }
-      else
-        _tolerance = DefaultUnits.Tolerance;
-
-      UpdateMessage();
-      return flag;
-    }
-
-    #endregion
+    #endregion Private Methods
   }
 }

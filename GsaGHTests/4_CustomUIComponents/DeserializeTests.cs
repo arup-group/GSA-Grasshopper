@@ -5,8 +5,11 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.CustomComponent {
+
   [Collection("GrasshopperFixture collection")]
   public class DeserializeTests {
+
+    #region Public Methods
     [Theory]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(CreateBool6))]
@@ -25,5 +28,7 @@ namespace GsaGHTests.CustomComponent {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.TestDeserialize(comp);
     }
+
+    #endregion Public Methods
   }
 }

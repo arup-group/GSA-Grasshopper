@@ -10,60 +10,20 @@ using OasysGH.Components;
 using OasysGH.Parameters;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to edit Buckling Length Factors and ouput the information
   /// </summary>
   public class EditBucklingFactors : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaFls = new GsaBucklingLengthFactors();
-      var fls = new GsaBucklingLengthFactors();
-      if (da.GetData(0, ref gsaFls))
-        fls = gsaFls.Duplicate();
 
-      if (fls != null) {
-        var y = new GH_Number();
-        if (da.GetData(1, ref y))
-          if (GH_Convert.ToDouble(y, out double yy, GH_Conversion.Both))
-            fls.MomentAmplificationFactorStrongAxis = yy;
-
-        var z = new GH_Number();
-        if (da.GetData(2, ref z))
-          if (GH_Convert.ToDouble(z, out double zz, GH_Conversion.Both))
-            fls.MomentAmplificationFactorWeakAxis = zz;
-
-        var lt = new GH_Number();
-        if (da.GetData(3, ref lt))
-          if (GH_Convert.ToDouble(lt, out double ltb, GH_Conversion.Both))
-            fls.LateralTorsionalBucklingFactor = ltb;
-
-        da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
-        da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
-        da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
-        da.SetData(3, fls.LateralTorsionalBucklingFactor);
-        da.SetData(4,
-          (fls.LengthIsSet && fls.MomentAmplificationFactorStrongAxis.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorStrongAxis)
-            : null);
-        da.SetData(5,
-          (fls.LengthIsSet && fls.MomentAmplificationFactorWeakAxis.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorWeakAxis)
-            : null);
-        da.SetData(6,
-          (fls.LengthIsSet && fls.LateralTorsionalBucklingFactor.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.LateralTorsionalBucklingFactor)
-            : null);
-      }
-      else
-        this.AddRuntimeError("Buckling Factors is Null");
-    }
-
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("6440b34e-d787-48cc-8e95-c07c6217e40a");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBucklingLengthFactors;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public EditBucklingFactors() : base("Edit " + GsaBucklingLengthFactorsGoo.Name,
       "BucklingFactorsEdit",
       "Modify GSA Buckling Length Factors",
@@ -71,10 +31,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
-
+    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
       pManager.AddNumberParameter("Factor Lsy",
@@ -122,6 +81,49 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaFls = new GsaBucklingLengthFactors();
+      var fls = new GsaBucklingLengthFactors();
+      if (da.GetData(0, ref gsaFls))
+        fls = gsaFls.Duplicate();
+
+      if (fls != null) {
+        var y = new GH_Number();
+        if (da.GetData(1, ref y))
+          if (GH_Convert.ToDouble(y, out double yy, GH_Conversion.Both))
+            fls.MomentAmplificationFactorStrongAxis = yy;
+
+        var z = new GH_Number();
+        if (da.GetData(2, ref z))
+          if (GH_Convert.ToDouble(z, out double zz, GH_Conversion.Both))
+            fls.MomentAmplificationFactorWeakAxis = zz;
+
+        var lt = new GH_Number();
+        if (da.GetData(3, ref lt))
+          if (GH_Convert.ToDouble(lt, out double ltb, GH_Conversion.Both))
+            fls.LateralTorsionalBucklingFactor = ltb;
+
+        da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
+        da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
+        da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
+        da.SetData(3, fls.LateralTorsionalBucklingFactor);
+        da.SetData(4,
+          (fls.LengthIsSet && fls.MomentAmplificationFactorStrongAxis.HasValue)
+            ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorStrongAxis)
+            : null);
+        da.SetData(5,
+          (fls.LengthIsSet && fls.MomentAmplificationFactorWeakAxis.HasValue)
+            ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorWeakAxis)
+            : null);
+        da.SetData(6,
+          (fls.LengthIsSet && fls.LateralTorsionalBucklingFactor.HasValue)
+            ? new GH_UnitNumber(fls.Length * fls.LateralTorsionalBucklingFactor)
+            : null);
+      }
+      else
+        this.AddRuntimeError("Buckling Factors is Null");
+    }
+
+    #endregion Protected Methods
   }
 }

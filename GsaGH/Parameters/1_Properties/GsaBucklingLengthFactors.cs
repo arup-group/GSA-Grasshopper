@@ -1,21 +1,22 @@
-﻿
-using OasysUnits;
+﻿using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   /// Buckling Length Factors for a <see cref="GsaAPI.Member"/>
   /// </summary>
   public class GsaBucklingLengthFactors {
-    #region properties
+
+    #region Properties + Fields
+    public double? LateralTorsionalBucklingFactor { get; set; }
     public double? MomentAmplificationFactorStrongAxis { get; set; }
     public double? MomentAmplificationFactorWeakAxis { get; set; }
-    public double? LateralTorsionalBucklingFactor { get; set; }
     internal Length Length { get; }
     internal bool LengthIsSet { get; private set; } = false;
-    #endregion
+    #endregion Properties + Fields
 
-    #region constructors
+    #region Public Constructors
     public GsaBucklingLengthFactors() {
     }
 
@@ -25,6 +26,9 @@ namespace GsaGH.Parameters {
       MomentAmplificationFactorWeakAxis = momentAmplificationFactorWeakAxis;
     }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaBucklingLengthFactors(GsaMember1d member) {
       LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
@@ -38,9 +42,10 @@ namespace GsaGH.Parameters {
       Length = new Length(member.PolyCurve.GetLength(), lengthUnit);
       LengthIsSet = true;
     }
-    #endregion
 
-    #region methods
+    #endregion Internal Constructors
+
+    #region Public Methods
     public GsaBucklingLengthFactors Duplicate() {
       return (GsaBucklingLengthFactors)MemberwiseClone();
     }
@@ -52,6 +57,7 @@ namespace GsaGH.Parameters {
       string output = string.Join(" ", y, z, lt).Trim();
       return output == "" ? "Automatic" : output;
     }
-    #endregion
+
+    #endregion Public Methods
   }
 }

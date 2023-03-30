@@ -2,11 +2,16 @@
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+
   public class GsaLocalAxes {
+
+    #region Properties + Fields
     public Vector3d X { get; }
     public Vector3d Y { get; }
     public Vector3d Z { get; }
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public GsaLocalAxes(Vector3d x, Vector3d y, Vector3d z) {
       X = x;
       Y = y;
@@ -18,5 +23,7 @@ namespace GsaGH.Parameters {
       Y = new Vector3d(collection[1], collection[4], collection[7]);
       Z = new Vector3d(collection[2], collection[5], collection[8]);
     }
+
+    #endregion Public Constructors
   }
 }

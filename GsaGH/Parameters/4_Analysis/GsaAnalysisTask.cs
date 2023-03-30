@@ -5,10 +5,13 @@ using GsaAPI;
 using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
+
   /// <summary>
   ///   Section class, this class defines the basic properties and methods for any Gsa Section
   /// </summary>
   public class GsaAnalysisTask {
+
+    #region Enums
     public enum AnalysisType {
       Static = 1,
       Buckling = 3,
@@ -29,36 +32,30 @@ namespace GsaGH.Parameters {
       ModelStability = 39,
       ModelStabilityPDelta = 40,
     }
+    #endregion Enums
 
-    #region fields
-
-    private int _id = 0;
-
-    #endregion
-
-    #region properties
-
+    #region Properties + Fields
     public List<GsaAnalysisCase> Cases { get; set; } = null;
-
-    public string Name { get; set; }
-
-    public AnalysisType Type { get; set; }
-
     public int Id {
       get => _id;
       set => _id = value;
     }
 
-    #endregion
+    public string Name { get; set; }
+    public AnalysisType Type { get; set; }
+    private int _id = 0;
+    #endregion Properties + Fields
 
-    #region constructors
-
+    #region Public Constructors
     public GsaAnalysisTask() {
       _id = 0;
       Cases = new List<GsaAnalysisCase>();
       Type = AnalysisType.Static;
     }
 
+    #endregion Public Constructors
+
+    #region Internal Constructors
     internal GsaAnalysisTask(int id, AnalysisTask task, Model model) {
       _id = id;
       Cases = new List<GsaAnalysisCase>();
@@ -72,24 +69,9 @@ namespace GsaGH.Parameters {
       Name = task.Name;
     }
 
-    #endregion
+    #endregion Internal Constructors
 
-    #region methods
-
-    internal void CreateDefaultCases(Model model) {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(model);
-      Cases = tuple.Item2.Select(x => x.Value)
-        .ToList();
-    }
-
-    internal void CreateDeafultCases(GsaModel gsaModel) {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
-      Cases = tuple.Item2.Select(x => x.Value)
-        .ToList();
-    }
-
+    #region Public Methods
     public GsaAnalysisTask Duplicate() {
       var dup = new GsaAnalysisTask {
         _id = _id,
@@ -112,6 +94,23 @@ namespace GsaGH.Parameters {
             .Replace("_", " ")).Trim()
         .Replace("  ", " ");
 
-    #endregion
+    #endregion Public Methods
+
+    #region Internal Methods
+    internal void CreateDeafultCases(GsaModel gsaModel) {
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
+        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
+      Cases = tuple.Item2.Select(x => x.Value)
+        .ToList();
+    }
+
+    internal void CreateDefaultCases(Model model) {
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
+        = Analyses.GetAnalysisTasksAndCombinations(model);
+      Cases = tuple.Item2.Select(x => x.Value)
+        .ToList();
+    }
+
+    #endregion Internal Methods
   }
 }

@@ -14,28 +14,21 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to create a new Offset
   /// </summary>
   public class CreateOffset : GH_OasysDropDownComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var offset = new GsaOffset {
-        X1 = (Length)Input.UnitNumber(this, da, 0, _lengthUnit, true),
-        X2 = (Length)Input.UnitNumber(this, da, 1, _lengthUnit, true),
-        Y = (Length)Input.UnitNumber(this, da, 2, _lengthUnit, true),
-        Z = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true),
-      };
 
-      da.SetData(0, new GsaOffsetGoo(offset));
-    }
-
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("ba73abd3-cd48-4dd2-9cd1-d89c921dd108");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateOffset;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public CreateOffset() : base("Create Offset",
       "Offset",
       "Create GSA Offset",
@@ -43,43 +36,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]",
-        "X1",
-        "X1 - Start axial offset",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]",
-        "X2",
-        "X2 - End axial offset",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]",
-        "Y",
-        "Y Offset",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]",
-        "Z",
-        "Z Offset",
-        GH_ParamAccess.item);
-
-      for (int i = 0; i < pManager.ParamCount; i++)
-        pManager[i].Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaOffsetParameter());
-
-    #endregion
-
-    #region Custom UI
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-
+    #region Public Methods
     public override void InitialiseDropdowns() {
       SpacerDescriptions = new List<string>(new[] {
         "Measure",
@@ -119,6 +78,47 @@ namespace GsaGH.Components {
         .Name = "Offset Z [" + unitAbbreviation + "]";
     }
 
-    #endregion
+    #endregion Public Methods
+
+    #region Protected Methods
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]",
+        "X1",
+        "X1 - Start axial offset",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]",
+        "X2",
+        "X2 - End axial offset",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]",
+        "Y",
+        "Y Offset",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]",
+        "Z",
+        "Z Offset",
+        GH_ParamAccess.item);
+
+      for (int i = 0; i < pManager.ParamCount; i++)
+        pManager[i].Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaOffsetParameter());
+
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var offset = new GsaOffset {
+        X1 = (Length)Input.UnitNumber(this, da, 0, _lengthUnit, true),
+        X2 = (Length)Input.UnitNumber(this, da, 1, _lengthUnit, true),
+        Y = (Length)Input.UnitNumber(this, da, 2, _lengthUnit, true),
+        Z = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true),
+      };
+
+      da.SetData(0, new GsaOffsetGoo(offset));
+    }
+
+    #endregion Protected Methods
   }
 }

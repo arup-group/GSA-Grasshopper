@@ -7,7 +7,10 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
+
   internal class Prop2ds {
+
+    #region Internal Methods
     internal static int AddProp2d(GsaProp2d prop, ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
       Materials.AddMaterial(ref prop, ref apiMaterials);
       if (prop.AxisProperty == -2) {
@@ -56,5 +59,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaProp2d prop2d in prop2Ds.Where(prop2d => prop2d != null))
         ConvertProp2d(prop2d, ref apiProp2ds, ref apiMaterials, ref existingAxes, unit);
     }
+
+    #endregion Internal Methods
   }
 }

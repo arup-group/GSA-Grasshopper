@@ -14,11 +14,158 @@ using OasysGH.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to create new 1D Member
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent {
+
+    #region Properties + Fields
+    public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMem1d;
+    private bool _x1;
+    private bool _x2;
+    private bool _xx1;
+    private bool _xx2;
+    private bool _y1;
+    private bool _y2;
+    private bool _yy1;
+    private bool _yy2;
+    private bool _z1;
+    private bool _z2;
+    private bool _zz1;
+    private bool _zz2;
+    #endregion Properties + Fields
+
+    #region Public Constructors
+    public CreateMember1d_OBSOLETE() : base("Create 1D Member",
+      "Mem1D",
+      "Create GSA 1D Member",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    #endregion Public Constructors
+
+    #region Public Methods
+    public override void CreateAttributes()
+      => m_attributes = new ReleasesComponentAttributes(this,
+        SetReleases,
+        "Start Release",
+        "End Release",
+        _x1,
+        _y1,
+        _z1,
+        _xx1,
+        _yy1,
+        _zz1,
+        _x2,
+        _y2,
+        _z2,
+        _xx2,
+        _yy2,
+        _zz2);
+
+    public override void InitialiseDropdowns() {
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _x1 = reader.GetBoolean("x1");
+      _y1 = reader.GetBoolean("y1");
+      _z1 = reader.GetBoolean("z1");
+      _xx1 = reader.GetBoolean("xx1");
+      _yy1 = reader.GetBoolean("yy1");
+      _zz1 = reader.GetBoolean("zz1");
+      _x2 = reader.GetBoolean("x2");
+      _y2 = reader.GetBoolean("y2");
+      _z2 = reader.GetBoolean("z2");
+      _xx2 = reader.GetBoolean("xx2");
+      _yy2 = reader.GetBoolean("yy2");
+      _zz2 = reader.GetBoolean("zz2");
+
+      if (reader.ChunkExists("ParameterData"))
+        base.Read(reader);
+      else {
+        BaseReader.Read(reader, this);
+        IsInitialised = true;
+        UpdateUIFromSelectedItems();
+      }
+
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      Attributes.Bounds = (RectangleF)attributes.Items[0]
+        .InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1]
+        .InternalData;
+      return true;
+    }
+
+    public void SetReleases(
+      bool resx1,
+      bool resy1,
+      bool resz1,
+      bool resxx1,
+      bool resyy1,
+      bool reszz1,
+      bool resx2,
+      bool resy2,
+      bool resz2,
+      bool resxx2,
+      bool resyy2,
+      bool reszz2) {
+      _x1 = resx1;
+      _y1 = resy1;
+      _z1 = resz1;
+      _xx1 = resxx1;
+      _yy1 = resyy1;
+      _zz1 = reszz1;
+      _x2 = resx2;
+      _y2 = resy2;
+      _z2 = resz2;
+      _xx2 = resxx2;
+      _yy2 = resyy2;
+      _zz2 = reszz2;
+
+      base.UpdateUI();
+    }
+
+    public override void SetSelected(int i, int j) {
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("x1", _x1);
+      writer.SetBoolean("y1", _y1);
+      writer.SetBoolean("z1", _z1);
+      writer.SetBoolean("xx1", _xx1);
+      writer.SetBoolean("yy1", _yy1);
+      writer.SetBoolean("zz1", _zz1);
+      writer.SetBoolean("x2", _x2);
+      writer.SetBoolean("y2", _y2);
+      writer.SetBoolean("z2", _z2);
+      writer.SetBoolean("xx2", _xx2);
+      writer.SetBoolean("yy2", _yy2);
+      writer.SetBoolean("zz2", _zz2);
+      return base.Write(writer);
+    }
+
+    #endregion Public Methods
+
+    #region Protected Methods
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddCurveParameter("Curve",
+        "C",
+        "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionParameter());
+      pManager[1]
+        .Optional = true;
+      pManager.HideParameter(0);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaMember1dParameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghcrv = new GH_Curve();
       if (!da.GetData(0, ref ghcrv))
@@ -82,153 +229,6 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaMember1dGoo(mem));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem1d;
-
-    public CreateMember1d_OBSOLETE() : base("Create 1D Member",
-      "Mem1D",
-      "Create GSA 1D Member",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddCurveParameter("Curve",
-        "C",
-        "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter());
-      pManager[1]
-        .Optional = true;
-      pManager.HideParameter(0);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMember1dParameter());
-
-    #endregion
-
-    #region Custom UI
-
-    private bool _x1;
-    private bool _y1;
-    private bool _z1;
-    private bool _xx1;
-    private bool _yy1;
-    private bool _zz1;
-    private bool _x2;
-    private bool _y2;
-    private bool _z2;
-    private bool _xx2;
-    private bool _yy2;
-    private bool _zz2;
-    public override void SetSelected(int i, int j) { }
-    public override void InitialiseDropdowns() { }
-
-    public override void CreateAttributes()
-      => m_attributes = new ReleasesComponentAttributes(this,
-        SetReleases,
-        "Start Release",
-        "End Release",
-        _x1,
-        _y1,
-        _z1,
-        _xx1,
-        _yy1,
-        _zz1,
-        _x2,
-        _y2,
-        _z2,
-        _xx2,
-        _yy2,
-        _zz2);
-
-    public void SetReleases(
-      bool resx1,
-      bool resy1,
-      bool resz1,
-      bool resxx1,
-      bool resyy1,
-      bool reszz1,
-      bool resx2,
-      bool resy2,
-      bool resz2,
-      bool resxx2,
-      bool resyy2,
-      bool reszz2) {
-      _x1 = resx1;
-      _y1 = resy1;
-      _z1 = resz1;
-      _xx1 = resxx1;
-      _yy1 = resyy1;
-      _zz1 = reszz1;
-      _x2 = resx2;
-      _y2 = resy2;
-      _z2 = resz2;
-      _xx2 = resxx2;
-      _yy2 = resyy2;
-      _zz2 = reszz2;
-
-      base.UpdateUI();
-    }
-
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetBoolean("x1", _x1);
-      writer.SetBoolean("y1", _y1);
-      writer.SetBoolean("z1", _z1);
-      writer.SetBoolean("xx1", _xx1);
-      writer.SetBoolean("yy1", _yy1);
-      writer.SetBoolean("zz1", _zz1);
-      writer.SetBoolean("x2", _x2);
-      writer.SetBoolean("y2", _y2);
-      writer.SetBoolean("z2", _z2);
-      writer.SetBoolean("xx2", _xx2);
-      writer.SetBoolean("yy2", _yy2);
-      writer.SetBoolean("zz2", _zz2);
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _x1 = reader.GetBoolean("x1");
-      _y1 = reader.GetBoolean("y1");
-      _z1 = reader.GetBoolean("z1");
-      _xx1 = reader.GetBoolean("xx1");
-      _yy1 = reader.GetBoolean("yy1");
-      _zz1 = reader.GetBoolean("zz1");
-      _x2 = reader.GetBoolean("x2");
-      _y2 = reader.GetBoolean("y2");
-      _z2 = reader.GetBoolean("z2");
-      _xx2 = reader.GetBoolean("xx2");
-      _yy2 = reader.GetBoolean("yy2");
-      _zz2 = reader.GetBoolean("zz2");
-
-      if (reader.ChunkExists("ParameterData"))
-        base.Read(reader);
-      else {
-        BaseReader.Read(reader, this);
-        IsInitialised = true;
-        UpdateUIFromSelectedItems();
-      }
-
-      GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
-      return true;
-    }
-
-    #endregion
+    #endregion Protected Methods
   }
 }

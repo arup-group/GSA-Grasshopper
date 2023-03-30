@@ -11,95 +11,21 @@ using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class GlobalResult_OBSOLETE : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
-        return;
 
-      #region Inputs
-
-      if (ghTyp.Value is GsaModelGoo)
-        ghTyp.CastTo(ref gsaModel);
-      else {
-        this.AddRuntimeError("Error converting input to GSA Model");
-        return;
-      }
-
-      var ghACase = new GH_Integer();
-      da.GetData(1, ref ghACase);
-      GH_Convert.ToInt32(ghACase, out int analCase, GH_Conversion.Both);
-
-      #endregion
-
-      #region Get results from GSA
-
-      gsaModel.Model.Results()
-        .TryGetValue(analCase, out AnalysisCaseResult analysisCaseResult);
-      if (analysisCaseResult == null) {
-        this.AddRuntimeError("No results exist for Analysis Case " + analCase + " in file");
-        return;
-      }
-
-      #endregion
-
-      const double unitfactorForce = 1000;
-      const double unitfactorMoment = 1000;
-
-      var force = new Vector3d(analysisCaseResult.Global.TotalLoad.X / unitfactorForce,
-        analysisCaseResult.Global.TotalLoad.Y / unitfactorForce,
-        analysisCaseResult.Global.TotalLoad.Z / unitfactorForce);
-
-      var moment = new Vector3d(analysisCaseResult.Global.TotalLoad.XX / unitfactorMoment,
-        analysisCaseResult.Global.TotalLoad.YY / unitfactorMoment,
-        analysisCaseResult.Global.TotalLoad.ZZ / unitfactorMoment);
-
-      var reaction = new Vector3d(analysisCaseResult.Global.TotalReaction.X / unitfactorForce,
-        analysisCaseResult.Global.TotalReaction.Y / unitfactorForce,
-        analysisCaseResult.Global.TotalReaction.Z / unitfactorForce);
-
-      var reactionmoment = new Vector3d(
-        analysisCaseResult.Global.TotalReaction.XX / unitfactorMoment,
-        analysisCaseResult.Global.TotalReaction.YY / unitfactorMoment,
-        analysisCaseResult.Global.TotalReaction.ZZ / unitfactorMoment);
-
-      var effMass = new Vector3d(analysisCaseResult.Global.EffectiveMass.X,
-        analysisCaseResult.Global.EffectiveMass.Y,
-        analysisCaseResult.Global.EffectiveMass.Z);
-
-      Vector3d effStiff;
-      if (analysisCaseResult.Global.EffectiveInertia != null)
-        effStiff = new Vector3d(analysisCaseResult.Global.EffectiveInertia.X,
-          analysisCaseResult.Global.EffectiveInertia.Y,
-          analysisCaseResult.Global.EffectiveInertia.Z);
-      else
-        effStiff = new Vector3d();
-
-      var modal = new Vector3d(analysisCaseResult.Global.ModalMass,
-        analysisCaseResult.Global.ModalStiffness,
-        analysisCaseResult.Global.ModalGeometricStiffness);
-
-      da.SetData(0, force);
-      da.SetData(1, moment);
-      da.SetData(2, reaction);
-      da.SetData(3, reactionmoment);
-      da.SetData(4, effMass);
-      da.SetData(5, effStiff);
-      da.SetData(6, analysisCaseResult.Global.Mode);
-      da.SetData(7, modal);
-      da.SetData(8, analysisCaseResult.Global.Frequency);
-      da.SetData(9, analysisCaseResult.Global.LoadFactor);
-    }
-
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("267d8dc3-aa6e-4ed2-b82d-57fc290173cc");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.ResultGlobal;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public GlobalResult_OBSOLETE() : base("Global Results",
       "GlobalResult",
       "Get Global Results from GSA model",
@@ -107,14 +33,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ResultGlobal;
+    #endregion Public Constructors
 
-    #endregion
-
-    #region Input and output
-
+    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("GSA Model",
         "GSA",
@@ -178,6 +99,86 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaModel = new GsaModel();
+      var ghTyp = new GH_ObjectWrapper();
+      if (!da.GetData(0, ref ghTyp))
+        return;
+
+      #region Inputs
+
+      if (ghTyp.Value is GsaModelGoo)
+        ghTyp.CastTo(ref gsaModel);
+      else {
+        this.AddRuntimeError("Error converting input to GSA Model");
+        return;
+      }
+
+      var ghACase = new GH_Integer();
+      da.GetData(1, ref ghACase);
+      GH_Convert.ToInt32(ghACase, out int analCase, GH_Conversion.Both);
+
+      #endregion Inputs
+
+      #region Get results from GSA
+
+      gsaModel.Model.Results()
+        .TryGetValue(analCase, out AnalysisCaseResult analysisCaseResult);
+      if (analysisCaseResult == null) {
+        this.AddRuntimeError("No results exist for Analysis Case " + analCase + " in file");
+        return;
+      }
+
+      #endregion Get results from GSA
+
+      const double unitfactorForce = 1000;
+      const double unitfactorMoment = 1000;
+
+      var force = new Vector3d(analysisCaseResult.Global.TotalLoad.X / unitfactorForce,
+        analysisCaseResult.Global.TotalLoad.Y / unitfactorForce,
+        analysisCaseResult.Global.TotalLoad.Z / unitfactorForce);
+
+      var moment = new Vector3d(analysisCaseResult.Global.TotalLoad.XX / unitfactorMoment,
+        analysisCaseResult.Global.TotalLoad.YY / unitfactorMoment,
+        analysisCaseResult.Global.TotalLoad.ZZ / unitfactorMoment);
+
+      var reaction = new Vector3d(analysisCaseResult.Global.TotalReaction.X / unitfactorForce,
+        analysisCaseResult.Global.TotalReaction.Y / unitfactorForce,
+        analysisCaseResult.Global.TotalReaction.Z / unitfactorForce);
+
+      var reactionmoment = new Vector3d(
+        analysisCaseResult.Global.TotalReaction.XX / unitfactorMoment,
+        analysisCaseResult.Global.TotalReaction.YY / unitfactorMoment,
+        analysisCaseResult.Global.TotalReaction.ZZ / unitfactorMoment);
+
+      var effMass = new Vector3d(analysisCaseResult.Global.EffectiveMass.X,
+        analysisCaseResult.Global.EffectiveMass.Y,
+        analysisCaseResult.Global.EffectiveMass.Z);
+
+      Vector3d effStiff;
+      if (analysisCaseResult.Global.EffectiveInertia != null)
+        effStiff = new Vector3d(analysisCaseResult.Global.EffectiveInertia.X,
+          analysisCaseResult.Global.EffectiveInertia.Y,
+          analysisCaseResult.Global.EffectiveInertia.Z);
+      else
+        effStiff = new Vector3d();
+
+      var modal = new Vector3d(analysisCaseResult.Global.ModalMass,
+        analysisCaseResult.Global.ModalStiffness,
+        analysisCaseResult.Global.ModalGeometricStiffness);
+
+      da.SetData(0, force);
+      da.SetData(1, moment);
+      da.SetData(2, reaction);
+      da.SetData(3, reactionmoment);
+      da.SetData(4, effMass);
+      da.SetData(5, effStiff);
+      da.SetData(6, analysisCaseResult.Global.Mode);
+      da.SetData(7, modal);
+      da.SetData(8, analysisCaseResult.Global.Frequency);
+      da.SetData(9, analysisCaseResult.Global.LoadFactor);
+    }
+
+    #endregion Protected Methods
   }
 }

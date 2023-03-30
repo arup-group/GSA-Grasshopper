@@ -22,206 +22,79 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to edit a 1D Member
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class EditMember1d_OBSOLETE : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember1d = new GsaMember1d();
-      var mem = new GsaMember1d();
-      if (da.GetData(0, ref gsaMember1d)) {
-        if (gsaMember1d == null)
-          this.AddRuntimeWarning("Member1D input is null");
-        mem = gsaMember1d.Duplicate();
-      }
 
-      if (mem == null)
-        return;
-
-      var ghId = new GH_Integer();
-      if (da.GetData(1, ref ghId))
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
-          mem.Id = id;
-
-      var ghCurve = new GH_Curve();
-      if (da.GetData(2, ref ghCurve)) {
-        Curve crv = null;
-        if (GH_Convert.ToCurve(ghCurve, ref crv, GH_Conversion.Both)) {
-          if (crv is PolyCurve curve)
-            mem.PolyCurve = curve;
-          else {
-            var tempMem = new GsaMember1d(crv);
-            mem.PolyCurve = tempMem.PolyCurve;
-          }
-        }
-      }
-
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo)
-          ghTyp.CastTo(ref section);
-        else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-            section = new GsaSection(idd);
-          else {
-            this.AddRuntimeError(
-              "Unable to convert PB input to a Section Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Section = section;
-      }
-
-      var ghgrp = new GH_Integer();
-      if (da.GetData(4, ref ghgrp))
-        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-          mem.Group = grp;
-
-      var ghString = new GH_String();
-      if (da.GetData(5, ref ghString)) {
-        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
-          mem.Type = (MemberType)typeInt;
-        if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.s_elementTypeMapping.ContainsKey(typestring))
-            mem.Type = Mappings.s_memberTypeMapping[typestring];
-          else
-            this.AddRuntimeError("Unable to change Element1D Type");
-        }
-      }
-
-      ghString = new GH_String();
-      if (da.GetData(6, ref ghString)) {
-        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
-          mem.Type1D = (ElementType)typeInt;
-        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.s_elementTypeMapping.ContainsKey(typestring))
-            mem.Type1D = Mappings.s_elementTypeMapping[typestring];
-          else
-            this.AddRuntimeError("Unable to change Element1D Type");
-        }
-      }
-
-      var offset = new GsaOffset();
-      if (da.GetData(7, ref offset))
-        mem.Offset = offset;
-
-      var start = new GsaBool6();
-      if (da.GetData(8, ref start))
-        mem.ReleaseStart = start;
-
-      var end = new GsaBool6();
-      if (da.GetData(9, ref end))
-        mem.ReleaseEnd = end;
-
-      var ghAngle = new GH_Number();
-      if (da.GetData(10, ref ghAngle))
-        if (GH_Convert.ToDouble(ghAngle, out double angle, GH_Conversion.Both))
-          mem.OrientationAngle = new Angle(angle, _angleUnit);
-
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(11, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          mem.OrientationNode = node;
-        }
-        else
-          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
-      }
-
-      if (Params.Input[12]
-          .Sources.Count
-        > 0)
-        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
-
-      var ghbool = new GH_Boolean();
-      if (da.GetData(13, ref ghbool))
-        if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
-          if (mem.MeshWithOthers != mbool)
-            mem.MeshWithOthers = mbool;
-
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(14, ref ghTyp)) {
-        var fls = new GsaBucklingLengthFactors();
-        if (ghTyp.Value is GsaBucklingLengthFactorsGoo) {
-          ghTyp.CastTo(ref fls);
-          mem.ApiMember.MomentAmplificationFactorStrongAxis
-            = fls.MomentAmplificationFactorStrongAxis;
-          mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
-        }
-        else
-          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
-      }
-
-      var ghnm = new GH_String();
-      if (da.GetData(15, ref ghnm))
-        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-          mem.Name = name;
-
-      var ghcol = new GH_Colour();
-      if (da.GetData(16, ref ghcol))
-        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
-          mem.Colour = col;
-
-      var ghdum = new GH_Boolean();
-      if (da.GetData(17, ref ghdum))
-        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-          mem.IsDummy = dum;
-
-      da.SetData(0, new GsaMember1dGoo(mem));
-      da.SetData(1, mem.Id);
-      da.SetData(2, mem.PolyCurve);
-      da.SetData(3, new GsaSectionGoo(mem.Section));
-      da.SetData(4, mem.Group);
-      da.SetData(5,
-        Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type)
-          .Key);
-      da.SetData(6,
-        Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D)
-          .Key);
-
-      da.SetData(7, new GsaOffsetGoo(mem.Offset));
-
-      da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
-      da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
-
-      da.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
-      da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
-
-      da.SetData(12,
-        new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
-      da.SetData(13, mem.MeshWithOthers);
-
-      da.SetData(14,
-        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
-
-      da.SetData(15, mem.Name);
-
-      da.SetData(16, mem.Colour);
-      da.SetData(17, mem.IsDummy);
-      da.SetData(18, mem.ApiMember.Topology);
-    }
-
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("094f676f-c384-4d49-9d7f-64515004bf4b");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem1d;
+    private AngleUnit _angleUnit = AngleUnit.Radian;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public EditMember1d_OBSOLETE() : base("Edit 1D Member",
       "Mem1dEdit",
       "Modify GSA 1D Member",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
+    #region Public Methods
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true,
+        };
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      if (reader.ItemExists("LengthUnit")) {
+        _lengthUnit
+          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        return base.Read(reader) || Params.ReadAllParameterData(reader);
+      }
+
+      _lengthUnit = DefaultUnits.LengthUnitGeometry;
+      return base.Read(reader);
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetString("LengthUnit", _lengthUnit.ToString());
+      return base.Write(writer);
+    }
+
+    #endregion Public Methods
+
+    #region Protected Methods
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      if (Params.Input[10] is Param_Number angleParameter)
+        _angleUnit = angleParameter.UseDegrees
+          ? AngleUnit.Degree
+          : AngleUnit.Radian;
+      Message = Length.GetAbbreviation(_lengthUnit);
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember1dParameter(),
@@ -415,64 +288,194 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
-
-    #region Custom UI
-
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-      if (Params.Input[10] is Param_Number angleParameter)
-        _angleUnit = angleParameter.UseDegrees
-          ? AngleUnit.Degree
-          : AngleUnit.Radian;
-      Message = Length.GetAbbreviation(_lengthUnit);
-    }
-
-    private AngleUnit _angleUnit = AngleUnit.Radian;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
-          Checked = unit == Length.GetAbbreviation(_lengthUnit),
-          Enabled = true,
-        };
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaMember1d = new GsaMember1d();
+      var mem = new GsaMember1d();
+      if (da.GetData(0, ref gsaMember1d)) {
+        if (gsaMember1d == null)
+          this.AddRuntimeWarning("Member1D input is null");
+        mem = gsaMember1d.Duplicate();
       }
 
-      menu.Items.Add(unitsMenu);
+      if (mem == null)
+        return;
 
-      Menu_AppendSeparator(menu);
+      var ghId = new GH_Integer();
+      if (da.GetData(1, ref ghId))
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+          mem.Id = id;
+
+      var ghCurve = new GH_Curve();
+      if (da.GetData(2, ref ghCurve)) {
+        Curve crv = null;
+        if (GH_Convert.ToCurve(ghCurve, ref crv, GH_Conversion.Both)) {
+          if (crv is PolyCurve curve)
+            mem.PolyCurve = curve;
+          else {
+            var tempMem = new GsaMember1d(crv);
+            mem.PolyCurve = tempMem.PolyCurve;
+          }
+        }
+      }
+
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(3, ref ghTyp)) {
+        var section = new GsaSection();
+        if (ghTyp.Value is GsaSectionGoo)
+          ghTyp.CastTo(ref section);
+        else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+            section = new GsaSection(idd);
+          else {
+            this.AddRuntimeError(
+              "Unable to convert PB input to a Section Property of reference integer");
+            return;
+          }
+        }
+
+        mem.Section = section;
+      }
+
+      var ghgrp = new GH_Integer();
+      if (da.GetData(4, ref ghgrp))
+        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
+          mem.Group = grp;
+
+      var ghString = new GH_String();
+      if (da.GetData(5, ref ghString)) {
+        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
+          mem.Type = (MemberType)typeInt;
+        if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
+          if (Mappings.s_elementTypeMapping.ContainsKey(typestring))
+            mem.Type = Mappings.s_memberTypeMapping[typestring];
+          else
+            this.AddRuntimeError("Unable to change Element1D Type");
+        }
+      }
+
+      ghString = new GH_String();
+      if (da.GetData(6, ref ghString)) {
+        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
+          mem.Type1D = (ElementType)typeInt;
+        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
+          if (Mappings.s_elementTypeMapping.ContainsKey(typestring))
+            mem.Type1D = Mappings.s_elementTypeMapping[typestring];
+          else
+            this.AddRuntimeError("Unable to change Element1D Type");
+        }
+      }
+
+      var offset = new GsaOffset();
+      if (da.GetData(7, ref offset))
+        mem.Offset = offset;
+
+      var start = new GsaBool6();
+      if (da.GetData(8, ref start))
+        mem.ReleaseStart = start;
+
+      var end = new GsaBool6();
+      if (da.GetData(9, ref end))
+        mem.ReleaseEnd = end;
+
+      var ghAngle = new GH_Number();
+      if (da.GetData(10, ref ghAngle))
+        if (GH_Convert.ToDouble(ghAngle, out double angle, GH_Conversion.Both))
+          mem.OrientationAngle = new Angle(angle, _angleUnit);
+
+      ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(11, ref ghTyp)) {
+        var node = new GsaNode();
+        if (ghTyp.Value is GsaNodeGoo) {
+          ghTyp.CastTo(ref node);
+          mem.OrientationNode = node;
+        }
+        else
+          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
+      }
+
+      if (Params.Input[12]
+          .Sources.Count
+        > 0)
+        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
+
+      var ghbool = new GH_Boolean();
+      if (da.GetData(13, ref ghbool))
+        if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
+          if (mem.MeshWithOthers != mbool)
+            mem.MeshWithOthers = mbool;
+
+      ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(14, ref ghTyp)) {
+        var fls = new GsaBucklingLengthFactors();
+        if (ghTyp.Value is GsaBucklingLengthFactorsGoo) {
+          ghTyp.CastTo(ref fls);
+          mem.ApiMember.MomentAmplificationFactorStrongAxis
+            = fls.MomentAmplificationFactorStrongAxis;
+          mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
+          mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+        }
+        else
+          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
+      }
+
+      var ghnm = new GH_String();
+      if (da.GetData(15, ref ghnm))
+        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+          mem.Name = name;
+
+      var ghcol = new GH_Colour();
+      if (da.GetData(16, ref ghcol))
+        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
+          mem.Colour = col;
+
+      var ghdum = new GH_Boolean();
+      if (da.GetData(17, ref ghdum))
+        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
+          mem.IsDummy = dum;
+
+      da.SetData(0, new GsaMember1dGoo(mem));
+      da.SetData(1, mem.Id);
+      da.SetData(2, mem.PolyCurve);
+      da.SetData(3, new GsaSectionGoo(mem.Section));
+      da.SetData(4, mem.Group);
+      da.SetData(5,
+        Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type)
+          .Key);
+      da.SetData(6,
+        Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D)
+          .Key);
+
+      da.SetData(7, new GsaOffsetGoo(mem.Offset));
+
+      da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
+      da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
+
+      da.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
+      da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
+
+      da.SetData(12,
+        new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
+      da.SetData(13, mem.MeshWithOthers);
+
+      da.SetData(14,
+        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
+
+      da.SetData(15, mem.Name);
+
+      da.SetData(16, mem.Colour);
+      da.SetData(17, mem.IsDummy);
+      da.SetData(18, mem.ApiMember.Topology);
     }
 
+    #endregion Protected Methods
+
+    #region Private Methods
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       ExpireSolution(true);
     }
 
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("LengthUnit")) {
-        _lengthUnit
-          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-        return base.Read(reader) || Params.ReadAllParameterData(reader);
-      }
-
-      _lengthUnit = DefaultUnits.LengthUnitGeometry;
-      return base.Read(reader);
-    }
-
-    #endregion
+    #endregion Private Methods
   }
 }

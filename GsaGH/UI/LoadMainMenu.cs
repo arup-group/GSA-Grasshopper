@@ -7,9 +7,14 @@ using Grasshopper.GUI.Canvas;
 using GsaGH.Properties;
 
 namespace GsaGH.Graphics.Menu {
-  public class MenuLoad {
-    private static ToolStripMenuItem s_oasysMenu;
 
+  public class MenuLoad {
+
+    #region Properties + Fields
+    private static ToolStripMenuItem s_oasysMenu;
+    #endregion Properties + Fields
+
+    #region Internal Methods
     internal static void OnStartup(GH_Canvas canvas) {
       s_oasysMenu = new ToolStripMenuItem("Oasys") {
         Name = "Oasys",
@@ -37,6 +42,9 @@ namespace GsaGH.Graphics.Menu {
       Instances.CanvasCreated -= OnStartup;
     }
 
+    #endregion Internal Methods
+
+    #region Private Methods
     private static void PopulateSub(ToolStripMenuItem menuItem) {
       menuItem.DropDown.Items.Add("GsaGH Documentation",
         Resources.Documentation,
@@ -58,5 +66,7 @@ namespace GsaGH.Graphics.Menu {
           aboutBox.ShowDialog();
         });
     }
+
+    #endregion Private Methods
   }
 }

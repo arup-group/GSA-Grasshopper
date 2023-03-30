@@ -8,8 +8,11 @@ using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Properties {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateCustomMaterialTests {
+
+    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateCustomMaterial();
       comp.CreateAttributes();
@@ -47,5 +50,7 @@ namespace GsaGHTests.Components.Properties {
           CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
         output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
     }
+
+    #endregion Public Methods
   }
 }

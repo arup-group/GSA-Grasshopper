@@ -7,8 +7,11 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateSectionModifierTests {
+
+    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateSectionModifier();
       comp.CreateAttributes();
@@ -47,5 +50,7 @@ namespace GsaGHTests.Components.Properties {
       Assert.True(output.Value.IsBendingAxesPrincipal);
       Assert.True(output.Value.IsReferencePointCentroid);
     }
+
+    #endregion Public Methods
   }
 }

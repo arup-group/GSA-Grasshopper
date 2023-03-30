@@ -8,8 +8,11 @@ using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Geometry {
+
   [Collection("GrasshopperFixture collection")]
   public class CreateMember3dTests {
+
+    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateMember3d();
       comp.CreateAttributes();
@@ -35,5 +38,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(MatType.Concrete, output.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output.Value.MeshSize);
     }
+
+    #endregion Public Methods
   }
 }

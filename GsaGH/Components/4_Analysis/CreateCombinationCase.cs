@@ -8,25 +8,20 @@ using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
+
   /// <summary>
   ///   Component to create GSA Combination Case
   /// </summary>
   public class CreateCombinationCase : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      string name = "";
-      da.GetData(0, ref name);
-      string desc = "";
-      da.GetData(1, ref desc);
-      da.SetData(0, new GsaCombinationCaseGoo(new GsaCombinationCase(name, desc)));
-    }
 
-    #region Name and Ribbon Layout
-
+    #region Properties + Fields
     public override Guid ComponentGuid => new Guid("d8df767a-ef59-4e08-b592-2a39149efde1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateCombinationCase;
+    #endregion Properties + Fields
 
+    #region Public Constructors
     public CreateCombinationCase() : base("Create Combination Case",
       "CreateCombination",
       "Create a new GSA Combination Case",
@@ -34,10 +29,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat4())
       => Hidden = true;
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Input and output
-
+    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Description",
@@ -53,6 +47,14 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaCombinationCaseParameter());
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      string name = "";
+      da.GetData(0, ref name);
+      string desc = "";
+      da.GetData(1, ref desc);
+      da.SetData(0, new GsaCombinationCaseGoo(new GsaCombinationCase(name, desc)));
+    }
+
+    #endregion Protected Methods
   }
 }
