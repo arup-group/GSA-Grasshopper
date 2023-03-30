@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using Grasshopper.Plugin;
 using GsaGH.Helpers;
 using Interop.Gsa_10_1;
@@ -39,6 +40,7 @@ namespace IntegrationTests {
       AddPluginToGh();
 
       LoadRefs();
+      Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
       TryGsaCom();
 
       InitializeCore();
