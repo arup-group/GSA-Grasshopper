@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -109,7 +110,8 @@ namespace IntegrationTests.Parameters {
     }
 
     [Fact]
-    public void OriginalTaskIdTest() {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public void OriginalTaskIDTest() {
       IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
         .Name.Replace("Test", string.Empty));
       var output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
