@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Grasshopper;
 using Grasshopper.Kernel;
 using GsaGH.Graphics.Menu;
@@ -47,6 +48,7 @@ namespace GsaGH {
       }
 
       try {
+        Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
         var gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
         gsaVersion = gsaVers.FileMajorPart
           + "."
