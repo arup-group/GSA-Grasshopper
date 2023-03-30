@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -12,12 +13,15 @@ using OasysGH.UI;
 using OasysGH.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components {
+namespace GsaGH.Components
+{
   /// <summary>
   ///   Component to create new 1D Member
   /// </summary>
-  public class CreateMember1d : GH_OasysDropDownComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
+  public class CreateMember1d : GH_OasysDropDownComponent
+  {
+    protected override void SolveInstance(IGH_DataAccess da)
+    {
       var ghcrv = new GH_Curve();
       if (!da.GetData(0, ref ghcrv))
         return;
@@ -38,7 +42,8 @@ namespace GsaGH.Components {
           + DefaultUnits.LengthUnitGeometry.ToString()
           + ".");
 
-      var rel1 = new GsaBool6 {
+      var rel1 = new GsaBool6
+      {
         X = _x1,
         Y = _y1,
         Z = _z1,
@@ -49,7 +54,8 @@ namespace GsaGH.Components {
 
       mem.ReleaseStart = rel1;
 
-      var rel2 = new GsaBool6 {
+      var rel2 = new GsaBool6
+      {
         X = _x2,
         Y = _y2,
         Z = _z2,
@@ -61,12 +67,15 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       var section = new GsaSection();
-      if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo) {
+      if (da.GetData(1, ref ghTyp))
+      {
+        if (ghTyp.Value is GsaSectionGoo)
+        {
           ghTyp.CastTo(ref section);
           mem.Section = section;
         }
-        else {
+        else
+        {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
             mem.Section = new GsaSection(id);
           else
@@ -93,13 +102,15 @@ namespace GsaGH.Components {
       "Mem1D",
       "Create GSA 1D Member",
       CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+      SubCategoryName.Cat2())
+    { }
 
     #endregion
 
     #region Input and output
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+    {
       pManager.AddCurveParameter("Curve",
         "C",
         "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)",
@@ -139,10 +150,11 @@ namespace GsaGH.Components {
     public override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()
-      => m_attributes = new ReleasesComponentAttributes(this,
+      => m_attributes = new OasysGH.UI.Foo.ReleasesComponentAttributes(this,
         SetReleases,
         "Start Release",
         "End Release",
+        new List<bool>() {
         _x1,
         _y1,
         _z1,
@@ -154,33 +166,22 @@ namespace GsaGH.Components {
         _z2,
         _xx2,
         _yy2,
-        _zz2);
+        _zz2});
 
-    public void SetReleases(
-      bool resx1,
-      bool resy1,
-      bool resz1,
-      bool resxx1,
-      bool resyy1,
-      bool reszz1,
-      bool resx2,
-      bool resy2,
-      bool resz2,
-      bool resxx2,
-      bool resyy2,
-      bool reszz2) {
-      _x1 = resx1;
-      _y1 = resy1;
-      _z1 = resz1;
-      _xx1 = resxx1;
-      _yy1 = resyy1;
-      _zz1 = reszz1;
-      _x2 = resx2;
-      _y2 = resy2;
-      _z2 = resz2;
-      _xx2 = resxx2;
-      _yy2 = resyy2;
-      _zz2 = reszz2;
+    public void SetReleases(List<bool> releases)
+    {
+      _x1 = releases[0];
+      _y1 = releases[1];
+      _z1 = releases[2];
+      _xx1 = releases[3];
+      _yy1 = releases[4];
+      _zz1 = releases[5];
+      _x2 = releases[6];
+      _y2 = releases[7];
+      _z2 = releases[8];
+      _xx2 = releases[9];
+      _yy2 = releases[10];
+      _zz2 = releases[11];
 
       base.UpdateUI();
     }
@@ -189,7 +190,8 @@ namespace GsaGH.Components {
 
     #region (de)serialization
 
-    public override bool Write(GH_IWriter writer) {
+    public override bool Write(GH_IWriter writer)
+    {
       writer.SetBoolean("x1", _x1);
       writer.SetBoolean("y1", _y1);
       writer.SetBoolean("z1", _z1);
@@ -205,7 +207,8 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    public override bool Read(GH_IReader reader) {
+    public override bool Read(GH_IReader reader)
+    {
       _x1 = reader.GetBoolean("x1");
       _y1 = reader.GetBoolean("y1");
       _z1 = reader.GetBoolean("z1");
