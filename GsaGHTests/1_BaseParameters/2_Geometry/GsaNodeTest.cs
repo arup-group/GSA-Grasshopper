@@ -1,59 +1,48 @@
-﻿using GsaGH.Parameters;
+﻿using System.Drawing;
+using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaNodeTest
-
-  {
+  public class GsaNodeTest {
     [Fact]
-    public void GsaNodeEqualsTest()
-    {
-      // Arrange
-      GsaNode original = new GsaNode();
+    public void GsaNodeEqualsTest() {
+      var original = new GsaNode();
 
-      // Act
       GsaNode duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
     }
 
     [Fact]
-    public void TestCreateGsaNodeFromPt()
-    {
-      GsaNode node = new GsaNode(new Point3d(10, 15, 7.8));
+    public void TestCreateGsaNodeFromPt() {
+      var node = new GsaNode(new Point3d(10, 15, 7.8));
 
       Assert.Equal(10, node.Point.X);
       Assert.Equal(15, node.Point.Y);
       Assert.Equal(7.8, node.Point.Z);
 
-      // node should maintain syncronisation of Point and API_Node.Position:
       Assert.Equal(10, node.Point.X);
       Assert.Equal(15, node.Point.Y);
       Assert.Equal(7.8, node.Point.Z);
     }
-    [Fact]
 
-    public void TestCreateGsaNodeRestrained()
-    {
-      // create new Bool6
-      GsaBool6 bool6 = new GsaBool6
-      {
+    [Fact]
+    public void TestCreateGsaNodeRestrained() {
+      var bool6 = new GsaBool6 {
         X = true,
         Y = false,
         Z = true,
-        XX = false,
-        YY = true,
-        ZZ = false
+        Xx = false,
+        Yy = true,
+        Zz = false,
       };
 
-      // create new node from point with bool6 restraint
-      GsaNode node = new GsaNode(new Point3d(5.3, 9.9, 2017));
-      node.Restraint = bool6;
+      var node = new GsaNode(new Point3d(5.3, 9.9, 2017)) {
+        Restraint = bool6,
+      };
 
       Assert.Equal(5.3, node.Point.X);
       Assert.Equal(9.9, node.Point.Y);
@@ -61,33 +50,28 @@ namespace GsaGHTests.Parameters
       Assert.True(node.Restraint.X);
       Assert.False(node.Restraint.Y);
       Assert.True(node.Restraint.Z);
-      Assert.False(node.Restraint.XX);
-      Assert.True(node.Restraint.YY);
-      Assert.False(node.Restraint.ZZ);
+      Assert.False(node.Restraint.Xx);
+      Assert.True(node.Restraint.Yy);
+      Assert.False(node.Restraint.Zz);
     }
 
     [Fact]
-    public void TestCreateGsaNodeIdRestrainLocAxis()
-    {
-      // create new Bool6
-      GsaBool6 bool6 = new GsaBool6
-      {
+    public void TestCreateGsaNodeIdRestrainLocAxis() {
+      var bool6 = new GsaBool6 {
         X = false,
         Y = true,
         Z = false,
-        XX = true,
-        YY = false,
-        ZZ = true
+        Xx = true,
+        Yy = false,
+        Zz = true,
       };
-      // create new rhino plane for local axis
       Plane pln = Plane.WorldZX;
 
-      // set ID 
       int id = 44;
 
-      // create new node from point with id, bool6 restraint and plane local axis:
-      GsaNode node = new GsaNode(new Point3d(-40, -3.654, -99));
-      node.Restraint = bool6;
+      var node = new GsaNode(new Point3d(-40, -3.654, -99)) {
+        Restraint = bool6,
+      };
       pln.Origin = node.Point;
       node.LocalAxis = pln;
       node.Id = id;
@@ -101,11 +85,10 @@ namespace GsaGHTests.Parameters
       Assert.False(node.Restraint.X);
       Assert.True(node.Restraint.Y);
       Assert.False(node.Restraint.Z);
-      Assert.True(node.Restraint.XX);
-      Assert.False(node.Restraint.YY);
-      Assert.True(node.Restraint.ZZ);
+      Assert.True(node.Restraint.Xx);
+      Assert.False(node.Restraint.Yy);
+      Assert.True(node.Restraint.Zz);
 
-      // the local plane origin point should be moved to the node position
       Assert.Equal(-40, node.LocalAxis.OriginX);
       Assert.Equal(-3.654, node.LocalAxis.OriginY);
       Assert.Equal(-99, node.LocalAxis.OriginZ);
@@ -115,19 +98,16 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestDuplicateNode()
-    {
-      // create new node with some properties
-      GsaNode node = new GsaNode(new Point3d(-3.3, 0, 1.5));
-      node.Colour = System.Drawing.Color.Red;
-      node.LocalAxis = Plane.WorldYZ;
-      node.Id = 3;
-      node.Name = "Mariam";
+    public void TestDuplicateNode() {
+      var node = new GsaNode(new Point3d(-3.3, 0, 1.5)) {
+        Colour = Color.Red,
+        LocalAxis = Plane.WorldYZ,
+        Id = 3,
+        Name = "Mariam",
+      };
 
-      // duplicate node
       GsaNode duplicate = node.Duplicate();
 
-      // check that original and duplicate are the same
       Assert.Equal(node.Point.X, duplicate.Point.X);
       Assert.Equal(node.Point.Y, duplicate.Point.Y);
       Assert.Equal(node.Point.Z, duplicate.Point.Z);
@@ -143,15 +123,12 @@ namespace GsaGHTests.Parameters
       Assert.Equal(node.Colour, duplicate.Colour);
       Assert.Equal(node.Name, duplicate.Name);
 
-
-      // make changes to original node
       node.Point = new Point3d(3.3, 1, -1.5);
       node.LocalAxis = Plane.Unset;
-      node.Colour = System.Drawing.Color.Blue;
+      node.Colour = Color.Blue;
       node.Id = 2;
       node.Name = "Kristjan";
 
-      // check that original and duplicate are not the same
       Assert.NotEqual(node.Point.X, duplicate.Point.X);
       Assert.NotEqual(node.Point.Y, duplicate.Point.Y);
       Assert.NotEqual(node.Point.Y, duplicate.Point.Y);

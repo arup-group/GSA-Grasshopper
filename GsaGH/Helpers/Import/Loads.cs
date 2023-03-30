@@ -1,38 +1,32 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.Import
-{
+namespace GsaGH.Helpers.Import {
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
-  internal class Loads
-  {
+  internal class Loads {
     /// <summary>
     /// Method to import Gravity Loads from a GSA model.
     /// Will output a list of GsaLoadsGoo.
     /// </summary>
     /// <param name="gravityLoads">Collection of gravity loads to import</param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> GetGravityLoads(ReadOnlyCollection<GravityLoad> gravityLoads)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+    internal static List<GsaLoadGoo> GetGravityLoads(ReadOnlyCollection<GravityLoad> gravityLoads) {
+      var loads = new List<GsaLoadGoo>();
 
-      List<GravityLoad> gloads = gravityLoads.ToList();
+      var gloads = gravityLoads.ToList();
 
-      // Loop through all loads in list and create new GsaLoads
-      for (int i = 0; i < gloads.Count; i++)
-      {
-        GsaGravityLoad myload = new GsaGravityLoad();
-        myload.GravityLoad = gloads[i];
-        GsaLoad load = new GsaLoad(myload);
+      foreach (GravityLoad gload in gloads) {
+        var myload = new GsaGravityLoad { GravityLoad = gload };
+        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
       return loads;
@@ -48,51 +42,42 @@ namespace GsaGH.Helpers.Import
     /// </summary>
     /// <param name="model">GSA model containing node loads</param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> GetNodeLoads(Model model)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+    internal static List<GsaLoadGoo> GetNodeLoads(Model model) {
+      var loads = new List<GsaLoadGoo>();
 
       // NodeLoads come in varioys types, depending on GsaAPI.NodeLoadType:
-      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType)))
-      {
+      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
         try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
         {
-          List<NodeLoad> gsaloads = model.NodeLoads(typ).ToList();
-          GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
-          switch (typ)
-          {
+          var gsaloads = model.NodeLoads(typ).ToList();
+          GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
+          switch (typ) {
             case NodeLoadType.APPL_DISP:
-              ntyp = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
+              ntyp = GsaNodeLoad.NodeLoadTypes.AppliedDisp;
               break;
             case NodeLoadType.GRAVITY:
-              ntyp = GsaNodeLoad.NodeLoadTypes.GRAVITY;
+              ntyp = GsaNodeLoad.NodeLoadTypes.Gravity;
               break;
             case NodeLoadType.NODE_LOAD:
-              ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+              ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
               break;
             case NodeLoadType.NUM_TYPES:
-              ntyp = GsaNodeLoad.NodeLoadTypes.NUM_TYPES;
+              ntyp = GsaNodeLoad.NodeLoadTypes.NumTypes;
               break;
             case NodeLoadType.SETTLEMENT:
-              ntyp = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
+              ntyp = GsaNodeLoad.NodeLoadTypes.Settlement;
               break;
           }
 
-          // Loop through all loads in list and create new GsaLoads
-          for (int i = 0; i < gsaloads.Count; i++)
-          {
-            GsaNodeLoad myload = new GsaNodeLoad();
-            myload.NodeLoad = gsaloads[i];
-            myload.Type = ntyp;
-            GsaLoad load = new GsaLoad(myload);
+          foreach (NodeLoad gsaLoad in gsaloads) {
+            var myload = new GsaNodeLoad { NodeLoad = gsaLoad, Type = ntyp };
+            var load = new GsaLoad(myload);
             loads.Add(new GsaLoadGoo(load));
           }
         }
-        catch (Exception)
-        {
-
+        catch (Exception) {
+          // ignored
         }
-
       }
       return loads;
     }
@@ -102,18 +87,14 @@ namespace GsaGH.Helpers.Import
     /// </summary>
     /// <param name="beamLoads">Collection of beams loads to be imported</param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> GetBeamLoads(ReadOnlyCollection<BeamLoad> beamLoads)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+    internal static List<GsaLoadGoo> GetBeamLoads(ReadOnlyCollection<BeamLoad> beamLoads) {
+      var loads = new List<GsaLoadGoo>();
 
-      List<BeamLoad> gsaloads = beamLoads.ToList();
+      var gsaloads = beamLoads.ToList();
 
-      // Loop through all loads in list and create new GsaLoads
-      for (int i = 0; i < gsaloads.Count; i++)
-      {
-        GsaBeamLoad myload = new GsaBeamLoad();
-        myload.BeamLoad = gsaloads[i];
-        GsaLoad load = new GsaLoad(myload);
+      foreach (BeamLoad gsaLoad in gsaloads) {
+        var myload = new GsaBeamLoad { BeamLoad = gsaLoad };
+        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
       return loads;
@@ -124,22 +105,19 @@ namespace GsaGH.Helpers.Import
     /// </summary>
     /// <param name="faceLoads">Collection of Face loads to be imported</param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> GetFaceLoads(ReadOnlyCollection<FaceLoad> faceLoads)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+    internal static List<GsaLoadGoo> GetFaceLoads(ReadOnlyCollection<FaceLoad> faceLoads) {
+      var loads = new List<GsaLoadGoo>();
 
-      List<FaceLoad> gsaloads = faceLoads.ToList();
+      var gsaloads = faceLoads.ToList();
 
-      // Loop through all loads in list and create new GsaLoads
-      for (int i = 0; i < gsaloads.Count; i++)
-      {
-        GsaFaceLoad myload = new GsaFaceLoad();
-        myload.FaceLoad = gsaloads[i];
-        GsaLoad load = new GsaLoad(myload);
+      foreach (FaceLoad faceLoad in gsaloads) {
+        var myload = new GsaFaceLoad { FaceLoad = faceLoad };
+        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
       return loads;
     }
+
     /// <summary>
     /// Method to import Grid Point Loads from a GSA model.
     /// Will output a list of GsaLoads.
@@ -148,30 +126,26 @@ namespace GsaGH.Helpers.Import
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="unit"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGridPointLoads(ReadOnlyCollection<GridPointLoad> pointLoads,
-        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) {
+      var loads = new List<GsaLoadGoo>();
 
-      List<GridPointLoad> gsaloads = pointLoads.ToList();
+      var gsaloads = pointLoads.ToList();
 
-      // Loop through all loads in list and create new GsaLoads
-      for (int i = 0; i < gsaloads.Count; i++)
-      {
-        // Get Grid Point Load
-        GsaGridPointLoad myload = new GsaGridPointLoad();
-        myload.GridPointLoad = gsaloads[i];
+      foreach (GridPointLoad gridPointLoad in gsaloads) {
+        var myload = new GsaGridPointLoad {
+          GridPointLoad = gridPointLoad,
+          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit)
+        };
 
-        // Get GridPlaneSurface
-        myload.GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gsaloads[i].GridSurface, unit);
-
-        // Add load to list
-        GsaLoad load = new GsaLoad(myload);
+        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
       return loads;
     }
+
     /// <summary>
     /// Method to import Grid Line Loads from a GSA model.
     /// Will output a list of GsaLoads.
@@ -180,30 +154,25 @@ namespace GsaGH.Helpers.Import
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="unit"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGridLineLoads(ReadOnlyCollection<GridLineLoad> lineLoads,
-        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) {
+      var loads = new List<GsaLoadGoo>();
 
-      List<GridLineLoad> gsaloads = lineLoads.ToList();
+      var gsaloads = lineLoads.ToList();
 
-      // Loop through all loads in list and create new GsaLoads
-      for (int i = 0; i < gsaloads.Count; i++)
-      {
-        // Get Grid Point Load
-        GsaGridLineLoad myload = new GsaGridLineLoad();
-        myload.GridLineLoad = gsaloads[i];
-
-        // Get GridPlaneSurface
-        myload.GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gsaloads[i].GridSurface, unit);
-
-        // Add load to list
-        GsaLoad load = new GsaLoad(myload);
+      foreach (GridLineLoad gridLineLoad in gsaloads) {
+        var myload = new GsaGridLineLoad {
+          GridLineLoad = gridLineLoad,
+          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit),
+        };
+        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
       return loads;
     }
+
     /// <summary>
     /// Method to import Grid Area Loads from a GSA model.
     /// Will output a list of GsaLoads.
@@ -212,26 +181,20 @@ namespace GsaGH.Helpers.Import
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="unit"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGridAreaLoads(ReadOnlyCollection<GridAreaLoad> areaLoads,
-        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit)
-    {
-      List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) {
+      var loads = new List<GsaLoadGoo>();
 
-      List<GridAreaLoad> gsaloads = areaLoads.ToList();
+      var gsaloads = areaLoads.ToList();
 
-      // Loop through all loads in list and create new GsaLoads
-      for (int i = 0; i < gsaloads.Count; i++)
-      {
-        // Get Grid Point Load
-        GsaGridAreaLoad myload = new GsaGridAreaLoad();
-        myload.GridAreaLoad = gsaloads[i];
-
-        // Get GridPlaneSurface
-        myload.GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gsaloads[i].GridSurface, unit);
-
-        // Add load to list
-        GsaLoad load = new GsaLoad(myload);
+      foreach (GridAreaLoad gridAreaLoad in gsaloads) {
+        var myload = new GsaGridAreaLoad {
+          GridAreaLoad = gridAreaLoad,
+          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit),
+        };
+        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
       return loads;
@@ -251,50 +214,42 @@ namespace GsaGH.Helpers.Import
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
     /// <param name="gridSrfId">ID/Key/number of Grid Surface in GSA model to convert</param>
+    /// <param name="unit"></param>
     /// <returns></returns>
     internal static GsaGridPlaneSurface GetGridPlaneSurface(IReadOnlyDictionary<int, GridSurface> srfDict,
-        IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, int gridSrfId, LengthUnit unit)
-    {
-      // GridPlaneSurface
-      GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
+        IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, int gridSrfId, LengthUnit unit) {
+      var gps = new GsaGridPlaneSurface();
 
-      // Get Grid Surface
-      if (srfDict.Count > 0)
-      {
+      if (srfDict.Count > 0) {
         srfDict.TryGetValue(gridSrfId, out GridSurface gs);
         gps.GridSurface = gs;
         gps.GridSurfaceId = gridSrfId;
         gps.Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
 
-        // Get Grid Plane
         plnDict.TryGetValue(gs.GridPlane, out GridPlane gp);
         gps.GridPlane = gp;
         gps.GridPlaneId = gs.GridPlane;
         gps.Elevation = new Length(gp.Elevation, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
-        gps.StoreyToleranceAbove = gp.ToleranceAbove == 0 ? "auto" : new Length(gp.ToleranceAbove, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty); 
+        gps.StoreyToleranceAbove = gp.ToleranceAbove == 0 ? "auto" : new Length(gp.ToleranceAbove, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
         gps.StoreyToleranceBelow = gp.ToleranceBelow == 0 ? "auto" : new Length(gp.ToleranceBelow, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
 
-        // Get Axis
         axDict.TryGetValue(gp.AxisProperty, out Axis ax);
 
         gps.AxisId = gp.AxisProperty;
 
-        // Construct Plane from Axis
-        Plane pln;
-        if (ax != null)
-        {
+        Plane plane;
+        if (ax != null) {
           // for new origin Z-coordinate we add axis origin and grid plane elevation
-          pln = new Plane(Nodes.Point3dFromXYZUnit(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation, unit),
-            Nodes.Vector3dFromXYZUnit(ax.XVector.X, ax.XVector.Y, ax.XVector.Z, unit),
-            Nodes.Vector3dFromXYZUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit)
+          plane = new Plane(Nodes.Point3dFromXyzUnit(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation, unit),
+            Nodes.Vector3dFromXyzUnit(ax.XVector.X, ax.XVector.Y, ax.XVector.Z, unit),
+            Nodes.Vector3dFromXyzUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit)
             );
         }
-        else
-        {
-          pln = Plane.WorldXY;
-          pln.OriginZ = new Length(gp.Elevation, LengthUnit.Meter).As(unit);
+        else {
+          plane = Plane.WorldXY;
+          plane.OriginZ = new Length(gp.Elevation, LengthUnit.Meter).As(unit);
         }
-        gps.Plane = pln;
+        gps.Plane = plane;
       }
       else
         return null;

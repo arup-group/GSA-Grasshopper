@@ -1,14 +1,11 @@
-﻿namespace GsaGH.Helpers.GH
-{
+﻿namespace GsaGH.Helpers.GH {
   /// <summary>
   /// Class containing the ribbon tab display name
   /// 
   /// Call this class from all components in plugin for naming consistency
   /// </summary>
-  public class CategoryName
-  {
-    public static string Name()
-    {
+  public class CategoryName {
+    public static string Name() {
       return "GSA";
     }
   }
@@ -21,55 +18,32 @@
   /// Sorting of categories in the ribbon is controlled with a number of spaces in front of the name
   /// to avoid naming each category with a number in front. Spaces will automatically be removed when displayed
   /// </summary>
-  internal class SubCategoryName
-  {
-    public static string Cat0()
-    {
+  internal class SubCategoryName {
+    public static string Cat0() {
       return new string(' ', 7) + "Model";
     }
 
-    public static string Cat1()
-    {
+    public static string Cat1() {
       return new string(' ', 6) + "Properties";
     }
 
-    public static string Cat2()
-    {
+    public static string Cat2() {
       return new string(' ', 5) + "Geometry";
     }
 
-    public static string Cat3()
-    {
+    public static string Cat3() {
       return new string(' ', 4) + "Loads";
     }
 
-    public static string Cat4()
-    {
+    public static string Cat4() {
       return new string(' ', 3) + "Analysis";
     }
 
-    public static string Cat5()
-    {
+    public static string Cat5() {
       return new string(' ', 2) + "Results";
     }
 
-    public static string Cat6()
-    {
-      return "Lab";
-    }
-
-    //public static string Cat7()
-    //{
-    //    return "";
-    //}
-
-    //public static string Cat8()
-    //{
-    //    return "test";
-    //}
-
-    public static string Cat9()
-    {
+    public static string Cat9() {
       return "Params";
     }
   }

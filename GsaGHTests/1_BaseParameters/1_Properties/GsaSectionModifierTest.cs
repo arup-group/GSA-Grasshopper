@@ -5,124 +5,128 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaSectionModifierTest
-  {
+  public class GsaSectionModifierTest {
     [Fact]
-    public void AreaModifierToTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.AreaModifier = new Area(1, AreaUnit.SquareMeter);
+    public void AreaModifierToTest() {
+      var modifier = new GsaSectionModifier {
+        AreaModifier = new Area(1, AreaUnit.SquareMeter),
+      };
       Assert.Equal(1, modifier.AreaModifier.As(AreaUnit.SquareMeter));
       Assert.Equal(SectionModifierOptionType.TO, modifier._sectionModifier.AreaModifier.Option);
     }
+
     [Fact]
-    public void AreaModifierByTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.AreaModifier = new Ratio(2, RatioUnit.DecimalFraction);
+    public void AreaModifierByTest() {
+      var modifier = new GsaSectionModifier {
+        AreaModifier = new Ratio(2, RatioUnit.DecimalFraction),
+      };
       Assert.Equal(2, modifier.AreaModifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(SectionModifierOptionType.BY, modifier._sectionModifier.AreaModifier.Option);
     }
 
     [Fact]
-    public void I11ModifierToTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.I11Modifier = new AreaMomentOfInertia(1, AreaMomentOfInertiaUnit.MeterToTheFourth);
+    public void I11ModifierToTest() {
+      var modifier = new GsaSectionModifier {
+        I11Modifier = new AreaMomentOfInertia(1, AreaMomentOfInertiaUnit.MeterToTheFourth),
+      };
       Assert.Equal(1, modifier.I11Modifier.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
       Assert.Equal(SectionModifierOptionType.TO, modifier._sectionModifier.I11Modifier.Option);
     }
+
     [Fact]
-    public void I11ModifierByTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.I11Modifier = new Ratio(2, RatioUnit.DecimalFraction);
+    public void I11ModifierByTest() {
+      var modifier = new GsaSectionModifier {
+        I11Modifier = new Ratio(2, RatioUnit.DecimalFraction),
+      };
       Assert.Equal(2, modifier.I11Modifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(SectionModifierOptionType.BY, modifier._sectionModifier.I11Modifier.Option);
     }
 
     [Fact]
-    public void I22ModifierToTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.I22Modifier = new AreaMomentOfInertia(1, AreaMomentOfInertiaUnit.MeterToTheFourth);
+    public void I22ModifierToTest() {
+      var modifier = new GsaSectionModifier {
+        I22Modifier = new AreaMomentOfInertia(1, AreaMomentOfInertiaUnit.MeterToTheFourth),
+      };
       Assert.Equal(1, modifier.I22Modifier.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
       Assert.Equal(SectionModifierOptionType.TO, modifier._sectionModifier.I22Modifier.Option);
     }
+
     [Fact]
-    public void I22ModifierByTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.I22Modifier = new Ratio(2, RatioUnit.DecimalFraction);
+    public void I22ModifierByTest() {
+      var modifier = new GsaSectionModifier {
+        I22Modifier = new Ratio(2, RatioUnit.DecimalFraction),
+      };
       Assert.Equal(2, modifier.I22Modifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(SectionModifierOptionType.BY, modifier._sectionModifier.I22Modifier.Option);
     }
 
     [Fact]
-    public void K11Test()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.K11Modifier = new Ratio(1.5, RatioUnit.DecimalFraction);
+    public void K11Test() {
+      var modifier = new GsaSectionModifier {
+        K11Modifier = new Ratio(1.5, RatioUnit.DecimalFraction),
+      };
       Assert.Equal(1.5, modifier.K11Modifier.As(RatioUnit.DecimalFraction));
     }
+
     [Fact]
-    public void K22Test()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.K22Modifier = new Ratio(150, RatioUnit.Percent);
+    public void K22Test() {
+      var modifier = new GsaSectionModifier {
+        K22Modifier = new Ratio(150, RatioUnit.Percent),
+      };
       Assert.Equal(150, modifier.K22Modifier.As(RatioUnit.Percent));
     }
 
     [Fact]
-    public void JModifierToTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.JModifier = new AreaMomentOfInertia(1, AreaMomentOfInertiaUnit.MeterToTheFourth);
+    public void JModifierToTest() {
+      var modifier = new GsaSectionModifier {
+        JModifier = new AreaMomentOfInertia(1, AreaMomentOfInertiaUnit.MeterToTheFourth),
+      };
       Assert.Equal(1, modifier.JModifier.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
       Assert.Equal(SectionModifierOptionType.TO, modifier._sectionModifier.JModifier.Option);
     }
+
     [Fact]
-    public void JModifierByTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.JModifier = new Ratio(2, RatioUnit.DecimalFraction);
+    public void JModifierByTest() {
+      var modifier = new GsaSectionModifier {
+        JModifier = new Ratio(2, RatioUnit.DecimalFraction),
+      };
       Assert.Equal(2, modifier.JModifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(SectionModifierOptionType.BY, modifier._sectionModifier.JModifier.Option);
     }
 
     [Fact]
-    public void VolumeModifierToTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.VolumeModifier = new VolumePerLength(1, VolumePerLengthUnit.CubicMeterPerMeter);
+    public void VolumeModifierToTest() {
+      var modifier = new GsaSectionModifier {
+        VolumeModifier = new VolumePerLength(1, VolumePerLengthUnit.CubicMeterPerMeter),
+      };
       Assert.Equal(1, modifier.VolumeModifier.As(VolumePerLengthUnit.CubicMeterPerMeter));
       Assert.Equal(SectionModifierOptionType.TO, modifier._sectionModifier.VolumeModifier.Option);
     }
+
     [Fact]
-    public void VolumeModifierByTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.VolumeModifier = new Ratio(2, RatioUnit.DecimalFraction);
+    public void VolumeModifierByTest() {
+      var modifier = new GsaSectionModifier {
+        VolumeModifier = new Ratio(2, RatioUnit.DecimalFraction),
+      };
       Assert.Equal(2, modifier.VolumeModifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(SectionModifierOptionType.BY, modifier._sectionModifier.VolumeModifier.Option);
     }
 
     [Fact]
-    public void AdditionalMassTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.AdditionalMass = new LinearDensity(1, LinearDensityUnit.KilogramPerMeter);
+    public void AdditionalMassTest() {
+      var modifier = new GsaSectionModifier {
+        AdditionalMass = new LinearDensity(1, LinearDensityUnit.KilogramPerMeter),
+      };
       Assert.Equal(1, modifier.AdditionalMass.As(LinearDensityUnit.KilogramPerMeter));
     }
 
     [Fact]
-    public void IsBendingAxesPrincipalTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.IsBendingAxesPrincipal = true;
+    public void IsBendingAxesPrincipalTest() {
+      var modifier = new GsaSectionModifier {
+        IsBendingAxesPrincipal = true,
+      };
       Assert.True(modifier.IsBendingAxesPrincipal);
 
       modifier.IsBendingAxesPrincipal = false;
@@ -130,10 +134,10 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void IsReferencePointCentroidTest()
-    {
-      GsaSectionModifier modifier = new GsaSectionModifier();
-      modifier.IsReferencePointCentroid = true;
+    public void IsReferencePointCentroidTest() {
+      var modifier = new GsaSectionModifier {
+        IsReferencePointCentroid = true,
+      };
       Assert.True(modifier.IsReferencePointCentroid);
 
       modifier.IsReferencePointCentroid = false;
@@ -141,20 +145,15 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void DuplicateTest()
-    {
-      // Arrange
-      GsaSectionModifier original = new GsaSectionModifier();
-      original.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-
-      // Act
+    public void DuplicateTest() {
+      var original = new GsaSectionModifier {
+        StressOption = GsaSectionModifier.StressOptionType.NoCalculation,
+      };
       GsaSectionModifier duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
       Assert.NotEqual(original, duplicate);
 
-      // make some changes to duplicate
       duplicate.AreaModifier = new Area(2, AreaUnit.SquareMeter);
       duplicate.I11Modifier = new AreaMomentOfInertia(2, AreaMomentOfInertiaUnit.MeterToTheFourth);
       duplicate.I22Modifier = new AreaMomentOfInertia(2, AreaMomentOfInertiaUnit.MeterToTheFourth);
@@ -167,7 +166,6 @@ namespace GsaGHTests.Parameters
       duplicate.IsBendingAxesPrincipal = true;
       duplicate.IsReferencePointCentroid = true;
 
-      // Assert
       Assert.NotEqual(2, original.AreaModifier.Value);
       Assert.NotEqual(2, original.I11Modifier.Value);
       Assert.NotEqual(2, original.I22Modifier.Value);

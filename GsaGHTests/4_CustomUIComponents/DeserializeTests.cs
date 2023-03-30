@@ -1,14 +1,12 @@
-﻿using GsaGH.Components;
+﻿using System;
+using GsaGH.Components;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using System;
 using Xunit;
 
-namespace GsaGHTests.CustomComponent
-{
+namespace GsaGHTests.CustomComponent {
   [Collection("GrasshopperFixture collection")]
-  public class DeserializeTests
-  {
+  public class DeserializeTests {
     [Theory]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(CreateBool6))]
@@ -23,11 +21,9 @@ namespace GsaGHTests.CustomComponent
     [InlineData(typeof(EditMember1d))]
     [InlineData(typeof(EditNode))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
-    public void DeSerializeComponentTest(Type t)
-    {
-      GH_OasysComponent comp = (GH_OasysComponent)Activator.CreateInstance(t);
+    public void DeSerializeComponentTest(Type t) {
+      var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.TestDeserialize(comp);
     }
   }
 }
-

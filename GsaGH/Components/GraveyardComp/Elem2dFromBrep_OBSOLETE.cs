@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
@@ -12,206 +14,218 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to edit a Node
-    /// </summary>
-    public class Elem2dFromBrep_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  ///   Component to edit a Node
+  /// </summary>
+  // ReSharper disable once InconsistentNaming
+  public class Elem2dFromBrep_OBSOLETE : GH_OasysDropDownComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var ghbrep = new GH_Brep();
+      if (!da.GetData(0, ref ghbrep))
+        return;
+
+      if (ghbrep == null)
+        this.AddRuntimeWarning("Brep input is null");
+      var brep = new Brep();
+      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
+        return;
+
+      var ghTypes = new List<GH_ObjectWrapper>();
+      var point3ds = new List<Point3d>();
+      var nodes = new List<GsaNode>();
+      if (da.GetDataList(1, ghTypes))
+        foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
+          var point3d = new Point3d();
+          if (objectWrapper.Value is GsaNodeGoo) {
+            var gsanode = new GsaNode();
+            objectWrapper.CastTo(ref gsanode);
+            nodes.Add(gsanode);
+          }
+          else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref point3d, GH_Conversion.Both))
+            point3ds.Add(point3d);
+          else {
+            string type = objectWrapper.Value.GetType()
+              .ToString();
+            type = type.Replace("GsaGH.Parameters.", "");
+            type = type.Replace("Goo", "");
+            this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
+              + type
+              + " to point or node");
+          }
+        }
+
+      ghTypes = new List<GH_ObjectWrapper>();
+      var crvs = new List<Curve>();
+      var mem1ds = new List<GsaMember1d>();
+      if (da.GetDataList(2, ghTypes))
+        foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
+          Curve crv = null;
+          if (objectWrapper.Value is GsaMember1dGoo) {
+            var gsamem1d = new GsaMember1d();
+            objectWrapper.CastTo(ref gsamem1d);
+            mem1ds.Add(gsamem1d);
+          }
+          else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both))
+            crvs.Add(crv);
+          else {
+            string type = objectWrapper.Value.GetType()
+              .ToString();
+            type = type.Replace("GsaGH.Parameters.", "");
+            type = type.Replace("Goo", "");
+            this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
+              + type
+              + " to curve or 1D Member");
+          }
+        }
+
+      var ghmsz = new GH_Number();
+      Length meshSize = Length.Zero;
+      if (da.GetData(4, ref ghmsz)) {
+        GH_Convert.ToDouble(ghmsz, out double size, GH_Conversion.Both);
+        meshSize = new Length(size, _lengthUnit).ToUnit(LengthUnit.Meter);
+      }
+
+      var elem2d = new GsaElement2d(brep,
+        crvs,
+        point3ds,
+        meshSize.Value,
+        mem1ds,
+        nodes,
+        _lengthUnit,
+        DefaultUnits.Tolerance);
+
+      var ghTyp = new GH_ObjectWrapper();
+      var prop2d = new GsaProp2d();
+      if (da.GetData(3, ref ghTyp)) {
+        if (ghTyp.Value is GsaProp2dGoo)
+          ghTyp.CastTo(ref prop2d);
+        else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+            prop2d.Id = idd;
+          else {
+            this.AddRuntimeError(
+              "Unable to convert PA input to a 2D Property of reference integer");
+            return;
+          }
+        }
+      }
+      else
+        prop2d.Id = 1;
+
+      var prop2Ds = new List<GsaProp2d>();
+      for (int i = 0; i < elem2d.ApiElements.Count; i++)
+        prop2Ds.Add(prop2d);
+      elem2d.Properties = prop2Ds;
+
+      da.SetData(0, new GsaElement2dGoo(elem2d));
+
+      this.AddRuntimeRemark(
+        "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
+    }
+
     #region Name and Ribbon Layout
+
     public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromBreps;
+    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
 
     public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep",
       "Elem2dFromBrep",
       "Mesh a non-planar Brep",
       CategoryName.Name(),
-      SubCategoryName.Cat2())
-    { }
+      SubCategoryName.Cat2()) { }
+
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-      pManager.AddBrepParameter("Brep [in " + unitAbbreviation + "]", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Incl. Points or Nodes [in " + unitAbbreviation + "]", "(P)", "Inclusion points or Nodes", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]", "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
 
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+      pManager.AddBrepParameter("Brep [in " + unitAbbreviation + "]",
+        "B",
+        "Brep (can be non-planar)",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Incl. Points or Nodes [in " + unitAbbreviation + "]",
+        "(P)",
+        "Inclusion points or Nodes",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]",
+        "(C)",
+        "Inclusion curves or 1D Members",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]",
+        "Ms",
+        "Targe mesh size",
+        GH_ParamAccess.item,
+        0);
+
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
       pManager.HideParameter(0);
       pManager.HideParameter(1);
       pManager.HideParameter(2);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
-    }
+      => pManager.AddParameter(new GsaElement2dParameter(),
+        "2D Elements",
+        "E2D",
+        "GSA 2D Elements",
+        GH_ParamAccess.list);
+
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GH_Brep ghbrep = new GH_Brep();
-      if (DA.GetData(0, ref ghbrep))
-      {
-        if (ghbrep == null) { this.AddRuntimeWarning("Brep input is null"); }
-        Brep brep = new Brep();
-        if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
-        {
-          // 1 Points
-          List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-          List<Point3d> pts = new List<Point3d>();
-          List<GsaNode> nodes = new List<GsaNode>();
-          if (DA.GetDataList(1, gh_types))
-          {
-            for (int i = 0; i < gh_types.Count; i++)
-            {
-              Point3d pt = new Point3d();
-              if (gh_types[i].Value is GsaNodeGoo)
-              {
-                GsaNode gsanode = new GsaNode();
-                gh_types[i].CastTo(ref gsanode);
-                nodes.Add(gsanode);
-              }
-              else if (GH_Convert.ToPoint3d(gh_types[i].Value, ref pt, GH_Conversion.Both))
-              {
-                pts.Add(pt);
-              }
-              else
-              {
-                string type = gh_types[i].Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", "");
-                type = type.Replace("Goo", "");
-                this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type " +
-                    type + " to point or node");
-              }
-            }
-          }
-
-          // 2 Curves
-          gh_types = new List<GH_ObjectWrapper>();
-          List<Curve> crvs = new List<Curve>();
-          List<GsaMember1d> mem1ds = new List<GsaMember1d>();
-          if (DA.GetDataList(2, gh_types))
-          {
-            for (int i = 0; i < gh_types.Count; i++)
-            {
-              Curve crv = null;
-              if (gh_types[i].Value is GsaMember1dGoo)
-              {
-                GsaMember1d gsamem1d = new GsaMember1d();
-                gh_types[i].CastTo(ref gsamem1d);
-                mem1ds.Add(gsamem1d);
-              }
-              else if (GH_Convert.ToCurve(gh_types[i].Value, ref crv, GH_Conversion.Both))
-              {
-                crvs.Add(crv);
-              }
-              else
-              {
-                string type = gh_types[i].Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", "");
-                type = type.Replace("Goo", "");
-                this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type " +
-                    type + " to curve or 1D Member");
-              }
-            }
-          }
-
-          // 4 mesh size
-          GH_Number ghmsz = new GH_Number();
-          Length meshSize = Length.Zero;
-          if (DA.GetData(4, ref ghmsz))
-          {
-            GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
-            meshSize = new Length(m_size, LengthUnit).ToUnit(LengthUnit.Meter);
-          }
-
-          // build new element2d with brep, crv and pts
-          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.Value, mem1ds, nodes, LengthUnit, DefaultUnits.Tolerance);
-
-          // 3 section
-          GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-          GsaProp2d prop2d = new GsaProp2d();
-          if (DA.GetData(3, ref gh_typ))
-          {
-            if (gh_typ.Value is GsaProp2dGoo)
-              gh_typ.CastTo(ref prop2d);
-            else
-            {
-              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                prop2d.Id = idd;
-              else
-              {
-                this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
-                return;
-              }
-            }
-          }
-          else
-            prop2d.Id = 1;
-          List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-          for (int i = 0; i < elem2d.API_Elements.Count; i++)
-            prop2Ds.Add(prop2d);
-          elem2d.Properties = prop2Ds;
-
-          DA.SetData(0, new GsaElement2dGoo(elem2d));
-
-          this.AddRuntimeRemark("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
-        }
-      }
-    }
-
     #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
-        {
-          "Unit"
-        });
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new string[] {
+        "Unit",
+      });
 
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
-      this.IsInitialised = true;
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      IsInitialised = true;
     }
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
       base.UpdateUI();
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
+
+    public override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-    public override void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
-      Params.Input[i++].Name = "Brep [in " + unitAbbreviation + "]";
-      Params.Input[i++].Name = "Incl. Points or Nodes [in " + unitAbbreviation + "]";
-      Params.Input[i++].Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "Brep [in " + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "Incl. Points or Nodes [in " + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
       i++;
-      Params.Input[i++].Name = "Mesh Size [" + unitAbbreviation + "]";
+      Params.Input[i]
+        .Name = "Mesh Size [" + unitAbbreviation + "]";
     }
+
     #endregion
   }
 }
-

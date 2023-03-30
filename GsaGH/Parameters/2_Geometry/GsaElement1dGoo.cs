@@ -1,94 +1,80 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Drawing;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.Graphics;
 using OasysGH;
-using Rhino.Geometry;
 using OasysGH.Parameters;
+using Rhino.Geometry;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaElement1d"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaElement1d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d>
-  {
+  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
+
+    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
+      => Value = duplicate
+        ? item.Duplicate()
+        : item;
+
     public static string Name => "Element1D";
     public static string NickName => "E1D";
     public static string Description => "GSA 1D Element";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
-    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
-    {
-      if (duplicate)
-        this.Value = item.Duplicate();
-      else
-        this.Value = item;
-    }
-
-    public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(this.Value);
-    public override GeometryBase GetGeometry() => this.Value.Line;
+    public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(Value);
+    public override GeometryBase GetGeometry() => Value.Line;
 
     #region casting
-    public override bool CastTo<Q>(ref Q target)
-    {
-      if (base.CastTo<Q>(ref target))
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (base.CastTo(ref target))
         return true;
 
-      // Cast to Curve
-      if (typeof(Q).IsAssignableFrom(typeof(Line)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Line;
+      if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
+        target = Value == null
+          ? default
+          : (TQ)(object)Value.Line;
         return true;
       }
 
-      else if (typeof(Q).IsAssignableFrom(typeof(GH_Line)))
-      {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
         if (Value == null)
           target = default;
-        else
-        {
-          GH_Line ghLine = new GH_Line();
+        else {
+          var ghLine = new GH_Line();
           GH_Convert.ToGHLine(Value.Line, GH_Conversion.Both, ref ghLine);
-          target = (Q)(object)ghLine;
+          target = (TQ)(object)ghLine;
         }
+
         return true;
       }
 
-      else if (typeof(Q).IsAssignableFrom(typeof(Curve)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Line;
+      if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
+        target = Value == null
+          ? default
+          : (TQ)(object)Value.Line;
         return true;
       }
 
-      else if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
-      {
-        if (Value == null)
-          target = default;
-        else
-        {
-          target = (Q)(object)new GH_Curve(Value.Line);
-        }
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
+        target = Value == null
+          ? default
+          : (TQ)(object)new GH_Curve(Value.Line);
         return true;
       }
 
-      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
-      {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null)
           target = default;
-        else
-        {
-          GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
-            target = (Q)(object)ghint;
-          else
-            target = default;
+        else {
+          var ghint = new GH_Integer();
+          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
+            ? (TQ)(object)ghint
+            : default;
         }
+
         return true;
       }
 
@@ -96,87 +82,76 @@ namespace GsaGH.Parameters
       return false;
     }
 
-    public override bool CastFrom(object source)
-    {
+    public override bool CastFrom(object source) {
       if (source == null)
         return false;
 
       if (base.CastFrom(source))
         return true;
 
-      // Cast from Curve
-      Line ln = new Line();
-      if (GH_Convert.ToLine(source, ref ln, GH_Conversion.Both))
-      {
-        LineCurve crv = new LineCurve(ln);
-        GsaElement1d elem = new GsaElement1d(crv);
-        this.Value = elem;
-        return true;
-      }
+      var ln = new Line();
+      if (!GH_Convert.ToLine(source, ref ln, GH_Conversion.Both))
+        return false;
+      var crv = new LineCurve(ln);
+      var elem = new GsaElement1d(crv);
+      Value = elem;
+      return true;
 
-      return false;
     }
     #endregion
-
     #region drawing methods
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
-    {
-      //Draw shape.
-      //no meshes to be drawn
-    }
-    public override void DrawViewportWires(GH_PreviewWireArgs args)
-    {
-      if (Value == null) { return; }
 
-      //Draw lines
-      if (Value.Line != null)
-      {
-        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+    }
+
+    public override void DrawViewportWires(GH_PreviewWireArgs args) {
+      if (Value == null)
+        return;
+
+      if (Value.Line != null) {
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, Helpers.Graphics.Colours.Dummy1D);
-          else
-          {
-            if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart,
+              Value.Line.PointAtEnd,
+              Colours.Dummy1D);
+          else {
+            if (Value.Colour != Color.FromArgb(0, 0, 0))
               args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
-            else
-            {
-              System.Drawing.Color col = Helpers.Graphics.Colours.ElementType(Value.Type);
+            else {
+              Color col = Colours.ElementType(Value.Type);
               args.Pipeline.DrawCurve(Value.Line, col, 2);
             }
-            //args.Pipeline.DrawPoint(Value.previewPointStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
-            //args.Pipeline.DrawPoint(Value.previewPointEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
           }
         }
-        else
-        {
+        else {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, Helpers.Graphics.Colours.Element1dSelected);
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart,
+              Value.Line.PointAtEnd,
+              Colours.Element1dSelected);
           else
-          {
-            args.Pipeline.DrawCurve(Value.Line, Helpers.Graphics.Colours.Element1dSelected, 2);
-            //args.Pipeline.DrawPoint(Value.previewPointStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
-            //args.Pipeline.DrawPoint(Value.previewPointEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
-          }
+            args.Pipeline.DrawCurve(Value.Line, Colours.Element1dSelected, 2);
         }
       }
-      //Draw releases
-      if (!Value.IsDummy)
-      {
-        if (Value.PreviewGreenLines != null)
-        {
-          foreach (Line ln1 in Value.PreviewGreenLines)
-            args.Pipeline.DrawLine(ln1, Helpers.Graphics.Colours.Support);
-          foreach (Line ln2 in Value.PreviewRedLines)
-            args.Pipeline.DrawLine(ln2, Helpers.Graphics.Colours.Release);
-        }
-      }
+
+      if (Value.IsDummy || Value._previewGreenLines == null)
+        return;
+      foreach (Line ln1 in Value._previewGreenLines)
+        args.Pipeline.DrawLine(ln1, Colours.Support);
+      foreach (Line ln2 in Value._previewRedLines)
+        args.Pipeline.DrawLine(ln2, Colours.Release);
     }
+
     #endregion
 
     #region transformation methods
-    public override IGH_GeometricGoo Transform(Transform xform) => new GsaElement1dGoo(Value.Transform(xform));
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) => new GsaElement1dGoo(Value.Morph(xmorph));
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaElement1dGoo(Value.Transform(xform));
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+      => new GsaElement1dGoo(Value.Morph(xmorph));
+
     #endregion
   }
 }

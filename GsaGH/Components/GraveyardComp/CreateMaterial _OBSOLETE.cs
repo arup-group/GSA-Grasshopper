@@ -1,61 +1,129 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
+using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-
-using Grasshopper.Kernel.Parameters;
-using GsaAPI;
-using GsaGH.Parameters;
-using System.Resources;
-using OasysGH.Components;
-using OasysGH;
 using GsaGH.Helpers.GH;
+using GsaGH.Parameters;
+using GsaGH.Properties;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.UI;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to create a new Material
-    /// </summary>
-    public class CreateMaterial_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  ///   Component to create a new Material
+  /// </summary>
+  // ReSharper disable once InconsistentNaming
+  public class CreateMaterial_OBSOLETE : GH_OasysComponent,
+    IGH_VariableParameterComponent {
+    #region IGH_VariableParameterComponent null implementation
+
+    void IGH_VariableParameterComponent.VariableParameterMaintenance() { }
+
+    #endregion
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddIntegerParameter("Analysis Property Number",
+        "ID",
+        "Analysis Property Number (default = 0 -> 'from Grade')",
+        GH_ParamAccess.item,
+        0);
+      pManager.AddIntegerParameter("Grade",
+        "Gr",
+        "Material Grade (default = 1)",
+        GH_ParamAccess.item,
+        1);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
+
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var material = new GsaMaterial();
+
+      var ghAnal = new GH_Integer();
+      if (da.GetData(0, ref ghAnal)) {
+        GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
+        material.AnalysisProperty = anal;
+      }
+
+      var ghGrade = new GH_Integer();
+      if (da.GetData(1, ref ghGrade)) {
+        GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
+        material.GradeProperty = grade;
+      }
+
+      switch (_mode) {
+        case FoldMode.Generic:
+          material.MaterialType = GsaMaterial.MatType.Generic;
+          break;
+        case FoldMode.Steel:
+          material.MaterialType = GsaMaterial.MatType.Steel;
+          break;
+        case FoldMode.Concrete:
+          material.MaterialType = GsaMaterial.MatType.Concrete;
+          break;
+        case FoldMode.Timber:
+          material.MaterialType = GsaMaterial.MatType.Timber;
+          break;
+        case FoldMode.Aluminium:
+          material.MaterialType = GsaMaterial.MatType.Aluminium;
+          break;
+        case FoldMode.Frp:
+          material.MaterialType = GsaMaterial.MatType.Frp;
+          break;
+        case FoldMode.Glass:
+          material.MaterialType = GsaMaterial.MatType.Glass;
+          break;
+        case FoldMode.Fabric:
+          material.MaterialType = GsaMaterial.MatType.Fabric;
+          break;
+      }
+
+      da.SetData(0, new GsaMaterialGoo(material));
+    }
+
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+
     public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
-    public CreateMaterial_OBSOLETE()
-      : base("Create Material", "Material", "Create GSA Material by reference to existing type and grade",
-            CategoryName.Name(),
-            SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+
+    public CreateMaterial_OBSOLETE() : base("Create Material",
+      "Material",
+      "Create GSA Material by reference to existing type and grade",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
+    protected override Bitmap Icon => Resources.CreateMaterial;
+
     #endregion
 
     #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        selecteditem = _mode.ToString();
-        //first = false;
-      }
 
-      m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, new List<List<string>>() { DropDownItems }, new List<string>() { selecteditem }, new List<string>() { "Material Type" });
+    public override void CreateAttributes() {
+      if (_first)
+        _selecteditem = _mode.ToString();
+
+      m_attributes = new DropDownComponentAttributes(this,
+        SetSelected,
+        new List<List<string>>() {
+          _dropDownItems,
+        },
+        new List<string>() {
+          _selecteditem,
+        },
+        new List<string>() {
+          "Material Type",
+        });
     }
 
-    public void SetSelected(int i, int j)
-    {
-      selecteditem = DropDownItems[i];
-      switch (selecteditem)
-      {
+    public void SetSelected(int i, int j) {
+      _selecteditem = _dropDownItems[i];
+      switch (_selecteditem) {
         case "Generic":
           Mode1Clicked();
           break;
@@ -71,7 +139,7 @@ namespace GsaGH.Components
         case "Aluminium":
           Mode5Clicked();
           break;
-        case "FRP":
+        case "Frp":
           Mode6Clicked();
           break;
         case "Glass":
@@ -82,97 +150,47 @@ namespace GsaGH.Components
           break;
       }
     }
+
     #endregion
 
     #region Input and output
-    readonly List<string> DropDownItems = new List<string>(new string[]
-    {
-            "Generic",
-            "Steel",
-            "Concrete",
-            "Timber",
-            "Aluminium",
-            "FRP",
-            "Glass",
-            "Fabric"
+
+    private readonly List<string> _dropDownItems = new List<string>(new[] {
+      "Generic",
+      "Steel",
+      "Concrete",
+      "Timber",
+      "Aluminium",
+      "Frp",
+      "Glass",
+      "Fabric",
     });
 
-    string selecteditem;
+    private string _selecteditem;
 
     #endregion
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
-      pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
-    }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
-    }
-
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaMaterial material = new GsaMaterial();
-
-      GH_Integer gh_anal = new GH_Integer();
-      if (DA.GetData(0, ref gh_anal))
-      {
-        int anal = 0;
-        GH_Convert.ToInt32(gh_anal, out anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
-      }
-
-      GH_Integer gh_grade = new GH_Integer();
-      if (DA.GetData(1, ref gh_grade))
-      {
-        int grade = 1;
-        GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
-        material.GradeProperty = grade;
-      }
-
-      // element type (picked in dropdown)
-      if (_mode == FoldMode.Generic)
-        material.MaterialType = GsaMaterial.MatType.GENERIC;
-      if (_mode == FoldMode.Steel)
-        material.MaterialType = GsaMaterial.MatType.STEEL;
-      if (_mode == FoldMode.Concrete)
-        material.MaterialType = GsaMaterial.MatType.CONCRETE;
-      if (_mode == FoldMode.Timber)
-        material.MaterialType = GsaMaterial.MatType.TIMBER;
-      if (_mode == FoldMode.Aluminium)
-        material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
-      if (_mode == FoldMode.FRP)
-        material.MaterialType = GsaMaterial.MatType.FRP;
-      if (_mode == FoldMode.Glass)
-        material.MaterialType = GsaMaterial.MatType.GLASS;
-      if (_mode == FoldMode.Fabric)
-        material.MaterialType = GsaMaterial.MatType.FABRIC;
-
-      DA.SetData(0, new GsaMaterialGoo(material));
-    }
     #region menu override
-    private enum FoldMode
-    {
+
+    private enum FoldMode {
       Generic,
       Steel,
       Concrete,
       Timber,
       Aluminium,
-      FRP,
+      Frp,
       Glass,
-      Fabric
+      Fabric,
     }
-    private bool first = true;
+
+    private readonly bool _first = true;
     private FoldMode _mode = FoldMode.Timber;
 
-
-    private void Mode1Clicked()
-    {
+    private void Mode1Clicked() {
       if (_mode == FoldMode.Generic)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Generic;
 
@@ -180,12 +198,12 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode2Clicked()
-    {
+
+    private void Mode2Clicked() {
       if (_mode == FoldMode.Steel)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Steel;
 
@@ -193,12 +211,12 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode3Clicked()
-    {
+
+    private void Mode3Clicked() {
       if (_mode == FoldMode.Concrete)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Concrete;
 
@@ -206,12 +224,12 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode4Clicked()
-    {
+
+    private void Mode4Clicked() {
       if (_mode == FoldMode.Timber)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Timber;
 
@@ -219,12 +237,12 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode5Clicked()
-    {
+
+    private void Mode5Clicked() {
       if (_mode == FoldMode.Aluminium)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Aluminium;
 
@@ -232,25 +250,25 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode6Clicked()
-    {
-      if (_mode == FoldMode.FRP)
+
+    private void Mode6Clicked() {
+      if (_mode == FoldMode.Frp)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
-      _mode = FoldMode.FRP;
+      _mode = FoldMode.Frp;
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode7Clicked()
-    {
+
+    private void Mode7Clicked() {
       if (_mode == FoldMode.Glass)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Glass;
 
@@ -258,12 +276,12 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void Mode8Clicked()
-    {
+
+    private void Mode8Clicked() {
       if (_mode == FoldMode.Fabric)
         return;
 
-      RecordUndoEvent(_mode.ToString() + "Parameters");
+      RecordUndoEvent(_mode + "Parameters");
 
       _mode = FoldMode.Fabric;
 
@@ -271,44 +289,35 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
+
     #endregion
+
     #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
+
+    public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
-      writer.SetString("select", selecteditem);
+      writer.SetString("select", _selecteditem);
       return base.Write(writer);
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
+
+    public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
-      selecteditem = reader.GetString("select");
-      this.CreateAttributes();
+      _selecteditem = reader.GetString("select");
+      CreateAttributes();
       return base.Read(reader);
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
+      => false;
 
-    }
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+      => false;
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+      => null;
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
     #endregion
   }
 }

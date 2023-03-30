@@ -1,293 +1,253 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using Rhino.Geometry;
-using Grasshopper.Kernel.Types;
-using OasysUnits.Units;
-using OasysUnits;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaAPI;
-using GsaGH.Components;
-using GH_IO.Serialization;
-using System.Collections.Concurrent;
-using Grasshopper.Kernel;
+using GsaGH.Helpers.Import;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
-  /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
+  ///   Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
   /// </summary>
-  public class GsaElement1d
-  {
+  public class GsaElement1d {
     #region fields
-    internal List<Line> PreviewGreenLines;
-    internal List<Line> PreviewRedLines;
 
-    private int _id = 0;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
+
+    private int _id;
     private Guid _guid = Guid.NewGuid();
     private LineCurve _line = new LineCurve();
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
+
     #endregion
 
     #region properties
-    public int Id
-    {
-      get
-      {
-        return _id;
-      }
-      set
-      {
-        this.CloneApiObject();
+
+    public int Id {
+      get => _id;
+      set {
+        CloneApiObject();
         _id = value;
       }
     }
+
     internal GsaLocalAxes LocalAxes { get; set; } = null;
-    public LineCurve Line
-    {
-      get
-      {
-        return this._line;
-      }
-      set
-      {
-        this._line = value;
-        this._guid = Guid.NewGuid();
-        this.UpdatePreview();
+
+    public LineCurve Line {
+      get => _line;
+      set {
+        _line = value;
+        _guid = Guid.NewGuid();
+        UpdatePreview();
       }
     }
-    public GsaBool6 ReleaseStart
-    {
+
+    public GsaBool6 ReleaseStart {
       get
-      {
-        return new GsaBool6(this.ApiElement.GetEndRelease(0).Releases);
-      }
-      set
-      {
-        this._rel1 = value;
-        if (this._rel1 == null)
-        {
-          this._rel1 = new GsaBool6();
-        }
-        this.CloneApiObject();
-        this.ApiElement.SetEndRelease(0, new EndRelease(this._rel1._bool6));
-        this.UpdatePreview();
+        => new GsaBool6(ApiElement.GetEndRelease(0)
+          .Releases);
+      set {
+        _rel1 = value ?? new GsaBool6();
+
+        CloneApiObject();
+        ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
+        UpdatePreview();
       }
     }
-    public GsaBool6 ReleaseEnd
-    {
+
+    public GsaBool6 ReleaseEnd {
       get
-      {
-        return new GsaBool6(this.ApiElement.GetEndRelease(1).Releases);
-      }
-      set
-      {
-        this._rel2 = value;
-        if (this._rel2 == null)
-        {
-          this._rel2 = new GsaBool6();
-        }
-        this.CloneApiObject();
-        this.ApiElement.SetEndRelease(1, new EndRelease(this._rel2._bool6));
-        this.UpdatePreview();
+        => new GsaBool6(ApiElement.GetEndRelease(1)
+          .Releases);
+      set {
+        _rel2 = value ?? new GsaBool6();
+
+        CloneApiObject();
+        ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
+        UpdatePreview();
       }
     }
+
     public GsaSection Section { get; set; } = new GsaSection();
     internal Element ApiElement { get; set; } = new Element();
 
-    public Color Colour
-    {
-      get
-      {
-        return (Color)this.ApiElement.Colour;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.Colour = value;
+    public Color Colour {
+      get => (Color)ApiElement.Colour;
+      set {
+        CloneApiObject();
+        ApiElement.Colour = value;
       }
     }
-    public int Group
-    {
-      get
-      {
-        return this.ApiElement.Group;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.Group = value;
+
+    public int Group {
+      get => ApiElement.Group;
+      set {
+        CloneApiObject();
+        ApiElement.Group = value;
       }
     }
-    public bool IsDummy
-    {
-      get
-      {
-        return this.ApiElement.IsDummy;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.IsDummy = value;
+
+    public bool IsDummy {
+      get => ApiElement.IsDummy;
+      set {
+        CloneApiObject();
+        ApiElement.IsDummy = value;
       }
     }
-    public string Name
-    {
-      get
-      {
-        return this.ApiElement.Name;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.Name = value;
+
+    public string Name {
+      get => ApiElement.Name;
+      set {
+        CloneApiObject();
+        ApiElement.Name = value;
       }
     }
-    public GsaOffset Offset
-    {
+
+    public GsaOffset Offset {
       get
-      {
-        return new GsaOffset(this.ApiElement.Offset.X1, this.ApiElement.Offset.X2, this.ApiElement.Offset.Y, this.ApiElement.Offset.Z);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.Offset.X1 = value.X1.Meters;
-        this.ApiElement.Offset.X2 = value.X2.Meters;
-        this.ApiElement.Offset.Y = value.Y.Meters;
-        this.ApiElement.Offset.Z = value.Z.Meters;
+        => new GsaOffset(ApiElement.Offset.X1,
+          ApiElement.Offset.X2,
+          ApiElement.Offset.Y,
+          ApiElement.Offset.Z);
+      set {
+        CloneApiObject();
+        ApiElement.Offset.X1 = value.X1.Meters;
+        ApiElement.Offset.X2 = value.X2.Meters;
+        ApiElement.Offset.Y = value.Y.Meters;
+        ApiElement.Offset.Z = value.Z.Meters;
       }
     }
-    public Angle OrientationAngle
-    {
-      get
-      {
-        return new Angle(this.ApiElement.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.OrientationAngle = value.Degrees;
+
+    public Angle OrientationAngle {
+      get => new Angle(ApiElement.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
+      set {
+        CloneApiObject();
+        ApiElement.OrientationAngle = value.Degrees;
       }
     }
-    public GsaNode OrientationNode
-    {
-      get
-      {
-        return this._orientationNode;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this._orientationNode = value;
+
+    public GsaNode OrientationNode {
+      get => _orientationNode;
+      set {
+        CloneApiObject();
+        _orientationNode = value;
       }
     }
-    public int ParentMember
-    {
-      get
-      {
-        return this.ApiElement.ParentMember.Member;
+
+    public int ParentMember => ApiElement.ParentMember.Member;
+
+    public ElementType Type {
+      get => ApiElement.Type;
+      set {
+        CloneApiObject();
+        ApiElement.Type = value;
       }
     }
-    public ElementType Type
-    {
-      get
-      {
-        return this.ApiElement.Type;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiElement.Type = value;
-      }
-    }
-    public Guid Guid
-    {
-      get
-      {
-        return this._guid;
-      }
-    }
+
+    public Guid Guid => _guid;
+
     #endregion
 
     #region constructors
-    public GsaElement1d()
-    {
-    }
 
-    public GsaElement1d(LineCurve line, int prop = 0, int id = 0, GsaNode orientationNode = null)
-    {
-      this.ApiElement = new Element
-      {
+    public GsaElement1d() { }
+
+    public GsaElement1d(LineCurve line, int prop = 0, GsaNode orientationNode = null) {
+      ApiElement = new Element {
         Type = ElementType.BEAM,
       };
-      this._line = line;
-      this.Id = Id;
-      this.Section.Id = prop;
-      this._orientationNode = orientationNode;
-      this.UpdatePreview();
+      _line = line;
+      Id = Id;
+      Section.Id = prop;
+      _orientationNode = orientationNode;
+      UpdatePreview();
     }
 
-    internal GsaElement1d(Element elem, LineCurve line, int id, GsaSection section, GsaNode orientationNode)
-    {
-      this.ApiElement = elem;
-      this._line = line;
-      this._rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);
-      this._rel2 = new GsaBool6(ApiElement.GetEndRelease(1).Releases);
-      this.Id = id;
-      this.Section = section;
-      this._orientationNode = orientationNode;
-      this.UpdatePreview();
+    internal GsaElement1d(
+      Element elem,
+      LineCurve line,
+      int id,
+      GsaSection section,
+      GsaNode orientationNode) {
+      ApiElement = elem;
+      _line = line;
+      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
+        .Releases);
+      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
+        .Releases);
+      Id = id;
+      Section = section;
+      _orientationNode = orientationNode;
+      UpdatePreview();
     }
 
-    internal GsaElement1d(ReadOnlyDictionary<int, Element> eDict, int id, ReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      Dictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit)
-    {
-      this.Id = id;
-      this.ApiElement = eDict[id];
-      this._rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);
-      this._rel2 = new GsaBool6(ApiElement.GetEndRelease(1).Releases);
-      if (this.ApiElement.OrientationNode > 0)
-        this._orientationNode = new GsaNode(Helpers.Import.Nodes.Point3dFromNode(nDict[this.ApiElement.OrientationNode], modelUnit));
-      this._line = new LineCurve(new Line(
-        Helpers.Import.Nodes.Point3dFromNode(nDict[this.ApiElement.Topology[0]], modelUnit),
-        Helpers.Import.Nodes.Point3dFromNode(nDict[this.ApiElement.Topology[1]], modelUnit)));
-      this.LocalAxes = new GsaLocalAxes(localAxesDict[id]);
-      this.Section = new GsaSection(sDict, this.ApiElement.Property, modDict, matDict);
-      this.UpdatePreview();
+    internal GsaElement1d(
+      IReadOnlyDictionary<int, Element> eDict,
+      int id,
+      IReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Section> sDict,
+      ReadOnlyDictionary<int, SectionModifier> modDict,
+      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      IDictionary<int, ReadOnlyCollection<double>> localAxesDict,
+      LengthUnit modelUnit) {
+      Id = id;
+      ApiElement = eDict[id];
+      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
+        .Releases);
+      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
+        .Releases);
+      if (ApiElement.OrientationNode > 0)
+        _orientationNode
+          = new GsaNode(Nodes.Point3dFromNode(nDict[ApiElement.OrientationNode], modelUnit));
+
+      _line = new LineCurve(new Line(
+        Nodes.Point3dFromNode(nDict[ApiElement.Topology[0]], modelUnit),
+        Nodes.Point3dFromNode(nDict[ApiElement.Topology[1]], modelUnit)));
+      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
+      Section = new GsaSection(sDict, ApiElement.Property, modDict, matDict);
+      UpdatePreview();
     }
+
     #endregion
 
     #region methods
-    public GsaElement1d Duplicate(bool cloneApiElement = false)
-    {
-      GsaElement1d dup = new GsaElement1d();
-      dup.Id = this.Id;
-      dup.ApiElement = this.ApiElement;
-      dup.LocalAxes = this.LocalAxes;
-      dup._guid = new Guid(_guid.ToString());
+
+    public GsaElement1d Duplicate(bool cloneApiElement = false) {
+      var dup = new GsaElement1d {
+        Id = Id,
+        ApiElement = ApiElement,
+        LocalAxes = LocalAxes,
+        _guid = new Guid(_guid.ToString()),
+      };
       if (cloneApiElement)
         dup.CloneApiObject();
-      dup._line = (LineCurve)this._line.DuplicateShallow();
+
+      dup._line = (LineCurve)_line.DuplicateShallow();
       if (_rel1 != null)
-        dup._rel1 = this._rel1.Duplicate();
+        dup._rel1 = _rel1.Duplicate();
+
       if (_rel2 != null)
-        dup._rel2 = this._rel2.Duplicate();
-      dup.Section = this.Section.Duplicate();
-      if (this._orientationNode != null)
-        dup._orientationNode = this._orientationNode.Duplicate();
-      this.UpdatePreview();
+        dup._rel2 = _rel2.Duplicate();
+
+      dup.Section = Section.Duplicate();
+      if (_orientationNode != null)
+        dup._orientationNode = _orientationNode.Duplicate();
+
+      UpdatePreview();
       return dup;
     }
 
-    public GsaElement1d Transform(Transform xform)
-    {
-      GsaElement1d elem = this.Duplicate(true);
+    public GsaElement1d Transform(Transform xform) {
+      GsaElement1d elem = Duplicate(true);
       elem.Id = 0;
       elem.LocalAxes = null;
 
@@ -298,71 +258,89 @@ namespace GsaGH.Parameters
       return elem;
     }
 
-    public GsaElement1d Morph(SpaceMorph xmorph)
-    {
-      GsaElement1d elem = this.Duplicate(true);
+    public GsaElement1d Morph(SpaceMorph xmorph) {
+      GsaElement1d elem = Duplicate(true);
       elem.Id = 0;
       elem.LocalAxes = null;
 
-      LineCurve xLn = this.Line;
+      LineCurve xLn = Line;
       xmorph.Morph(xLn);
       elem.Line = xLn;
 
       return elem;
     }
 
-    public override string ToString()
-    {
-      string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
-      string pb = this.Section.Id > 0 ? "PB" + this.Section.Id : this.Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
+    public override string ToString() {
+      string idd = Id == 0
+        ? ""
+        : "ID:" + Id + " ";
+      string type = Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == Type)
+          .Key
+        + " ";
+      string pb = Section.Id > 0
+        ? "PB" + Section.Id
+        : Section.Profile;
+      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim())
+        .Trim()
+        .Replace("  ", " ");
     }
 
-    internal void CloneApiObject()
-    {
-      this.ApiElement = this.GetApiElementClone();
-      this._guid = Guid.NewGuid();
+    internal void CloneApiObject() {
+      ApiElement = GetApiElementClone();
+      _guid = Guid.NewGuid();
     }
 
-    internal Element GetApiElementClone()
-    {
-      Element elem = new Element()
-      {
-        Group = this.ApiElement.Group,
-        IsDummy = this.ApiElement.IsDummy,
-        Name = this.ApiElement.Name.ToString(),
-        Offset = this.ApiElement.Offset,
-        OrientationAngle = this.ApiElement.OrientationAngle,
-        OrientationNode = this.ApiElement.OrientationNode,
-        ParentMember = this.ApiElement.ParentMember,
-        Property = this.ApiElement.Property,
-        Type = this.ApiElement.Type //GsaToModel.Element1dType((int)Element.Type)
+    internal Element GetApiElementClone() {
+      var elem = new Element {
+        Group = ApiElement.Group,
+        IsDummy = ApiElement.IsDummy,
+        Name = ApiElement.Name.ToString(),
+        Offset = ApiElement.Offset,
+        OrientationAngle = ApiElement.OrientationAngle,
+        OrientationNode = ApiElement.OrientationNode,
+        ParentMember = ApiElement.ParentMember,
+        Property = ApiElement.Property,
+        Type = ApiElement.Type,
+        Topology = new ReadOnlyCollection<int>(ApiElement.Topology.ToList()),
       };
-      elem.Topology = new ReadOnlyCollection<int>(this.ApiElement.Topology.ToList());
-      elem.SetEndRelease(0, this.ApiElement.GetEndRelease(0));
-      elem.SetEndRelease(1, this.ApiElement.GetEndRelease(1));
+      elem.SetEndRelease(0, ApiElement.GetEndRelease(0));
+      elem.SetEndRelease(1, ApiElement.GetEndRelease(1));
       if ((Color)ApiElement.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        elem.Colour = this.ApiElement.Colour;
+        elem.Colour = ApiElement.Colour;
+
       return elem;
     }
 
-    internal void UpdatePreview()
-    {
-      if (this._rel1 != null & this._rel2 != null)
-      {
-        if (this._rel1.X || this._rel1.Y || _rel1.Z || _rel1.XX || this._rel1.YY || this._rel1.ZZ || this._rel2.X || this._rel2.Y || this._rel2.Z || this._rel2.XX || this._rel2.YY || this._rel2.ZZ)
-        {
-          PolyCurve crv = new PolyCurve();
-          crv.Append(this._line);
-          Tuple<List<Line>, List<Line>> previewCurves = Helpers.Graphics.Display.Preview1D(crv, this.ApiElement.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2);
-          PreviewGreenLines = previewCurves.Item1;
-          PreviewRedLines = previewCurves.Item2;
-        }
-        else
-          PreviewGreenLines = null;
+    internal void UpdatePreview() {
+      if (!(_rel1 != null & _rel2 != null))
+        return;
+
+      if (_rel1.X
+        || _rel1.Y
+        || _rel1.Z
+        || _rel1.Xx
+        || _rel1.Yy
+        || _rel1.Zz
+        || _rel2.X
+        || _rel2.Y
+        || _rel2.Z
+        || _rel2.Xx
+        || _rel2.Yy
+        || _rel2.Zz) {
+        var crv = new PolyCurve();
+        crv.Append(_line);
+        Tuple<List<Line>, List<Line>> previewCurves = Display.Preview1D(crv,
+          ApiElement.OrientationAngle * Math.PI / 180.0,
+          _rel1,
+          _rel2);
+        _previewGreenLines = previewCurves.Item1;
+        _previewRedLines = previewCurves.Item2;
+      }
+      else {
+        _previewGreenLines = null;
       }
     }
+
     #endregion
   }
 }

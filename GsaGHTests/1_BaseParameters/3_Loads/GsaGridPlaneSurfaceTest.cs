@@ -6,18 +6,13 @@ using Rhino.Geometry;
 using Xunit;
 using static GsaAPI.GridSurface;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaGridPlaneSurfaceTest
-  {
+  public class GsaGridPlaneSurfaceTest {
     [Fact]
-    public void EmptyConstructorTest()
-    {
-      // Act
-      GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
+    public void EmptyConstructorTest() {
+      var gps = new GsaGridPlaneSurface();
 
-      // Assert
       Assert.Equal(Plane.WorldXY, gps.Plane);
       Assert.Equal(0, gps.GridPlane.AxisProperty);
       Assert.Equal(0, gps.GridPlane.Elevation);
@@ -47,21 +42,64 @@ namespace GsaGHTests.Parameters
     }
 
     [Theory]
-    [InlineData(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)]
-    [InlineData(1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0)]
-    [InlineData(-1, -1, -1, -1, 0, 0, 0, -1, 0, 0, 0, -1)]
-    public void ConstructorTest(double originX, double originY, double originZ, double xAxisX, double xAxisY, double xAxisZ, double yAxisX, double yAxisY, double yAxisZ, double zAxisX, double zAxisY, double zAxisZ)
-    {
-      // Act
-      Plane plane = new Plane();
-      plane.Origin = new Point3d(originX, originY, originZ);
-      plane.XAxis = new Vector3d(xAxisX, xAxisY, xAxisZ);
-      plane.YAxis = new Vector3d(yAxisX, yAxisY, yAxisZ);
-      plane.ZAxis = new Vector3d(zAxisX, zAxisY, zAxisZ);
+    [InlineData(0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1)]
+    [InlineData(1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0)]
+    [InlineData(-1,
+      -1,
+      -1,
+      -1,
+      0,
+      0,
+      0,
+      -1,
+      0,
+      0,
+      0,
+      -1)]
+    public void ConstructorTest(
+      double originX,
+      double originY,
+      double originZ,
+      double xAxisX,
+      double xAxisY,
+      double xAxisZ,
+      double yAxisX,
+      double yAxisY,
+      double yAxisZ,
+      double zAxisX,
+      double zAxisY,
+      double zAxisZ) {
+      var plane = new Plane {
+        Origin = new Point3d(originX, originY, originZ),
+        XAxis = new Vector3d(xAxisX, xAxisY, xAxisZ),
+        YAxis = new Vector3d(yAxisX, yAxisY, yAxisZ),
+        ZAxis = new Vector3d(zAxisX, zAxisY, zAxisZ)
+      };
 
-      GsaGridPlaneSurface gps = new GsaGridPlaneSurface(plane);
+      var gps = new GsaGridPlaneSurface(plane);
 
-      // Assert
       Assert.Equal(originX, gps.Plane.OriginX);
       Assert.Equal(originY, gps.Plane.OriginY);
       Assert.Equal(originZ, gps.Plane.OriginZ);
@@ -102,18 +140,13 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void DuplicateTest()
-    {
-      // Arrange
-      GsaGridPlaneSurface original = new GsaGridPlaneSurface();
+    public void DuplicateTest() {
+      var original = new GsaGridPlaneSurface();
 
-      // Act
       GsaGridPlaneSurface duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
 
-      // make some changes to duplicate
       duplicate.Plane = Plane.WorldYZ;
       duplicate.GridPlane.AxisProperty = 1;
       duplicate.GridPlane.Elevation = 1;

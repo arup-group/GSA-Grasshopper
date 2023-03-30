@@ -6,13 +6,10 @@ using OasysGH.Components;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests.Components.Geometry
-{
+namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-  public class CreateSupportTests
-  {
-    public static GH_OasysComponent ComponentMother()
-    {
+  public class CreateSupportTests {
+    public static GH_OasysComponent ComponentMother() {
       var comp = new CreateSupport();
       comp.CreateAttributes();
 
@@ -22,13 +19,10 @@ namespace GsaGHTests.Components.Geometry
     }
 
     [Fact]
-    public void CreateComponentFromPtTest()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponentFromPtTest() {
+      GH_OasysComponent comp = ComponentMother();
 
-      // Assert
-      GsaNodeGoo output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.ApiNode.Position.X);
       Assert.Equal(-1, output.Value.ApiNode.Position.Y);
       Assert.Equal(0, output.Value.ApiNode.Position.Z);
@@ -45,15 +39,14 @@ namespace GsaGHTests.Components.Geometry
     }
 
     [Fact]
-    public void CreateComponentFromPtPlaneAndBool6Test()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponentFromPtPlaneAndBool6Test() {
+      GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, Plane.WorldYZ, 1);
-      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()), 2);
-      
-      // Assert
-      GsaNodeGoo output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
+      ComponentTestHelper.SetInput(comp,
+        ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()),
+        2);
+
+      var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.ApiNode.Position.X);
       Assert.Equal(-1, output.Value.ApiNode.Position.Y);
       Assert.Equal(0, output.Value.ApiNode.Position.Z);
@@ -61,7 +54,13 @@ namespace GsaGHTests.Components.Geometry
       Assert.Equal(-1, output.Value.Point.Y);
       Assert.Equal(0, output.Value.Point.Z);
       Assert.True(output.Value.IsSupport);
-      Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true), output.Value.Restraint);
+      Duplicates.AreEqual(new GsaBool6(true,
+          true,
+          true,
+          true,
+          true,
+          true),
+        output.Value.Restraint);
       Assert.Equal(0, output.Value.Id);
       Duplicates.AreEqual(Plane.WorldYZ, output.Value.LocalAxis);
       Assert.Equal(0, output.Value.DamperProperty);
