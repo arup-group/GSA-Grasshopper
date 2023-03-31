@@ -124,6 +124,7 @@ namespace GsaGH.Components {
         }
       }
 
+      var key = new Tuple<GsaResult.CaseType, int>(_resultType, _caseId);
       switch (_resultType) {
         case GsaResult.CaseType.AnalysisCase:
           if (_analysisCaseResults == null) {
@@ -138,12 +139,10 @@ namespace GsaGH.Components {
             this.AddRuntimeError("Analysis Case A" + _caseId + " does not exist in model");
             return;
           }
-
-          if (!_resultCache.ContainsKey(
-            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, _caseId)))
-            _resultCache.Add(
-              new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, _caseId),
-              new GsaResult(_gsaModel, _analysisCaseResults[_caseId], _caseId));
+          if (!_resultCache.ContainsKey(key)) {
+            var result = new GsaResult(_gsaModel, _analysisCaseResults[_caseId], _caseId);
+            _resultCache.Add(key, result);
+          }
           break;
 
         case GsaResult.CaseType.Combination:
@@ -187,19 +186,18 @@ namespace GsaGH.Components {
             }
           }
 
-          if (!_resultCache.ContainsKey(
-            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, _caseId)))
-            _resultCache.Add(
-              new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, _caseId),
-              new GsaResult(_gsaModel, _combinationCaseResults[_caseId], _caseId, _permutationIDs));
-          else
-            _resultCache[new Tuple<GsaResult.CaseType, int>(_resultType, _caseId)]
-              .SelectedPermutationIds = _permutationIDs;
+          if (!_resultCache.ContainsKey(key)) {
+            var result = new GsaResult(_gsaModel, _combinationCaseResults[_caseId], _caseId, _permutationIDs);
+            _resultCache.Add(key, result);
+          }
+          else {
+            _resultCache[key].SelectedPermutationIds = _permutationIDs;
+          }
           break;
       }
 
-      da.SetData(0,
-        new GsaResultGoo(_resultCache[new Tuple<GsaResult.CaseType, int>(_resultType, _caseId)]));
+      GsaResult item = _resultCache[key];
+      da.SetData(0, new GsaResultGoo(item));
     }
 
     #region Name and Ribbon Layout
@@ -383,40 +381,40 @@ namespace GsaGH.Components {
 
       switch (i) {
         case 0 when SelectedItems[i] == _type[0]: {
-          if (_resultType == GsaResult.CaseType.AnalysisCase)
-            return;
-          _resultType = GsaResult.CaseType.AnalysisCase;
-          UpdateDropdowns();
-          break;
-        }
-        case 0: {
-          if (SelectedItems[i] == _type[1]) {
-            if (_resultType == GsaResult.CaseType.Combination)
+            if (_resultType == GsaResult.CaseType.AnalysisCase)
               return;
-            _resultType = GsaResult.CaseType.Combination;
+            _resultType = GsaResult.CaseType.AnalysisCase;
             UpdateDropdowns();
+            break;
           }
+        case 0: {
+            if (SelectedItems[i] == _type[1]) {
+              if (_resultType == GsaResult.CaseType.Combination)
+                return;
+              _resultType = GsaResult.CaseType.Combination;
+              UpdateDropdowns();
+            }
 
-          break;
-        }
+            break;
+          }
         case 1 when SelectedItems[i]
             .ToLower()
           == "all":
           _caseId = -1;
           break;
         case 1: {
-          int newId = int.Parse(string.Join("",
-            SelectedItems[i]
-              .ToCharArray()
-              .Where(char.IsDigit)));
-          if (newId != _caseId) {
-            _caseId = newId;
-            if (_resultType == GsaResult.CaseType.Combination)
-              UpdatePermutations();
-          }
+            int newId = int.Parse(string.Join("",
+              SelectedItems[i]
+                .ToCharArray()
+                .Where(char.IsDigit)));
+            if (newId != _caseId) {
+              _caseId = newId;
+              if (_resultType == GsaResult.CaseType.Combination)
+                UpdatePermutations();
+            }
 
-          break;
-        }
+            break;
+          }
         case 2 when SelectedItems[i]
             .ToLower()
           != "all":
