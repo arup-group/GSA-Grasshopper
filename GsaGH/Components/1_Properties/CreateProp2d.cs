@@ -190,19 +190,25 @@ namespace GsaGH.Components {
         case FoldMode.PlaneStress:
         case FoldMode.FlatPlate:
         case FoldMode.CurvedShell:
-          if (Params.Input.Count == 0) {
-            Params.RegisterInputParam(new Param_GenericObject());
-            Params.RegisterInputParam(new GsaMaterialParameter());
+          switch (Params.Input.Count) {
+            case 0:
+              Params.RegisterInputParam(new Param_GenericObject());
+              Params.RegisterInputParam(new GsaMaterialParameter());
+              break;
+            case 1:
+              Params.RegisterInputParam(new GsaMaterialParameter());
+              break;
           }
-          else if (Params.Input.Count == 1)
-            Params.RegisterInputParam(new GsaMaterialParameter());
           break;
         case FoldMode.Fabric:
-          if (Params.Input.Count == 0) {
-            Params.RegisterInputParam(new Param_GenericObject());
+          switch (Params.Input.Count) {
+            case 0:
+              Params.RegisterInputParam(new Param_GenericObject());
+              break;
+            case 2:
+              Params.UnregisterInputParameter(Params.Input[0], true);
+              break;
           }
-          else if (Params.Input.Count == 2)
-            Params.UnregisterInputParameter(Params.Input[0], true);
 
           break;
         case FoldMode.LoadPanel:
