@@ -1,4 +1,5 @@
-﻿using GsaAPI;
+﻿using System.Collections.Generic;
+using GsaAPI;
 
 namespace GsaGH.Parameters
 {
@@ -89,11 +90,6 @@ namespace GsaGH.Parameters
     public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz)
     {
       _bool6 = new Bool6(x, y, z, xx, yy, zz);
-    }
-
-    public GsaBool6(bool bool6)
-    {
-      _bool6 = bool6;
     }
 
     internal GsaBool6(Bool6 bool6)

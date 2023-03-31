@@ -12,15 +12,26 @@ using OasysGH.Components;
 using OasysGH.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components
-{
+namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 1D Member
   /// </summary>
-  public class CreateMember1d : GH_OasysDropDownComponent
-  {
-    protected override void SolveInstance(IGH_DataAccess da)
-    {
+  public class CreateMember1d : GH_OasysDropDownComponent {
+
+    private bool _x1;
+    private bool _y1;
+    private bool _z1;
+    private bool _xx1;
+    private bool _yy1;
+    private bool _zz1;
+    private bool _x2;
+    private bool _y2;
+    private bool _z2;
+    private bool _xx2;
+    private bool _yy2;
+    private bool _zz2;
+
+    protected override void SolveInstance(IGH_DataAccess da) {
       var ghcrv = new GH_Curve();
       if (!da.GetData(0, ref ghcrv))
         return;
@@ -41,9 +52,8 @@ namespace GsaGH.Components
           + DefaultUnits.LengthUnitGeometry.ToString()
           + ".");
 
-      var rel1 = new GsaBool6
-      {
-        X = _restraints,
+      var rel1 = new GsaBool6 {
+        X = _x1,
         Y = _y1,
         Z = _z1,
         Xx = _xx1,
@@ -53,8 +63,7 @@ namespace GsaGH.Components
 
       mem.ReleaseStart = rel1;
 
-      var rel2 = new GsaBool6
-      {
+      var rel2 = new GsaBool6 {
         X = _x2,
         Y = _y2,
         Z = _z2,
@@ -66,15 +75,12 @@ namespace GsaGH.Components
 
       var ghTyp = new GH_ObjectWrapper();
       var section = new GsaSection();
-      if (da.GetData(1, ref ghTyp))
-      {
-        if (ghTyp.Value is GsaSectionGoo)
-        {
+      if (da.GetData(1, ref ghTyp)) {
+        if (ghTyp.Value is GsaSectionGoo) {
           ghTyp.CastTo(ref section);
           mem.Section = section;
         }
-        else
-        {
+        else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
             mem.Section = new GsaSection(id);
           else
@@ -101,15 +107,13 @@ namespace GsaGH.Components
       "Mem1D",
       "Create GSA 1D Member",
       CategoryName.Name(),
-      SubCategoryName.Cat2())
-    { }
+      SubCategoryName.Cat2()) { }
 
     #endregion
 
     #region Input and output
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddCurveParameter("Curve",
         "C",
         "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)",
@@ -132,54 +136,64 @@ namespace GsaGH.Components
     #endregion
 
     #region Custom UI
-    private List<bool> _startRestraints;
-    private List<bool> _endRestraints;
 
     public override void SetSelected(int i, int j) { }
 
     public override void InitialiseDropdowns() { }
 
-    public override void CreateAttributes() => m_attributes = new OasysGH.UI.Foo.ReleasesComponentAttributes(this, SetReleases, "Start Release", "End Release", _restraints);
+    public override void CreateAttributes() {
+      var restraints = new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1, _x2, _y2, _z2, _xx2, _yy2, _zz2 };
+      m_attributes = new OasysGH.UI.Foo.ReleasesComponentAttributes(this, SetReleases, "Start Release", "End Release", restraints);
+    }
 
-    public void SetReleases(List<bool> startRestraints, List<bool> endRestraints)
-    {
-      _restraints = restraints;
+    public void SetReleases(List<bool> restraints) {
+      _x1 = restraints[0];
+      _y1 = restraints[0];
+      _z1 = restraints[0];
+      _xx1 = restraints[0];
+      _yy1 = restraints[0];
+      _zz1 = restraints[0];
+      _x2 = restraints[0];
+      _y2 = restraints[0];
+      _z2 = restraints[0];
+      _xx2 = restraints[0];
+      _yy2 = restraints[0];
+      _zz2 = restraints[0];
+
       base.UpdateUI();
     }
     #endregion
 
     #region (de)serialization
-    public override bool Write(GH_IWriter writer)
-    {
-      writer.SetBoolean("x1", _restraints[0]);
-      writer.SetBoolean("y1", _restraints[1]);
-      writer.SetBoolean("z1", _restraints[2]);
-      writer.SetBoolean("xx1", _restraints[3]);
-      writer.SetBoolean("yy1", _restraints[4]);
-      writer.SetBoolean("zz1", _restraints[5]);
-      writer.SetBoolean("x2", _restraints[6]);
-      writer.SetBoolean("y2", _restraints[7]);
-      writer.SetBoolean("z2", _restraints[8]);
-      writer.SetBoolean("xx2", _restraints[9]);
-      writer.SetBoolean("yy2", _restraints[10]);
-      writer.SetBoolean("zz2", _restraints[11]);
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("x1", _x1);
+      writer.SetBoolean("y1", _y1);
+      writer.SetBoolean("z1", _z1);
+      writer.SetBoolean("xx1", _xx1);
+      writer.SetBoolean("yy1", _yy1);
+      writer.SetBoolean("zz1", _zz1);
+      writer.SetBoolean("x2", _x2);
+      writer.SetBoolean("y2", _y2);
+      writer.SetBoolean("z2", _z2);
+      writer.SetBoolean("xx2", _xx2);
+      writer.SetBoolean("yy2", _yy2);
+      writer.SetBoolean("zz2", _zz2);
       return base.Write(writer);
     }
 
-    public override bool Read(GH_IReader reader)
-    {
-      _restraints[0] = reader.GetBoolean("x1");
-      _restraints[1] = reader.GetBoolean("y1");
-      _restraints[2] = reader.GetBoolean("z1");
-      _restraints[3] = reader.GetBoolean("xx1");
-      _restraints[4] = reader.GetBoolean("yy1");
-      _restraints[5] = reader.GetBoolean("zz1");
-      _restraints[6] = reader.GetBoolean("x2");
-      _restraints[7] = reader.GetBoolean("y2");
-      _restraints[8] = reader.GetBoolean("z2");
-      _restraints[9] = reader.GetBoolean("xx2");
-      _restraints[10] = reader.GetBoolean("yy2");
-      _restraints[11] = reader.GetBoolean("zz2");
+    public override bool Read(GH_IReader reader) {
+      _x1 = reader.GetBoolean("x1");
+      _y1 = reader.GetBoolean("y1");
+      _z1 = reader.GetBoolean("z1");
+      _xx1 = reader.GetBoolean("xx1");
+      _yy1 = reader.GetBoolean("yy1");
+      _zz1 = reader.GetBoolean("zz1");
+      _x2 = reader.GetBoolean("x2");
+      _y2 = reader.GetBoolean("y2");
+      _z2 = reader.GetBoolean("z2");
+      _xx2 = reader.GetBoolean("xx2");
+      _yy2 = reader.GetBoolean("yy2");
+      _zz2 = reader.GetBoolean("zz2");
       return base.Read(reader);
     }
     #endregion
