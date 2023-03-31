@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -118,14 +119,14 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    private readonly List<string> _dropdownTopLevel = new List<string>(new[] {
-      "Plane Stress",
-      "Fabric",
-      "Flat Plate",
-      "Shell",
-      "Curved Shell",
-      "Load Panel",
-    });
+    private readonly IReadOnlyDictionary<FoldMode, string> _dropdownTopLevel = new Dictionary<FoldMode, string>(){
+      { FoldMode.PlaneStress, "Plane Stress"},
+      { FoldMode.Fabric, "Fabric"},
+      { FoldMode.FlatPlate, "Flat Plate"},
+      { FoldMode.Shell, "Shell"},
+      { FoldMode.CurvedShell, "Curved Shell"},
+      { FoldMode.LoadPanel, "Load Panel"},
+    };
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
@@ -138,8 +139,8 @@ namespace GsaGH.Components {
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();
 
-      DropDownItems.Add(_dropdownTopLevel);
-      SelectedItems.Add(_dropdownTopLevel[3]);
+      DropDownItems.Add(_dropdownTopLevel.Values.ToList());
+      SelectedItems.Add(_dropdownTopLevel.Values.ElementAt(3));
 
       DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -151,38 +152,7 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0)
-        switch (SelectedItems[i]) {
-          case "Plane Stress":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode1Clicked();
-            break;
-          case "Fabric":
-            if (DropDownItems.Count > 1)
-              DropDownItems.RemoveAt(1);
-            Mode2Clicked();
-            break;
-          case "Flat Plate":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode3Clicked();
-            break;
-          case "Shell":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode4Clicked();
-            break;
-          case "Curved Shell":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode5Clicked();
-            break;
-          case "Load Panel":
-            if (DropDownItems.Count > 1)
-              DropDownItems.RemoveAt(1);
-            Mode6Clicked();
-            break;
-        }
+        UpdateDropDownItems();
       else
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
 
@@ -190,39 +160,7 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      switch (SelectedItems[0]) {
-        case "Plane Stress":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode1Clicked();
-          break;
-        case "Fabric":
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
-          Mode2Clicked();
-          break;
-        case "Flat Plate":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode3Clicked();
-          break;
-        case "Shell":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode4Clicked();
-          break;
-        case "Curved Shell":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode5Clicked();
-          break;
-        case "Load Panel":
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
-          Mode6Clicked();
-          break;
-      }
-
+      UpdateDropDownItems();
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
@@ -240,136 +178,104 @@ namespace GsaGH.Components {
 
     private FoldMode _mode = FoldMode.Shell;
 
-    private void Mode1Clicked() {
-      if (_mode == FoldMode.PlaneStress)
+    private void ModeClicked(FoldMode mode) {
+      if (_mode == mode)
         return;
 
-      RecordUndoEvent("Plane Stress Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
+      _dropdownTopLevel.TryGetValue(mode, out string eventName);
+      RecordUndoEvent($"{eventName} Parameters");
 
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+      switch (mode) {
+        case FoldMode.Shell:
+        case FoldMode.PlaneStress:
+        case FoldMode.FlatPlate:
+        case FoldMode.CurvedShell:
+          if (Params.Input.Count == 0) {
+            Params.RegisterInputParam(new Param_GenericObject());
+            Params.RegisterInputParam(new GsaMaterialParameter());
+          }
+          else if (Params.Input.Count == 1)
+            Params.RegisterInputParam(new GsaMaterialParameter());
+          break;
+        case FoldMode.Fabric:
+          if (Params.Input.Count == 0) {
+            Params.RegisterInputParam(new Param_GenericObject());
+          }
+          else if (Params.Input.Count == 2)
+            Params.UnregisterInputParameter(Params.Input[0], true);
+
+          break;
+        case FoldMode.LoadPanel:
+          while (Params.Input.Count > 0)
+            Params.UnregisterInputParameter(Params.Input[0], true);
+          break;
       }
 
-      _mode = FoldMode.PlaneStress;
+      _mode = mode;
     }
 
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Fabric)
-        return;
+    private void UpdateDropDownItems() {
+      string selectedItem = SelectedItems[0];
+      FoldMode mode = FoldMode.Shell;
 
-      RecordUndoEvent("Fabric Parameters");
-      _mode = FoldMode.Fabric;
+      foreach (KeyValuePair<FoldMode, string> item in _dropdownTopLevel)
+        if (item.Value.Contains(selectedItem))
+          mode = item.Key;
 
-      while (Params.Input.Count > 0)
-        Params.UnregisterInputParameter(Params.Input[0], true);
-
-      Params.RegisterInputParam(new Param_GenericObject());
-    }
-
-    private void Mode3Clicked() {
-      if (_mode == FoldMode.FlatPlate)
-        return;
-
-      RecordUndoEvent("Flat Plate Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+      switch (mode) {
+        case FoldMode.PlaneStress:
+        case FoldMode.FlatPlate:
+        case FoldMode.Shell:
+        case FoldMode.CurvedShell:
+          if (DropDownItems.Count < 2)
+            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          break;
+        case FoldMode.Fabric:
+        case FoldMode.LoadPanel:
+          if (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(1);
+          break;
       }
 
-      _mode = FoldMode.FlatPlate;
-    }
-
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.Shell)
-        return;
-
-      RecordUndoEvent("Shell Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = FoldMode.Shell;
-    }
-
-    private void Mode5Clicked() {
-      if (_mode == FoldMode.CurvedShell)
-        return;
-
-      RecordUndoEvent("Curved Shell Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = FoldMode.CurvedShell;
-    }
-
-    private void Mode6Clicked() {
-      if (_mode == FoldMode.LoadPanel)
-        return;
-
-      RecordUndoEvent("Load Panel Parameters");
-      _mode = FoldMode.LoadPanel;
-
-      while (Params.Input.Count > 0)
-        Params.UnregisterInputParameter(Params.Input[0], true);
+      ModeClicked(mode);
     }
 
     #endregion
 
     public override void VariableParameterMaintenance() {
-      if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
-        int i = 0;
-        Params.Input[i]
-          .NickName = "Thk";
-        Params.Input[i]
-          .Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
-        Params.Input[i]
-          .Description = "Section thickness";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = false;
-        i++;
-        Params.Input[i]
-          .NickName = "Mat";
-        Params.Input[i]
-          .Name = "Material";
-        Params.Input[i]
-          .Description = "GSA Material";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
+      switch (_mode) {
+        case FoldMode.LoadPanel:
+          return;
+        case FoldMode.Fabric:
+          SetMaterialInputAt(0);
+          break;
+        default:
+          SetInputProperties(index: 0, nickname: "Thk", name: $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", description: "Section thickness", optional: false);
+          SetMaterialInputAt(1);
+          break;
       }
-
-      if (_mode != FoldMode.Fabric)
-        return;
-
-      Params.Input[0]
-        .NickName = "Mat";
-      Params.Input[0]
-        .Name = "Material";
-      Params.Input[0]
-        .Description = "GSA Material";
-      Params.Input[0]
-        .Access = GH_ParamAccess.item;
-      Params.Input[0]
-        .Optional = true;
     }
+
+    private void SetInputProperties(
+      int index,
+      string nickname,
+      string name,
+      string description,
+      GH_ParamAccess access = GH_ParamAccess.item,
+      bool optional = true) {
+      Params.Input[index]
+        .NickName = nickname;
+      Params.Input[index]
+        .Name = name;
+      Params.Input[index]
+        .Description = description;
+      Params.Input[index]
+        .Access = access;
+      Params.Input[index]
+        .Optional = optional;
+    }
+
+    private void SetMaterialInputAt(int index) => SetInputProperties(index, "Mat", "Material", "GSA Material");
 
     #endregion
   }
