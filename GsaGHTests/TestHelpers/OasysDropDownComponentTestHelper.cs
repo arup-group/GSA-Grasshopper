@@ -50,11 +50,7 @@ namespace GsaGHTests.Helpers {
       for (int i = 0; i < comp.DropDownItems.Count; i++) {
         comp.SetSelected(i, 0);
 
-        for (int j = 0;
-          j
-          < comp.DropDownItems[i]
-            .Count;
-          j++) {
+        for (int j = 0; j < comp.DropDownItems[i].Count; j++) {
           comp.SetSelected(i, j);
           TestDeserialize(comp);
           Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);

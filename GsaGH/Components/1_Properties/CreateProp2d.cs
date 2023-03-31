@@ -151,8 +151,10 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       SelectedItems[i] = DropDownItems[i][j];
 
-      if (i == 0)
-        UpdateDropDownItems();
+      if (i == 0) {
+        UpdateParameters(GetModeBy(SelectedItems[0]));
+        UpdateDropDownItems(GetModeBy(SelectedItems[0]));
+      }
       else
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
 
@@ -160,8 +162,9 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      UpdateDropDownItems();
+      UpdateDropDownItems(GetModeBy(SelectedItems[0]));
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+
       base.UpdateUIFromSelectedItems();
     }
 
@@ -178,7 +181,7 @@ namespace GsaGH.Components {
 
     private FoldMode _mode = FoldMode.Shell;
 
-    private void ModeClicked(FoldMode mode) {
+    private void UpdateParameters(FoldMode mode) {
       if (_mode == mode)
         return;
 
@@ -199,6 +202,7 @@ namespace GsaGH.Components {
               Params.RegisterInputParam(new GsaMaterialParameter());
               break;
           }
+
           break;
         case FoldMode.Fabric:
           switch (Params.Input.Count) {
@@ -220,14 +224,7 @@ namespace GsaGH.Components {
       _mode = mode;
     }
 
-    private void UpdateDropDownItems() {
-      string selectedItem = SelectedItems[0];
-      FoldMode mode = FoldMode.Shell;
-
-      foreach (KeyValuePair<FoldMode, string> item in _dropdownTopLevel)
-        if (item.Value.Contains(selectedItem))
-          mode = item.Key;
-
+    private void UpdateDropDownItems(FoldMode mode) {
       switch (mode) {
         case FoldMode.PlaneStress:
         case FoldMode.FlatPlate:
@@ -235,6 +232,7 @@ namespace GsaGH.Components {
         case FoldMode.CurvedShell:
           if (DropDownItems.Count < 2)
             DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+
           break;
         case FoldMode.Fabric:
         case FoldMode.LoadPanel:
@@ -242,8 +240,15 @@ namespace GsaGH.Components {
             DropDownItems.RemoveAt(1);
           break;
       }
+    }
 
-      ModeClicked(mode);
+    private FoldMode GetModeBy(string name) {
+      FoldMode mode = FoldMode.Shell;
+
+      foreach (KeyValuePair<FoldMode, string> item in _dropdownTopLevel)
+        if (item.Value.Contains(name))
+          mode = item.Key;
+      return mode;
     }
 
     #endregion
@@ -255,7 +260,10 @@ namespace GsaGH.Components {
         case FoldMode.Fabric:
           SetMaterialInputAt(0);
           break;
-        default:
+        case FoldMode.Shell:
+        case FoldMode.PlaneStress:
+        case FoldMode.FlatPlate:
+        case FoldMode.CurvedShell:
           SetInputProperties(index: 0, nickname: "Thk", name: $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", description: "Section thickness", optional: false);
           SetMaterialInputAt(1);
           break;
@@ -282,7 +290,6 @@ namespace GsaGH.Components {
     }
 
     private void SetMaterialInputAt(int index) => SetInputProperties(index, "Mat", "Material", "GSA Material");
-
     #endregion
   }
 }
