@@ -158,7 +158,7 @@ namespace GsaGH.Components {
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+          mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
         }
         else
           this.AddRuntimeWarning("Unable to change buckling length factors");
@@ -305,11 +305,11 @@ namespace GsaGH.Components {
         "⭲",
         "Set Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 1 offset",
+      pManager.AddBooleanParameter("End 1 Offset",
         "E1o",
         "Set Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 2 offset",
+      pManager.AddBooleanParameter("End 2 Offset",
         "E2o",
         "Set Automatic Offset at End 2 of Member",
         GH_ParamAccess.item);
@@ -391,11 +391,11 @@ namespace GsaGH.Components {
         "⭲",
         "Get Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 1 offset",
+      pManager.AddBooleanParameter("End 1 Offset",
         "E1o",
         "Get Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 2 offset",
+      pManager.AddBooleanParameter("End 2 Offset",
         "E2o",
         "Get Automatic Offset at End 2 of Member",
         GH_ParamAccess.item);

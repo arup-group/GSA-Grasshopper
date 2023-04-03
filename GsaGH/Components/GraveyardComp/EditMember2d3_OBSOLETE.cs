@@ -21,7 +21,8 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 2D Member
   /// </summary>
-  public class EditMember2d : GH_OasysComponent, IGH_VariableParameterComponent {
+  public class EditMember2d3_OBSOLETE : GH_OasysComponent,
+    IGH_VariableParameterComponent {
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -134,37 +135,32 @@ namespace GsaGH.Components {
       if (da.GetData(9, ref offset))
         mem.Offset = offset;
 
-      var ioData = new GH_Boolean();
-      if (da.GetData(10, ref ioData))
-        if (GH_Convert.ToBoolean(ioData, out bool ioBool, GH_Conversion.Both))
-          mem.AutomaticInternalOffset = ioBool;
-
       double meshSize = 0;
-      if (da.GetData(11, ref meshSize))
+      if (da.GetData(10, ref meshSize))
         mem.MeshSize = meshSize;
 
       var ghbool = new GH_Boolean();
-      if (da.GetData(12, ref ghbool))
+      if (da.GetData(11, ref ghbool))
         if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
           mem.MeshWithOthers = mbool;
 
       var ghangle = new GH_Number();
-      if (da.GetData(13, ref ghangle))
+      if (da.GetData(12, ref ghangle))
         if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
           mem.OrientationAngle = new Angle(angle, _angleUnit);
 
       var ghnm = new GH_String();
-      if (da.GetData(14, ref ghnm))
+      if (da.GetData(13, ref ghnm))
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
           mem.Name = name;
 
       var ghcol = new GH_Colour();
-      if (da.GetData(15, ref ghcol))
+      if (da.GetData(14, ref ghcol))
         if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
           mem.Colour = col;
 
       var ghdum = new GH_Boolean();
-      if (da.GetData(16, ref ghdum))
+      if (da.GetData(15, ref ghdum))
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           mem.IsDummy = dum;
 
@@ -182,14 +178,13 @@ namespace GsaGH.Components {
         Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D)
           .Key);
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
-      da.SetData(10, mem.AutomaticInternalOffset);
-      da.SetData(11, mem.MeshSize);
-      da.SetData(12, mem.MeshWithOthers);
-      da.SetData(13, mem.OrientationAngle.Radians);
-      da.SetData(14, mem.Name);
-      da.SetData(15, mem.Colour);
-      da.SetData(16, mem.IsDummy);
-      da.SetData(17, mem.ApiMember.Topology);
+      da.SetData(10, mem.MeshSize);
+      da.SetData(11, mem.MeshWithOthers);
+      da.SetData(12, mem.OrientationAngle.Radians);
+      da.SetData(13, mem.Name);
+      da.SetData(14, mem.Colour);
+      da.SetData(15, mem.IsDummy);
+      da.SetData(16, mem.ApiMember.Topology);
     }
 
     protected override void BeforeSolveInstance() {
@@ -202,12 +197,12 @@ namespace GsaGH.Components {
 
     #region Name and Ribbon Layout
 
-    public override Guid ComponentGuid => new Guid("01390fdb-4319-46e9-9ff9-6a5d274e185d");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem2d;
 
-    public EditMember2d() : base("Edit 2D Member",
+    public EditMember2d3_OBSOLETE() : base("Edit 2D Member",
       "Mem2dEdit",
       "Modify GSA 2D Member",
       CategoryName.Name(),
@@ -276,15 +271,13 @@ namespace GsaGH.Components {
         + Environment.NewLine
         + "2: Rigid Diaphragm",
         GH_ParamAccess.item);
+
       pManager.AddParameter(new GsaOffsetParameter(),
         "Offset",
         "Of",
         "Set Member Offset",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Internal Offset",
-        "Io",
-        "Set Automatic Internal Offset of Member",
-        GH_ParamAccess.item);
+
       pManager.AddNumberParameter("Mesh Size in model units",
         "Ms",
         "Set target mesh size",
@@ -297,6 +290,7 @@ namespace GsaGH.Components {
         "⭮A",
         "Set Member Orientation Angle",
         GH_ParamAccess.item);
+
       pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member2d Colour",
         "Co",
@@ -342,6 +336,7 @@ namespace GsaGH.Components {
         "Get 2D Section Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
+
       pManager.AddTextParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
       pManager.AddTextParameter("2D Element Type",
         "eT",
@@ -349,14 +344,11 @@ namespace GsaGH.Components {
         + Environment.NewLine
         + "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm",
         GH_ParamAccess.item);
+
       pManager.AddParameter(new GsaOffsetParameter(),
         "Offset",
         "Of",
         "Get Member Offset",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Internal Offset",
-        "Io",
-        "Get Automatic Internal Offset of Member",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size in model units",
         "Ms",
@@ -370,6 +362,7 @@ namespace GsaGH.Components {
         "⭮A",
         "Get Member Orientation Angle in radians",
         GH_ParamAccess.item);
+
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Dummy Member",

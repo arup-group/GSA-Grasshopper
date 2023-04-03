@@ -151,7 +151,7 @@ namespace GsaGH.Components {
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+          mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
         }
         else
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");

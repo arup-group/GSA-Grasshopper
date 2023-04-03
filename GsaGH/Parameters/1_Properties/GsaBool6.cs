@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using GsaAPI;
+﻿using GsaAPI;
 
 namespace GsaGH.Parameters {
   /// <summary>

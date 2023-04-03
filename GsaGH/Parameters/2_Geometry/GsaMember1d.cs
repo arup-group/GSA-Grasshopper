@@ -91,7 +91,7 @@ namespace GsaGH.Parameters {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
         IsIntersector = ApiMember.IsIntersector,
-        LateralTorsionalBucklingFactor = ApiMember.LateralTorsionalBucklingFactor,
+        EquivalentUniformMomentFactor = ApiMember.EquivalentUniformMomentFactor,
         MeshSize = ApiMember.MeshSize,
         MomentAmplificationFactorStrongAxis = ApiMember.MomentAmplificationFactorStrongAxis,
         MomentAmplificationFactorWeakAxis = ApiMember.MomentAmplificationFactorWeakAxis,
@@ -102,6 +102,7 @@ namespace GsaGH.Parameters {
         Property = ApiMember.Property,
         Type = ApiMember.Type,
         Type1D = ApiMember.Type1D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
       };
       if (ApiMember.Topology != string.Empty)
         mem.Topology = ApiMember.Topology;

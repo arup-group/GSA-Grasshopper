@@ -9,6 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.UI;
 using OasysGH.Units;
 using Rhino.Geometry;
 
@@ -141,24 +142,49 @@ namespace GsaGH.Components {
 
     public override void InitialiseDropdowns() { }
 
-    public override void CreateAttributes() {
-      var restraints = new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1, _x2, _y2, _z2, _xx2, _yy2, _zz2 };
-      m_attributes = new OasysGH.UI.Foo.ReleasesComponentAttributes(this, SetReleases, "Start Release", "End Release", restraints);
-    }
+    public override void CreateAttributes()
+      => m_attributes = new ReleasesComponentAttributes(this,
+        SetReleases,
+        "Start Release",
+        "End Release",
+        _x1,
+        _y1,
+        _z1,
+        _xx1,
+        _yy1,
+        _zz1,
+        _x2,
+        _y2,
+        _z2,
+        _xx2,
+        _yy2,
+        _zz2);
 
-    public void SetReleases(List<bool> restraints) {
-      _x1 = restraints[0];
-      _y1 = restraints[0];
-      _z1 = restraints[0];
-      _xx1 = restraints[0];
-      _yy1 = restraints[0];
-      _zz1 = restraints[0];
-      _x2 = restraints[0];
-      _y2 = restraints[0];
-      _z2 = restraints[0];
-      _xx2 = restraints[0];
-      _yy2 = restraints[0];
-      _zz2 = restraints[0];
+    public void SetReleases(
+      bool resx1,
+      bool resy1,
+      bool resz1,
+      bool resxx1,
+      bool resyy1,
+      bool reszz1,
+      bool resx2,
+      bool resy2,
+      bool resz2,
+      bool resxx2,
+      bool resyy2,
+      bool reszz2) {
+      _x1 = resx1;
+      _y1 = resy1;
+      _z1 = resz1;
+      _xx1 = resxx1;
+      _yy1 = resyy1;
+      _zz1 = reszz1;
+      _x2 = resx2;
+      _y2 = resy2;
+      _z2 = resz2;
+      _xx2 = resxx2;
+      _yy2 = resyy2;
+      _zz2 = reszz2;
 
       base.UpdateUI();
     }

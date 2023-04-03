@@ -21,7 +21,7 @@ namespace GsaGH.Components {
       da.GetData(1, ref optional);
       fls.MomentAmplificationFactorWeakAxis = optional;
       da.GetData(2, ref input);
-      fls.LateralTorsionalBucklingFactor = input;
+      fls.EquivalentUniformMomentFactor = input;
       da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
     }
 

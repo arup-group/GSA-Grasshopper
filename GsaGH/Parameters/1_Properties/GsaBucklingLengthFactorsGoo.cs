@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
         return false;
       }
 
-      Value.LateralTorsionalBucklingFactor = val;
+      Value.EquivalentUniformMomentFactor = val;
       Value.MomentAmplificationFactorStrongAxis = val;
       Value.MomentAmplificationFactorWeakAxis = val;
       return true;

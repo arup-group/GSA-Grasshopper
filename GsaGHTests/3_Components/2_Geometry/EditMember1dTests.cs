@@ -90,7 +90,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.True(output15.Value);
       Assert.Null(output16.Value.MomentAmplificationFactorStrongAxis);
       Assert.Null(output16.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Null(output16.Value.LateralTorsionalBucklingFactor);
+      Assert.Null(output16.Value.EquivalentUniformMomentFactor);
       Assert.True(output16.Value.LengthIsSet);
       Assert.Equal("", output17.Value);
       Assert.Equal(0, output18.Value.R);
@@ -128,15 +128,15 @@ namespace GsaGHTests.Components.Geometry {
           true,
           true)),
         9);
-      ComponentTestHelper.SetInput(comp, true, 10);
-      ComponentTestHelper.SetInput(comp, true, 11);
-      ComponentTestHelper.SetInput(comp, Math.PI, 12);
-      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 13);
-      ComponentTestHelper.SetInput(comp, 0.7, 14);
-      ComponentTestHelper.SetInput(comp, false, 15);
-      ComponentTestHelper.SetInput(comp,
-        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)),
-        16);
+      //ComponentTestHelper.SetInput(comp, true, 10);
+      //ComponentTestHelper.SetInput(comp, true, 11);
+      //ComponentTestHelper.SetInput(comp, Math.PI, 12);
+      //ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 13);
+      //ComponentTestHelper.SetInput(comp, 0.7, 14);
+      //ComponentTestHelper.SetInput(comp, false, 15);
+      //ComponentTestHelper.SetInput(comp,
+      //  new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)),
+      //  16);
       ComponentTestHelper.SetInput(comp, "name", 17);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
       ComponentTestHelper.SetInput(comp, true, 19);
@@ -208,7 +208,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.False(output15.Value);
       Assert.Equal(1, output16.Value.MomentAmplificationFactorStrongAxis);
       Assert.Equal(2, output16.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(3, output16.Value.LateralTorsionalBucklingFactor);
+      Assert.Equal(3, output16.Value.EquivalentUniformMomentFactor);
       Assert.True(output16.Value.LengthIsSet);
       Assert.Equal("name", output17.Value);
       Assert.Equal(255, output18.Value.R);

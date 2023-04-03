@@ -149,7 +149,7 @@ namespace GsaGH.Components.GraveyardComp {
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+          mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
         }
         else
           this.AddRuntimeWarning("Unable to change buckling length factors");
