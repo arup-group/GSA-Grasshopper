@@ -165,17 +165,17 @@ namespace GsaGH.Components {
       }
 
       var ghnm = new GH_String();
-      if (da.GetData(15, ref ghnm))
+      if (da.GetData(17, ref ghnm))
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
           mem.Name = name;
 
       var ghcol = new GH_Colour();
-      if (da.GetData(16, ref ghcol))
+      if (da.GetData(18, ref ghcol))
         if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
           mem.Colour = col;
 
       var ghdum = new GH_Boolean();
-      if (da.GetData(17, ref ghdum))
+      if (da.GetData(19, ref ghdum))
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           mem.IsDummy = dum;
 
