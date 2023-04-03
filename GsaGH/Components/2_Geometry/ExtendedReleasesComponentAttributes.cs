@@ -18,7 +18,6 @@ namespace OasysGH.UI.Foo
       _setting = setting;
     }
 
-
     #region Custom layout logic
     List<bool> _setting = new List<bool>();
 

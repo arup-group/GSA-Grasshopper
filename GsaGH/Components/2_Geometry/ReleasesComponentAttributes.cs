@@ -13,9 +13,9 @@ namespace OasysGH.UI.Foo
   /// <summary>
   /// Class to create custom component UI with 2 x 6 check box toggles
   /// 
-  /// This class is made for the CreateMember1d component
+  /// This class is made for the CreateMember1d component.
   /// 
-  /// To use this method override CreateAttributes() in component class and set m_attributes = new ReleasesComponentAttributes(...
+  /// To use this class override CreateAttributes() in component class and set m_attributes = new ReleasesComponentAttributes(...
   /// </summary>
   public class ReleasesComponentAttributes : GH_ComponentAttributes
   {
@@ -332,15 +332,10 @@ namespace OasysGH.UI.Foo
 
       if (channel == GH_CanvasChannel.Objects)
       {
-        // We need to draw everything outselves.
-
-        Color myColour = Colour.OasysDarkBlue;
-        Brush myBrush = new SolidBrush(myColour);
-
         // Text boxes
-        Brush activeFillBrush = myBrush;
+        Brush activeFillBrush = new SolidBrush(Colour.OasysDarkBlue);
         Brush passiveFillBrush = Brushes.LightGray;
-        Color borderColour = myColour;
+        Color borderColour = Colour.OasysDarkBlue;
         Color passiveBorder = Color.DarkGray;
         Brush annoText = Brushes.Black;
 
