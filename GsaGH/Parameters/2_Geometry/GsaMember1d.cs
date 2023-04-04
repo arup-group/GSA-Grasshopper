@@ -177,6 +177,10 @@ namespace GsaGH.Parameters {
       }
     }
 
+    public double AutomaticOffsetLength1 => ApiMember.AutomaticOffset.X1;
+
+    public double AutomaticOffsetLength2 => ApiMember.AutomaticOffset.X2;
+
     public GsaOffset Offset {
       get
         => new GsaOffset(ApiMember.Offset.X1,

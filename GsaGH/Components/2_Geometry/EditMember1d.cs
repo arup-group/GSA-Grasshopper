@@ -194,16 +194,18 @@ namespace GsaGH.Components {
       da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
       da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
       da.SetData(10, mem.AutomaticOffsetEnd1);
-      da.SetData(11, mem.AutomaticOffsetEnd2);
-      da.SetData(12, mem.OrientationAngle.Radians);
-      da.SetData(13, new GsaNodeGoo(mem.OrientationNode));
-      da.SetData(14, mem.MeshSize);
-      da.SetData(15, mem.MeshWithOthers);
-      da.SetData(16, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
-      da.SetData(17, mem.Name);
-      da.SetData(18, mem.Colour);
-      da.SetData(19, mem.IsDummy);
-      da.SetData(20, mem.ApiMember.Topology);
+      da.SetData(11, mem.AutomaticOffsetLength1);
+      da.SetData(12, mem.AutomaticOffsetEnd2);
+      da.SetData(13, mem.AutomaticOffsetLength2);
+      da.SetData(14, mem.OrientationAngle.Radians);
+      da.SetData(15, new GsaNodeGoo(mem.OrientationNode));
+      da.SetData(16, mem.MeshSize);
+      da.SetData(17, mem.MeshWithOthers);
+      da.SetData(18, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
+      da.SetData(19, mem.Name);
+      da.SetData(20, mem.Colour);
+      da.SetData(21, mem.IsDummy);
+      da.SetData(22, mem.ApiMember.Topology);
     }
 
     #region Name and Ribbon Layout
@@ -395,9 +397,17 @@ namespace GsaGH.Components {
         "E1o",
         "Get Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
+      pManager.AddNumberParameter("Offset Length 1",
+        "Ol1",
+        "Get Automatic Offset Length at End 1 of Member",
+        GH_ParamAccess.item);
       pManager.AddBooleanParameter("End 2 Offset",
         "E2o",
         "Get Automatic Offset at End 2 of Member",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Offset Length 2",
+        "Ol2",
+        "Get Automatic Offset Length at End 2 of Member",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle",
         "⭮A",
