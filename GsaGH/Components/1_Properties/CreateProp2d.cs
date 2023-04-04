@@ -152,8 +152,9 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0) {
-        UpdateParameters(GetModeBy(SelectedItems[0]));
-        UpdateDropDownItems(GetModeBy(SelectedItems[0]));
+        FoldMode mode = GetModeBy(SelectedItems[0]);
+        UpdateParameters(mode);
+        UpdateDropDownItems(mode);
       }
       else
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
@@ -163,11 +164,12 @@ namespace GsaGH.Components {
 
     public override void UpdateUIFromSelectedItems() {
       UpdateDropDownItems(GetModeBy(SelectedItems[0]));
+
+      UpdateParameters(GetModeBy(SelectedItems[0]));
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
       base.UpdateUIFromSelectedItems();
     }
-
     #region update inputs
 
     private enum FoldMode {
@@ -210,7 +212,7 @@ namespace GsaGH.Components {
               Params.RegisterInputParam(new Param_GenericObject());
               break;
             case 2:
-              Params.UnregisterInputParameter(Params.Input[0], true);
+              Params.UnregisterInputParameter(Params.Input[1], true);
               break;
           }
 
