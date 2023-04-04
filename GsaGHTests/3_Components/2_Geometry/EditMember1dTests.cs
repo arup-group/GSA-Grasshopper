@@ -90,7 +90,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.True(output15.Value);
       Assert.Null(output16.Value.MomentAmplificationFactorStrongAxis);
       Assert.Null(output16.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Null(output16.Value.LateralTorsionalBucklingFactor);
+      Assert.Null(output16.Value.EquivalentUniformMomentFactor);
       Assert.True(output16.Value.LengthIsSet);
       Assert.Equal("", output17.Value);
       Assert.Equal(0, output18.Value.R);
@@ -208,7 +208,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.False(output15.Value);
       Assert.Equal(1, output16.Value.MomentAmplificationFactorStrongAxis);
       Assert.Equal(2, output16.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(3, output16.Value.LateralTorsionalBucklingFactor);
+      Assert.Equal(3, output16.Value.EquivalentUniformMomentFactor);
       Assert.True(output16.Value.LengthIsSet);
       Assert.Equal("name", output17.Value);
       Assert.Equal(255, output18.Value.R);

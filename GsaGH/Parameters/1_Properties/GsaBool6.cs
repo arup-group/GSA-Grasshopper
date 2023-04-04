@@ -1,116 +1,89 @@
-﻿using System.Collections.Generic;
-using GsaAPI;
+﻿using GsaAPI;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Bool6 class, this class defines the basic properties and methods for any <see cref="GsaAPI.Bool6"/>
   /// </summary>
-  public class GsaBool6
-  {
+  public class GsaBool6 {
     #region fields
     internal Bool6 _bool6;
     #endregion
 
     #region properties
-    public bool X
-    {
-      get
-      {
+    public bool X {
+      get {
         return _bool6.X;
       }
-      set
-      {
+      set {
         _bool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
       }
     }
-    public bool Y
-    {
-      get
-      {
+    public bool Y {
+      get {
         return _bool6.Y;
       }
-      set
-      {
+      set {
         _bool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
       }
     }
-    public bool Z
-    {
-      get
-      {
+    public bool Z {
+      get {
         return _bool6.Z;
       }
-      set
-      {
+      set {
         _bool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
       }
     }
-    public bool Xx
-    {
-      get
-      {
+    public bool Xx {
+      get {
         return _bool6.XX;
       }
-      set
-      {
+      set {
         _bool6 = new Bool6(X, Y, Z, value, Yy, Zz);
       }
     }
-    public bool Yy
-    {
-      get
-      {
+    public bool Yy {
+      get {
         return _bool6.YY;
       }
-      set
-      {
+      set {
         _bool6 = new Bool6(X, Y, Z, Xx, value, Zz);
       }
     }
-    public bool Zz
-    {
-      get
-      {
+    public bool Zz {
+      get {
         return _bool6.ZZ;
       }
-      set
-      {
+      set {
         _bool6 = new Bool6(X, Y, Z, Xx, Yy, value);
       }
     }
     #endregion
 
     #region constructors
-    public GsaBool6()
-    {
+    public GsaBool6() {
       _bool6 = new Bool6(false, false, false, false, false, false);
     }
 
-    public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz)
-    {
+    public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
       _bool6 = new Bool6(x, y, z, xx, yy, zz);
     }
 
-    internal GsaBool6(Bool6 bool6)
-    {
+    internal GsaBool6(Bool6 bool6) {
       _bool6 = bool6;
     }
     #endregion
 
     #region methods
-    public GsaBool6 Duplicate()
-    {
+    public GsaBool6 Duplicate() {
       // create shallow copy
-      var dup = new GsaBool6
-      {
+      var dup = new GsaBool6 {
         _bool6 = _bool6,
       };
       return dup;
     }
 
-    public override string ToString()
-    {
+    public override string ToString() {
       string state = "Other";
       if (
         X == false &&
@@ -148,8 +121,7 @@ namespace GsaGH.Parameters
         Zz == true
         )
         state = "Fixed";
-      if (state == "Other")
-      {
+      if (state == "Other") {
         string sx = (X) ? "\u2713" : "\u2610";
         sx = "X" + sx;
         string sy = (Y) ? "\u2713" : "\u2610";

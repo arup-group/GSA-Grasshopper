@@ -158,24 +158,24 @@ namespace GsaGH.Components {
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+          mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
         }
         else
           this.AddRuntimeWarning("Unable to change buckling length factors");
       }
 
       var ghnm = new GH_String();
-      if (da.GetData(15, ref ghnm))
+      if (da.GetData(17, ref ghnm))
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
           mem.Name = name;
 
       var ghcol = new GH_Colour();
-      if (da.GetData(16, ref ghcol))
+      if (da.GetData(18, ref ghcol))
         if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
           mem.Colour = col;
 
       var ghdum = new GH_Boolean();
-      if (da.GetData(17, ref ghdum))
+      if (da.GetData(19, ref ghdum))
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           mem.IsDummy = dum;
 
@@ -305,11 +305,11 @@ namespace GsaGH.Components {
         "⭲",
         "Set Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 1 offset",
+      pManager.AddBooleanParameter("End 1 Offset",
         "E1o",
         "Set Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 2 offset",
+      pManager.AddBooleanParameter("End 2 Offset",
         "E2o",
         "Set Automatic Offset at End 2 of Member",
         GH_ParamAccess.item);
@@ -391,11 +391,11 @@ namespace GsaGH.Components {
         "⭲",
         "Get Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 1 offset",
+      pManager.AddBooleanParameter("End 1 Offset",
         "E1o",
         "Get Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 2 offset",
+      pManager.AddBooleanParameter("End 2 Offset",
         "E2o",
         "Get Automatic Offset at End 2 of Member",
         GH_ParamAccess.item);

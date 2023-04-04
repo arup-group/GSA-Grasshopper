@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
     #region properties
     public double? MomentAmplificationFactorStrongAxis { get; set; }
     public double? MomentAmplificationFactorWeakAxis { get; set; }
-    public double? LateralTorsionalBucklingFactor { get; set; }
+    public double? EquivalentUniformMomentFactor { get; set; }
     internal Length Length { get; }
     internal bool LengthIsSet { get; private set; } = false;
     #endregion
@@ -19,20 +19,20 @@ namespace GsaGH.Parameters {
     public GsaBucklingLengthFactors() {
     }
 
-    public GsaBucklingLengthFactors(double momentAmplificationFactorStrongAxis, double momentAmplificationFactorWeakAxis, double lateralTorsionalBucklingFactor) {
-      LateralTorsionalBucklingFactor = lateralTorsionalBucklingFactor;
+    public GsaBucklingLengthFactors(double momentAmplificationFactorStrongAxis, double momentAmplificationFactorWeakAxis, double equivalentUniformMomentFactor) {
+      EquivalentUniformMomentFactor = equivalentUniformMomentFactor;
       MomentAmplificationFactorStrongAxis = momentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = momentAmplificationFactorWeakAxis;
     }
 
     internal GsaBucklingLengthFactors(GsaMember1d member) {
-      LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
+      EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
 
     internal GsaBucklingLengthFactors(GsaMember1d member, LengthUnit lengthUnit) {
-      LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
+      EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
       Length = new Length(member.PolyCurve.GetLength(), lengthUnit);
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string y = MomentAmplificationFactorStrongAxis == null ? "" : "fLsy:" + MomentAmplificationFactorStrongAxis;
       string z = MomentAmplificationFactorWeakAxis == null ? "" : "fLsz:" + MomentAmplificationFactorWeakAxis;
-      string lt = LateralTorsionalBucklingFactor == null ? "" : "fLtb:" + LateralTorsionalBucklingFactor;
+      string lt = EquivalentUniformMomentFactor == null ? "" : "fLtb:" + EquivalentUniformMomentFactor;
       string output = string.Join(" ", y, z, lt).Trim();
       return output == "" ? "Automatic" : output;
     }
