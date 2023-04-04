@@ -132,17 +132,17 @@ namespace GsaGHTests.Components.Geometry {
           true)),
         9);
       ComponentTestHelper.SetInput(comp, true, 10);
-      ComponentTestHelper.SetInput(comp, true, 12);
-      ComponentTestHelper.SetInput(comp, Math.PI, 14);
-      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 15);
-      ComponentTestHelper.SetInput(comp, 0.7, 16);
-      ComponentTestHelper.SetInput(comp, false, 17);
+      ComponentTestHelper.SetInput(comp, true, 11);
+      ComponentTestHelper.SetInput(comp, Math.PI, 12);
+      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 13);
+      ComponentTestHelper.SetInput(comp, 0.7, 14);
+      ComponentTestHelper.SetInput(comp, false, 15);
       ComponentTestHelper.SetInput(comp,
         new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)),
-        18);
-      ComponentTestHelper.SetInput(comp, "name", 19);
-      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 20);
-      ComponentTestHelper.SetInput(comp, true, 21);
+        16);
+      ComponentTestHelper.SetInput(comp, "name", 17);
+      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
+      ComponentTestHelper.SetInput(comp, true, 19);
 
       var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
