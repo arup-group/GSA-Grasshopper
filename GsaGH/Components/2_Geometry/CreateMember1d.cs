@@ -143,7 +143,7 @@ namespace GsaGH.Components {
 
     public override void CreateAttributes() {
       var restraints = new List<List<bool>>() { new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1 }, new List<bool>() { _x2, _y2, _z2, _xx2, _yy2, _zz2 } };
-      m_attributes = new OasysGH.UI.Foo.ReleaseComponentComponentAttributes(this, SetReleases, new List<string>() { "Start Release", "End Release" }, restraints, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" }, new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
+      m_attributes = new OasysGH.UI.CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Start Release", "End Release" }, restraints, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" }, new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
     }
 
     public void SetReleases(List<List<bool>> restraints) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -14,7 +15,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 2D Member
   /// </summary>
-  public class CreateMember2d : GH_OasysComponent {
+  public class CreateMember2d : GH_OasysDropDownComponent {
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep))
@@ -77,15 +78,18 @@ namespace GsaGH.Components {
         if (GH_Convert.ToBoolean(ioData, out bool ioBool, GH_Conversion.Both))
           mem.AutomaticInternalOffset = ioBool;
 
+      mem.AutomaticInternalOffset = _automaticInternalOffset;
+
       da.SetData(0, new GsaMember2dGoo(mem));
     }
 
     #region Name and Ribbon Layout
 
-    public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
+    public override Guid ComponentGuid => new Guid("a6333001-bbe1-49bd-873d-b925833ed159");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateMem2d;
+    private bool _automaticInternalOffset;
 
     public CreateMember2d() : base("Create 2D Member",
       "Mem2D",
@@ -93,6 +97,21 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
     #endregion
+
+    public override void SetSelected(int i, int j) { }
+
+    public override void InitialiseDropdowns() { }
+
+    public override void CreateAttributes() {
+      var internalOffset = new List<List<bool>>() { new List<bool>() { _automaticInternalOffset } };
+      m_attributes = new OasysGH.UI.CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Automatic offset" }, internalOffset, new List<List<string>>() { new List<string>() { "Internal" } });
+    }
+
+    public void SetReleases(List<List<bool>> internalAutomaticOffset) {
+      _automaticInternalOffset = internalAutomaticOffset[0][0];
+
+      base.UpdateUI();
+    }
 
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -133,5 +152,15 @@ namespace GsaGH.Components {
       => pManager.AddParameter(new GsaMember2dParameter());
 
     #endregion
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("automaticInternalOffset", _automaticInternalOffset);
+      return base.Write(writer);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _automaticInternalOffset = reader.GetBoolean("automaticInternalOffset");
+      return base.Read(reader);
+    }
   }
 }
