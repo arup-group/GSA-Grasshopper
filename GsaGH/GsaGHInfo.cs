@@ -56,10 +56,10 @@ namespace GsaGH {
           + gsaVers.FileMinorPart
           + "."
           + gsaVers.FileBuildPart;
-        if (gsaVers.FileBuildPart < 63) {
+        if (gsaVers.FileBuildPart < 65) {
           var exception = new Exception("Version "
             + GsaGhInfo.Vers
-            + " of GSA-Grasshopper requires GSA 10.1.63 installed. Please upgrade GSA.");
+            + " of GSA-Grasshopper requires GSA 10.1.65 installed. Please upgrade GSA.");
           var ghLoadingException
             = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
@@ -204,7 +204,7 @@ namespace GsaGH {
     internal const string Company = "Oasys";
     internal const string Copyright = "Copyright © Oasys 1985 - 2023";
     internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Vers = "0.9.47";
+    internal const string Vers = "0.9.48";
     internal const string ProductName = "GSA";
     internal const string PluginName = "GsaGH";
 
@@ -232,7 +232,7 @@ namespace GsaGH {
           ? s_disclaimer
           : "")
         + Environment.NewLine
-        + "A licensed version of GSA 10.1.63 or later installed in "
+        + "A licensed version of GSA 10.1.65 or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin."
         + Environment.NewLine
         + "Contact oasys@arup.com to request a free trial version."
