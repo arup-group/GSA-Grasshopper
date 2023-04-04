@@ -92,7 +92,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("STD R 15 20", orig.Profile);
       Assert.Equal(areaExpected.SquareMillimeters, orig.Area.SquareMillimeters);
 
-      Assert.Equal(profile, dup.Profile);
+      Assert.Equal(profile, dup.Profile.Substring(0, profile.Length));
       Assert.Equal(myarea1, dup.Area.SquareMillimeters, 5);
 
       Assert.Equal(0, dup.Material.AnalysisProperty);

@@ -39,7 +39,7 @@ namespace GsaGHTests.Parameters {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = factor1,
           MomentAmplificationFactorWeakAxis = factor2,
-          LateralTorsionalBucklingFactor = factor3,
+          EquivalentUniformMomentFactor = factor3,
         },
       };
 
@@ -59,7 +59,7 @@ namespace GsaGHTests.Parameters {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = factor1,
           MomentAmplificationFactorWeakAxis = factor2,
-          LateralTorsionalBucklingFactor = factor3,
+          EquivalentUniformMomentFactor = factor3,
         },
       };
 
@@ -79,7 +79,7 @@ namespace GsaGHTests.Parameters {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = factor1,
           MomentAmplificationFactorWeakAxis = factor2,
-          LateralTorsionalBucklingFactor = factor3,
+          EquivalentUniformMomentFactor = factor3,
         },
       };
 
@@ -105,7 +105,7 @@ namespace GsaGHTests.Parameters {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = 1.5,
           MomentAmplificationFactorWeakAxis = 2.5,
-          LateralTorsionalBucklingFactor = 0.75,
+          EquivalentUniformMomentFactor = 0.75,
         },
       };
 
@@ -137,7 +137,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
       Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(0.75, assembledMem1d.LateralTorsionalBucklingFactor);
+      Assert.Equal(0.75, assembledMem1d.EquivalentUniformMomentFactor);
     }
   }
 }

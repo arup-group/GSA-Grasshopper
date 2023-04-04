@@ -91,7 +91,7 @@ namespace GsaGH.Parameters {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
         IsIntersector = ApiMember.IsIntersector,
-        LateralTorsionalBucklingFactor = ApiMember.LateralTorsionalBucklingFactor,
+        EquivalentUniformMomentFactor = ApiMember.EquivalentUniformMomentFactor,
         MeshSize = ApiMember.MeshSize,
         MomentAmplificationFactorStrongAxis = ApiMember.MomentAmplificationFactorStrongAxis,
         MomentAmplificationFactorWeakAxis = ApiMember.MomentAmplificationFactorWeakAxis,
