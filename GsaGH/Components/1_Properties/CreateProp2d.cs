@@ -163,9 +163,39 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      UpdateDropDownItems(GetModeBy(SelectedItems[0]));
+      switch (SelectedItems[0]) {
+        case "Plane Stress":
+          if (DropDownItems.Count < 2)
+            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode1Clicked();
+          break;
+        case "Fabric":
+          if (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(1);
+          Mode2Clicked();
+          break;
+        case "Flat Plate":
+          if (DropDownItems.Count < 2)
+            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode3Clicked();
+          break;
+        case "Shell":
+          if (DropDownItems.Count < 2)
+            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode4Clicked();
+          break;
+        case "Curved Shell":
+          if (DropDownItems.Count < 2)
+            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode5Clicked();
+          break;
+        case "Load Panel":
+          if (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(1);
+          Mode6Clicked();
+          break;
+      }
 
-      UpdateParameters(GetModeBy(SelectedItems[0]));
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
       base.UpdateUIFromSelectedItems();
@@ -293,5 +323,95 @@ namespace GsaGH.Components {
 
     private void SetMaterialInputAt(int index) => SetInputProperties(index, "Mat", "Material", "GSA Material");
     #endregion
+
+    // shitty methods - extracted it to updateDropDown and UpdateParameters but then
+    // using updateParameter in UpdateUIFromSelectedItems brokes tests...so left for now
+    private void Mode1Clicked() {
+      if (_mode == FoldMode.PlaneStress)
+        return;
+
+      RecordUndoEvent("Plane Stress Parameters");
+      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+        while (Params.Input.Count > 0)
+          Params.UnregisterInputParameter(Params.Input[0], true);
+
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new GsaMaterialParameter());
+      }
+
+      _mode = FoldMode.PlaneStress;
+    }
+
+    private void Mode2Clicked() {
+      if (_mode == FoldMode.Fabric)
+        return;
+
+      RecordUndoEvent("Fabric Parameters");
+      _mode = FoldMode.Fabric;
+
+      while (Params.Input.Count > 0)
+        Params.UnregisterInputParameter(Params.Input[0], true);
+
+      Params.RegisterInputParam(new Param_GenericObject());
+    }
+
+    private void Mode3Clicked() {
+      if (_mode == FoldMode.FlatPlate)
+        return;
+
+      RecordUndoEvent("Flat Plate Parameters");
+      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+        while (Params.Input.Count > 0)
+          Params.UnregisterInputParameter(Params.Input[0], true);
+
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new GsaMaterialParameter());
+      }
+
+      _mode = FoldMode.FlatPlate;
+    }
+
+    private void Mode4Clicked() {
+      if (_mode == FoldMode.Shell)
+        return;
+
+      RecordUndoEvent("Shell Parameters");
+      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+        while (Params.Input.Count > 0)
+          Params.UnregisterInputParameter(Params.Input[0], true);
+
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new GsaMaterialParameter());
+      }
+
+      _mode = FoldMode.Shell;
+    }
+
+    private void Mode5Clicked() {
+      if (_mode == FoldMode.CurvedShell)
+        return;
+
+      RecordUndoEvent("Curved Shell Parameters");
+      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+        while (Params.Input.Count > 0)
+          Params.UnregisterInputParameter(Params.Input[0], true);
+
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new GsaMaterialParameter());
+      }
+
+      _mode = FoldMode.CurvedShell;
+    }
+
+    private void Mode6Clicked() {
+      if (_mode == FoldMode.LoadPanel)
+        return;
+
+      RecordUndoEvent("Load Panel Parameters");
+      _mode = FoldMode.LoadPanel;
+
+      while (Params.Input.Count > 0)
+        Params.UnregisterInputParameter(Params.Input[0], true);
+    }
   }
 }
