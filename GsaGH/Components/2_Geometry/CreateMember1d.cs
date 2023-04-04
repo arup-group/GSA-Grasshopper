@@ -142,23 +142,23 @@ namespace GsaGH.Components {
     public override void InitialiseDropdowns() { }
 
     public override void CreateAttributes() {
-      var restraints = new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1, _x2, _y2, _z2, _xx2, _yy2, _zz2 };
-      m_attributes = new OasysGH.UI.Foo.ReleasesComponentAttributes(this, SetReleases, "Start Release", "End Release", restraints);
+      var restraints = new List<List<bool>>() { new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1 }, new List<bool>() { _x2, _y2, _z2, _xx2, _yy2, _zz2 } };
+      m_attributes = new OasysGH.UI.Foo.ReleaseComponentComponentAttributes(this, SetReleases, new List<string>() { "Start Release", "End Release" }, restraints, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" }, new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
     }
 
-    public void SetReleases(List<bool> restraints) {
-      _x1 = restraints[0];
-      _y1 = restraints[0];
-      _z1 = restraints[0];
-      _xx1 = restraints[0];
-      _yy1 = restraints[0];
-      _zz1 = restraints[0];
-      _x2 = restraints[0];
-      _y2 = restraints[0];
-      _z2 = restraints[0];
-      _xx2 = restraints[0];
-      _yy2 = restraints[0];
-      _zz2 = restraints[0];
+    public void SetReleases(List<List<bool>> restraints) {
+      _x1 = restraints[0][0];
+      _y1 = restraints[0][1];
+      _z1 = restraints[0][2];
+      _xx1 = restraints[0][3];
+      _yy1 = restraints[0][4];
+      _zz1 = restraints[0][5];
+      _x2 = restraints[1][0];
+      _y2 = restraints[1][1];
+      _z2 = restraints[1][2];
+      _xx2 = restraints[1][3];
+      _yy2 = restraints[1][4];
+      _zz2 = restraints[1][5];
 
       base.UpdateUI();
     }
