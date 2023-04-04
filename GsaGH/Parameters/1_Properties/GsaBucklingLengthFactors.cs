@@ -27,6 +27,7 @@ namespace GsaGH.Parameters {
 
     internal GsaBucklingLengthFactors(GsaMember1d member) {
       EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
+
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
