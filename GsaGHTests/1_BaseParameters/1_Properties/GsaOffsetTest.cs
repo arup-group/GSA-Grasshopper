@@ -4,15 +4,12 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaOffsetTest
-  {
+  public class GsaOffsetTest {
     [Fact]
-    public void EmptyConstructorTest()
-    {
-      GsaOffset offset = new GsaOffset();
+    public void EmptyConstructorTest() {
+      var offset = new GsaOffset();
 
       Assert.Equal(Length.Zero, offset.X1);
       Assert.Equal(Length.Zero, offset.X2);
@@ -22,9 +19,8 @@ namespace GsaGHTests.Parameters
 
     [Theory]
     [InlineData(1, 2, 3, 4)]
-    public void ConstructorTest1(double x1, double x2, double y, double z)
-    {
-      GsaOffset offset = new GsaOffset(x1, x2, y, z);
+    public void ConstructorTest1(double x1, double x2, double y, double z) {
+      var offset = new GsaOffset(x1, x2, y, z);
 
       Assert.Equal(new Length(x1, LengthUnit.Meter), offset.X1);
       Assert.Equal(new Length(x2, LengthUnit.Meter), offset.X2);
@@ -34,9 +30,8 @@ namespace GsaGHTests.Parameters
 
     [Theory]
     [InlineData(1, 2, 3, 4, LengthUnit.Angstrom)]
-    public void ConstructorTest2(double x1, double x2, double y, double z, LengthUnit unit)
-    {
-      GsaOffset offset = new GsaOffset(x1, x2, y, z, unit);
+    public void ConstructorTest2(double x1, double x2, double y, double z, LengthUnit unit) {
+      var offset = new GsaOffset(x1, x2, y, z, unit);
 
       Assert.Equal(new Length(x1, unit), offset.X1);
       Assert.Equal(new Length(x2, unit), offset.X2);
@@ -46,18 +41,13 @@ namespace GsaGHTests.Parameters
 
     [Theory]
     [InlineData(1, 2, 3, 4, LengthUnit.Angstrom)]
-    public void DuplicateTest(double x1, double x2, double y, double z, LengthUnit unit)
-    {
-      // Arrange
-      GsaOffset original = new GsaOffset(x1, x2, y, z, unit);
+    public void DuplicateTest(double x1, double x2, double y, double z, LengthUnit unit) {
+      var original = new GsaOffset(x1, x2, y, z, unit);
 
-      // Act
       GsaOffset duplicate = original.Duplicate();
 
-      // Assert
       Duplicates.AreEqual(original, duplicate);
 
-      // make some changes to duplicate
       duplicate.X1 = new Length(4, LengthUnit.Millimeter);
       duplicate.X2 = new Length(3, LengthUnit.Millimeter);
       duplicate.Y = new Length(2, LengthUnit.Millimeter);

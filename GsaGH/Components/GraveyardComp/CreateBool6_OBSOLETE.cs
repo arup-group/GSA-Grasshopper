@@ -1,93 +1,135 @@
 ﻿using System;
+using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to create a new Bool6
-    /// </summary>
-    public class CreateBool6_OBSOLETE : GH_OasysComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  ///   Component to create a new Bool6
+  /// </summary>
+  // ReSharper disable once InconsistentNaming
+  public class CreateBool6_OBSOLETE : GH_OasysComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var ghBolX = new GH_Boolean();
+      if (da.GetData(0, ref ghBolX))
+        GH_Convert.ToBoolean(ghBolX, out _x, GH_Conversion.Both);
+      var ghBolY = new GH_Boolean();
+      if (da.GetData(1, ref ghBolY))
+        GH_Convert.ToBoolean(ghBolY, out _y, GH_Conversion.Both);
+      var ghBolZ = new GH_Boolean();
+      if (da.GetData(2, ref ghBolZ))
+        GH_Convert.ToBoolean(ghBolZ, out _z, GH_Conversion.Both);
+      var ghBolXx = new GH_Boolean();
+      if (da.GetData(3, ref ghBolXx))
+        GH_Convert.ToBoolean(ghBolXx, out _xx, GH_Conversion.Both);
+      var ghBolYy = new GH_Boolean();
+      if (da.GetData(4, ref ghBolYy))
+        GH_Convert.ToBoolean(ghBolYy, out _yy, GH_Conversion.Both);
+      var ghBolZz = new GH_Boolean();
+      if (da.GetData(5, ref ghBolZz))
+        GH_Convert.ToBoolean(ghBolZz, out _zz, GH_Conversion.Both);
+      var bool6 = new GsaBool6 {
+        X = _x,
+        Y = _y,
+        Z = _z,
+        Xx = _xx,
+        Yy = _yy,
+        Zz = _zz,
+      };
+      da.SetData(0, new GsaBool6Goo(bool6.Duplicate()));
+    }
+
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
+
     public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateBool6;
+    protected override Bitmap Icon => Resources.CreateBool6;
 
     public CreateBool6_OBSOLETE() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
       GsaBool6Goo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      => Hidden = true;
+
     #endregion
 
     #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      m_attributes = new Bool6ComponentAttributes(this, SetBool, "Set 6 DOF", x, y, z, xx, yy, zz);
-    }
 
-    public void SetBool(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)
-    {
-      x = resx;
-      y = resy;
-      z = resz;
-      xx = resxx;
-      yy = resyy;
-      zz = reszz;
+    public override void CreateAttributes()
+      => m_attributes = new Bool6ComponentAttributes(this,
+        SetBool,
+        "Set 6 DOF",
+        _x,
+        _y,
+        _z,
+        _xx,
+        _yy,
+        _zz);
+
+    public void SetBool(
+      bool resx,
+      bool resy,
+      bool resz,
+      bool resxx,
+      bool resyy,
+      bool reszz) {
+      _x = resx;
+      _y = resy;
+      _z = resz;
+      _xx = resxx;
+      _yy = resyy;
+      _zz = reszz;
     }
 
     #endregion
 
     #region Input and output
-    bool x;
-    bool y;
-    bool z;
-    bool xx;
-    bool yy;
-    bool zz;
+
+    private bool _x;
+    private bool _y;
+    private bool _z;
+    private bool _xx;
+    private bool _yy;
+    private bool _zz;
 
     #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      // we need to save all the items that we want to reappear when a GH file is saved and re-opened
-      writer.SetBoolean("x", (bool)x);
-      writer.SetBoolean("y", (bool)y);
-      writer.SetBoolean("z", (bool)z);
-      writer.SetBoolean("xx", (bool)xx);
-      writer.SetBoolean("yy", (bool)yy);
-      writer.SetBoolean("zz", (bool)zz);
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("x", _x);
+      writer.SetBoolean("y", _y);
+      writer.SetBoolean("z", _z);
+      writer.SetBoolean("xx", _xx);
+      writer.SetBoolean("yy", _yy);
+      writer.SetBoolean("zz", _zz);
       return base.Write(writer);
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      // when a GH file is opened we need to read in the data that was previously set by user
-      x = (bool)reader.GetBoolean("x");
-      y = (bool)reader.GetBoolean("y");
-      z = (bool)reader.GetBoolean("z");
-      xx = (bool)reader.GetBoolean("xx");
-      yy = (bool)reader.GetBoolean("yy");
-      zz = (bool)reader.GetBoolean("zz");
-      // we need to recreate the custom UI again as this is created before this read IO is called
-      // otherwise the component will not display the selected items on the canvas
+
+    public override bool Read(GH_IReader reader) {
+      _x = reader.GetBoolean("x");
+      _y = reader.GetBoolean("y");
+      _z = reader.GetBoolean("z");
+      _xx = reader.GetBoolean("xx");
+      _yy = reader.GetBoolean("yy");
+      _zz = reader.GetBoolean("zz");
       CreateAttributes();
       ExpireSolution(true);
       Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
+      OnDisplayExpired(true);
       return base.Read(reader);
     }
+
     #endregion
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
@@ -95,51 +137,26 @@ namespace GsaGH.Components
       pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
       pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
 
-      pManager[0].Optional = true;
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
-      pManager[4].Optional = true;
-      pManager[5].Optional = true;
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager[5]
+        .Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      pManager.AddGenericParameter("Bool6", "B6", "GSA Bool6 to set releases or restraints", GH_ParamAccess.item);
+      => pManager.AddGenericParameter("Bool6",
+        "B6",
+        "GSA Bool6 to set releases or restraints",
+        GH_ParamAccess.item);
 
-    }
     #endregion
-
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GH_Boolean ghBolX = new GH_Boolean();
-      if (DA.GetData(0, ref ghBolX))
-        GH_Convert.ToBoolean(ghBolX, out x, GH_Conversion.Both); //use Grasshopper to convert, these methods covers many cases and are consistent
-      GH_Boolean ghBolY = new GH_Boolean();
-      if (DA.GetData(1, ref ghBolY))
-        GH_Convert.ToBoolean(ghBolY, out y, GH_Conversion.Both);
-      GH_Boolean ghBolZ = new GH_Boolean();
-      if (DA.GetData(2, ref ghBolZ))
-        GH_Convert.ToBoolean(ghBolZ, out z, GH_Conversion.Both);
-      GH_Boolean ghBolXX = new GH_Boolean();
-      if (DA.GetData(3, ref ghBolXX))
-        GH_Convert.ToBoolean(ghBolXX, out xx, GH_Conversion.Both);
-      GH_Boolean ghBolYY = new GH_Boolean();
-      if (DA.GetData(4, ref ghBolYY))
-        GH_Convert.ToBoolean(ghBolYY, out yy, GH_Conversion.Both);
-      GH_Boolean ghBolZZ = new GH_Boolean();
-      if (DA.GetData(5, ref ghBolZZ))
-        GH_Convert.ToBoolean(ghBolZZ, out zz, GH_Conversion.Both);
-      GsaBool6 bool6 = new GsaBool6
-      {
-        X = x,
-        Y = y,
-        Z = z,
-        XX = xx,
-        YY = yy,
-        ZZ = zz
-      };
-      DA.SetData(0, new GsaBool6Goo(bool6.Duplicate())); // output as Goo-type for consistency. 
-    }
   }
 }

@@ -1,56 +1,52 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Drawing;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
+using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
+using Rhino.Display;
 using Rhino.Geometry;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaMember3d"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaMember3d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>, IGH_PreviewData
-  {
+  public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>,
+    IGH_PreviewData {
+    public GsaMember3dGoo(GsaMember3d item) : base(item) { }
+
+    internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null)
+      => Value = duplicate
+        ? item.Duplicate()
+        : item;
+
     public static string Name => "Member3D";
     public static string NickName => "M3D";
     public static string Description => "GSA 3D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public GsaMember3dGoo(GsaMember3d item) : base(item) { }
-    internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null)
-    {
-      if (duplicate)
-        this.Value = item.Duplicate();
-      else
-        this.Value = item;
-    }
-    public override IGH_GeometricGoo Duplicate() => new GsaMember3dGoo(this.Value);
-    public override GeometryBase GetGeometry() => this.Value.SolidMesh;
+    public override IGH_GeometricGoo Duplicate() => new GsaMember3dGoo(Value);
+    public override GeometryBase GetGeometry() => Value.SolidMesh;
 
     #region casting methods
-    public override bool CastTo<Q>(ref Q target)
-    {
+
+    public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaMember into some other type Q.            
-      if (base.CastTo<Q>(ref target))
+      if (base.CastTo(ref target))
         return true;
 
-      //Cast to Mesh
-      if (typeof(Q).IsAssignableFrom(typeof(Mesh)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.SolidMesh;
+      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
+        target = Value == null
+          ? default
+          : (TQ)(object)Value.SolidMesh;
         return true;
       }
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Mesh)))
-      {
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         if (Value == null)
           target = default;
-        else
-        {
-          target = (Q)(object)new GH_Mesh(Value.SolidMesh);
+        else {
+          target = (TQ)(object)new GH_Mesh(Value.SolidMesh);
           if (Value.SolidMesh == null)
             return false;
         }
@@ -58,140 +54,116 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
-      {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null)
           target = default;
-        else
-        {
-          GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
-            target = (Q)(object)ghint;
-          else
-            target = default;
+        else {
+          var ghint = new GH_Integer();
+          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
+            ? (TQ)(object)ghint
+            : default;
         }
+
         return true;
       }
 
       target = default;
       return false;
     }
-    public override bool CastFrom(object source)
-    {
+
+    public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaMember.
-      if (source == null) { return false; }
+      if (source == null)
+        return false;
 
       if (base.CastFrom(source))
         return true;
 
-      //Cast from Brep
-      Brep brep = new Brep();
-      if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
-      {
-        GsaMember3d member = new GsaMember3d(brep);
-        this.Value = member;
+      var brep = new Brep();
+      if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both)) {
+        var member = new GsaMember3d(brep);
+        Value = member;
         return true;
       }
 
-      //Cast from Mesh
-      Mesh mesh = new Mesh();
+      var mesh = new Mesh();
 
-      if (GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
-      {
-        GsaMember3d member = new GsaMember3d(mesh);
-        this.Value = member;
+      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
+        return false;
+      else {
+        var member = new GsaMember3d(mesh);
+        Value = member;
         return true;
       }
-
-      return false;
     }
+
     #endregion
 
     #region transformation methods
+
     public override IGH_GeometricGoo Transform(Transform xform)
-    {
-      return new GsaMember3dGoo(Value.Transform(xform));
-    }
+      => new GsaMember3dGoo(Value.Transform(xform));
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      return new GsaMember3dGoo(Value.Morph(xmorph));
-    }
+      => new GsaMember3dGoo(Value.Morph(xmorph));
+
     #endregion
 
     #region drawing methods
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
-    {
-      //Draw shape.
-      if (Value.SolidMesh != null)
-      {
-        if (!Value.IsDummy)
-        {
-          if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            args.Pipeline.DrawMeshShaded(Value.SolidMesh, Helpers.Graphics.Colours.Element2dFace); //UI.Colour.Member2dFace
-          else
-            args.Pipeline.DrawMeshShaded(Value.SolidMesh, Helpers.Graphics.Colours.Element2dFaceSelected);
-        }
-        else
-          args.Pipeline.DrawMeshShaded(Value.SolidMesh, Helpers.Graphics.Colours.Dummy2D);
-      }
-    }
-    public override void DrawViewportWires(GH_PreviewWireArgs args)
-    {
-      if (Value == null) { return; }
 
-      //Draw lines
-      if (Value.SolidMesh != null)
-      {
-        // Draw edges
-        if (Value.IsDummy)
-        {
-          for (int i = 0; i < Value.previewEdgeLines.Count; i++)
-          {
-            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            {
-              args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], Helpers.Graphics.Colours.Dummy1D);
-            }
-            else
-            {
-              args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], Helpers.Graphics.Colours.Member2dEdgeSelected);
-            }
-          }
-        }
-        else
-        {
-          for (int i = 0; i < Value.previewEdgeLines.Count; i++)
-          {
-            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            {
-              if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
-                args.Pipeline.DrawLine(Value.previewEdgeLines[i], (System.Drawing.Color)Value.Colour, 2);
-              else
-              {
-                System.Drawing.Color col = Helpers.Graphics.Colours.Member2dEdge;
-                args.Pipeline.DrawLine(Value.previewEdgeLines[i], col, 2);
-              }
-            }
-            else
-              args.Pipeline.DrawLine(Value.previewEdgeLines[i], Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
-          }
-
-          for (int i = 0; i < Value.previewHiddenLines.Count; i++)
-          {
-            args.Pipeline.DrawDottedPolyline(Value.previewHiddenLines[i], Helpers.Graphics.Colours.Dummy1D, false);
-          }
-        }
-        // draw points
-        for (int i = 0; i < Value.previewPts.Count; i++)
-        {
-          if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? Helpers.Graphics.Colours.Dummy1D : Helpers.Graphics.Colours.Member1dNode);
-          else
-            args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, Helpers.Graphics.Colours.Member1dNodeSelected);
-        }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value?.SolidMesh == null)
+        return;
+      if (!Value.IsDummy) {
+        args.Pipeline.DrawMeshShaded(Value.SolidMesh,
+          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
+            ? Colours.Element2dFace
+            : Colours.Element2dFaceSelected); //UI.Colour.Member2dFace
       }
+      else
+        args.Pipeline.DrawMeshShaded(Value.SolidMesh, Colours.Dummy2D);
     }
+
+    public override void DrawViewportWires(GH_PreviewWireArgs args) {
+      if (Value?.SolidMesh == null)
+        return;
+      if (Value.IsDummy)
+        foreach (Line line in Value._previewEdgeLines)
+          args.Pipeline.DrawDottedLine(line,
+            args.Color == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
+              ? Colours.Dummy1D
+              : Colours.Member2dEdgeSelected);
+      else {
+        foreach (Line line in Value._previewEdgeLines)
+          if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+          {
+            if (Value.Colour != Color.FromArgb(0, 0, 0))
+              args.Pipeline.DrawLine(line, (Color)Value.Colour, 2);
+            else {
+              Color col = Colours.Member2dEdge;
+              args.Pipeline.DrawLine(line, col, 2);
+            }
+          }
+          else
+            args.Pipeline.DrawLine(line, Colours.Element2dEdgeSelected, 2);
+
+        foreach (Polyline line in Value._previewHiddenLines)
+          args.Pipeline.DrawDottedPolyline(line, Colours.Dummy1D, false);
+      }
+
+      foreach (Point3d point3d in Value._previewPts)
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+          args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 2, (Value.IsDummy)
+              ? Colours.Dummy1D
+              : Colours.Member1dNode);
+        else
+          args.Pipeline.DrawPoint(point3d,
+            PointStyle.RoundControlPoint,
+            3,
+            Colours.Member1dNodeSelected);
+    }
+
     #endregion
   }
 }

@@ -5,13 +5,10 @@ using OasysGH.Components;
 using Xunit;
 using static GsaAPI.GridSurface;
 
-namespace GsaGHTests.Components.Loads
-{
+namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
-  public class GridSurfaceTests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
+  public class GridSurfaceTests {
+    public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridSurface();
       comp.CreateAttributes();
 
@@ -19,12 +16,12 @@ namespace GsaGHTests.Components.Loads
     }
 
     [Fact]
-    public void CreateComponentTest()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponentTest() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      GsaGridPlaneSurfaceGoo gridPlane = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(CreateGridPlaneTests.ComponentMother());
+      var gridPlane
+        = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(
+          CreateGridPlaneTests.ComponentMother());
 
       ComponentTestHelper.SetInput(comp, gridPlane, 0);
       ComponentTestHelper.SetInput(comp, 42, 1);
@@ -32,8 +29,7 @@ namespace GsaGHTests.Components.Loads
       ComponentTestHelper.SetInput(comp, 99, 4);
       ComponentTestHelper.SetInput(comp, 0.5, 5);
 
-      // Assert
-      GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
       GsaGridPlaneSurface gridSurface = null;
       output.CastTo(ref gridSurface);
 

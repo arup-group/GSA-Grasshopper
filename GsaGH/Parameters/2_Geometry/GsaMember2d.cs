@@ -1,258 +1,236 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
-  /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
+  ///   Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
   /// </summary>
-  public class GsaMember2d
-  {
+  public class GsaMember2d {
     #region fields
-    private Brep _brep; // brep for visualisation /member2d
 
+    private Brep _brep; // brep for visualisation /member2d
     private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
     private List<Point3d> _edgeCrvTopo; // list of topology points for visualisation /member1d/member2d
     private List<string> _edgeCrvTopoType; // list of polyline curve type (arch or line) for member1d/2d
-
     private List<PolyCurve> _voidCrvs; //converted edgecurve /member2d
     private List<List<Point3d>> _voidCrvsTopo; // list of lists of void points /member2d
     private List<List<string>> _voidCrvsTopoType; // list of polyline curve type (arch or line) for void /member2d
-
     private List<PolyCurve> _inclCrvs; // converted inclusion lines /member2d
     private List<List<Point3d>> _inclCrvsTopo; // list of lists of line inclusion topology points /member2d
     private List<List<string>> _inclCrvsTopoType; // list of polyline curve type (arch or line) for inclusion /member2d
-
     private List<Point3d> _inclPts; //slist of points for inclusion /member2d
 
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
+
     #endregion
 
     #region properties
-    public int Id
-    {
-      get
-      {
-        return _id;
-      }
-      set
-      {
-        this.CloneApiObject();
+
+    public int Id {
+      get => _id;
+      set {
+        CloneApiObject();
         _id = value;
       }
     }
-    internal Member ApiMember { get; set; } = new Member() { Type = MemberType.GENERIC_2D };
+
+    internal Member ApiMember { get; set; } = new Member() {
+      Type = MemberType.GENERIC_2D,
+    };
+
     // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
     public double MeshSize { get; set; } = 0;
     public GsaProp2d Property { get; set; } = new GsaProp2d();
-    public PolyCurve PolyCurve => this._edgeCrv;
-    public Brep Brep => this._brep;
-    public List<Point3d> Topology => this._edgeCrvTopo;
-    public List<string> TopologyType => this._edgeCrvTopoType;
-    public List<List<Point3d>> VoidTopology => this._voidCrvsTopo;
-    public List<List<string>> VoidTopologyType => this._voidCrvsTopoType;
-    public List<PolyCurve> InclusionLines
-    {
-      get
-      {
-        if (this._inclCrvs == null)
-          return new List<PolyCurve>();
-        return this._inclCrvs;
-      }
-    }
-    public List<List<Point3d>> IncLinesTopology => this._inclCrvsTopo;
-    public List<List<string>> IncLinesTopologyType => this._inclCrvsTopoType;
-    public List<Point3d> InclusionPoints => this._inclPts;
-    public Guid Guid
-    {
-      get
-      {
-        return this._guid;
-      }
-    }
+    public PolyCurve PolyCurve => _edgeCrv;
+    public Brep Brep => _brep;
+    public List<Point3d> Topology => _edgeCrvTopo;
+    public List<string> TopologyType => _edgeCrvTopoType;
+    public List<List<Point3d>> VoidTopology => _voidCrvsTopo;
+    public List<List<string>> VoidTopologyType => _voidCrvsTopoType;
+    public List<PolyCurve> InclusionLines => _inclCrvs ?? new List<PolyCurve>();
+    public List<List<Point3d>> IncLinesTopology => _inclCrvsTopo;
+    public List<List<string>> IncLinesTopologyType => _inclCrvsTopoType;
+    public List<Point3d> InclusionPoints => _inclPts;
+    public Guid Guid => _guid;
+
     #region GsaAPI.Member members
-    public Color Colour
-    {
-      get
-      {
-        return (Color)this.ApiMember.Colour;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Colour = value;
-      }
-    }
-    public int Group
-    {
-      get
-      {
-        return this.ApiMember.Group;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Group = value;
-      }
-    }
-    public bool IsDummy
-    {
-      get
-      {
-        return ApiMember.IsDummy;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.IsDummy = value;
-      }
-    }
-    public string Name
-    {
-      get
-      {
-        return this.ApiMember.Name;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Name = value;
-      }
-    }
-    public bool MeshWithOthers
-    {
-      get
-      {
-        return this.ApiMember.IsIntersector;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.IsIntersector = value;
-      }
-    }
-    public GsaOffset Offset
-    {
-      get
-      {
-        return new GsaOffset(this.ApiMember.Offset.X1, this.ApiMember.Offset.X2, this.ApiMember.Offset.Y, this.ApiMember.Offset.Z);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Offset.X1 = value.X1.Meters;
-        this.ApiMember.Offset.X2 = value.X2.Meters;
-        this.ApiMember.Offset.Y = value.Y.Meters;
-        this.ApiMember.Offset.Z = value.Z.Meters;
-      }
-    }
-    public Angle OrientationAngle
-    {
-      get
-      {
-        return new Angle(this.ApiMember.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.OrientationAngle = value.Degrees;
-      }
-    }
-    public int OrientationNode
-    {
-      get
-      {
-        return this.ApiMember.OrientationNode;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.OrientationNode = value;
+
+    public Color Colour {
+      get => (Color)ApiMember.Colour;
+      set {
+        CloneApiObject();
+        ApiMember.Colour = value;
       }
     }
 
-    public MemberType Type
-    {
-      get
-      {
-        return this.ApiMember.Type;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Type = value;
-      }
-    }
-    public AnalysisOrder Type2D
-    {
-      get
-      {
-        return this.ApiMember.Type2D;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Type2D = value;
+    public int Group {
+      get => ApiMember.Group;
+      set {
+        CloneApiObject();
+        ApiMember.Group = value;
       }
     }
 
-    internal void CloneApiObject()
-    {
-      this.ApiMember = this.GetAPI_MemberClone();
-      this._guid = Guid.NewGuid();
+    public bool IsDummy {
+      get => ApiMember.IsDummy;
+      set {
+        CloneApiObject();
+        ApiMember.IsDummy = value;
+      }
     }
+
+    public string Name {
+      get => ApiMember.Name;
+      set {
+        CloneApiObject();
+        ApiMember.Name = value;
+      }
+    }
+
+    public bool MeshWithOthers {
+      get => ApiMember.IsIntersector;
+      set {
+        CloneApiObject();
+        ApiMember.IsIntersector = value;
+      }
+    }
+
+    public GsaOffset Offset {
+      get
+        => new GsaOffset(ApiMember.Offset.X1,
+          ApiMember.Offset.X2,
+          ApiMember.Offset.Y,
+          ApiMember.Offset.Z);
+      set {
+        CloneApiObject();
+        ApiMember.Offset.X1 = value.X1.Meters;
+        ApiMember.Offset.X2 = value.X2.Meters;
+        ApiMember.Offset.Y = value.Y.Meters;
+        ApiMember.Offset.Z = value.Z.Meters;
+      }
+    }
+
+    public bool AutomaticInternalOffset {
+      get => ApiMember.AutomaticOffset.Internal;
+      set {
+        CloneApiObject();
+        ApiMember.AutomaticOffset.Internal = value;
+      }
+    }
+
+    public Angle OrientationAngle {
+      get => new Angle(ApiMember.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
+      set {
+        CloneApiObject();
+        ApiMember.OrientationAngle = value.Degrees;
+      }
+    }
+
+    public int OrientationNode {
+      get => ApiMember.OrientationNode;
+      set {
+        CloneApiObject();
+        ApiMember.OrientationNode = value;
+      }
+    }
+
+    public MemberType Type {
+      get => ApiMember.Type;
+      set {
+        CloneApiObject();
+        ApiMember.Type = value;
+      }
+    }
+
+    public AnalysisOrder Type2D {
+      get => ApiMember.Type2D;
+      set {
+        CloneApiObject();
+        ApiMember.Type2D = value;
+      }
+    }
+
+    internal void CloneApiObject() {
+      ApiMember = GetAPI_MemberClone();
+      _guid = Guid.NewGuid();
+    }
+
     #endregion
+
     #endregion
 
     #region constructors
+
     public GsaMember2d() { }
 
-    public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 0)
-    {
-      this.ApiMember = new Member
-      {
+    public GsaMember2d(
+      Brep brep,
+      List<Curve> includeCurves = null,
+      List<Point3d> includePoints = null,
+      int prop = 0) {
+      ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
-        Property = prop
+        Property = prop,
       };
 
-      Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>> convertBrepInclusion = Helpers.GH.RhinoConversions.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
+      (Tuple<PolyCurve,
+            List<Point3d>,
+            List<string>> edgeTuple,
+            Tuple<List<PolyCurve>,
+            List<List<Point3d>>,
+            List<List<string>>> voidTuple, Tuple<List<PolyCurve>,
+            List<List<Point3d>>,
+            List<List<string>>,
+            List<Point3d>> inclTuple)
+        = RhinoConversions.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
 
-      Tuple<PolyCurve, List<Point3d>, List<string>> edgeTuple = convertBrepInclusion.Item1;
-      Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>> voidTuple = convertBrepInclusion.Item2;
-      Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>> inclTuple = convertBrepInclusion.Item3;
+      _edgeCrv = edgeTuple.Item1;
+      _edgeCrvTopo = edgeTuple.Item2;
+      _edgeCrvTopoType = edgeTuple.Item3;
+      _voidCrvs = voidTuple.Item1;
+      _voidCrvsTopo = voidTuple.Item2;
+      _voidCrvsTopoType = voidTuple.Item3;
+      _inclCrvs = inclTuple.Item1;
+      _inclCrvsTopo = inclTuple.Item2;
+      _inclCrvsTopoType = inclTuple.Item3;
+      _inclPts = inclTuple.Item4;
 
-      this._edgeCrv = edgeTuple.Item1;
-      this._edgeCrvTopo = edgeTuple.Item2;
-      this._edgeCrvTopoType = edgeTuple.Item3;
-      this._voidCrvs = voidTuple.Item1;
-      this._voidCrvsTopo = voidTuple.Item2;
-      this._voidCrvsTopoType = voidTuple.Item3;
-      this._inclCrvs = inclTuple.Item1;
-      this._inclCrvsTopo = inclTuple.Item2;
-      this._inclCrvsTopoType = inclTuple.Item3;
-      this._inclPts = inclTuple.Item4;
-
-      this._brep = Helpers.GH.RhinoConversions.BuildBrep(_edgeCrv, _voidCrvs);
-      if (this._brep == null)
-        throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
+      _brep = RhinoConversions.BuildBrep(_edgeCrv, _voidCrvs);
+      if (_brep == null)
+        throw new Exception(
+          " Error with Mem2D: Unable to build Brep, "
+          + "please verify input geometry is valid and tolerance "
+          + "is set accordingly with your geometry under GSA Plugin Unit "
+          + "Settings or if unset under Rhino unit settings");
     }
 
-    internal GsaMember2d(Member member, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit)
-    {
-      this.ApiMember = member;
-      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      this._id = id;
+    internal GsaMember2d(
+      Member member,
+      int id,
+      List<Point3d> topology,
+      List<string> topologyType,
+      List<List<Point3d>> voidTopology,
+      List<List<string>> voidTopologyType,
+      List<List<Point3d>> inlcusionLinesTopology,
+      List<List<string>> inclusionTopologyType,
+      List<Point3d> includePoints,
+      IReadOnlyDictionary<int, Prop2D> properties,
+      IReadOnlyDictionary<int, AnalysisMaterial> materials,
+      IReadOnlyDictionary<int, Axis> axDict,
+      LengthUnit modelUnit) {
+      ApiMember = member;
+      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
+      _id = id;
 
       if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
       {
@@ -260,101 +238,98 @@ namespace GsaGH.Parameters
         topologyType.Add("");
       }
 
-      this._edgeCrv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
-      this._edgeCrvTopo = topology;
-      this._edgeCrvTopoType = topologyType;
+      _edgeCrv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
+      _edgeCrvTopo = topology;
+      _edgeCrvTopoType = topologyType;
 
-      if (voidTopology != null)
-      {
-        if (this._voidCrvs == null)
-        {
-          this._voidCrvs = new List<PolyCurve>();
-        }
-        for (int i = 0; i < voidTopology.Count; i++)
-        {
-          // void curves must be closed, check that topogylist is ending with start point
-          if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1])
-          {
+      if (voidTopology != null) {
+        if (_voidCrvs == null)
+          _voidCrvs = new List<PolyCurve>();
+        for (int i = 0; i < voidTopology.Count; i++) {
+          if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
             voidTopology[i].Add(voidTopology[i][0]);
             voidTopologyType[i].Add("");
           }
+
           if (voidTopologyType != null)
-            this._voidCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i], voidTopologyType[i]));
+            _voidCrvs.Add(
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i],
+                voidTopologyType[i]));
           else
-            this._voidCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
+            _voidCrvs.Add(RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
         }
       }
-      this._voidCrvsTopo = voidTopology;
-      this._voidCrvsTopoType = voidTopologyType;
 
-      if (inlcusionLinesTopology != null)
-      {
-        if (this._inclCrvs == null)
-        {
-          this._inclCrvs = new List<PolyCurve>();
-        }
+      _voidCrvsTopo = voidTopology;
+      _voidCrvsTopoType = voidTopologyType;
+
+      if (inlcusionLinesTopology != null) {
+        if (_inclCrvs == null)
+          _inclCrvs = new List<PolyCurve>();
         for (int i = 0; i < inlcusionLinesTopology.Count; i++)
-        {
           if (inclusionTopologyType != null)
-            this._inclCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i], inclusionTopologyType[i]));
+            _inclCrvs.Add(
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i],
+                inclusionTopologyType[i]));
           else
-            this._inclCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
-        }
+            _inclCrvs.Add(
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
       }
-      this._inclCrvsTopo = inlcusionLinesTopology;
-      this._inclCrvsTopoType = inclusionTopologyType;
-      this._inclPts = includePoints;
 
-      this._brep = Helpers.GH.RhinoConversions.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
+      _inclCrvsTopo = inlcusionLinesTopology;
+      _inclCrvsTopoType = inclusionTopologyType;
+      _inclPts = includePoints;
 
-      this.Property = new GsaProp2d(properties, this.ApiMember.Property, materials, axDict, modelUnit);
+      _brep = RhinoConversions.BuildBrep(_edgeCrv,
+        _voidCrvs,
+        new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
+
+      Property = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
     }
+
     #endregion
 
     #region methods
-    public GsaMember2d Duplicate(bool cloneApiMember = false)
-    {
-      GsaMember2d dup = new GsaMember2d();
-      dup.Id = this.Id;
-      dup.MeshSize = this.MeshSize;
-      dup._guid = new Guid(_guid.ToString());
-      dup.ApiMember = this.ApiMember;
+
+    public GsaMember2d Duplicate(bool cloneApiMember = false) {
+      var dup = new GsaMember2d {
+        Id = Id,
+        MeshSize = MeshSize,
+        _guid = new Guid(_guid.ToString()),
+        ApiMember = ApiMember,
+      };
       if (cloneApiMember)
         dup.CloneApiObject();
-      dup.Property = this.Property.Duplicate();
+      dup.Property = Property.Duplicate();
 
-      if (this._brep == null)
+      if (_brep == null)
         return dup;
 
-      dup._brep = (Brep)this._brep.DuplicateShallow();
+      dup._brep = (Brep)_brep.DuplicateShallow();
 
-      dup._edgeCrv = (PolyCurve)this._edgeCrv.DuplicateShallow();
-      dup._edgeCrvTopo = this._edgeCrvTopo;
-      dup._edgeCrvTopoType = this._edgeCrvTopoType;
+      dup._edgeCrv = (PolyCurve)_edgeCrv.DuplicateShallow();
+      dup._edgeCrvTopo = _edgeCrvTopo;
+      dup._edgeCrvTopoType = _edgeCrvTopoType;
 
-      List<PolyCurve> dupVoidCrvs = new List<PolyCurve>();
-      for (int i = 0; i < this._voidCrvs.Count; i++)
-        dupVoidCrvs.Add((PolyCurve)this._voidCrvs[i].DuplicateShallow());
+      var dupVoidCrvs = _voidCrvs.Select(t => (PolyCurve)t.DuplicateShallow())
+        .ToList();
       dup._voidCrvs = dupVoidCrvs;
-      dup._voidCrvsTopo = this._voidCrvsTopo;
-      dup._voidCrvsTopoType = this._voidCrvsTopoType;
+      dup._voidCrvsTopo = _voidCrvsTopo;
+      dup._voidCrvsTopoType = _voidCrvsTopoType;
 
-      List<PolyCurve> dupInclCrvs = new List<PolyCurve>();
-      for (int i = 0; i < this._inclCrvs.Count; i++)
-        dupInclCrvs.Add((PolyCurve)this._inclCrvs[i].DuplicateShallow());
+      var dupInclCrvs = _inclCrvs.Select(t => (PolyCurve)t.DuplicateShallow())
+        .ToList();
       dup._inclCrvs = dupInclCrvs;
-      dup._inclCrvsTopo = this._inclCrvsTopo;
-      dup._inclCrvsTopoType = this._inclCrvsTopoType;
+      dup._inclCrvsTopo = _inclCrvsTopo;
+      dup._inclCrvsTopoType = _inclCrvsTopoType;
 
-      dup._inclPts = this._inclPts;
+      dup._inclPts = _inclPts;
 
       return dup;
     }
 
-    internal Member GetAPI_MemberClone()
-    {
-      Member mem = new Member
-      {
+    internal Member GetAPI_MemberClone() {
+      var mem = new Member {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
         MeshSize = ApiMember.MeshSize,
@@ -364,130 +339,123 @@ namespace GsaGH.Parameters
         OrientationNode = ApiMember.OrientationNode,
         Property = ApiMember.Property,
         Type = ApiMember.Type,
-        Type2D = ApiMember.Type2D
+        Type2D = ApiMember.Type2D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
       };
-      if (this.ApiMember.Topology != String.Empty)
-        mem.Topology = this.ApiMember.Topology;
+      if (ApiMember.Topology != string.Empty)
+        mem.Topology = ApiMember.Topology;
 
       if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = this.ApiMember.Colour;
+        mem.Colour = ApiMember.Colour;
 
       return mem;
     }
 
-    public GsaMember2d UpdateGeometry(Brep brep = null, List<Curve> inclCrvs = null, List<Point3d> inclPts = null)
-    {
-      if (brep == null && this._brep != null)
-        brep = this._brep.DuplicateBrep();
-      if (inclCrvs == null && this._inclCrvs != null)
-        inclCrvs = this._inclCrvs.Select(x => (Curve)x).ToList();
-      if (inclPts == null && this._inclPts != null)
-        inclPts = this._inclPts.ToList();
+    public GsaMember2d UpdateGeometry(
+      Brep brep = null,
+      List<Curve> inclCrvs = null,
+      List<Point3d> inclPts = null) {
+      if (brep == null && _brep != null)
+        brep = _brep.DuplicateBrep();
+      if (inclCrvs == null && _inclCrvs != null)
+        inclCrvs = _inclCrvs.Select(x => (Curve)x)
+          .ToList();
+      if (inclPts == null && _inclPts != null)
+        inclPts = _inclPts.ToList();
 
-      GsaMember2d dup = new GsaMember2d(brep, inclCrvs, inclPts);
-      dup.Id = this.Id;
-      dup.ApiMember = this.ApiMember;
-      dup.Property = this.Property.Duplicate();
+      var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
+        Id = Id,
+        ApiMember = ApiMember,
+        Property = Property.Duplicate(),
+      };
+
+      return dup;
+    }
+
+    public GsaMember2d Transform(Transform xform) {
+      GsaMember2d dup = Duplicate(true);
+      dup.Id = 0;
+
+      dup._brep?.Transform(xform);
+      dup._edgeCrv?.Transform(xform);
+      dup._edgeCrvTopo = xform.TransformList(dup._edgeCrvTopo)
+        .ToList();
+      for (int i = 0; i < _voidCrvs.Count; i++) {
+        dup._voidCrvs[i]
+          ?.Transform(xform);
+        dup._voidCrvsTopo[i] = xform.TransformList(dup._voidCrvsTopo[i])
+          .ToList();
+      }
+
+      for (int i = 0; i < _inclCrvs.Count; i++) {
+        dup._inclCrvs[i]
+          ?.Transform(xform);
+        dup._inclCrvsTopo[i] = xform.TransformList(dup._inclCrvsTopo[i])
+          .ToList();
+      }
+
+      dup._inclPts = xform.TransformList(dup._inclPts)
+        .ToList();
 
       return dup;
     }
 
-    public GsaMember2d Transform(Transform xform)
-    {
-      GsaMember2d dup = this.Duplicate(true);
+    public GsaMember2d Morph(SpaceMorph xmorph) {
+      GsaMember2d dup = Duplicate(true);
       dup.Id = 0;
 
-      // Brep
-      if (dup._brep != null)
-        dup._brep.Transform(xform);
-
-      // Edge curve
-      if (dup._edgeCrv != null)
-        dup._edgeCrv.Transform(xform);
-      dup._edgeCrvTopo = xform.TransformList(dup._edgeCrvTopo).ToList();
-
-      // Void curves
-      for (int i = 0; i < _voidCrvs.Count; i++)
-      {
-        if (dup._voidCrvs[i] != null)
-          dup._voidCrvs[i].Transform(xform);
-        dup._voidCrvsTopo[i] = xform.TransformList(dup._voidCrvsTopo[i]).ToList();
-      }
-
-      // Incl. curves
-      for (int i = 0; i < _inclCrvs.Count; i++)
-      {
-        if (dup._inclCrvs[i] != null)
-          dup._inclCrvs[i].Transform(xform);
-        dup._inclCrvsTopo[i] = xform.TransformList(dup._inclCrvsTopo[i]).ToList();
-      }
-
-      // Incl. points
-      dup._inclPts = xform.TransformList(dup._inclPts).ToList();
-
-      return dup;
-    }
-    public GsaMember2d Morph(SpaceMorph xmorph)
-    {
-      GsaMember2d dup = this.Duplicate(true);
-      dup.Id = 0;
-
-      // Brep
       if (dup._brep != null)
         xmorph.Morph(dup._brep);
 
-      // Edge curve
       if (dup._edgeCrv != null)
         xmorph.Morph(_edgeCrv);
       for (int i = 0; i < dup._edgeCrvTopo.Count; i++)
         dup._edgeCrvTopo[i] = xmorph.MorphPoint(dup._edgeCrvTopo[i]);
 
-      // Void curves
-      for (int i = 0; i < _voidCrvs.Count; i++)
-      {
+      for (int i = 0; i < _voidCrvs.Count; i++) {
         if (dup._voidCrvs[i] != null)
           xmorph.Morph(_voidCrvs[i]);
         for (int j = 0; j < dup._voidCrvsTopo[i].Count; j++)
           dup._voidCrvsTopo[i][j] = xmorph.MorphPoint(dup._voidCrvsTopo[i][j]);
       }
 
-      // Incl. curves
-      for (int i = 0; i < _inclCrvs.Count; i++)
-      {
+      for (int i = 0; i < _inclCrvs.Count; i++) {
         if (dup._inclCrvs[i] != null)
           xmorph.Morph(_inclCrvs[i]);
         for (int j = 0; j < dup._inclCrvsTopo[i].Count; j++)
           dup._inclCrvsTopo[i][j] = xmorph.MorphPoint(dup._inclCrvsTopo[i][j]);
       }
 
-      // Incl. points
       for (int i = 0; i < dup._inclPts.Count; i++)
         dup._inclPts[i] = xmorph.MorphPoint(dup._inclPts[i]);
 
       return dup;
     }
 
-    public override string ToString()
-    {
+    public override string ToString() {
       string incl = "";
-      if (this._inclCrvs != null)
-      {
-        if (this._inclCrvs.Count > 0)
-          incl = " Incl.Crv:" + this._inclCrvs.Count;
-      }
+      if (_inclCrvs != null)
+        if (_inclCrvs.Count > 0)
+          incl = " Incl.Crv:" + _inclCrvs.Count;
 
-      if (this._inclPts != null)
-      {
-        if (this._inclPts != null && this._inclPts.Count > 0)
+      if (_inclPts != null) {
+        if (_inclPts != null && _inclPts.Count > 0)
           incl += " &";
-        if (this._inclPts.Count > 0)
-          incl += " Incl.Pt:" + this._inclPts.Count;
+        if (_inclPts.Count > 0)
+          incl += " Incl.Pt:" + _inclPts.Count;
       }
 
-      string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
-      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
+      string idd = Id == 0
+        ? ""
+        : "ID:" + Id + " ";
+      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == Type)
+          .Key
+        + " ";
+      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim())
+        .Trim()
+        .Replace("  ", " ");
     }
+
     #endregion
   }
 }

@@ -7,13 +7,10 @@ using OasysUnits.Units;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
-namespace GsaGHTests.Components.Properties
-{
+namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class CreateCustomMaterialTests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
+  public class CreateCustomMaterialTests {
+    public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateCustomMaterial();
       comp.CreateAttributes();
 
@@ -32,20 +29,23 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponent()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponent() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
-      GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(1, output.Value.AnalysisProperty);
       Assert.Equal(0, output.Value.GradeProperty);
-      Assert.Equal(MatType.TIMBER, output.Value.MaterialType);
-      Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal), output.Value.AnalysisMaterial.ElasticModulus);
+      Assert.Equal(MatType.Timber, output.Value.MaterialType);
+      Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal),
+        output.Value.AnalysisMaterial.ElasticModulus);
       Assert.Equal(2, output.Value.AnalysisMaterial.PoissonsRatio);
-      Assert.Equal(new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter), output.Value.AnalysisMaterial.Density);
-      Assert.Equal( new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius), output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
+      Assert.Equal(
+        new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter),
+        output.Value.AnalysisMaterial.Density);
+      Assert.Equal(
+        new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(
+          CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+        output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
     }
   }
 }

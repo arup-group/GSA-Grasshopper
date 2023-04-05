@@ -4,13 +4,10 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Components.Loads
-{
+namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
-  public class CreateGridPlaneTests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
+  public class CreateGridPlaneTests {
+    public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridPlane();
       comp.CreateAttributes();
 
@@ -22,13 +19,10 @@ namespace GsaGHTests.Components.Loads
     }
 
     [Fact]
-    public void CreateComponentTest()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponentTest() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
-      GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
       GsaGridPlaneSurface gridPlane = null;
       output.CastTo(ref gridPlane);
 

@@ -1,29 +1,20 @@
-﻿using GsaGH.Components;
+﻿using Grasshopper.Kernel.Types;
+using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGHTests.Helpers;
-using Grasshopper.Kernel.Types;
-using Xunit;
-using OasysGH.Components;
-using GsaGHTests.Components.Properties;
-using OasysUnits;
 using OasysGH.Parameters;
-using Rhino.Geometry;
+using OasysUnits;
 
-namespace GsaGHTests.Helpers.Export
-{
-  public partial class AssembleModelTests
-  {
-    public enum ModelUnit
-    {
-      mm, 
-      cm,
-      m,
-      inch,
-      ft
+namespace GsaGHTests.Helpers.Export {
+  public partial class AssembleModelTests {
+    public enum ModelUnit {
+      Mm,
+      Cm,
+      M,
+      Inch,
+      Ft,
     }
 
-    public static GsaMaterialGoo CustomMaterialSteel()
-    {
+    public static GsaMaterialGoo CustomMaterialSteel() {
       var comp = new CreateCustomMaterial();
       comp.CreateAttributes();
       comp.SetSelected(0, 1); // set material type to "Steel"
@@ -37,8 +28,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaMaterialGoo CustomMaterialConcrete()
-    {
+    public static GsaMaterialGoo CustomMaterialConcrete() {
       var comp = new CreateCustomMaterial();
       comp.CreateAttributes();
       comp.SetSelected(0, 2); // set material type to "Concrete"
@@ -52,37 +42,39 @@ namespace GsaGHTests.Helpers.Export
       return (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaSectionGoo Section(string profile, bool useConcrete)
-    {
+    public static GsaSectionGoo Section(string profile, bool useConcrete) {
       var comp = new CreateSection();
       comp.CreateAttributes();
-      GsaMaterialGoo material = useConcrete? CustomMaterialConcrete() : CustomMaterialSteel();
+      GsaMaterialGoo material = useConcrete
+        ? CustomMaterialConcrete()
+        : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, profile, 0);
       ComponentTestHelper.SetInput(comp, material, 1);
       return (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaProp2dGoo Prop2d(Length thickness, bool useConcrete)
-    {
+    public static GsaProp2dGoo Prop2d(Length thickness, bool useConcrete) {
       var comp = new CreateProp2d();
       comp.CreateAttributes();
-      GsaMaterialGoo material = useConcrete ? CustomMaterialConcrete() : CustomMaterialSteel();
+      GsaMaterialGoo material = useConcrete
+        ? CustomMaterialConcrete()
+        : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(thickness), 0);
       ComponentTestHelper.SetInput(comp, material, 1);
       return (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaProp3dGoo Prop3d(bool useConcrete)
-    {
+    public static GsaProp3dGoo Prop3d(bool useConcrete) {
       var comp = new CreateProp3d();
       comp.CreateAttributes();
-      GsaMaterialGoo material = useConcrete ? CustomMaterialConcrete() : CustomMaterialSteel();
+      GsaMaterialGoo material = useConcrete
+        ? CustomMaterialConcrete()
+        : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, material, 0);
       return (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaElement1dGoo Element1d(GH_Line line, GsaSectionGoo section)
-    {
+    public static GsaElement1dGoo Element1d(GH_Line line, GsaSectionGoo section) {
       var comp = new CreateElement1d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, line, 0);
@@ -90,8 +82,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaMember1dGoo Member1d(GH_Curve crv, GsaSectionGoo section)
-    {
+    public static GsaMember1dGoo Member1d(GH_Curve crv, GsaSectionGoo section) {
       var comp = new CreateMember1d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, crv, 0);
@@ -99,8 +90,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaElement2dGoo Element2d(GH_Mesh mesh, GsaProp2dGoo prop)
-    {
+    public static GsaElement2dGoo Element2d(GH_Mesh mesh, GsaProp2dGoo prop) {
       var comp = new CreateElement2d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, mesh, 0);
@@ -108,8 +98,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaMember2dGoo Member2d(GH_Brep brep, GsaProp2dGoo prop)
-    {
+    public static GsaMember2dGoo Member2d(GH_Brep brep, GsaProp2dGoo prop) {
       var comp = new CreateMember2d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, brep, 0);
@@ -117,8 +106,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaMember3dGoo Member3d(GH_Box box, GsaProp3dGoo prop)
-    {
+    public static GsaMember3dGoo Member3d(GH_Box box, GsaProp3dGoo prop) {
       var comp = new CreateMember3d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, box, 0);

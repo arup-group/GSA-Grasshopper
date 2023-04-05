@@ -6,20 +6,17 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.Export
-{
-  internal class Nodes
-  {
+namespace GsaGH.Helpers.Export {
+  internal class Nodes {
     internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
-        ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit)
-    {
-      if (nodes != null && nodes.Count > 0)
-      {
-        nodes = nodes.OrderByDescending(n => n.Id).ToList();
-        for (int i = 0; i < nodes.Count; i++)
-          if (nodes[i] != null)
-            ConvertNode(nodes[i], ref existingNodes, ref existingAxes, modelUnit);
+        ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
+      if (nodes == null || nodes.Count <= 0) {
+        return;
       }
+
+      nodes = nodes.OrderByDescending(n => n.Id).ToList();
+      foreach (GsaNode node in nodes.Where(node => node != null))
+        ConvertNode(node, ref existingNodes, ref existingAxes, modelUnit);
     }
 
     /// <summary>
@@ -30,16 +27,12 @@ namespace GsaGH.Helpers.Export
     /// <param name="existingAxes">Dictionary of existing GsaAPI axes to add local axis to [in meters]</param>
     /// <param name="nodeidcounter">node id counter for </param>
     /// <param name="unit">UnitsNet LengthUnit of GsaNode node input</param>
-    internal static void ConvertNode(GsaNode node, ref GsaIntDictionary<Node> existingNodes, ref Dictionary<int, Axis> existingAxes, LengthUnit unit)
-    {
+    internal static void ConvertNode(GsaNode node, ref GsaIntDictionary<Node> existingNodes, ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
-      // Add axis to model
-      if (node.LocalAxis != null && node.LocalAxis.IsValid)
-      {
-        if (node.LocalAxis != Plane.WorldXY)
-        {
-          Axis ax = new Axis();
+      if (node.LocalAxis != null && node.LocalAxis.IsValid) {
+        if (node.LocalAxis != Plane.WorldXY) {
+          var ax = new Axis();
           Plane pln = node.LocalAxis;
           ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX : new Length(pln.OriginX, unit).Meters;
           ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY : new Length(pln.OriginY, unit).Meters;
@@ -55,23 +48,20 @@ namespace GsaGH.Helpers.Export
           apiNode.AxisProperty = Axes.AddAxis(ref existingAxes, ax);
         }
       }
+
       if (node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         existingNodes.SetValue(node.Id, apiNode);
       else
         AddNode(ref existingNodes, apiNode);
     }
 
-    internal static Node NodeFromPoint(Point3d point, LengthUnit unit)
-    {
-      if (unit == LengthUnit.Meter)
-      {
-        Vector3 pos = new Vector3() { X = point.X, Y = point.Y, Z = point.Z };
+    internal static Node NodeFromPoint(Point3d point, LengthUnit unit) {
+      if (unit == LengthUnit.Meter) {
+        var pos = new Vector3() { X = point.X, Y = point.Y, Z = point.Z };
         return new Node() { Position = pos };
       }
-      else
-      {
-        Vector3 pos = new Vector3()
-        {
+      else {
+        var pos = new Vector3() {
           X = new Length(point.X, unit).Meters,
           Y = new Length(point.Y, unit).Meters,
           Z = new Length(point.Z, unit).Meters
@@ -80,13 +70,7 @@ namespace GsaGH.Helpers.Export
       }
     }
 
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit)
-    {
-      return existNodes.AddValue(NodeFromPoint(testPoint, unit));
-    }
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node)
-    {
-      return existNodes.AddValue(node);
-    }
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) => existNodes.AddValue(NodeFromPoint(testPoint, unit));
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) => existNodes.AddValue(node);
   }
 }

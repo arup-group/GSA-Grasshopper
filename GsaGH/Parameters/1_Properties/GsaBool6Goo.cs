@@ -3,13 +3,11 @@ using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaBool6"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaBool6Goo : GH_OasysGoo<GsaBool6>
-  {
+  public class GsaBool6Goo : GH_OasysGoo<GsaBool6> {
     public static string Name => "Bool6";
     public static string NickName => "B6";
     public static string Description => "GSA Bool6 (A 6-character string to describe the restraint condition (F = Fixed, R = Released) for each degree of freedom)";
@@ -17,116 +15,130 @@ namespace GsaGH.Parameters
 
     public GsaBool6Goo(GsaBool6 item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaBool6Goo(this.Value);
+    public override IGH_Goo Duplicate() => new GsaBool6Goo(Value);
 
-    public override bool CastFrom(object source)
-    {
+    public override bool CastFrom(object source) {
       if (source == null)
         return false;
 
       if (base.CastFrom(source))
         return true;
 
-      // Cast from Bool
-      else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both))
-      {
+      else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both)) {
         Value.X = mybool;
         Value.Y = mybool;
         Value.Z = mybool;
-        Value.XX = mybool;
-        Value.YY = mybool;
-        Value.ZZ = mybool;
+        Value.Xx = mybool;
+        Value.Yy = mybool;
+        Value.Zz = mybool;
         return true;
       }
 
-      // Cast from string
-      else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both))
-      {
+      else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both)) {
         mystring = mystring.Trim().ToLower();
 
-        if (mystring == "free")
-        {
+        if (mystring == "free") {
           Value.X = false;
           Value.Y = false;
           Value.Z = false;
-          Value.XX = false;
-          Value.YY = false;
-          Value.ZZ = false;
+          Value.Xx = false;
+          Value.Yy = false;
+          Value.Zz = false;
           return true;
         }
-        else if (mystring == "pin" | mystring == "pinned")
-        {
+        else if (mystring == "pin" | mystring == "pinned") {
           Value.X = true;
           Value.Y = true;
           Value.Z = true;
-          Value.XX = false;
-          Value.YY = false;
-          Value.ZZ = false;
+          Value.Xx = false;
+          Value.Yy = false;
+          Value.Zz = false;
           return true;
         }
-        else if (mystring == "fix" | mystring == "fixed")
-        {
+        else if (mystring == "fix" | mystring == "fixed") {
           Value.X = true;
           Value.Y = true;
           Value.Z = true;
-          Value.XX = true;
-          Value.YY = true;
-          Value.ZZ = true;
+          Value.Xx = true;
+          Value.Yy = true;
+          Value.Zz = true;
           return true;
         }
-        else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
-        {
+        else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier") {
           Value.X = false;
           Value.Y = false;
           Value.Z = false;
-          Value.XX = false;
-          Value.YY = true;
-          Value.ZZ = true;
+          Value.Xx = false;
+          Value.Yy = true;
+          Value.Zz = true;
           return true;
         }
-        else if (mystring.Length == 6)
-        {
-          if (mystring[0] == 'r')
-            Value.X = false;
-          else if (mystring[0] == 'f')
-            Value.X = true;
-          else
-            return false;
+        else if (mystring.Length == 6) {
+          switch (mystring[0]) {
+            case 'r':
+              Value.X = false;
+              break;
+            case 'f':
+              Value.X = true;
+              break;
+            default:
+              return false;
+          }
 
-          if (mystring[1] == 'r')
-            Value.Y = false;
-          else if (mystring[1] == 'f')
-            Value.Y = true;
-          else
-            return false;
+          switch (mystring[1]) {
+            case 'r':
+              Value.Y = false;
+              break;
+            case 'f':
+              Value.Y = true;
+              break;
+            default:
+              return false;
+          }
 
-          if (mystring[2] == 'r')
-            Value.Z = false;
-          else if (mystring[2] == 'f')
-            Value.Z = true;
-          else
-            return false;
+          switch (mystring[2]) {
+            case 'r':
+              Value.Z = false;
+              break;
+            case 'f':
+              Value.Z = true;
+              break;
+            default:
+              return false;
+          }
 
-          if (mystring[3] == 'r')
-            Value.XX = false;
-          else if (mystring[3] == 'f')
-            Value.XX = true;
-          else
-            return false;
+          switch (mystring[3]) {
+            case 'r':
+              Value.Xx = false;
+              break;
+            case 'f':
+              Value.Xx = true;
+              break;
+            default:
+              return false;
+          }
 
-          if (mystring[4] == 'r')
-            Value.YY = false;
-          else if (mystring[4] == 'f')
-            Value.YY = true;
-          else
-            return false;
+          switch (mystring[4]) {
+            case 'r':
+              Value.Yy = false;
+              break;
+            case 'f':
+              Value.Yy = true;
+              break;
+            default:
+              return false;
+          }
 
-          if (mystring[5] == 'r')
-            Value.ZZ = false;
-          else if (mystring[5] == 'f')
-            Value.ZZ = true;
-          else
-            return false;
+          switch (mystring[5]) {
+            case 'r':
+              Value.Zz = false;
+              break;
+            case 'f':
+              Value.Zz = true;
+              break;
+            default:
+              return false;
+          }
           return true;
         }
         return false;

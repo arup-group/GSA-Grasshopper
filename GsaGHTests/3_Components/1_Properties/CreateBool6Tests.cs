@@ -4,13 +4,10 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Components.Properties
-{
+namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class CreateBool6Tests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
+  public class CreateBool6Tests {
+    public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateBool6();
       comp.CreateAttributes();
 
@@ -25,20 +22,16 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponent()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponent() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
-      GsaBool6Goo output = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp);
       Assert.True(output.Value.X);
       Assert.True(output.Value.Y);
       Assert.True(output.Value.Z);
-      Assert.True(output.Value.XX);
-      Assert.True(output.Value.YY);
-      Assert.True(output.Value.ZZ);
+      Assert.True(output.Value.Xx);
+      Assert.True(output.Value.Yy);
+      Assert.True(output.Value.Zz);
     }
-
   }
 }

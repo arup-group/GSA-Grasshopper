@@ -4,233 +4,167 @@ using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Section Modifier class, this class defines the basic properties and methods for any Gsa Offset
   /// </summary>
-  public class GsaSectionModifier
-  {
-    public enum StressOptionType
-    {
+  public class GsaSectionModifier {
+    public enum StressOptionType {
       NoCalculation,
       UseModified,
-      UseUnmodified
+      UseUnmodified,
     }
 
     internal SectionModifier _sectionModifier = new SectionModifier();
 
     #region properties
-    public bool IsModified
-    {
-      get
-      {
-        if (IsAttributeModified(this._sectionModifier.AreaModifier))
-          return true;
-        if (IsAttributeModified(this._sectionModifier.I11Modifier))
-          return true;
-        if (IsAttributeModified(this._sectionModifier.I22Modifier))
-          return true;
-        if (IsAttributeModified(this._sectionModifier.JModifier))
-          return true;
-        if (IsAttributeModified(this._sectionModifier.K11Modifier))
-          return true;
-        if (IsAttributeModified(this._sectionModifier.K22Modifier))
-          return true;
-        if (IsAttributeModified(this._sectionModifier.VolumeModifier))
-          return true;
-        if (IsBendingAxesPrincipal)
-          return true;
-        if (IsReferencePointCentroid)
-          return true;
-        if (this._sectionModifier.AdditionalMass != 0)
-          return true;
-        if (this._sectionModifier.StressOption != SectionModifierStressType.NO_MOD)
-          return true;
-        return false;
+    public bool IsModified {
+      get {
+        return IsAttributeModified(_sectionModifier.AreaModifier)
+               || IsAttributeModified(_sectionModifier.I11Modifier)
+               || IsAttributeModified(_sectionModifier.I22Modifier)
+               || IsAttributeModified(_sectionModifier.JModifier)
+               || IsAttributeModified(_sectionModifier.K11Modifier)
+               || IsAttributeModified(_sectionModifier.K22Modifier)
+               || IsAttributeModified(_sectionModifier.VolumeModifier)
+               || IsBendingAxesPrincipal
+               || IsReferencePointCentroid
+               || _sectionModifier.AdditionalMass != 0
+               || _sectionModifier.StressOption != SectionModifierStressType.NO_MOD;
       }
     }
-    private bool IsAttributeModified(SectionModifierAttribute attribute)
-    {
+    private static bool IsAttributeModified(SectionModifierAttribute attribute) {
       if (attribute.Option == SectionModifierOptionType.TO)
         return true;
-      if (attribute.Value != 1)
-        return true;
-      else
-        return false;
+      return attribute.Value != 1;
     }
-    public IQuantity AreaModifier
-    {
-      get
-      {
-        if (this._sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.AreaModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+    public IQuantity AreaModifier {
+      get {
+        if (_sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY)
+          return new Ratio(_sectionModifier.AreaModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
-          return new Area(this._sectionModifier.AreaModifier.Value, AreaUnit.SquareMeter).ToUnit(DefaultUnits.SectionAreaUnit);
+          return new Area(_sectionModifier.AreaModifier.Value, AreaUnit.SquareMeter).ToUnit(DefaultUnits.SectionAreaUnit);
       }
-      set
-      {
+      set {
         if (value.QuantityInfo.UnitType != typeof(AreaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("AreaModifier must be either Area or Ratio");
-        else
-        {
-          this.CloneApiObject();
-          if (value.QuantityInfo.UnitType == typeof(AreaUnit))
-            this._sectionModifier.AreaModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaUnit.SquareMeter));
-          else
-            this._sectionModifier.AreaModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-        }
+        CloneApiObject();
+        _sectionModifier.AreaModifier = value.QuantityInfo.UnitType == typeof(AreaUnit)
+          ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaUnit.SquareMeter))
+          : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
       }
     }
-    public IQuantity I11Modifier
-    {
-      get
-      {
-        if (this._sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.I11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+    public IQuantity I11Modifier {
+      get {
+        if (_sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY)
+          return new Ratio(_sectionModifier.I11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
-          return new AreaMomentOfInertia(this._sectionModifier.I11Modifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
+          return new AreaMomentOfInertia(_sectionModifier.I11Modifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
-      set
-      {
+      set {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("I11Modifier must be either AreaMomentOfInertia or Ratio");
+        CloneApiObject();
+        _sectionModifier.I11Modifier = value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit)
+          ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth))
+          : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
+      }
+    }
+    public IQuantity I22Modifier {
+      get {
+        if (_sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY)
+          return new Ratio(_sectionModifier.I22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+        return new AreaMomentOfInertia(_sectionModifier.I22Modifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
+      }
+      set {
+        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+          throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
+        CloneApiObject();
+        _sectionModifier.I22Modifier = value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit)
+          ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth))
+          : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
+      }
+    }
+
+    public IQuantity JModifier {
+      get {
+        if (_sectionModifier.JModifier.Option == SectionModifierOptionType.BY)
+          return new Ratio(_sectionModifier.JModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
-        {
+          return new AreaMomentOfInertia(_sectionModifier.JModifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
+      }
+      set {
+        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+          throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
+        else {
           CloneApiObject();
           if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
-            this._sectionModifier.I11Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
+            _sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
           else
-            this._sectionModifier.I11Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
+            _sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
         }
       }
     }
-    public IQuantity I22Modifier
-    {
-      get
-      {
-        if (this._sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.I22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+    public IQuantity VolumeModifier {
+      get {
+        if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY)
+          return new Ratio(_sectionModifier.VolumeModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
-          return new AreaMomentOfInertia(this._sectionModifier.I22Modifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
+          return new VolumePerLength(_sectionModifier.VolumeModifier.Value, VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
       }
-      set
-      {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
-          throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
-        else
-        {
-          this.CloneApiObject();
-          if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
-            this._sectionModifier.I22Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
-          else
-            this._sectionModifier.I22Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-        }
-      }
-    }
-
-    public IQuantity JModifier
-    {
-      get
-      {
-        if (this._sectionModifier.JModifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.JModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
-          return new AreaMomentOfInertia(this._sectionModifier.JModifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-      set
-      {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
-          throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
-        else
-        {
-          this.CloneApiObject();
-          if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
-            this._sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
-          else
-            this._sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-        }
-      }
-    }
-    public IQuantity VolumeModifier
-    {
-      get
-      {
-        if (this._sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.VolumeModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
-          return new VolumePerLength(this._sectionModifier.VolumeModifier.Value, VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
-      }
-      set
-      {
+      set {
         if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
-        else
-        {
-          this.CloneApiObject();
-          if (value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit))
-            this._sectionModifier.VolumeModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(VolumePerLengthUnit.CubicMeterPerMeter));
-          else
-            this._sectionModifier.VolumeModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-        }
-      }
-    }
-
-    public Ratio K11Modifier
-    {
-      get
-      {
-        if (this._sectionModifier.K11Modifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
-          return new Ratio(this._sectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction);
-      }
-      set
-      {
-        this.CloneApiObject();
-        if (value.Unit == RatioUnit.Percent) // assume that percentage unit is modify BY option
-          this._sectionModifier.K11Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-        else // assume that all other than percentage unit is modify TO option
-          this._sectionModifier.K11Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(RatioUnit.DecimalFraction));
-      }
-    }
-    public Ratio K22Modifier
-    {
-      get
-      {
-        if (this._sectionModifier.K22Modifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(this._sectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
-          return new Ratio(this._sectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction);
-      }
-      set
-      {
         CloneApiObject();
-        if (value.Unit == RatioUnit.Percent) // assume that percentage unit is modify BY option
-          this._sectionModifier.K22Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-        else // assume that all other than percentage unit is modify TO option
-          this._sectionModifier.K22Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(RatioUnit.DecimalFraction));
-      }
-    }
-    public LinearDensity AdditionalMass
-    {
-      get
-      {
-        return new LinearDensity(this._sectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this._sectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
+        _sectionModifier.VolumeModifier = value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit)
+          ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(VolumePerLengthUnit.CubicMeterPerMeter))
+          : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
       }
     }
 
-    public StressOptionType StressOption
-    {
-      get
-      {
-        switch (this._sectionModifier.StressOption)
-        {
+    public Ratio K11Modifier {
+      get {
+        return _sectionModifier.K11Modifier.Option == SectionModifierOptionType.BY
+        ? new Ratio(_sectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
+        : new Ratio(_sectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction);
+      }
+      set {
+        CloneApiObject();
+        _sectionModifier.K11Modifier = value.Unit == RatioUnit.Percent
+          ? new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction))
+          : // assume that percentage unit is modify BY option
+            // assume that all other than percentage unit is modify TO option
+          new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(RatioUnit.DecimalFraction));
+      }
+    }
+    public Ratio K22Modifier {
+      get {
+        return _sectionModifier.K22Modifier.Option == SectionModifierOptionType.BY
+        ? new Ratio(_sectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
+        : new Ratio(_sectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction);
+      }
+      set {
+        CloneApiObject();
+        _sectionModifier.K22Modifier = value.Unit == RatioUnit.Percent
+          ? new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction))
+          : // assume that percentage unit is modify BY option
+            // assume that all other than percentage unit is modify TO option
+          new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(RatioUnit.DecimalFraction));
+      }
+    }
+    public LinearDensity AdditionalMass {
+      get {
+        return new LinearDensity(_sectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
+      }
+      set {
+        CloneApiObject();
+        _sectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
+      }
+    }
+
+    public StressOptionType StressOption {
+      get {
+        switch (_sectionModifier.StressOption) {
           case SectionModifierStressType.USE_MOD:
             return StressOptionType.UseModified;
           case SectionModifierStressType.USE_UNMOD:
@@ -240,233 +174,200 @@ namespace GsaGH.Parameters
             return StressOptionType.NoCalculation;
         }
       }
-      set
-      {
+      set {
         CloneApiObject();
-        switch (value)
-        {
+        switch (value) {
           case StressOptionType.UseModified:
-            this._sectionModifier.StressOption = SectionModifierStressType.USE_MOD;
+            _sectionModifier.StressOption = SectionModifierStressType.USE_MOD;
             break;
           case StressOptionType.UseUnmodified:
-            this._sectionModifier.StressOption = SectionModifierStressType.USE_UNMOD;
+            _sectionModifier.StressOption = SectionModifierStressType.USE_UNMOD;
             break;
           case StressOptionType.NoCalculation:
           default:
-            this._sectionModifier.StressOption = SectionModifierStressType.NO_MOD;
+            _sectionModifier.StressOption = SectionModifierStressType.NO_MOD;
             break;
         }
       }
     }
 
-    public bool IsBendingAxesPrincipal
-    {
-      get
-      {
-        return this._sectionModifier.IsBendingAxesPrincipal;
+    public bool IsBendingAxesPrincipal {
+      get {
+        return _sectionModifier.IsBendingAxesPrincipal;
       }
-      set
-      {
+      set {
         CloneApiObject();
-        this._sectionModifier.IsBendingAxesPrincipal = value;
+        _sectionModifier.IsBendingAxesPrincipal = value;
       }
     }
-    public bool IsReferencePointCentroid
-    {
-      get
-      {
-        return this._sectionModifier.IsReferencePointCentroid;
+    public bool IsReferencePointCentroid {
+      get {
+        return _sectionModifier.IsReferencePointCentroid;
       }
-      set
-      {
+      set {
         CloneApiObject();
-        this._sectionModifier.IsReferencePointCentroid = value;
+        _sectionModifier.IsReferencePointCentroid = value;
       }
     }
 
-    private void CloneApiObject()
-    {
-      SectionModifier dup = new SectionModifier
-      {
-        AreaModifier = new SectionModifierAttribute(this._sectionModifier.AreaModifier.Option, this._sectionModifier.AreaModifier.Value),
-        I11Modifier = new SectionModifierAttribute(this._sectionModifier.I11Modifier.Option, this._sectionModifier.I11Modifier.Value),
-        I22Modifier = new SectionModifierAttribute(this._sectionModifier.I22Modifier.Option, this._sectionModifier.I22Modifier.Value),
-        JModifier = new SectionModifierAttribute(this._sectionModifier.JModifier.Option, this._sectionModifier.JModifier.Value),
-        K11Modifier = new SectionModifierAttribute(this._sectionModifier.K11Modifier.Option, this._sectionModifier.K11Modifier.Value),
-        K22Modifier = new SectionModifierAttribute(this._sectionModifier.K22Modifier.Option, this._sectionModifier.K22Modifier.Value),
-        VolumeModifier = new SectionModifierAttribute(this._sectionModifier.VolumeModifier.Option, this._sectionModifier.VolumeModifier.Value),
-        AdditionalMass = this._sectionModifier.AdditionalMass,
-        StressOption = this._sectionModifier.StressOption,
-        IsBendingAxesPrincipal = this._sectionModifier.IsBendingAxesPrincipal,
-        IsReferencePointCentroid = this._sectionModifier.IsReferencePointCentroid
+    private void CloneApiObject() {
+      var dup = new SectionModifier {
+        AreaModifier = new SectionModifierAttribute(_sectionModifier.AreaModifier.Option, _sectionModifier.AreaModifier.Value),
+        I11Modifier = new SectionModifierAttribute(_sectionModifier.I11Modifier.Option, _sectionModifier.I11Modifier.Value),
+        I22Modifier = new SectionModifierAttribute(_sectionModifier.I22Modifier.Option, _sectionModifier.I22Modifier.Value),
+        JModifier = new SectionModifierAttribute(_sectionModifier.JModifier.Option, _sectionModifier.JModifier.Value),
+        K11Modifier = new SectionModifierAttribute(_sectionModifier.K11Modifier.Option, _sectionModifier.K11Modifier.Value),
+        K22Modifier = new SectionModifierAttribute(_sectionModifier.K22Modifier.Option, _sectionModifier.K22Modifier.Value),
+        VolumeModifier = new SectionModifierAttribute(_sectionModifier.VolumeModifier.Option, _sectionModifier.VolumeModifier.Value),
+        AdditionalMass = _sectionModifier.AdditionalMass,
+        StressOption = _sectionModifier.StressOption,
+        IsBendingAxesPrincipal = _sectionModifier.IsBendingAxesPrincipal,
+        IsReferencePointCentroid = _sectionModifier.IsReferencePointCentroid
       };
-      this._sectionModifier = dup;
+      _sectionModifier = dup;
     }
     #endregion
 
     #region constructors
-    public GsaSectionModifier()
-    {
+    public GsaSectionModifier() {
     }
 
-    internal GsaSectionModifier(SectionModifier sectionModifier)
-    {
-      this._sectionModifier = sectionModifier;
+    internal GsaSectionModifier(SectionModifier sectionModifier) {
+      _sectionModifier = sectionModifier;
     }
     #endregion
 
     #region methods
-    public GsaSectionModifier Duplicate(bool cloneApiObject = false)
-    {
-      GsaSectionModifier dup = new GsaSectionModifier
-      {
-        _sectionModifier = this._sectionModifier
+    public GsaSectionModifier Duplicate(bool cloneApiObject = false) {
+      var dup = new GsaSectionModifier {
+        _sectionModifier = _sectionModifier,
       };
       if (cloneApiObject)
         dup.CloneApiObject();
       return dup;
     }
 
-    public override string ToString()
-    {
-      if (!this.IsModified)
-      {
+    public override string ToString() {
+      if (!IsModified) {
         return "Unmodified";
       }
-      string A = "A:";
-      string I11 = "I11:";
-      string I22 = "I22:";
-      string J = "J:";
-      string K11 = "K11:";
-      string K22 = "K22:";
-      string V = "V:";
+      string a = "A:";
+      string i11 = "I11:";
+      string i22 = "I22:";
+      string j = "J:";
+      string k11 = "K11:";
+      string k22 = "K22:";
+      string v = "V:";
       string mass = "Add.Mass:";
       string stress = "StressCalc.Opt.:";
       string axis = "X";
       string refPt = "X";
 
-      // Area
-      if (this._sectionModifier.AreaModifier.Option == SectionModifierOptionType.TO)
-      {
-        Area val = (Area)this.AreaModifier;
-        A += val.ToString("f0").Replace(" ", string.Empty);
+      if (_sectionModifier.AreaModifier.Option == SectionModifierOptionType.TO) {
+        var val = (Area)AreaModifier;
+        a += val.ToString("f0").Replace(" ", string.Empty);
       }
-      else
-      {
-        Ratio val = (Ratio)this.AreaModifier;
+      else {
+        var val = (Ratio)AreaModifier;
         if (val.DecimalFractions != 1)
-          A += val.ToString("f0").Replace(" ", string.Empty);
+          a += val.ToString("f0").Replace(" ", string.Empty);
         else
-          A = "X";
+          a = "X";
       }
 
-      // I11
-      if (this._sectionModifier.I11Modifier.Option == SectionModifierOptionType.TO)
-      {
-        AreaMomentOfInertia val = (AreaMomentOfInertia)this.I11Modifier;
-        I11 += val.ToString("f0").Replace(" ", string.Empty);
+      if (_sectionModifier.I11Modifier.Option == SectionModifierOptionType.TO) {
+        var val = (AreaMomentOfInertia)I11Modifier;
+        i11 += val.ToString("f0").Replace(" ", string.Empty);
       }
-      else
-      {
-        Ratio val = (Ratio)this.I11Modifier;
+      else {
+        var val = (Ratio)I11Modifier;
         if (val.DecimalFractions != 1)
-          I11 += val.ToString("f0").Replace(" ", string.Empty);
+          i11 += val.ToString("f0").Replace(" ", string.Empty);
         else
-          I11 = "X";
+          i11 = "X";
       }
 
-      // I22
-      if (this._sectionModifier.I22Modifier.Option == SectionModifierOptionType.TO)
-      {
-        AreaMomentOfInertia val = (AreaMomentOfInertia)this.I22Modifier;
-        I22 += val.ToString("f0").Replace(" ", string.Empty);
+      if (_sectionModifier.I22Modifier.Option == SectionModifierOptionType.TO) {
+        var val = (AreaMomentOfInertia)I22Modifier;
+        i22 += val.ToString("f0").Replace(" ", string.Empty);
       }
-      else
-      {
-        Ratio val = (Ratio)this.I22Modifier;
+      else {
+        var val = (Ratio)I22Modifier;
         if (val.DecimalFractions != 1)
-          I22 += val.ToString("f0").Replace(" ", string.Empty);
+          i22 += val.ToString("f0").Replace(" ", string.Empty);
         else
-          I22 = "X";
+          i22 = "X";
       }
 
-      // J
-      if (this._sectionModifier.JModifier.Option == SectionModifierOptionType.TO)
-      {
-        AreaMomentOfInertia val = (AreaMomentOfInertia)this.JModifier;
-        J += val.ToString("f0").Replace(" ", string.Empty);
+      if (_sectionModifier.JModifier.Option == SectionModifierOptionType.TO) {
+        var val = (AreaMomentOfInertia)JModifier;
+        j += val.ToString("f0").Replace(" ", string.Empty);
       }
-      else
-      {
-        Ratio val = (Ratio)this.JModifier;
+      else {
+        var val = (Ratio)JModifier;
         if (val.DecimalFractions != 1)
-          J += val.ToString("f0").Replace(" ", string.Empty);
+          j += val.ToString("f0").Replace(" ", string.Empty);
         else
-          J = "X";
+          j = "X";
       }
 
-      // K11
-      if (this._sectionModifier.K11Modifier.Option == SectionModifierOptionType.TO)
-      {
-        K11 += this._sectionModifier.K11Modifier.Value.ToString("f3") + "[-]";
+      if (_sectionModifier.K11Modifier.Option == SectionModifierOptionType.TO) {
+        k11 += _sectionModifier.K11Modifier.Value.ToString("f3") + "[-]";
       }
-      else
-      {
-        Ratio val = this.K11Modifier;
+      else {
+        Ratio val = K11Modifier;
         if (val.DecimalFractions != 1)
-          K11 += val.ToString("f0").Replace(" ", string.Empty);
+          k11 += val.ToString("f0").Replace(" ", string.Empty);
         else
-          K11 = "X";
+          k11 = "X";
       }
 
-      // K22
-      if (this._sectionModifier.K22Modifier.Option == SectionModifierOptionType.TO)
-      {
-        K22 += this._sectionModifier.K22Modifier.Value.ToString("f3") + "[-]";
+      if (_sectionModifier.K22Modifier.Option == SectionModifierOptionType.TO) {
+        k22 += _sectionModifier.K22Modifier.Value.ToString("f3") + "[-]";
       }
-      else
-      {
-        Ratio val = this.K22Modifier;
+      else {
+        Ratio val = K22Modifier;
         if (val.DecimalFractions != 1)
-          K22 += val.ToString("f0").Replace(" ", string.Empty);
+          k22 += val.ToString("f0").Replace(" ", string.Empty);
         else
-          K22 = "X";
+          k22 = "X";
       }
 
-      // Volume
-      if (this._sectionModifier.VolumeModifier.Option == SectionModifierOptionType.TO)
-      {
-        VolumePerLength val = (VolumePerLength)this.VolumeModifier;
-        V += val.ToString("f0").Replace(" ", string.Empty);
+      if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.TO) {
+        var val = (VolumePerLength)VolumeModifier;
+        v += val.ToString("f0").Replace(" ", string.Empty);
       }
-      else
-      {
-        Ratio val = (Ratio)this.VolumeModifier;
+      else {
+        var val = (Ratio)VolumeModifier;
         if (val.DecimalFractions != 1)
-          V += val.ToString("f0").Replace(" ", string.Empty);
+          v += val.ToString("f0").Replace(" ", string.Empty);
         else
-          V = "X";
+          v = "X";
       }
 
-      // Additional Mass
-      if (this.AdditionalMass.Value != 0)
-        mass += this.AdditionalMass.ToString("f0").Replace(" ", string.Empty);
+      if (AdditionalMass.Value != 0)
+        mass += AdditionalMass.ToString("f0").Replace(" ", string.Empty);
       else
         mass = "X";
 
-      if (this._sectionModifier.StressOption == SectionModifierStressType.NO_MOD)
-        stress = "X";
-      else if (this._sectionModifier.StressOption == SectionModifierStressType.USE_MOD)
-        stress += "UseModified";
-      else
-        stress += "UseUnmodified";
+      switch (_sectionModifier.StressOption) {
+        case SectionModifierStressType.NO_MOD:
+          stress = "X";
+          break;
+        case SectionModifierStressType.USE_MOD:
+          stress += "UseModified";
+          break;
+        default:
+          stress += "UseUnmodified";
+          break;
+      }
 
-      if (this._sectionModifier.IsBendingAxesPrincipal)
+      if (_sectionModifier.IsBendingAxesPrincipal)
         axis = "BendingAxis(UsePringipal(u,v)";
-      if (this._sectionModifier.IsReferencePointCentroid)
+      if (_sectionModifier.IsReferencePointCentroid)
         refPt = "AnalysisRefPt(UseCentroid)";
 
-      string innerDesc = string.Join(" ", A.Trim(), I11.Trim(), I22.Trim(), J.Trim(), K11.Trim(), K22.Trim(), V.Trim(), mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
+      string innerDesc = string.Join(" ", a.Trim(), i11.Trim(), i22.Trim(), j.Trim(), k11.Trim(), k22.Trim(), v.Trim(), mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
       return innerDesc;
     }
     #endregion

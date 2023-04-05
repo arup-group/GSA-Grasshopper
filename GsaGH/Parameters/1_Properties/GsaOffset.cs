@@ -1,24 +1,21 @@
 ﻿using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Offset class, this class defines the basic properties and methods for any Gsa Offset
   /// </summary>
-  public class GsaOffset
-  {
-    public enum AlignmentType
-    {
+  public class GsaOffset {
+    public enum AlignmentType {
       Centroid,
-      Top_Left,
-      Top_Centre,
-      Top_Right,
-      Mid_Left,
-      Mid_Right,
-      Bottom_Left,
-      Bottom_Centre,
-      Bottom_Right
+      TopLeft,
+      TopCentre,
+      TopRight,
+      MidLeft,
+      MidRight,
+      BottomLeft,
+      BottomCentre,
+      BottomRight,
     }
 
     #region properties
@@ -29,28 +26,24 @@ namespace GsaGH.Parameters
     #endregion
 
     #region constructors
-    public GsaOffset()
-    {
+    public GsaOffset() {
     }
 
-    public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
-    {
-      this.X1 = new Length(x1, unit);
-      this.X2 = new Length(x2, unit);
-      this.Y = new Length(y, unit);
-      this.Z = new Length(z, unit);
+    public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter) {
+      X1 = new Length(x1, unit);
+      X2 = new Length(x2, unit);
+      Y = new Length(y, unit);
+      Z = new Length(z, unit);
     }
 
-    public GsaOffset Duplicate()
-    {
-      return (GsaOffset)this.MemberwiseClone(); // all members are structs
+    public GsaOffset Duplicate() {
+      return (GsaOffset)MemberwiseClone(); // all members are structs
     }
     #endregion
 
     #region methods
-    public override string ToString()
-    {
-      LengthUnit unit = this.Z.Unit;
+    public override string ToString() {
+      LengthUnit unit = Z.Unit;
       string unitAbbreviation = Length.GetAbbreviation(unit);
 
       return "X1:" + X1.As(unit).ToString("g") +

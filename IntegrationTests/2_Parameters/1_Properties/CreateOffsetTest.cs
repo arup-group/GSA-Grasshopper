@@ -6,39 +6,48 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace IntegrationTests.Parameters
-{
+namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class CreateOffsetTest
-  {
-    public static GH_Document Document
-    {
-      get
-      {
-        if (_document == null)
-          _document = OpenDocument();
-        return _document;
-      }
-    }
-    private static GH_Document _document = null;
-    private static GH_Document OpenDocument()
-    {
-      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+  public class CreateOffsetTest {
+    private static GH_Document s_document = null;
+
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "1_Properties" });
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "1_Properties",
+      });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
     [Theory]
-    [InlineData("Of", 1, 2, 3, 4, LengthUnit.Meter)]
-    public void OutputTest(string groupIdentifier, double expectedX1, double expectedX2, double expectedY, double expectedZ, LengthUnit expectedUnit)
-    {
+    [InlineData("Of",
+      1,
+      2,
+      3,
+      4,
+      LengthUnit.Meter)]
+    public void OutputTest(
+      string groupIdentifier,
+      double expectedX1,
+      double expectedX2,
+      double expectedY,
+      double expectedZ,
+      LengthUnit expectedUnit) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-      GsaOffsetGoo output = (GsaOffsetGoo)param.VolatileData.get_Branch(0)[0];
+      var output = (GsaOffsetGoo)param.VolatileData.get_Branch(0)[0];
       GsaOffset offset = output.Value;
       Assert.Equal(new Length(expectedX1, expectedUnit), offset.X1);
       Assert.Equal(new Length(expectedX2, expectedUnit), offset.X2);
@@ -48,8 +57,6 @@ namespace IntegrationTests.Parameters
 
     [Fact]
     public void NoRuntimeErrorTest()
-    {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-    }
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
   }
 }

@@ -1,74 +1,62 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reflection;
+﻿using System.Diagnostics;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
+using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
-using Grasshopper.Kernel;
+using GsaGH.Properties;
 
-namespace GsaGH.Graphics.Menu
-{
-  public class MenuLoad
-  {
-    private static ToolStripMenuItem oasysMenu;
-    internal static void OnStartup(GH_Canvas canvas)
-    {
-      oasysMenu = new ToolStripMenuItem("Oasys");
-      oasysMenu.Name = "Oasys";
+namespace GsaGH.Graphics.Menu {
+  public class MenuLoad {
+    private static ToolStripMenuItem s_oasysMenu;
 
-      PopulateSub(oasysMenu);
+    internal static void OnStartup(GH_Canvas canvas) {
+      s_oasysMenu = new ToolStripMenuItem("Oasys") {
+        Name = "Oasys",
+      };
+
+      PopulateSub(s_oasysMenu);
 
       GH_DocumentEditor editor = null;
 
-      while (editor == null)
-      {
-        editor = Grasshopper.Instances.DocumentEditor;
+      while (editor == null) {
+        editor = Instances.DocumentEditor;
         Thread.Sleep(321);
       }
 
       if (!editor.MainMenuStrip.Items.ContainsKey("Oasys"))
-        editor.MainMenuStrip.Items.Add(oasysMenu);
-      else
-      {
-        oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items["Oasys"];
-        lock (oasysMenu)
-        {
-          oasysMenu.DropDown.Items.Add(new ToolStripSeparator());
-          PopulateSub(oasysMenu);
+        editor.MainMenuStrip.Items.Add(s_oasysMenu);
+      else {
+        s_oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items["Oasys"];
+        lock (s_oasysMenu) {
+          s_oasysMenu.DropDown.Items.Add(new ToolStripSeparator());
+          PopulateSub(s_oasysMenu);
         }
       }
 
-      Grasshopper.Instances.CanvasCreated -= OnStartup;
+      Instances.CanvasCreated -= OnStartup;
     }
 
-    private static void PopulateSub(ToolStripMenuItem menuItem)
-    {
-      // add documentation
-      menuItem.DropDown.Items.Add("GsaGH Documentation", Properties.Resources.Documentation, (s, a) =>
-      {
-        Process.Start(new ProcessStartInfo
-        {
-          FileName = "https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=grasshopper",
-          UseShellExecute = true
-        });
-      });
-      // add example files
-      menuItem.DropDown.Items.Add("GsaGH Example files", Properties.Resources.ExampleFiles, (s, a) =>
-      {
-        Process.Start(new ProcessStartInfo
-        {
+    private static void PopulateSub(ToolStripMenuItem menuItem) {
+      menuItem.DropDown.Items.Add("GsaGH Documentation",
+        Resources.Documentation,
+        (s, a) => Process.Start(new ProcessStartInfo {
+          FileName
+              = "https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=grasshopper",
+          UseShellExecute = true,
+        }));
+      menuItem.DropDown.Items.Add("GsaGH Example files",
+        Resources.ExampleFiles,
+        (s, a) => Process.Start(new ProcessStartInfo {
           FileName = "https://github.com/arup-group/GSA-Grasshopper/tree/main/ExampleFiles",
-          UseShellExecute = true
+          UseShellExecute = true,
+        }));
+      menuItem.DropDown.Items.Add("GsaGH Info",
+        Resources.GSAInfo,
+        (s, a) => {
+          var aboutBox = new AboutBox();
+          aboutBox.ShowDialog();
         });
-      });
-      // add info
-      menuItem.DropDown.Items.Add("GsaGH Info", Properties.Resources.GSAInfo, (s, a) =>
-      {
-        AboutBox aboutBox = new AboutBox();
-        aboutBox.ShowDialog();
-      });
     }
   }
 }

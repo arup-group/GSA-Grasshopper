@@ -1,37 +1,40 @@
-﻿using GsaGH.Components;
+﻿using System.Collections.Generic;
+using Grasshopper.Kernel;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using Xunit;
-using System.Collections.Generic;
 using OasysGH.Components;
+using Xunit;
 using static GsaGHTests.Helpers.Export.AssembleModelTests;
 
-namespace GsaGHTests.Model
-{
+namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
-  public class CreateModelTest
-  {
-    public static GsaModel GetModel(GH_OasysDropDownComponent comp)
-    {
-      GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+  public class CreateModelTest {
+    public static GsaModel GetModel(GH_OasysDropDownComponent comp) {
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
       return modelGoo.Value;
     }
-    public static GH_OasysDropDownComponent CreateModelFromModels(List<GsaModel> models)
-    {
+
+    public static GH_OasysDropDownComponent CreateModelFromModels(List<GsaModel> models) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = Grasshopper.Kernel.GH_DataMapping.Flatten;
-      if (models != null)
-        foreach (GsaModel input in models)
-          ComponentTestHelper.SetInput(comp, input, 0);
+      comp.Params.Input[2]
+        .DataMapping = GH_DataMapping.Flatten;
+      if (models == null)
+        return comp;
+      foreach (GsaModel input in models)
+        ComponentTestHelper.SetInput(comp, input, 0);
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModelFromPropeties(List<GsaSection> sections, List<GsaProp2d> prop2ds, List<GsaProp3d> prop3ds)
-    {
+    public static GH_OasysDropDownComponent CreateModelFromPropeties(
+      List<GsaSection> sections,
+      List<GsaProp2d> prop2ds,
+      List<GsaProp3d> prop3ds) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = Grasshopper.Kernel.GH_DataMapping.Flatten;
+      comp.Params.Input[2]
+        .DataMapping = GH_DataMapping.Flatten;
       if (sections != null)
         foreach (GsaSection input in sections)
           ComponentTestHelper.SetInput(comp, input, 1);
@@ -44,11 +47,18 @@ namespace GsaGHTests.Model
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModelFromGeometry(List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d, List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d, List<GsaMember3dGoo> mem3d, ModelUnit unit)
-    {
+    public static GH_OasysDropDownComponent CreateModelFromGeometry(
+      List<GsaNodeGoo> node,
+      List<GsaElement1dGoo> elem1d,
+      List<GsaElement2dGoo> elem2d,
+      List<GsaMember1dGoo> mem1d,
+      List<GsaMember2dGoo> mem2d,
+      List<GsaMember3dGoo> mem3d,
+      ModelUnit unit) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = Grasshopper.Kernel.GH_DataMapping.Flatten;
+      comp.Params.Input[2]
+        .DataMapping = GH_DataMapping.Flatten;
       comp.SetSelected(0, (int)unit);
       if (node != null)
         foreach (GsaNodeGoo input in node)
@@ -71,11 +81,13 @@ namespace GsaGHTests.Model
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModelFromLoads(List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
-    {
+    public static GH_OasysDropDownComponent CreateModelFromLoads(
+      List<GsaLoad> loads,
+      List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = Grasshopper.Kernel.GH_DataMapping.Flatten;
+      comp.Params.Input[2]
+        .DataMapping = GH_DataMapping.Flatten;
       if (loads != null)
         foreach (GsaLoad input in loads)
           ComponentTestHelper.SetInput(comp, input, 3);
@@ -85,11 +97,24 @@ namespace GsaGHTests.Model
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModel(List<GsaModel> models, List<GsaSection> sections, List<GsaProp2d> prop2ds, List<GsaProp3d> prop3ds, List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d, List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d, List<GsaMember3dGoo> mem3d, ModelUnit unit, List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
-    {
+    public static GH_OasysDropDownComponent CreateModel(
+      List<GsaModel> models,
+      List<GsaSection> sections,
+      List<GsaProp2d> prop2ds,
+      List<GsaProp3d> prop3ds,
+      List<GsaNodeGoo> node,
+      List<GsaElement1dGoo> elem1d,
+      List<GsaElement2dGoo> elem2d,
+      List<GsaMember1dGoo> mem1d,
+      List<GsaMember2dGoo> mem2d,
+      List<GsaMember3dGoo> mem3d,
+      ModelUnit unit,
+      List<GsaLoad> loads,
+      List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = Grasshopper.Kernel.GH_DataMapping.Flatten;
+      comp.Params.Input[2]
+        .DataMapping = GH_DataMapping.Flatten;
       comp.SetSelected(0, (int)unit);
       if (models != null)
         foreach (GsaModel input in models)

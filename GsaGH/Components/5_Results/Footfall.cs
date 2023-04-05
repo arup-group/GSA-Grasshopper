@@ -1,101 +1,110 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to select results from a GSA Model
-    /// </summary>
-    public class FootfallResults : GH_OasysComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  ///   Component to select results from a GSA Model
+  /// </summary>
+  public class FootfallResults : GH_OasysComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
+      var ghTyp = new GH_ObjectWrapper();
+      if (!da.GetData(0, ref ghTyp))
+        return;
+
+      switch (ghTyp?.Value) {
+        case null:
+          this.AddRuntimeWarning("Input is null");
+          return;
+        case GsaResultGoo goo: {
+          result = goo.Value;
+          if (result.Type == GsaResult.CaseType.Combination) {
+            this.AddRuntimeError("Footfall Result only available for Analysis Cases");
+            return;
+          }
+
+          break;
+        }
+        default:
+          this.AddRuntimeError("Error converting input to GSA Result");
+          return;
+      }
+
+      string nodeList = "All";
+      var ghNoList = new GH_String();
+      if (da.GetData(1, ref ghNoList))
+        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both))
+          nodeList = tempnodeList;
+
+      if (nodeList.ToLower() == "all" || nodeList == "")
+        nodeList = "All";
+
+      GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
+      GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);
+
+      da.SetData(0, res.DmaxX.Value);
+      da.SetData(1, tra.DmaxX.Value);
+
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
+    }
+
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
+
     public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Footfall;
+    protected override Bitmap Icon => Resources.Footfall;
 
     public FootfallResults() : base("Footfall Result",
       "Footfall",
       "Get the maximum response factor for a footfall analysis case",
       CategoryName.Name(),
       SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      => Hidden = true;
+
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
-          "Node list should take the form:" + Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
-          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Node filter list",
+        "No",
+        "Filter results by list."
+        + Environment.NewLine
+        + "Node list should take the form:"
+        + Environment.NewLine
+        + " 1 11 to 72 step 2 not (XY3 31 to 45)"
+        + Environment.NewLine
+        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        GH_ParamAccess.item,
+        "All");
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      pManager.AddNumberParameter("Resonant Response Factor", "RRF", "Maximum resonant response factor", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Transient Response Factor", "TRF", "Maximum transient response factor", GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddNumberParameter("Resonant Response Factor",
+        "RRF",
+        "Maximum resonant response factor",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Transient Response Factor",
+        "TRF",
+        "Maximum transient response factor",
+        GH_ParamAccess.item);
     }
+
     #endregion
-
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      // Result to work on
-      GsaResult result = new GsaResult();
-
-      // Get Model
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(0, ref gh_typ))
-      {
-        if (gh_typ == null || gh_typ.Value == null)
-        {
-          this.AddRuntimeWarning("Input is null");
-          return;
-        }
-        if (gh_typ.Value is GsaResultGoo)
-        {
-          result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.CaseType.Combination)
-          {
-            this.AddRuntimeError("Footfall Result only available for Analysis Cases");
-            return;
-          }
-        }
-        else
-        {
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
-        }
-
-        // Get node filter list
-        string nodeList = "All";
-        GH_String gh_noList = new GH_String();
-        if (DA.GetData(1, ref gh_noList))
-        {
-          if (GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both))
-            nodeList = tempnodeList;
-        }
-
-        if (nodeList.ToLower() == "all" || nodeList == "")
-          nodeList = "All";
-
-        GsaResultsValues res = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Resonant);
-        GsaResultsValues tra = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Transient);
-
-        DA.SetData(0, res.DmaxX.Value);
-        DA.SetData(1, tra.DmaxX.Value);
-
-        Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
-      }
-    }
   }
 }
