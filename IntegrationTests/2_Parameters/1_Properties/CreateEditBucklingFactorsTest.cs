@@ -36,19 +36,27 @@ namespace IntegrationTests.Parameters {
 
       IGH_Param y = Helper.FindParameter(doc, "TestLsy");
       var outputY = (GH_Number)y.VolatileData.get_Branch(0)[0];
-      Assert.Equal(10, outputY.Value);
+      Assert.Equal(0.9, outputY.Value);
 
       IGH_Param z = Helper.FindParameter(doc, "TestLsz");
       var outputZ = (GH_Number)z.VolatileData.get_Branch(0)[0];
-      Assert.Equal(15, outputZ.Value);
+      Assert.Equal(1.5, outputZ.Value);
 
       IGH_Param lt = Helper.FindParameter(doc, "TestLtb");
       var outputLtb = (GH_Number)lt.VolatileData.get_Branch(0)[0];
-      Assert.Equal(20, outputLtb.Value);
+      Assert.Equal(2.0, outputLtb.Value);
+
+      IGH_Param integ = Helper.FindParameter(doc, "null tests");
+      var outputInteger = (GH_Integer)integ.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputInteger.Value);
     }
 
     [Fact]
     public void NoRuntimeErrorTest()
       => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+
+    [Fact]
+    public void NoRuntimeWarningTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
   }
 }
