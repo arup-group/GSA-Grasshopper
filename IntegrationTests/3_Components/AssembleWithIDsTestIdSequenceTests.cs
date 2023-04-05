@@ -13,12 +13,12 @@ namespace IntegrationTests.Components
     {
       get
       {
-        if (_document == null)
-          _document = OpenDocument();
-        return _document;
+        if (s_document == null)
+          s_document = OpenDocument();
+        return s_document;
       }
     }
-    private static GH_Document _document = null;
+    private static GH_Document s_document = null;
     private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
@@ -33,25 +33,25 @@ namespace IntegrationTests.Components
 
     [Theory]
     [InlineData("NPoints", 401)]
-    //[InlineData("FixedId", 5)]
-    //[InlineData("NodeSame", true)]
-    //[InlineData("Elem1dIds", new int[] { 1, 2, 3, 14 })]
-    //[InlineData("Elem1dSame", true)]
-    //[InlineData("Mem1dIds", new int[] { 1, 2, 3, 14 })]
-    //[InlineData("Mem1dSame", true)]
-    //[InlineData("Mem2dIds", new int[] { 1, 2, 3 })]
-    //[InlineData("Mem2dSame", true)]
+    [InlineData("FixedId", 5)]
+    [InlineData("NodeSame", true)]
+    [InlineData("Elem1dIds", new int[] { 1, 2, 3, 14 })]
+    [InlineData("Elem1dSame", true)]
+    [InlineData("Mem1dIds", new int[] { 1, 2, 3, 14 })]
+    [InlineData("Mem1dSame", true)]
+    [InlineData("Mem2dIds", new int[] { 1, 2, 3 })]
+    [InlineData("Mem2dSame", true)]
     public void Test(string groupIdentifier, object expected)
     {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGHPrimitives(param, expected);
+      Helper.TestGhPrimitives(param, expected);
     }
 
-    //[Fact]
-    //public void NoRuntimeErrorTest()
-    //{
-    //  Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-    //  Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
-    //}
+    [Fact]
+    public void NoRuntimeErrorTest()
+    {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+    }
   }
 }
