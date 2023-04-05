@@ -282,7 +282,7 @@ namespace GsaGH.Components {
         "Set Member Offset",
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Internal Offset",
-        "Io",
+        "IO",
         "Set Automatic Internal Offset of Member",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size in model units",
@@ -355,7 +355,7 @@ namespace GsaGH.Components {
         "Get Member Offset",
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Internal Offset",
-        "Io",
+        "IO",
         "Get Automatic Internal Offset of Member",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size in model units",
