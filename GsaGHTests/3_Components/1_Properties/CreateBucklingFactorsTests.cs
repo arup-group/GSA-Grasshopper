@@ -26,7 +26,6 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(0.1, output.Value.MomentAmplificationFactorStrongAxis);
       Assert.Equal(0.2, output.Value.MomentAmplificationFactorWeakAxis);
       Assert.Equal(1.0, output.Value.EquivalentUniformMomentFactor);
-      Assert.False(output.Value.LengthIsSet);
     }
   }
 }
