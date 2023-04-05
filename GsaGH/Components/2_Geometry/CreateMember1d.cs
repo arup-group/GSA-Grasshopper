@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -17,6 +18,20 @@ namespace GsaGH.Components {
   ///   Component to create new 1D Member
   /// </summary>
   public class CreateMember1d : GH_OasysDropDownComponent {
+
+    private bool _x1;
+    private bool _y1;
+    private bool _z1;
+    private bool _xx1;
+    private bool _yy1;
+    private bool _zz1;
+    private bool _x2;
+    private bool _y2;
+    private bool _z2;
+    private bool _xx2;
+    private bool _yy2;
+    private bool _zz2;
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghcrv = new GH_Curve();
       if (!da.GetData(0, ref ghcrv))
@@ -123,19 +138,8 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    private bool _x1;
-    private bool _y1;
-    private bool _z1;
-    private bool _xx1;
-    private bool _yy1;
-    private bool _zz1;
-    private bool _x2;
-    private bool _y2;
-    private bool _z2;
-    private bool _xx2;
-    private bool _yy2;
-    private bool _zz2;
     public override void SetSelected(int i, int j) { }
+
     public override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()
@@ -184,11 +188,9 @@ namespace GsaGH.Components {
 
       base.UpdateUI();
     }
-
     #endregion
 
     #region (de)serialization
-
     public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("x1", _x1);
       writer.SetBoolean("y1", _y1);
@@ -220,7 +222,6 @@ namespace GsaGH.Components {
       _zz2 = reader.GetBoolean("zz2");
       return base.Read(reader);
     }
-
     #endregion
   }
 }

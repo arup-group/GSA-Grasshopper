@@ -19,11 +19,11 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components {
+namespace GsaGH.Components.GraveyardComp {
   /// <summary>
   /// Component to edit a 1D Member
   /// </summary>
-  public class EditMember1d : GH_OasysComponent, IGH_VariableParameterComponent {
+  public class EditMember1d3_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaMember1d = new GsaMember1d();
       var mem = new GsaMember1d();
@@ -115,23 +115,13 @@ namespace GsaGH.Components {
       if (da.GetData(9, ref end))
         mem.ReleaseEnd = end;
 
-      var eo1Data = new GH_Boolean();
-      if (da.GetData(10, ref eo1Data))
-        if (GH_Convert.ToBoolean(eo1Data, out bool eo1Bool, GH_Conversion.Both))
-          mem.AutomaticOffsetEnd1 = eo1Bool;
-
-      var eo2Data = new GH_Boolean();
-      if (da.GetData(11, ref eo2Data))
-        if (GH_Convert.ToBoolean(eo2Data, out bool eo2Bool, GH_Conversion.Both))
-          mem.AutomaticOffsetEnd2 = eo2Bool;
-
       var ghangle = new GH_Number();
-      if (da.GetData(12, ref ghangle))
+      if (da.GetData(10, ref ghangle))
         if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
           mem.OrientationAngle = new Angle(angle, _angleUnit);
 
       ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(13, ref ghTyp)) {
+      if (da.GetData(11, ref ghTyp)) {
         var node = new GsaNode();
         if (ghTyp.Value is GsaNodeGoo) {
           ghTyp.CastTo(ref node);
@@ -142,16 +132,17 @@ namespace GsaGH.Components {
       }
 
       double meshSize = 0;
-      if (da.GetData(14, ref meshSize))
+      if (da.GetData(12, ref meshSize))
         mem.MeshSize = meshSize;
 
       var ghbool = new GH_Boolean();
-      if (da.GetData(15, ref ghbool))
+      if (da.GetData(13, ref ghbool))
         if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
-          mem.MeshWithOthers = mbool;
+          if (mem.MeshWithOthers != mbool)
+            mem.MeshWithOthers = mbool;
 
       ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(16, ref ghTyp)) {
+      if (da.GetData(14, ref ghTyp)) {
         var fls = new GsaBucklingLengthFactors();
         if (ghTyp.Value is GsaBucklingLengthFactorsGoo) {
           ghTyp.CastTo(ref fls);
@@ -165,17 +156,17 @@ namespace GsaGH.Components {
       }
 
       var ghnm = new GH_String();
-      if (da.GetData(17, ref ghnm))
+      if (da.GetData(15, ref ghnm))
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
           mem.Name = name;
 
       var ghcol = new GH_Colour();
-      if (da.GetData(18, ref ghcol))
+      if (da.GetData(16, ref ghcol))
         if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
           mem.Colour = col;
 
       var ghdum = new GH_Boolean();
-      if (da.GetData(19, ref ghdum))
+      if (da.GetData(17, ref ghdum))
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
           mem.IsDummy = dum;
 
@@ -193,30 +184,26 @@ namespace GsaGH.Components {
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
       da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
       da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
-      da.SetData(10, mem.AutomaticOffsetEnd1);
-      da.SetData(11, mem.AutomaticOffsetLength1);
-      da.SetData(12, mem.AutomaticOffsetEnd2);
-      da.SetData(13, mem.AutomaticOffsetLength2);
-      da.SetData(14, mem.OrientationAngle.Radians);
-      da.SetData(15, new GsaNodeGoo(mem.OrientationNode));
-      da.SetData(16, mem.MeshSize);
-      da.SetData(17, mem.MeshWithOthers);
-      da.SetData(18, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
-      da.SetData(19, mem.Name);
-      da.SetData(20, mem.Colour);
-      da.SetData(21, mem.IsDummy);
-      da.SetData(22, mem.ApiMember.Topology);
+      da.SetData(10, mem.OrientationAngle.Radians);
+      da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
+      da.SetData(12, mem.MeshSize);
+      da.SetData(13, mem.MeshWithOthers);
+      da.SetData(14,
+        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, _lengthUnit)));
+      da.SetData(15, mem.Name);
+      da.SetData(16, mem.Colour);
+      da.SetData(17, mem.IsDummy);
+      da.SetData(18, mem.ApiMember.Topology);
     }
 
     #region Name and Ribbon Layout
 
-    public override Guid ComponentGuid => new Guid("32e744e5-7352-4308-81d0-13bf06db5e82");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("06ae2d01-b152-49c1-9356-c83714c4e5f4");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem1d;
 
-    public EditMember1d() : base(
-      "Edit 1D Member",
+    public EditMember1d3_OBSOLETE() : base("Edit 1D Member",
       "Mem1dEdit",
       "Modify GSA 1D Member",
       CategoryName.Name(),
@@ -307,14 +294,6 @@ namespace GsaGH.Components {
         "⭲",
         "Set Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Automatic Offset End 1",
-        "AO1",
-        "Set Automatic Offset at End 1 of Member",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Automatic Offset End 2",
-        "AO2",
-        "Set Automatic Offset at End 2 of Member",
-        GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle",
         "⭮A",
         "Set Member Orientation Angle",
@@ -393,22 +372,6 @@ namespace GsaGH.Components {
         "⭲",
         "Get Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Automatic Offset End 1",
-        "AO1",
-        "Get Automatic Offset at End 1 of Member",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Offset Length 1",
-        "Ol1",
-        "Get Automatic Offset Length at End 1 of Member",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Automatic Offset End 2",
-        "AO2",
-        "Get Automatic Offset at End 2 of Member",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Offset Length 2",
-        "Ol2",
-        "Get Automatic Offset Length at End 2 of Member",
-        GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle",
         "⭮A",
         "Get Member Orientation Angle in radians",
@@ -442,6 +405,7 @@ namespace GsaGH.Components {
         "Get the Member's original topology list referencing node IDs in Model that Model was created from",
         GH_ParamAccess.item);
     }
+
     #endregion
 
     #region Custom UI
