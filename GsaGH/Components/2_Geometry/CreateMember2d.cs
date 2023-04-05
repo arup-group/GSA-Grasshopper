@@ -133,9 +133,10 @@ namespace GsaGH.Components {
         "Target mesh size",
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Internal Offset",
-        "Io",
+        "IO",
         "Set Automatic Internal Offset of Member",
-        GH_ParamAccess.item);
+        GH_ParamAccess.item,
+        false);
 
       pManager.HideParameter(0);
       pManager.HideParameter(1);
@@ -145,7 +146,6 @@ namespace GsaGH.Components {
       pManager[2].Optional = true;
       pManager[3].Optional = true;
       pManager[4].Optional = true;
-      pManager[5].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)

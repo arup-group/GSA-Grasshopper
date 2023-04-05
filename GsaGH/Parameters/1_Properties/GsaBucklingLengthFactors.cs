@@ -11,8 +11,6 @@ namespace GsaGH.Parameters {
     public double? MomentAmplificationFactorStrongAxis { get; set; }
     public double? MomentAmplificationFactorWeakAxis { get; set; }
     public double? EquivalentUniformMomentFactor { get; set; }
-    internal Length Length { get; }
-    internal bool LengthIsSet { get; private set; } = false;
     #endregion
 
     #region constructors
@@ -35,8 +33,6 @@ namespace GsaGH.Parameters {
       EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
-      Length = new Length(member.PolyCurve.GetLength(), lengthUnit);
-      LengthIsSet = true;
     }
     #endregion
 

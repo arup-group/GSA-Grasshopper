@@ -18,7 +18,6 @@ namespace GsaGHTests.Parameters {
       Assert.Null(factors.MomentAmplificationFactorStrongAxis);
       Assert.Null(factors.MomentAmplificationFactorWeakAxis);
       Assert.Null(factors.EquivalentUniformMomentFactor);
-      Assert.False(factors.LengthIsSet);
     }
 
     [Theory]
@@ -29,7 +28,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
       Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
-      Assert.False(factors.LengthIsSet);
     }
 
     [Theory]
@@ -48,7 +46,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
       Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
-      Assert.False(factors.LengthIsSet);
     }
 
     [Theory]
@@ -68,8 +65,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
       Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
-      Assert.True(factors.LengthIsSet);
-      Assert.Equal(0, factors.Length.As(unit));
     }
 
     [Theory]
@@ -96,7 +91,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(factor1, original.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, original.MomentAmplificationFactorWeakAxis);
       Assert.Equal(factor3, original.EquivalentUniformMomentFactor);
-      Assert.False(original.LengthIsSet);
     }
 
     [Fact]
