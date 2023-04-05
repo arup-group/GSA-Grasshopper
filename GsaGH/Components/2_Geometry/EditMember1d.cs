@@ -307,12 +307,12 @@ namespace GsaGH.Components {
         "⭲",
         "Set Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 1 Offset",
-        "E1o",
+      pManager.AddBooleanParameter("Automatic Offset End 1",
+        "AO1",
         "Set Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 2 Offset",
-        "E2o",
+      pManager.AddBooleanParameter("Automatic Offset End 2",
+        "AO2",
         "Set Automatic Offset at End 2 of Member",
         GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle",
@@ -393,16 +393,16 @@ namespace GsaGH.Components {
         "⭲",
         "Get Release (Bool6) at End of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 1 Offset",
-        "E1o",
+      pManager.AddBooleanParameter("Automatic Offset End 1",
+        "AO1",
         "Get Automatic Offset at End 1 of Member",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Offset Length 1",
         "Ol1",
         "Get Automatic Offset Length at End 1 of Member",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("End 2 Offset",
-        "E2o",
+      pManager.AddBooleanParameter("Automatic Offset End 2",
+        "AO2",
         "Get Automatic Offset at End 2 of Member",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Offset Length 2",
