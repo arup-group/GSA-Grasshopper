@@ -25,7 +25,7 @@ namespace GsaGHTests.Components.Properties {
       var output = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0.1, output.Value.MomentAmplificationFactorStrongAxis);
       Assert.Equal(0.2, output.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(1.0, output.Value.LateralTorsionalBucklingFactor);
+      Assert.Equal(1.0, output.Value.EquivalentUniformMomentFactor);
       Assert.False(output.Value.LengthIsSet);
     }
   }

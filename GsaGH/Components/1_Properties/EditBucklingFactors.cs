@@ -34,12 +34,12 @@ namespace GsaGH.Components {
         var lt = new GH_Number();
         if (da.GetData(3, ref lt))
           if (GH_Convert.ToDouble(lt, out double ltb, GH_Conversion.Both))
-            fls.LateralTorsionalBucklingFactor = ltb;
+            fls.EquivalentUniformMomentFactor = ltb;
 
         da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
         da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
         da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
-        da.SetData(3, fls.LateralTorsionalBucklingFactor);
+        da.SetData(3, fls.EquivalentUniformMomentFactor);
         da.SetData(4,
           (fls.LengthIsSet && fls.MomentAmplificationFactorStrongAxis.HasValue)
             ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorStrongAxis)
@@ -49,8 +49,8 @@ namespace GsaGH.Components {
             ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorWeakAxis)
             : null);
         da.SetData(6,
-          (fls.LengthIsSet && fls.LateralTorsionalBucklingFactor.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.LateralTorsionalBucklingFactor)
+          (fls.LengthIsSet && fls.EquivalentUniformMomentFactor.HasValue)
+            ? new GH_UnitNumber(fls.Length * fls.EquivalentUniformMomentFactor)
             : null);
       }
       else

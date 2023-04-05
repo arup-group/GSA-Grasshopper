@@ -329,6 +329,7 @@ namespace GsaGH.Helpers.GsaAPI {
       r.UpdateMinMax();
       return r;
     }
+
     /// <summary>
     /// Returns displacement result values
     /// </summary>
@@ -355,6 +356,7 @@ namespace GsaGH.Helpers.GsaAPI {
 
       return r;
     }
+
     /// <summary>
     /// Returns reaction forces result values
     /// </summary>
@@ -388,6 +390,7 @@ namespace GsaGH.Helpers.GsaAPI {
       r.UpdateMinMax();
       return r;
     }
+
     /// <summary>
     /// Returns spring reaction forces result values
     /// </summary>
