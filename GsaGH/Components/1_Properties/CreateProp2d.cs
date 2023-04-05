@@ -25,39 +25,25 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProp2d();
       switch (_mode) {
-        case FoldMode.PlaneStress:
-          prop.Type = Property2D_Type.PL_STRESS;
-          break;
-
-        case FoldMode.Fabric:
-          prop.Type = Property2D_Type.FABRIC;
-          break;
-
-        case FoldMode.FlatPlate:
-          prop.Type = Property2D_Type.PLATE;
-          break;
-
-        case FoldMode.Shell:
-          prop.Type = Property2D_Type.SHELL;
-          break;
-
-        case FoldMode.CurvedShell:
-          prop.Type = Property2D_Type.CURVED_SHELL;
-          break;
-
-        case FoldMode.LoadPanel:
-          prop.Type = Property2D_Type.LOAD;
+        case Property2D_Type.PL_STRESS:
+        case Property2D_Type.FABRIC:
+        case Property2D_Type.PLATE:
+        case Property2D_Type.SHELL:
+        case Property2D_Type.CURVED_SHELL:
+        case Property2D_Type.LOAD:
+          prop.Type = _mode;
           break;
 
         default:
+          this.AddRuntimeWarning("Property type is undefined");
           prop.Type = Property2D_Type.UNDEF;
           break;
       }
 
-      if (_mode != FoldMode.LoadPanel) {
+      if (_mode != Property2D_Type.LOAD) {
         prop.AxisProperty = 0;
 
-        if (_mode != FoldMode.Fabric) {
+        if (_mode != Property2D_Type.FABRIC) {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
@@ -88,7 +74,7 @@ namespace GsaGH.Components {
 
     #region Name and Ribbon Layout
 
-    public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
+    public override Guid ComponentGuid => new Guid("796c3b14-e34b-4cd0-8364-d4003b32857a");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProp2d;
@@ -119,13 +105,23 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    private readonly IReadOnlyDictionary<FoldMode, string> _dropdownTopLevel = new Dictionary<FoldMode, string>(){
-      { FoldMode.PlaneStress, "Plane Stress"},
-      { FoldMode.Fabric, "Fabric"},
-      { FoldMode.FlatPlate, "Flat Plate"},
-      { FoldMode.Shell, "Shell"},
-      { FoldMode.CurvedShell, "Curved Shell"},
-      { FoldMode.LoadPanel, "Load Panel"},
+    private readonly IReadOnlyDictionary<Property2D_Type, string> _dropdownTopLevel = new Dictionary<Property2D_Type, string>{
+      { Property2D_Type.PL_STRESS, "Plane Stress"},
+      { Property2D_Type.FABRIC, "Fabric"},
+      { Property2D_Type.PLATE, "Flat Plate"},
+      { Property2D_Type.SHELL, "Shell"},
+      { Property2D_Type.CURVED_SHELL, "Curved Shell"},
+      { Property2D_Type.LOAD, "Load Panel"},
+    };
+
+    private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string>{
+      { SupportType.Auto, "Automatic"},
+      { SupportType.AllEdges, "All sides"},
+      { SupportType.ThreeEdges, "3 sides"},
+      { SupportType.TwoEdges, "2 sides"},
+      { SupportType.TwoAdjacentEdges, "2 adjacent sides"},
+      { SupportType.OneEdge, "1 side"},
+      { SupportType.Cantilever, "Cantilever"},
     };
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
@@ -152,7 +148,7 @@ namespace GsaGH.Components {
       SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0) {
-        FoldMode mode = GetModeBy(SelectedItems[0]);
+        Property2D_Type mode = GetModeBy(SelectedItems[0]);
         UpdateParameters(mode);
         UpdateDropDownItems(mode);
       }
@@ -163,35 +159,58 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      switch (SelectedItems[0]) {
-        case "Plane Stress":
-          if (DropDownItems.Count < 2)
+      if (DropDownItems.Count > 1)
+        DropDownItems.RemoveAt(1);
+
+      Property2D_Type mode = GetModeBy(SelectedItems[0]);
+
+      switch (mode) {
+        case Property2D_Type.PL_STRESS:
+          if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
+            while (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(DropDownItems.Count - 1);
             DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          }
+
           Mode1Clicked();
           break;
-        case "Fabric":
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+        case Property2D_Type.FABRIC:
+          while (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(DropDownItems.Count - 1);
           Mode2Clicked();
           break;
-        case "Flat Plate":
-          if (DropDownItems.Count < 2)
+        case Property2D_Type.PLATE:
+          if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
+            while (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(DropDownItems.Count - 1);
             DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          }
+
           Mode3Clicked();
           break;
-        case "Shell":
-          if (DropDownItems.Count < 2)
+        case Property2D_Type.SHELL:
+          if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
+            while (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(DropDownItems.Count - 1);
             DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          }
+
           Mode4Clicked();
           break;
-        case "Curved Shell":
-          if (DropDownItems.Count < 2)
+        case Property2D_Type.CURVED_SHELL:
+          if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
+            while (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(DropDownItems.Count - 1);
             DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          }
+
           Mode5Clicked();
           break;
-        case "Load Panel":
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+        case Property2D_Type.LOAD:
+          while (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(DropDownItems.Count - 1);
+          // DropDownItems.Add(_supportDropDown.Values.ToList());
+          // SelectedItems.Add(_supportDropDown.Values.ElementAt(0));
           Mode6Clicked();
           break;
       }
@@ -202,18 +221,9 @@ namespace GsaGH.Components {
     }
     #region update inputs
 
-    private enum FoldMode {
-      PlaneStress,
-      Fabric,
-      FlatPlate,
-      Shell,
-      CurvedShell,
-      LoadPanel,
-    }
+    private Property2D_Type _mode = Property2D_Type.SHELL;
 
-    private FoldMode _mode = FoldMode.Shell;
-
-    private void UpdateParameters(FoldMode mode) {
+    private void UpdateParameters(Property2D_Type mode) {
       if (_mode == mode)
         return;
 
@@ -221,10 +231,10 @@ namespace GsaGH.Components {
       RecordUndoEvent($"{eventName} Parameters");
 
       switch (mode) {
-        case FoldMode.Shell:
-        case FoldMode.PlaneStress:
-        case FoldMode.FlatPlate:
-        case FoldMode.CurvedShell:
+        case Property2D_Type.SHELL:
+        case Property2D_Type.PL_STRESS:
+        case Property2D_Type.PLATE:
+        case Property2D_Type.CURVED_SHELL:
           switch (Params.Input.Count) {
             case 0:
               Params.RegisterInputParam(new Param_GenericObject());
@@ -236,7 +246,7 @@ namespace GsaGH.Components {
           }
 
           break;
-        case FoldMode.Fabric:
+        case Property2D_Type.FABRIC:
           switch (Params.Input.Count) {
             case 0:
               Params.RegisterInputParam(new Param_GenericObject());
@@ -247,7 +257,7 @@ namespace GsaGH.Components {
           }
 
           break;
-        case FoldMode.LoadPanel:
+        case Property2D_Type.LOAD:
           while (Params.Input.Count > 0)
             Params.UnregisterInputParameter(Params.Input[0], true);
           break;
@@ -256,28 +266,31 @@ namespace GsaGH.Components {
       _mode = mode;
     }
 
-    private void UpdateDropDownItems(FoldMode mode) {
+    private void UpdateDropDownItems(Property2D_Type mode) {
       switch (mode) {
-        case FoldMode.PlaneStress:
-        case FoldMode.FlatPlate:
-        case FoldMode.Shell:
-        case FoldMode.CurvedShell:
-          if (DropDownItems.Count < 2)
+        case Property2D_Type.PL_STRESS:
+        case Property2D_Type.PLATE:
+        case Property2D_Type.SHELL:
+        case Property2D_Type.CURVED_SHELL:
+          if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
+            while (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(DropDownItems.Count - 1);
             DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          }
 
           break;
-        case FoldMode.Fabric:
-        case FoldMode.LoadPanel:
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+        case Property2D_Type.FABRIC:
+        case Property2D_Type.LOAD:
+          while (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(DropDownItems.Count - 1);
           break;
       }
     }
 
-    private FoldMode GetModeBy(string name) {
-      FoldMode mode = FoldMode.Shell;
+    private Property2D_Type GetModeBy(string name) {
+      Property2D_Type mode = Property2D_Type.SHELL;
 
-      foreach (KeyValuePair<FoldMode, string> item in _dropdownTopLevel)
+      foreach (KeyValuePair<Property2D_Type, string> item in _dropdownTopLevel)
         if (item.Value.Contains(name))
           mode = item.Key;
       return mode;
@@ -287,15 +300,15 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       switch (_mode) {
-        case FoldMode.LoadPanel:
+        case Property2D_Type.LOAD:
           return;
-        case FoldMode.Fabric:
+        case Property2D_Type.FABRIC:
           SetMaterialInputAt(0);
           break;
-        case FoldMode.Shell:
-        case FoldMode.PlaneStress:
-        case FoldMode.FlatPlate:
-        case FoldMode.CurvedShell:
+        case Property2D_Type.SHELL:
+        case Property2D_Type.PL_STRESS:
+        case Property2D_Type.PLATE:
+        case Property2D_Type.CURVED_SHELL:
           SetInputProperties(index: 0, nickname: "Thk", name: $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", description: "Section thickness", optional: false);
           SetMaterialInputAt(1);
           break;
@@ -327,11 +340,11 @@ namespace GsaGH.Components {
     // shitty methods - extracted it to updateDropDown and UpdateParameters but then
     // using updateParameter in UpdateUIFromSelectedItems brokes tests...so left for now
     private void Mode1Clicked() {
-      if (_mode == FoldMode.PlaneStress)
+      if (_mode == Property2D_Type.PL_STRESS)
         return;
 
       RecordUndoEvent("Plane Stress Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+      if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
@@ -339,15 +352,15 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
 
-      _mode = FoldMode.PlaneStress;
+      _mode = Property2D_Type.PL_STRESS;
     }
 
     private void Mode2Clicked() {
-      if (_mode == FoldMode.Fabric)
+      if (_mode == Property2D_Type.FABRIC)
         return;
 
       RecordUndoEvent("Fabric Parameters");
-      _mode = FoldMode.Fabric;
+      _mode = Property2D_Type.FABRIC;
 
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
@@ -356,11 +369,11 @@ namespace GsaGH.Components {
     }
 
     private void Mode3Clicked() {
-      if (_mode == FoldMode.FlatPlate)
+      if (_mode == Property2D_Type.PLATE)
         return;
 
       RecordUndoEvent("Flat Plate Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+      if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
@@ -368,15 +381,15 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
 
-      _mode = FoldMode.FlatPlate;
+      _mode = Property2D_Type.PLATE;
     }
 
     private void Mode4Clicked() {
-      if (_mode == FoldMode.Shell)
+      if (_mode == Property2D_Type.SHELL)
         return;
 
       RecordUndoEvent("Shell Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+      if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
@@ -384,15 +397,15 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
 
-      _mode = FoldMode.Shell;
+      _mode = Property2D_Type.SHELL;
     }
 
     private void Mode5Clicked() {
-      if (_mode == FoldMode.CurvedShell)
+      if (_mode == Property2D_Type.CURVED_SHELL)
         return;
 
       RecordUndoEvent("Curved Shell Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
+      if (_mode == Property2D_Type.LOAD || _mode == Property2D_Type.FABRIC) {
         while (Params.Input.Count > 0)
           Params.UnregisterInputParameter(Params.Input[0], true);
 
@@ -400,15 +413,15 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
 
-      _mode = FoldMode.CurvedShell;
+      _mode = Property2D_Type.CURVED_SHELL;
     }
 
     private void Mode6Clicked() {
-      if (_mode == FoldMode.LoadPanel)
+      if (_mode == Property2D_Type.LOAD)
         return;
 
       RecordUndoEvent("Load Panel Parameters");
-      _mode = FoldMode.LoadPanel;
+      _mode = Property2D_Type.LOAD;
 
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
