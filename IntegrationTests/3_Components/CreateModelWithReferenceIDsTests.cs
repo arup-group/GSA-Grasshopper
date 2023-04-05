@@ -31,8 +31,8 @@ namespace IntegrationTests.Components {
     [Theory]
     [InlineData("Profiles",
       new string[] {
-        "CAT HE HE240.A",
-        "CAT HE HE260.B",
+        "CAT HE HE240.A 19920101",
+        "CAT HE HE260.B 19920101",
       })]
     [InlineData("SteelE",
       new double[] {
