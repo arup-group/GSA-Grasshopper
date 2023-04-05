@@ -170,60 +170,60 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Material Type",
         "Stress Unit",
         "Density Unit",
         "Temperature Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(CreateMaterial.MaterialTypes);
-      SelectedItems.Add(_mode.ToString());
+      _dropDownItems.Add(CreateMaterial.MaterialTypes);
+      _selectedItems.Add(_mode.ToString());
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
-      SelectedItems.Add(Pressure.GetAbbreviation(_stressUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
+      _selectedItems.Add(Pressure.GetAbbreviation(_stressUnit));
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
-      SelectedItems.Add(Density.GetAbbreviation(_densityUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
+      _selectedItems.Add(Density.GetAbbreviation(_densityUnit));
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
-      SelectedItems.Add(Temperature.GetAbbreviation(_temperatureUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
+      _selectedItems.Add(Temperature.GetAbbreviation(_temperatureUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0)
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].ToPascalCase());
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0].ToPascalCase());
       else
         switch (i) {
           case 1:
-            _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
+            _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
             break;
           case 2:
-            _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), SelectedItems[2]);
+            _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), _selectedItems[2]);
             break;
           case 3:
             _temperatureUnit
-              = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), SelectedItems[3]);
+              = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
             break;
         }
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].ToPascalCase());
-      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
-      _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), SelectedItems[2]);
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0].ToPascalCase());
+      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
+      _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), _selectedItems[2]);
       _temperatureUnit
-        = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), SelectedItems[3]);
+        = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
       base.UpdateUIFromSelectedItems();
     }
 

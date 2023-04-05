@@ -121,7 +121,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Footfall:
           var footfallType
-            = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), SelectedItems[1]);
+            = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), _selectedItems[1]);
           res = result.Element2DFootfallValues(elementlist, footfallType)[0];
           break;
       }
@@ -783,32 +783,32 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private DisplayValue _disp = DisplayValue.ResXyz;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Result Type",
         "Component",
         "Deform Shape",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(DropDownItems[0][0]);
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_dropDownItems[0][0]);
 
-      DropDownItems.Add(_displacement);
-      SelectedItems.Add(DropDownItems[1][3]);
+      _dropDownItems.Add(_displacement);
+      _selectedItems.Add(_dropDownItems[1][3]);
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
       m_attributes = new DropDownSliderComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
+        _dropDownItems,
+        _selectedItems,
         _slider,
         SetVal,
         SetMaxMin,
@@ -816,26 +816,26 @@ namespace GsaGH.Components {
         _maxValue,
         _minValue,
         _noDigits,
-        SpacerDescriptions);
+        _spacerDescriptions);
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
         case 0: {
             switch (j) {
               case 0: {
-                  if (DropDownItems[1] != _displacement) {
+                  if (_dropDownItems[1] != _displacement) {
                     while (
-                      DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                      _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
                     {
-                      DropDownItems.RemoveAt(2);
-                      SelectedItems.RemoveAt(2);
-                      SpacerDescriptions.RemoveAt(2);
+                      _dropDownItems.RemoveAt(2);
+                      _selectedItems.RemoveAt(2);
+                      _spacerDescriptions.RemoveAt(2);
                     }
 
-                    DropDownItems[1] = _displacement;
-                    SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
+                    _dropDownItems[1] = _displacement;
+                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
 
                     _disp = (DisplayValue)3;
                     _isShear = false;
@@ -846,17 +846,17 @@ namespace GsaGH.Components {
                   break;
                 }
               case 1: {
-                  if (DropDownItems[1] != _force) {
+                  if (_dropDownItems[1] != _force) {
                     while (
-                      DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                      _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
                     {
-                      DropDownItems.RemoveAt(2);
-                      SelectedItems.RemoveAt(2);
-                      SpacerDescriptions.RemoveAt(2);
+                      _dropDownItems.RemoveAt(2);
+                      _selectedItems.RemoveAt(2);
+                      _spacerDescriptions.RemoveAt(2);
                     }
 
-                    DropDownItems[1] = _force;
-                    SelectedItems[1] = DropDownItems[1][0];
+                    _dropDownItems[1] = _force;
+                    _selectedItems[1] = _dropDownItems[1][0];
 
                     _disp = 0;
                     _isShear = false;
@@ -867,19 +867,19 @@ namespace GsaGH.Components {
                   break;
                 }
               case 2: {
-                  if (DropDownItems[1] != _stress) {
-                    if (DropDownItems.Count < 3) {
-                      DropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
-                      SpacerDescriptions.Insert(2, "Layer");
+                  if (_dropDownItems[1] != _stress) {
+                    if (_dropDownItems.Count < 3) {
+                      _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
+                      _spacerDescriptions.Insert(2, "Layer");
                     }
 
-                    DropDownItems[1] = _stress;
-                    SelectedItems[1] = DropDownItems[1][0];
+                    _dropDownItems[1] = _stress;
+                    _selectedItems[1] = _dropDownItems[1][0];
 
-                    if (SelectedItems.Count < 3)
-                      SelectedItems.Insert(2, DropDownItems[2][1]);
+                    if (_selectedItems.Count < 3)
+                      _selectedItems.Insert(2, _dropDownItems[2][1]);
                     else
-                      SelectedItems[2] = DropDownItems[2][1];
+                      _selectedItems[2] = _dropDownItems[2][1];
 
                     _disp = 0;
                     _isShear = false;
@@ -889,17 +889,17 @@ namespace GsaGH.Components {
                   break;
                 }
               case 3: {
-                  if (DropDownItems[1] != _footfall) {
+                  if (_dropDownItems[1] != _footfall) {
                     while (
-                      DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                      _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
                     {
-                      DropDownItems.RemoveAt(2);
-                      SelectedItems.RemoveAt(2);
-                      SpacerDescriptions.RemoveAt(2);
+                      _dropDownItems.RemoveAt(2);
+                      _selectedItems.RemoveAt(2);
+                      _spacerDescriptions.RemoveAt(2);
                     }
 
-                    DropDownItems[1] = _footfall;
-                    SelectedItems[1] = DropDownItems[1][0];
+                    _dropDownItems[1] = _footfall;
+                    _selectedItems[1] = _dropDownItems[1][0];
 
                     _disp = 0;
                     _isShear = false;
@@ -915,7 +915,7 @@ namespace GsaGH.Components {
           }
         case 1: {
             bool redraw = false;
-            SelectedItems[1] = DropDownItems[1][j];
+            _selectedItems[1] = _dropDownItems[1][j];
             if (_mode == FoldMode.Displacement) {
               if ((int)_disp > 3 & j < 4) {
                 redraw = true;
@@ -929,7 +929,7 @@ namespace GsaGH.Components {
             }
 
             _disp = (DisplayValue)j;
-            if (DropDownItems[1] != _displacement) {
+            if (_dropDownItems[1] != _displacement) {
               _isShear = false;
               if (_mode == FoldMode.Force) {
                 if (j == 3 | j == 4) {
@@ -1099,7 +1099,7 @@ namespace GsaGH.Components {
 
       _slider = false;
       _defScale = 0;
-      SpacerDescriptions[2] = "Deform Shape";
+      _spacerDescriptions[2] = "Deform Shape";
 
       ReDrawComponent();
     }

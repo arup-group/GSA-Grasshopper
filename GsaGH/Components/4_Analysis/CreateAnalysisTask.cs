@@ -104,32 +104,32 @@ namespace GsaGH.Components {
 
     private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Solver",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(new List<string>() {
+      _dropDownItems.Add(new List<string>() {
         GsaAnalysisTask.AnalysisType.Static.ToString(),
       });
-      SelectedItems.Add(_analtype.ToString());
+      _selectedItems.Add(_analtype.ToString());
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
-        SelectedItems[i]);
+        _selectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
+    protected override void UpdateUIFromSelectedItems() {
       _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
-        SelectedItems[0]);
+        _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 

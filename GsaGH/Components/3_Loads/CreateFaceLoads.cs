@@ -291,29 +291,29 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Uniform;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_loadTypeOptions);
-      SelectedItems.Add(_mode.ToString());
+      _dropDownItems.Add(_loadTypeOptions);
+      _selectedItems.Add(_mode.ToString());
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
-      SelectedItems.Add(Pressure.GetAbbreviation((_forcePerAreaUnit)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      _selectedItems.Add(Pressure.GetAbbreviation((_forcePerAreaUnit)));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0)
-        switch (SelectedItems[0]) {
+        switch (_selectedItems[0]) {
           case "Uniform":
             Mode1Clicked();
             break;
@@ -328,15 +328,15 @@ namespace GsaGH.Components {
             break;
         }
       else
-        _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
+        _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
       _duringLoad = true;
-      switch (SelectedItems[0]) {
+      switch (_selectedItems[0]) {
         case "Uniform":
           Mode1Clicked();
           break;
@@ -352,7 +352,7 @@ namespace GsaGH.Components {
       }
 
       _duringLoad = false;
-      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
+      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

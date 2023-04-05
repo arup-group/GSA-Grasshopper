@@ -217,16 +217,16 @@ namespace GsaGH.Components {
 
         InitialiseDropdowns();
 
-        SelectedItems = new List<string>();
+        _selectedItems = new List<string>();
         switch (_mode) {
           case FoldMode.OneDimensionalOneWay:
-            SelectedItems.Add("1D, One-way span");
+            _selectedItems.Add("1D, One-way span");
             break;
           case FoldMode.OneDimensionalTwoWay:
-            SelectedItems.Add("1D, Two-way span");
+            _selectedItems.Add("1D, Two-way span");
             break;
           case FoldMode.TwoDimensional:
-            SelectedItems.Add("2D");
+            _selectedItems.Add("2D");
             break;
         }
       }
@@ -337,24 +337,24 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.OneDimensionalOneWay;
     private bool _duringLoad = false;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(_type[0]);
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_type[0]);
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0)
-        switch (SelectedItems[i]) {
+        switch (_selectedItems[i]) {
           case "1D, One-way span":
             Mode1Clicked();
             break;
@@ -369,9 +369,9 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
+    protected override void UpdateUIFromSelectedItems() {
       _duringLoad = true;
-      switch (SelectedItems[0]) {
+      switch (_selectedItems[0]) {
         case "1D, One-way span":
           _mode = FoldMode.OneDimensionalOneWay;
           Mode1Clicked();

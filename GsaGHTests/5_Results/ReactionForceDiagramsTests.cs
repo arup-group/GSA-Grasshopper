@@ -12,16 +12,16 @@ namespace GsaGHTests {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests {
     [Fact]
-    private void WhenSetSelected_ThenSelectedItems_ShouldBeValid() {
+    private void WhenSetSelected_Then_selectedItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      string defaultValue = obj.DropDownItems[0][3];
-      string expectedValue = obj.DropDownItems[0][0];
+      string defaultValue = obj._dropDownItems[0][3];
+      string expectedValue = obj._dropDownItems[0][0];
 
-      Assert.Equal(obj.SelectedItems[0], defaultValue);
+      Assert.Equal(obj._selectedItems[0], defaultValue);
 
       obj.SetSelected(0, 0);
 
-      Assert.Equal(obj.SelectedItems[0], expectedValue);
+      Assert.Equal(obj._selectedItems[0], expectedValue);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ namespace GsaGHTests {
     #region Initialise Dropdowns
 
     [Fact]
-    private void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeValid() {
+    private void WhenInitialiseDropdowns_Then_dropDownItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
@@ -206,26 +206,26 @@ namespace GsaGHTests {
           "Resolved |M|",
         },
       };
-      Assert.Equal(expectedValues, obj.DropDownItems);
+      Assert.Equal(expectedValues, obj._dropDownItems);
     }
 
     [Fact]
-    private void WhenInitialiseDropdowns_ThenSelectedItems_ShouldBeSetTo() {
+    private void WhenInitialiseDropdowns_Then_selectedItems_ShouldBeSetTo() {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
       var expectedValues = new List<string> {
         "Resolved |F|",
       };
-      Assert.Equal(expectedValues, obj.SelectedItems);
+      Assert.Equal(expectedValues, obj._selectedItems);
     }
 
     [Fact]
-    private void WhenInitialiseDropdowns_ThenIsInitialisedValue_ShouldBeTrue() {
+    private void WhenInitialiseDropdowns_Then_isInitialisedValue_ShouldBeTrue() {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.True(obj.IsInitialised);
+      Assert.True(obj._isInitialised);
     }
 
     [Fact]
@@ -233,7 +233,7 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.Equal(obj.SpacerDescriptions,
+      Assert.Equal(obj._spacerDescriptions,
         new List<string>() {
           "Component",
         });
@@ -248,10 +248,10 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.CreateAttributes();
 
-      Assert.NotNull(obj.SpacerDescriptions);
-      Assert.NotNull(obj.DropDownItems);
-      Assert.NotNull(obj.SelectedItems);
-      Assert.True(obj.IsInitialised);
+      Assert.NotNull(obj._spacerDescriptions);
+      Assert.NotNull(obj._dropDownItems);
+      Assert.NotNull(obj._selectedItems);
+      Assert.True(obj._isInitialised);
     }
 
     [Fact]

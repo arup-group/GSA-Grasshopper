@@ -183,42 +183,42 @@ namespace GsaGH.Components {
     private bool _average = true;
     private EnergyUnit _energyUnit = DefaultUnits.EnergyUnit;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Energy Unit",
         "Settings",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Energy)));
-      SelectedItems.Add(Energy.GetAbbreviation(_energyUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Energy)));
+      _selectedItems.Add(Energy.GetAbbreviation(_energyUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
       m_attributes = new DropDownCheckBoxesComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
+        _dropDownItems,
+        _selectedItems,
         SetAnalysis,
         _initialCheckState,
         _checkboxText,
-        SpacerDescriptions);
+        _spacerDescriptions);
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), _selectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), _selectedItems[0]);
       UpdateInputs();
       base.UpdateUIFromSelectedItems();
     }

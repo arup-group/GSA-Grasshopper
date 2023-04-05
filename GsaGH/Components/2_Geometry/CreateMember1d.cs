@@ -139,7 +139,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) { }
 
-    public override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes() {
       var restraints = new List<List<bool>>() { new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1 }, new List<bool>() { _x2, _y2, _z2, _xx2, _yy2, _zz2 } };

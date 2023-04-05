@@ -148,7 +148,7 @@ namespace GsaGH.Components {
     #region Custom UI
 
     public override void SetSelected(int i, int j) { }
-    public override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()
       => m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
