@@ -208,7 +208,9 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string type = Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == _prop2d.Type).Key + " ";
       string desc = Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
-      string mat = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+      string mat = Type != Property2D_Type.LOAD
+        ? Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " "
+        : string.Empty;
       string pa = (Id > 0) ? "PA" + Id + " " : "";
       string supportType = Type == Property2D_Type.LOAD
         ? $"{SupportType}"

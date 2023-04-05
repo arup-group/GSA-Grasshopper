@@ -120,11 +120,11 @@ namespace GsaGH.Components {
 
     private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string>{
       { SupportType.Auto, "Automatic"},
-      { SupportType.AllEdges, "All sides"},
-      { SupportType.ThreeEdges, "Three sides"},
-      { SupportType.TwoEdges, "Two sides"},
-      { SupportType.TwoAdjacentEdges, "Two adjacent sides"},
-      { SupportType.OneEdge, "One side"},
+      { SupportType.AllEdges, "All Edges"},
+      { SupportType.ThreeEdges, "Three Edges"},
+      { SupportType.TwoEdges, "Two Edges"},
+      { SupportType.TwoAdjacentEdges, "Two Adjacent Edges"},
+      { SupportType.OneEdge, "One Edge"},
       { SupportType.Cantilever, "Cantilever"},
     };
 
@@ -170,12 +170,27 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      ResetDropdownMenus();
       Prop2dType mode = GetModeBy(SelectedItems[0]);
 
       switch (mode) {
         case Prop2dType.PlaneStress:
+        case Prop2dType.FlatPlate:
+        case Prop2dType.Shell:
+        case Prop2dType.CurvedShell:
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+          break;
+        case Prop2dType.LoadPanel:
+          _supportTypeIndex = _supportDropDown.ToList()
+            .FindIndex(x => x.Value == SelectedItems[1]);
+          break;
+      }
+
+      ResetDropdownMenus();
+
+      switch (mode) {
+        case Prop2dType.PlaneStress:
           AddLengthUnitDropDown();
+          SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
           Mode1Clicked();
           break;
         case Prop2dType.Fabric:
@@ -183,26 +198,25 @@ namespace GsaGH.Components {
           break;
         case Prop2dType.FlatPlate:
           AddLengthUnitDropDown();
+          SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
           Mode3Clicked();
           break;
         case Prop2dType.Shell:
           AddLengthUnitDropDown();
+          SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
           Mode4Clicked();
           break;
         case Prop2dType.CurvedShell:
           AddLengthUnitDropDown();
+          SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
           Mode5Clicked();
           break;
         case Prop2dType.LoadPanel:
-          _supportTypeIndex = _supportDropDown.ToList()
-            .FindIndex(x => x.Value == SelectedItems[1]);
+          SelectedItems.Add(_supportDropDown.Values.ToList()[_supportTypeIndex].ToString());
           AddSupportTypeDropDown();
           Mode6Clicked();
           break;
       }
-
-      if (mode != Prop2dType.LoadPanel)
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
       base.UpdateUIFromSelectedItems();
     }
