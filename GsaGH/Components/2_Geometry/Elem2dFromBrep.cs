@@ -239,28 +239,28 @@ namespace GsaGH.Components {
       UpdateMessage();
     }
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -324,7 +324,7 @@ namespace GsaGH.Components {
       if (reader.ChunkExists("ParameterData"))
         return base.Read(reader);
       BaseReader.Read(reader, this);
-      IsInitialised = true;
+      _isInitialised = true;
       UpdateUIFromSelectedItems();
       GH_IReader attributes = reader.FindChunk("Attributes");
       Attributes.Bounds = (RectangleF)attributes.Items[0]

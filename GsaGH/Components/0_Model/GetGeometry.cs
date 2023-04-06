@@ -696,49 +696,49 @@ namespace GsaGH.Components {
 
     #region custom UI
 
-    public List<List<string>> DropDownItems;
+    public List<List<string>> _dropDownItems;
 
-    public List<string> SelectedItems;
+    public List<string> _selectedItems;
 
-    public List<string> SpacerDescriptions;
+    public List<string> _spacerDescriptions;
 
-    public bool IsInitialised;
+    public bool _isInitialised;
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
 
       m_attributes = new DropDownComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
-        SpacerDescriptions);
+        _dropDownItems,
+        _selectedItems,
+        _spacerDescriptions);
     }
 
     public void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+      _spacerDescriptions = new List<string>(new[] {
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       UpdateUi();
     }
 
-    public void UpdateUiFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+    public void UpdateUiFrom_selectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       CreateAttributes();
       UpdateUi();
     }
@@ -911,7 +911,7 @@ namespace GsaGH.Components {
 
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
-      WriteDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
+      WriteDropDownComponents(ref writer, _dropDownItems, _selectedItems, _spacerDescriptions);
 
       return base.Write(writer);
     }
@@ -919,11 +919,11 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       ReadDropDownComponents(ref reader,
-        ref DropDownItems,
-        ref SelectedItems,
-        ref SpacerDescriptions);
-      IsInitialised = true;
-      UpdateUiFromSelectedItems();
+        ref _dropDownItems,
+        ref _selectedItems,
+        ref _spacerDescriptions);
+      _isInitialised = true;
+      UpdateUiFrom_selectedItems();
       return base.Read(reader);
     }
 

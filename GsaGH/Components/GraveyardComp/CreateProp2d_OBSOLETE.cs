@@ -351,7 +351,7 @@ namespace GsaGH.Components {
       OnDisplayExpired(true);
     }
 
-    private void UpdateUiFromSelectedItems() {
+    private void UpdateUiFrom_selectedItems() {
       CreateAttributes();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -549,7 +549,7 @@ namespace GsaGH.Components {
           .Where(char.IsLetter));
       }
 
-      UpdateUiFromSelectedItems();
+      UpdateUiFrom_selectedItems();
       _first = false;
       return base.Read(reader);
     }

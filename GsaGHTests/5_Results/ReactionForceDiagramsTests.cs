@@ -14,14 +14,14 @@ namespace GsaGHTests {
     [Fact]
     private void WhenSetSelected_ThenSelectedItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      string defaultValue = obj.DropDownItems[0][3];
-      string expectedValue = obj.DropDownItems[0][0];
+      string defaultValue = obj._dropDownItems[0][3];
+      string expectedValue = obj._dropDownItems[0][0];
 
-      Assert.Equal(obj.SelectedItems[0], defaultValue);
+      Assert.Equal(obj._selectedItems[0], defaultValue);
 
       obj.SetSelected(0, 0);
 
-      Assert.Equal(obj.SelectedItems[0], expectedValue);
+      Assert.Equal(obj._selectedItems[0], expectedValue);
     }
 
     [Fact]
@@ -206,7 +206,7 @@ namespace GsaGHTests {
           "Resolved |M|",
         },
       };
-      Assert.Equal(expectedValues, obj.DropDownItems);
+      Assert.Equal(expectedValues, obj._dropDownItems);
     }
 
     [Fact]
@@ -217,7 +217,7 @@ namespace GsaGHTests {
       var expectedValues = new List<string> {
         "Resolved |F|",
       };
-      Assert.Equal(expectedValues, obj.SelectedItems);
+      Assert.Equal(expectedValues, obj._selectedItems);
     }
 
     [Fact]
@@ -225,7 +225,7 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.True(obj.IsInitialised);
+      Assert.True(obj._isInitialised);
     }
 
     [Fact]
@@ -233,7 +233,7 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.Equal(obj.SpacerDescriptions,
+      Assert.Equal(obj._spacerDescriptions,
         new List<string>() {
           "Component",
         });
@@ -248,10 +248,10 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.CreateAttributes();
 
-      Assert.NotNull(obj.SpacerDescriptions);
-      Assert.NotNull(obj.DropDownItems);
-      Assert.NotNull(obj.SelectedItems);
-      Assert.True(obj.IsInitialised);
+      Assert.NotNull(obj._spacerDescriptions);
+      Assert.NotNull(obj._dropDownItems);
+      Assert.NotNull(obj._selectedItems);
+      Assert.True(obj._isInitialised);
     }
 
     [Fact]
