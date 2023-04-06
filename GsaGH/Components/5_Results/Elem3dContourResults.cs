@@ -793,6 +793,9 @@ namespace GsaGH.Components {
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
@@ -803,9 +806,7 @@ namespace GsaGH.Components {
         (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
+      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
@@ -814,9 +815,7 @@ namespace GsaGH.Components {
         lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var stressUnitsMenu = new ToolStripMenuItem("Stress") {
-        Enabled = true,
-      };
+      var stressUnitsMenu = new ToolStripMenuItem("Stress") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
           Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),

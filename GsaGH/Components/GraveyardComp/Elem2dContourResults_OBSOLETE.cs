@@ -908,14 +908,15 @@ namespace GsaGH.Components {
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient",
-        gradient.Icon_24x24,
-        (s, e) => CreateGradient());
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
       Menu_AppendSeparator(menu);
     }
