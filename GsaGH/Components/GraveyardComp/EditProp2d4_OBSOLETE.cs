@@ -22,7 +22,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components.GraveyardComp {
   // ReSharper disable once InconsistentNaming
-  internal class EditProp2d4_OBSOLETE : GH_OasysComponent,
+  public class EditProp2d4_OBSOLETE : GH_OasysComponent,
       IGH_VariableParameterComponent {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaProp2d = new GsaProp2d();
@@ -121,7 +121,7 @@ namespace GsaGH.Components.GraveyardComp {
     #region Name and Ribbon Layout
 
     public override Guid ComponentGuid => new Guid("dfb17a0f-a856-4a54-ae5c-d794961f3c52");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProp2d;
 
