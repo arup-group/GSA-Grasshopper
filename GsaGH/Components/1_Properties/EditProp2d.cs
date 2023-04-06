@@ -74,10 +74,13 @@ namespace GsaGH.Components {
 
         var ghSupportType = new GH_ObjectWrapper();
         if (da.GetData(5, ref ghSupportType)) {
-          if (GH_Convert.ToInt32(ghSupportType.Value, out int val, GH_Conversion.Both))
-            prop.SupportType = (SupportType)val;
-          else if (GH_Convert.ToString(ghSupportType.Value, out string supportType, GH_Conversion.Both))
-            prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportType);
+          var supportTypeIndex = new GH_Integer();
+          if (ghTyp.Value is GH_Integer) {
+            ghTyp.CastTo(ref supportTypeIndex);
+            prop.SupportType = (SupportType)supportTypeIndex.Value;
+          }
+          else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName, GH_Conversion.Both))
+            prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
           else {
             this.AddRuntimeError("Cannot convert support type");
           }

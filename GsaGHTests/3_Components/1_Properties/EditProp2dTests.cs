@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
@@ -33,9 +34,11 @@ namespace GsaGHTests.Properties {
       var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
       var thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
+      var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
+      var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, i++);
-      var type = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, i);
 
       Duplicates.AreEqual(prop2d, prop2dGoo.Value);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
@@ -44,6 +47,8 @@ namespace GsaGHTests.Properties {
       Duplicates.AreEqual(expectedMat, mat.Value);
       Assert.Equal(400, thk.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(-1, axis.Value);
+      Assert.Equal(SupportType.Undefined, supportType.Value);
+      Assert.Equal(1, referenceEdge.Value);
       Assert.Equal("", name.Value);
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal("Shell", type.Value);
@@ -60,9 +65,11 @@ namespace GsaGHTests.Properties {
       var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
       var thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
+      var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
+      var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, i++);
-      var type = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, i);
 
       Duplicates.AreEqual(prop2d, prop2dGoo.Value);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
@@ -71,6 +78,8 @@ namespace GsaGHTests.Properties {
       Duplicates.AreEqual(expectedMat, mat.Value);
       Assert.Equal(0, thk.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(-1, axis.Value);
+      Assert.Equal(SupportType.Undefined, supportType.Value);
+      Assert.Equal(1, referenceEdge.Value);
       Assert.Equal("", name.Value);
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal("Shell", type.Value);
@@ -83,9 +92,11 @@ namespace GsaGHTests.Properties {
         new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
         i++);
       ComponentTestHelper.SetInput(comp, new GH_Integer(7), i++);
+      ComponentTestHelper.SetInput(comp, new GH_Integer(7), i++);
+      ComponentTestHelper.SetInput(comp, new GH_Integer(3), i++);
       ComponentTestHelper.SetInput(comp, new GH_String("MyPropediprop"), i++);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), i++);
-      ComponentTestHelper.SetInput(comp, new GH_String("Curved Shell"), i++);
+      ComponentTestHelper.SetInput(comp, new GH_String("Curved Shell"), i);
 
       i = 0;
       prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, i++);
@@ -93,14 +104,19 @@ namespace GsaGHTests.Properties {
       mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
       thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
+      supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
+      referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
       name = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
       colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, i++);
-      type = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
+      type = (GH_String)ComponentTestHelper.GetOutput(comp, i);
 
       Assert.Equal(49, id.Value);
       Duplicates.AreEqual(expectedMat, mat.Value);
       Assert.Equal(40, thk.Value.As(LengthUnit.Centimeter), 6);
       Assert.Equal(7, axis.Value);
+
+      Assert.Equal(SupportType.Cantilever, supportType.Value);
+      Assert.Equal(3, referenceEdge.Value);
       Assert.Equal("MyPropediprop", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
       Assert.Equal("Curved Shell", type.Value);
