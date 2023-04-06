@@ -71,6 +71,12 @@ namespace GsaGH.Components {
       }
       else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == SelectedItems[1]).Key;
+        if (prop.SupportType == SupportType.Auto) {
+          int referenceEdge = 0;
+          prop.ReferenceEdge = da.GetData("Reference edge", ref referenceEdge)
+            ? referenceEdge
+            : prop.ReferenceEdge;
+        }
       }
 
       da.SetData(0, new GsaProp2dGoo(prop));
@@ -100,6 +106,8 @@ namespace GsaGH.Components {
         "Section thickness",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddIntegerParameter("Reference edge", "RE", "Reference edge for automatic support type", GH_ParamAccess.item);
+      pManager.HideParameter(2);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -120,16 +128,16 @@ namespace GsaGH.Components {
 
     private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string>{
       { SupportType.Auto, "Automatic"},
-      { SupportType.AllEdges, "All sides"},
-      { SupportType.ThreeEdges, "Three sides"},
-      { SupportType.TwoEdges, "Two sides"},
-      { SupportType.TwoAdjacentEdges, "Two adjacent sides"},
-      { SupportType.OneEdge, "One side"},
+      { SupportType.AllEdges, "All edges"},
+      { SupportType.ThreeEdges, "Three edges"},
+      { SupportType.TwoEdges, "Two edges"},
+      { SupportType.TwoAdjacentEdges, "Two adjacent edges"},
+      { SupportType.OneEdge, "One edge"},
       { SupportType.Cantilever, "Cantilever"},
     };
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private int _supportTypeIndex = 0;
+    private int _supportTypeIndex;
 
     public override void InitialiseDropdowns() {
       SpacerDescriptions = new List<string>(new[] {
@@ -163,6 +171,7 @@ namespace GsaGH.Components {
 
       if (i == 1 && mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = j;
+        UpdateParameters(mode);
         UpdateDropDownItems(mode);
       }
 
@@ -178,33 +187,8 @@ namespace GsaGH.Components {
       else if (mode != Prop2dType.Fabric)
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
-      ResetDropdownMenus();
-
-      switch (mode) {
-        case Prop2dType.PlaneStress:
-          AddLengthUnitDropDown();
-          Mode1Clicked();
-          break;
-        case Prop2dType.Fabric:
-          Mode2Clicked();
-          break;
-        case Prop2dType.FlatPlate:
-          AddLengthUnitDropDown();
-          Mode3Clicked();
-          break;
-        case Prop2dType.Shell:
-          AddLengthUnitDropDown();
-          Mode4Clicked();
-          break;
-        case Prop2dType.CurvedShell:
-          AddLengthUnitDropDown();
-          Mode5Clicked();
-          break;
-        case Prop2dType.LoadPanel:
-          AddSupportTypeDropDown();
-          Mode6Clicked();
-          break;
-      }
+      UpdateDropDownItems(mode);
+      UpdateParameters(mode);
 
       base.UpdateUIFromSelectedItems();
     }
@@ -213,42 +197,29 @@ namespace GsaGH.Components {
     private Prop2dType _mode = Prop2dType.Shell;
 
     private void UpdateParameters(Prop2dType mode) {
-      if (_mode == mode)
+      if (_mode == mode && mode != Prop2dType.LoadPanel)
         return;
 
       _dropdownTopLevel.TryGetValue(mode, out string eventName);
       RecordUndoEvent($"{eventName} Parameters");
+
+      while (Params.Input.Count > 0)
+        Params.UnregisterInputParameter(Params.Input[0], true);
 
       switch (mode) {
         case Prop2dType.Shell:
         case Prop2dType.PlaneStress:
         case Prop2dType.FlatPlate:
         case Prop2dType.CurvedShell:
-          switch (Params.Input.Count) {
-            case 0:
-              Params.RegisterInputParam(new Param_GenericObject());
-              Params.RegisterInputParam(new GsaMaterialParameter());
-              break;
-            case 1:
-              Params.RegisterInputParam(new GsaMaterialParameter());
-              break;
-          }
-
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new GsaMaterialParameter());
           break;
         case Prop2dType.Fabric:
-          switch (Params.Input.Count) {
-            case 0:
-              Params.RegisterInputParam(new Param_GenericObject());
-              break;
-            case 2:
-              Params.UnregisterInputParameter(Params.Input[1], true);
-              break;
-          }
-
+          Params.RegisterInputParam(new Param_GenericObject());
           break;
         case Prop2dType.LoadPanel:
-          while (Params.Input.Count > 0)
-            Params.UnregisterInputParameter(Params.Input[0], true);
+          if (_supportTypeIndex == _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto))
+            Params.RegisterInputParam(new Param_Integer());
           break;
       }
 
@@ -286,6 +257,8 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case Prop2dType.LoadPanel:
+          if (_supportTypeIndex == _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto))
+            SetReferenceEdgeInputAt(0);
           return;
         case Prop2dType.Fabric:
           SetMaterialInputAt(0);
@@ -320,6 +293,7 @@ namespace GsaGH.Components {
     }
 
     private void SetMaterialInputAt(int index) => SetInputProperties(index, "Mat", "Material", "GSA Material");
+    private void SetReferenceEdgeInputAt(int index) => SetInputProperties(index, "RE", "Reference edge", "Reference edge for automatic support type");
     #endregion
 
     private void AddLengthUnitDropDown() {
@@ -346,96 +320,6 @@ namespace GsaGH.Components {
         DropDownItems.RemoveAt(DropDownItems.Count - 1);
       while (SelectedItems.Count > 1)
         SelectedItems.RemoveAt(SelectedItems.Count - 1);
-    }
-
-    // shitty methods - extracted it to updateDropDown and UpdateParameters but then
-    // using updateParameter in UpdateUIFromSelectedItems brokes tests...so left for now
-    private void Mode1Clicked() {
-      if (_mode == Prop2dType.PlaneStress)
-        return;
-
-      RecordUndoEvent("Plane Stress Parameters");
-      if (_mode == Prop2dType.LoadPanel || _mode == Prop2dType.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = Prop2dType.PlaneStress;
-    }
-
-    private void Mode2Clicked() {
-      if (_mode == Prop2dType.Fabric)
-        return;
-
-      RecordUndoEvent("Fabric Parameters");
-      _mode = Prop2dType.Fabric;
-
-      while (Params.Input.Count > 0)
-        Params.UnregisterInputParameter(Params.Input[0], true);
-
-      Params.RegisterInputParam(new Param_GenericObject());
-    }
-
-    private void Mode3Clicked() {
-      if (_mode == Prop2dType.FlatPlate)
-        return;
-
-      RecordUndoEvent("Flat Plate Parameters");
-      if (_mode == Prop2dType.LoadPanel || _mode == Prop2dType.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = Prop2dType.FlatPlate;
-    }
-
-    private void Mode4Clicked() {
-      if (_mode == Prop2dType.Shell)
-        return;
-
-      RecordUndoEvent("Shell Parameters");
-      if (_mode == Prop2dType.LoadPanel || _mode == Prop2dType.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = Prop2dType.Shell;
-    }
-
-    private void Mode5Clicked() {
-      if (_mode == Prop2dType.CurvedShell)
-        return;
-
-      RecordUndoEvent("Curved Shell Parameters");
-      if (_mode == Prop2dType.LoadPanel || _mode == Prop2dType.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = Prop2dType.CurvedShell;
-    }
-
-    private void Mode6Clicked() {
-      if (_mode == Prop2dType.LoadPanel)
-        return;
-
-      RecordUndoEvent("Load Panel Parameters");
-      _mode = Prop2dType.LoadPanel;
-
-      while (Params.Input.Count > 0)
-        Params.UnregisterInputParameter(Params.Input[0], true);
     }
   }
 }
