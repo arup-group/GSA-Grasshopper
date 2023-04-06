@@ -170,8 +170,15 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      ResetDropdownMenus();
       Prop2dType mode = GetModeBy(SelectedItems[0]);
+
+      if (mode == Prop2dType.LoadPanel)
+        _supportTypeIndex = _supportDropDown.ToList()
+          .FindIndex(x => x.Value == SelectedItems[1]);
+      else
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+
+      ResetDropdownMenus();
 
       switch (mode) {
         case Prop2dType.PlaneStress:
@@ -194,15 +201,10 @@ namespace GsaGH.Components {
           Mode5Clicked();
           break;
         case Prop2dType.LoadPanel:
-          _supportTypeIndex = _supportDropDown.ToList()
-            .FindIndex(x => x.Value == SelectedItems[1]);
           AddSupportTypeDropDown();
           Mode6Clicked();
           break;
       }
-
-      if (mode != Prop2dType.LoadPanel)
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
       base.UpdateUIFromSelectedItems();
     }
