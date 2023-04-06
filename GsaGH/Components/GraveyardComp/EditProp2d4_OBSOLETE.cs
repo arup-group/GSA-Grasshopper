@@ -20,12 +20,10 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components {
-  /// <summary>
-  ///   Component to edit a Prop2d and ouput the information
-  /// </summary>
-  public class EditProp2d : GH_OasysComponent,
-    IGH_VariableParameterComponent {
+namespace GsaGH.Components.GraveyardComp {
+  // ReSharper disable once InconsistentNaming
+  internal class EditProp2d4_OBSOLETE : GH_OasysComponent,
+      IGH_VariableParameterComponent {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaProp2d = new GsaProp2d();
       var prop = new GsaProp2d();
@@ -72,34 +70,18 @@ namespace GsaGH.Components {
             prop.AxisProperty = axis;
         }
 
-        var ghSupportType = new GH_ObjectWrapper();
-        if (da.GetData(5, ref ghSupportType)) {
-          if (GH_Convert.ToInt32(ghSupportType.Value, out int val, GH_Conversion.Both))
-            prop.SupportType = (SupportType)val;
-          else if (GH_Convert.ToString(ghSupportType.Value, out string supportType, GH_Conversion.Both))
-            prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportType);
-          else {
-            this.AddRuntimeError("Cannot convert support type");
-          }
-        }
-
-        var ghReferenceEdge = new GH_Integer();
-        if (da.GetData(6, ref ghReferenceEdge))
-          if (GH_Convert.ToInt32(ghReferenceEdge, out int referenceEdge, GH_Conversion.Both))
-            prop.ReferenceEdge = referenceEdge;
-
         var ghString = new GH_String();
-        if (da.GetData(7, ref ghString))
+        if (da.GetData(5, ref ghString))
           if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
             prop.Name = name;
 
         var ghColour = new GH_Colour();
-        if (da.GetData(8, ref ghColour))
+        if (da.GetData(6, ref ghColour))
           if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
             prop.Colour = col;
 
         var ghType = new GH_ObjectWrapper();
-        if (da.GetData(9, ref ghType)) {
+        if (da.GetData(7, ref ghType)) {
           if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
             prop.Type = (Property2D_Type)number;
           else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both))
@@ -125,12 +107,10 @@ namespace GsaGH.Components {
           da.SetData(4, new GH_Plane(prop.LocalAxis));
         else
           da.SetData(4, ax);
-        da.SetData(5, prop.SupportType);
-        da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
-        da.SetData(7, nm);
-        da.SetData(8, colour);
+        da.SetData(5, nm);
+        da.SetData(6, colour);
 
-        da.SetData(9,
+        da.SetData(7,
           Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type)
             .Key);
       }
@@ -140,12 +120,12 @@ namespace GsaGH.Components {
 
     #region Name and Ribbon Layout
 
-    public override Guid ComponentGuid => new Guid("8cb4eacb-5f7d-49cf-a89a-87f8456fc308");
+    public override Guid ComponentGuid => new Guid("dfb17a0f-a856-4a54-ae5c-d794961f3c52");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProp2d;
 
-    public EditProp2d() : base("Edit 2D Property",
+    public EditProp2d4_OBSOLETE() : base("Edit 2D Property",
       "Prop2dEdit",
       "Modify GSA 2D Property",
       CategoryName.Name(),
@@ -177,15 +157,6 @@ namespace GsaGH.Components {
         "Ax",
         "Input a Plane to set a custom Axis or input an integer (Global (0) or Topological (-1)) to reference a predefined Axis in the model",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Support Type",
-        "ST",
-        "Support Type",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Reference Edge",
-        "RE",
-        "Reference edge for support type other than Auto",
-        GH_ParamAccess.item);
-
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour",
         "Co",
@@ -218,8 +189,8 @@ namespace GsaGH.Components {
         + "Load : 10",
         GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++)
-        pManager[i].Optional = true;
-      // pManager.HideParameter(6);//hide reference edge
+        pManager[i]
+          .Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -241,14 +212,6 @@ namespace GsaGH.Components {
         "Ax",
         "Get Local Axis either as Plane for custom or an integer (Global (0) or Topological (1)) for referenced Axis.",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Support Type",
-        "ST",
-        "Support Type",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Reference Edge",
-        "Re",
-        "Reference edge for support type other than Auto",
-        GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
@@ -261,8 +224,6 @@ namespace GsaGH.Components {
     protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private int _supportTypeIndex;
-    private int _referenceEdge;
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -293,16 +254,12 @@ namespace GsaGH.Components {
 
     public override bool Write(GH_IWriter writer) {
       writer.SetString("LengthUnit", _lengthUnit.ToString());
-      writer.SetInt32("SupportType", _supportTypeIndex);
-      writer.SetInt32("ReferenceEdge", _referenceEdge);
       return base.Write(writer);
     }
 
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      _supportTypeIndex = reader.GetInt32("SupportType");
-      _referenceEdge = reader.GetInt32("ReferenceEdge");
       return base.Read(reader);
     }
 
