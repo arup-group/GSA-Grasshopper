@@ -323,23 +323,23 @@ namespace GsaGH.Components {
       UpdateMessage();
     }
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       UpdateMessage();
       base.UpdateUI();
     }
@@ -428,7 +428,7 @@ namespace GsaGH.Components {
 
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
         _tolerance = new Length(tol, _lengthUnit);

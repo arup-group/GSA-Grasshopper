@@ -607,32 +607,32 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private DisplayValue _disp = DisplayValue.ResXyz;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Result Type",
         "Component",
         "Deform Shape",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(DropDownItems[0][0]);
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_dropDownItems[0][0]);
 
-      DropDownItems.Add(_displacement);
-      SelectedItems.Add(DropDownItems[1][3]);
+      _dropDownItems.Add(_displacement);
+      _selectedItems.Add(_dropDownItems[1][3]);
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
       m_attributes = new DropDownSliderComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
+        _dropDownItems,
+        _selectedItems,
         _slider,
         SetVal,
         SetMaxMin,
@@ -640,18 +640,18 @@ namespace GsaGH.Components {
         _maxValue,
         _minValue,
         _noDigits,
-        SpacerDescriptions);
+        _spacerDescriptions);
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
         case 0: {
             switch (j) {
               case 0: {
-                  if (DropDownItems[1] != _displacement) {
-                    DropDownItems[1] = _displacement;
-                    SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
+                  if (_dropDownItems[1] != _displacement) {
+                    _dropDownItems[1] = _displacement;
+                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
 
                     _disp = (DisplayValue)3; // Resolved XYZ
                     DeformationModeClicked();
@@ -660,9 +660,9 @@ namespace GsaGH.Components {
                   break;
                 }
               case 1: {
-                  if (DropDownItems[1] != _stress) {
-                    DropDownItems[1] = _stress;
-                    SelectedItems[1] = DropDownItems[1][2];
+                  if (_dropDownItems[1] != _stress) {
+                    _dropDownItems[1] = _stress;
+                    _selectedItems[1] = _dropDownItems[1][2];
 
                     _disp = (DisplayValue)2;
                     StressModeClicked();
@@ -676,7 +676,7 @@ namespace GsaGH.Components {
           }
         case 1: {
             bool redraw = false;
-            SelectedItems[1] = DropDownItems[1][j];
+            _selectedItems[1] = _dropDownItems[1][j];
             if (_mode == FoldMode.Displacement) {
               if ((int)_disp > 3 & j < 4) {
                 redraw = true;

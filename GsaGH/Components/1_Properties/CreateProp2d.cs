@@ -60,7 +60,7 @@ namespace GsaGH.Components {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
-            var material = new GsaMaterial();
+            GsaMaterial material = null;
             if (ghTyp.Value is GsaMaterialGoo) {
               ghTyp.CastTo(ref material);
               prop.Material = material ?? new GsaMaterial();
@@ -129,101 +129,101 @@ namespace GsaGH.Components {
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_dropdownTopLevel);
-      SelectedItems.Add(_dropdownTopLevel[3]);
+      _dropDownItems.Add(_dropdownTopLevel);
+      _selectedItems.Add(_dropdownTopLevel[3]);
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0)
-        switch (SelectedItems[i]) {
+        switch (_selectedItems[i]) {
           case "Plane Stress":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode1Clicked();
             break;
           case "Fabric":
-            if (DropDownItems.Count > 1)
-              DropDownItems.RemoveAt(1);
+            if (_dropDownItems.Count > 1)
+              _dropDownItems.RemoveAt(1);
             Mode2Clicked();
             break;
           case "Flat Plate":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode3Clicked();
             break;
           case "Shell":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode4Clicked();
             break;
           case "Curved Shell":
-            if (DropDownItems.Count < 2)
-              DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+            if (_dropDownItems.Count < 2)
+              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode5Clicked();
             break;
           case "Load Panel":
-            if (DropDownItems.Count > 1)
-              DropDownItems.RemoveAt(1);
+            if (_dropDownItems.Count > 1)
+              _dropDownItems.RemoveAt(1);
             Mode6Clicked();
             break;
         }
       else
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      switch (SelectedItems[0]) {
+    protected override void UpdateUIFromSelectedItems() {
+      switch (_selectedItems[0]) {
         case "Plane Stress":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          if (_dropDownItems.Count < 2)
+            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
           Mode1Clicked();
           break;
         case "Fabric":
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+          if (_dropDownItems.Count > 1)
+            _dropDownItems.RemoveAt(1);
           Mode2Clicked();
           break;
         case "Flat Plate":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          if (_dropDownItems.Count < 2)
+            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
           Mode3Clicked();
           break;
         case "Shell":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          if (_dropDownItems.Count < 2)
+            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
           Mode4Clicked();
           break;
         case "Curved Shell":
-          if (DropDownItems.Count < 2)
-            DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          if (_dropDownItems.Count < 2)
+            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
           Mode5Clicked();
           break;
         case "Load Panel":
-          if (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+          if (_dropDownItems.Count > 1)
+            _dropDownItems.RemoveAt(1);
           Mode6Clicked();
           break;
       }
 
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

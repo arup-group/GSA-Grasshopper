@@ -168,28 +168,28 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.General;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new string[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new string[] {
         "Type",
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(_mode.ToString());
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_mode.ToString());
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0)
-        switch (SelectedItems[0]) {
+        switch (_selectedItems[0]) {
           case "General":
             Mode1Clicked();
             break;
@@ -198,14 +198,14 @@ namespace GsaGH.Components {
             break;
         }
       else
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

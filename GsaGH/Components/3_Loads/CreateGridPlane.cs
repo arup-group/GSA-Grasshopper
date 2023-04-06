@@ -193,24 +193,24 @@ namespace GsaGH.Components {
 
     private FoldMode _mode = FoldMode.General;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new string[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new string[] {
         "Type",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(_mode.ToString());
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_mode.ToString());
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0)
-        switch (SelectedItems[0]) {
+        switch (_selectedItems[0]) {
           case "General":
             Mode1Clicked();
             break;
@@ -222,8 +222,8 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 

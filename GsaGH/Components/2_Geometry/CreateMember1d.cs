@@ -140,51 +140,26 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) { }
 
-    public override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() { }
 
-    public override void CreateAttributes()
-      => m_attributes = new ReleasesComponentAttributes(this,
-        SetReleases,
-        "Start Release",
-        "End Release",
-        _x1,
-        _y1,
-        _z1,
-        _xx1,
-        _yy1,
-        _zz1,
-        _x2,
-        _y2,
-        _z2,
-        _xx2,
-        _yy2,
-        _zz2);
+    public override void CreateAttributes() {
+      var restraints = new List<List<bool>>() { new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1 }, new List<bool>() { _x2, _y2, _z2, _xx2, _yy2, _zz2 } };
+      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Start Release", "End Release" }, restraints, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" }, new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
+    }
 
-    public void SetReleases(
-      bool resx1,
-      bool resy1,
-      bool resz1,
-      bool resxx1,
-      bool resyy1,
-      bool reszz1,
-      bool resx2,
-      bool resy2,
-      bool resz2,
-      bool resxx2,
-      bool resyy2,
-      bool reszz2) {
-      _x1 = resx1;
-      _y1 = resy1;
-      _z1 = resz1;
-      _xx1 = resxx1;
-      _yy1 = resyy1;
-      _zz1 = reszz1;
-      _x2 = resx2;
-      _y2 = resy2;
-      _z2 = resz2;
-      _xx2 = resxx2;
-      _yy2 = resyy2;
-      _zz2 = reszz2;
+    public void SetReleases(List<List<bool>> restraints) {
+      _x1 = restraints[0][0];
+      _y1 = restraints[0][1];
+      _z1 = restraints[0][2];
+      _xx1 = restraints[0][3];
+      _yy1 = restraints[0][4];
+      _zz1 = restraints[0][5];
+      _x2 = restraints[1][0];
+      _y2 = restraints[1][1];
+      _z2 = restraints[1][2];
+      _xx2 = restraints[1][3];
+      _yy2 = restraints[1][4];
+      _zz2 = restraints[1][5];
 
       base.UpdateUI();
     }

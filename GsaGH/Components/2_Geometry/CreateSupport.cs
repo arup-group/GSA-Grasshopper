@@ -109,7 +109,7 @@ namespace GsaGH.Components {
     private bool _yy;
     private bool _zz;
     public override void SetSelected(int i, int j) { }
-    public override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()
       => m_attributes = new SupportComponentAttributes(this,

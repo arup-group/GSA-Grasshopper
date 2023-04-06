@@ -95,8 +95,8 @@ namespace GsaGH.Components {
           return;
       }
 
-      AlignmentType alignmentType = Mappings.GetAlignmentType(SelectedItems[0]);
-      string alignment = SelectedItems[0];
+      AlignmentType alignmentType = Mappings.GetAlignmentType(_selectedItems[0]);
+      string alignment = _selectedItems[0];
       if (da.GetData(1, ref alignment))
         try {
           alignmentType = Mappings.GetAlignmentType(alignment);
@@ -506,24 +506,24 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Alignment",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
       var alignmentTypes = Enum.GetNames(typeof(AlignmentType))
         .ToList();
-      DropDownItems.Add(alignmentTypes);
-      SelectedItems.Add(alignmentTypes[0]);
+      _dropDownItems.Add(alignmentTypes);
+      _selectedItems.Add(alignmentTypes[0]);
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       base.UpdateUI();
     }
 
