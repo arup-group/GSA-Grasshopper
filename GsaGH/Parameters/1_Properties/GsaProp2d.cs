@@ -130,6 +130,16 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+
+    public int ReferenceEdge {
+      get => _prop2d.ReferenceEdge;
+      set {
+        CloneApiObject();
+        _prop2d.ReferenceEdge = value;
+        IsReferencedById = false;
+      }
+    }
+
     public Color Colour {
       get => (Color)_prop2d.Colour;
       set {
@@ -208,12 +218,17 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string type = Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == _prop2d.Type).Key + " ";
       string desc = Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
-      string mat = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+      string mat = Type != Property2D_Type.LOAD
+        ? Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " "
+        : string.Empty;
       string pa = (Id > 0) ? "PA" + Id + " " : "";
       string supportType = Type == Property2D_Type.LOAD
         ? $"{SupportType}"
         : string.Empty;
-      return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
+      string referenceEdge = Type == Property2D_Type.LOAD && SupportType == SupportType.Auto
+        ? $"{ReferenceEdge}"
+        : string.Empty;
+      return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
