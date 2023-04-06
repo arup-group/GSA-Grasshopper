@@ -237,11 +237,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.DoNotGetConnected;
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-      => Menu_AppendItem(menu,
-        "Try get connected Element & Members",
-        FlipMode,
-        true,
-        _mode == FoldMode.GetConnected);
+      => Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
 
     private void FlipMode(object sender, EventArgs e) {
       RecordUndoEvent("GetConnected Parameters");

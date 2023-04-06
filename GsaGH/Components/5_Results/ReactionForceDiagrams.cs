@@ -255,6 +255,9 @@ namespace GsaGH.Components {
         : Moment.GetAbbreviation(_momentUnit);
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Text", ShowText, true, _showText);
 
