@@ -93,7 +93,11 @@ namespace GsaGH {
       Instances.CanvasCreated += MenuLoad.OnStartup;
       Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
       Instances.ComponentServer.AddCategoryIcon("GSA", Resources.GSALogo);
-      Utility.InitialiseMainMenuAndDefaultUnits();
+
+      var oasysGh = Assembly.Load("OasysGH");
+      Version version = oasysGh.GetName().Version;
+      OasysGH.Utility.InitialiseMainMenuAndDefaultUnits(true, version);
+
       PostHog.PluginLoaded(PluginInfo.Instance, gsaVersion);
 
       return GH_LoadingInstruction.Proceed;
