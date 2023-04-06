@@ -175,7 +175,7 @@ namespace GsaGH.Components {
       if (mode == Prop2dType.LoadPanel)
         _supportTypeIndex = _supportDropDown.ToList()
           .FindIndex(x => x.Value == SelectedItems[1]);
-      else
+      else if (mode != Prop2dType.Fabric)
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
       ResetDropdownMenus();
