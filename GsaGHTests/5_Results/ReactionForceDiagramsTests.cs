@@ -12,7 +12,7 @@ namespace GsaGHTests {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests {
     [Fact]
-    private void WhenSetSelected_Then_selectedItems_ShouldBeValid() {
+    private void WhenSetSelected_ThenSelectedItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
       string defaultValue = obj._dropDownItems[0][3];
       string expectedValue = obj._dropDownItems[0][0];
@@ -190,7 +190,7 @@ namespace GsaGHTests {
     #region Initialise Dropdowns
 
     [Fact]
-    private void WhenInitialiseDropdowns_Then_dropDownItems_ShouldBeValid() {
+    private void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
@@ -210,7 +210,7 @@ namespace GsaGHTests {
     }
 
     [Fact]
-    private void WhenInitialiseDropdowns_Then_selectedItems_ShouldBeSetTo() {
+    private void WhenInitialiseDropdowns_ThenSelectedItems_ShouldBeSetTo() {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
@@ -221,7 +221,7 @@ namespace GsaGHTests {
     }
 
     [Fact]
-    private void WhenInitialiseDropdowns_Then_isInitialisedValue_ShouldBeTrue() {
+    private void WhenInitialiseDropdowns_ThenIsInitialisedValue_ShouldBeTrue() {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
