@@ -106,8 +106,6 @@ namespace GsaGH.Components {
         "Section thickness",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddIntegerParameter("Reference edge", "RE", "Reference edge for automatic support type", GH_ParamAccess.item);
-      pManager.HideParameter(2);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
