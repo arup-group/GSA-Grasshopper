@@ -94,9 +94,7 @@ namespace GsaGH {
       Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
       Instances.ComponentServer.AddCategoryIcon("GSA", Resources.GSALogo);
 
-      var oasysGh = Assembly.Load("OasysGH");
-      Version version = oasysGh.GetName().Version;
-      OasysGH.Utility.InitialiseMainMenuAndDefaultUnits(true, version);
+      OasysGH.Utility.InitialiseMainMenuAndDefaultUnits();
 
       PostHog.PluginLoaded(PluginInfo.Instance, gsaVersion);
 
