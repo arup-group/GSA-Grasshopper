@@ -120,6 +120,14 @@ namespace GsaGH.Parameters {
       }
     }
 
+    public bool AutomaticInternalOffset {
+      get => ApiMember.AutomaticOffset.Internal;
+      set {
+        CloneApiObject();
+        ApiMember.AutomaticOffset.Internal = value;
+      }
+    }
+
     public Angle OrientationAngle {
       get => new Angle(ApiMember.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
       set {
@@ -332,6 +340,7 @@ namespace GsaGH.Parameters {
         Property = ApiMember.Property,
         Type = ApiMember.Type,
         Type2D = ApiMember.Type2D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
       };
       if (ApiMember.Topology != string.Empty)
         mem.Topology = ApiMember.Topology;

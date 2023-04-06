@@ -14,14 +14,16 @@ namespace GsaGH.Components {
   public class CreateBucklingFactors : GH_OasysComponent {
     protected override void SolveInstance(IGH_DataAccess da) {
       var fls = new GsaBucklingLengthFactors();
-      double input = 1;
-      if (da.GetData(0, ref input))
+      double? input = null ;
+      if (da.GetData(0, ref input)) {
         fls.MomentAmplificationFactorStrongAxis = input;
-      double optional = input;
-      da.GetData(1, ref optional);
-      fls.MomentAmplificationFactorWeakAxis = optional;
-      da.GetData(2, ref input);
-      fls.LateralTorsionalBucklingFactor = input;
+      }
+      if (da.GetData(1, ref input)) {
+        fls.MomentAmplificationFactorWeakAxis = input;
+      }
+      if (da.GetData(2, ref input)) {
+        fls.EquivalentUniformMomentFactor = input;
+      }
       da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
     }
 
@@ -53,19 +55,17 @@ namespace GsaGH.Components {
         "fLz",
         "Moment Amplification Factor, Weak Axis",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Factor Ltb",
+      pManager.AddNumberParameter("Equivalent uniform moment factor for LTB",
         "fLtb",
-        "Lateral Torsional Buckling Factor",
+        "Override the automatically calculated factor to account for the shape of the moment diagram in lateral torsional buckling design equations. This override is applied for all bending segments in the member.  This override is applied to the following variable for each design code:\r\n AISC 360: C_b \r\n AS 4100: alpha_m \r\n BS 5950: m_LT \r\n CSA S16: omega_2 \r\n EN 1993-1-1 and EN 1993-1-2: C_1 \r\n Hong Kong Code of Practice: m_LT \r\n IS 800: C_mLT \r\n SANS 10162-1: omega_2",
         GH_ParamAccess.item);
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
-
     #endregion
   }
 }

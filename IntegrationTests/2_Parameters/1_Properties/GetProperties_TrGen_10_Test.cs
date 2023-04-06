@@ -49,9 +49,9 @@ namespace IntegrationTests.Parameters {
         "STD R(m) 0.4 0.3",
         "STD R(m) 0.45 0.25",
         "STD R(m) 0.45 0.25",
-        "CAT UC UC152x152x30 - S/S",
-        "CAT UB UB203x133x25 - S/S",
-        "CAT UB UB254x146x37 - S/S",
+        "CAT UC UC152x152x30 19990407",
+        "CAT UB UB203x133x25 19990407",
+        "CAT UB UB254x146x37 19990407",
       })]
     [InlineData("PbE",
       new double[] {

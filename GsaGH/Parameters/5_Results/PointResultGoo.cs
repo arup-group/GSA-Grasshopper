@@ -41,7 +41,7 @@ namespace GsaGH.Parameters {
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override string ToString()
-      => $"PointResult: P:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{Result:0.0}";
+      => $"PointResult: P {NodeId}:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{Result:0.0}";
 
     public override IGH_GeometricGoo DuplicateGeometry()
       => new PointResultGoo(Value, Result, _color, _size, NodeId);

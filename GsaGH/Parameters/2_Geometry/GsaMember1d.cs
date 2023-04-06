@@ -24,7 +24,7 @@ namespace GsaGH.Parameters {
 
     private PolyCurve _crv = new PolyCurve(); // Polyline for visualisation /member1d/member2d
     private List<Point3d> _topo; // list of topology points for visualisation /member1d/member2d
-    private List<string> _topoType; //list of polyline curve type (arch or line) for member1d/2d
+    private List<string> _topoType; // list of polyline curve type (arch or line) for member1d/2d
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
@@ -91,7 +91,7 @@ namespace GsaGH.Parameters {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
         IsIntersector = ApiMember.IsIntersector,
-        LateralTorsionalBucklingFactor = ApiMember.LateralTorsionalBucklingFactor,
+        EquivalentUniformMomentFactor = ApiMember.EquivalentUniformMomentFactor,
         MeshSize = ApiMember.MeshSize,
         MomentAmplificationFactorStrongAxis = ApiMember.MomentAmplificationFactorStrongAxis,
         MomentAmplificationFactorWeakAxis = ApiMember.MomentAmplificationFactorWeakAxis,
@@ -102,6 +102,7 @@ namespace GsaGH.Parameters {
         Property = ApiMember.Property,
         Type = ApiMember.Type,
         Type1D = ApiMember.Type1D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
       };
       if (ApiMember.Topology != string.Empty)
         mem.Topology = ApiMember.Topology;
@@ -159,6 +160,26 @@ namespace GsaGH.Parameters {
         ApiMember.IsIntersector = value;
       }
     }
+
+    public bool AutomaticOffsetEnd1 {
+      get => ApiMember.AutomaticOffset.End1;
+      set {
+        CloneApiObject();
+        ApiMember.AutomaticOffset.End1 = value;
+      }
+    }
+
+    public bool AutomaticOffsetEnd2 {
+      get => ApiMember.AutomaticOffset.End2;
+      set {
+        CloneApiObject();
+        ApiMember.AutomaticOffset.End2 = value;
+      }
+    }
+
+    public double AutomaticOffsetLength1 => ApiMember.AutomaticOffset.X1;
+
+    public double AutomaticOffsetLength2 => ApiMember.AutomaticOffset.X2;
 
     public GsaOffset Offset {
       get

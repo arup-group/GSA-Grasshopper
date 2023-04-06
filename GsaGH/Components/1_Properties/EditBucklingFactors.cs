@@ -34,24 +34,12 @@ namespace GsaGH.Components {
         var lt = new GH_Number();
         if (da.GetData(3, ref lt))
           if (GH_Convert.ToDouble(lt, out double ltb, GH_Conversion.Both))
-            fls.LateralTorsionalBucklingFactor = ltb;
+            fls.EquivalentUniformMomentFactor = ltb;
 
         da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
         da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
         da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
-        da.SetData(3, fls.LateralTorsionalBucklingFactor);
-        da.SetData(4,
-          (fls.LengthIsSet && fls.MomentAmplificationFactorStrongAxis.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorStrongAxis)
-            : null);
-        da.SetData(5,
-          (fls.LengthIsSet && fls.MomentAmplificationFactorWeakAxis.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.MomentAmplificationFactorWeakAxis)
-            : null);
-        da.SetData(6,
-          (fls.LengthIsSet && fls.LateralTorsionalBucklingFactor.HasValue)
-            ? new GH_UnitNumber(fls.Length * fls.LateralTorsionalBucklingFactor)
-            : null);
+        da.SetData(3, fls.EquivalentUniformMomentFactor);
       }
       else
         this.AddRuntimeError("Buckling Factors is Null");
@@ -85,9 +73,9 @@ namespace GsaGH.Components {
         "fLz",
         "Moment Amplification Factor, Weak Axis",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Factor Ltb",
+      pManager.AddNumberParameter("Equivalent uniform moment factor for LTB",
         "fLtb",
-        "Lateral Torsional Buckling Factor",
+        "Override the automatically calculated factor to account for the shape of the moment diagram in lateral torsional buckling design equations. This override is applied for all bending segments in the member.  This override is applied to the following variable for each design code:\r\n AISC 360: C_b \r\n AS 4100: alpha_m \r\n BS 5950: m_LT \r\n CSA S16: omega_2 \r\n EN 1993-1-1 and EN 1993-1-2: C_1 \r\n Hong Kong Code of Practice: m_LT \r\n IS 800: C_mLT \r\n SANS 10162-1: omega_2",
         GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i]
@@ -104,24 +92,11 @@ namespace GsaGH.Components {
         "fLz",
         "Moment Amplification Factor, Weak Axis",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Factor Ltb",
+      pManager.AddNumberParameter("Equivalent uniform moment factor for LTB",
         "fLtb",
-        "Lateral Torsional Buckling Factor",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Buckling L Y-Y",
-        "Lsy",
-        "Strong Axis Buckling Length",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Buckling L Z-Z",
-        "Lsz",
-        "Weak Axis Buckling Length",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("LTB Length",
-        "Ltb",
-        "Lateral Torsional Buckling Length",
+        "Override the automatically calculated factor to account for the shape of the moment diagram in lateral torsional buckling design equations. This override is applied for all bending segments in the member.  This override is applied to the following variable for each design code:\r\n AISC 360: C_b \r\n AS 4100: alpha_m \r\n BS 5950: m_LT \r\n CSA S16: omega_2 \r\n EN 1993-1-1 and EN 1993-1-2: C_1 \r\n Hong Kong Code of Practice: m_LT \r\n IS 800: C_mLT \r\n SANS 10162-1: omega_2",
         GH_ParamAccess.item);
     }
-
     #endregion
   }
 }
