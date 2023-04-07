@@ -73,9 +73,11 @@ namespace GsaGH.Components {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (prop.SupportType != SupportType.Auto) {
           int referenceEdge = 0;
-          prop.ReferenceEdge = da.GetData("Reference edge", ref referenceEdge)
-            ? referenceEdge
-            : prop.ReferenceEdge;
+          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4)
+            prop.ReferenceEdge = referenceEdge;
+          else {
+            this.AddRuntimeError("Reference edge invalid or can't take it from the model");
+          }
         }
       }
 
