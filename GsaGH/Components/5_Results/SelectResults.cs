@@ -314,9 +314,15 @@ namespace GsaGH.Components {
         }
 
         List<int?> ints = modelResults.Item3.Branch(new GH_Path(_caseId));
-        _dropDownItems[2]
-          .AddRange(ints.Select(x => "P" + x.ToString())
-            .ToList());
+        if (ints != null) {
+          _dropDownItems[2]
+            .AddRange(ints.Select(x => "P" + x.ToString())
+              .ToList());
+        }
+        else {
+          _dropDownItems[2].Add("-");
+        }
+
       }
       else if (_dropDownItems.Count > 2) {
         _dropDownItems.RemoveAt(2);
@@ -330,6 +336,9 @@ namespace GsaGH.Components {
 
       if (_combinationCaseResults == null)
         _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
+      if (_combinationCaseResults.Count == 0) {
+        return;
+      }
       IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
         = _combinationCaseResults[_caseId]
           .NodeResults(_gsaModel.Model.Nodes()
