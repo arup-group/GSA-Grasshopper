@@ -176,7 +176,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
+    protected override void UpdateUIFromSelectedItems() {
       Prop2dType mode = GetModeBy(_selectedItems[0]);
 
       if (mode == Prop2dType.LoadPanel)
