@@ -50,7 +50,7 @@ namespace IntegrationTests.Parameters {
       new double[] {
         50,
         105,
-        100,
+        70,
         30,
         35,
         45,
@@ -67,7 +67,7 @@ namespace IntegrationTests.Parameters {
       new double[] {
         50,
         105,
-        100,
+        70,
         30,
         35,
         45,
