@@ -55,7 +55,7 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes
-        = Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
+        = Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit, gsaResult.Model.Model.Axes());
 
       double scale = 1;
       if (!dataAccess.GetData(2, ref scale))
@@ -509,6 +509,11 @@ namespace GsaGH.Components {
           forceValue = xxyyzzResults[nodeId][0]
             .Xyz.ToUnit(_momentUnit);
           break;
+      }
+
+      if (!node.Value.Value.IsGlobalAxis()) {
+        var rotation = Transform.PlaneToPlane(Plane.WorldXY, node.Value.Value.LocalAxis);
+        direction.Transform(rotation);
       }
 
       var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue, nodeId);

@@ -680,14 +680,11 @@ namespace GsaGH.Components {
               args.Display.Draw3dText(node.Value._previewText, Colours.NodeSelected);
           }
 
-          if (!(node.Value.LocalAxis != Plane.WorldXY
-            & node.Value.LocalAxis != new Plane()
-            & node.Value.LocalAxis != Plane.Unset))
-            continue;
-
-          args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
-          args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
-          args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+          if (!node.Value.IsGlobalAxis()) {
+            args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
+            args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
+            args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+          }
         }
       }
     }
