@@ -179,20 +179,20 @@ namespace GsaGH.Components {
 
       InitialiseDropdowns();
 
-      SelectedItems = new List<string>();
+      _selectedItems = new List<string>();
       switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
-          SelectedItems.Add("1D, One-way span");
+          _selectedItems.Add("1D, One-way span");
           break;
         case FoldMode.OneDimensionalTwoWay:
-          SelectedItems.Add("1D, Two-way span");
+          _selectedItems.Add("1D, Two-way span");
           break;
         case FoldMode.TwoDimensional:
-          SelectedItems.Add("2D");
+          _selectedItems.Add("2D");
           break;
       }
 
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       return base.Read(reader);
     }
@@ -305,28 +305,28 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.OneDimensionalOneWay;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(_type[0]);
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_type[0]);
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0)
-        switch (SelectedItems[i]) {
+        switch (_selectedItems[i]) {
           case "1D, One-way span":
             Mode1Clicked();
             break;
@@ -338,13 +338,13 @@ namespace GsaGH.Components {
             break;
         }
       else
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      switch (SelectedItems[0]) {
+    protected override void UpdateUIFromSelectedItems() {
+      switch (_selectedItems[0]) {
         case "1D, One-way span":
           _mode = FoldMode.OneDimensionalOneWay;
           break;
@@ -356,8 +356,8 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (SelectedItems.Count > 1)
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+      if (_selectedItems.Count > 1)
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

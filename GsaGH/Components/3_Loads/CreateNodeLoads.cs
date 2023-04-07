@@ -236,84 +236,84 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(_mode.ToString()
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_mode.ToString()
         .Replace('_', ' '));
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0)
-        switch (SelectedItems[0]) {
+        switch (_selectedItems[0]) {
           case "Node Force":
             _mode = FoldMode.NodeForce;
-            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force);
-            SelectedItems[1] = Force.GetAbbreviation(_forceUnit);
+            _dropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force);
+            _selectedItems[1] = Force.GetAbbreviation(_forceUnit);
             break;
           case "Node Moment":
             _mode = FoldMode.NodeMoment;
-            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment);
-            SelectedItems[1] = Moment.GetAbbreviation(_momentUnit);
+            _dropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment);
+            _selectedItems[1] = Moment.GetAbbreviation(_momentUnit);
             break;
           case "Applied Displ":
             _mode = FoldMode.AppliedDispl;
-            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
-            SelectedItems[1] = Length.GetAbbreviation(_lengthUnit);
+            _dropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
+            _selectedItems[1] = Length.GetAbbreviation(_lengthUnit);
             break;
           case "Settlement":
             _mode = FoldMode.Settlement;
-            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
-            SelectedItems[1] = Length.GetAbbreviation(_lengthUnit);
+            _dropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
+            _selectedItems[1] = Length.GetAbbreviation(_lengthUnit);
             break;
         }
       else
         switch (_mode) {
           case FoldMode.NodeForce:
-            _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[1]);
+            _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
             break;
           case FoldMode.NodeMoment:
-            _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[1]);
+            _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
             break;
           case FoldMode.AppliedDispl:
           case FoldMode.Settlement:
-            _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+            _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
             break;
         }
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      string md = SelectedItems[0].Replace(" ", "_").ToPascalCase();
+    protected override void UpdateUIFromSelectedItems() {
+      string md = _selectedItems[0].Replace(" ", "_").ToPascalCase();
       _mode = md.ToLower() == "node"
         ? FoldMode.NodeForce
         : (FoldMode)Enum.Parse(typeof(FoldMode), md);
 
       switch (_mode) {
         case FoldMode.NodeForce:
-          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[1]);
+          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
           break;
         case FoldMode.NodeMoment:
-          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[1]);
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
           break;
         case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
           break;
       }
 

@@ -48,7 +48,7 @@ namespace GsaGH.Components {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
-            var material = new GsaMaterial();
+            GsaMaterial material = null;
             if (ghTyp.Value is GsaMaterialGoo) {
               ghTyp.CastTo(ref material);
               prop.Material = material ?? new GsaMaterial();
@@ -137,26 +137,26 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private int _supportTypeIndex;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
       DropDownItems.Add(_dropdownTopLevel.Values.ToList());
       SelectedItems.Add(_dropdownTopLevel.Values.ElementAt(3));
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
 
       Prop2dType mode = GetModeBy(SelectedItems[0]);
       if (i == 0) {
@@ -166,6 +166,7 @@ namespace GsaGH.Components {
 
       if (i != 0 && mode != Prop2dType.LoadPanel)
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+
 
       if (i == 1 && mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = j;
@@ -185,11 +186,13 @@ namespace GsaGH.Components {
       else if (mode != Prop2dType.Fabric)
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
 
+
       UpdateDropDownItems(mode);
       UpdateParameters(mode);
 
       base.UpdateUIFromSelectedItems();
     }
+    
     #region update inputs
 
     private Prop2dType _mode = Prop2dType.Shell;

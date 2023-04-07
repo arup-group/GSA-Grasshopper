@@ -42,18 +42,18 @@ namespace GsaGHTests.Helpers {
     public static void ChangeDropDownTest(
       GH_OasysDropDownComponent comp,
       bool ignoreSpacerDescriptionsCount = false) {
-      Assert.True(comp.IsInitialised);
+      Assert.True(comp._isInitialised);
       if (!ignoreSpacerDescriptionsCount)
-        Assert.Equal(comp.DropDownItems.Count, comp.SpacerDescriptions.Count);
-      Assert.Equal(comp.DropDownItems.Count, comp.SelectedItems.Count);
+        Assert.Equal(comp._dropDownItems.Count, comp._spacerDescriptions.Count);
+      Assert.Equal(comp._dropDownItems.Count, comp._selectedItems.Count);
 
-      for (int i = 0; i < comp.DropDownItems.Count; i++) {
+      for (int i = 0; i < comp._dropDownItems.Count; i++) {
         comp.SetSelected(i, 0);
 
         for (int j = 0; j < comp.DropDownItems[i].Count; j++) {
           comp.SetSelected(i, j);
           TestDeserialize(comp);
-          Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);
+          Assert.Equal(comp._selectedItems[i], comp._dropDownItems[i][j]);
         }
       }
     }

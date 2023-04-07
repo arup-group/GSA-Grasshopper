@@ -34,7 +34,7 @@ namespace GsaGH.Components {
         material.GradeProperty = grade;
       }
 
-      switch (SelectedItems[0]) {
+      switch (_selectedItems[0]) {
         case "Steel":
           material.MaterialType = GsaMaterial.MatType.Steel;
           break;
@@ -100,22 +100,22 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Material type",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(new List<string>(MaterialTypes));
-      SelectedItems.Add(MaterialTypes[3]);
+      _dropDownItems.Add(new List<string>(MaterialTypes));
+      _selectedItems.Add(MaterialTypes[3]);
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       base.UpdateUI();
     }
 

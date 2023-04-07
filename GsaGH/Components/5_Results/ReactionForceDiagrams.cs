@@ -191,34 +191,34 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Component",
       });
 
-      DropDownItems = new List<List<string>> {
+      _dropDownItems = new List<List<string>> {
         _reactionStringList,
       };
-      SelectedItems = new List<string> {
-        DropDownItems[0][3],
+      _selectedItems = new List<string> {
+        _dropDownItems[0][3],
       };
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
       m_attributes = new DropDownComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
-        SpacerDescriptions);
+        _dropDownItems,
+        _selectedItems,
+        _spacerDescriptions);
     }
 
     public override void SetSelected(int i, int j) {
       _selectedDisplayValue = (DisplayValue)j;
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       base.UpdateUI();
     }
 

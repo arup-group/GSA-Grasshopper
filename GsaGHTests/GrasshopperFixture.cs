@@ -26,7 +26,7 @@ namespace GsaGHTests {
       AddPluginToGh();
 
       LoadRefs();
-      var gsaApi = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
       InitializeCore();
 
