@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.Export;
@@ -300,6 +301,9 @@ namespace GsaGH.Components {
         .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
@@ -315,6 +319,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
+      var menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
       toleranceMenu.DropDownItems[1]
         .MouseUp += (s, e) => {
           UpdateMessage();
@@ -324,9 +329,6 @@ namespace GsaGH.Components {
       menu.Items.Add(toleranceMenu);
 
       Menu_AppendSeparator(menu);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
     }
 
     private void MaintainText(ToolStripItem tolerance) {

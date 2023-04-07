@@ -325,24 +325,13 @@ namespace GsaGH.Components {
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      bool noGps = Params.Input[2]
-          .SourceCount
-        == 0;
-      Menu_AppendItem(menu,
-        "Use GridPlaneSurface",
-        SetUseGps,
-        !noGps,
-        _expansionType == ExpansionType.UseGpsSettings);
-      Menu_AppendItem(menu,
-        "Expand to 1D Elements",
-        SetUse1D,
-        noGps,
-        _expansionType == ExpansionType.To1D);
-      Menu_AppendItem(menu,
-        "Expand to 2D Elements",
-        SetUse2D,
-        noGps,
-        _expansionType == ExpansionType.To2D);
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+      bool noGps = Params.Input[2].SourceCount == 0;
+      Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGps, !noGps, _expansionType == ExpansionType.UseGpsSettings);
+      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, noGps, _expansionType == ExpansionType.To1D);
+      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, noGps, _expansionType == ExpansionType.To2D);
     }
 
     private void UpdateMessage()

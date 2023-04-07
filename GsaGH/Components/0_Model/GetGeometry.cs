@@ -786,6 +786,9 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.List;
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
       Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
     }
