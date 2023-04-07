@@ -260,10 +260,13 @@ namespace GsaGH.Parameters {
         Description = _prop2d.Description,
         Type = _prop2d.Type,
         AxisProperty = _prop2d.AxisProperty,
-        SupportType = _prop2d.SupportType,
       };
-      if (_prop2d.SupportType != SupportType.Auto)
-        prop.ReferenceEdge = _prop2d.ReferenceEdge;
+      if (_prop2d.Type == Property2D_Type.LOAD) {
+        prop.SupportType = _prop2d.SupportType;
+        if (prop.SupportType != SupportType.Auto)
+          prop.ReferenceEdge = _prop2d.ReferenceEdge;
+      }
+
       if ((Color)_prop2d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         prop.Colour = _prop2d.Colour;
 
