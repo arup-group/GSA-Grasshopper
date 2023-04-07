@@ -422,7 +422,7 @@ namespace GsaGH.Components {
       }
 
       double factor = 0.000001;
-      return bbox.Area * values.Max() * factor;
+      return bbox.Diagonal.Length * values.Max() * factor;
     }
 
     private VectorResultGoo GenerateReactionForceVector(
@@ -512,7 +512,7 @@ namespace GsaGH.Components {
       }
 
       if (!node.Value.Value.IsGlobalAxis()) {
-        var rotation = Transform.PlaneToPlane(Plane.WorldXY, node.Value.Value.LocalAxis);
+        var rotation = Transform.PlaneToPlane(node.Value.Value.LocalAxis, Plane.WorldXY);
         direction.Transform(rotation);
       }
 
