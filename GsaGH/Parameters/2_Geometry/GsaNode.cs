@@ -266,17 +266,11 @@ namespace GsaGH.Parameters {
                 : "\u2610");
 
       string localTxt = "";
-      var noPlane = new Plane() {
-        Origin = new Point3d(0, 0, 0),
-        XAxis = new Vector3d(0, 0, 0),
-        YAxis = new Vector3d(0, 0, 0),
-        ZAxis = new Vector3d(0, 0, 0),
-      };
-      if (LocalAxis != noPlane)
-        if (LocalAxis != Plane.WorldXY) {
-          var ghPlane = new GH_Plane(LocalAxis);
-          localTxt = " Axis:{" + ghPlane.ToString() + "}";
-        }
+      
+      if (!IsGlobalAxis()) {
+        var ghPlane = new GH_Plane(LocalAxis);
+        localTxt = " Axis:{" + ghPlane.ToString() + "}";
+      }
 
       return string.Join(" ",
           idd.Trim(),
@@ -384,6 +378,34 @@ namespace GsaGH.Parameters {
       _previewXaxis = new Line(Point, local.XAxis, 0.5);
       _previewYaxis = new Line(Point, local.YAxis, 0.5);
       _previewZaxis = new Line(Point, local.ZAxis, 0.5);
+    }
+
+    internal bool IsGlobalAxis() {
+      // AxisProperty = 0 is Global but 0 is also the default value,
+      // so if we have set a local Plane the AxisProperty might still
+      // be 0 as it is only updated in the node assembly method
+      if (ApiNode.AxisProperty != 0) {
+        return false;
+      }
+      // test first if the Plane object is valid
+      if (LocalAxis == null && !LocalAxis.IsValid) {
+        return true;
+      }
+      // test for default plane values just to be sure
+      if (LocalAxis == Plane.WorldXY || LocalAxis == new Plane() || LocalAxis == Plane.Unset) {
+        return true;
+      }
+      // GsaAPI might import local plane as an invalid plane:
+      var invalidPlane = new Plane() {
+        Origin = new Point3d(0, 0, 0),
+        XAxis = new Vector3d(0, 0, 0),
+        YAxis = new Vector3d(0, 0, 0),
+        ZAxis = new Vector3d(0, 0, 0),
+      };
+      if (LocalAxis == invalidPlane) {
+        return true;
+      }
+      return false;
     }
 
     #endregion
