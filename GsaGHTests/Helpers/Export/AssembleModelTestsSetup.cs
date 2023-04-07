@@ -61,7 +61,6 @@ namespace GsaGHTests.Helpers.Export {
         : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(thickness), 0);
       ComponentTestHelper.SetInput(comp, material, 1);
-      ComponentTestHelper.SetInput(comp, 0, 2);
       return (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
