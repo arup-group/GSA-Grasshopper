@@ -126,11 +126,11 @@ namespace GsaGH.Components {
               Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
               _inclSs);
 
-            SelectedItems[2] = _typeNames[0];
-            DropDownItems[2] = _typeNames;
+            _selectedItems[2] = _typeNames[0];
+            _dropDownItems[2] = _typeNames;
 
-            SelectedItems[3] = _sectionList[0];
-            DropDownItems[3] = _sectionList;
+            _selectedItems[3] = _sectionList[0];
+            _dropDownItems[3] = _sectionList;
 
             base.UpdateUI();
           }
@@ -163,8 +163,8 @@ namespace GsaGH.Components {
             .Success;
 
           var filteredlist = new List<string>();
-          if (SelectedItems[3] != "All") {
-            if (!MatchAndAdd(SelectedItems[3], _search, ref filteredlist, tryHard)) {
+          if (_selectedItems[3] != "All") {
+            if (!MatchAndAdd(_selectedItems[3], _search, ref filteredlist, tryHard)) {
               _profileString = new List<string>();
               this.AddRuntimeWarning("No profile found that matches selected profile and search!");
             }
@@ -934,42 +934,42 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Profile type",
         "Measure",
         "Type",
         "Profile",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(s_profileTypes.Keys.ToList());
-      SelectedItems.Add("Rectangle");
+      _dropDownItems.Add(s_profileTypes.Keys.ToList());
+      _selectedItems.Add("Rectangle");
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
       bool updateCat = false;
       if (i == -1) {
-        SelectedItems[0] = "Catalogue";
+        _selectedItems[0] = "Catalogue";
         updateCat = true;
         i = 0;
       }
       else
-        SelectedItems[i] = DropDownItems[i][j];
+        _selectedItems[i] = _dropDownItems[i][j];
 
-      if (SelectedItems[0] == "Catalogue") {
-        SpacerDescriptions[1] = "Catalogue";
+      if (_selectedItems[0] == "Catalogue") {
+        _spacerDescriptions[1] = "Catalogue";
 
         if (_mode != FoldMode.Catalogue | updateCat) {
-          while (SelectedItems.Count > 1)
-            SelectedItems.RemoveAt(1);
+          while (_selectedItems.Count > 1)
+            _selectedItems.RemoveAt(1);
 
           _catalogueIndex = -1;
 
@@ -983,21 +983,21 @@ namespace GsaGH.Components {
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
             _inclSs);
 
-          SelectedItems.Add(_catalogueNames[0]);
-          SelectedItems.Add(_typeNames[0]);
-          SelectedItems.Add(_sectionList[0]);
+          _selectedItems.Add(_catalogueNames[0]);
+          _selectedItems.Add(_typeNames[0]);
+          _selectedItems.Add(_sectionList[0]);
 
           Mode1Clicked();
         }
 
-        while (DropDownItems.Count > 1)
-          DropDownItems.RemoveAt(1);
+        while (_dropDownItems.Count > 1)
+          _dropDownItems.RemoveAt(1);
 
-        DropDownItems.Add(_catalogueNames);
+        _dropDownItems.Add(_catalogueNames);
 
         if (i == 1) {
           _catalogueIndex = _catalogueNumbers[j];
-          SelectedItems[1] = _catalogueNames[j];
+          _selectedItems[1] = _catalogueNames[j];
 
           _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
@@ -1011,15 +1011,15 @@ namespace GsaGH.Components {
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
             _inclSs);
 
-          SelectedItems[2] = _typeNames[0];
-          SelectedItems[3] = _sectionList[0];
+          _selectedItems[2] = _typeNames[0];
+          _selectedItems[3] = _sectionList[0];
         }
 
-        DropDownItems.Add(_typeNames);
+        _dropDownItems.Add(_typeNames);
 
         if (i == 2) {
           _typeIndex = _typeNumbers[j];
-          SelectedItems[2] = _typeNames[j];
+          _selectedItems[2] = _typeNames[j];
 
           List<int> types;
           if (_typeIndex == -1) {
@@ -1035,13 +1035,13 @@ namespace GsaGH.Components {
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
             _inclSs);
 
-          SelectedItems[3] = _sectionList[0];
+          _selectedItems[3] = _sectionList[0];
         }
 
-        DropDownItems.Add(_sectionList);
+        _dropDownItems.Add(_sectionList);
 
         if (i == 3)
-          SelectedItems[3] = _sectionList[j];
+          _selectedItems[3] = _sectionList[j];
 
         if (_search == "")
           UpdateProfileString();
@@ -1049,23 +1049,23 @@ namespace GsaGH.Components {
         base.UpdateUI();
       }
       else {
-        SpacerDescriptions[1] = "Measure";
+        _spacerDescriptions[1] = "Measure";
 
         if (_mode != FoldMode.Other) {
-          while (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+          while (_dropDownItems.Count > 1)
+            _dropDownItems.RemoveAt(1);
 
-          DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
 
-          SelectedItems[1] = _lengthUnit.ToString();
+          _selectedItems[1] = _lengthUnit.ToString();
         }
 
         if (i == 0) {
-          _type = s_profileTypes[SelectedItems[0]];
+          _type = s_profileTypes[_selectedItems[0]];
           Mode2Clicked();
         }
         else {
-          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
           base.UpdateUI();
         }
@@ -1081,20 +1081,20 @@ namespace GsaGH.Components {
     }
 
     private void UpdateProfileString() {
-      if (SelectedItems[3] == "All") {
+      if (_selectedItems[3] == "All") {
         _profileString = new List<string>();
         foreach (string profile in _sectionList.Where(profile => profile != "All"))
           _profileString.Add("CAT " + profile);
       }
       else
         _profileString = new List<string>() {
-          "CAT " + SelectedItems[3],
+          "CAT " + _selectedItems[3],
         };
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      if (SelectedItems[0] == "Catalogue") {
-        SpacerDescriptions = new List<string>(new[] {
+    protected override void UpdateUIFromSelectedItems() {
+      if (_selectedItems[0] == "Catalogue") {
+        _spacerDescriptions = new List<string>(new[] {
           "Profile type",
           "Catalogue",
           "Type",
@@ -1112,18 +1112,18 @@ namespace GsaGH.Components {
         Mode1Clicked();
 
         _profileString = new List<string>() {
-          "CAT " + SelectedItems[3],
+          "CAT " + _selectedItems[3],
         };
       }
       else {
-        SpacerDescriptions = new List<string>(new[] {
+        _spacerDescriptions = new List<string>(new[] {
           "Profile type",
           "Measure",
           "Type",
           "Profile",
         });
 
-        _type = s_profileTypes[SelectedItems[0]];
+        _type = s_profileTypes[_selectedItems[0]];
         Mode2Clicked();
       }
 

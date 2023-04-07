@@ -244,28 +244,28 @@ namespace GsaGH.Components {
 
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
-      SelectedItems.Add(_stresshUnit.ToString());
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
+      _selectedItems.Add(_stresshUnit.ToString());
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _stresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _stresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _stresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _stresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
