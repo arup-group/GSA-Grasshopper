@@ -1079,19 +1079,18 @@ namespace GsaGH.Components {
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient",
-        gradient.Icon_24x24,
-        (s, e) => CreateGradient());
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
+      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
@@ -1100,9 +1099,7 @@ namespace GsaGH.Components {
         lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var forceUnitsMenu = new ToolStripMenuItem("Force") {
-        Enabled = true,
-      };
+      var forceUnitsMenu = new ToolStripMenuItem("Force") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
           Checked = unit == Force.GetAbbreviation(_forceUnit),
@@ -1111,9 +1108,7 @@ namespace GsaGH.Components {
         forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var momentUnitsMenu = new ToolStripMenuItem("Moment") {
-        Enabled = true,
-      };
+      var momentUnitsMenu = new ToolStripMenuItem("Moment") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
           Checked = unit == Moment.GetAbbreviation(_momentUnit),
@@ -1122,9 +1117,7 @@ namespace GsaGH.Components {
         momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var energyUnitsMenu = new ToolStripMenuItem("Energy") {
-        Enabled = true,
-      };
+      var energyUnitsMenu = new ToolStripMenuItem("Energy") { Enabled = true };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Energy)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateEnergy(unit)) {
           Checked = unit == Energy.GetAbbreviation(_energyResultUnit),
@@ -1136,9 +1129,7 @@ namespace GsaGH.Components {
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
       if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
+        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") { Enabled = true };
         foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
           var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
             Checked = unit == Length.GetAbbreviation(_lengthUnit),
