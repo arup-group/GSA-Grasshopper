@@ -70,7 +70,7 @@ namespace GsaGH.Components {
           prop.Material = new GsaMaterial(8);
       }
       else {
-        prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == SelectedItems[1]).Key;
+        prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (prop.SupportType != SupportType.Auto) {
           int referenceEdge = 0;
           prop.ReferenceEdge = da.GetData("Reference edge", ref referenceEdge)
@@ -146,8 +146,8 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      DropDownItems.Add(_dropdownTopLevel.Values.ToList());
-      SelectedItems.Add(_dropdownTopLevel.Values.ElementAt(3));
+      _dropDownItems.Add(_dropdownTopLevel.Values.ToList());
+      _selectedItems.Add(_dropdownTopLevel.Values.ElementAt(3));
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -158,15 +158,14 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      Prop2dType mode = GetModeBy(SelectedItems[0]);
+      Prop2dType mode = GetModeBy(_selectedItems[0]);
       if (i == 0) {
         UpdateParameters(mode);
         UpdateDropDownItems(mode);
       }
 
       if (i != 0 && mode != Prop2dType.LoadPanel)
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
-
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
       if (i == 1 && mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = j;
@@ -178,21 +177,20 @@ namespace GsaGH.Components {
     }
 
     public override void UpdateUIFromSelectedItems() {
-      Prop2dType mode = GetModeBy(SelectedItems[0]);
+      Prop2dType mode = GetModeBy(_selectedItems[0]);
 
       if (mode == Prop2dType.LoadPanel)
         _supportTypeIndex = _supportDropDown.ToList()
-          .FindIndex(x => x.Value == SelectedItems[1]);
+          .FindIndex(x => x.Value == _selectedItems[1]);
       else if (mode != Prop2dType.Fabric)
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
-
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
 
       UpdateDropDownItems(mode);
       UpdateParameters(mode);
 
       base.UpdateUIFromSelectedItems();
     }
-    
+
     #region update inputs
 
     private Prop2dType _mode = Prop2dType.Shell;
@@ -298,9 +296,9 @@ namespace GsaGH.Components {
     #endregion
 
     private void AddLengthUnitDropDown() {
-      SpacerDescriptions.Add("Unit");
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _spacerDescriptions.Add("Unit");
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
     }
 
     private void AddSupportTypeDropDown() {
@@ -309,18 +307,18 @@ namespace GsaGH.Components {
         _supportTypeIndex = 0;
       }
 
-      SpacerDescriptions.Add("Support Type");
-      DropDownItems.Add(_supportDropDown.Values.ToList());
-      SelectedItems.Add(_supportDropDown.Values.ElementAt(_supportTypeIndex));
+      _spacerDescriptions.Add("Support Type");
+      _dropDownItems.Add(_supportDropDown.Values.ToList());
+      _selectedItems.Add(_supportDropDown.Values.ElementAt(_supportTypeIndex));
     }
 
     private void ResetDropdownMenus() {
-      while (SpacerDescriptions.Count > 1)
-        SpacerDescriptions.RemoveAt(SpacerDescriptions.Count - 1);
-      while (DropDownItems.Count > 1)
-        DropDownItems.RemoveAt(DropDownItems.Count - 1);
-      while (SelectedItems.Count > 1)
-        SelectedItems.RemoveAt(SelectedItems.Count - 1);
+      while (_spacerDescriptions.Count > 1)
+        _spacerDescriptions.RemoveAt(_spacerDescriptions.Count - 1);
+      while (_dropDownItems.Count > 1)
+        _dropDownItems.RemoveAt(_dropDownItems.Count - 1);
+      while (_selectedItems.Count > 1)
+        _selectedItems.RemoveAt(_selectedItems.Count - 1);
     }
   }
 }
