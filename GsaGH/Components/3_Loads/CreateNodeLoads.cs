@@ -43,8 +43,17 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
         var refPt = new Point3d();
-        if (ghTyp.Value is GsaNodeGoo goo)
+        if (ghTyp.Value is GsaNodeGoo goo) {
           nodeLoad._refPoint = goo.Value.Point;
+        }
+        else if (ghTyp.Value is GsaListGoo value) {
+          if (value.Value.EntityType == Parameters.EntityType.Node) {
+            nodeLoad._refList = value.Value;
+          }
+          else {
+            this.AddRuntimeWarning("List must be of type Node to apply to Node loading");
+          }
+        }
         else if (GH_Convert.ToPoint3d(ghTyp.Value, ref refPt, GH_Conversion.Both)) {
           nodeLoad._refPoint = refPt;
           this.AddRuntimeRemark(
