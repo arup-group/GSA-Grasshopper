@@ -97,9 +97,9 @@ namespace GsaGH.Parameters {
     /// 7 : Timber
     /// 8 : Fabric
     /// </summary>
-    /// <param name="materialId"></param>
-    public GsaMaterial(int materialId) {
-      MaterialType = (MatType)materialId;
+    /// <param name="type"></param>
+    public GsaMaterial(int type) {
+      MaterialType = (MatType)type;
     }
 
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
