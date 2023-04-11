@@ -225,8 +225,8 @@ namespace GsaGH.Parameters {
       string supportType = Type == Property2D_Type.LOAD
         ? $"{SupportType}"
         : string.Empty;
-      string referenceEdge = Type == Property2D_Type.LOAD && SupportType == SupportType.Auto
-        ? $"{ReferenceEdge}"
+      string referenceEdge = Type == Property2D_Type.LOAD && (SupportType != SupportType.Auto && SupportType != SupportType.AllEdges)
+        ? $"RefEdge:{ReferenceEdge}"
         : string.Empty;
       return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
