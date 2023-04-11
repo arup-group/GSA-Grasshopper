@@ -1113,6 +1113,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ReactionForceDiagram {
+            get {
+                object obj = ResourceManager.GetObject("ReactionForceDiagram", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ReactionForces {
             get {
                 object obj = ResourceManager.GetObject("ReactionForces", resourceCulture);
@@ -1296,6 +1306,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap SelectResult {
             get {
                 object obj = ResourceManager.GetObject("SelectResult", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ShowID {
+            get {
+                object obj = ResourceManager.GetObject("ShowID", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

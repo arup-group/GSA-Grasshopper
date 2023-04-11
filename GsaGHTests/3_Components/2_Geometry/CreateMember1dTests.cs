@@ -5,17 +5,16 @@ using OasysGH.Components;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests.Components.Geometry
-{
+namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-  public class CreateMember1dTests
-  {
-    public static GH_OasysComponent ComponentMother()
-    {
+  public class CreateMember1dTests {
+    public static GH_OasysComponent ComponentMother() {
       var comp = new CreateMember1d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)), 0);
+      ComponentTestHelper.SetInput(comp,
+        new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)),
+        0);
       ComponentTestHelper.SetInput(comp, "STD CH(ft) 1 2 3 4", 1);
       ComponentTestHelper.SetInput(comp, 0.5, 2);
 
@@ -23,13 +22,10 @@ namespace GsaGHTests.Components.Geometry
     }
 
     [Fact]
-    public void CreateComponentTest()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponentTest() {
+      GH_OasysComponent comp = ComponentMother();
 
-      // Assert
-      GsaMember1dGoo output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.PolyCurve.PointAtStart.X);
       Assert.Equal(-1, output.Value.PolyCurve.PointAtStart.Y);
       Assert.Equal(0, output.Value.PolyCurve.PointAtStart.Z);

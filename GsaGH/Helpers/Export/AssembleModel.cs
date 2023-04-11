@@ -10,10 +10,8 @@ using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Helpers.Export
-{
-    internal class AssembleModel
-  {
+namespace GsaGH.Helpers.Export {
+  internal class AssembleModel {
     /// <summary>
     /// 
     /// </summary>
@@ -34,6 +32,8 @@ namespace GsaGH.Helpers.Export
     /// <param name="combinations"></param>
     /// <param name="modelUnit"></param>
     /// /// <param name="toleranceCoincidentNodes">Set to zero to skip collapsing coincident nodes</param>
+    /// <param name="createElementsFromMembers"></param>
+    /// <param name="owner"></param>
     /// <returns></returns>
     internal static Model Assemble(GsaModel model, List<GsaList> lists, List<GsaNode> nodes,
         List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
@@ -41,188 +41,154 @@ namespace GsaGH.Helpers.Export
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
         List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
         List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-        LengthUnit modelUnit, Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner)
-    {
-      // Set model to work on
-      Model gsa = new Model();
+        LengthUnit modelUnit, Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
+      var gsa = new Model();
       if (model != null)
         gsa = model.Model;
 
       #region Nodes
-      // ### Nodes ###
-      // We take out the existing nodes in the model and work on that dictionary
-      // Get existing nodes
-      GsaIntDictionary<Node> apiNodes = new GsaIntDictionary<Node>(gsa.Nodes());
-
-      // Get existing axes
+      var apiNodes = new GsaIntDictionary<Node>(gsa.Nodes());
       IReadOnlyDictionary<int, Axis> gsaAxes = gsa.Axes();
-      Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-      // Set / add nodes to dictionary
+      var apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       Nodes.ConvertNodes(nodes, ref apiNodes, ref apiaxes, modelUnit);
       #endregion
 
       #region Properties
-      // ### Sections ###
-      GsaGuidDictionary<Section> apiSections = new GsaGuidDictionary<Section>(gsa.Sections());
-      GsaIntDictionary<SectionModifier> apiSectionModifiers = new GsaIntDictionary<SectionModifier>(gsa.SectionModifiers());
-      GsaGuidDictionary<AnalysisMaterial> apiMaterials = new GsaGuidDictionary<AnalysisMaterial>(gsa.AnalysisMaterials());
+      var apiSections = new GsaGuidDictionary<Section>(gsa.Sections());
+      var apiSectionModifiers = new GsaIntDictionary<SectionModifier>(gsa.SectionModifiers());
+      var apiMaterials = new GsaGuidDictionary<AnalysisMaterial>(gsa.AnalysisMaterials());
       Sections.ConvertSection(sections, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
-      // ### Prop2ds ###
-      GsaGuidDictionary<Prop2D> apiProp2ds = new GsaGuidDictionary<Prop2D>(gsa.Prop2Ds());
+      var apiProp2ds = new GsaGuidDictionary<Prop2D>(gsa.Prop2Ds());
       Prop2ds.ConvertProp2d(prop2Ds, ref apiProp2ds, ref apiMaterials, ref apiaxes, modelUnit);
 
-      // ### Prop3ds ###
-      GsaGuidDictionary<Prop3D> apiProp3ds = new GsaGuidDictionary<Prop3D>(gsa.Prop3Ds());
+      var apiProp3ds = new GsaGuidDictionary<Prop3D>(gsa.Prop3Ds());
       Prop3ds.ConvertProp3d(prop3Ds, ref apiProp3ds, ref apiMaterials);
       #endregion
 
       #region Elements
-      GsaGuidIntListDictionary<Element> apiElements = new GsaGuidIntListDictionary<Element>(gsa.Elements());
+      var apiElements = new GsaGuidIntListDictionary<Element>(gsa.Elements());
       Elements.ConvertElement1D(elem1ds, ref apiElements, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Elements.ConvertElement2D(elem2ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Elements.ConvertElement3D(elem3ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 
       #region Members
-      GsaGuidDictionary<Member> apiMembers = new GsaGuidDictionary<Member>(gsa.Members());
+      var apiMembers = new GsaGuidDictionary<Member>(gsa.Members());
       Members.ConvertMember1D(mem1ds, ref apiMembers, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Members.ConvertMember2D(mem2ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 
       #region Node loads
-      List<NodeLoad> nodeLoads_node = new List<NodeLoad>();
-      List<NodeLoad> nodeLoads_displ = new List<NodeLoad>();
-      List<NodeLoad> nodeLoads_settle = new List<NodeLoad>();
-      Loads.ConvertNodeLoad(loads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle, ref apiNodes, modelUnit);
+      var nodeLoadsNode = new List<NodeLoad>();
+      var nodeLoadsDispl = new List<NodeLoad>();
+      var nodeLoadsSettle = new List<NodeLoad>();
+      Loads.ConvertNodeLoad(loads, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle, ref apiNodes, modelUnit);
       #endregion
 
       #region set geometry in model
-      // Geometry
       ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.Dictionary;
       gsa.SetNodes(apiNodeDict);
       ReadOnlyDictionary<int, Element> apiElemDict = apiElements.Dictionary;
       gsa.SetElements(apiElemDict);
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.Dictionary;
       gsa.SetMembers(apiMemDict);
-      // node loads
-      gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
-      gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoads_node));
-      gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoads_settle));
+
+      gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
+      gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoadsNode));
+      gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoadsSettle));
 
       int initialNodeCount = apiNodeDict.Keys.Count;
       if (createElementsFromMembers && apiMembers.Count > 0)
         gsa.CreateElementsFromMembers();
-      if (toleranceCoincidentNodes.Value > 0)
-      {
+      if (toleranceCoincidentNodes.Value > 0) {
         gsa.CollapseCoincidentNodes(toleranceCoincidentNodes.Meters);
-        
-        // provide feedback to user if we have removed unreasonable amount of nodes
-        if (owner != null)
-        {
-          try
-          {
+        if (owner != null) {
+          try {
             double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
             if (minMeshSize < toleranceCoincidentNodes.Meters)
               owner.AddRuntimeWarning(
                 "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes.Meters + ")."
-                + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
-                + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+                + Environment.NewLine + "This is likely to produce an undisarable mesh."
+                + Environment.NewLine + "Right-click the component to change the tolerance.");
           }
-          catch (System.InvalidOperationException)
-          {
+          catch (InvalidOperationException) {
             // if linq .Where returns an empty list (all mesh sizes are zero)
           }
 
           int newNodeCount = gsa.Nodes().Keys.Count;
-          
-          if (elem2ds != null && elem2ds.Count > 0)
-          {
-            foreach (GsaElement2d e2d in elem2ds) 
-            {
+
+          if (elem2ds != null && elem2ds.Count > 0) {
+            foreach (GsaElement2d e2d in elem2ds) {
               int expectedCollapsedNodeCount = e2d.Mesh.TopologyVertices.Count;
-              int actualNodeCount = 0;
-              foreach(List<int> topoint in e2d.TopoInt)
-                actualNodeCount+= topoint.Count;
+              int actualNodeCount = e2d.TopoInt.Sum(topoint => topoint.Count);
               int difference = actualNodeCount - expectedCollapsedNodeCount;
               initialNodeCount -= difference;
             }
           }
-          if (elem3ds != null && elem3ds.Count > 0)
-          {
-            foreach (GsaElement3d e3d in elem3ds)
-            {
+
+          if (elem3ds != null && elem3ds.Count > 0) {
+            foreach (GsaElement3d e3d in elem3ds) {
               int expectedCollapsedNodeCount = e3d.NgonMesh.TopologyVertices.Count;
-              int actualNodeCount = 0;
-              foreach (List<int> topoint in e3d.TopoInt)
-                actualNodeCount += topoint.Count;
+              int actualNodeCount = e3d.TopoInt.Sum(topoint => topoint.Count);
               int difference = actualNodeCount - expectedCollapsedNodeCount;
               initialNodeCount -= difference;
             }
           }
-          double nodeSurvivalRate = (double)newNodeCount / (double)initialNodeCount;
-          
+
+          double nodeSurvivalRate = newNodeCount / (double)initialNodeCount;
+
           int elemCount = apiElemDict.Count;
           int memCount = apiMemDict.Count;
-          double warningSurvivalRate = elemCount > memCount ? 0.1 : 0.5;
-          double remarkSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
+          double warningSurvivalRate = elemCount > memCount ? 0.05 : 0.2; // warning if >95% of nodes are removed for elements or >80% for members
+          double remarkSurvivalRate = elemCount > memCount ? 0.2 : 0.33; // remark if >80% of nodes are removed for elements or >66% for members
 
           if (newNodeCount == 1)
             owner.AddRuntimeWarning(
-              "After collapsing coincident nodes only one node remained." + System.Environment.NewLine
+              "After collapsing coincident nodes only one node remained." + Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
-              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+              + Environment.NewLine + "Right-click the component to change the tolerance.");
           else if (nodeSurvivalRate < warningSurvivalRate)
             owner.AddRuntimeWarning(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
-              + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
+              + " of the nodes were removed after collapsing coincident nodes." + Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
-              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+              + Environment.NewLine + "Right-click the component to change the tolerance.");
           else if (nodeSurvivalRate < remarkSurvivalRate)
             owner.AddRuntimeRemark(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
-              + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
+              + " of the nodes were removed after collapsing coincident nodes." + Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
-              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+              + Environment.NewLine + "Right-click the component to change the tolerance.");
         }
       }
       #endregion
 
       #region Loads
-      // ### Loads ###
-      // We let the existing loads (if any) survive and just add new loads
-      // Get existing loads
-      List<GravityLoad> gravityLoads = new List<GravityLoad>();
-      List<BeamLoad> beamLoads = new List<BeamLoad>();
-      List<FaceLoad> faceLoads = new List<FaceLoad>();
-      List<GridPointLoad> gridPointLoads = new List<GridPointLoad>();
-      List<GridLineLoad> gridLineLoads = new List<GridLineLoad>();
-      List<GridAreaLoad> gridAreaLoads = new List<GridAreaLoad>();
+      var gravityLoads = new List<GravityLoad>();
+      var beamLoads = new List<BeamLoad>();
+      var faceLoads = new List<FaceLoad>();
+      var gridPointLoads = new List<GridPointLoad>();
+      var gridLineLoads = new List<GridLineLoad>();
+      var gridAreaLoads = new List<GridAreaLoad>();
 
       IReadOnlyDictionary<int, GridPlane> gsaGPln = gsa.GridPlanes();
-      Dictionary<int, GridPlane> apiGridPlanes = gsaGPln.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      var apiGridPlanes = gsaGPln.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
       IReadOnlyDictionary<int, GridSurface> gsaGSrf = gsa.GridSurfaces();
-      Dictionary<int, GridSurface> apiGridSurfaces = gsaGSrf.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      var apiGridSurfaces = gsaGSrf.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-      // lists to keep track of duplicated grid planes and grid surfaces
-      Dictionary<Guid, int> gp_guid = new Dictionary<Guid, int>();
-      Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
+      var gpGuid = new Dictionary<Guid, int>();
+      var gsGuid = new Dictionary<Guid, int>();
 
-      // member-element relationship, not used if not needed
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship = null;
+      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
 
-      // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
-      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
-
-      // Set / add loads to lists
-      Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+      Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
       #endregion
 
       #region set rest in model
-      // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
       gsa.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(beamLoads));
       gsa.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(faceLoads));
@@ -233,41 +199,40 @@ namespace GsaGH.Helpers.Export
       gsa.SetGridPlanes(new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes));
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
 
-      //properties
       gsa.SetSections(apiSections.Dictionary);
       gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);
       gsa.SetProp2Ds(apiProp2ds.Dictionary);
       gsa.SetProp3Ds(apiProp3ds.Dictionary);
       ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.Dictionary;
-      if (materials.Count > 0)
-      {
+      if (materials.Count > 0) {
         foreach (KeyValuePair<int, AnalysisMaterial> mat in materials)
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
       }
 
-      //tasks
-      if (analysisTasks != null)
-      {
+      if (analysisTasks != null) {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = gsa.AnalysisTasks();
-        foreach (GsaAnalysisTask task in analysisTasks)
-        {
-          if (!existingTasks.Keys.Contains(task.ID))
-            task.ID = gsa.AddAnalysisTask();
+        foreach (GsaAnalysisTask task in analysisTasks) {
+          if (!existingTasks.Keys.Contains(task.Id))
+            task.Id = gsa.AddAnalysisTask();
 
           if (task.Cases == null || task.Cases.Count == 0)
             task.CreateDefaultCases(gsa);
 
+          if (task.Cases == null) {
+            continue;
+          }
+
           foreach (GsaAnalysisCase ca in task.Cases)
-            gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
+            gsa.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
         }
       }
 
-      //combinations
-      if (combinations != null)
-      {
-        foreach (GsaCombinationCase co in combinations)
-          gsa.AddCombinationCase(co.Name, co.Description);
+      if (combinations == null) {
+        return gsa;
       }
+
+      foreach (GsaCombinationCase co in combinations)
+        gsa.AddCombinationCase(co.Name, co.Description);
       #endregion
 
       return gsa;

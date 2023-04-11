@@ -5,57 +5,55 @@ using GsaAPI;
 using static GsaGH.Parameters.GsaMaterial;
 using static GsaGH.Parameters.GsaOffset;
 
-namespace GsaGH.Helpers.GsaApi
-{
-  internal class Mappings
-  {
-    internal static readonly Dictionary<string, AlignmentType> AlignmentTypeMapping = new Dictionary<string, AlignmentType>()
+namespace GsaGH.Helpers.GsaAPI {
+  internal class Mappings {
+    internal static readonly Dictionary<string, AlignmentType> s_alignmentTypeMapping = new Dictionary<string, AlignmentType>()
     {
      { "Centroid" , AlignmentType.Centroid },
-     { "Top-Left", AlignmentType.Top_Left },
-     { "Top-Centre" , AlignmentType.Top_Centre },
-     { "Top-Center" , AlignmentType.Top_Centre },
-     { "Top" , AlignmentType.Top_Centre },
-     { "Top-Right" , AlignmentType.Top_Right },
-     { "Mid-Left" , AlignmentType.Mid_Left },
-     { "Left" , AlignmentType.Mid_Left },
-     { "Mid-Right" , AlignmentType.Mid_Right },
-     { "Right" , AlignmentType.Mid_Right },
-     { "Bottom-Left" , AlignmentType.Bottom_Left },
-     { "Bottom-Centre" , AlignmentType.Bottom_Centre },
-     { "Bottom-Center" , AlignmentType.Bottom_Centre },
-     { "Bottom" , AlignmentType.Bottom_Centre },
-     { "Bottom-Right", AlignmentType.Bottom_Right }
+     { "Top-Left", AlignmentType.TopLeft },
+     { "Top-Centre" , AlignmentType.TopCentre },
+     { "Top-Center" , AlignmentType.TopCentre },
+     { "Top" , AlignmentType.TopCentre },
+     { "Top-Right" , AlignmentType.TopRight },
+     { "Mid-Left" , AlignmentType.MidLeft },
+     { "Left" , AlignmentType.MidLeft },
+     { "Mid-Right" , AlignmentType.MidRight },
+     { "Right" , AlignmentType.MidRight },
+     { "Bottom-Left" , AlignmentType.BottomLeft },
+     { "Bottom-Centre" , AlignmentType.BottomCentre },
+     { "Bottom-Center" , AlignmentType.BottomCentre },
+     { "Bottom" , AlignmentType.BottomCentre },
+     { "Bottom-Right", AlignmentType.BottomRight },
     };
 
-    internal static readonly Dictionary<string, MatType> MaterialTypeMapping = new Dictionary<string, MatType>()
+    internal static readonly Dictionary<string, MatType> s_materialTypeMapping = new Dictionary<string, MatType>()
     {
-      { "Undefined", MatType.UNDEF },
-      { "None", MatType.NONE },
-      { "Generic", MatType.GENERIC },
-      { "Steel", MatType.STEEL },
-      { "Concrete", MatType.CONCRETE },
-      { "Aluminium", MatType.ALUMINIUM },
-      { "Glass", MatType.GLASS },
-      { "FRP", MatType.FRP },
-      { "Rebar", MatType.REBAR },
-      { "Timber", MatType.TIMBER },
-      { "Fabric", MatType.FABRIC },
-      { "Soil", MatType.SOIL },
-      { "Numeric Material", MatType.NUM_MT },
-      { "Compound", MatType.COMPOUND },
-      { "Bar", MatType.BAR },
-      { "Tendon", MatType.TENDON },
-      { "FRP Bar", MatType.FRPBAR },
-      { "CFRP", MatType.CFRP },
-      { "GFRP", MatType.GFRP },
-      { "AFRP", MatType.AFRP },
-      { "ARGFRP", MatType.ARGFRP },
-      { "Bar Material", MatType.BARMAT }
+      { "Undefined", MatType.Undef },
+      { "None", MatType.None },
+      { "Generic", MatType.Generic },
+      { "Steel", MatType.Steel },
+      { "Concrete", MatType.Concrete },
+      { "Aluminium", MatType.Aluminium },
+      { "Glass", MatType.Glass },
+      { "FRP", MatType.Frp },
+      { "Rebar", MatType.Rebar },
+      { "Timber", MatType.Timber },
+      { "Fabric", MatType.Fabric },
+      { "Soil", MatType.Soil },
+      { "Numeric Material", MatType.NumMt },
+      { "Compound", MatType.Compound },
+      { "Bar", MatType.Bar },
+      { "Tendon", MatType.Tendon },
+      { "FRP Bar", MatType.Frpbar },
+      { "CFRP", MatType.Cfrp },
+      { "GFRP", MatType.Gfrp },
+      { "AFRP", MatType.Afrp },
+      { "ARGFRP", MatType.Argfrp },
+      { "Bar Material", MatType.Barmat },
     };
 
-        internal static readonly Dictionary<string, Property2D_Type> Prop2dTypeMapping = new Dictionary<string, Property2D_Type>()
-    {
+    internal static readonly Dictionary<string, Property2D_Type> s_prop2dTypeMapping = new Dictionary<string, Property2D_Type>()
+{
       { "Undefined", Property2D_Type.UNDEF },
       { "Plane Stress", Property2D_Type.PL_STRESS },
       { "Plane Strain", Property2D_Type.PL_STRAIN },
@@ -66,11 +64,11 @@ namespace GsaGH.Helpers.GsaApi
       { "Curved Shell", Property2D_Type.CURVED_SHELL },
       { "Torsion", Property2D_Type.TORSION },
       { "Load Panel", Property2D_Type.LOAD },
-      { "Num Type", Property2D_Type.NUM_TYPE }
+      { "Num Type", Property2D_Type.NUM_TYPE },
     };
 
-        internal static readonly Dictionary<string, ElementType> ElementTypeMapping = new Dictionary<string, ElementType>()
-    {
+    internal static readonly Dictionary<string, ElementType> s_elementTypeMapping = new Dictionary<string, ElementType>()
+{
       { "New", ElementType.NEW },
       { "Undefined", ElementType.UNDEF },
       { "Bar", ElementType.BAR },
@@ -97,18 +95,18 @@ namespace GsaGH.Helpers.GsaApi
       { "3D", ElementType.THREE_D },
       { "1D Section", ElementType.ONE_D_SECT },
       { "2D Finite Element", ElementType.TWO_D_FE },
-      { "2D Load", ElementType.TWO_D_LOAD }
+      { "2D Load", ElementType.TWO_D_LOAD },
     };
 
-        internal static readonly Dictionary<string, AnalysisOrder> AnalysisOrderMapping = new Dictionary<string, AnalysisOrder>()
-    {
+    internal static readonly Dictionary<string, AnalysisOrder> s_analysisOrderMapping = new Dictionary<string, AnalysisOrder>()
+{
       { "Linear", AnalysisOrder.LINEAR },
       { "Quadratic", AnalysisOrder.QUADRATIC },
-      { "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM }
+      { "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM },
     };
 
-        internal static readonly Dictionary<string, MemberType> MemberTypeMapping = new Dictionary<string, MemberType>()
-    {
+    internal static readonly Dictionary<string, MemberType> s_memberTypeMapping = new Dictionary<string, MemberType>()
+{
       { "Undefined", MemberType.UNDEF },
       { "Generic 1D", MemberType.GENERIC_1D },
       { "Generic 2D", MemberType.GENERIC_2D },
@@ -126,90 +124,67 @@ namespace GsaGH.Helpers.GsaApi
       { "Generic 3D", MemberType.GENERIC_3D },
     };
 
-    internal static AlignmentType GetAlignmentType(string typestring)
-    {
-      return (AlignmentType)GetValue(typestring, typeof(AlignmentType));
-    }
+    internal static AlignmentType GetAlignmentType(string typestring) => (AlignmentType)GetValue(typestring, typeof(AlignmentType));
 
-    internal static AnalysisOrder GetAnalysisOrder(string input)
-    {
-      return (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));
-    }
+    internal static AnalysisOrder GetAnalysisOrder(string input) => (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));
 
-    internal static ElementType GetElementType(string typestring)
-    {
-      return (ElementType)GetValue(typestring, typeof(ElementType));
-    }
+    internal static ElementType GetElementType(string typestring) => (ElementType)GetValue(typestring, typeof(ElementType));
 
-    internal static MatType GetMatType(string typestring)
-    {
-      return (MatType)GetValue(typestring, typeof(MatType));
-    }
+    internal static MatType GetMatType(string typestring) => (MatType)GetValue(typestring, typeof(MatType));
 
-    internal static MemberType GetMemberType(string typestring)
-    {
-      return (MemberType)GetValue(typestring, typeof(MemberType));
-    }
+    internal static MemberType GetMemberType(string typestring) => (MemberType)GetValue(typestring, typeof(MemberType));
 
-    internal static Property2D_Type GetProperty2D_Type(string typestring)
-    {
-      return (Property2D_Type)GetValue(typestring, typeof(Property2D_Type));
-    }
+    internal static Property2D_Type GetProperty2D_Type(string typestring) => (Property2D_Type)GetValue(typestring, typeof(Property2D_Type));
 
-    private static Enum GetValue(string key, Type t)
-    {
+    private static Enum GetValue(string key, Type t) {
       List<string> types;
       int index;
-      switch (t)
-      {
+      switch (t) {
         case Type _ when t == typeof(AlignmentType):
-          types = AlignmentTypeMapping.Keys.ToList();
+          types = s_alignmentTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1)
-            return AlignmentTypeMapping[types[index]];
+            return s_alignmentTypeMapping[types[index]];
           break;
 
         case Type _ when t == typeof(AnalysisOrder):
-          types = AnalysisOrderMapping.Keys.ToList();
+          types = s_analysisOrderMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1)
-            return AnalysisOrderMapping[types[index]];
+            return s_analysisOrderMapping[types[index]];
           break;
 
         case Type _ when t == typeof(ElementType):
-          types = ElementTypeMapping.Keys.ToList();
+          types = s_elementTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1)
-            return ElementTypeMapping[types[index]];
+            return s_elementTypeMapping[types[index]];
           break;
 
         case Type _ when t == typeof(MatType):
-          types = MaterialTypeMapping.Keys.ToList();
+          types = s_materialTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1)
-            return MaterialTypeMapping[types[index]];
+            return s_materialTypeMapping[types[index]];
           break;
 
         case Type _ when t == typeof(MemberType):
-          types = MemberTypeMapping.Keys.ToList();
+          types = s_memberTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1)
-            return MemberTypeMapping[types[index]];
+            return s_memberTypeMapping[types[index]];
           break;
 
         case Type _ when t == typeof(Property2D_Type):
-          types = Prop2dTypeMapping.Keys.ToList();
+          types = s_prop2dTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1)
-            return Prop2dTypeMapping[types[index]];
+            return s_prop2dTypeMapping[types[index]];
           break;
       }
       throw new ArgumentException();
     }
 
-    private static int GetIndex(string key, List<string> types)
-    {
-      return types.Select(v => v.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty)).ToList().IndexOf(key.ToLower().Trim().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty));
-    }
+    private static int GetIndex(string key, List<string> types) => types.Select(v => v.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty)).ToList().IndexOf(key.ToLower().Trim().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty));
   }
 }

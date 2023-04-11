@@ -1,19 +1,16 @@
-﻿using GsaGH.Parameters;
+﻿using GsaGH.Components;
+using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Components.Properties
-{
+namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class CreateOffsetTests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
-      var comp = new GsaGH.Components.CreateOffset();
+  public class CreateOffsetTests {
+    public static GH_OasysDropDownComponent ComponentMother() {
+      var comp = new CreateOffset();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp, new Length(0.5, LengthUnit.Kilometer));
@@ -25,13 +22,10 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponent()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponent() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
-      GsaOffsetGoo output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(500, output.Value.X1.As(LengthUnit.Meter));
       Assert.Equal(-0.75, output.Value.X2.As(LengthUnit.Meter));
       Assert.Equal(1.99, output.Value.Y.As(LengthUnit.Meter));

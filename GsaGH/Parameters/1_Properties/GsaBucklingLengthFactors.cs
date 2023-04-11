@@ -2,61 +2,49 @@
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Buckling Length Factors for a <see cref="GsaAPI.Member"/>
   /// </summary>
-  public class GsaBucklingLengthFactors
-  {
+  public class GsaBucklingLengthFactors {
     #region properties
     public double? MomentAmplificationFactorStrongAxis { get; set; }
     public double? MomentAmplificationFactorWeakAxis { get; set; }
-    public double? LateralTorsionalBucklingFactor { get; set; }
-    internal Length Length { get; }
-    internal bool LengthIsSet { get; private set; } = false;
+    public double? EquivalentUniformMomentFactor { get; set; }
     #endregion
 
     #region constructors
-    public GsaBucklingLengthFactors()
-    {
+    public GsaBucklingLengthFactors() {
     }
 
-    public GsaBucklingLengthFactors(double momentAmplificationFactorStrongAxis, double momentAmplificationFactorWeakAxis, double lateralTorsionalBucklingFactor)
-    {
-      this.LateralTorsionalBucklingFactor = lateralTorsionalBucklingFactor;
-      this.MomentAmplificationFactorStrongAxis = momentAmplificationFactorStrongAxis;
-      this.MomentAmplificationFactorWeakAxis = momentAmplificationFactorWeakAxis;
+    public GsaBucklingLengthFactors(double momentAmplificationFactorStrongAxis, double momentAmplificationFactorWeakAxis, double equivalentUniformMomentFactor) {
+      EquivalentUniformMomentFactor = equivalentUniformMomentFactor;
+      MomentAmplificationFactorStrongAxis = momentAmplificationFactorStrongAxis;
+      MomentAmplificationFactorWeakAxis = momentAmplificationFactorWeakAxis;
     }
 
-    internal GsaBucklingLengthFactors(GsaMember1d member)
-    {
-      this.LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
-      this.MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
-      this.MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
+    internal GsaBucklingLengthFactors(GsaMember1d member) {
+      EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
+      MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
+      MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
 
-    internal GsaBucklingLengthFactors(GsaMember1d member, LengthUnit lengthUnit)
-    {
-      this.LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
-      this.MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
-      this.MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
-      this.Length = new Length(member.PolyCurve.GetLength(), lengthUnit);
-      this.LengthIsSet = true;
+    internal GsaBucklingLengthFactors(GsaMember1d member, LengthUnit lengthUnit) {
+      EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
+      MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
+      MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
     #endregion
 
     #region methods
-    public GsaBucklingLengthFactors Duplicate()
-    {
-      return (GsaBucklingLengthFactors)this.MemberwiseClone();
+    public GsaBucklingLengthFactors Duplicate() {
+      return (GsaBucklingLengthFactors)MemberwiseClone();
     }
 
-    public override string ToString()
-    {
-      string y = this.MomentAmplificationFactorStrongAxis == null ? "" : "fLsy:" + this.MomentAmplificationFactorStrongAxis;
-      string z = this.MomentAmplificationFactorWeakAxis == null ? "" : "fLsz:" + this.MomentAmplificationFactorWeakAxis;
-      string lt = this.LateralTorsionalBucklingFactor == null ? "" : "fLtb:" + this.LateralTorsionalBucklingFactor;
+    public override string ToString() {
+      string y = MomentAmplificationFactorStrongAxis == null ? "" : "fLsy:" + MomentAmplificationFactorStrongAxis;
+      string z = MomentAmplificationFactorWeakAxis == null ? "" : "fLsz:" + MomentAmplificationFactorWeakAxis;
+      string lt = EquivalentUniformMomentFactor == null ? "" : "fLtb:" + EquivalentUniformMomentFactor;
       string output = string.Join(" ", y, z, lt).Trim();
       return output == "" ? "Automatic" : output;
     }

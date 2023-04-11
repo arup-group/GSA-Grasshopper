@@ -4,13 +4,10 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Components.Properties
-{
+namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class CreateProfileTests
-  {
-    public static GH_OasysDropDownComponent ComponentMother()
-    {
+  public class CreateProfileTests {
+    public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateProfile();
       comp.CreateAttributes();
 
@@ -26,13 +23,10 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponentTest1()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
+    public void CreateComponentTest1() {
+      GH_OasysDropDownComponent comp = ComponentMother();
 
-      // Assert
-      GH_String output = (GH_String)ComponentTestHelper.GetOutput(comp);
+      var output = (GH_String)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("STD CH(ft) 1 2 3 4", output.Value);
     }
 
@@ -43,14 +37,11 @@ namespace GsaGHTests.Components.Properties
     [InlineData(2, "STD CH(m) 1 2 3 4")]
     [InlineData(3, "STD CH(in) 1 2 3 4")]
     [InlineData(4, "STD CH(ft) 1 2 3 4")]
-    public void CreateComponentTest2(int j, string profile)
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
-      comp.SetSelected(1, j); // set measure
+    public void CreateComponentTest2(int j, string profile) {
+      GH_OasysDropDownComponent comp = ComponentMother();
+      comp.SetSelected(1, j);
 
-      // Assert
-      GH_String output = (GH_String)ComponentTestHelper.GetOutput(comp);
+      var output = (GH_String)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(profile, output.Value);
     }
   }

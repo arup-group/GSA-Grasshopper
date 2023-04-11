@@ -1,65 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Drawing;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
+using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
 using Rhino.Geometry;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaElement3d"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaElement3d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>, IGH_PreviewData
-  {
+  public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>,
+    IGH_PreviewData {
+    public GsaElement3dGoo(GsaElement3d item) : base(item) { }
+
+    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null)
+      => Value = duplicate
+        ? item.Duplicate()
+        : item;
+
     public static string Name => "Element3D";
     public static string NickName => "E3D";
     public static string Description => "GSA 3D Element(s)";
 
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement3dGoo(GsaElement3d item) : base(item) { }
-    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null)
-    {
-      if (duplicate)
-        this.Value = item.Duplicate();
-      else
-        this.Value = item;
-    }
+    public override IGH_GeometricGoo Duplicate() => new GsaElement3dGoo(Value);
 
-    public override IGH_GeometricGoo Duplicate() => new GsaElement3dGoo(this.Value);
-
-    public override GeometryBase GetGeometry() => this.Value.DisplayMesh;
+    public override GeometryBase GetGeometry() => Value.DisplayMesh;
 
     #region casting methods
-    public override bool CastTo<Q>(ref Q target)
-    {
+
+    public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaElement3D into some other type Q.            
-      if (base.CastTo<Q>(ref target))
+      if (base.CastTo(ref target))
         return true;
 
-      //Cast to Mesh
-      if (typeof(Q).IsAssignableFrom(typeof(Mesh)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.DisplayMesh;
+      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
+        target = Value == null
+          ? default
+          : (TQ)(object)Value.DisplayMesh;
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Mesh)))
-      {
-        if (Value == null)
-          target = default;
-        else
-        {
-          target = (Q)(object)new GH_Mesh(Value.DisplayMesh);
-        }
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
+        target = Value == null
+          ? default
+          : (TQ)(object)new GH_Mesh(Value.DisplayMesh);
 
         return true;
       }
@@ -67,49 +56,38 @@ namespace GsaGH.Parameters
       target = default;
       return false;
     }
+
     #endregion
 
     #region transformation methods
+
     public override IGH_GeometricGoo Transform(Transform xform)
-    {
-      return new GsaElement3dGoo(Value.Transform(xform));
-    }
+      => new GsaElement3dGoo(Value.Transform(xform));
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      return new GsaElement3dGoo(Value.Morph(xmorph));
-    }
+      => new GsaElement3dGoo(Value.Morph(xmorph));
+
     #endregion
 
     #region drawing methods
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
-    {
-      //Draw shape.
-      if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-      {
-        args.Pipeline.DrawMeshShaded(Value.DisplayMesh, Helpers.Graphics.Colours.Element3dFace);
-      }
-      else
-        args.Pipeline.DrawMeshShaded(Value.DisplayMesh, Helpers.Graphics.Colours.Element2dFaceSelected);
-    }
-    public override void DrawViewportWires(GH_PreviewWireArgs args)
-    {
-      if (Value == null) { return; }
-      if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
-      //Draw lines
-      if (Value.NgonMesh != null)
-      {
-        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-        {
-          args.Pipeline.DrawMeshWires(Value.DisplayMesh, Helpers.Graphics.Colours.Element2dEdge, 1);
-        }
-        else
-        {
-          args.Pipeline.DrawMeshWires(Value.DisplayMesh, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
-        }
-      }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) => args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
+        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
+          ? Colours.Element3dFace
+          : Colours.Element2dFaceSelected);
+
+    public override void DrawViewportWires(GH_PreviewWireArgs args) {
+      if (Value == null
+        || CentralSettings.PreviewMeshEdges == false
+        || Value.NgonMesh == null)
+        return;
+
+      if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+        args.Pipeline.DrawMeshWires(Value.DisplayMesh, Colours.Element2dEdge, 1);
+      else
+        args.Pipeline.DrawMeshWires(Value.DisplayMesh, Colours.Element2dEdgeSelected, 2);
     }
+
     #endregion
   }
 }

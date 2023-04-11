@@ -1,21 +1,17 @@
 ﻿using System.Collections.Generic;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers
-{
-  internal class PostHog
-  {
-    internal static void Debug(Dictionary<string, object> properties)
-    {
-      string eventName = "Debug";
+namespace GsaGH.Helpers {
+  internal class PostHog {
+    internal static void Debug(Dictionary<string, object> properties) {
+      const string eventName = "Debug";
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
-    internal static void Load(GsaLoad.LoadTypes loadType, ReferenceType refType, string subType = "-")
-    {
-      string eventName = "Load";
+    internal static void Load(GsaLoad.LoadTypes loadType, ReferenceType refType, string subType = "-") {
+      const string eventName = "Load";
       bool objLoad = refType != ReferenceType.None;
-      Dictionary<string, object> properties = new Dictionary<string, object>()
+      var properties = new Dictionary<string, object>()
         {
           { "loadType", loadType.ToString() },
           { "objectLoad", objLoad },
@@ -25,10 +21,9 @@ namespace GsaGH.Helpers
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
-    internal static void Load(bool refType, string subType = "-")
-    {
-      string eventName = "Load";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
+    internal static void Load(bool refType, string subType = "-") {
+      const string eventName = "Load";
+      var properties = new Dictionary<string, object>()
         {
           { "loadType", "Node" },
           { "objectLoad", refType },
@@ -38,10 +33,9 @@ namespace GsaGH.Helpers
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
-    internal static void Result(GsaResult.CaseType caseType, int dimension, GsaResultsValues.ResultType resultType, string subType = "-")
-    {
-      string eventName = "Result";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
+    internal static void Result(GsaResult.CaseType caseType, int dimension, GsaResultsValues.ResultType resultType, string subType = "-") {
+      const string eventName = "Result";
+      var properties = new Dictionary<string, object>()
         {
           { "caseType", caseType.ToString() },
           { "elementType", dimension },
@@ -51,10 +45,9 @@ namespace GsaGH.Helpers
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
-    internal static void Result(GsaResult.CaseType caseType, int dimension, string resultType, string subType = "-")
-    {
-      string eventName = "Result";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
+    internal static void Result(GsaResult.CaseType caseType, int dimension, string resultType, string subType = "-") {
+      const string eventName = "Result";
+      var properties = new Dictionary<string, object>()
         {
           { "caseType", caseType.ToString() },
           { "elementType", dimension },
@@ -64,21 +57,19 @@ namespace GsaGH.Helpers
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
-    internal static void GWA(string gwa, bool existingModel)
-    {
+    internal static void Gwa(string gwa, bool existingModel) {
       string[] commands = gwa.Split('\n');
-      foreach (string command in commands)
-      {
+      foreach (string command in commands) {
         if (command == "") { continue; }
         string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
         if (key == "") { continue; }
-        string eventName = "GwaCommand";
-        Dictionary<string, object> properties = new Dictionary<string, object>()
+        const string eventName = "GwaCommand";
+        var properties = new Dictionary<string, object>()
         {
           { key, command },
           { "existingModel", existingModel },
         };
-        _ = OasysGH.Helpers.PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
+        _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
       }
     }
   }

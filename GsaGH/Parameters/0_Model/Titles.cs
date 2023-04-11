@@ -1,103 +1,88 @@
 ﻿using GsaAPI;
 
-namespace GsaGH
-{
+namespace GsaGH {
   /// <summary>
   /// Class to hold Titles used in Grasshopper GSA file. 
   /// </summary>
-  public static class Titles
-  {
-    public static string Calculation
-    {
-      get { return m_calculation; }
-      set { m_calculation = value; }
+  public static class Titles {
+    public static string Calculation {
+      get { return s_calculation; }
+      set { s_calculation = value; }
     }
-    public static string Initials
-    {
-      get { return m_initials; }
-      set { m_initials = value; }
+    public static string Initials {
+      get { return s_initials; }
+      set { s_initials = value; }
     }
-    public static string JobNumber
-    {
-      get { return m_jobnumber; }
-      set { m_jobnumber = value; }
+    public static string JobNumber {
+      get { return s_jobnumber; }
+      set { s_jobnumber = value; }
     }
-    public static string Notes
-    {
-      get { return m_notes; }
-      set { m_notes = value; }
+    public static string Notes {
+      get { return s_notes; }
+      set { s_notes = value; }
     }
-    public static string SubTitle
-    {
-      get { return m_subtitle; }
-      set { m_subtitle = value; }
+    public static string SubTitle {
+      get { return s_subtitle; }
+      set { s_subtitle = value; }
     }
-    public static string Title
-    {
-      get { return m_title; }
-      set { m_title = value; }
+    public static string Title {
+      get { return s_title; }
+      set { s_title = value; }
     }
     #region fields
-    private static string m_calculation;
-    private static bool m_calculation_byuser = false;
-    private static string m_initials;
-    private static bool m_initials_byuser = false;
-    private static string m_jobnumber;
-    private static bool m_jobnumber_byuser = false;
-    private static string m_notes;
-    private static bool m_notes_byuser = false;
-    private static string m_subtitle;
-    private static bool m_subtitle_byuser = false;
-    private static string m_title;
-    private static bool m_title_byuser = false;
+    private static string s_calculation;
+    private static bool s_calculationByuser;
+    private static string s_initials;
+    private static bool s_initialsByuser;
+    private static string s_jobnumber;
+    private static bool s_jobnumberByuser;
+    private static string s_notes;
+    private static bool s_notesByuser;
+    private static string s_subtitle;
+    private static bool s_subtitleByuser;
+    private static string s_title;
+    private static bool s_titleByuser;
     #endregion
 
-    public static void GetTitlesFromGSA(Model model)
-    {
+    public static void GetTitlesFromGsa(Model model) {
       GsaAPI.Titles titles = model.Titles();
-      if (!m_calculation_byuser)
+      if (!s_calculationByuser)
         Titles.Calculation = titles.Calculation;
-      if (!m_initials_byuser)
+      if (!s_initialsByuser)
         Titles.Initials = titles.Initials;
-      if (!m_jobnumber_byuser)
+      if (!s_jobnumberByuser)
         Titles.JobNumber = titles.JobNumber;
-      if (!m_notes_byuser)
+      if (!s_notesByuser)
         Titles.Notes = titles.Notes;
-      if (!m_subtitle_byuser)
+      if (!s_subtitleByuser)
         Titles.SubTitle = titles.SubTitle;
-      if (!m_title_byuser)
+      if (!s_titleByuser)
         Titles.Title = titles.Title;
     }
 
-    public static void SetCalculation(string calculation)
-    {
+    public static void SetCalculation(string calculation) {
       Titles.Calculation = calculation;
-      m_calculation_byuser = true;
+      s_calculationByuser = true;
     }
-    public static void SetInitials(string initials)
-    {
+    public static void SetInitials(string initials) {
       Titles.Initials = initials;
-      m_initials_byuser = true;
+      s_initialsByuser = true;
     }
-    public static void SetJobNumber(string jobnumber)
-    {
+    public static void SetJobNumber(string jobnumber) {
       Titles.JobNumber = jobnumber;
-      m_jobnumber_byuser = true;
+      s_jobnumberByuser = true;
     }
-    public static void SetNotes(string notes)
-    {
+    public static void SetNotes(string notes) {
       Titles.Notes = notes;
-      m_notes_byuser = true;
+      s_notesByuser = true;
     }
-    public static void SetSubTitle(string subtitle)
-    {
+    public static void SetSubTitle(string subtitle) {
       Titles.SubTitle = subtitle;
-      m_subtitle_byuser = true;
+      s_subtitleByuser = true;
     }
-    public static void SetTitle(string title)
-    {
+    public static void SetTitle(string title) {
       Titles.Title = title;
-      m_title_byuser = true;
+      s_titleByuser = true;
     }
   }
 }

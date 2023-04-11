@@ -1,160 +1,108 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using GsaGH.Parameters;
 using Xunit;
 
-namespace GsaGHTests
-{
-  public class GrasshopperFixture : IDisposable
-  {
+namespace GsaGHTests {
+  public class GrasshopperFixture : IDisposable {
     public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
-    private object _Core = null;
-    private object _GHPlugin = null;
-    private object _DocIO { get; set; }
-    private object _Doc { get; set; }
+    private object _core = null;
+    private object _ghPlugin = null;
+    private object DocIo { get; set; }
+    private object Doc { get; set; }
     private bool _isDisposed;
-    private static string _linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
-    private static string _linkFileName = "GsaGhTests.ghlink";
+    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
+    private const string LinkFileName = "GsaGhTests.ghlink";
 
-    static GrasshopperFixture()
-    {
+    static GrasshopperFixture() =>
       // This MUST be included in a static constructor to ensure that no Rhino DLLs
       // are loaded before the resolver is set up. Avoid creating other static functions
       // and members which may reference Rhino assemblies, as that may cause those
       // assemblies to be loaded before this is called.
       RhinoInside.Resolver.Initialize();
-    }
 
-    public GrasshopperFixture()
-    {
-      AddPluginToGH();
+    public GrasshopperFixture() {
+      AddPluginToGh();
 
       LoadRefs();
-      Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      //Assert.NotNull(new GsaBool6());
+      Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
       InitializeCore();
 
-      // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
     }
 
-    public void LoadRefs()
-    {
+    public void LoadRefs() {
       const string name = "PATH";
       string pathvar = System.Environment.GetEnvironmentVariable(name);
-      var value = pathvar + ";" + InstallPath + "\\";
-      var target = EnvironmentVariableTarget.Process;
+      string value = pathvar + ";" + InstallPath + "\\";
+      EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
     }
 
-    public void AddPluginToGH()
-    {
-      Directory.CreateDirectory(_linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(_linkFilePath, _linkFileName));
+    public void AddPluginToGh() {
+      Directory.CreateDirectory(s_linkFilePath);
+      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, LinkFileName));
       writer.Write(Environment.CurrentDirectory);
       writer.Close();
     }
 
-    protected virtual void Dispose(bool disposing)
-    {
-      if (_isDisposed) return;
-      if (disposing)
-      {
-        _Doc = null;
-        _DocIO = null;
-        GHPlugin.CloseAllDocuments();
-        _GHPlugin = null;
+    protected virtual void Dispose(bool disposing) {
+      if (_isDisposed)
+        return;
+      if (disposing) {
+        Doc = null;
+        DocIo = null;
+        GhPlugin.CloseAllDocuments();
+        _ghPlugin = null;
         Core.Dispose();
       }
 
-      // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-      // TODO: set large fields to null
       _isDisposed = true;
     }
 
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    // ~GrasshopperFixture()
-    // {
-    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    //     Dispose(disposing: false);
-    // }
-
-    public void Dispose()
-    {
-      // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-      this.Dispose(disposing: true);
+    public void Dispose() {
+      Dispose(disposing: true);
       GC.SuppressFinalize(this);
-      File.Delete(Path.Combine(_linkFilePath, _linkFileName));
+      File.Delete(Path.Combine(s_linkFilePath, LinkFileName));
     }
 
-    public Rhino.Runtime.InProcess.RhinoCore Core
-    {
-      get
-      {
-        if (null == _Core) InitializeCore();
-        return _Core as Rhino.Runtime.InProcess.RhinoCore;
+    public Rhino.Runtime.InProcess.RhinoCore Core {
+      get {
+        if (null == _core)
+          InitializeCore();
+        return _core as Rhino.Runtime.InProcess.RhinoCore;
       }
     }
 
-    public Grasshopper.Plugin.GH_RhinoScriptInterface GHPlugin
-    {
-      get
-      {
-        if (null == _GHPlugin) InitializeGrasshopperPlugin();
-        return _GHPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
+    public Grasshopper.Plugin.GH_RhinoScriptInterface GhPlugin {
+      get {
+        if (null == _ghPlugin)
+          InitializeGrasshopperPlugin();
+        return _ghPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
       }
     }
 
-    public Grasshopper.Kernel.GH_DocumentIO DocIO
-    {
-      get
-      {
-        if (null == _DocIO) InitializeDocIO();
-        return _DocIO as Grasshopper.Kernel.GH_DocumentIO;
-      }
-    }
+    private void InitializeCore() => _core = new Rhino.Runtime.InProcess.RhinoCore();
 
-    void InitializeCore()
-    {
-      _Core = new Rhino.Runtime.InProcess.RhinoCore();
-    }
-
-    void InitializeGrasshopperPlugin()
-    {
-      if (null == _Core) InitializeCore();
+    private void InitializeGrasshopperPlugin() {
+      if (null == _core)
+        InitializeCore();
       // we do this in a seperate function to absolutely ensure that the core is initialized before we load the GH plugin,
       // which will happen automatically when we enter the function containing GH references
       InitializeGrasshopperPlugin2();
     }
 
-    void InitializeGrasshopperPlugin2()
-    {
-      _GHPlugin = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
-      var ghp = _GHPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
-      ghp.RunHeadless();
-    }
-
-    void InitializeDocIO()
-    {
-      // we do this in a seperate function to absolutely ensure that the core is initialized before we load the GH plugin,
-      // which will happen automatically when we enter the function containing GH references
-      if (null == _GHPlugin) InitializeGrasshopperPlugin();
-      InitializeDocIO2();
-    }
-
-    void InitializeDocIO2()
-    {
-      var docIO = new Grasshopper.Kernel.GH_DocumentIO();
-      _DocIO = docIO;
+    private void InitializeGrasshopperPlugin2() {
+      _ghPlugin = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
+      var ghp = _ghPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
+      ghp?.RunHeadless();
     }
   }
 
   [CollectionDefinition("GrasshopperFixture collection")]
-  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture>
-  {
+  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
     // This class has no code, and is never created. Its purpose is simply
     // to be the place to apply [CollectionDefinition] and all the
     // ICollectionFixture<> interfaces.
