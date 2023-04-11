@@ -55,7 +55,7 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes
-        = Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
+        = Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit, gsaResult.Model.Model.Axes());
 
       double scale = 1;
       if (!dataAccess.GetData(2, ref scale))
@@ -425,7 +425,7 @@ namespace GsaGH.Components {
       }
 
       double factor = 0.000001;
-      return bbox.Area * values.Max() * factor;
+      return bbox.Diagonal.Length * values.Max() * factor;
     }
 
     private VectorResultGoo GenerateReactionForceVector(
@@ -441,76 +441,53 @@ namespace GsaGH.Components {
       if (!xyzResults.ContainsKey(nodeId))
         return null;
 
+      bool isForce = (int)_selectedDisplayValue < 4;
+      GsaResultQuantity quantity;
+      Enum unit;
+
+      if (isForce) {
+        quantity = xyzResults[nodeId][0];
+        unit = _forceUnit;
+      }
+      else {
+        quantity = xxyyzzResults[nodeId][0];
+        unit = _momentUnit;
+      }
+
       var direction = new Vector3d();
       IQuantity forceValue = null;
-      bool isForce = true;
+
+      Vector3d xAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.XAxis : node.Value.Value.LocalAxis.XAxis;
+      xAxis.Unitize();
+      Vector3d yAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.YAxis : node.Value.Value.LocalAxis.YAxis;
+      yAxis.Unitize();
+      Vector3d zAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.ZAxis : node.Value.Value.LocalAxis.ZAxis;
+      zAxis.Unitize();
+
+      xAxis *= quantity.X.As(unit) * scale;
+      yAxis *= quantity.Y.As(unit) * scale;
+      zAxis *= quantity.Z.As(unit) * scale;
 
       switch (_selectedDisplayValue) {
         case (DisplayValue.X):
-          IQuantity xVal = xyzResults[nodeId][0]
-            .X;
-          direction = new Vector3d(xVal.As(_forceUnit) * scale, 0, 0);
-          forceValue = xVal.ToUnit(_forceUnit);
+        case (DisplayValue.Xx):
+          direction = xAxis;
+          forceValue = quantity.X.ToUnit(unit);
           break;
         case (DisplayValue.Y):
-          IQuantity yVal = xyzResults[nodeId][0]
-            .Y;
-          direction = new Vector3d(0, yVal.As(_forceUnit) * scale, 0);
-          forceValue = yVal.ToUnit(_forceUnit);
+        case (DisplayValue.Yy):
+          direction = yAxis;
+          forceValue = quantity.Y.ToUnit(unit);
           break;
         case (DisplayValue.Z):
-          IQuantity zVal = xyzResults[nodeId][0]
-            .Z;
-          direction = new Vector3d(0, 0, zVal.As(_forceUnit) * scale);
-          forceValue = zVal.ToUnit(_forceUnit);
+        case (DisplayValue.Zz):
+          direction = zAxis;
+          forceValue = quantity.Z.ToUnit(unit);
           break;
         case (DisplayValue.ResXyz):
-          direction = new Vector3d(xyzResults[nodeId][0]
-              .X.As(_forceUnit)
-            * scale,
-            xyzResults[nodeId][0]
-              .Y.As(_forceUnit)
-            * scale,
-            xyzResults[nodeId][0]
-              .Z.As(_forceUnit)
-            * scale);
-          forceValue = xyzResults[nodeId][0]
-            .Xyz.ToUnit(_forceUnit);
-          break;
-        case (DisplayValue.Xx):
-          isForce = false;
-          IQuantity xxVal = xxyyzzResults[nodeId][0]
-            .X;
-          direction = new Vector3d(xxVal.As(_momentUnit) * scale, 0, 0);
-          forceValue = xxVal.ToUnit(_momentUnit);
-          break;
-        case (DisplayValue.Yy):
-          isForce = false;
-          IQuantity yyVal = xxyyzzResults[nodeId][0]
-            .Y;
-          direction = new Vector3d(0, yyVal.As(_momentUnit) * scale, 0);
-          forceValue = yyVal.ToUnit(_momentUnit);
-          break;
-        case (DisplayValue.Zz):
-          isForce = false;
-          IQuantity zzVal = xxyyzzResults[nodeId][0]
-            .Z;
-          direction = new Vector3d(0, 0, zzVal.As(_momentUnit) * scale);
-          forceValue = zzVal.ToUnit(_momentUnit);
-          break;
         case (DisplayValue.ResXxyyzz):
-          isForce = false;
-          direction = new Vector3d(xxyyzzResults[nodeId][0]
-              .X.As(_momentUnit)
-            * scale,
-            xxyyzzResults[nodeId][0]
-              .Y.As(_momentUnit)
-            * scale,
-            xxyyzzResults[nodeId][0]
-              .Z.As(_momentUnit)
-            * scale);
-          forceValue = xxyyzzResults[nodeId][0]
-            .Xyz.ToUnit(_momentUnit);
+          direction = (xAxis + yAxis + zAxis);
+          forceValue = quantity.Xyz.ToUnit(unit);
           break;
       }
 

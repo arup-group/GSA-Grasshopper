@@ -159,13 +159,11 @@ namespace GsaGH.Parameters {
           args.Pipeline.Draw3dText(Value._previewText, Colours.NodeSelected);
       }
 
-      if (!(Value.LocalAxis != Plane.WorldXY
-        & Value.LocalAxis != new Plane()
-        & Value.LocalAxis != Plane.Unset))
-        return;
-      args.Pipeline.DrawLine(Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
-      args.Pipeline.DrawLine(Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
-      args.Pipeline.DrawLine(Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+      if (!Value.IsGlobalAxis()) {
+        args.Pipeline.DrawLine(Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
+        args.Pipeline.DrawLine(Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
+        args.Pipeline.DrawLine(Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+      }
     }
 
     #endregion

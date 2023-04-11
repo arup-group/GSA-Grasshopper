@@ -200,38 +200,39 @@ namespace GsaGH.Components {
         + "fx. {1;2} is Case 1, Permutation 2, where each branch "
         + Environment.NewLine
         + "branch contains a list matching the NodeIDs in the ID output.";
+      string axis = " in Node's Local Axis (Global Axis is no Local Axis has been set).";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]",
         "Fx",
-        "Reaction Forces in X-direction in Global Axis." + note,
+        "Reaction Forces in X-direction" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]",
         "Fy",
-        "Reaction Forces in Y-direction in Global Axis." + note,
+        "Reaction Forces in Y-direction" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]",
         "Fz",
-        "Reaction Forces in Z-direction in Global Axis." + note,
+        "Reaction Forces in Z-direction" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]",
         "|F|",
-        "Combined |XYZ| Reaction Forces in Global Axis." + note,
+        "Combined |XYZ| Reaction Forces" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]",
         "Mxx",
-        "Reaction Moments around X-axis in Global Axis." + note,
+        "Reaction Moments around X-axis" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]",
         "Myy",
-        "Reaction Moments around Y-axis in Global Axis." + note,
+        "Reaction Moments around Y-axis" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]",
         "Mzz",
-        "Reaction Moments around Z-axis in Global Axis." + note,
+        "Reaction Moments around Z-axis" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]",
         "|M|",
-        "Combined |XXYYZZ| Reaction Moments in Global Axis." + note,
+        "Combined |XXYYZZ| Reaction Moments" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddTextParameter("Nodes IDs",
         "ID",
