@@ -246,11 +246,12 @@ namespace GsaGH.Components {
 
     private Prop2dType GetModeBy(string name) {
       Prop2dType mode = Prop2dType.Shell;
-
       foreach (KeyValuePair<Prop2dType, string> item in _dropdownTopLevel)
-        if (item.Value.Contains(name))
+        if (item.Value.Contains(name)) {
           mode = item.Key;
-      return mode;
+          return mode;
+        }
+      throw new Exception("Unable to convert " + name + " to Prop2d Type");
     }
 
     #endregion
