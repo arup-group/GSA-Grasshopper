@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
 using OasysUnits;
 using OasysUnits.Units;

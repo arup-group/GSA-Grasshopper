@@ -8,7 +8,7 @@ using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
