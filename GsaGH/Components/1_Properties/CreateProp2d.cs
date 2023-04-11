@@ -71,12 +71,14 @@ namespace GsaGH.Components {
       }
       else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
-        if (prop.SupportType != SupportType.Auto) {
+        if (prop.SupportType != SupportType.Auto && prop.SupportType != SupportType.AllEdges) {
           int referenceEdge = 0;
-          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4)
+          if (da.GetData("Reference edge", ref referenceEdge)) {
             prop.ReferenceEdge = referenceEdge;
+          }
           else {
-            this.AddRuntimeError("Reference edge invalid or can't take it from the model");
+            this.AddRuntimeWarning("Reference edge input failed to collect data");
+            return;
           }
         }
       }
@@ -219,7 +221,8 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_GenericObject());
           break;
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto))
+          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
             Params.RegisterInputParam(new Param_Integer());
           break;
       }
@@ -259,7 +262,8 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto))
+          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
             SetReferenceEdgeInputAt(0);
           return;
         case Prop2dType.Fabric:
