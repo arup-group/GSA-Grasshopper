@@ -47,16 +47,16 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      GsaList list = new GsaList() { EntityType = this._type };
+      var list = new GsaList() { EntityType = _type };
       int id = 0;
       if (DA.GetData(0, ref id))
         list.Id = id;
 
-      string name = this._type.ToString() + " List";
+      string name = _type.ToString() + " List";
       if (DA.GetData(1, ref name))
         list.Name = name;
 
-      List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, this._type);
+      List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, _type);
 
       try
       {
@@ -65,7 +65,7 @@ namespace GsaGH.Components
       catch (System.ArgumentException)
       {
         string message = "";
-        switch (this._type)
+        switch (_type)
         {
           case EntityType.Node:
             message = "Invalid node list\n\nThe node list should take the form:\n 1 11 to 72 step 2 not (XY3 31 to 45)\nwhere:\nPS(n)  ->  Springs (of property n)\nPM(n)  ->  Masses (of property n)\nPD(n)  ->  Dampers (of property n)\nXn  ->  Nodes on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Nodes on global XY plane through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of a node number to refer to\nthe highest numbered node.";
@@ -93,37 +93,36 @@ namespace GsaGH.Components
     #region Custom UI
     private EntityType _type = EntityType.Node;
 
-    public override void InitialiseDropdowns()
+    protected override void InitialiseDropdowns()
     {
-      this.SpacerDescriptions = new List<string>(new string[]
+      _spacerDescriptions = new List<string>(new string[]
         {
           "Type"
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      // Length
-      this.DropDownItems.Add(new List<string>() {
+      _dropDownItems.Add(new List<string>() {
         EntityType.Node.ToString(),
         EntityType.Element.ToString(),
         EntityType.Member.ToString(),
         EntityType.Case.ToString() });
-      this.SelectedItems.Add(this.DropDownItems[0][0]);
+      _selectedItems.Add(_dropDownItems[0][0]);
 
-      this.IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j)
     {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this._type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _type = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems()
+    protected override void UpdateUIFromSelectedItems()
     {
-      this._type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[0]);
+      _type = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
     #endregion
