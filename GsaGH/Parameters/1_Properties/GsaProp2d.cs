@@ -130,6 +130,16 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+
+    public int ReferenceEdge {
+      get => _prop2d.ReferenceEdge;
+      set {
+        CloneApiObject();
+        _prop2d.ReferenceEdge = value;
+        IsReferencedById = false;
+      }
+    }
+
     public Color Colour {
       get => (Color)_prop2d.Colour;
       set {
@@ -215,7 +225,10 @@ namespace GsaGH.Parameters {
       string supportType = Type == Property2D_Type.LOAD
         ? $"{SupportType}"
         : string.Empty;
-      return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
+      string referenceEdge = Type == Property2D_Type.LOAD && SupportType == SupportType.Auto
+        ? $"{ReferenceEdge}"
+        : string.Empty;
+      return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
@@ -247,8 +260,13 @@ namespace GsaGH.Parameters {
         Description = _prop2d.Description,
         Type = _prop2d.Type,
         AxisProperty = _prop2d.AxisProperty,
-        SupportType = _prop2d.SupportType,
       };
+      if (_prop2d.Type == Property2D_Type.LOAD) {
+        prop.SupportType = _prop2d.SupportType;
+        if (_prop2d.SupportType != SupportType.Auto)
+          prop.ReferenceEdge = _prop2d.ReferenceEdge;
+      }
+
       if ((Color)_prop2d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         prop.Colour = _prop2d.Colour;
 
