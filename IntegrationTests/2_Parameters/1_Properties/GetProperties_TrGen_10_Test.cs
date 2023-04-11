@@ -88,6 +88,11 @@ namespace IntegrationTests.Parameters {
         "Beam - x - top floor",
         "Beam - y - top floor",
       })]
+    [InlineData("MatIds", new int[] { 1, 2 })]
+    [InlineData("MatEs", new double[] { 14000, 205000 })]
+    [InlineData("MatPoissons", new double[] { 0.2, 0.3 })]
+    [InlineData("MatRos", new double[] { 2400, 7850 })]
+    [InlineData("MatAlphas", new double[] { 0.00001, 0.000012 })]
     [InlineData("PaIds",
       new int[] {
         1,

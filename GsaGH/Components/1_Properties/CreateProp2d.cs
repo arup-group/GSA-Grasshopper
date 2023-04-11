@@ -219,7 +219,8 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_GenericObject());
           break;
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto))
+          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
             Params.RegisterInputParam(new Param_Integer());
           break;
       }
@@ -246,11 +247,12 @@ namespace GsaGH.Components {
 
     private Prop2dType GetModeBy(string name) {
       Prop2dType mode = Prop2dType.Shell;
-
       foreach (KeyValuePair<Prop2dType, string> item in _dropdownTopLevel)
-        if (item.Value.Contains(name))
+        if (item.Value.Contains(name)) {
           mode = item.Key;
-      return mode;
+          return mode;
+        }
+      throw new Exception("Unable to convert " + name + " to Prop2d Type");
     }
 
     #endregion
@@ -258,7 +260,8 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto))
+          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
             SetReferenceEdgeInputAt(0);
           return;
         case Prop2dType.Fabric:

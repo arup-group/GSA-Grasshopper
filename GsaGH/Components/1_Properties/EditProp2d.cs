@@ -89,8 +89,13 @@ namespace GsaGH.Components {
             ghTyp.CastTo(ref supportTypeIndex);
             prop.SupportType = (SupportType)supportTypeIndex.Value;
           }
-          else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName, GH_Conversion.Both)) {
+            supportTypeName = supportTypeName.Replace(" ", string.Empty)
+              .Replace("1", "One").Replace("2", "Two").Replace("3", "Three");
+            supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
+              .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
             prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
+          }
           else {
             this.AddRuntimeError("Cannot convert support type");
           }
@@ -184,11 +189,27 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Support Type",
         "ST",
-        "Support Type",
+        "Set Load Panel Support Type."
+        + Environment.NewLine
+        + "Input either text string or integer:"
+        + Environment.NewLine
+        + "Auto : 1"
+        + Environment.NewLine
+        + "All Edges : 2"
+        + Environment.NewLine
+        + "Three Edges : 3"
+        + Environment.NewLine
+        + "Two Edges : 4"
+        + Environment.NewLine
+        + "Two Adjacent Edges : 5"
+        + Environment.NewLine
+        + "One Edge : 6"
+        + Environment.NewLine
+        + "Cantilever : 7",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Reference Edge",
         "RE",
-        "Reference edge for support type other than Auto",
+        "Reference Edge for Load Panels with support type other than Auto and All Edges",
         GH_ParamAccess.item);
 
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
@@ -251,8 +272,8 @@ namespace GsaGH.Components {
         "Support Type",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Reference Edge",
-        "Re",
-        "Reference edge for support type other than Auto",
+        "RE",
+        "Reference Edge for Load Panels with support type other than Auto and All Edges",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
