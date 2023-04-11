@@ -47,16 +47,16 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      GsaList list = new GsaList() { EntityType = this.Type };
+      GsaList list = new GsaList() { EntityType = this._type };
       int id = 0;
       if (DA.GetData(0, ref id))
         list.Id = id;
 
-      string name = this.Type.ToString() + " List";
+      string name = this._type.ToString() + " List";
       if (DA.GetData(1, ref name))
         list.Name = name;
 
-      List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, this.Type);
+      List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, this._type);
 
       try
       {
@@ -65,7 +65,7 @@ namespace GsaGH.Components
       catch (System.ArgumentException)
       {
         string message = "";
-        switch (this.Type)
+        switch (this._type)
         {
           case EntityType.Node:
             message = "Invalid node list\n\nThe node list should take the form:\n 1 11 to 72 step 2 not (XY3 31 to 45)\nwhere:\nPS(n)  ->  Springs (of property n)\nPM(n)  ->  Masses (of property n)\nPD(n)  ->  Dampers (of property n)\nXn  ->  Nodes on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Nodes on global XY plane through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of a node number to refer to\nthe highest numbered node.";
@@ -91,7 +91,7 @@ namespace GsaGH.Components
     }
 
     #region Custom UI
-    private EntityType Type = EntityType.Node;
+    private EntityType _type = EntityType.Node;
 
     public override void InitialiseDropdowns()
     {
@@ -117,13 +117,13 @@ namespace GsaGH.Components
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.Type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[i]);
+      this._type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[i]);
       base.UpdateUI();
     }
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.Type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[0]);
+      this._type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
     #endregion
