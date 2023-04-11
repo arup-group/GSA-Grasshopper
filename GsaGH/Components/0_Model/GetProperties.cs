@@ -31,9 +31,12 @@ namespace GsaGH.Components {
       List<GsaProp3dGoo> prop3Ds
         = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
 
+      List<GsaMaterialGoo> customMaterials = Helpers.Import.Materials.GetCustomMaterials(model.AnalysisMaterials());
+
       da.SetDataList(0, sections);
       da.SetDataList(1, prop2Ds);
       da.SetDataList(2, prop3Ds);
+      da.SetDataList(3, customMaterials);
     }
 
     #region Name and Ribbon Layout
@@ -77,6 +80,8 @@ namespace GsaGH.Components {
         "PV",
         "3D Properties from GSA Model",
         GH_ParamAccess.list);
+
+      pManager.AddParameter(new GsaMaterialParameter(), "Custom Materials", "Mat", "Custom Materials from GSA Model",  GH_ParamAccess.list);
     }
 
     #endregion
