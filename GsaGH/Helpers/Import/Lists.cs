@@ -16,7 +16,7 @@ namespace GsaGH.Helpers.Import
   {
     internal static List<GsaList> GetLists(GsaModel gsaModel)
     {
-      List<GsaList> lists = new List<GsaList>();
+      var lists = new List<GsaList>();
       foreach (KeyValuePair<int, EntityList> apiList in gsaModel.Model.Lists())
         lists.Add(new GsaList(apiList.Key, apiList.Value, gsaModel));
       return lists;
