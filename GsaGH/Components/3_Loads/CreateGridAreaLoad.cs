@@ -293,28 +293,28 @@ namespace GsaGH.Components {
       UpdateMessage();
     }
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
-      SelectedItems.Add(Pressure.GetAbbreviation(_forcePerAreaUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      _selectedItems.Add(Pressure.GetAbbreviation(_forcePerAreaUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -325,24 +325,13 @@ namespace GsaGH.Components {
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      bool noGps = Params.Input[2]
-          .SourceCount
-        == 0;
-      Menu_AppendItem(menu,
-        "Use GridPlaneSurface",
-        SetUseGps,
-        !noGps,
-        _expansionType == ExpansionType.UseGpsSettings);
-      Menu_AppendItem(menu,
-        "Expand to 1D Elements",
-        SetUse1D,
-        noGps,
-        _expansionType == ExpansionType.To1D);
-      Menu_AppendItem(menu,
-        "Expand to 2D Elements",
-        SetUse2D,
-        noGps,
-        _expansionType == ExpansionType.To2D);
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+      bool noGps = Params.Input[2].SourceCount == 0;
+      Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGps, !noGps, _expansionType == ExpansionType.UseGpsSettings);
+      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, noGps, _expansionType == ExpansionType.To1D);
+      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, noGps, _expansionType == ExpansionType.To2D);
     }
 
     private void UpdateMessage()

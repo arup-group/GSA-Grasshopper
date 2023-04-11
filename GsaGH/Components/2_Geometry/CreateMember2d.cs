@@ -53,7 +53,7 @@ namespace GsaGH.Components {
       }
 
       var ghTyp = new GH_ObjectWrapper();
-      var prop2d = new GsaProp2d();
+      GsaProp2d prop2d = null;
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProp2dGoo) {
           ghTyp.CastTo(ref prop2d);

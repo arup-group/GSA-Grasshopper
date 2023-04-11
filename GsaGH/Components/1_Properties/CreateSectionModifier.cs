@@ -175,37 +175,37 @@ namespace GsaGH.Components {
     private LinearDensityUnit _densityUnit = DefaultUnits.LinearDensityUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Modify type",
         "Density unit",
         "Stress calc.",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_optionTypes);
-      SelectedItems.Add(_optionTypes[0]);
+      _dropDownItems.Add(_optionTypes);
+      _selectedItems.Add(_optionTypes[0]);
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.LinearDensity)));
-      SelectedItems.Add(LinearDensity.GetAbbreviation(_densityUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.LinearDensity)));
+      _selectedItems.Add(LinearDensity.GetAbbreviation(_densityUnit));
 
-      DropDownItems.Add(_stressOptions);
-      SelectedItems.Add(_stressOptions[0]);
+      _dropDownItems.Add(_stressOptions);
+      _selectedItems.Add(_stressOptions[0]);
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
 
       switch (i) {
         case 0 when j == 0: {
           if (_toMode) {
-            DropDownItems.RemoveAt(1);
-            SelectedItems.RemoveAt(1);
-            SpacerDescriptions.RemoveAt(1);
+            _dropDownItems.RemoveAt(1);
+            _selectedItems.RemoveAt(1);
+            _spacerDescriptions.RemoveAt(1);
           }
 
           _toMode = false;
@@ -213,9 +213,9 @@ namespace GsaGH.Components {
         }
         case 0: {
           if (!_toMode) {
-            DropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
-            SelectedItems.Insert(1, _lengthUnit.ToString());
-            SpacerDescriptions.Insert(1, "Length unit");
+            _dropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
+            _selectedItems.Insert(1, _lengthUnit.ToString());
+            _spacerDescriptions.Insert(1, "Length unit");
           }
 
           _toMode = true;
@@ -223,10 +223,10 @@ namespace GsaGH.Components {
         }
         case 1 when !_toMode:
           _densityUnit
-            = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), SelectedItems[i]);
+            = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[i]);
           break;
         case 1:
-          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
           break;
         case 2 when !_toMode:
           switch (j) {
@@ -244,7 +244,7 @@ namespace GsaGH.Components {
           break;
         case 2:
           _densityUnit
-            = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), SelectedItems[i]);
+            = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[i]);
           break;
         case 3:
           switch (j) {
@@ -265,26 +265,26 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
+    protected override void UpdateUIFromSelectedItems() {
       if (_toMode) {
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
         _densityUnit
-          = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), SelectedItems[2]);
-        if (SelectedItems[3] == _stressOptions[0])
+          = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[2]);
+        if (_selectedItems[3] == _stressOptions[0])
           _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (SelectedItems[3] == _stressOptions[1])
+        if (_selectedItems[3] == _stressOptions[1])
           _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (SelectedItems[3] == _stressOptions[2])
+        if (_selectedItems[3] == _stressOptions[2])
           _stressOption = GsaSectionModifier.StressOptionType.UseModified;
       }
       else {
         _densityUnit
-          = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), SelectedItems[1]);
-        if (SelectedItems[2] == _stressOptions[0])
+          = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[1]);
+        if (_selectedItems[2] == _stressOptions[0])
           _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (SelectedItems[2] == _stressOptions[1])
+        if (_selectedItems[2] == _stressOptions[1])
           _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (SelectedItems[2] == _stressOptions[2])
+        if (_selectedItems[2] == _stressOptions[2])
           _stressOption = GsaSectionModifier.StressOptionType.UseModified;
       }
 

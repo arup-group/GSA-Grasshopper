@@ -200,38 +200,39 @@ namespace GsaGH.Components {
         + "fx. {1;2} is Case 1, Permutation 2, where each branch "
         + Environment.NewLine
         + "branch contains a list matching the NodeIDs in the ID output.";
+      string axis = " in Node's Local Axis (Global Axis is no Local Axis has been set).";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]",
         "Fx",
-        "Reaction Forces in X-direction in Global Axis." + note,
+        "Reaction Forces in X-direction" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]",
         "Fy",
-        "Reaction Forces in Y-direction in Global Axis." + note,
+        "Reaction Forces in Y-direction" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]",
         "Fz",
-        "Reaction Forces in Z-direction in Global Axis." + note,
+        "Reaction Forces in Z-direction" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]",
         "|F|",
-        "Combined |XYZ| Reaction Forces in Global Axis." + note,
+        "Combined |XYZ| Reaction Forces" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]",
         "Mxx",
-        "Reaction Moments around X-axis in Global Axis." + note,
+        "Reaction Moments around X-axis" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]",
         "Myy",
-        "Reaction Moments around Y-axis in Global Axis." + note,
+        "Reaction Moments around Y-axis" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]",
         "Mzz",
-        "Reaction Moments around Z-axis in Global Axis." + note,
+        "Reaction Moments around Z-axis" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]",
         "|M|",
-        "Combined |XXYYZZ| Reaction Moments in Global Axis." + note,
+        "Combined |XXYYZZ| Reaction Moments" + axis + note,
         GH_ParamAccess.tree);
       pManager.AddTextParameter("Nodes IDs",
         "ID",
@@ -246,41 +247,41 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Force Unit",
         "Moment Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
-      SelectedItems.Add(Moment.GetAbbreviation(_momentUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
+      _selectedItems.Add(Moment.GetAbbreviation(_momentUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
+      _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
         case 0:
-          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[i]);
+          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[i]);
           break;
         case 1:
-          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[i]);
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[i]);
           break;
       }
 
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[0]);
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[1]);
+    protected override void UpdateUIFromSelectedItems() {
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

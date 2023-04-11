@@ -87,9 +87,7 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiNode.Restraint.YY, expected.Restraint.Yy);
       Assert.Equal(apiNode.Restraint.ZZ, expected.Restraint.Zz);
 
-      if (expected.LocalAxis != null
-        && expected.LocalAxis.IsValid
-        && expected.LocalAxis != Plane.WorldXY) {
+      if (!expected.IsGlobalAxis()) {
         ReadOnlyDictionary<int, Axis> apiAxes = actualModel.Model.Axes();
         Assert.True(apiAxes.ContainsKey(apiNode.AxisProperty),
           "Axis with id " + apiNode.AxisProperty + " is not present in model");

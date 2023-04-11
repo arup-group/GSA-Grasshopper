@@ -521,36 +521,36 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private DisplayValue _disp = DisplayValue.ResXyz;
 
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
         "Result Type",
         "Component",
         "Geometry Unit",
         "Deform Shape",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(_type);
-      SelectedItems.Add(DropDownItems[0][0]);
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_dropDownItems[0][0]);
 
-      DropDownItems.Add(_displacement);
-      SelectedItems.Add(DropDownItems[1][3]);
+      _dropDownItems.Add(_displacement);
+      _selectedItems.Add(_dropDownItems[1][3]);
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
       m_attributes = new DropDownSliderComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
+        _dropDownItems,
+        _selectedItems,
         _slider,
         SetVal,
         SetMaxMin,
@@ -558,7 +558,7 @@ namespace GsaGH.Components {
         _maxValue,
         _minValue,
         _noDigits,
-        SpacerDescriptions);
+        _spacerDescriptions);
     }
 
     public override void SetSelected(int dropdownlistidd, int selectedidd) {
@@ -566,20 +566,20 @@ namespace GsaGH.Components {
         case 0: {
             switch (selectedidd) {
               case 0: {
-                  if (DropDownItems[1] != _displacement) {
-                    DropDownItems[1] = _displacement;
-                    SelectedItems[0] = DropDownItems[0][0];
-                    SelectedItems[1] = DropDownItems[1][3];
+                  if (_dropDownItems[1] != _displacement) {
+                    _dropDownItems[1] = _displacement;
+                    _selectedItems[0] = _dropDownItems[0][0];
+                    _selectedItems[1] = _dropDownItems[1][3];
                     Mode1Clicked();
                   }
 
                   break;
                 }
               case 1: {
-                  if (DropDownItems[1] != _reaction) {
-                    DropDownItems[1] = _reaction;
-                    SelectedItems[0] = DropDownItems[0][1];
-                    SelectedItems[1] = DropDownItems[1][3];
+                  if (_dropDownItems[1] != _reaction) {
+                    _dropDownItems[1] = _reaction;
+                    _selectedItems[0] = _dropDownItems[0][1];
+                    _selectedItems[1] = _dropDownItems[1][3];
                     Mode2Clicked();
                   }
 
@@ -591,10 +591,10 @@ namespace GsaGH.Components {
           }
         case 1:
           _disp = (DisplayValue)selectedidd;
-          SelectedItems[1] = DropDownItems[1][selectedidd];
+          _selectedItems[1] = _dropDownItems[1][selectedidd];
           break;
         default:
-          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[2]);
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[2]);
           break;
       }
 
@@ -608,8 +608,8 @@ namespace GsaGH.Components {
       _minValue = min;
     }
 
-    public override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[2]);
+    protected override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -682,14 +682,15 @@ namespace GsaGH.Components {
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient",
-        gradient.Icon_24x24,
-        (s, e) => CreateGradient());
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
       Menu_AppendSeparator(menu);
     }

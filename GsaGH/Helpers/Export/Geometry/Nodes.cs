@@ -30,23 +30,21 @@ namespace GsaGH.Helpers.Export {
     internal static void ConvertNode(GsaNode node, ref GsaIntDictionary<Node> existingNodes, ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
-      if (node.LocalAxis != null && node.LocalAxis.IsValid) {
-        if (node.LocalAxis != Plane.WorldXY) {
-          var ax = new Axis();
-          Plane pln = node.LocalAxis;
-          ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX : new Length(pln.OriginX, unit).Meters;
-          ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY : new Length(pln.OriginY, unit).Meters;
-          ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ : new Length(pln.OriginZ, unit).Meters;
+      if (!node.IsGlobalAxis()) {
+        var ax = new Axis();
+        Plane pln = node.LocalAxis;
+        ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX : new Length(pln.OriginX, unit).Meters;
+        ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY : new Length(pln.OriginY, unit).Meters;
+        ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ : new Length(pln.OriginZ, unit).Meters;
 
-          ax.XVector.X = pln.XAxis.X;
-          ax.XVector.Y = pln.XAxis.Y;
-          ax.XVector.Z = pln.XAxis.Z;
-          ax.XYPlane.X = pln.YAxis.X;
-          ax.XYPlane.Y = pln.YAxis.Y;
-          ax.XYPlane.Z = pln.YAxis.Z;
+        ax.XVector.X = pln.XAxis.X;
+        ax.XVector.Y = pln.XAxis.Y;
+        ax.XVector.Z = pln.XAxis.Z;
+        ax.XYPlane.X = pln.YAxis.X;
+        ax.XYPlane.Y = pln.YAxis.Y;
+        ax.XYPlane.Z = pln.YAxis.Z;
 
-          apiNode.AxisProperty = Axes.AddAxis(ref existingAxes, ax);
-        }
+        apiNode.AxisProperty = Axes.AddAxis(ref existingAxes, ax);
       }
 
       if (node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list

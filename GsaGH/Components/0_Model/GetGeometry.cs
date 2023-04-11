@@ -680,14 +680,11 @@ namespace GsaGH.Components {
               args.Display.Draw3dText(node.Value._previewText, Colours.NodeSelected);
           }
 
-          if (!(node.Value.LocalAxis != Plane.WorldXY
-            & node.Value.LocalAxis != new Plane()
-            & node.Value.LocalAxis != Plane.Unset))
-            continue;
-
-          args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
-          args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
-          args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+          if (!node.Value.IsGlobalAxis()) {
+            args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
+            args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
+            args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+          }
         }
       }
     }
@@ -696,49 +693,49 @@ namespace GsaGH.Components {
 
     #region custom UI
 
-    public List<List<string>> DropDownItems;
+    public List<List<string>> _dropDownItems;
 
-    public List<string> SelectedItems;
+    public List<string> _selectedItems;
 
-    public List<string> SpacerDescriptions;
+    public List<string> _spacerDescriptions;
 
-    public bool IsInitialised;
+    public bool _isInitialised;
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public override void CreateAttributes() {
-      if (!IsInitialised)
+      if (!_isInitialised)
         InitialiseDropdowns();
 
       m_attributes = new DropDownComponentAttributes(this,
         SetSelected,
-        DropDownItems,
-        SelectedItems,
-        SpacerDescriptions);
+        _dropDownItems,
+        _selectedItems,
+        _spacerDescriptions);
     }
 
     public void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
+      _spacerDescriptions = new List<string>(new[] {
         "Unit",
       });
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      IsInitialised = true;
+      _isInitialised = true;
     }
 
     public void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       UpdateUi();
     }
 
-    public void UpdateUiFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+    public void UpdateUiFrom_selectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       CreateAttributes();
       UpdateUi();
     }
@@ -789,6 +786,9 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.List;
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
       Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
       Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
     }
@@ -908,7 +908,7 @@ namespace GsaGH.Components {
 
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
-      WriteDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
+      WriteDropDownComponents(ref writer, _dropDownItems, _selectedItems, _spacerDescriptions);
 
       return base.Write(writer);
     }
@@ -916,11 +916,11 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       ReadDropDownComponents(ref reader,
-        ref DropDownItems,
-        ref SelectedItems,
-        ref SpacerDescriptions);
-      IsInitialised = true;
-      UpdateUiFromSelectedItems();
+        ref _dropDownItems,
+        ref _selectedItems,
+        ref _spacerDescriptions);
+      _isInitialised = true;
+      UpdateUiFrom_selectedItems();
       return base.Read(reader);
     }
 
