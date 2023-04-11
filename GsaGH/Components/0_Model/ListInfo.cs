@@ -43,54 +43,54 @@ namespace GsaGH.Components
       pManager.AddTextParameter("Name", "Na", "List Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "Entity Type", GH_ParamAccess.item);
       pManager.AddTextParameter("Definition", "Def", "List Definition", GH_ParamAccess.item);
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       pManager.AddGenericParameter("List Objects [" + unitAbbreviation + "]", "Obj", "Expanded objects contained in the input list", GH_ParamAccess.list);
     }
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      GsaList list = new GsaList();
+      var list = new GsaList();
       if (DA.GetData(0, ref list))
       {
         DA.SetData(0, list.Id);
         DA.SetData(1, list.Name);
         DA.SetData(2, list.EntityType.ToString());
         DA.SetData(3, list.Definition);
-        DA.SetDataList(4, list.GetListObjects(this.LengthUnit));
+        DA.SetDataList(4, list.GetListObjects(_lengthUnit));
       }
     }
 
     #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public override void InitialiseDropdowns()
+    protected override void InitialiseDropdowns()
     {
-      this.SpacerDescriptions = new List<string>(new string[]
+      _spacerDescriptions = new List<string>(new string[]
         {
           "Unit"
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
       // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      this.IsInitialised = true;
+      _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j)
     {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance()
     {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       Params.Output[4].Name = "List Objects [" + unitAbbreviation + "]";
     }
     #endregion
