@@ -92,7 +92,7 @@ namespace GsaGH.Components {
           else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName, GH_Conversion.Both)) {
             supportTypeName = supportTypeName.Replace(" ", string.Empty)
               .Replace("1", "One").Replace("2", "Two").Replace("3", "Three");
-            supportTypeName = supportTypeName.Replace("all", "All")
+            supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
               .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
             prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
           }
