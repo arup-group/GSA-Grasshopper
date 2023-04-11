@@ -30,29 +30,29 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (round) {
-        plane.OriginX = GsaAPI.ResultHelper.RoundToSignificantDigits(plane.OriginX, dig);
-        plane.OriginY = GsaAPI.ResultHelper.RoundToSignificantDigits(plane.OriginY, dig);
-        plane.OriginZ = GsaAPI.ResultHelper.RoundToSignificantDigits(plane.OriginZ, dig);
+        plane.OriginX = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginX, dig);
+        plane.OriginY = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginY, dig);
+        plane.OriginZ = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginZ, dig);
 
         plane.XAxis.Unitize();
         Vector3d xaxis = plane.XAxis;
-        xaxis.X = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
-        xaxis.Y = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
-        xaxis.Z = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
+        xaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
+        xaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
+        xaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
         plane.XAxis = xaxis;
 
         plane.YAxis.Unitize();
         Vector3d yaxis = plane.YAxis;
-        yaxis.X = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
-        yaxis.Y = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
-        yaxis.Z = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
+        yaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
+        yaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
+        yaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
         plane.YAxis = yaxis;
 
         plane.ZAxis.Unitize();
         Vector3d zaxis = plane.ZAxis;
-        zaxis.X = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
-        zaxis.Y = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
-        zaxis.Z = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
+        zaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
+        zaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
+        zaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
         plane.ZAxis = zaxis;
       }
       else {

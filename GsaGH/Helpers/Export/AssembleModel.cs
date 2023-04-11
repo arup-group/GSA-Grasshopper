@@ -35,7 +35,7 @@ namespace GsaGH.Helpers.Export {
     /// <param name="createElementsFromMembers"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    internal static Model Assemble(GsaModel model, List<GsaList> lists, List<GsaNode> nodes,
+    internal static Model Assemble(GsaModel model, List<GsaNode> nodes,
         List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
         List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,

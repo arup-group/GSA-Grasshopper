@@ -8,7 +8,7 @@ using System.Reflection;
 using Grasshopper;
 using Grasshopper.Kernel;
 using GsaGH.Graphics.Menu;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Helpers;
