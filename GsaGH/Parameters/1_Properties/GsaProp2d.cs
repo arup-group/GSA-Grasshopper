@@ -263,7 +263,7 @@ namespace GsaGH.Parameters {
       };
       if (_prop2d.Type == Property2D_Type.LOAD) {
         prop.SupportType = _prop2d.SupportType;
-        if (prop.SupportType != SupportType.Auto)
+        if (_prop2d.SupportType != SupportType.Auto)
           prop.ReferenceEdge = _prop2d.ReferenceEdge;
       }
 

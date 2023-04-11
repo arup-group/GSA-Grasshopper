@@ -71,6 +71,16 @@ namespace GsaGH.Components {
           else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both))
             prop.AxisProperty = axis;
         }
+        // first we need to set type then if load
+        // we can set support Type and then if not load support type
+        // we can set reference egde
+        var ghType = new GH_ObjectWrapper();
+        if (da.GetData(9, ref ghType)) {
+          if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
+            prop.Type = (Property2D_Type)number;
+          else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both))
+            prop.Type = GsaProp2d.PropTypeFromString(type);
+        }
 
         var ghSupportType = new GH_ObjectWrapper();
         if (da.GetData(5, ref ghSupportType)) {
@@ -100,14 +110,6 @@ namespace GsaGH.Components {
         if (da.GetData(8, ref ghColour))
           if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
             prop.Colour = col;
-
-        var ghType = new GH_ObjectWrapper();
-        if (da.GetData(9, ref ghType)) {
-          if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
-            prop.Type = (Property2D_Type)number;
-          else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both))
-            prop.Type = GsaProp2d.PropTypeFromString(type);
-        }
 
         int ax = (prop.ApiProp2d == null)
           ? 0

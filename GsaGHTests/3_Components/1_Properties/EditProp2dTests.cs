@@ -92,11 +92,11 @@ namespace GsaGHTests.Properties {
         new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
         i++);
       ComponentTestHelper.SetInput(comp, new GH_Integer(7), i++);
-      ComponentTestHelper.SetInput(comp, new GH_Integer(7), i++);
+      ComponentTestHelper.SetInput(comp, new GH_String("Load Panel"), 9);
+      ComponentTestHelper.SetInput(comp, new GH_String("Cantilever"), i++);
       ComponentTestHelper.SetInput(comp, new GH_Integer(3), i++);
       ComponentTestHelper.SetInput(comp, new GH_String("MyPropediprop"), i++);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), i++);
-      ComponentTestHelper.SetInput(comp, new GH_String("Curved Shell"), i);
 
       i = 0;
       prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, i++);
@@ -115,11 +115,11 @@ namespace GsaGHTests.Properties {
       Assert.Equal(40, thk.Value.As(LengthUnit.Centimeter), 6);
       Assert.Equal(7, axis.Value);
 
-      Assert.Equal(SupportType.Cantilever, supportType.Value);
+      Assert.Equal(SupportType.Cantilever, (SupportType)supportType.Value);
       Assert.Equal(3, referenceEdge.Value);
       Assert.Equal("MyPropediprop", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
-      Assert.Equal("Curved Shell", type.Value);
+      Assert.Equal("Load Panel", type.Value);
     }
 
     [Fact]
