@@ -27,8 +27,9 @@ namespace GsaGH.Helpers.Graphics {
           pt = crv.PointAtNormalizedLength(0.05);
           scale = crv.GetLength();
         }
-        else
+        else {
           pt = crv.PointAtLength(0.05);
+        }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angleRadian, pln.Normal);
@@ -60,8 +61,9 @@ namespace GsaGH.Helpers.Graphics {
           pt = crv.PointAtNormalizedLength(0.05);
           scale = crv.GetLength();
         }
-        else
+        else {
           pt = crv.PointAtLength(0.05);
+        }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angleRadian, pln.Normal);
@@ -115,8 +117,9 @@ namespace GsaGH.Helpers.Graphics {
           pt = crv.PointAtNormalizedLength(0.05);
           scale = crv.GetLength();
         }
-        else
+        else {
           pt = crv.PointAtLength(0.05);
+        }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angleRadian, pln.Normal);
@@ -324,8 +327,9 @@ namespace GsaGH.Helpers.Graphics {
           pt = crv.PointAtNormalizedLength(0.05);
           scale = crv.GetLength();
         }
-        else
+        else {
           pt = crv.PointAtLength(0.05);
+        }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         var vec = new Vector3d(pln.Normal);
@@ -333,8 +337,9 @@ namespace GsaGH.Helpers.Graphics {
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
         redLines10.Add(new Line(pt, vec));
       }
-      else
+      else {
         redLines10.Add(Line.Unset);
+      }
 
       if (start.Yy) {
         Point3d pt;
@@ -343,8 +348,9 @@ namespace GsaGH.Helpers.Graphics {
           pt = crv.PointAtNormalizedLength(0.05);
           scale = crv.GetLength();
         }
-        else
+        else {
           pt = crv.PointAtLength(0.05);
+        }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angleRadian, pln.Normal);
@@ -380,8 +386,9 @@ namespace GsaGH.Helpers.Graphics {
           pt = crv.PointAtNormalizedLength(0.05);
           scale = crv.GetLength();
         }
-        else
+        else {
           pt = crv.PointAtLength(0.05);
+        }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angleRadian, pln.Normal);
@@ -430,8 +437,9 @@ namespace GsaGH.Helpers.Graphics {
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
         redLines10.Add(new Line(pt, vec));
       }
-      else
+      else {
         redLines10.Add(Line.Unset);
+      }
 
       if (end.Yy) {
         Point3d pt;
@@ -516,8 +524,9 @@ namespace GsaGH.Helpers.Graphics {
 
     public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts) {
       MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;
-      if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count)
+      if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count) {
         solidMesh.FaceNormals.ComputeFaceNormals();
+      }
 
       hiddenLines = new List<Polyline>();
       edgeLines = new List<Line>();
@@ -564,18 +573,30 @@ namespace GsaGH.Helpers.Graphics {
         if (!plane.IsValid) { plane = Plane.WorldXY; }
         plane.Origin = pt;
         string rest = "";
-        if (restraint.X)
+        if (restraint.X) {
           rest += "X";
-        if (restraint.Y)
+        }
+
+        if (restraint.Y) {
           rest += "Y";
-        if (restraint.Z)
+        }
+
+        if (restraint.Z) {
           rest += "Z";
-        if (restraint.Xx)
+        }
+
+        if (restraint.Xx) {
           rest += "XX";
-        if (restraint.Yy)
+        }
+
+        if (restraint.Yy) {
           rest += "YY";
-        if (restraint.Zz)
+        }
+
+        if (restraint.Zz) {
           rest += "ZZ";
+        }
+
         text = new Text3d(rest, plane, 0.3) {
           HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Left,
           VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top,

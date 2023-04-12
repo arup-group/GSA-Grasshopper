@@ -29,8 +29,9 @@ namespace GsaGH.Components {
           "Prop2dEdit",
       "Modify GSA 2D Property",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       IQuantity quantity = new Length(0, DefaultUnits.LengthUnitSection);
@@ -62,9 +63,10 @@ namespace GsaGH.Components {
         "Co",
         "Set 2D Property Colour",
         GH_ParamAccess.item);
-      for (int i = 1; i < pManager.ParamCount; i++)
+      for (int i = 1; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -92,27 +94,28 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaProp2d = new GsaProp2d();
-      var prop = new GsaProp2d();
-      if (!da.GetData(0, ref gsaProp2d))
+      if (!da.GetData(0, ref gsaProp2d)) {
         return;
+      }
 
-      prop = gsaProp2d.Duplicate();
+      GsaProp2d prop = gsaProp2d.Duplicate();
 
       var ghId = new GH_Integer();
-      if (da.GetData(1, ref ghId))
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+      if (da.GetData(1, ref ghId)) {
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
           prop.Id = id;
+        }
+      }
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
-        var material = new GsaMaterial();
-        if (ghTyp.Value is GsaMaterialGoo) {
-          ghTyp.CastTo(ref material);
-          prop.Material = material;
+        if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+          prop.Material = materialGoo.Value;
         }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-            prop.MaterialId = idd;
+          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+            prop.MaterialId = id;
+          }
           else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
@@ -123,24 +126,31 @@ namespace GsaGH.Components {
 
       if (Params.Input[3]
           .SourceCount
-        > 0)
+        > 0) {
         prop.Thickness
           = (Length)Input.UnitNumber(this, da, 3, DefaultUnits.LengthUnitSection, true);
+      }
 
       var ghAxis = new GH_Integer();
-      if (da.GetData(4, ref ghAxis))
-        if (GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both))
+      if (da.GetData(4, ref ghAxis)) {
+        if (GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both)) {
           prop.AxisProperty = axis;
+        }
+      }
 
       var ghString = new GH_String();
-      if (da.GetData(5, ref ghString))
-        if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
+      if (da.GetData(5, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
           prop.Name = name;
+        }
+      }
 
       var ghColour = new GH_Colour();
-      if (da.GetData(6, ref ghColour))
-        if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
+      if (da.GetData(6, ref ghColour)) {
+        if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
           prop.Colour = col;
+        }
+      }
 
       int ax = (prop.ApiProp2d == null)
         ? 0
@@ -164,11 +174,13 @@ namespace GsaGH.Components {
       string str = (prop.ApiProp2d == null)
         ? "--"
         : prop.Type.ToString();
-      if (prop.ApiProp2d == null)
+      if (prop.ApiProp2d == null) {
         str = char.ToUpper(str[0])
           + str.Substring(1)
             .ToLower()
             .Replace("_", " ");
+      }
+
       da.SetData(7, str);
     }
   }

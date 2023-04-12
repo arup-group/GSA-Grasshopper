@@ -35,8 +35,9 @@ namespace GsaGH.Components {
               "BeamDisp",
       "Element1D Translation and Rotation result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -144,11 +145,13 @@ namespace GsaGH.Components {
 
       string elementlist = "All";
       var ghType = new GH_String();
-      if (da.GetData(1, ref ghType))
+      if (da.GetData(1, ref ghType)) {
         GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
+      }
 
-      if (elementlist.ToLower() == "all" || elementlist == "")
+      if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
+      }
 
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
@@ -165,8 +168,9 @@ namespace GsaGH.Components {
       var outRotXyz = new DataTree<GH_UnitNumber>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes))
+      if (!da.GetDataList(0, ghTypes)) {
         return;
+      }
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         if (ghTyp?.Value == null) {
@@ -174,8 +178,9 @@ namespace GsaGH.Components {
           return;
         }
 
-        if (ghTyp.Value is GsaResultGoo goo)
+        if (ghTyp.Value is GsaResultGoo goo) {
           result = goo.Value;
+        }
         else {
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -189,9 +194,10 @@ namespace GsaGH.Components {
             1,
           }
           : result.SelectedPermutationIds;
-        if (permutations.Count == 1 && permutations[0] == -1)
+        if (permutations.Count == 1 && permutations[0] == -1) {
           permutations = Enumerable.Range(1, vals.Count)
             .ToList();
+        }
 
         // loop through all permutations (analysis case will just have one)
         foreach (int perm in permutations) {
@@ -220,8 +226,9 @@ namespace GsaGH.Components {
                         .XyzResults) {
                       int elementId = kvp.Key;
                       ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                      if (res.Count == 0)
+                      if (res.Count == 0) {
                         continue;
+                      }
 
                       var path = new GH_Path(result.CaseId,
                         result.SelectedPermutationIds == null
@@ -252,8 +259,9 @@ namespace GsaGH.Components {
                         .XxyyzzResults) {
                       int elementId = kvp.Key;
                       ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                      if (res.Count == 0)
+                      if (res.Count == 0) {
                         continue;
+                      }
 
                       var path = new GH_Path(result.CaseId,
                         result.SelectedPermutationIds == null

@@ -31,8 +31,10 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
     }
 
-    protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) => data.GetType() == typeof(GsaGridPlaneSurface)
+    protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) {
+      return data.GetType() == typeof(GsaGridPlaneSurface)
         ? new GsaGridPlaneSurfaceGoo((GsaGridPlaneSurface)data)
         : base.PreferredCast(data);
+    }
   }
 }

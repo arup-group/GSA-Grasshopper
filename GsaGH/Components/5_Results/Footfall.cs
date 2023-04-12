@@ -24,8 +24,9 @@ namespace GsaGH.Components {
           "Footfall",
       "Get the maximum response factor for a footfall analysis case",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(),
@@ -58,10 +59,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var result = new GsaResult();
+      GsaResult result;
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
       switch (ghTyp?.Value) {
         case null:
@@ -84,12 +86,15 @@ namespace GsaGH.Components {
 
       string nodeList = "All";
       var ghNoList = new GH_String();
-      if (da.GetData(1, ref ghNoList))
-        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both))
+      if (da.GetData(1, ref ghNoList)) {
+        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both)) {
           nodeList = tempnodeList;
+        }
+      }
 
-      if (nodeList.ToLower() == "all" || nodeList == "")
+      if (nodeList.ToLower() == "all" || nodeList == "") {
         nodeList = "All";
+      }
 
       GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
       GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);

@@ -36,8 +36,9 @@ namespace GsaGH.Components {
                   "SpringForce",
       "Spring Reaction Force result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -169,11 +170,13 @@ namespace GsaGH.Components {
       var result = new GsaResult();
       string nodeList = "All";
       var ghType = new GH_String();
-      if (da.GetData(1, ref ghType))
+      if (da.GetData(1, ref ghType)) {
         GH_Convert.ToString(ghType, out nodeList, GH_Conversion.Both);
+      }
 
-      if (nodeList.ToLower() == "all" || nodeList == "")
+      if (nodeList.ToLower() == "all" || nodeList == "") {
         nodeList = "All";
+      }
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -186,8 +189,9 @@ namespace GsaGH.Components {
       var outIDs = new DataTree<int>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes))
+      if (!da.GetDataList(0, ghTypes)) {
         return;
+      }
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
@@ -213,9 +217,10 @@ namespace GsaGH.Components {
           ?? new List<int>() {
             1,
           };
-        if (permutations.Count == 1 && permutations[0] == -1)
+        if (permutations.Count == 1 && permutations[0] == -1) {
           permutations = Enumerable.Range(1, vals.Count)
             .ToList();
+        }
 
         foreach (int perm in permutations) {
           var path = new GH_Path(result.CaseId,

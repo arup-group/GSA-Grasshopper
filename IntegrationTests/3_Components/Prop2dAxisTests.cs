@@ -39,8 +39,9 @@ namespace IntegrationTests.Components {
       int listLength,
       int tolerance = 6) {
       var expecteds = new List<double>();
-      for (int i = 0; i < listLength; i++)
+      for (int i = 0; i < listLength; i++) {
         expecteds.Add(expected);
+      }
 
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expecteds.ToArray(), tolerance);

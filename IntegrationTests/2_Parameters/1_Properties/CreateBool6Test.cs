@@ -13,8 +13,9 @@ namespace IntegrationTests.Parameters {
     private static GH_Document s_document = null;
 
     [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    }
 
     [Theory]
     [InlineData("X", true)]
@@ -61,27 +62,37 @@ namespace IntegrationTests.Parameters {
       GH_ProcessStep state = io.Document.SolutionState;
       Assert.Equal(GH_ProcessStep.PostProcess, state);
 
-      foreach (IGH_DocumentObject obj in (io.Document.Objects)) {
+      foreach (IGH_DocumentObject obj in io.Document.Objects) {
         if (obj is IGH_Param p) {
           p.CollectData();
           p.ComputeData();
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error)) {
             Console.WriteLine("Parameter " + p.NickName + ", Error: " + message);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+          }
+
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning)) {
             Console.WriteLine("Parameter " + p.NickName + ", Warning: " + message);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+          }
+
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark)) {
             Console.WriteLine("Parameter " + p.NickName + ", Remark: " + message);
+          }
         }
       }
 
-      foreach (IGH_DocumentObject obj in (io.Document.Objects)) {
+      foreach (IGH_DocumentObject obj in io.Document.Objects) {
         if (obj is IGH_Component comp) {
-          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error)) {
             Console.WriteLine("Component " + comp.NickName + ", Error: " + message);
-          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+          }
+
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning)) {
             Console.WriteLine("Component \" + comp.NickName + \", Warning: " + message);
-          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+          }
+
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)) {
             Console.WriteLine("Component \" + comp.NickName + \", Remark: " + message);
+          }
         }
       }
 

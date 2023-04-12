@@ -26,8 +26,9 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaSection))
+      if (data.GetType() == typeof(GsaSection)) {
         return new GsaSectionGoo((GsaSection)data);
+      }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         var section = new GsaSection(id);

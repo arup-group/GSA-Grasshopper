@@ -21,8 +21,9 @@ namespace GsaGH.Components {
           "GravityLoad",
       "Create GSA Gravity Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
+      SubCategoryName.Cat3()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Load case",
@@ -56,19 +57,22 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Gravity load",
-        "Ld",
-        "GSA Gravity Load",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaLoadParameter(),
+                                                                                         "Gravity load",
+                                                                                         "Ld",
+                                                                                         "GSA Gravity Load",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gravityLoad = new GsaGravityLoad();
       int loadCase = 1;
       var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc))
+      if (da.GetData(0, ref ghLc)) {
         GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      }
+
       gravityLoad.GravityLoad.Case = loadCase;
 
       var ghTyp = new GH_ObjectWrapper();
@@ -136,33 +140,41 @@ namespace GsaGH.Components {
               break;
             }
           default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
                 gravityLoad.GravityLoad.Elements = elemList;
+              }
+
               break;
             }
         }
       }
-      else
+      else {
         gravityLoad.GravityLoad.Elements = "All";
+      }
 
       var ghName = new GH_String();
-      if (da.GetData(2, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+      if (da.GetData(2, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
           gravityLoad.GravityLoad.Name = name;
+        }
+      }
 
       var vect = new Vector3d(0, 0, -1);
       var ghFactor = new GH_Vector();
-      if (da.GetData(3, ref ghFactor))
+      if (da.GetData(3, ref ghFactor)) {
         GH_Convert.ToVector3d(ghFactor, ref vect, GH_Conversion.Both);
+      }
+
       var factor = new Vector3() {
         X = vect.X,
         Y = vect.Y,
         Z = vect.Z,
       };
 
-      if (vect.Z > 0)
+      if (vect.Z > 0) {
         this.AddRuntimeRemark(
           "Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
+      }
 
       gravityLoad.GravityLoad.Factor = factor;
 

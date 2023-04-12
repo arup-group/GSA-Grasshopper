@@ -40,9 +40,9 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "ModalMasses");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
+      //var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      //var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      //var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       Assert.Equal(45.62, output1.Value, 2);
       // GSA-6480
       //Assert.Equal(19.75, output2.Value, 2);
@@ -55,9 +55,9 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "ModalStiffnesses");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
+      //var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      //var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      //var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       Assert.Equal(27740 / 10, output1.Value / 10, 0);
       // GSA-6480
       //Assert.Equal(61630 / 10, output2.Value / 10, 0);

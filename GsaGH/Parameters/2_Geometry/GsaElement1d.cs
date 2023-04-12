@@ -178,9 +178,10 @@ namespace GsaGH.Parameters {
         .Releases);
       _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
         .Releases);
-      if (ApiElement.OrientationNode > 0)
+      if (ApiElement.OrientationNode > 0) {
         _orientationNode
           = new GsaNode(Nodes.Point3dFromNode(nDict[ApiElement.OrientationNode], modelUnit));
+      }
 
       _line = new LineCurve(new Line(
         Nodes.Point3dFromNode(nDict[ApiElement.Topology[0]], modelUnit),
@@ -197,19 +198,23 @@ namespace GsaGH.Parameters {
         LocalAxes = LocalAxes,
         _guid = new Guid(_guid.ToString()),
       };
-      if (cloneApiElement)
+      if (cloneApiElement) {
         dup.CloneApiObject();
+      }
 
       dup._line = (LineCurve)_line.DuplicateShallow();
-      if (_rel1 != null)
+      if (_rel1 != null) {
         dup._rel1 = _rel1.Duplicate();
+      }
 
-      if (_rel2 != null)
+      if (_rel2 != null) {
         dup._rel2 = _rel2.Duplicate();
+      }
 
       dup.Section = Section.Duplicate();
-      if (_orientationNode != null)
+      if (_orientationNode != null) {
         dup._orientationNode = _orientationNode.Duplicate();
+      }
 
       UpdatePreview();
       return dup;
@@ -275,14 +280,17 @@ namespace GsaGH.Parameters {
       elem.SetEndRelease(0, ApiElement.GetEndRelease(0));
       elem.SetEndRelease(1, ApiElement.GetEndRelease(1));
       if ((Color)ApiElement.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+{
         elem.Colour = ApiElement.Colour;
+      }
 
       return elem;
     }
 
     internal void UpdatePreview() {
-      if (!(_rel1 != null & _rel2 != null))
+      if (!(_rel1 != null & _rel2 != null)) {
         return;
+      }
 
       if (_rel1.X
         || _rel1.Y

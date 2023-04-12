@@ -29,8 +29,9 @@ namespace GsaGH.Helpers.Export {
 
             prop.AxisProperty = Axes.AddAxis(ref existingAxes, ax);
           }
-          else
+          else {
             prop.AxisProperty = 0;
+          }
         }
       }
 
@@ -43,8 +44,12 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int ConvertProp2d(GsaProp2d prop2d, ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
-      if (prop2d == null) { return 0; }
-      if (prop2d.IsReferencedById || prop2d.ApiProp2d == null) { return prop2d.Id; }
+      if (prop2d == null) { 
+        return 0; 
+      }
+      if (prop2d.IsReferencedById || prop2d.ApiProp2d == null) { 
+        return prop2d.Id; 
+      }
       return AddProp2d(prop2d, ref apiProp2ds, ref apiMaterials, ref existingAxes, unit);
     }
 
@@ -54,8 +59,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       prop2Ds = prop2Ds.OrderByDescending(p => p.Id).ToList();
-      foreach (GsaProp2d prop2d in prop2Ds.Where(prop2d => prop2d != null))
+      foreach (GsaProp2d prop2d in prop2Ds.Where(prop2d => prop2d != null)) {
         ConvertProp2d(prop2d, ref apiProp2ds, ref apiMaterials, ref existingAxes, unit);
+      }
     }
   }
 }

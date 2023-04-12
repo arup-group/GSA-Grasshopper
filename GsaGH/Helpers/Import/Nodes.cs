@@ -93,9 +93,7 @@ namespace GsaGH.Helpers.Import {
 
     internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null) {
       var outNodes = new ConcurrentDictionary<int, GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => {
-        outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
-      });
+      Parallel.ForEach(nDict, node => outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict))));
       return outNodes;
     }
 
@@ -111,9 +109,7 @@ namespace GsaGH.Helpers.Import {
     /// <returns></returns>
     internal static ConcurrentBag<GsaNodeGoo> GetNodes(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false) {
       var outNodes = new ConcurrentBag<GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => {
-        outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects));
-      });
+      Parallel.ForEach(nDict, node => outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects)));
       return outNodes;
     }
 

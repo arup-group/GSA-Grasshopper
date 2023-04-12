@@ -33,12 +33,15 @@ namespace GsaGH.Parameters {
     }
 
     protected override GsaNodeGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaNode))
+      if (data.GetType() == typeof(GsaNode)) {
         return new GsaNodeGoo((GsaNode)data);
+      }
 
       var pt = new Point3d();
-      if (!GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both))
+      if (!GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both)) {
         return base.PreferredCast(data);
+      }
+
       var node = new GsaNode(pt);
       return new GsaNodeGoo(node);
     }

@@ -20,16 +20,18 @@ namespace GsaGH.Parameters {
 
     public GsaElement3dGoo(GsaElement3d item) : base(item) { }
 
-    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null)
-                                  => Value = duplicate
-        ? item.Duplicate()
-        : item;
+    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null) {
+      Value = duplicate
+                                                                                     ? item.Duplicate()
+                                                                                     : item;
+    }
 
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       // instance of GsaElement3D into some other type Q.
-      if (base.CastTo(ref target))
+      if (base.CastTo(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
         target = Value == null
@@ -50,31 +52,43 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) => args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
         args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
           ? Colours.Element3dFace
           : Colours.Element2dFaceSelected);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null
         || CentralSettings.PreviewMeshEdges == false
-        || Value.NgonMesh == null)
+        || Value.NgonMesh == null) {
         return;
+      }
 
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+{
         args.Pipeline.DrawMeshWires(Value.DisplayMesh, Colours.Element2dEdge, 1);
-      else
+      }
+      else {
         args.Pipeline.DrawMeshWires(Value.DisplayMesh, Colours.Element2dEdgeSelected, 2);
+      }
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaElement3dGoo(Value);
+    public override IGH_GeometricGoo Duplicate() {
+      return new GsaElement3dGoo(Value);
+    }
 
-    public override GeometryBase GetGeometry() => Value.DisplayMesh;
+    public override GeometryBase GetGeometry() {
+      return Value.DisplayMesh;
+    }
 
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaElement3dGoo(Value.Morph(xmorph));
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
+      return new GsaElement3dGoo(Value.Morph(xmorph));
+    }
 
-    public override IGH_GeometricGoo Transform(Transform xform)
-      => new GsaElement3dGoo(Value.Transform(xform));
+    public override IGH_GeometricGoo Transform(Transform xform) {
+      return new GsaElement3dGoo(Value.Transform(xform));
+    }
   }
 }

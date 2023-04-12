@@ -24,23 +24,28 @@ namespace GsaGH.Parameters {
 
     public GsaMember2dGoo(GsaMember2d item) : base(item) { }
 
-    internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null)
-                                      => Value = duplicate
-        ? item.Duplicate()
-        : item;
+    internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null) {
+      Value = duplicate
+                                                                                   ? item.Duplicate()
+                                                                                   : item;
+    }
 
     public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data
       // into GsaMember.
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
-      if (base.CastFrom(source))
+      if (base.CastFrom(source)) {
         return true;
+      }
 
       var brep = new Brep();
-      if (!GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
+      if (!GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both)) {
         return false;
+      }
+
       var pts = new List<Point3d>();
       var crvs = new List<Curve>();
       var mem = new GsaMember2d(brep, crvs, pts);
@@ -51,8 +56,9 @@ namespace GsaGH.Parameters {
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       // instance of GsaMember into some other type Q.
-      if (base.CastTo(ref target))
+      if (base.CastTo(ref target)) {
         return true;
+      }
 
       //Cast to Curve
       if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
@@ -63,76 +69,88 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
-          if (Value.PolyCurve == null)
+          if (Value.PolyCurve == null) {
             return false;
+          }
         }
 
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(PolyCurve))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
-          if (Value.PolyCurve == null)
+          if (Value.PolyCurve == null) {
             return false;
+          }
         }
 
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Polyline))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
-          if (Value.PolyCurve == null)
+          if (Value.PolyCurve == null) {
             return false;
+          }
         }
 
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)Value.PolyCurve.ToPolyline(
             DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry),
             2,
             0,
             0);
-          if (Value.PolyCurve == null)
+          if (Value.PolyCurve == null) {
             return false;
+          }
         }
 
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Brep))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)Value.Brep.DuplicateBrep();
-          if (Value.Brep == null)
+          if (Value.Brep == null) {
             return false;
+          }
         }
 
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)new GH_Brep(Value.Brep.DuplicateBrep());
-          if (Value.Brep == null)
+          if (Value.Brep == null) {
             return false;
+          }
         }
 
         return true;
@@ -153,8 +171,9 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           var ghint = new GH_Integer();
           target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
@@ -170,12 +189,16 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-      if (Value.Brep == null)
+      if (Value.Brep == null) {
         return;
+      }
+
       if (Value.Type == MemberType.VOID_CUTTER_2D) {
         if (args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+{
           args.Pipeline.DrawBrepShaded(Value.Brep,
             Colours.Member2dVoidCutterFace); //UI.Colour.Member2dFace
+        }
       }
       else {
         args.Pipeline.DrawBrepShaded(Value.Brep,
@@ -186,29 +209,35 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null)
+      if (Value == null) {
         return;
+      }
 
       if (Value.Brep != null) {
         if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
-          if (Value.Type == MemberType.VOID_CUTTER_2D)
+          if (Value.Type == MemberType.VOID_CUTTER_2D) {
             args.Pipeline.DrawBrepWires(Value.Brep, Colours.VoidCutter, -1);
-          else if (!Value.IsDummy)
+          }
+          else if (!Value.IsDummy) {
             args.Pipeline.DrawBrepWires(Value.Brep, Colours.Member2dEdge, -1);
+          }
         }
-        else
+        else {
           args.Pipeline.DrawBrepWires(Value.Brep, Colours.Member2dEdgeSelected, -1);
+        }
       }
 
       if (Value.PolyCurve != null & Value.Brep == null) {
         if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
-          if (Value.IsDummy)
+          if (Value.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Dummy1D, false);
+          }
           else {
-            if (Value.Colour != Color.FromArgb(0, 0, 0))
+            if (Value.Colour != Color.FromArgb(0, 0, 0)) {
               args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
+            }
             else {
               Color col = Colours.Member2dEdge;
               args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
@@ -216,77 +245,99 @@ namespace GsaGH.Parameters {
           }
         }
         else {
-          if (Value.IsDummy)
+          if (Value.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Member1dSelected, false);
-          else
+          }
+          else {
             args.Pipeline.DrawCurve(Value.PolyCurve, Colours.Member1dSelected, 2);
+          }
         }
       }
 
-      if (Value.InclusionLines != null)
-        for (int i = 0; i < Value.InclusionLines.Count; i++)
-          if (Value.IsDummy)
+      if (Value.InclusionLines != null) {
+        for (int i = 0; i < Value.InclusionLines.Count; i++) {
+          if (Value.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i],
               Colours.Member1dSelected,
               false);
-          else
+          }
+          else {
             args.Pipeline.DrawCurve(Value.InclusionLines[i], Colours.Member2dInclLn, 2);
+          }
+        }
+      }
 
       if (Value.Topology != null) {
         List<Point3d> pts = Value.Topology;
-        for (int i = 0; i < pts.Count; i++)
+        for (int i = 0; i < pts.Count; i++) {
           if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
           {
             if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
+{
               args.Pipeline.DrawPoint(pts[i],
                 PointStyle.RoundSimple,
                 3,
-                (Value.IsDummy)
+                Value.IsDummy
                   ? Colours.Dummy1D
                   : Colours.Member1dNode);
-            else
+            }
+            else {
               args.Pipeline.DrawPoint(pts[i],
                 PointStyle.RoundSimple,
                 2,
-                (Value.IsDummy)
+                Value.IsDummy
                   ? Colours.Dummy1D
                   : Colours.Member1dNode);
+            }
           }
           else {
             if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
+{
               args.Pipeline.DrawPoint(pts[i],
                 PointStyle.RoundControlPoint,
                 3,
                 Colours.Member1dNodeSelected);
-            else
+            }
+            else {
               args.Pipeline.DrawPoint(pts[i],
                 PointStyle.RoundControlPoint,
                 2,
                 Colours.Member1dNodeSelected);
+            }
           }
+        }
       }
 
-      if (Value.InclusionPoints == null)
+      if (Value.InclusionPoints == null) {
         return;
+      }
+
       {
-        foreach (Point3d point3d in Value.InclusionPoints)
+        foreach (Point3d point3d in Value.InclusionPoints) {
           args.Pipeline.DrawPoint(point3d,
             PointStyle.RoundSimple,
             3,
-            (Value.IsDummy)
+            Value.IsDummy
               ? Colours.Dummy1D
               : Colours.Member2dInclPt);
+        }
       }
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(Value);
+    public override IGH_GeometricGoo Duplicate() {
+      return new GsaMember2dGoo(Value);
+    }
 
-    public override GeometryBase GetGeometry() => Value.Brep;
+    public override GeometryBase GetGeometry() {
+      return Value.Brep;
+    }
 
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaMember2dGoo(Value.Morph(xmorph));
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
+      return new GsaMember2dGoo(Value.Morph(xmorph));
+    }
 
-    public override IGH_GeometricGoo Transform(Transform xform)
-      => new GsaMember2dGoo(Value.Transform(xform));
+    public override IGH_GeometricGoo Transform(Transform xform) {
+      return new GsaMember2dGoo(Value.Transform(xform));
+    }
   }
 }

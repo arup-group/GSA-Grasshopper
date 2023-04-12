@@ -42,8 +42,9 @@ namespace GsaGH.Components {
                                   "Model",
       "Assemble a GSA Model",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -78,8 +79,10 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
-      if (!_isInitialised)
+      if (!_isInitialised) {
         InitialiseDropdowns();
+      }
+
       m_attributes = new DropDownCheckBoxesComponentAttributes(this,
         SetSelected,
         _dropDownItems,
@@ -95,8 +98,9 @@ namespace GsaGH.Components {
       _initialCheckState = new List<bool>() {
         _reMesh,
       };
-      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
+      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData")) {
         base.Read(reader);
+      }
       else {
         BaseReader.Read(reader, this, true);
         _isInitialised = true;
@@ -113,14 +117,17 @@ namespace GsaGH.Components {
         double tol = reader.GetDouble("Tolerance");
         _tolerance = new Length(tol, _lengthUnit);
       }
-      else
+      else {
         _tolerance = DefaultUnits.Tolerance;
+      }
 
       UpdateMessage();
       return base.Read(reader);
     }
 
-    public void SetAnalysis(List<bool> value) => _reMesh = value[0];
+    public void SetAnalysis(List<bool> value) {
+      _reMesh = value[0];
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -129,9 +136,10 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void VariableParameterMaintenance()
-      => Params.Input[2]
-        .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    public override void VariableParameterMaintenance() {
+      Params.Input[2]
+                                                                .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("ReMesh", _reMesh);
@@ -191,13 +199,15 @@ namespace GsaGH.Components {
         "ΣT",
         "GSA Analysis Tasks and Combination Cases to add to the model",
         GH_ParamAccess.list);
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       #region GetData
@@ -235,12 +245,14 @@ namespace GsaGH.Components {
       #endregion
 
       var model = new GsaModel();
-      if (models != null)
-        if (models.Count > 0)
+      if (models != null) {
+        if (models.Count > 0) {
           model = models.Count > 1
             ? MergeModels.MergeModel(models, this, _tolerance)
             : models[0]
               .Clone();
+        }
+      }
 
       model.Model = AssembleModel.Assemble(model,
         nodes,
@@ -280,7 +292,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "")
+      if (_toleranceTxt != "") {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         }
@@ -288,17 +300,21 @@ namespace GsaGH.Components {
           MessageBox.Show(e.Message);
           return;
         }
+      }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
       Message = "Tol: "
         + _tolerance.ToString()
           .Replace(" ", string.Empty);
-      if (_tolerance.Meters < 0.001)
+      if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (_tolerance.Meters > 0.25)
+      }
+
+      if (_tolerance.Meters > 0.25) {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
+      }
     }
   }
 }

@@ -17,9 +17,13 @@ namespace GsaGH.Helpers.GsaApi {
       _2D,
     }
 
-    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
+    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) {
+      return GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
+    }
 
-    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
+    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) {
+      return GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
+    }
 
     internal static GsaResultsValues GetNodeFootfallResultValues(string nodelist, GsaModel model, FootfallResultType type, int caseId) {
       if (model == null) { return null; }
@@ -29,8 +33,9 @@ namespace GsaGH.Helpers.GsaApi {
       ReadOnlyDictionary<int, Node> nodes = model.Model.Nodes(nodelist);
 
       int dataRef = 12009001;
-      if (type == FootfallResultType.Transient)
+      if (type == FootfallResultType.Transient) {
         dataRef = 12009101;
+      }
 
       const string aCase = "A";
 
@@ -61,12 +66,14 @@ namespace GsaGH.Helpers.GsaApi {
 
       foreach (int elemId in elements.Keys) {
         if (typ == ElementDimension._1D) {
-          if (elements[elemId].Topology.Count > 2)
+          if (elements[elemId].Topology.Count > 2) {
             continue;
+          }
         }
         else {
-          if (elements[elemId].Topology.Count < 3)
+          if (elements[elemId].Topology.Count < 3) {
             continue;
+          }
         }
 
         var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -77,8 +84,10 @@ namespace GsaGH.Helpers.GsaApi {
         }
         if (typ == ElementDimension._2D) {
           var average = new Ratio(0, RatioUnit.DecimalFraction);
-          foreach (int key in xyzRes.Keys)
+          foreach (int key in xyzRes.Keys) {
             average += (Ratio)xyzRes[key].X;
+          }
+
           average /= elements[elemId].Topology.Count;
           xyzRes.TryAdd(elements[elemId].Topology.Count, new GsaResultQuantity() { X = average });
         }

@@ -130,12 +130,16 @@ namespace GsaGH.Helpers.GsaApi {
 
         ReadOnlyCollection<Tensor3> stresses = elementResults.Stress;
         Parallel.For(1, stresses.Count * 2, i => {
-          if (i == stresses.Count)
+          if (i == stresses.Count) {
             return;
-          if (i < stresses.Count)
+          }
+
+          if (i < stresses.Count) {
             xyzRes[i] = GetQuantityResult(stresses[i], stressUnit);
-          else
+          }
+          else {
             xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
+          }
         });
         xyzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit); // add centre point at the end
         xxyyzzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit, true);
@@ -202,12 +206,16 @@ namespace GsaGH.Helpers.GsaApi {
         ReadOnlyCollection<Tensor2> forces = elementResults.Force;
         ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
         Parallel.For(1, forces.Count + moments.Count, i => {
-          if (i == forces.Count)
+          if (i == forces.Count) {
             return;
-          if (i < forces.Count)
+          }
+
+          if (i < forces.Count) {
             xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
-          else
+          }
+          else {
             xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
+          }
         });
         xyzRes[forces.Count] = GetQuantityResult(forces[0], forceUnit); // add centre point at the end
         xxyyzzRes[moments.Count] = GetQuantityResult(moments[0], momentUnit);
@@ -215,13 +223,13 @@ namespace GsaGH.Helpers.GsaApi {
         Parallel.ForEach(xxyyzzRes.Keys, i => {
           xyzRes[i].Xyz = new Force(
                     xxyyzzRes[i].X.Value
-                    + Math.Sign(xxyyzzRes[i].X.Value)
-                    * Math.Abs(xxyyzzRes[i].Z.Value),
+                    + (Math.Sign(xxyyzzRes[i].X.Value)
+                    * Math.Abs(xxyyzzRes[i].Z.Value)),
                     momentUnit);
           xxyyzzRes[i].Xyz = new Force(
                     xxyyzzRes[i].Y.Value
-                    + Math.Sign(xxyyzzRes[i].Y.Value)
-                    * Math.Abs(xxyyzzRes[i].Z.Value),
+                    + (Math.Sign(xxyyzzRes[i].Y.Value)
+                    * Math.Abs(xxyyzzRes[i].Z.Value)),
                     momentUnit);
         });
 
@@ -254,12 +262,16 @@ namespace GsaGH.Helpers.GsaApi {
 
         ReadOnlyCollection<Double6> disp = elementResults.Displacement;
         Parallel.For(1, disp.Count * 2, i => {
-          if (i == disp.Count)
+          if (i == disp.Count) {
             return;
-          if (i < disp.Count)
+          }
+
+          if (i < disp.Count) {
             xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
-          else
+          }
+          else {
             xxyyzzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
+          }
         });
         xyzRes[disp.Count] = GetQuantityResult(disp[0], resultLengthUnit); // add centre point at the end
         xxyyzzRes[disp.Count - disp.Count] = GetQuantityResult(disp[0], AngleUnit.Radian);
@@ -320,12 +332,16 @@ namespace GsaGH.Helpers.GsaApi {
 
         ReadOnlyCollection<Tensor3> stressVals = elementResults.Stress;
         Parallel.For(1, stressVals.Count * 2, i => {
-          if (i == stressVals.Count)
+          if (i == stressVals.Count) {
             return;
-          if (i < stressVals.Count)
+          }
+
+          if (i < stressVals.Count) {
             xyzRes[i] = GetQuantityResult(stressVals[i], stressUnit);
-          else
+          }
+          else {
             xxyyzzRes[i - stressVals.Count] = GetQuantityResult(stressVals[i - stressVals.Count], stressUnit, true);
+          }
         });
         xyzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit); // add centre point at the end
         xxyyzzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit, true);

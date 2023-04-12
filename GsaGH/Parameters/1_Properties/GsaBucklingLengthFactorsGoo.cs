@@ -14,6 +14,8 @@ namespace GsaGH.Parameters {
 
     public GsaBucklingLengthFactorsGoo(GsaBucklingLengthFactors item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaBucklingLengthFactorsGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaBucklingLengthFactorsGoo(Value);
+    }
   }
 }

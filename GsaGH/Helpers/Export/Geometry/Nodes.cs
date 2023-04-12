@@ -9,9 +9,13 @@ using Rhino.Geometry;
 namespace GsaGH.Helpers.Export {
   internal class Nodes {
 
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) => existNodes.AddValue(NodeFromPoint(testPoint, unit));
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) {
+      return existNodes.AddValue(NodeFromPoint(testPoint, unit));
+    }
 
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) => existNodes.AddValue(node);
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) {
+      return existNodes.AddValue(node);
+    }
 
     /// <summary>
     /// Method to convert a GsaNode to GsaAPI.Node
@@ -42,9 +46,12 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+{
         existingNodes.SetValue(node.Id, apiNode);
-      else
+      }
+      else {
         AddNode(ref existingNodes, apiNode);
+      }
     }
 
     internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
@@ -54,8 +61,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       nodes = nodes.OrderByDescending(n => n.Id).ToList();
-      foreach (GsaNode node in nodes.Where(node => node != null))
+      foreach (GsaNode node in nodes.Where(node => node != null)) {
         ConvertNode(node, ref existingNodes, ref existingAxes, modelUnit);
+      }
     }
 
     internal static Node NodeFromPoint(Point3d point, LengthUnit unit) {

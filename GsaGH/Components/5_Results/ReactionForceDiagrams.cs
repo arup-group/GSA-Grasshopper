@@ -71,8 +71,10 @@ namespace GsaGH.Components {
       SubCategoryName.Cat5()) { }
 
     public override void CreateAttributes() {
-      if (!_isInitialised)
+      if (!_isInitialised) {
         InitialiseDropdowns();
+      }
+
       m_attributes = new DropDownComponentAttributes(this,
         SetSelected,
         _dropDownItems,
@@ -83,8 +85,9 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      foreach (KeyValuePair<int, VectorResultGoo> force in _reactionForceVectors)
+      foreach (KeyValuePair<int, VectorResultGoo> force in _reactionForceVectors) {
         force.Value.ShowText(_showText);
+      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -140,10 +143,11 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    protected override void BeforeSolveInstance()
-      => Message = (int)_selectedDisplayValue < 4
-        ? Force.GetAbbreviation(_forceUnit)
-        : Moment.GetAbbreviation(_momentUnit);
+    protected override void BeforeSolveInstance() {
+      Message = (int)_selectedDisplayValue < 4
+                                                          ? Force.GetAbbreviation(_forceUnit)
+                                                          : Moment.GetAbbreviation(_momentUnit);
+    }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
@@ -198,8 +202,9 @@ namespace GsaGH.Components {
       var gsaResult = new GsaResult();
       var ghObject = new GH_ObjectWrapper();
 
-      if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject))
+      if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) {
         return;
+      }
 
       gsaResult = (ghObject.Value as GsaResultGoo).Value;
       string filteredNodes = GetNodeFilters(dataAccess);
@@ -216,16 +221,18 @@ namespace GsaGH.Components {
         = Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit, gsaResult.Model.Model.Axes());
 
       double scale = 1;
-      if (!dataAccess.GetData(2, ref scale))
+      if (!dataAccess.GetData(2, ref scale)) {
         scale = ComputeScale(forceValues, gsaResult.Model.BoundingBox);
+      }
 
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes,
         node => {
           VectorResultGoo reactionForceVector
             = GenerateReactionForceVector(node, forceValues, scale);
-          if (reactionForceVector != null)
+          if (reactionForceVector != null) {
             _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
+          }
         });
 
       SetOutputs(dataAccess);
@@ -238,13 +245,15 @@ namespace GsaGH.Components {
     private static string GetNodeFilters(IGH_DataAccess dataAccess) {
       string nodeList = string.Empty;
       var ghNoList = new GH_String();
-      if (dataAccess.GetData(1, ref ghNoList))
+      if (dataAccess.GetData(1, ref ghNoList)) {
         nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both)
           ? tempNodeList
           : string.Empty;
+      }
 
-      if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList))
+      if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList)) {
         nodeList = "All";
+      }
 
       return nodeList;
     }
@@ -252,10 +261,10 @@ namespace GsaGH.Components {
     private double ComputeScale(GsaResultsValues forceValues, BoundingBox bbox) {
       var values = new List<double>(8);
       switch (_selectedDisplayValue) {
-        case (DisplayValue.X):
-        case (DisplayValue.Y):
-        case (DisplayValue.Z):
-        case (DisplayValue.ResXyz):
+        case DisplayValue.X:
+        case DisplayValue.Y:
+        case DisplayValue.Z:
+        case DisplayValue.ResXyz:
           values = new List<double>() {
             forceValues.DmaxX.As(_forceUnit),
             forceValues.DmaxY.As(_forceUnit),
@@ -268,10 +277,10 @@ namespace GsaGH.Components {
           };
           break;
 
-        case (DisplayValue.Xx):
-        case (DisplayValue.Yy):
-        case (DisplayValue.Zz):
-        case (DisplayValue.ResXxyyzz):
+        case DisplayValue.Xx:
+        case DisplayValue.Yy:
+        case DisplayValue.Zz:
+        case DisplayValue.ResXxyyzz:
           values = new List<double>() {
             forceValues.DmaxXx.As(_momentUnit),
             forceValues.DmaxYy.As(_momentUnit),
@@ -299,8 +308,9 @@ namespace GsaGH.Components {
         .Select(unit => new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
           Checked = unit == Force.GetAbbreviation(_forceUnit),
           Enabled = true,
-        }))
+        })) {
         forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
 
       return forceUnitsMenu;
     }
@@ -314,8 +324,9 @@ namespace GsaGH.Components {
         .Select(unit => new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
           Enabled = true,
-        }))
+        })) {
         modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
 
       return modelUnitsMenu;
     }
@@ -329,8 +340,9 @@ namespace GsaGH.Components {
         .Select(unit => new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
           Checked = unit == Moment.GetAbbreviation(_momentUnit),
           Enabled = true,
-        }))
+        })) {
         momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
 
       return momentUnitsMenu;
     }
@@ -345,8 +357,9 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults
         = forceValues.XxyyzzResults;
 
-      if (!xyzResults.ContainsKey(nodeId))
+      if (!xyzResults.ContainsKey(nodeId)) {
         return null;
+      }
 
       bool isForce = (int)_selectedDisplayValue < 4;
       GsaResultQuantity quantity;
@@ -376,27 +389,27 @@ namespace GsaGH.Components {
       zAxis *= quantity.Z.As(unit) * scale;
 
       switch (_selectedDisplayValue) {
-        case (DisplayValue.X):
-        case (DisplayValue.Xx):
+        case DisplayValue.X:
+        case DisplayValue.Xx:
           direction = xAxis;
           forceValue = quantity.X.ToUnit(unit);
           break;
 
-        case (DisplayValue.Y):
-        case (DisplayValue.Yy):
+        case DisplayValue.Y:
+        case DisplayValue.Yy:
           direction = yAxis;
           forceValue = quantity.Y.ToUnit(unit);
           break;
 
-        case (DisplayValue.Z):
-        case (DisplayValue.Zz):
+        case DisplayValue.Z:
+        case DisplayValue.Zz:
           direction = zAxis;
           forceValue = quantity.Z.ToUnit(unit);
           break;
 
-        case (DisplayValue.ResXyz):
-        case (DisplayValue.ResXxyyzz):
-          direction = (xAxis + yAxis + zAxis);
+        case DisplayValue.ResXyz:
+        case DisplayValue.ResXxyyzz:
+          direction = xAxis + yAxis + zAxis;
           forceValue = quantity.Xyz.ToUnit(unit);
           break;
       }
@@ -413,8 +426,9 @@ namespace GsaGH.Components {
       LengthUnit lengthUnit = gsaResult.Model.ModelUnit;
       bool isUndefined = lengthUnit == LengthUnit.Undefined;
 
-      if (!isUndefined)
+      if (!isUndefined) {
         return lengthUnit;
+      }
 
       lengthUnit = _lengthUnit;
       this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. "
@@ -427,12 +441,15 @@ namespace GsaGH.Components {
 
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject) {
       bool valid = false;
-      if (ghObject == null || ghObject.Value == null)
+      if (ghObject == null || ghObject.Value == null) {
         this.AddRuntimeWarning("Input is null");
-      else if (!(ghObject.Value is GsaResultGoo))
+      }
+      else if (!(ghObject.Value is GsaResultGoo)) {
         this.AddRuntimeError("Error converting input to GSA Result");
-      else
+      }
+      else {
         valid = true;
+      }
 
       return valid;
     }

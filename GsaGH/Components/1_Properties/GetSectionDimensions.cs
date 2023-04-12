@@ -35,8 +35,9 @@ namespace GsaGH.Components {
               "SectDims",
       "Get GSA Section Dimensions",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -46,7 +47,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => Update(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
           Enabled = true,
         };
@@ -58,16 +59,21 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override bool Read(GH_IReader reader) {
       _lengthUnit
@@ -103,14 +109,17 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
+    protected override void BeforeSolveInstance() {
+      Message = Length.GetAbbreviation(_lengthUnit);
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaSectionParameter(),
-        GsaSectionGoo.Name,
-        GsaSectionGoo.NickName,
-        GsaSectionGoo.Description + " to get a bit more info out of.",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaSectionParameter(),
+                                                                                       GsaSectionGoo.Name,
+                                                                                       GsaSectionGoo.NickName,
+                                                                                       GsaSectionGoo.Description + " to get a bit more info out of.",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string abb = Length.GetAbbreviation(_lengthUnit);
@@ -157,20 +166,23 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
-        var gsaSection = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo && ghTyp.CastTo(ref gsaSection)) { }
+        GsaSection gsaSection;
+        string profile = string.Empty;
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          gsaSection = sectionGoo.Value;
+        }
         else {
-          string profileIn = string.Empty;
-          ghTyp.CastTo(ref profileIn);
-          if (GsaSection.ValidProfile(profileIn))
-            gsaSection = new GsaSection(profileIn);
+          ghTyp.CastTo(ref profile);
+          if (GsaSection.ValidProfile(profile)) {
+            gsaSection = new GsaSection(profile);
+          }
           else {
-            this.AddRuntimeWarning("Invalid profile syntax: " + profileIn);
+            this.AddRuntimeWarning("Invalid profile syntax: " + profile);
             return;
           }
         }
 
-        string profile = gsaSection.Profile;
+        profile = gsaSection.Profile;
         if (profile.Trim() == "") {
           this.AddRuntimeWarning("Profile not set in Section");
           return;
@@ -419,7 +431,7 @@ namespace GsaGH.Components {
             int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
             double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
             double diameter = double.Parse(parts[2], CultureInfo.InvariantCulture);
-            length = new Length((count - 1) * spacing + diameter, unit);
+            length = new Length(((count - 1) * spacing) + diameter, unit);
           }
 
           da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
@@ -540,8 +552,9 @@ namespace GsaGH.Components {
 
           da.SetData(i, "CAT " + profile.Split(' ')[1]);
         }
-        else
+        else {
           this.AddRuntimeError("Unable to get dimensions for type " + type[0]);
+        }
       }
     }
 

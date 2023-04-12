@@ -25,8 +25,9 @@ namespace GsaGH.Components {
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisTaskGoo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat4())
-      => Hidden = true;
+      SubCategoryName.Cat4()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -63,8 +64,9 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaAnalysisTaskParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaAnalysisTaskParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       string name = _analtype.ToString();
@@ -84,8 +86,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaAnalysisCaseGoo goo)
+          if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
             cases.Add(goo.Value.Duplicate());
+          }
           else {
             string type = ghTyp.Value.GetType()
               .ToString();
@@ -99,14 +102,16 @@ namespace GsaGH.Components {
         }
       }
 
-      if (cases == null)
+      if (cases == null) {
         this.AddRuntimeRemark(
           "Default Task has been created; it will by default contain all cases found in model");
+      }
 
-      if (_analtype != GsaAnalysisTask.AnalysisType.Static)
+      if (_analtype != GsaAnalysisTask.AnalysisType.Static) {
         this.AddRuntimeWarning("It is currently not possible to adjust the solver settings. "
           + Environment.NewLine
           + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
+      }
 
       var task = new GsaAnalysisTask {
         Name = name,

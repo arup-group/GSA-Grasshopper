@@ -22,14 +22,16 @@ namespace GsaGH.Components {
           "MeshResInfo",
       "Get Element 2D or Element 3D Contour Result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Result Mesh",
-        "M",
-        "Mesh with coloured result values",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Result Mesh",
+                                                                                       "M",
+                                                                                       "Mesh with coloured result values",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddMeshParameter("Mesh", "M", "Mesh", GH_ParamAccess.item);
@@ -54,8 +56,9 @@ namespace GsaGH.Components {
         if (res.Vertices[i]
             .Count
           >= res.ResultValues[i]
-            .Count)
+            .Count) {
           continue;
+        }
 
         double x = 0;
         double y = 0;

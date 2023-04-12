@@ -34,8 +34,9 @@ namespace GsaGH.Components.GraveyardComp {
               "Prop2dEdit",
       "Modify GSA 2D Property",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -57,16 +58,21 @@ namespace GsaGH.Components.GraveyardComp {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override bool Read(GH_IReader reader) {
       _lengthUnit
@@ -86,7 +92,9 @@ namespace GsaGH.Components.GraveyardComp {
       return base.Write(writer);
     }
 
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
+    protected override void BeforeSolveInstance() {
+      Message = Length.GetAbbreviation(_lengthUnit);
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaProp2dParameter(),
@@ -140,9 +148,10 @@ namespace GsaGH.Components.GraveyardComp {
         + Environment.NewLine
         + "Load : 10",
         GH_ParamAccess.item);
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -172,14 +181,17 @@ namespace GsaGH.Components.GraveyardComp {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaProp2d = new GsaProp2d();
       var prop = new GsaProp2d();
-      if (da.GetData(0, ref gsaProp2d))
+      if (da.GetData(0, ref gsaProp2d)) {
         prop = gsaProp2d.Duplicate();
+      }
 
       if (prop != null) {
         var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId))
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+        if (da.GetData(1, ref ghId)) {
+          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
             prop.Id = id;
+          }
+        }
 
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
@@ -189,8 +201,9 @@ namespace GsaGH.Components.GraveyardComp {
             prop.Material = material ?? new GsaMaterial();
           }
           else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
               prop.MaterialId = idd;
+            }
             else {
               this.AddRuntimeError(
                 "Unable to convert PB input to a Section Property of reference integer");
@@ -201,36 +214,45 @@ namespace GsaGH.Components.GraveyardComp {
 
         if (Params.Input[3]
             .SourceCount
-          > 0)
+          > 0) {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
+        }
 
         var ghObjectWrapper = new GH_ObjectWrapper();
         if (da.GetData(4, ref ghObjectWrapper)) {
           var pln = new Plane();
           if (ghObjectWrapper.Value.GetType() == typeof(GH_Plane)) {
-            if (GH_Convert.ToPlane(ghObjectWrapper.Value, ref pln, GH_Conversion.Both))
+            if (GH_Convert.ToPlane(ghObjectWrapper.Value, ref pln, GH_Conversion.Both)) {
               prop.LocalAxis = pln;
+            }
           }
-          else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both))
+          else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both)) {
             prop.AxisProperty = axis;
+          }
         }
 
         var ghString = new GH_String();
-        if (da.GetData(5, ref ghString))
-          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
+        if (da.GetData(5, ref ghString)) {
+          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
             prop.Name = name;
+          }
+        }
 
         var ghColour = new GH_Colour();
-        if (da.GetData(6, ref ghColour))
-          if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
+        if (da.GetData(6, ref ghColour)) {
+          if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
             prop.Colour = col;
+          }
+        }
 
         var ghType = new GH_ObjectWrapper();
         if (da.GetData(7, ref ghType)) {
-          if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both)) {
             prop.Type = (Property2D_Type)number;
-          else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both))
+          }
+          else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
             prop.Type = GsaProp2d.PropTypeFromString(type);
+          }
         }
 
         int ax = (prop.ApiProp2d == null)
@@ -248,10 +270,13 @@ namespace GsaGH.Components.GraveyardComp {
           prop.ApiProp2d.Description == ""
             ? new GH_UnitNumber(Length.Zero)
             : new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
-        if (prop.AxisProperty == -2)
+        if (prop.AxisProperty == -2) {
           da.SetData(4, new GH_Plane(prop.LocalAxis));
-        else
+        }
+        else {
           da.SetData(4, ax);
+        }
+
         da.SetData(5, nm);
         da.SetData(6, colour);
 
@@ -259,8 +284,9 @@ namespace GsaGH.Components.GraveyardComp {
           Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type)
             .Key);
       }
-      else
+      else {
         this.AddRuntimeError("Prop2d is Null");
+      }
     }
 
     private void Update(string unit) {

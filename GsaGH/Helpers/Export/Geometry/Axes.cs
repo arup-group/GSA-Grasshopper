@@ -36,8 +36,9 @@ namespace GsaGH.Helpers.Export {
             Math.Abs(testAxis.XYPlane.X - gsaAxis.XYPlane.X) <= tolerance &
             Math.Abs(testAxis.XYPlane.Y - gsaAxis.XYPlane.Y) <= tolerance &
             Math.Abs(testAxis.XYPlane.Z - gsaAxis.XYPlane.Z) <= tolerance
-           )
+           ) {
           return key;
+        }
       }
 
       return 0;

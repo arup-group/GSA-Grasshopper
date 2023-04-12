@@ -496,11 +496,12 @@ namespace IntegrationTests.Components {
         4.941,
         1.245,
       };
-      for (int i = 0; i < expectedVals.Count; i++)
+      for (int i = 0; i < expectedVals.Count; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           0.05);
+      }
     }
 
     [Theory]
@@ -580,11 +581,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Theory]
@@ -696,11 +698,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Theory]
@@ -734,11 +737,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Fact]
@@ -748,12 +752,13 @@ namespace IntegrationTests.Components {
       var output1 = (List<GH_Number>)param1.VolatileData.get_Branch(0);
       IGH_Param param2 = Helper.FindParameter(doc, "ScaledContours");
       var output2 = (List<GH_Number>)param2.VolatileData.get_Branch(0);
-      for (int i = 0; i < output1.Count; i++)
+      for (int i = 0; i < output1.Count; i++) {
         Assert.Equal(output2[i]
             .Value,
           output1[i]
             .Value,
           6);
+      }
     }
 
     [Fact]
@@ -769,11 +774,12 @@ namespace IntegrationTests.Components {
         2.652E-6,
         3.342E-6,
       };
-      for (int i = 0; i < expectedVals.Count; i++)
+      for (int i = 0; i < expectedVals.Count; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           0.01);
+      }
     }
 
     [Fact]
@@ -894,11 +900,12 @@ namespace IntegrationTests.Components {
         0.0,
         0.0,
       };
-      for (int i = 0; i < expectedVals.Count; i++)
+      for (int i = 0; i < expectedVals.Count; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           0.01);
+      }
     }
 
     private static GH_Document OpenDocument() {

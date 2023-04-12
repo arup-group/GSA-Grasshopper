@@ -40,15 +40,20 @@ namespace GsaGH.Helpers.Export {
         case GsaLoad.LoadTypes.Gravity:
           PostHog.Load(load.LoadType, load.GravityLoad._referenceType);
           if (load.GravityLoad._referenceType != ReferenceType.None) {
-            if (memberElementRelationship == null)
+            if (memberElementRelationship == null) {
               memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+            }
+
             string objectElemList = ElementListFromReference.GetRefElementIds(load.GravityLoad, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
-            if (objectElemList.Trim() != "")
+            if (objectElemList.Trim() != "") {
               load.GravityLoad.GravityLoad.Elements = objectElemList;
+            }
             else {
               string warning = "One or more GravityLoads with reference to a " + load.GravityLoad._referenceType + " could not be added to the model. Ensure the reference " + load.GravityLoad._referenceType + " has been added to the model.";
-              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning))
+              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
                 owner.AddRuntimeWarning(warning);
+              }
+
               break;
             }
           }
@@ -59,15 +64,20 @@ namespace GsaGH.Helpers.Export {
         case GsaLoad.LoadTypes.Beam:
           PostHog.Load(load.LoadType, load.BeamLoad._referenceType);
           if (load.BeamLoad._referenceType != ReferenceType.None) {
-            if (memberElementRelationship == null)
+            if (memberElementRelationship == null) {
               memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+            }
+
             string objectElemList = ElementListFromReference.GetRefElementIds(load.BeamLoad, apiSections, apiElements, apiMembers, memberElementRelationship);
-            if (objectElemList.Trim() != "")
+            if (objectElemList.Trim() != "") {
               load.BeamLoad.BeamLoad.Elements = objectElemList;
+            }
             else {
               string warning = "One or more BeamLoads with reference to a " + load.BeamLoad._referenceType + " could not be added to the model. Ensure the reference " + load.BeamLoad._referenceType + " has been added to the model.";
-              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning))
+              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
                 owner.AddRuntimeWarning(warning);
+              }
+
               break;
             }
           }
@@ -78,15 +88,20 @@ namespace GsaGH.Helpers.Export {
         case GsaLoad.LoadTypes.Face:
           PostHog.Load(load.LoadType, load.FaceLoad._referenceType);
           if (load.FaceLoad._referenceType != ReferenceType.None) {
-            if (memberElementRelationship == null)
+            if (memberElementRelationship == null) {
               memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+            }
+
             string objectElemList = ElementListFromReference.GetRefElementIds(load.FaceLoad, apiProp2ds, apiElements, apiMembers, memberElementRelationship);
-            if (objectElemList.Trim() != "")
+            if (objectElemList.Trim() != "") {
               load.FaceLoad.FaceLoad.Elements = objectElemList;
+            }
             else {
               string warning = "One or more FaceLoads with reference to a " + load.FaceLoad._referenceType + " could not be added to the model. Ensure the reference " + load.FaceLoad._referenceType + " has been added to the model.";
-              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning))
+              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
                 owner.AddRuntimeWarning(warning);
+              }
+
               break;
             }
           }
@@ -144,8 +159,9 @@ namespace GsaGH.Helpers.Export {
 
         case GsaLoad.LoadTypes.GridArea:
           PostHog.Load(load.LoadType, ReferenceType.None, load.AreaLoad.GridAreaLoad.Type.ToString());
-          if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON)
+          if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
             load.AreaLoad.GridAreaLoad.PolyLineDefinition += "(" + Length.GetAbbreviation(unit) + ")";
+          }
 
           if (load.AreaLoad.GridPlaneSurface == null) {
             gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
@@ -177,13 +193,16 @@ namespace GsaGH.Helpers.Export {
         return;
       }
 
-      foreach (GsaLoad load in loads.Where(load => load != null).Where(load => load.LoadType == GsaLoad.LoadTypes.Node))
+      foreach (GsaLoad load in loads.Where(load => load != null).Where(load => load.LoadType == GsaLoad.LoadTypes.Node)) {
         ConvertNodeLoad(load, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle, ref apiNodes, unit);
+      }
     }
 
     internal static void ConvertNodeLoad(GsaLoad load, ref List<NodeLoad> nodeLoadsNode, ref List<NodeLoad> nodeLoadsDispl, ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
-      if (load.NodeLoad._refPoint != Point3d.Unset)
+      if (load.NodeLoad._refPoint != Point3d.Unset) {
         load.NodeLoad.NodeLoad.Nodes = Nodes.AddNode(ref apiNodes, load.NodeLoad._refPoint, unit).ToString();
+      }
+
       switch (load.NodeLoad.Type) {
         case GsaNodeLoad.NodeLoadTypes.AppliedDisp:
           nodeLoadsDispl.Add(load.NodeLoad.NodeLoad);

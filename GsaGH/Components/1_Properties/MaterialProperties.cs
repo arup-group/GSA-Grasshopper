@@ -33,8 +33,9 @@ namespace GsaGH.Components {
                       "MatProp",
       "Get GSA Material Properties for Elastic Isotropic material type",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -44,7 +45,7 @@ namespace GsaGH.Components {
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
         var toolStripMenuItem
-          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateStress(unit); }) {
+          = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
             Checked = unit == Pressure.GetAbbreviation(_stressUnit),
             Enabled = true,
           };
@@ -56,7 +57,7 @@ namespace GsaGH.Components {
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density)) {
         var toolStripMenuItem
-          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateDensity(unit); }) {
+          = new ToolStripMenuItem(unit, null, (s, e) => UpdateDensity(unit)) {
             Checked = unit == Density.GetAbbreviation(_densityUnit),
             Enabled = true,
           };
@@ -68,7 +69,7 @@ namespace GsaGH.Components {
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature)) {
         var toolStripMenuItem
-          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateTemperature(unit); }) {
+          = new ToolStripMenuItem(unit, null, (s, e) => UpdateTemperature(unit)) {
             Checked = unit == Temperature.GetAbbreviation(_temperatureUnit),
             Enabled = true,
           };
@@ -88,16 +89,21 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override bool Read(GH_IReader reader) {
       try {
@@ -135,14 +141,17 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void BeforeSolveInstance() => UpdateMessage();
+    protected override void BeforeSolveInstance() {
+      UpdateMessage();
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaMaterialParameter(),
-        "Material",
-        "Mat",
-        "GSA Custom Material",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaMaterialParameter(),
+                                                                                       "Material",
+                                                                                       "Mat",
+                                                                                       "GSA Custom Material",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddGenericParameter(
@@ -170,12 +179,15 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaMaterial gsaMaterial = null;
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp))
-        if (ghTyp.Value is GsaMaterialGoo)
+      if (da.GetData(0, ref ghTyp)) {
+        if (ghTyp.Value is GsaMaterialGoo) {
           ghTyp.CastTo(ref gsaMaterial);
+        }
+      }
 
-      if (gsaMaterial == null)
+      if (gsaMaterial == null) {
         return;
+      }
 
       if (gsaMaterial.AnalysisMaterial == null) {
         this.AddRuntimeWarning("One or more materials are not custom material");

@@ -24,12 +24,6 @@ namespace GsaGH.Parameters {
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
 
-    internal GsaBucklingLengthFactors(GsaMember1d member, LengthUnit lengthUnit) {
-      EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
-      MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
-      MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
-    }
-
     public GsaBucklingLengthFactors Duplicate() {
       return (GsaBucklingLengthFactors)MemberwiseClone();
     }

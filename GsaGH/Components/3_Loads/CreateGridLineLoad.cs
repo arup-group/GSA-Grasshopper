@@ -29,8 +29,9 @@ namespace GsaGH.Components {
               "LineLoad",
       "Create GSA Grid Line Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
+      SubCategoryName.Cat3()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -55,7 +56,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
       _selectedItems.Add(ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
 
       _isInitialised = true;
@@ -132,19 +133,22 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Grid Line Load",
-        "Ld",
-        "GSA Grid Line Load",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaLoadParameter(),
+                                                                                         "Grid Line Load",
+                                                                                         "Ld",
+                                                                                         "GSA Grid Line Load",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gridlineload = new GsaGridLineLoad();
       int loadCase = 1;
       var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc))
+      if (da.GetData(0, ref ghLc)) {
         GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      }
+
       gridlineload.GridLineLoad.Case = loadCase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
@@ -152,12 +156,10 @@ namespace GsaGH.Components {
       bool planeSet = false;
       var gridPlaneSurface = new GsaGridPlaneSurface();
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(2, ref ghTyp))
+      if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo _: {
-              var temppln = new GsaGridPlaneSurface();
-              ghTyp.CastTo(ref temppln);
-              gridPlaneSurface = temppln.Duplicate();
+          case GsaGridPlaneSurfaceGoo value: {
+              gridPlaneSurface = value.Value.Duplicate();
               plane = gridPlaneSurface.Plane;
               planeSet = true;
               break;
@@ -184,6 +186,7 @@ namespace GsaGH.Components {
               break;
             }
         }
+      }
 
       // we wait setting the gridplanesurface until we have run the polyline input
       var ghCurve = new GH_Curve();
@@ -210,8 +213,9 @@ namespace GsaGH.Components {
           string desc = "";
 
           for (int i = 0; i < controlPoints.Count; i++) {
-            if (i > 0)
+            if (i > 0) {
               desc += " ";
+            }
 
             plane.RemapToPlaneSpace(controlPoints[i], out Point3d temppt);
             // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
@@ -223,20 +227,25 @@ namespace GsaGH.Components {
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
           gridlineload.GridLineLoad.PolyLineDefinition = desc;
         }
-        else
+        else {
           this.AddRuntimeError("Could not convert Curve to Polyline");
+        }
       }
 
-      if (gridlineload.GridPlaneSurface != null)
-        if (gridlineload.GridPlaneSurface.GridSurfaceId == 0)
+      if (gridlineload.GridPlaneSurface != null) {
+        if (gridlineload.GridPlaneSurface.GridSurfaceId == 0) {
           gridlineload.GridPlaneSurface = gridPlaneSurface;
+        }
+      }
 
       string dir = "Z";
       Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
-      if (da.GetData(3, ref ghDir))
+      if (da.GetData(3, ref ghDir)) {
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
+      }
+
       dir = dir.ToUpper();
       switch (dir) {
         case "X":
@@ -254,28 +263,35 @@ namespace GsaGH.Components {
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
         GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both);
-        if (axis == 0 || axis == -1)
+        if (axis == 0 || axis == -1) {
           gridlineload.GridLineLoad.AxisProperty = axis;
+        }
       }
 
       var ghProj = new GH_Boolean();
-      if (da.GetData(5, ref ghProj))
-        if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both))
+      if (da.GetData(5, ref ghProj)) {
+        if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both)) {
           gridlineload.GridLineLoad.IsProjected = proj;
+        }
+      }
 
       var ghName = new GH_String();
-      if (da.GetData(6, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+      if (da.GetData(6, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
           gridlineload.GridLineLoad.Name = name;
+        }
+      }
 
       double load1 = ((ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit))
         .NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
       double load2 = load1;
-      if (da.GetData(8, ref load2))
+      if (da.GetData(8, ref load2)) {
         load2 = ((ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit, true))
           .NewtonsPerMeter;
+      }
+
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
       var gsaLoad = new GsaLoad(gridlineload);

@@ -18,12 +18,14 @@ namespace GsaGH.Parameters {
     public GsaLoadGoo(GsaLoad item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo<TQ>(ref target))
+      if (base.CastTo<TQ>(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           if (Value.AreaLoad != null) {
             GsaGridPlaneSurface gridplane = Value.AreaLoad.GridPlaneSurface;
@@ -39,8 +41,10 @@ namespace GsaGH.Parameters {
             return true;
           }
 
-          if (Value.PointLoad == null)
+          if (Value.PointLoad == null) {
             return true;
+          }
+
           {
             GsaGridPlaneSurface gridplane = Value.PointLoad.GridPlaneSurface;
             var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
@@ -53,8 +57,9 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           switch (Value.LoadType) {
             case GsaLoad.LoadTypes.GridArea: {
@@ -88,11 +93,14 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
-          if (Value.LoadType != GsaLoad.LoadTypes.GridPoint)
+          if (Value.LoadType != GsaLoad.LoadTypes.GridPoint) {
             return false;
+          }
+
           var point = new Point3d {
             X = Value.PointLoad.GridPointLoad.X,
             Y = Value.PointLoad.GridPointLoad.Y,
@@ -108,11 +116,14 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
-          if (Value.LoadType != GsaLoad.LoadTypes.GridLine)
+          if (Value.LoadType != GsaLoad.LoadTypes.GridLine) {
             return false;
+          }
+
           var pts = new List<Point3d>();
           string def = Value.LineLoad.GridLineLoad.PolyLineDefinition; //implement converter
           // to be done
@@ -127,6 +138,8 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override IGH_Goo Duplicate() => new GsaLoadGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaLoadGoo(Value);
+    }
   }
 }

@@ -99,37 +99,41 @@ namespace GsaGH.Components {
       pManager.HideParameter(2);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaElement2dParameter(),
-        "2D Elements",
-        "E2D",
-        "GSA 2D Elements",
-        GH_ParamAccess.list);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaElement2dParameter(),
+                                                                                         "2D Elements",
+                                                                                         "E2D",
+                                                                                         "GSA 2D Elements",
+                                                                                         GH_ParamAccess.list);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
-      if (!da.GetData(0, ref ghbrep))
+      if (!da.GetData(0, ref ghbrep)) {
         return;
+      }
 
-      if (ghbrep == null)
+      if (ghbrep == null) {
         this.AddRuntimeWarning("Brep input is null");
+      }
+
       var brep = new Brep();
-      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
+      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both)) {
         return;
+      }
 
       var ghTypes = new List<GH_ObjectWrapper>();
       var point3ds = new List<Point3d>();
       var nodes = new List<GsaNode>();
-      if (da.GetDataList(1, ghTypes))
+      if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           var point3d = new Point3d();
-          if (objectWrapper.Value is GsaNodeGoo) {
-            var gsanode = new GsaNode();
-            objectWrapper.CastTo(ref gsanode);
-            nodes.Add(gsanode);
+          if (objectWrapper.Value is GsaNodeGoo nodeGoo) {
+            nodes.Add(nodeGoo.Value);
           }
-          else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref point3d, GH_Conversion.Both))
+          else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref point3d, GH_Conversion.Both)) {
             point3ds.Add(point3d);
+          }
           else {
             string type = objectWrapper.Value.GetType()
               .ToString();
@@ -140,20 +144,20 @@ namespace GsaGH.Components {
               + " to point or node");
           }
         }
+      }
 
       ghTypes = new List<GH_ObjectWrapper>();
       var crvs = new List<Curve>();
       var mem1ds = new List<GsaMember1d>();
-      if (da.GetDataList(2, ghTypes))
+      if (da.GetDataList(2, ghTypes)) {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           Curve crv = null;
-          if (objectWrapper.Value is GsaMember1dGoo) {
-            var gsamem1d = new GsaMember1d();
-            objectWrapper.CastTo(ref gsamem1d);
-            mem1ds.Add(gsamem1d);
+          if (objectWrapper.Value is GsaMember1dGoo member1dGoo) {
+            mem1ds.Add(member1dGoo.Value);
           }
-          else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both))
+          else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both)) {
             crvs.Add(crv);
+          }
           else {
             string type = objectWrapper.Value.GetType()
               .ToString();
@@ -164,6 +168,7 @@ namespace GsaGH.Components {
               + " to curve or 1D Member");
           }
         }
+      }
 
       var ghmsz = new GH_Number();
       Length meshSize = Length.Zero;
@@ -184,11 +189,13 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo)
+        if (ghTyp.Value is GsaProp2dGoo) {
           ghTyp.CastTo(ref prop2d);
+        }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
+          }
           else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
@@ -196,12 +203,15 @@ namespace GsaGH.Components {
           }
         }
       }
-      else
+      else {
         prop2d.Id = 1;
+      }
 
       var prop2Ds = new List<GsaProp2d>();
-      for (int i = 0; i < elem2d.ApiElements.Count; i++)
+      for (int i = 0; i < elem2d.ApiElements.Count; i++) {
         prop2Ds.Add(prop2d);
+      }
+
       elem2d.Properties = prop2Ds;
 
       da.SetData(0, new GsaElement2dGoo(elem2d));

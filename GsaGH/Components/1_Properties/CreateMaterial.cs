@@ -34,8 +34,9 @@ namespace GsaGH.Components {
           GsaMaterialGoo.Name.Replace(" ", string.Empty),
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -56,19 +57,21 @@ namespace GsaGH.Components {
       _isInitialised = true;
     }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddIntegerParameter("Grade",
-        "Grd",
-        "Material Grade (default = 1)",
-        GH_ParamAccess.item,
-        1);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddIntegerParameter("Grade",
+                                                                                       "Grd",
+                                                                                       "Material Grade (default = 1)",
+                                                                                       GH_ParamAccess.item,
+                                                                                       1);
+    }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMaterialParameter(),
-        "Material",
-        "Mat",
-        "GSA Standard Material (reference)",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMaterialParameter(),
+                                                                                         "Material",
+                                                                                         "Mat",
+                                                                                         "GSA Standard Material (reference)",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var material = new GsaMaterial();

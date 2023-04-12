@@ -4,7 +4,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
   public sealed class GsaComObject {
-    public static Interop.Gsa_10_1.ComAuto Instance { get { return s_lazy.Value; } }
+    public static Interop.Gsa_10_1.ComAuto Instance => s_lazy.Value;
     private static readonly Lazy<Interop.Gsa_10_1.ComAuto> s_lazy = new Lazy<Interop.Gsa_10_1.ComAuto>(() => new Interop.Gsa_10_1.ComAuto());
 
     private GsaComObject() { }
@@ -21,8 +21,9 @@ namespace GsaGH.Helpers {
         gsa.NewFile();
         return gsa;
       }
-      if (model.Guid == s_guid)
+      if (model.Guid == s_guid) {
         return gsa;
+      }
 
       s_guid = model.Guid;
       s_tempPath = Path.GetTempPath() + s_guid.ToString() + ".gwb";

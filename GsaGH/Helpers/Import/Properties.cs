@@ -29,8 +29,9 @@ namespace GsaGH.Helpers.Import {
 
         var prop = new GsaProp2d(key) { ApiProp2d = apisection };
         if (prop.ApiProp2d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.ApiProp2d.MaterialAnalysisProperty))
+          if (analysisMaterials.ContainsKey(prop.ApiProp2d.MaterialAnalysisProperty)) {
             prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+          }
         }
 
         // Axis property 0 = Global, -1 = Topological
@@ -57,11 +58,13 @@ namespace GsaGH.Helpers.Import {
           continue;
         }
 
-        var prop = new GsaProp3d(key);
-        prop.ApiProp3d = apisection;
+        var prop = new GsaProp3d(key) {
+          ApiProp3d = apisection
+        };
         if (prop.ApiProp3d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.ApiProp3d.MaterialAnalysisProperty))
+          if (analysisMaterials.ContainsKey(prop.ApiProp3d.MaterialAnalysisProperty)) {
             prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+          }
         }
         prop2ds.Add(new GsaProp3dGoo(prop));
       }
@@ -86,11 +89,14 @@ namespace GsaGH.Helpers.Import {
 
         var sect = new GsaSection(key) { ApiSection = apisection };
         if (sect.ApiSection.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty))
+          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty)) {
             sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+          }
         }
-        if (modDict.Keys.Contains(key))
+        if (modDict.Keys.Contains(key)) {
           sect.Modifier = new GsaSectionModifier(modDict[key]);
+        }
+
         sections.Add(new GsaSectionGoo(sect));
       }
       return sections;

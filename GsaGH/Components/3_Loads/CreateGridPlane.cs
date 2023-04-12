@@ -42,8 +42,9 @@ namespace GsaGH.Components {
         InitialiseDropdowns();
       }
 
-      if (_mode != FoldMode.Storey || Params.Input.Count >= 5)
+      if (_mode != FoldMode.Storey || Params.Input.Count >= 5) {
         return base.Read(reader);
+      }
 
       Params.RegisterInputParam(new Param_GenericObject());
       Params.RegisterInputParam(new Param_GenericObject());
@@ -53,7 +54,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      if (i == 0)
+      if (i == 0) {
         switch (_selectedItems[0]) {
           case "General":
             Mode1Clicked();
@@ -63,6 +64,7 @@ namespace GsaGH.Components {
             Mode2Clicked();
             break;
         }
+      }
 
       base.UpdateUI();
     }
@@ -71,8 +73,9 @@ namespace GsaGH.Components {
       Params.Input[2]
         .Name = "Grid Elevation in model units";
 
-      if (_mode != FoldMode.Storey)
+      if (_mode != FoldMode.Storey) {
         return;
+      }
 
       if (Params.Input.Count < 5) {
         Params.RegisterInputParam(new Param_GenericObject());
@@ -145,19 +148,21 @@ namespace GsaGH.Components {
       _mode = FoldMode.General;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Plane",
-        "GP",
-        "GSA Grid Plane",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaGridPlaneParameter(),
+                                                                                         "Grid Plane",
+                                                                                         "GP",
+                                                                                         "GSA Grid Plane",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       Plane pln = Plane.WorldXY;
 
       var ghPlane = new GH_Plane();
-      if (da.GetData(0, ref ghPlane))
+      if (da.GetData(0, ref ghPlane)) {
         GH_Convert.ToPlane(ghPlane, ref pln, GH_Conversion.Both);
+      }
 
       var gps = new GsaGridPlaneSurface(pln);
 
@@ -171,18 +176,21 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         string elevationIn = ghTyp.Value.ToString();
         double elevation = 0;
-        if (elevationIn != "" && elevationIn.ToLower() != "0")
+        if (elevationIn != "" && elevationIn.ToLower() != "0") {
           try {
             var newElevation = Length.Parse(elevationIn);
             gps.Elevation = elevationIn;
             elevation = newElevation.Value;
           }
           catch (Exception e) {
-            if (double.TryParse(elevationIn, out elevation))
+            if (double.TryParse(elevationIn, out elevation)) {
               gps.Elevation = elevationIn;
-            else
+            }
+            else {
               this.AddRuntimeWarning(e.Message);
+            }
           }
+        }
 
         if (elevation != 0) {
           // if elevation is set we want to move the plane in it's normal direction
@@ -198,44 +206,53 @@ namespace GsaGH.Components {
       }
 
       var ghString = new GH_String();
-      if (da.GetData(3, ref ghString))
-        if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both))
+      if (da.GetData(3, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
           gps.GridPlane.Name = name;
+        }
+      }
 
-      if (_mode == FoldMode.General)
+      if (_mode == FoldMode.General) {
         gps.GridPlane.IsStoreyType = false;
+      }
       else {
         gps.GridPlane.IsStoreyType = true;
         ghTyp = new GH_ObjectWrapper();
         if (da.GetData(4, ref ghTyp)) {
           string tolIn = ghTyp.Value.ToString();
-          if (tolIn != "" && tolIn.ToLower() != "auto")
+          if (tolIn != "" && tolIn.ToLower() != "auto") {
             try {
               Length.Parse(tolIn);
               gps.StoreyToleranceAbove = tolIn;
             }
             catch (Exception e) {
-              if (double.TryParse(tolIn, out double _))
+              if (double.TryParse(tolIn, out double _)) {
                 gps.StoreyToleranceAbove = tolIn;
-              else
+              }
+              else {
                 this.AddRuntimeWarning(e.Message);
+              }
             }
+          }
         }
 
         ghTyp = new GH_ObjectWrapper();
         if (da.GetData(5, ref ghTyp)) {
           string tolIn = ghTyp.Value.ToString();
-          if (tolIn != "" && tolIn.ToLower() != "auto")
+          if (tolIn != "" && tolIn.ToLower() != "auto") {
             try {
               var newTolerance = Length.Parse(tolIn);
               gps.StoreyToleranceBelow = tolIn;
             }
             catch (Exception e) {
-              if (double.TryParse(tolIn, out double _))
+              if (double.TryParse(tolIn, out double _)) {
                 gps.StoreyToleranceBelow = tolIn;
-              else
+              }
+              else {
                 this.AddRuntimeWarning(e.Message);
+              }
             }
+          }
         }
       }
 
@@ -248,19 +265,22 @@ namespace GsaGH.Components {
     }
 
     private void Mode1Clicked() {
-      if (_mode == FoldMode.General)
+      if (_mode == FoldMode.General) {
         return;
+      }
 
       RecordUndoEvent("General Parameters");
       _mode = FoldMode.General;
 
-      while (Params.Input.Count > 4)
+      while (Params.Input.Count > 4) {
         Params.UnregisterInputParameter(Params.Input[4], true);
+      }
     }
 
     private void Mode2Clicked() {
-      if (_mode == FoldMode.Storey)
+      if (_mode == FoldMode.Storey) {
         return;
+      }
 
       RecordUndoEvent("Storey Parameters");
       _mode = FoldMode.Storey;

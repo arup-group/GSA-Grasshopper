@@ -277,22 +277,38 @@ namespace GsaGHTests.Components.Properties {
       string expectedType = profile.Split(' ')[1];
 
       Assert.Equal(expectedDepth, depth.Value.As(unit), 6);
-      if (expectedWidth > 0)
+      if (expectedWidth > 0) {
         Assert.Equal(expectedWidth, width.Value.As(unit), 6);
-      if (expectedWidthTop > 0)
+      }
+
+      if (expectedWidthTop > 0) {
         Assert.Equal(expectedWidthTop, widthTop.Value.As(unit), 6);
-      if (expectedWidthBottom > 0)
+      }
+
+      if (expectedWidthBottom > 0) {
         Assert.Equal(expectedWidthBottom, widthBottom.Value.As(unit), 6);
-      if (expectedFlngThkTop > 0)
+      }
+
+      if (expectedFlngThkTop > 0) {
         Assert.Equal(expectedFlngThkTop, flngThkTop.Value.As(unit), 6);
-      if (expectedFlngThkBtm > 0)
+      }
+
+      if (expectedFlngThkBtm > 0) {
         Assert.Equal(expectedFlngThkBtm, flngThkBot.Value.As(unit), 6);
-      if (expectedWebThk > 0)
+      }
+
+      if (expectedWebThk > 0) {
         Assert.Equal(expectedWebThk, webThk.Value.As(unit), 6);
-      if (expectedRootRadius > 0)
+      }
+
+      if (expectedRootRadius > 0) {
         Assert.Equal(expectedRootRadius, radius.Value.As(unit), 6);
-      if (expectedSpacing > 0)
+      }
+
+      if (expectedSpacing > 0) {
         Assert.Equal(expectedSpacing, spacing.Value.As(unit), 6);
+      }
+
       Assert.StartsWith(type, expectedType);
     }
   }

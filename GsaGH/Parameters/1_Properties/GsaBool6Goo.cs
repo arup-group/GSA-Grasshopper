@@ -16,11 +16,13 @@ namespace GsaGH.Parameters {
     public GsaBool6Goo(GsaBool6 item) : base(item) { }
 
     public override bool CastFrom(object source) {
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
-      if (base.CastFrom(source))
+      if (base.CastFrom(source)) {
         return true;
+      }
       else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both)) {
         Value.X = mybool;
         Value.Y = mybool;
@@ -154,6 +156,8 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override IGH_Goo Duplicate() => new GsaBool6Goo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaBool6Goo(Value);
+    }
   }
 }

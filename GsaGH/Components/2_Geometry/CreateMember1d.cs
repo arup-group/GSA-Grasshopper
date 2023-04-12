@@ -116,22 +116,27 @@ namespace GsaGH.Components {
       pManager.HideParameter(0);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMember1dParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMember1dParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghcrv = new GH_Curve();
-      if (!da.GetData(0, ref ghcrv))
+      if (!da.GetData(0, ref ghcrv)) {
         return;
+      }
 
-      if (ghcrv == null)
+      if (ghcrv == null) {
         this.AddRuntimeWarning("Curve input is null");
+      }
+
       Curve crv = null;
-      if (!GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
+      if (!GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both)) {
         return;
+      }
 
       var mem = new GsaMember1d(crv);
-      if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
+      if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)) {
         this.AddRuntimeRemark(
           "Service message from you favourite Oasys dev team: Based on your Default Unit Settings (changed in the Oasys Menu), one or more input curves have relatively short length less than the set tolerance ("
           + DefaultUnits.Tolerance.ToString()
@@ -139,6 +144,7 @@ namespace GsaGH.Components {
           + ". This may convert into a zero-length line when assembling the GSA Model, thus creating invalid topology that cannot be analysed. You can ignore this message if you are creating your model in another unit (set on 'Analyse' or 'CreateModel' components) than "
           + DefaultUnits.LengthUnitGeometry.ToString()
           + ".");
+      }
 
       var rel1 = new GsaBool6 {
         X = _x1,
@@ -162,24 +168,25 @@ namespace GsaGH.Components {
       mem.ReleaseEnd = rel2;
 
       var ghTyp = new GH_ObjectWrapper();
-      var section = new GsaSection();
       if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo) {
-          ghTyp.CastTo(ref section);
-          mem.Section = section;
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          mem.Section = sectionGoo.Value;
         }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             mem.Section = new GsaSection(id);
-          else
+          }
+          else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
+          }
         }
       }
 
       double meshSize = 0;
-      if (da.GetData(2, ref meshSize))
+      if (da.GetData(2, ref meshSize)) {
         mem.MeshSize = meshSize;
+      }
 
       da.SetData(0, new GsaMember1dGoo(mem));
     }

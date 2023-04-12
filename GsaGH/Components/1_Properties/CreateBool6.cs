@@ -30,8 +30,9 @@ namespace GsaGH.Components {
                                   GsaBool6Goo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void CreateAttributes() {
       var bool6 = new List<List<bool>>() { new List<bool>() { _x, _y, _z, _xx, _yy, _zz } };
@@ -96,8 +97,9 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaBool6Parameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaBool6Parameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var uiSet = new GsaBool6(_x,
@@ -109,18 +111,29 @@ namespace GsaGH.Components {
       GsaBool6 bool6 = uiSet.Duplicate();
 
       bool input = false;
-      if (da.GetData(0, ref input))
+      if (da.GetData(0, ref input)) {
         bool6.X = input;
-      if (da.GetData(1, ref input))
+      }
+
+      if (da.GetData(1, ref input)) {
         bool6.Y = input;
-      if (da.GetData(2, ref input))
+      }
+
+      if (da.GetData(2, ref input)) {
         bool6.Z = input;
-      if (da.GetData(3, ref input))
+      }
+
+      if (da.GetData(3, ref input)) {
         bool6.Xx = input;
-      if (da.GetData(4, ref input))
+      }
+
+      if (da.GetData(4, ref input)) {
         bool6.Yy = input;
-      if (da.GetData(5, ref input))
+      }
+
+      if (da.GetData(5, ref input)) {
         bool6.Zz = input;
+      }
 
       bool update = false;
       if (bool6.X != uiSet.X) {
@@ -153,8 +166,9 @@ namespace GsaGH.Components {
         update = true;
       }
 
-      if (update)
+      if (update) {
         ReDrawComponent();
+      }
 
       da.SetData(0, new GsaBool6Goo(bool6));
     }

@@ -6,52 +6,28 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaBool6 {
     public bool X {
-      get {
-        return _bool6.X;
-      }
-      set {
-        _bool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
-      }
+      get => _bool6.X;
+      set => _bool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
     }
     public bool Xx {
-      get {
-        return _bool6.XX;
-      }
-      set {
-        _bool6 = new Bool6(X, Y, Z, value, Yy, Zz);
-      }
+      get => _bool6.XX;
+      set => _bool6 = new Bool6(X, Y, Z, value, Yy, Zz);
     }
     public bool Y {
-      get {
-        return _bool6.Y;
-      }
-      set {
-        _bool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
-      }
+      get => _bool6.Y;
+      set => _bool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
     }
     public bool Yy {
-      get {
-        return _bool6.YY;
-      }
-      set {
-        _bool6 = new Bool6(X, Y, Z, Xx, value, Zz);
-      }
+      get => _bool6.YY;
+      set => _bool6 = new Bool6(X, Y, Z, Xx, value, Zz);
     }
     public bool Z {
-      get {
-        return _bool6.Z;
-      }
-      set {
-        _bool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
-      }
+      get => _bool6.Z;
+      set => _bool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
     }
     public bool Zz {
-      get {
-        return _bool6.ZZ;
-      }
-      set {
-        _bool6 = new Bool6(X, Y, Z, Xx, Yy, value);
-      }
+      get => _bool6.ZZ;
+      set => _bool6 = new Bool6(X, Y, Z, Xx, Yy, value);
     }
     internal Bool6 _bool6;
 
@@ -84,8 +60,10 @@ namespace GsaGH.Parameters {
         Xx == false &&
         Yy == false &&
         Zz == false
-        )
+        ) {
         state = "Free";
+      }
+
       if (
         X == true &&
         Y == true &&
@@ -93,8 +71,10 @@ namespace GsaGH.Parameters {
         Xx == false &&
         Yy == false &&
         Zz == false
-        )
+        ) {
         state = "Pin";
+      }
+
       if (
         X == false &&
         Y == false &&
@@ -102,8 +82,10 @@ namespace GsaGH.Parameters {
         Xx == false &&
         Yy == true &&
         Zz == true
-        )
+        ) {
         state = "Hinge";
+      }
+
       if (
         X == true &&
         Y == true &&
@@ -111,25 +93,28 @@ namespace GsaGH.Parameters {
         Xx == true &&
         Yy == true &&
         Zz == true
-        )
+        ) {
         state = "Fixed";
+      }
+
       if (state == "Other") {
-        string sx = (X) ? "\u2713" : "\u2610";
+        string sx = X ? "\u2713" : "\u2610";
         sx = "X" + sx;
-        string sy = (Y) ? "\u2713" : "\u2610";
+        string sy = Y ? "\u2713" : "\u2610";
         sy = " Y" + sy;
-        string sz = (Z) ? "\u2713" : "\u2610";
+        string sz = Z ? "\u2713" : "\u2610";
         sz = " Z" + sz;
-        string sxx = (Xx) ? "\u2713" : "\u2610";
+        string sxx = Xx ? "\u2713" : "\u2610";
         sxx = " XX" + sxx;
-        string syy = (Yy) ? "\u2713" : "\u2610";
+        string syy = Yy ? "\u2713" : "\u2610";
         syy = " YY" + syy;
-        string szz = (Zz) ? "\u2713" : "\u2610";
+        string szz = Zz ? "\u2713" : "\u2610";
         szz = " ZZ" + szz;
         return sx + sy + sz + sxx + syy + szz;
       }
-      else
+      else {
         return state.Trim();
+      }
     }
   }
 }

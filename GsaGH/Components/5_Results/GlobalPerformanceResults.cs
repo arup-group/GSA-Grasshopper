@@ -34,8 +34,9 @@ namespace GsaGH.Components {
                       "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -106,25 +107,22 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Mass)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Mass));
       _selectedItems.Add(Mass.GetAbbreviation(_massUnit));
 
       _dropDownItems.Add(
-        UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.AreaMomentOfInertia)));
-      _selectedItems.Add(AreaMomentOfInertia.GetAbbreviation((_inertiaUnit)));
+        UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.AreaMomentOfInertia));
+      _selectedItems.Add(AreaMomentOfInertia.GetAbbreviation(_inertiaUnit));
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
-      _selectedItems.Add(ForcePerLength.GetAbbreviation((_forcePerLengthUnit)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
+      _selectedItems.Add(ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
 
       _isInitialised = true;
     }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string massUnitAbbreviation = Mass.GetAbbreviation(_massUnit);
@@ -195,10 +193,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var result = new GsaResult();
-      var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      GsaResult result;
+      GH_ObjectWrapper ghTyp = null;
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
       #region Inputs
 
@@ -254,17 +253,20 @@ namespace GsaGH.Components {
         da.SetData(i++, null);
       }
 
-      if (analysisCaseResult.Global.Mode != 0)
+      if (analysisCaseResult.Global.Mode != 0) {
         da.SetData(i++, analysisCaseResult.Global.Mode);
-      else
+      }
+      else {
         da.SetData(i++, null);
+      }
 
       if (analysisCaseResult.Global.ModalMass != 0) {
         IQuantity mmass = new Mass(analysisCaseResult.Global.ModalMass, MassUnit.Kilogram);
         da.SetData(i++, new GH_UnitNumber(mmass.ToUnit(_massUnit)));
       }
-      else
+      else {
         da.SetData(i++, null);
+      }
 
       if (!(analysisCaseResult.Global.Frequency == 0
         && analysisCaseResult.Global.LoadFactor == 0)) {
@@ -272,16 +274,18 @@ namespace GsaGH.Components {
           ForcePerLengthUnit.NewtonPerMeter);
         da.SetData(i++, new GH_UnitNumber(mstiff.ToUnit(_forcePerLengthUnit)));
       }
-      else
+      else {
         da.SetData(i++, null);
+      }
 
       if (analysisCaseResult.Global.ModalGeometricStiffness != 0) {
         IQuantity geostiff = new ForcePerLength(analysisCaseResult.Global.ModalGeometricStiffness,
           ForcePerLengthUnit.NewtonPerMeter);
         da.SetData(i++, new GH_UnitNumber(geostiff.ToUnit(_forcePerLengthUnit)));
       }
-      else
+      else {
         da.SetData(i++, null);
+      }
 
       da.SetData(i++,
         analysisCaseResult.Global.Frequency != 0
@@ -289,17 +293,21 @@ namespace GsaGH.Components {
             FrequencyUnit.Hertz))
           : null);
 
-      if (analysisCaseResult.Global.LoadFactor != 0)
+      if (analysisCaseResult.Global.LoadFactor != 0) {
         da.SetData(i++, analysisCaseResult.Global.LoadFactor);
-      else
+      }
+      else {
         da.SetData(i++, null);
+      }
 
       if (analysisCaseResult.Global.Frequency == 0
         && analysisCaseResult.Global.LoadFactor == 0
-        && analysisCaseResult.Global.ModalStiffness != 0)
+        && analysisCaseResult.Global.ModalStiffness != 0) {
         da.SetData(i, analysisCaseResult.Global.ModalStiffness);
-      else
+      }
+      else {
         da.SetData(i, null);
+      }
 
       PostHog.Result(result.Type, -1, "Global", "Performance");
     }

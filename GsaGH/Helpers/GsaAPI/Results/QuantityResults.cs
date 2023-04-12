@@ -63,8 +63,9 @@ namespace GsaGH.Helpers.GsaApi {
             ? new Angle(360, AngleUnit.Degree)
             : new Angle(-360, AngleUnit.Degree));
       }
-      else
+      else {
         x = new Angle(0, unit);
+      }
 
       IQuantity y;
       if (!double.IsNaN(result.YY)) {
@@ -74,8 +75,9 @@ namespace GsaGH.Helpers.GsaApi {
             ? new Angle(360, AngleUnit.Degree)
             : new Angle(-360, AngleUnit.Degree));
       }
-      else
+      else {
         y = new Angle(0, unit);
+      }
 
       IQuantity z;
       if (!double.IsNaN(result.ZZ)) {
@@ -85,8 +87,10 @@ namespace GsaGH.Helpers.GsaApi {
             ? new Angle(360, AngleUnit.Degree)
             : new Angle(-360, AngleUnit.Degree));
       }
-      else
+      else {
         z = new Angle(0, unit);
+      }
+
       double pyth = Math.Sqrt(Math.Pow(x.Value, 2) + Math.Pow(y.Value, 2) + Math.Pow(z.Value, 2));
       IQuantity xyz = double.IsInfinity(pyth)
         ? new Angle(360, AngleUnit.Degree)

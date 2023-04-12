@@ -24,11 +24,13 @@ namespace GsaGH.Components {
           "GWA",
       "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
-    protected override string HtmlHelp_Source()
-      => "GOTO:https://docs.oasys-software.com/structural/gsa/references/comautomation.html#gwacommand-function";
+    protected override string HtmlHelp_Source() {
+      return "GOTO:https://docs.oasys-software.com/structural/gsa/references/comautomation.html#gwacommand-function";
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(),
@@ -55,14 +57,17 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaModelGoo gooModel = null;
       GsaModel model = null;
-      if (da.GetData(0, ref gooModel))
+      if (da.GetData(0, ref gooModel)) {
         model = gooModel.Value;
+      }
+
       ComAuto m = GsaComHelper.GetGsaComModel(model);
 
       string gwa = "";
       var strings = new List<string>();
-      if (da.GetDataList(1, strings))
-        gwa = strings.Aggregate(gwa, (current, s) => current + (s + "\n"));
+      if (da.GetDataList(1, strings)) {
+        gwa = strings.Aggregate(gwa, (current, s) => current + s + "\n");
+      }
 
       da.SetData(1, m.GwaCommand(gwa));
 

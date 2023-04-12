@@ -26,8 +26,9 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProp3dGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaProp3d))
+      if (data.GetType() == typeof(GsaProp3d)) {
         return new GsaProp3dGoo((GsaProp3d)data);
+      }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         var prop = new GsaProp3d(id);

@@ -17,14 +17,20 @@
       Description = description;
     }
 
-    public GsaCombinationCase Duplicate() => new GsaCombinationCase(Id, Name, Description);
+    public GsaCombinationCase Duplicate() {
+      return new GsaCombinationCase(Id, Name, Description);
+    }
 
     public override string ToString() {
       string s = "";
-      if (Name != null)
+      if (Name != null) {
         s += " '" + Name.ToString() + "'";
-      if (Description != null)
+      }
+
+      if (Description != null) {
         s += " " + Description.ToString();
+      }
+
       return string.Join(" ",
           (Id > 0
             ? "ID:" + Id

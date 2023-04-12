@@ -176,8 +176,9 @@ namespace GsaGH.Helpers.Import {
         }
         gps.Plane = plane;
       }
-      else
+      else {
         return null;
+      }
 
       return gps;
     }

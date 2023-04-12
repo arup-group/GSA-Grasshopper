@@ -31,8 +31,9 @@ namespace GsaGH.Components {
               "OffsetEdit",
       "Modify GSA Offset or just get information about existing",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -42,7 +43,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => Update(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
           Enabled = true,
         };
@@ -54,16 +55,21 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override bool Read(GH_IReader reader) {
       _lengthUnit
@@ -96,7 +102,9 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
+    protected override void BeforeSolveInstance() {
+      Message = Length.GetAbbreviation(_lengthUnit);
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
@@ -124,9 +132,10 @@ namespace GsaGH.Components {
         "Z",
         "Z Offset",
         GH_ParamAccess.item);
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -158,32 +167,38 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var offset = new GsaOffset();
       var gsaoffset = new GsaOffset();
-      if (da.GetData(0, ref gsaoffset))
+      if (da.GetData(0, ref gsaoffset)) {
         offset = gsaoffset.Duplicate();
+      }
 
-      if (offset == null)
+      if (offset == null) {
         return;
+      }
 
       int inp = 1;
       if (Params.Input[inp]
           .SourceCount
-        != 0)
+        != 0) {
         offset.X1 = (Length)Input.UnitNumber(this, da, inp++, _lengthUnit, true);
+      }
 
       if (Params.Input[inp]
           .SourceCount
-        != 0)
+        != 0) {
         offset.X2 = (Length)Input.UnitNumber(this, da, inp++, _lengthUnit, true);
+      }
 
       if (Params.Input[inp]
           .SourceCount
-        != 0)
+        != 0) {
         offset.Y = (Length)Input.UnitNumber(this, da, inp++, _lengthUnit, true);
+      }
 
       if (Params.Input[inp]
           .SourceCount
-        != 0)
+        != 0) {
         offset.Z = (Length)Input.UnitNumber(this, da, inp, _lengthUnit, true);
+      }
 
       int outp = 0;
       da.SetData(outp++, new GsaOffsetGoo(offset));

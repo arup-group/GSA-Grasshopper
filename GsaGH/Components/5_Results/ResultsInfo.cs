@@ -26,15 +26,17 @@ namespace GsaGH.Components {
               "GetCases",
       "Get Analysis or Combination Case IDs from a GSA model with Results",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some results",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+                                                                                       "GSA Model",
+                                                                                       "GSA",
+                                                                                       "GSA model containing some results",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddTextParameter("Result Type", "T", "Result type", GH_ParamAccess.list);
@@ -51,20 +53,19 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new GsaModel();
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
-      if (ghTyp.Value is GsaModelGoo) {
-        var inModel = new GsaModel();
-        ghTyp.CastTo(ref inModel);
+      if (ghTyp.Value is GsaModelGoo modelGoo) {
         if (_modelGuid == new Guid()) {
-          if (inModel.Guid != _modelGuid) {
-            model = inModel;
+          if (modelGoo.Value.Guid != _modelGuid) {
+            model = modelGoo.Value;
             ClearData();
           }
         }
         else {
-          model = inModel;
+          model = modelGoo.Value; ;
           _modelGuid = model.Guid;
         }
       }

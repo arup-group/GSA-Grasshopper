@@ -109,9 +109,11 @@ namespace GsaGH.Components {
         "Set Element to Dummy",
         GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
+
       pManager.HideParameter(0);
       pManager.HideParameter(2);
     }
@@ -182,18 +184,23 @@ namespace GsaGH.Components {
       var gsaElement1d = new GsaElement1d();
       var elem = new GsaElement1d();
       if (da.GetData(0, ref gsaElement1d)) {
-        if (gsaElement1d == null)
+        if (gsaElement1d == null) {
           this.AddRuntimeWarning("Element1D input is null");
+        }
+
         elem = gsaElement1d.Duplicate();
       }
 
-      if (elem == null)
+      if (elem == null) {
         return;
+      }
 
       var ghId = new GH_Integer();
-      if (da.GetData(1, ref ghId))
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+      if (da.GetData(1, ref ghId)) {
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
           elem.Id = id;
+        }
+      }
 
       var ghLine = new GH_Line();
       if (da.GetData(2, ref ghLine)) {
@@ -206,74 +213,87 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
-        var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo)
-          ghTyp.CastTo(ref section);
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          elem.Section = sectionGoo.Value;
+        }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-            section = new GsaSection(idd);
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
+            elem.Section = new GsaSection(idd);
+          }
           else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
             return;
           }
         }
-
-        elem.Section = section;
       }
 
       var ghgrp = new GH_Integer();
-      if (da.GetData(4, ref ghgrp))
-        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
+      if (da.GetData(4, ref ghgrp)) {
+        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both)) {
           elem.Group = grp;
+        }
+      }
 
       var ghinteg = new GH_Integer();
-      if (da.GetData(5, ref ghinteg))
-        if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
+      if (da.GetData(5, ref ghinteg)) {
+        if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both)) {
           elem.Type = (ElementType)type;
+        }
+      }
 
       var offset = new GsaOffset();
-      if (da.GetData(6, ref offset))
+      if (da.GetData(6, ref offset)) {
         elem.Offset = offset;
+      }
 
       var start = new GsaBool6();
-      if (da.GetData(7, ref start))
+      if (da.GetData(7, ref start)) {
         elem.ReleaseStart = start;
+      }
 
       var end = new GsaBool6();
-      if (da.GetData(8, ref end))
+      if (da.GetData(8, ref end)) {
         elem.ReleaseEnd = end;
+      }
 
       var ghangle = new GH_Number();
-      if (da.GetData(9, ref ghangle))
-        if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
+      if (da.GetData(9, ref ghangle)) {
+        if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both)) {
           elem.OrientationAngle = new Angle(angle, AngleUnit.Degree);
+        }
+      }
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(10, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          elem.OrientationNode = node;
+        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+          elem.OrientationNode = nodeGoo.Value;
         }
-        else
+        else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
+        }
       }
 
       var ghnm = new GH_String();
-      if (da.GetData(11, ref ghnm))
-        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+      if (da.GetData(11, ref ghnm)) {
+        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both)) {
           elem.Name = name;
+        }
+      }
 
       var ghcol = new GH_Colour();
-      if (da.GetData(12, ref ghcol))
-        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
+      if (da.GetData(12, ref ghcol)) {
+        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both)) {
           elem.Colour = col;
+        }
+      }
 
       var ghdum = new GH_Boolean();
-      if (da.GetData(13, ref ghdum))
-        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
+      if (da.GetData(13, ref ghdum)) {
+        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both)) {
           elem.IsDummy = dum;
+        }
+      }
 
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);

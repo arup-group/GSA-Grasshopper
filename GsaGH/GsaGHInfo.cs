@@ -25,8 +25,9 @@ namespace GsaGH {
         ProcessModuleCollection dlls = Process.GetCurrentProcess()
           .Modules;
         foreach (ProcessModule module in dlls) {
-          if (module.ModuleName != "libiomp5md.dll")
+          if (module.ModuleName != "libiomp5md.dll") {
             continue;
+          }
 
           s_loaded = true;
           string gsaVersion = FileVersionInfo
@@ -34,8 +35,9 @@ namespace GsaGH {
             .FileVersion;
           if (FileVersionInfo.GetVersionInfo(module.FileName)
               .FileVersion
-            == gsaVersion)
+            == gsaVersion) {
             s_canAnalyse = true;
+          }
           else {
             s_canAnalyse = false;
             LoadedFromPath = module.FileName;
@@ -55,8 +57,9 @@ namespace GsaGH {
     private static string s_pluginPath;
 
     public override GH_LoadingInstruction PriorityLoad() {
-      if (TryFindPluginPath("GSA.gha") == "")
+      if (TryFindPluginPath("GSA.gha") == "") {
         return GH_LoadingInstruction.Abort;
+      }
 
       // ### Set system environment variables to allow user rights to read below dlls ###
       const string name = "PATH";
@@ -142,8 +145,9 @@ namespace GsaGH {
         RhinoApp.ExeVersion + ".0",
         GsaGhInfo.ProductName);
 
-      if (File.Exists(Path.Combine(path, keyword)))
+      if (File.Exists(Path.Combine(path, keyword))) {
         return Path.GetDirectoryName(path);
+      }
 
       string sDir
         = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -151,15 +155,20 @@ namespace GsaGH {
           "Libraries");
 
       string[] files = Directory.GetFiles(sDir, keyword, SearchOption.AllDirectories);
-      if (files.Length > 0)
+      if (files.Length > 0) {
         path = files[0].Replace(keyword, string.Empty);
+      }
 
-      if (File.Exists(Path.Combine(path, keyword)))
+      if (File.Exists(Path.Combine(path, keyword))) {
         return Path.GetDirectoryName(path);
+      }
+
       foreach (GH_AssemblyFolderInfo pluginFolder in Folders.AssemblyFolders) {
         files = Directory.GetFiles(pluginFolder.Folder, keyword, SearchOption.AllDirectories);
-        if (files.Length <= 0)
+        if (files.Length <= 0) {
           continue;
+        }
+
         path = files[0].Replace(keyword, string.Empty);
         return Path.GetDirectoryName(path);
       }
@@ -173,7 +182,7 @@ namespace GsaGH {
         + "Folders (including subfolder) that was searched:"
         + Environment.NewLine
         + sDir;
-      message = Folders.AssemblyFolders.Aggregate(message, (current, pluginFolder) => current + (Environment.NewLine + pluginFolder.Folder));
+      message = Folders.AssemblyFolders.Aggregate(message, (current, pluginFolder) => current + Environment.NewLine + pluginFolder.Folder);
 
       var exception = new Exception(message);
       var ghLoadingException

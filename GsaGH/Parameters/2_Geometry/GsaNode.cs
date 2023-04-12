@@ -146,16 +146,19 @@ namespace GsaGH.Parameters {
         Id = Id,
         _node = _node,
       };
-      if (cloneApiNode)
+      if (cloneApiNode) {
         dup.CloneApiObject();
+      }
+
       dup._plane = _plane;
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaNode Morph(SpaceMorph xmorph) {
-      if (Point == null)
+      if (Point == null) {
         return null;
+      }
 
       GsaNode node = Duplicate();
       node.Id = 0;
@@ -169,8 +172,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (ApiNode == null)
+      if (ApiNode == null) {
         return "Null";
+      }
+
       string idd = Id == 0
         ? ""
         : "ID:" + Id + " ";
@@ -239,8 +244,9 @@ namespace GsaGH.Parameters {
     }
 
     public GsaNode Transform(Transform xform) {
-      if (Point == null)
+      if (Point == null) {
         return null;
+      }
 
       GsaNode node = Duplicate(true);
       node.Id = 0;
@@ -253,7 +259,10 @@ namespace GsaGH.Parameters {
 
     public void UpdateUnit(LengthUnit unit) {
       if (unit == LengthUnit.Meter) // convert from meter to input unit if not meter
+{
         return;
+      }
+
       ApiNode.Position.X = new Length(ApiNode.Position.X, LengthUnit.Meter).As(unit);
       ApiNode.Position.Y = new Length(ApiNode.Position.Y, LengthUnit.Meter).As(unit);
       ApiNode.Position.Z = new Length(ApiNode.Position.Z, LengthUnit.Meter).As(unit);
@@ -282,7 +291,9 @@ namespace GsaGH.Parameters {
       };
 
       if ((Color)_node.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+{
         node.Colour = _node.Colour;
+      }
 
       _node = node;
     }
@@ -317,7 +328,9 @@ namespace GsaGH.Parameters {
 
       if ((Color)_node.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+{
         node.Colour = _node.Colour;
+      }
 
       return node;
     }
@@ -356,20 +369,23 @@ namespace GsaGH.Parameters {
         || _node.Restraint.Z
         || _node.Restraint.XX
         || _node.Restraint.YY
-        || _node.Restraint.ZZ)
+        || _node.Restraint.ZZ) {
         Display.PreviewRestraint(Restraint,
           _plane,
           Point,
           ref _previewSupportSymbol,
           ref _previewText);
+      }
       else {
         _previewSupportSymbol = null;
         _previewText = null;
       }
 
       if (_plane == null
-        || !(_plane != Plane.WorldXY & _plane != new Plane()))
+        || !(_plane != Plane.WorldXY & _plane != new Plane())) {
         return;
+      }
+
       Plane local = _plane.Clone();
       local.Origin = Point;
 

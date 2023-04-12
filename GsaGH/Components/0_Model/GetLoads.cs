@@ -30,8 +30,9 @@ namespace GsaGH.Components {
               "GetLoads",
       "Get Loads and Grid Planes/Surfaces from GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -66,12 +67,13 @@ namespace GsaGH.Components {
       _isInitialised = true;
     }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some loads",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+                                                                                       "GSA Model",
+                                                                                       "GSA",
+                                                                                       "GSA model containing some loads",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
@@ -121,8 +123,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
+      if (!da.GetData(0, ref gsaModel)) {
         return;
+      }
 
       Model model = gsaModel.Model;
 

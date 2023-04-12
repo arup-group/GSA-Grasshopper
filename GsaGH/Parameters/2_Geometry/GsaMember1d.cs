@@ -113,8 +113,8 @@ namespace GsaGH.Parameters {
         Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv
           = RhinoConversions.ConvertMem1dCrv(value);
         _crv = convertCrv.Item1;
-        _topo = convertCrv.Item2;
-        _topoType = convertCrv.Item3;
+        Topology = convertCrv.Item2;
+        TopologyType = convertCrv.Item3;
         UpdatePreview();
       }
     }
@@ -141,8 +141,8 @@ namespace GsaGH.Parameters {
       }
     }
     public GsaSection Section { get; set; } = new GsaSection();
-    public List<Point3d> Topology => _topo;
-    public List<string> TopologyType => _topoType;
+    public List<Point3d> Topology { get; private set; }
+    public List<string> TopologyType { get; private set; }
     public MemberType Type {
       get => ApiMember.Type;
       set {
@@ -168,9 +168,6 @@ namespace GsaGH.Parameters {
     private GsaNode _orientationNode;
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
-    private List<Point3d> _topo;
-    // list of topology points for visualisation /member1d/member2d
-    private List<string> _topoType;
 
     public GsaMember1d() { }
 
@@ -182,8 +179,8 @@ namespace GsaGH.Parameters {
       Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv
         = RhinoConversions.ConvertMem1dCrv(crv);
       _crv = convertCrv.Item1;
-      _topo = convertCrv.Item2;
-      _topoType = convertCrv.Item3;
+      Topology = convertCrv.Item2;
+      TopologyType = convertCrv.Item3;
 
       UpdatePreview();
     }
@@ -203,8 +200,8 @@ namespace GsaGH.Parameters {
       MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = id;
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
-      _topo = topology;
-      _topoType = topoType;
+      Topology = topology;
+      TopologyType = topoType;
       _rel1 = new GsaBool6(ApiMember.GetEndRelease(0)
         .Releases);
       _rel2 = new GsaBool6(ApiMember.GetEndRelease(1)
@@ -222,18 +219,26 @@ namespace GsaGH.Parameters {
         ApiMember = ApiMember,
         LocalAxes = LocalAxes,
       };
-      if (cloneApiMember)
+      if (cloneApiMember) {
         dup.CloneApiObject();
+      }
+
       dup._crv = (PolyCurve)_crv.DuplicateShallow();
-      if (_rel1 != null)
+      if (_rel1 != null) {
         dup._rel1 = _rel1.Duplicate();
-      if (_rel2 != null)
+      }
+
+      if (_rel2 != null) {
         dup._rel2 = _rel2.Duplicate();
+      }
+
       dup.Section = Section.Duplicate();
-      dup._topo = _topo;
-      dup._topoType = _topoType;
-      if (_orientationNode != null)
+      dup.Topology = Topology;
+      dup.TopologyType = TopologyType;
+      if (_orientationNode != null) {
         dup._orientationNode = _orientationNode.Duplicate(cloneApiMember);
+      }
+
       dup.UpdatePreview();
       return dup;
     }
@@ -243,10 +248,12 @@ namespace GsaGH.Parameters {
       dup.Id = 0;
       dup.LocalAxes = null;
 
-      var pts = _topo.ToList();
-      for (int i = 0; i < pts.Count; i++)
+      var pts = Topology.ToList();
+      for (int i = 0; i < pts.Count; i++) {
         pts[i] = xmorph.MorphPoint(pts[i]);
-      dup._topo = pts;
+      }
+
+      dup.Topology = pts;
 
       if (_crv != null) {
         PolyCurve crv = _crv.DuplicatePolyCurve();
@@ -278,10 +285,10 @@ namespace GsaGH.Parameters {
       dup.Id = 0;
       dup.LocalAxes = null;
 
-      var pts = _topo.ToList();
+      var pts = Topology.ToList();
       var xpts = new Point3dList(pts);
       xpts.Transform(xform);
-      dup._topo = xpts.ToList();
+      dup.Topology = xpts.ToList();
 
       if (_crv != null) {
         PolyCurve crv = _crv.DuplicatePolyCurve();
@@ -316,8 +323,9 @@ namespace GsaGH.Parameters {
         Type1D = ApiMember.Type1D,
         AutomaticOffset = ApiMember.AutomaticOffset,
       };
-      if (ApiMember.Topology != string.Empty)
+      if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
+      }
 
       mem.MeshSize = MeshSize;
 
@@ -326,21 +334,27 @@ namespace GsaGH.Parameters {
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+{
         mem.Colour = ApiMember.Colour;
+      }
 
       return mem;
     }
 
     internal void UpdateCurveFromTopology() {
-      if (_crv == null)
+      if (_crv == null) {
         return;
-      _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(_topo, _topoType);
+      }
+
+      _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(Topology, TopologyType);
     }
 
     // list of polyline curve type (arch or line) for member1d/2d
     private void UpdatePreview() {
-      if (!(_rel1 != null & _rel2 != null))
+      if (!(_rel1 != null & _rel2 != null)) {
         return;
+      }
+
       if (_rel1.X
         || _rel1.Y
         || _rel1.Z
@@ -360,8 +374,9 @@ namespace GsaGH.Parameters {
         _previewGreenLines = previewCurves.Item1;
         _previewRedLines = previewCurves.Item2;
       }
-      else
+      else {
         _previewGreenLines = null;
+      }
     }
   }
 }

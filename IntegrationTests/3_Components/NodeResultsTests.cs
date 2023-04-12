@@ -113,10 +113,11 @@ namespace IntegrationTests.Components {
         3026,
         3027,
       };
-      for (int i = 0; i < expected.Count; i++)
+      for (int i = 0; i < expected.Count; i++) {
         Assert.Equal(expected[i],
           output1[i]
             .Value);
+      }
     }
 
     [Theory]

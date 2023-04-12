@@ -21,8 +21,9 @@ namespace GsaGH.Components {
           "Bool6Edit",
       "Modify GSA Bool6 or just get information about existing",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaBool6Parameter(),
@@ -38,9 +39,10 @@ namespace GsaGH.Components {
       pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
       pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
       pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -60,28 +62,40 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var myBool = new GsaBool6();
       var gsaBool = new GsaBool6();
-      if (da.GetData(0, ref gsaBool))
+      if (da.GetData(0, ref gsaBool)) {
         myBool = gsaBool.Duplicate();
+      }
 
       if (myBool != null) {
         bool x = new bool();
-        if (da.GetData(1, ref x))
+        if (da.GetData(1, ref x)) {
           myBool.X = x;
+        }
+
         bool y = new bool();
-        if (da.GetData(2, ref y))
+        if (da.GetData(2, ref y)) {
           myBool.Y = y;
+        }
+
         bool z = new bool();
-        if (da.GetData(3, ref z))
+        if (da.GetData(3, ref z)) {
           myBool.Z = z;
+        }
+
         bool xx = new bool();
-        if (da.GetData(4, ref xx))
+        if (da.GetData(4, ref xx)) {
           myBool.Xx = xx;
+        }
+
         bool yy = new bool();
-        if (da.GetData(5, ref yy))
+        if (da.GetData(5, ref yy)) {
           myBool.Yy = yy;
+        }
+
         bool zz = new bool();
-        if (da.GetData(6, ref zz))
+        if (da.GetData(6, ref zz)) {
           myBool.Zz = zz;
+        }
 
         da.SetData(0, new GsaBool6Goo(myBool));
         da.SetData(1, myBool.X);
@@ -91,8 +105,9 @@ namespace GsaGH.Components {
         da.SetData(5, myBool.Yy);
         da.SetData(6, myBool.Zz);
       }
-      else
+      else {
         this.AddRuntimeError("Bool6 is Null");
+      }
     }
   }
 }

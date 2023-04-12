@@ -36,8 +36,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat2()) { }
 
     public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
+      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData")) {
         base.Read(reader);
+      }
       else {
         BaseReader.Read(reader, this);
         _isInitialised = true;
@@ -58,9 +59,10 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void VariableParameterMaintenance()
-      => Params.Input[4]
-        .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    public override void VariableParameterMaintenance() {
+      Params.Input[4]
+                                                                .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
@@ -111,50 +113,58 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMember2dParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMember2dParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
-      if (!da.GetData(0, ref ghbrep))
+      if (!da.GetData(0, ref ghbrep)) {
         return;
+      }
 
-      if (ghbrep == null)
+      if (ghbrep == null) {
         this.AddRuntimeWarning("Brep input is null");
+      }
+
       var brep = new Brep();
-      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
+      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both)) {
         return;
+      }
 
       var point3ds = new List<Point3d>();
       var ghpts = new List<GH_Point>();
-      if (da.GetDataList(1, ghpts))
+      if (da.GetDataList(1, ghpts)) {
         foreach (GH_Point point in ghpts) {
           var pt = new Point3d();
-          if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both))
+          if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both)) {
             point3ds.Add(pt);
+          }
         }
+      }
 
       var curves = new List<Curve>();
       var ghCurves = new List<GH_Curve>();
-      if (da.GetDataList(2, ghCurves))
+      if (da.GetDataList(2, ghCurves)) {
         foreach (GH_Curve curve in ghCurves) {
           Curve crv = null;
-          if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both))
+          if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both)) {
             curves.Add(crv);
+          }
         }
+      }
 
       var mem = new GsaMember2d(brep, curves, point3ds);
 
       var ghTyp = new GH_ObjectWrapper();
-      var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo) {
-          ghTyp.CastTo(ref prop2d);
-          mem.Property = prop2d;
+        if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
+          mem.Property = prop2dGoo.Value;
         }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             mem.Property = new GsaProp2d(idd);
+          }
           else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
@@ -165,8 +175,9 @@ namespace GsaGH.Components {
 
       if (Params.Input[4]
           .SourceCount
-        > 0)
+        > 0) {
         mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
+      }
 
       da.SetData(0, new GsaMember2dGoo(mem));
     }

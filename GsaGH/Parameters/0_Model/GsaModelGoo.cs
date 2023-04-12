@@ -14,6 +14,8 @@ namespace GsaGH.Parameters {
 
     public GsaModelGoo(GsaModel item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaModelGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaModelGoo(Value);
+    }
   }
 }

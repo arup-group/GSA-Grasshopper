@@ -132,7 +132,8 @@ namespace IntegrationTests.Components {
     }
 
     [Fact]
-    public void NoRuntimeErrorsTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorsTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    }
   }
 }

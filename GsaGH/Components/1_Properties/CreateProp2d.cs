@@ -52,8 +52,9 @@ namespace GsaGH.Components {
                               "Prop2d",
       "Create GSA 2D Property",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -64,8 +65,9 @@ namespace GsaGH.Components {
         UpdateDropDownItems(mode);
       }
 
-      if (i != 0 && mode != Prop2dType.LoadPanel)
+      if (i != 0 && mode != Prop2dType.LoadPanel) {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      }
 
       if (i == 1 && mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = j;
@@ -80,8 +82,10 @@ namespace GsaGH.Components {
       switch (_mode) {
         case Prop2dType.LoadPanel:
           if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
             SetReferenceEdgeInputAt(0);
+          }
+
           return;
 
         case Prop2dType.Fabric:
@@ -124,8 +128,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaMaterialParameter());
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaProp2dParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaProp2dParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProp2d();
@@ -158,8 +163,9 @@ namespace GsaGH.Components {
               prop.Material = material ?? new GsaMaterial();
             }
             else {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+              if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
                 prop.Material = new GsaMaterial(idd);
+              }
               else {
                 this.AddRuntimeError(
                   "Unable to convert PB input to a Section Property of reference integer");
@@ -167,18 +173,21 @@ namespace GsaGH.Components {
               }
             }
           }
-          else
+          else {
             prop.Material = new GsaMaterial(2);
+          }
         }
-        else
+        else {
           prop.Material = new GsaMaterial(8);
+        }
       }
       else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (prop.SupportType != SupportType.Auto) {
           int referenceEdge = 0;
-          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4)
+          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4) {
             prop.ReferenceEdge = referenceEdge;
+          }
           else {
             this.AddRuntimeError("Reference edge invalid or can't take it from the model");
           }
@@ -191,11 +200,13 @@ namespace GsaGH.Components {
     protected override void UpdateUIFromSelectedItems() {
       Prop2dType mode = GetModeBy(_selectedItems[0]);
 
-      if (mode == Prop2dType.LoadPanel)
+      if (mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = _supportDropDown.ToList()
           .FindIndex(x => x.Value == _selectedItems[1]);
-      else if (mode != Prop2dType.Fabric)
+      }
+      else if (mode != Prop2dType.Fabric) {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+      }
 
       UpdateDropDownItems(mode);
       UpdateParameters(mode);
@@ -221,22 +232,27 @@ namespace GsaGH.Components {
     }
 
     private Prop2dType GetModeBy(string name) {
-      Prop2dType mode = Prop2dType.Shell;
-      foreach (KeyValuePair<Prop2dType, string> item in _dropdownTopLevel)
+      foreach (KeyValuePair<Prop2dType, string> item in _dropdownTopLevel) {
         if (item.Value.Equals(name)) {
-          mode = item.Key;
-          return mode;
+          return item.Key;
         }
+      }
+      
       throw new Exception("Unable to convert " + name + " to Prop2d Type");
     }
 
     private void ResetDropdownMenus() {
-      while (_spacerDescriptions.Count > 1)
+      while (_spacerDescriptions.Count > 1) {
         _spacerDescriptions.RemoveAt(_spacerDescriptions.Count - 1);
-      while (_dropDownItems.Count > 1)
+      }
+
+      while (_dropDownItems.Count > 1) {
         _dropDownItems.RemoveAt(_dropDownItems.Count - 1);
-      while (_selectedItems.Count > 1)
+      }
+
+      while (_selectedItems.Count > 1) {
         _selectedItems.RemoveAt(_selectedItems.Count - 1);
+      }
     }
 
     private void SetInputProperties(
@@ -258,9 +274,13 @@ namespace GsaGH.Components {
         .Optional = optional;
     }
 
-    private void SetMaterialInputAt(int index) => SetInputProperties(index, "Mat", "Material", "GSA Material");
+    private void SetMaterialInputAt(int index) {
+      SetInputProperties(index, "Mat", "Material", "GSA Material");
+    }
 
-    private void SetReferenceEdgeInputAt(int index) => SetInputProperties(index, "RE", "Reference edge", "Reference edge for automatic support type");
+    private void SetReferenceEdgeInputAt(int index) {
+      SetInputProperties(index, "RE", "Reference edge", "Reference edge for automatic support type");
+    }
 
     private void UpdateDropDownItems(Prop2dType mode) {
       ResetDropdownMenus();
@@ -282,14 +302,16 @@ namespace GsaGH.Components {
     }
 
     private void UpdateParameters(Prop2dType mode) {
-      if (_mode == mode && mode != Prop2dType.LoadPanel)
+      if (_mode == mode && mode != Prop2dType.LoadPanel) {
         return;
+      }
 
       _dropdownTopLevel.TryGetValue(mode, out string eventName);
       RecordUndoEvent($"{eventName} Parameters");
 
-      while (Params.Input.Count > 0)
+      while (Params.Input.Count > 0) {
         Params.UnregisterInputParameter(Params.Input[0], true);
+      }
 
       switch (mode) {
         case Prop2dType.Shell:
@@ -306,8 +328,10 @@ namespace GsaGH.Components {
 
         case Prop2dType.LoadPanel:
           if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
             Params.RegisterInputParam(new Param_Integer());
+          }
+
           break;
       }
 

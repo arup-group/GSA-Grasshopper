@@ -76,15 +76,17 @@ namespace GsaGH.Components {
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
       base.DrawViewportMeshes(args);
 
-      if (_element2ds == null)
+      if (_element2ds == null) {
         return;
+      }
 
       foreach (GsaElement2dGoo element in _element2ds) {
         if (element?.Value.Mesh == null
           || element.Value.ApiElements[0]
             .ParentMember.Member
-          > 0)
+          > 0) {
           continue;
+        }
 
         args.Display.DrawMeshShaded(element.Value.Mesh,
           Attributes.Selected
@@ -96,36 +98,44 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      if (_element2ds == null)
+      if (_element2ds == null) {
         return;
+      }
 
       foreach (GsaElement2dGoo element in _element2ds) {
-        if (element == null || element.Value.Mesh == null)
+        if (element == null || element.Value.Mesh == null) {
           continue;
+        }
 
         if (element.Value.ApiElements[0]
             .ParentMember.Member
           > 0) // only draw mesh shading if no parent member exist.
         {
-          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
             if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i)
                 .Length
-              > 1)
+              > 1) {
               args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
                 Color.FromArgb(255, 229, 229, 229),
                 1);
+            }
+          }
         }
         else {
-          if (Attributes.Selected)
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+          if (Attributes.Selected) {
+            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
               args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
                 Colours.Element2dEdgeSelected,
                 2);
-          else
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+            }
+          }
+          else {
+            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
               args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
                 Colours.Element2dEdge,
                 1);
+            }
+          }
         }
       }
     }
@@ -137,8 +147,9 @@ namespace GsaGH.Components {
         double tol = reader.GetDouble("Tolerance");
         _tolerance = new Length(tol, _lengthUnit);
       }
-      else
+      else {
         _tolerance = DefaultUnits.Tolerance;
+      }
 
       UpdateMessage();
       return flag;
@@ -243,7 +254,7 @@ namespace GsaGH.Components {
       var ghTypes = new List<GH_ObjectWrapper>();
 
       var inNodes = new List<GsaNode>();
-      if (da.GetDataList(0, ghTypes))
+      if (da.GetDataList(0, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -263,9 +274,10 @@ namespace GsaGH.Components {
             return;
           }
         }
+      }
 
       var inMem1ds = new List<GsaMember1d>();
-      if (da.GetDataList(1, ghTypes))
+      if (da.GetDataList(1, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -285,10 +297,11 @@ namespace GsaGH.Components {
             return;
           }
         }
+      }
 
       ghTypes = new List<GH_ObjectWrapper>();
       var inMem2ds = new List<GsaMember2d>();
-      if (da.GetDataList(2, ghTypes))
+      if (da.GetDataList(2, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -308,10 +321,11 @@ namespace GsaGH.Components {
             return;
           }
         }
+      }
 
       ghTypes = new List<GH_ObjectWrapper>();
       var inMem3ds = new List<GsaMember3d>();
-      if (da.GetDataList(3, ghTypes))
+      if (da.GetDataList(3, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -331,6 +345,7 @@ namespace GsaGH.Components {
             return;
           }
         }
+      }
 
       // manually add a warning if no input is set, as all three inputs are optional
       if ((inMem1ds.Count < 1) & (inMem2ds.Count < 1) & (inMem3ds.Count < 1)) {
@@ -403,7 +418,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "")
+      if (_toleranceTxt != "") {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         }
@@ -411,17 +426,21 @@ namespace GsaGH.Components {
           MessageBox.Show(e.Message);
           return;
         }
+      }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
       Message = "Tol: "
         + _tolerance.ToString()
           .Replace(" ", string.Empty);
-      if (_tolerance.Meters < 0.001)
+      if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (_tolerance.Meters > 0.25)
+      }
+
+      if (_tolerance.Meters > 0.25) {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
+      }
     }
   }
 }

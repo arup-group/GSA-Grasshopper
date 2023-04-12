@@ -31,15 +31,17 @@ namespace GsaGH.Parameters {
     public List<Color> Colours {
       get {
         var cols = new List<Color>();
-        for (int i = 0; i < _elements.Count; i++) {
-          if ((Color)_elements[i].Colour == Color.FromArgb(0, 0, 0))
-            _elements[i]
+        for (int i = 0; i < ApiElements.Count; i++) {
+          if ((Color)ApiElements[i].Colour == Color.FromArgb(0, 0, 0)) {
+            ApiElements[i]
               .Colour = Color.FromArgb(50, 150, 150, 150);
-          cols.Add((Color)_elements[i]
+          }
+
+          cols.Add((Color)ApiElements[i]
             .Colour);
 
           NgonMesh.VertexColors.SetColor(i,
-            (Color)_elements[i]
+            (Color)ApiElements[i]
               .Colour);
         }
 
@@ -56,34 +58,30 @@ namespace GsaGH.Parameters {
           null,
           value);
     }
-    public int Count => _elements.Count;
+    public int Count => ApiElements.Count;
     public Mesh DisplayMesh {
       get {
-        if (_displayMesh == null)
+        if (_displayMesh == null) {
           UpdatePreview();
+        }
+
         return _displayMesh;
       }
     }
-    public List<List<int>> FaceInt {
-      get => _faceInt;
-      set => _faceInt = value;
-    }
+    public List<List<int>> FaceInt { get; set; }
     public List<int> Groups {
       get => (from element
-            in _elements
+            in ApiElements
               where element != null
               select element.Group)
         .ToList();
       set => CloneApiElements(ApiObjectMember.Group, value);
     }
     public Guid Guid => _guid;
-    public List<int> Ids {
-      get => _ids;
-      set => _ids = value;
-    }
+    public List<int> Ids { get; set; } = new List<int>();
     public List<bool> IsDummies {
       get => (from element
-              in _elements
+              in ApiElements
               where element != null
               select element.IsDummy)
         .ToList();
@@ -91,16 +89,16 @@ namespace GsaGH.Parameters {
     }
     public List<string> Names {
       get => (from element
-              in _elements
+              in ApiElements
               where element != null
               select element.Name)
         .ToList();
       set => CloneApiElements(ApiObjectMember.Dummy, null, null, value);
     }
-    public Mesh NgonMesh => _mesh;
+    public Mesh NgonMesh { get; private set; } = new Mesh();
     public List<GsaOffset> Offsets {
       get => (from element
-              in _elements
+              in ApiElements
               where element != null
               select new GsaOffset(element.Offset.X1,
         element.Offset.X2,
@@ -117,7 +115,7 @@ namespace GsaGH.Parameters {
     }
     public List<double> OrientationAngles {
       get => (from element
-            in _elements
+            in ApiElements
               where element != null
               select element.OrientationAngle)
         .ToList();
@@ -126,24 +124,22 @@ namespace GsaGH.Parameters {
     public List<int> ParentMembers {
       get {
         var pMems = new List<int>();
-        foreach (Element element in _elements)
+        foreach (Element element in ApiElements) {
           try {
             pMems.Add(element.ParentMember.Member);
           }
           catch (Exception) {
             pMems.Add(0);
           }
+        }
 
         return pMems;
       }
     }
-    public List<GsaProp3d> Properties {
-      get => _props;
-      set => _props = value;
-    }
+    public List<GsaProp3d> Properties { get; set; } = new List<GsaProp3d>();
     public List<int> PropertyIDs {
       get => (from element
-              in _elements
+              in ApiElements
               where element != null
               select element.Property)
         .ToList();
@@ -156,28 +152,25 @@ namespace GsaGH.Parameters {
           null,
           value);
     }
-    public List<List<int>> TopoInt {
-      get => _topoInt;
-      set => _topoInt = value;
-    }
-    public List<Point3d> Topology {
-      get => _topo;
-      set => _topo = value;
-    }
+    public List<List<int>> TopoInt { get; set; }
+    public List<Point3d> Topology { get; set; }
     public DataTree<int> TopologyIDs {
       get {
         var topos = new DataTree<int>();
-        for (int i = 0; i < _elements.Count; i++)
-          if (_elements[i] != null)
-            topos.AddRange(_elements[i]
+        for (int i = 0; i < ApiElements.Count; i++) {
+          if (ApiElements[i] != null) {
+            topos.AddRange(ApiElements[i]
                 .Topology.ToList(),
               new GH_Path(i));
+          }
+        }
+
         return topos;
       }
     }
     public List<ElementType> Types {
       get => (from element
-              in _elements
+              in ApiElements
               where element != null
               select element.Type)
         .ToList();
@@ -191,55 +184,46 @@ namespace GsaGH.Parameters {
           null,
           value);
     }
-    internal List<Element> ApiElements {
-      get => _elements;
-      set => _elements = value;
-    }
+    internal List<Element> ApiElements { get; set; } = new List<Element>();
     private Mesh _displayMesh;
-    private List<Element> _elements = new List<Element>();
-    private List<List<int>> _faceInt;
     private Guid _guid = Guid.NewGuid();
-    private List<int> _ids = new List<int>();
-    private Mesh _mesh = new Mesh();
-    private List<GsaProp3d> _props = new List<GsaProp3d>();
-    // list of face integers included in each solid mesh referring to the mesh face list
-    private List<Point3d> _topo;
-    private List<List<int>> _topoInt;
 
     public GsaElement3d() {
     }
 
     public GsaElement3d(Mesh mesh) {
-      _mesh = mesh;
+      NgonMesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
-      _elements = convertMesh.Item1;
-      _topo = convertMesh.Item2;
-      _topoInt = convertMesh.Item3;
-      _faceInt = convertMesh.Item4;
+      ApiElements = convertMesh.Item1;
+      Topology = convertMesh.Item2;
+      TopoInt = convertMesh.Item3;
+      FaceInt = convertMesh.Item4;
 
-      _ids = new List<int>(new int[_mesh.Faces.Count]);
+      Ids = new List<int>(new int[NgonMesh.Faces.Count]);
 
-      _props = new List<GsaProp3d>();
-      for (int i = 0; i < _mesh.Faces.Count; i++)
-        _props.Add(new GsaProp3d());
+      Properties = new List<GsaProp3d>();
+      for (int i = 0; i < NgonMesh.Faces.Count; i++) {
+        Properties.Add(new GsaProp3d());
+      }
+
       UpdatePreview();
     }
 
     internal GsaElement3d(Element element, int id, Mesh mesh, GsaProp3d prop3d) {
-      _elements = new List<Element>() {
+      ApiElements = new List<Element>() {
         element,
       };
-      _mesh = mesh;
+      NgonMesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
-      _topo = convertMesh.Item2;
-      _topoInt = convertMesh.Item3;
-      _faceInt = convertMesh.Item4;
-      _ids = new List<int>() {
+      Topology = convertMesh.Item2;
+      TopoInt = convertMesh.Item3;
+      FaceInt = convertMesh.Item4;
+      Ids = new List<int>() {
         id,
       };
-      _props = new List<GsaProp3d>() {
+      Properties = new List<GsaProp3d>() {
         prop3d,
       };
       UpdatePreview();
@@ -249,38 +233,41 @@ namespace GsaGH.Parameters {
       ConcurrentDictionary<int, Element> elements,
       Mesh mesh,
       List<GsaProp3d> prop3ds) {
-      _elements = elements.Values.ToList();
-      _mesh = mesh;
+      ApiElements = elements.Values.ToList();
+      NgonMesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
-      _topo = convertMesh.Item2;
-      _topoInt = convertMesh.Item3;
-      _faceInt = convertMesh.Item4;
-      _ids = elements.Keys.ToList();
-      _props = prop3ds;
+      Topology = convertMesh.Item2;
+      TopoInt = convertMesh.Item3;
+      FaceInt = convertMesh.Item4;
+      Ids = elements.Keys.ToList();
+      Properties = prop3ds;
       UpdatePreview();
     }
 
     public GsaElement3d Duplicate(bool cloneApiElements = false) {
       var dup = new GsaElement3d {
-        _mesh = (Mesh)_mesh.DuplicateShallow(),
+        NgonMesh = (Mesh)NgonMesh.DuplicateShallow(),
         _guid = new Guid(_guid.ToString()),
-        _topo = _topo,
-        _topoInt = _topoInt,
-        _faceInt = _faceInt,
-        _elements = _elements,
+        Topology = Topology,
+        TopoInt = TopoInt,
+        FaceInt = FaceInt,
+        ApiElements = ApiElements,
       };
-      if (cloneApiElements)
+      if (cloneApiElements) {
         dup.CloneApiElements();
-      dup._ids = _ids.ToList();
-      dup._props = _props.ConvertAll(x => x.Duplicate());
+      }
+
+      dup.Ids = Ids.ToList();
+      dup.Properties = Properties.ConvertAll(x => x.Duplicate());
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaElement3d Morph(SpaceMorph xmorph) {
-      if (NgonMesh == null)
+      if (NgonMesh == null) {
         return null;
+      }
 
       GsaElement3d dup = Duplicate(true);
       dup.Ids = new List<int>(new int[dup.NgonMesh.Faces.Count]);
@@ -292,8 +279,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (!(_mesh.Ngons.Count > 0))
+      if (!(NgonMesh.Ngons.Count > 0)) {
         return "Null";
+      }
+
       var types = Types.Select(t => Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == t)
           .Key)
         .ToList();
@@ -305,8 +294,9 @@ namespace GsaGH.Parameters {
     }
 
     public GsaElement3d Transform(Transform xform) {
-      if (NgonMesh == null)
+      if (NgonMesh == null) {
         return null;
+      }
 
       GsaElement3d dup = Duplicate(true);
       dup.Ids = new List<int>(new int[dup.NgonMesh.Faces.Count]);
@@ -324,13 +314,13 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     public GsaElement3d UpdateGeometry(Mesh updatedMesh) {
       GsaElement3d dup = Duplicate(true);
-      _mesh = updatedMesh;
+      NgonMesh = updatedMesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(_mesh, 0);
-      _elements = convertMesh.Item1;
-      _topo = convertMesh.Item2;
-      _topoInt = convertMesh.Item3;
-      _faceInt = convertMesh.Item4;
+        = RhinoConversions.ConvertMeshToElem3d(NgonMesh, 0);
+      ApiElements = convertMesh.Item1;
+      Topology = convertMesh.Item2;
+      TopoInt = convertMesh.Item3;
+      FaceInt = convertMesh.Item4;
       return dup;
     }
 
@@ -341,25 +331,25 @@ namespace GsaGH.Parameters {
 
     internal Element GetApiObjectClone(int i) {
       var dup = new Element() {
-        Group = _elements[i]
+        Group = ApiElements[i]
           .Group,
-        IsDummy = _elements[i]
+        IsDummy = ApiElements[i]
           .IsDummy,
-        Name = _elements[i]
+        Name = ApiElements[i]
           .Name.ToString(),
-        OrientationNode = _elements[i]
+        OrientationNode = ApiElements[i]
           .OrientationNode,
-        OrientationAngle = _elements[i]
+        OrientationAngle = ApiElements[i]
           .OrientationAngle,
-        Offset = _elements[i]
+        Offset = ApiElements[i]
           .Offset,
-        ParentMember = _elements[i]
+        ParentMember = ApiElements[i]
           .ParentMember,
-        Property = _elements[i]
+        Property = ApiElements[i]
           .Property,
-        Type = _elements[i]
+        Type = ApiElements[i]
           .Type,
-        Topology = new ReadOnlyCollection<int>(_elements[i]
+        Topology = new ReadOnlyCollection<int>(ApiElements[i]
         .Topology.ToList()
       )
       };
@@ -398,32 +388,33 @@ namespace GsaGH.Parameters {
       IList<ElementType> typ = null,
       IList<Color> col = null) {
       var elems = new List<Element>();
-      for (int i = 0; i < _elements.Count; i++) {
+      for (int i = 0; i < ApiElements.Count; i++) {
         elems.Add(new Element() {
-          Group = _elements[i]
+          Group = ApiElements[i]
             .Group,
-          IsDummy = _elements[i]
+          IsDummy = ApiElements[i]
             .IsDummy,
-          Name = _elements[i]
+          Name = ApiElements[i]
             .Name.ToString(),
-          OrientationNode = _elements[i]
+          OrientationNode = ApiElements[i]
             .OrientationNode,
-          OrientationAngle = _elements[i]
+          OrientationAngle = ApiElements[i]
             .OrientationAngle,
-          Offset = _elements[i]
+          Offset = ApiElements[i]
             .Offset,
-          ParentMember = _elements[i]
+          ParentMember = ApiElements[i]
             .ParentMember,
-          Property = _elements[i]
+          Property = ApiElements[i]
             .Property,
-          Topology = new ReadOnlyCollection<int>(_elements[i]
+          Topology = new ReadOnlyCollection<int>(ApiElements[i]
             .Topology.ToList()),
-          Type = _elements[i]
+          Type = ApiElements[i]
             .Type,
         });
 
-        if (memType == ApiObjectMember.All)
+        if (memType == ApiObjectMember.All) {
           continue;
+        }
 
         switch (memType) {
           case ApiObjectMember.Group:
@@ -483,14 +474,14 @@ namespace GsaGH.Parameters {
               ? col[i]
               : col.Last();
 
-            _mesh.VertexColors.SetColor(i,
+            NgonMesh.VertexColors.SetColor(i,
               (Color)elems[i]
                 .Colour);
             break;
         }
       }
 
-      _elements = elems;
+      ApiElements = elems;
     }
   }
 }

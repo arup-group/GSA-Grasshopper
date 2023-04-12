@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestCreateSection() {
       string profile = "STD CHS 200 10";
-      double myarea = Math.PI / 4 * Math.Pow(200, 2) - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2);
+      double myarea = (Math.PI / 4 * Math.Pow(200, 2)) - (Math.PI / 4 * Math.Pow(200 - (2 * 10), 2));
       var areaExpected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       var sect = new GsaSection(profile);

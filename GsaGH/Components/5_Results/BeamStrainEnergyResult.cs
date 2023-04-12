@@ -44,12 +44,15 @@ namespace GsaGH.Components {
                           "StrainEnergy",
       "Element1D Strain Energy Density result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
     public override void CreateAttributes() {
-      if (!_isInitialised)
+      if (!_isInitialised) {
         InitialiseDropdowns();
+      }
+
       m_attributes = new DropDownCheckBoxesComponentAttributes(this,
         SetSelected,
         _dropDownItems,
@@ -84,8 +87,9 @@ namespace GsaGH.Components {
       Params.Output[0]
         .Name = "Strain energy density [" + unitAbbreviation + "]";
 
-      if (_average)
+      if (_average) {
         return;
+      }
 
       Params.Input[2]
         .Name = "Intermediate Points";
@@ -111,7 +115,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Energy)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Energy));
       _selectedItems.Add(Energy.GetAbbreviation(_energyUnit));
 
       _isInitialised = true;
@@ -157,27 +161,33 @@ namespace GsaGH.Components {
 
       string elementlist = "All";
       var ghType = new GH_String();
-      if (da.GetData(1, ref ghType))
+      if (da.GetData(1, ref ghType)) {
         GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
+      }
 
-      if (elementlist.ToLower() == "all" || elementlist == "")
+      if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
+      }
 
       int positionsCount = 3;
       if (!_average) {
         var ghDivisions = new GH_Integer();
-        if (da.GetData(2, ref ghDivisions))
+        if (da.GetData(2, ref ghDivisions)) {
           GH_Convert.ToInt32(ghDivisions, out positionsCount, GH_Conversion.Both);
-        else
+        }
+        else {
           positionsCount = 3;
+        }
+
         positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
       }
 
       var outTransX = new DataTree<GH_UnitNumber>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes))
+      if (!da.GetDataList(0, ghTypes)) {
         return;
+      }
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
@@ -202,9 +212,10 @@ namespace GsaGH.Components {
           ?? new List<int>() {
             1,
           };
-        if (permutations.Count == 1 && permutations[0] == -1)
+        if (permutations.Count == 1 && permutations[0] == -1) {
           permutations = Enumerable.Range(1, vals.Count)
             .ToList();
+        }
 
         foreach (int perm in permutations) {
           if (vals[perm - 1]
@@ -222,8 +233,9 @@ namespace GsaGH.Components {
             .XyzResults) {
             int elementId = kvp.Key;
             ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-            if (res.Count == 0)
+            if (res.Count == 0) {
               continue;
+            }
 
             var path = new GH_Path(result.CaseId,
               result.SelectedPermutationIds == null
@@ -250,12 +262,15 @@ namespace GsaGH.Components {
 
     private void UpdateInputs() {
       RecordUndoEvent("Toggled Average");
-      if (_average)
-        while (Params.Input.Count > 2)
+      if (_average) {
+        while (Params.Input.Count > 2) {
           Params.UnregisterInputParameter(Params.Input[2], true);
+        }
+      }
       else {
-        if (Params.Input.Count < 3)
+        if (Params.Input.Count < 3) {
           Params.RegisterInputParam(new Param_Integer());
+        }
       }
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

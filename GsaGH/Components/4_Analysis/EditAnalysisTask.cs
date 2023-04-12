@@ -24,8 +24,9 @@ namespace GsaGH.Components {
           "EditTask",
       "Modify GSA Analysis Tasks",
       CategoryName.Name(),
-      SubCategoryName.Cat4())
-      => Hidden = true;
+      SubCategoryName.Cat4()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaAnalysisTaskParameter(),
@@ -38,9 +39,10 @@ namespace GsaGH.Components {
         GsaAnalysisCaseGoo.NickName,
         "Add list of " + GsaAnalysisCaseGoo.Name + " to task",
         GH_ParamAccess.list);
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -65,9 +67,11 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaTask = new GsaAnalysisTask();
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp))
-        if (ghTyp.Value is GsaAnalysisTaskGoo goo)
+      if (da.GetData(0, ref ghTyp)) {
+        if (ghTyp.Value is GsaAnalysisTaskGoo goo) {
           gsaTask = goo.Value.Duplicate();
+        }
+      }
 
       if (gsaTask != null) {
         var ghTypes = new List<GH_ObjectWrapper>();
@@ -82,8 +86,9 @@ namespace GsaGH.Components {
               continue;
             }
 
-            if (ghTyp2.Value is GsaAnalysisCaseGoo goo)
+            if (ghTyp2.Value is GsaAnalysisCaseGoo goo) {
               cases.Add(goo.Value.Duplicate());
+            }
             else {
               string typ = ghTyp2.Value.GetType()
                 .ToString();
@@ -102,11 +107,14 @@ namespace GsaGH.Components {
 
         da.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
         da.SetData(1, gsaTask.Name);
-        if (gsaTask.Cases != null)
+        if (gsaTask.Cases != null) {
           da.SetDataList(2,
             new List<GsaAnalysisCaseGoo>(gsaTask.Cases.Select(x => new GsaAnalysisCaseGoo(x))));
-        else
+        }
+        else {
           da.SetData(2, null);
+        }
+
         da.SetData(3, gsaTask.Type.ToString());
         da.SetData(4, gsaTask.Id);
       }

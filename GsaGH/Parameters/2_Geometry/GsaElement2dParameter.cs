@@ -28,6 +28,8 @@ namespace GsaGH.Parameters {
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override GsaElement2dGoo PreferredCast(object data) => data.GetType() == typeof(GsaElement2d) ? new GsaElement2dGoo((GsaElement2d)data) : base.PreferredCast(data);
+    protected override GsaElement2dGoo PreferredCast(object data) {
+      return data.GetType() == typeof(GsaElement2d) ? new GsaElement2dGoo((GsaElement2d)data) : base.PreferredCast(data);
+    }
   }
 }

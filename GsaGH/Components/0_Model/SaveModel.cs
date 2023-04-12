@@ -30,11 +30,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       Message = "";
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
-      if (ghTyp == null)
+      if (ghTyp == null) {
         return;
+      }
 
       var gsaModel = new GsaModel();
       if (ghTyp.Value is GsaModelGoo) {
@@ -50,15 +52,17 @@ namespace GsaGH.Components {
       da.GetData(2, ref fileName);
 
       bool save = false;
-      if (da.GetData(1, ref save) && save)
+      if (da.GetData(1, ref save) && save) {
         Save(ref gsaModel, fileName);
+      }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
     }
 
     internal void Save(ref GsaModel model, string fileNameAndPath) {
-      if (!fileNameAndPath.EndsWith(".gwb"))
+      if (!fileNameAndPath.EndsWith(".gwb")) {
         fileNameAndPath += ".gwb";
+      }
 
       Directory.CreateDirectory(Path.GetDirectoryName(fileNameAndPath) ?? string.Empty);
 
@@ -71,8 +75,9 @@ namespace GsaGH.Components {
           (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
       }
-      else
+      else {
         this.AddRuntimeError(mes);
+      }
     }
 
     #region Name and Ribbon Layout
@@ -86,8 +91,9 @@ namespace GsaGH.Components {
       "Save",
       "Saves your GSA model from this parametric nightmare",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
     #endregion
 
@@ -107,8 +113,9 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter());
+    }
 
     #endregion
 
@@ -120,32 +127,38 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() { }
 
-    public override void CreateAttributes()
-      => m_attributes = new ThreeButtonAtrributes(this,
-        "Save",
-        "Save As",
-        "Open in GSA",
-        SaveButtonClick,
-        SaveAsButtonClick,
-        OpenGsaExe,
-        true,
-        "Save GSA file");
+    public override void CreateAttributes() {
+      m_attributes = new ThreeButtonAtrributes(this,
+                                                    "Save",
+                                                    "Save As",
+                                                    "Open in GSA",
+                                                    SaveButtonClick,
+                                                    SaveAsButtonClick,
+                                                    OpenGsaExe,
+                                                    true,
+                                                    "Save GSA file");
+    }
 
-    internal void SaveButtonClick() => UpdateUI();
+    internal void SaveButtonClick() {
+      UpdateUI();
+    }
 
     internal void SaveAsButtonClick() {
       var fdi = new SaveFileDialog {
         Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*",
       };
       bool res = fdi.ShowSaveDialog();
-      if (!res)
+      if (!res) {
         return;
+      }
+
       while (Params.Input[2]
           .Sources.Count
-        > 0)
+        > 0) {
         Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2]
             .Sources[0],
           false);
+      }
 
       var panel = new GH_Panel();
       panel.CreateAttributes();
@@ -164,16 +177,18 @@ namespace GsaGH.Components {
     }
 
     internal void OpenGsaExe() {
-      if (!string.IsNullOrEmpty(_fileNameLastSaved))
+      if (!string.IsNullOrEmpty(_fileNameLastSaved)) {
         Process.Start(_fileNameLastSaved);
+      }
     }
 
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
       var saveInput = (Param_Boolean)Params.Input[1];
       if (saveInput.PersistentData.First()
-        .Value)
+        .Value) {
         return flag;
+      }
 
       saveInput.PersistentData.Clear();
       saveInput.PersistentData.Append(new GH_Boolean(true));

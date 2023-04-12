@@ -26,10 +26,11 @@ namespace IntegrationTests.Components {
           branch,
         };
         var output = (List<GH_Integer>)param.VolatileData.get_Branch(new GH_Path(branch));
-        for (int i = 0; i < expectedVals.Length; i++)
+        for (int i = 0; i < expectedVals.Length; i++) {
           Assert.Equal(expectedVals[i],
             output[i]
               .Value);
+        }
       }
     }
 
@@ -309,10 +310,11 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Integer>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value);
+      }
     }
 
     private static GH_Document OpenDocument() {

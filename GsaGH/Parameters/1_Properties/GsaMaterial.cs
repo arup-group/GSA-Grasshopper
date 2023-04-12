@@ -49,8 +49,10 @@ namespace GsaGH.Parameters {
       get => _grade;
       set {
         _grade = value;
-        if (_grade > 0)
+        if (_grade > 0) {
           _analProp = 0;
+        }
+
         _guid = Guid.NewGuid();
       }
     }
@@ -82,43 +84,56 @@ namespace GsaGH.Parameters {
     /// 8 : Fabric<br></br>
     /// </summary>
     /// <param name="typeId"></param>
-    public GsaMaterial(int typeId) => MaterialType = (MatType)typeId;
+    public GsaMaterial(int typeId) {
+      MaterialType = (MatType)typeId;
+    }
 
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
-      if (section?.ApiSection == null)
+      if (section?.ApiSection == null) {
         return;
+      }
+
       if (section.Material != null) {
-        if (analysisMaterial == null && section.Material.AnalysisMaterial != null)
+        if (analysisMaterial == null && section.Material.AnalysisMaterial != null) {
           analysisMaterial = section.Material.AnalysisMaterial;
-        else if (section.ApiSection.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null)
+        }
+        else if (section.ApiSection.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null) {
           analysisMaterial = section.Material.AnalysisMaterial;
+        }
       }
 
       CreateFromApiObject(section.ApiSection.MaterialType, section.ApiSection.MaterialAnalysisProperty, section.ApiSection.MaterialGradeProperty, analysisMaterial);
     }
 
     internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null) {
-      if (prop?.ApiProp2d == null)
+      if (prop?.ApiProp2d == null) {
         return;
+      }
+
       if (prop.Material != null) {
-        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
+        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
-        else if (prop.ApiProp2d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
+        }
+        else if (prop.ApiProp2d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
+        }
       }
 
       CreateFromApiObject(prop.ApiProp2d.MaterialType, prop.ApiProp2d.MaterialAnalysisProperty, prop.ApiProp2d.MaterialGradeProperty, analysisMaterial);
     }
 
     internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null) {
-      if (prop?.ApiProp3d == null)
+      if (prop?.ApiProp3d == null) {
         return;
+      }
 
       if (prop.Material != null) {
-        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
+        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
-        else if (prop.ApiProp3d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
+        }
+        else if (prop.ApiProp3d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
+        }
       }
       CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty, prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
@@ -143,8 +158,10 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string type = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
-      if (_analProp != 0)
+      if (_analProp != 0) {
         return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
+      }
+
       string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
       return (id + type).Trim();
     }

@@ -76,11 +76,14 @@ namespace GsaGHTests.Parameters {
       int chsecid = 3;
       for (int i = 0; i < elem.Count; i++) {
         if (mesh.Faces[i]
-          .IsTriangle)
+          .IsTriangle) {
           Assert.True(elem.Types[i] == ElementType.TRI3);
+        }
+
         if (mesh.Faces[i]
-          .IsQuad)
+          .IsQuad) {
           Assert.True(elem.Types[i] == ElementType.QUAD4);
+        }
 
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A];
         Point3d ePt = elem.Topology[elem.TopoInt[i][0]]; // topology first pt
@@ -178,11 +181,14 @@ namespace GsaGHTests.Parameters {
 
       for (int i = 0; i < dup.Count; i++) {
         if (mesh.Faces[i]
-          .IsTriangle)
+          .IsTriangle) {
           Assert.True(dup.Types[i] == ElementType.TRI3);
+        }
+
         if (mesh.Faces[i]
-          .IsQuad)
+          .IsQuad) {
           Assert.True(dup.Types[i] == ElementType.QUAD4);
+        }
 
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A];
         Point3d ePt = dup.Topology[dup.TopoInt[i][0]]; // topology first pt
@@ -202,8 +208,10 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(mPt.Y, ePt.Y);
         Assert.Equal(mPt.Z, ePt.Z);
 
-        if (dup.Types[i] != ElementType.QUAD4)
+        if (dup.Types[i] != ElementType.QUAD4) {
           continue;
+        }
+
         mPt = mesh.Vertices[mesh.Faces[i].D];
         ePt = dup.Topology[dup.TopoInt[i][3]]; // topology fourth pt
         Assert.Equal(mPt.X, ePt.X);

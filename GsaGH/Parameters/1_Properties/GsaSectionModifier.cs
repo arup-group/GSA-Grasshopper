@@ -16,9 +16,7 @@ namespace GsaGH.Parameters {
     }
 
     public LinearDensity AdditionalMass {
-      get {
-        return new LinearDensity(_sectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
-      }
+      get => new LinearDensity(_sectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
       set {
         CloneApiObject();
         _sectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
@@ -26,14 +24,18 @@ namespace GsaGH.Parameters {
     }
     public IQuantity AreaModifier {
       get {
-        if (_sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY)
+        if (_sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY) {
           return new Ratio(_sectionModifier.AreaModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
+        }
+        else {
           return new Area(_sectionModifier.AreaModifier.Value, AreaUnit.SquareMeter).ToUnit(DefaultUnits.SectionAreaUnit);
+        }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+        if (value.QuantityInfo.UnitType != typeof(AreaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("AreaModifier must be either Area or Ratio");
+        }
+
         CloneApiObject();
         _sectionModifier.AreaModifier = value.QuantityInfo.UnitType == typeof(AreaUnit)
           ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaUnit.SquareMeter))
@@ -42,14 +44,18 @@ namespace GsaGH.Parameters {
     }
     public IQuantity I11Modifier {
       get {
-        if (_sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY)
+        if (_sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY) {
           return new Ratio(_sectionModifier.I11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
+        }
+        else {
           return new AreaMomentOfInertia(_sectionModifier.I11Modifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I11Modifier must be either AreaMomentOfInertia or Ratio");
+        }
+
         CloneApiObject();
         _sectionModifier.I11Modifier = value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit)
           ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth))
@@ -58,13 +64,17 @@ namespace GsaGH.Parameters {
     }
     public IQuantity I22Modifier {
       get {
-        if (_sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY)
+        if (_sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY) {
           return new Ratio(_sectionModifier.I22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+        }
+
         return new AreaMomentOfInertia(_sectionModifier.I22Modifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
+        }
+
         CloneApiObject();
         _sectionModifier.I22Modifier = value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit)
           ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth))
@@ -72,17 +82,13 @@ namespace GsaGH.Parameters {
       }
     }
     public bool IsBendingAxesPrincipal {
-      get {
-        return _sectionModifier.IsBendingAxesPrincipal;
-      }
+      get => _sectionModifier.IsBendingAxesPrincipal;
       set {
         CloneApiObject();
         _sectionModifier.IsBendingAxesPrincipal = value;
       }
     }
-    public bool IsModified {
-      get {
-        return IsAttributeModified(_sectionModifier.AreaModifier)
+    public bool IsModified => IsAttributeModified(_sectionModifier.AreaModifier)
                || IsAttributeModified(_sectionModifier.I11Modifier)
                || IsAttributeModified(_sectionModifier.I22Modifier)
                || IsAttributeModified(_sectionModifier.JModifier)
@@ -93,12 +99,8 @@ namespace GsaGH.Parameters {
                || IsReferencePointCentroid
                || _sectionModifier.AdditionalMass != 0
                || _sectionModifier.StressOption != SectionModifierStressType.NO_MOD;
-      }
-    }
     public bool IsReferencePointCentroid {
-      get {
-        return _sectionModifier.IsReferencePointCentroid;
-      }
+      get => _sectionModifier.IsReferencePointCentroid;
       set {
         CloneApiObject();
         _sectionModifier.IsReferencePointCentroid = value;
@@ -106,29 +108,32 @@ namespace GsaGH.Parameters {
     }
     public IQuantity JModifier {
       get {
-        if (_sectionModifier.JModifier.Option == SectionModifierOptionType.BY)
+        if (_sectionModifier.JModifier.Option == SectionModifierOptionType.BY) {
           return new Ratio(_sectionModifier.JModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
+        }
+        else {
           return new AreaMomentOfInertia(_sectionModifier.JModifier.Value, AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
+        }
         else {
           CloneApiObject();
-          if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
+          if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit)) {
             _sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
-          else
+          }
+          else {
             _sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
+          }
         }
       }
     }
     public Ratio K11Modifier {
-      get {
-        return _sectionModifier.K11Modifier.Option == SectionModifierOptionType.BY
+      get => _sectionModifier.K11Modifier.Option == SectionModifierOptionType.BY
         ? new Ratio(_sectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
         : new Ratio(_sectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction);
-      }
       set {
         CloneApiObject();
         _sectionModifier.K11Modifier = value.Unit == RatioUnit.Percent
@@ -139,11 +144,9 @@ namespace GsaGH.Parameters {
       }
     }
     public Ratio K22Modifier {
-      get {
-        return _sectionModifier.K22Modifier.Option == SectionModifierOptionType.BY
+      get => _sectionModifier.K22Modifier.Option == SectionModifierOptionType.BY
         ? new Ratio(_sectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
         : new Ratio(_sectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction);
-      }
       set {
         CloneApiObject();
         _sectionModifier.K22Modifier = value.Unit == RatioUnit.Percent
@@ -187,14 +190,18 @@ namespace GsaGH.Parameters {
     }
     public IQuantity VolumeModifier {
       get {
-        if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY)
+        if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY) {
           return new Ratio(_sectionModifier.VolumeModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
+        }
+        else {
           return new VolumePerLength(_sectionModifier.VolumeModifier.Value, VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
+        }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+        if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
+        }
+
         CloneApiObject();
         _sectionModifier.VolumeModifier = value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit)
           ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(VolumePerLengthUnit.CubicMeterPerMeter))
@@ -214,8 +221,10 @@ namespace GsaGH.Parameters {
       var dup = new GsaSectionModifier {
         _sectionModifier = _sectionModifier,
       };
-      if (cloneApiObject)
+      if (cloneApiObject) {
         dup.CloneApiObject();
+      }
+
       return dup;
     }
 
@@ -241,10 +250,12 @@ namespace GsaGH.Parameters {
       }
       else {
         var val = (Ratio)AreaModifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           a += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           a = "X";
+        }
       }
 
       if (_sectionModifier.I11Modifier.Option == SectionModifierOptionType.TO) {
@@ -253,10 +264,12 @@ namespace GsaGH.Parameters {
       }
       else {
         var val = (Ratio)I11Modifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           i11 += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           i11 = "X";
+        }
       }
 
       if (_sectionModifier.I22Modifier.Option == SectionModifierOptionType.TO) {
@@ -265,10 +278,12 @@ namespace GsaGH.Parameters {
       }
       else {
         var val = (Ratio)I22Modifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           i22 += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           i22 = "X";
+        }
       }
 
       if (_sectionModifier.JModifier.Option == SectionModifierOptionType.TO) {
@@ -277,10 +292,12 @@ namespace GsaGH.Parameters {
       }
       else {
         var val = (Ratio)JModifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           j += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           j = "X";
+        }
       }
 
       if (_sectionModifier.K11Modifier.Option == SectionModifierOptionType.TO) {
@@ -288,10 +305,12 @@ namespace GsaGH.Parameters {
       }
       else {
         Ratio val = K11Modifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           k11 += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           k11 = "X";
+        }
       }
 
       if (_sectionModifier.K22Modifier.Option == SectionModifierOptionType.TO) {
@@ -299,10 +318,12 @@ namespace GsaGH.Parameters {
       }
       else {
         Ratio val = K22Modifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           k22 += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           k22 = "X";
+        }
       }
 
       if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.TO) {
@@ -311,16 +332,20 @@ namespace GsaGH.Parameters {
       }
       else {
         var val = (Ratio)VolumeModifier;
-        if (val.DecimalFractions != 1)
+        if (val.DecimalFractions != 1) {
           v += val.ToString("f0").Replace(" ", string.Empty);
-        else
+        }
+        else {
           v = "X";
+        }
       }
 
-      if (AdditionalMass.Value != 0)
+      if (AdditionalMass.Value != 0) {
         mass += AdditionalMass.ToString("f0").Replace(" ", string.Empty);
-      else
+      }
+      else {
         mass = "X";
+      }
 
       switch (_sectionModifier.StressOption) {
         case SectionModifierStressType.NO_MOD:
@@ -336,18 +361,23 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      if (_sectionModifier.IsBendingAxesPrincipal)
+      if (_sectionModifier.IsBendingAxesPrincipal) {
         axis = "BendingAxis(UsePringipal(u,v)";
-      if (_sectionModifier.IsReferencePointCentroid)
+      }
+
+      if (_sectionModifier.IsReferencePointCentroid) {
         refPt = "AnalysisRefPt(UseCentroid)";
+      }
 
       string innerDesc = string.Join(" ", a.Trim(), i11.Trim(), i22.Trim(), j.Trim(), k11.Trim(), k22.Trim(), v.Trim(), mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
       return innerDesc;
     }
 
     private static bool IsAttributeModified(SectionModifierAttribute attribute) {
-      if (attribute.Option == SectionModifierOptionType.TO)
+      if (attribute.Option == SectionModifierOptionType.TO) {
         return true;
+      }
+
       return attribute.Value != 1;
     }
 

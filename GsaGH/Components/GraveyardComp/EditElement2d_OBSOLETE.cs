@@ -63,9 +63,10 @@ namespace GsaGH.Components {
         "Set Element to Dummy",
         GH_ParamAccess.list);
 
-      for (int i = 1; i < pManager.ParamCount; i++)
+      for (int i = 1; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
 
       pManager.HideParameter(0);
     }
@@ -116,11 +117,14 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaElement2d = new GsaElement2d();
-      if (!da.GetData(0, ref gsaElement2d))
+      if (!da.GetData(0, ref gsaElement2d)) {
         return;
+      }
 
-      if (gsaElement2d == null)
+      if (gsaElement2d == null) {
         this.AddRuntimeWarning("Element2D input is null");
+      }
+
       GsaElement2d elem = gsaElement2d.Duplicate(true);
 
       var ghId = new List<GH_Integer>();
@@ -134,10 +138,11 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (!GH_Convert.ToInt32(ghId[i], out int id, GH_Conversion.Both))
+          if (!GH_Convert.ToInt32(ghId[i], out int id, GH_Conversion.Both)) {
             continue;
+          }
 
-          if (inIds.Contains(id))
+          if (inIds.Contains(id)) {
             if (id > 0) {
               this.AddRuntimeWarning("ID input("
                 + i
@@ -148,6 +153,7 @@ namespace GsaGH.Components {
                 + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
               continue;
             }
+          }
 
           inIds.Add(id);
         }
@@ -159,10 +165,12 @@ namespace GsaGH.Components {
       if (da.GetDataList(2, ghTypes)) {
         var prop2Ds = new List<GsaProp2d>();
         for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.ApiElements.Count)
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input List Length is longer than number of elements."
               + Environment.NewLine
               + "Excess PA's have been ignored");
+          }
+
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var prop2d = new GsaProp2d();
           if (ghTyp.Value is GsaProp2dGoo) {
@@ -170,8 +178,9 @@ namespace GsaGH.Components {
             prop2Ds.Add(prop2d);
           }
           else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop2Ds.Add(new GsaProp2d(id));
+            }
             else {
               this.AddRuntimeError(
                 "Unable to convert PA input to a 2D Property of reference integer");
@@ -194,8 +203,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToInt32(ghGroups[i], out int grp, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghGroups[i], out int grp, GH_Conversion.Both)) {
             inGroups.Add(grp);
+          }
         }
 
         elem.Groups = inGroups;
@@ -205,14 +215,17 @@ namespace GsaGH.Components {
       if (da.GetDataList(4, ghTypes)) {
         var inOffsets = new List<GsaOffset>();
         for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.ApiElements.Count)
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Offset input List Length is longer than number of elements."
               + Environment.NewLine
               + "Excess Offsets have been ignored");
+          }
+
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var offset = new GsaOffset();
-          if (ghTyp.Value is GsaOffsetGoo)
+          if (ghTyp.Value is GsaOffsetGoo) {
             ghTyp.CastTo(ref offset);
+          }
           else {
             if (GH_Convert.ToDouble(ghTyp.Value, out double z, GH_Conversion.Both)) {
               offset.Z = new Length(z, DefaultUnits.LengthUnitGeometry);
@@ -247,8 +260,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToString(ghStrings[i], out string name, GH_Conversion.Both))
+          if (GH_Convert.ToString(ghStrings[i], out string name, GH_Conversion.Both)) {
             inNames.Add(name);
+          }
         }
 
         elem.Names = inNames;
@@ -265,8 +279,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToColor(ghColours[i], out Color col, GH_Conversion.Both))
+          if (GH_Convert.ToColor(ghColours[i], out Color col, GH_Conversion.Both)) {
             inColours.Add(col);
+          }
         }
 
         elem.Colours = inColours;
@@ -284,8 +299,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToBoolean(ghDummy[i], out bool dum, GH_Conversion.Both))
+          if (GH_Convert.ToBoolean(ghDummy[i], out bool dum, GH_Conversion.Both)) {
             inDummies.Add(dum);
+          }
         }
 
         elem.IsDummies = inDummies;

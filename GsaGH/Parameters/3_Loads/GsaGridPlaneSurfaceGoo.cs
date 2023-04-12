@@ -24,8 +24,9 @@ namespace GsaGH.Parameters {
     public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data
       // into GsaGridPlane.
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
       if (typeof(GsaGridPlaneSurface).IsAssignableFrom(source.GetType())) {
         Value = (GsaGridPlaneSurface)source;
@@ -33,8 +34,10 @@ namespace GsaGH.Parameters {
       }
 
       var pln = new Plane();
-      if (!GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both))
+      if (!GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both)) {
         return false;
+      }
+
       var gridplane = new GsaGridPlaneSurface(pln);
       Value = gridplane;
       return true;
@@ -42,12 +45,14 @@ namespace GsaGH.Parameters {
 
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
-      if (base.CastTo<TQ>(ref target))
+      if (base.CastTo<TQ>(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           var pln = new GH_Plane();
           GH_Convert.ToGHPlane(Value.Plane, GH_Conversion.Both, ref pln);
@@ -66,8 +71,9 @@ namespace GsaGH.Parameters {
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null
-        || !Value.Plane.IsValid)
+        || !Value.Plane.IsValid) {
         return;
+      }
 
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
       {
@@ -95,11 +101,15 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaGridPlaneSurfaceGoo(Value);
+    public override IGH_GeometricGoo Duplicate() {
+      return new GsaGridPlaneSurfaceGoo(Value);
+    }
 
     public override GeometryBase GetGeometry() {
-      if (Value?.Plane.Origin == null)
+      if (Value?.Plane.Origin == null) {
         return null;
+      }
+
       Point3d pt1 = Value.Plane.Origin;
       pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
       Point3d pt2 = Value.Plane.Origin;
@@ -109,8 +119,10 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      if (Value?.Plane == null)
+      if (Value?.Plane == null) {
         return null;
+      }
+
       GsaGridPlaneSurface dup = Value.Duplicate();
       Plane pln = dup.Plane;
       xmorph.Morph(ref pln);
@@ -119,8 +131,10 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      if (Value?.Plane == null)
+      if (Value?.Plane == null) {
         return null;
+      }
+
       GsaGridPlaneSurface dup = Value.Duplicate();
       Plane pln = dup.Plane;
       pln.Transform(xform);

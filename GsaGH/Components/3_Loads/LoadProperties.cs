@@ -27,8 +27,9 @@ namespace GsaGH.Components {
                   "LoadProp",
       "Get properties of a GSA Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
+      SubCategoryName.Cat3()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -97,12 +98,13 @@ namespace GsaGH.Components {
       _isInitialised = true;
     }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Load",
-        "Ld",
-        "Load to get some info out of.",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaLoadParameter(),
+                                                                                       "Load",
+                                                                                       "Ld",
+                                                                                       "Load to get some info out of.",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string forceUnitAbbreviation = Force.GetAbbreviation(_forceUnit);
@@ -153,12 +155,12 @@ namespace GsaGH.Components {
       PressureUnit forcePerAreaUnit = UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit);
 
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
-      GsaLoad gsaLoad = null;
-      if (ghTyp.Value is GsaLoadGoo) {
-        ghTyp.CastTo(ref gsaLoad);
+      if (ghTyp.Value is GsaLoadGoo loadGoo) {
+        GsaLoad gsaLoad = loadGoo.Value;
         switch (gsaLoad.LoadType) {
           case GsaLoad.LoadTypes.Gravity:
             da.SetData(0, gsaLoad.GravityLoad.GravityLoad.Case);
@@ -274,8 +276,9 @@ namespace GsaGH.Components {
             return;
         }
       }
-      else
+      else {
         this.AddRuntimeError("Error converting input to GSA Load");
+      }
     }
 
     protected override void UpdateUIFromSelectedItems() {

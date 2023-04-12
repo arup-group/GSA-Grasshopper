@@ -109,8 +109,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
       GsaMember1d mem1d = null;
       GsaElement1d elem1d = null;
@@ -183,7 +184,7 @@ namespace GsaGH.Components {
 
       AlignmentType alignmentType = Mappings.GetAlignmentType(_selectedItems[0]);
       string alignment = _selectedItems[0];
-      if (da.GetData(1, ref alignment))
+      if (da.GetData(1, ref alignment)) {
         try {
           alignmentType = Mappings.GetAlignmentType(alignment);
         }
@@ -192,6 +193,7 @@ namespace GsaGH.Components {
             + alignment);
           return;
         }
+      }
 
       var additionalOffset = new GsaOffset();
       da.GetData(2, ref additionalOffset);
@@ -354,7 +356,7 @@ namespace GsaGH.Components {
               int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
               double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
               double diameter = double.Parse(parts[2], CultureInfo.InvariantCulture);
-              width = new Length((count - 1) * spacing + diameter, unit);
+              width = new Length(((count - 1) * spacing) + diameter, unit);
             }
           }
 
@@ -402,8 +404,9 @@ namespace GsaGH.Components {
             depth = new Length(sqlValues[0], unit);
             width = new Length(sqlValues[1], unit);
           }
-          else
+          else {
             this.AddRuntimeError("Unable to get dimensions for Profile " + profile);
+          }
 
           switch (alignmentType) {
             case AlignmentType.Centroid:

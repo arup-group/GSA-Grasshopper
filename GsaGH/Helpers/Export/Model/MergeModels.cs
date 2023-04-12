@@ -53,11 +53,14 @@ namespace GsaGH.Helpers.Export {
       var elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       elem1ds.Select(c => { c.Id = 0; return c; }).ToList();
       var elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
-      foreach (GsaElement2d elem2d in elem2ds)
+      foreach (GsaElement2d elem2d in elem2ds) {
         elem2d.Ids.Select(c => { c = 0; return c; }).ToList();
+      }
+
       var elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
-      foreach (GsaElement3d elem3d in elem3ds)
+      foreach (GsaElement3d elem3d in elem3ds) {
         elem3d.Ids.Select(c => { c = 0; return c; }).ToList();
+      }
 
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
           = Import.Members.GetMembers(mDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localMemAxesDict, axDict, LengthUnit.Meter, true);

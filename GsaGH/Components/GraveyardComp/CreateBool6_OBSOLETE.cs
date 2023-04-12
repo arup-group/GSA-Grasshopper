@@ -32,8 +32,9 @@ namespace GsaGH.Components {
                                   GsaBool6Goo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void CreateAttributes() {
       var bool6 = new List<List<bool>>() { new List<bool>() { _x, _y, _z, _xx, _yy, _zz } };
@@ -95,31 +96,44 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddGenericParameter("Bool6",
-        "B6",
-        "GSA Bool6 to set releases or restraints",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("Bool6",
+                                                                                         "B6",
+                                                                                         "GSA Bool6 to set releases or restraints",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghBolX = new GH_Boolean();
-      if (da.GetData(0, ref ghBolX))
+      if (da.GetData(0, ref ghBolX)) {
         GH_Convert.ToBoolean(ghBolX, out _x, GH_Conversion.Both);
+      }
+
       var ghBolY = new GH_Boolean();
-      if (da.GetData(1, ref ghBolY))
+      if (da.GetData(1, ref ghBolY)) {
         GH_Convert.ToBoolean(ghBolY, out _y, GH_Conversion.Both);
+      }
+
       var ghBolZ = new GH_Boolean();
-      if (da.GetData(2, ref ghBolZ))
+      if (da.GetData(2, ref ghBolZ)) {
         GH_Convert.ToBoolean(ghBolZ, out _z, GH_Conversion.Both);
+      }
+
       var ghBolXx = new GH_Boolean();
-      if (da.GetData(3, ref ghBolXx))
+      if (da.GetData(3, ref ghBolXx)) {
         GH_Convert.ToBoolean(ghBolXx, out _xx, GH_Conversion.Both);
+      }
+
       var ghBolYy = new GH_Boolean();
-      if (da.GetData(4, ref ghBolYy))
+      if (da.GetData(4, ref ghBolYy)) {
         GH_Convert.ToBoolean(ghBolYy, out _yy, GH_Conversion.Both);
+      }
+
       var ghBolZz = new GH_Boolean();
-      if (da.GetData(5, ref ghBolZz))
+      if (da.GetData(5, ref ghBolZz)) {
         GH_Convert.ToBoolean(ghBolZz, out _zz, GH_Conversion.Both);
+      }
+
       var bool6 = new GsaBool6 {
         X = _x,
         Y = _y,

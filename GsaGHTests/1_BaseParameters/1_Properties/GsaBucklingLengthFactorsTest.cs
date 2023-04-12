@@ -93,7 +93,7 @@ namespace GsaGHTests.Parameters {
         },
       };
 
-      var factors = new GsaBucklingLengthFactors(member, unit);
+      var factors = new GsaBucklingLengthFactors(member);
 
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);

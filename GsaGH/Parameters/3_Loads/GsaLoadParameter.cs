@@ -28,6 +28,8 @@ namespace GsaGH.Parameters {
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override GsaLoadGoo PreferredCast(object data) => data.GetType() == typeof(GsaLoad) ? new GsaLoadGoo((GsaLoad)data) : base.PreferredCast(data);
+    protected override GsaLoadGoo PreferredCast(object data) {
+      return data.GetType() == typeof(GsaLoad) ? new GsaLoadGoo((GsaLoad)data) : base.PreferredCast(data);
+    }
   }
 }

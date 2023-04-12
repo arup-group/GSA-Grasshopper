@@ -33,16 +33,17 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    public override void CreateAttributes()
-      => m_attributes = new SupportComponentAttributes(this,
-        SetRestraints,
-        "Restraints",
-        _x,
-        _y,
-        _z,
-        _xx,
-        _yy,
-        _zz);
+    public override void CreateAttributes() {
+      m_attributes = new SupportComponentAttributes(this,
+                                                    SetRestraints,
+                                                    "Restraints",
+                                                    _x,
+                                                    _y,
+                                                    _z,
+                                                    _xx,
+                                                    _yy,
+                                                    _zz);
+    }
 
     public override bool Read(GH_IReader reader) {
       _x = reader.GetBoolean("x");
@@ -108,22 +109,26 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddGenericParameter("Node", "No", "GSA Node with Restraint", GH_ParamAccess.list);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("Node", "No", "GSA Node with Restraint", GH_ParamAccess.list);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghpt = new GH_Point();
-      if (!da.GetData(0, ref ghpt))
+      if (!da.GetData(0, ref ghpt)) {
         return;
+      }
 
       var pt = new Point3d();
-      if (!GH_Convert.ToPoint3d(ghpt, ref pt, GH_Conversion.Both))
+      if (!GH_Convert.ToPoint3d(ghpt, ref pt, GH_Conversion.Both)) {
         return;
+      }
 
       var ghPlane = new GH_Plane();
       Plane localAxis = Plane.WorldXY;
-      if (da.GetData(1, ref ghPlane))
+      if (da.GetData(1, ref ghPlane)) {
         GH_Convert.ToPlane(ghPlane, ref localAxis, GH_Conversion.Both);
+      }
 
       var bool6 = new GsaBool6();
       if (da.GetData(2, ref bool6)) {

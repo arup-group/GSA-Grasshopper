@@ -114,8 +114,10 @@ namespace GsaGH.Components {
       SubCategoryName.Cat5()) { }
 
     public override void CreateAttributes() {
-      if (!_isInitialised)
+      if (!_isInitialised) {
         InitialiseDropdowns();
+      }
+
       m_attributes = new DropDownSliderComponentAttributes(this,
         SetSelected,
         _dropDownItems,
@@ -132,15 +134,18 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend))
+      if (!(_legendValues != null & _showLegend)) {
         return;
+      }
 
       args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
-      for (int i = 0; i < _legendValues.Count; i++)
+      for (int i = 0; i < _legendValues.Count; i++) {
         args.Display.Draw2dText(_legendValues[i],
           Color.Black,
           new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]),
           false);
+      }
+
       args.Display.Draw2dText(_resType,
         Color.Black,
         new Point2d(args.Viewport.Bounds.Right - 110, 7),
@@ -220,7 +225,9 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public void SetVal(double value) => _defScale = value;
+    public void SetVal(double value) {
+      _defScale = value;
+    }
 
     public override void VariableParameterMaintenance() {
       if (Params.Input.Count != 5) {
@@ -342,12 +349,13 @@ namespace GsaGH.Components {
           momentUnitsMenu,
         });
       }
-      else
+      else {
         unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
           lengthUnitsMenu,
           forceUnitsMenu,
           momentUnitsMenu,
         });
+      }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
@@ -459,8 +467,9 @@ namespace GsaGH.Components {
       _resType = "";
 
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
       #region Inputs
 
@@ -483,10 +492,14 @@ namespace GsaGH.Components {
               _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             }
 
-            if (result.Type == GsaResult.CaseType.Combination)
+            if (result.Type == GsaResult.CaseType.Combination) {
               _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-            if (result.Type == GsaResult.CaseType.AnalysisCase)
+            }
+
+            if (result.Type == GsaResult.CaseType.AnalysisCase) {
               _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+            }
+
             break;
           }
         default:
@@ -496,27 +509,32 @@ namespace GsaGH.Components {
 
       string nodeList = "All";
       var ghNoList = new GH_String();
-      if (da.GetData(1, ref ghNoList))
-        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both))
+      if (da.GetData(1, ref ghNoList)) {
+        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both)) {
           nodeList = tempnodeList;
+        }
+      }
 
-      if (nodeList.ToLower() == "all" || nodeList == "")
+      if (nodeList.ToLower() == "all" || nodeList == "") {
         nodeList = "All";
+      }
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
-      if (da.GetDataList(2, ghColours))
+      if (da.GetDataList(2, ghColours)) {
         foreach (GH_Colour t in ghColours) {
           GH_Convert.ToColor(t, out Color color, GH_Conversion.Both);
           colors.Add(color);
         }
+      }
 
       GH_Gradient ghGradient = Colours.Stress_Gradient(colors);
 
       var ghInterval = new GH_Interval();
       Interval customMinMax = Interval.Unset;
-      if (da.GetData(3, ref ghInterval))
+      if (da.GetData(3, ref ghInterval)) {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
+      }
 
       var ghScale = new GH_Number();
       da.GetData(4, ref ghScale);
@@ -620,7 +638,7 @@ namespace GsaGH.Components {
       double dmax = 0;
       double dmin = 0;
       switch (_disp) {
-        case (DisplayValue.X):
+        case DisplayValue.X:
           dmax = dmaxX;
           dmin = dminX;
           _resType = _mode == FoldMode.Displacement
@@ -628,7 +646,7 @@ namespace GsaGH.Components {
             : "Reaction Force, Fx";
           break;
 
-        case (DisplayValue.Y):
+        case DisplayValue.Y:
           dmax = dmaxY;
           dmin = dminY;
           _resType = _mode == FoldMode.Displacement
@@ -636,7 +654,7 @@ namespace GsaGH.Components {
             : "Reaction Force, Fy";
           break;
 
-        case (DisplayValue.Z):
+        case DisplayValue.Z:
           dmax = dmaxZ;
           dmin = dminZ;
           _resType = _mode == FoldMode.Displacement
@@ -644,7 +662,7 @@ namespace GsaGH.Components {
             : "Reaction Force, Fz";
           break;
 
-        case (DisplayValue.ResXyz):
+        case DisplayValue.ResXyz:
           dmax = dmaxXyz;
           dmin = dminXyz;
           _resType = _mode == FoldMode.Displacement
@@ -652,7 +670,7 @@ namespace GsaGH.Components {
             : "Res. Rxn. Force, |F|";
           break;
 
-        case (DisplayValue.Xx):
+        case DisplayValue.Xx:
           dmax = dmaxXx;
           dmin = dminXx;
           _resType = _mode == FoldMode.Displacement
@@ -660,7 +678,7 @@ namespace GsaGH.Components {
             : "Reaction Moment, Mxx";
           break;
 
-        case (DisplayValue.Yy):
+        case DisplayValue.Yy:
           dmax = dmaxYy;
           dmin = dminYy;
           _resType = _mode == FoldMode.Displacement
@@ -668,7 +686,7 @@ namespace GsaGH.Components {
             : "Reaction Moment, Ryy";
           break;
 
-        case (DisplayValue.Zz):
+        case DisplayValue.Zz:
           dmax = dmaxZz;
           dmin = dminZz;
           _resType = _mode == FoldMode.Displacement
@@ -676,7 +694,7 @@ namespace GsaGH.Components {
             : "Reaction Moment, Rzz";
           break;
 
-        case (DisplayValue.ResXxyyzz):
+        case DisplayValue.ResXxyyzz:
           dmax = dmaxXxyyzz;
           dmin = dminXxyyzz;
           _resType = _mode == FoldMode.Displacement
@@ -685,8 +703,9 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (_mode == FoldMode.Footfall)
+      if (_mode == FoldMode.Footfall) {
         _resType = "Response Factor [-]";
+      }
 
       if (customMinMax != Interval.Unset) {
         dmin = customMinMax.Min;
@@ -718,12 +737,14 @@ namespace GsaGH.Components {
 
       Parallel.ForEach(gsanodes,
         node => {
-          if (node.Value.Value == null)
+          if (node.Value.Value == null) {
             return;
+          }
 
           int nodeId = node.Value.Value.Id;
-          if (!xyzResults.ContainsKey(nodeId) || (dmin == 0 & dmax == 0))
+          if (!xyzResults.ContainsKey(nodeId) || (dmin == 0 & dmax == 0)) {
             return;
+          }
 
           var def = new Point3d(node.Value.Value.Point);
 
@@ -732,7 +753,7 @@ namespace GsaGH.Components {
             case FoldMode.Displacement:
               var translation = new Vector3d(0, 0, 0);
               switch (_disp) {
-                case (DisplayValue.X):
+                case DisplayValue.X:
                   t = xyzResults[nodeId][0]
                     .X.ToUnit(_lengthResultUnit);
                   translation.X = xyzResults[nodeId][0]
@@ -740,7 +761,7 @@ namespace GsaGH.Components {
                     * _defScale;
                   break;
 
-                case (DisplayValue.Y):
+                case DisplayValue.Y:
                   t = xyzResults[nodeId][0]
                     .Y.ToUnit(_lengthResultUnit);
                   translation.Y = xyzResults[nodeId][0]
@@ -748,7 +769,7 @@ namespace GsaGH.Components {
                     * _defScale;
                   break;
 
-                case (DisplayValue.Z):
+                case DisplayValue.Z:
                   t = xyzResults[nodeId][0]
                     .Z.ToUnit(_lengthResultUnit);
                   translation.Z = xyzResults[nodeId][0]
@@ -756,7 +777,7 @@ namespace GsaGH.Components {
                     * _defScale;
                   break;
 
-                case (DisplayValue.ResXyz):
+                case DisplayValue.ResXyz:
                   t = xyzResults[nodeId][0]
                     .Xyz.ToUnit(_lengthResultUnit);
                   translation.X = xyzResults[nodeId][0]
@@ -770,22 +791,22 @@ namespace GsaGH.Components {
                     * _defScale;
                   break;
 
-                case (DisplayValue.Xx):
+                case DisplayValue.Xx:
                   t = xxyyzzResults[nodeId][0]
                     .X.ToUnit(AngleUnit.Radian);
                   break;
 
-                case (DisplayValue.Yy):
+                case DisplayValue.Yy:
                   t = xxyyzzResults[nodeId][0]
                     .Y.ToUnit(AngleUnit.Radian);
                   break;
 
-                case (DisplayValue.Zz):
+                case DisplayValue.Zz:
                   t = xxyyzzResults[nodeId][0]
                     .Z.ToUnit(AngleUnit.Radian);
                   break;
 
-                case (DisplayValue.ResXxyyzz):
+                case DisplayValue.ResXxyyzz:
                   t = xxyyzzResults[nodeId][0]
                     .Xyz.ToUnit(AngleUnit.Radian);
                   break;
@@ -796,42 +817,42 @@ namespace GsaGH.Components {
 
             case FoldMode.Reaction:
               switch (_disp) {
-                case (DisplayValue.X):
+                case DisplayValue.X:
                   t = xyzResults[nodeId][0]
                     .X.ToUnit(_forceUnit);
                   break;
 
-                case (DisplayValue.Y):
+                case DisplayValue.Y:
                   t = xyzResults[nodeId][0]
                     .Y.ToUnit(_forceUnit);
                   break;
 
-                case (DisplayValue.Z):
+                case DisplayValue.Z:
                   t = xyzResults[nodeId][0]
                     .Z.ToUnit(_forceUnit);
                   break;
 
-                case (DisplayValue.ResXyz):
+                case DisplayValue.ResXyz:
                   t = xyzResults[nodeId][0]
                     .Xyz.ToUnit(_forceUnit);
                   break;
 
-                case (DisplayValue.Xx):
+                case DisplayValue.Xx:
                   t = xxyyzzResults[nodeId][0]
                     .X.ToUnit(_momentUnit);
                   break;
 
-                case (DisplayValue.Yy):
+                case DisplayValue.Yy:
                   t = xxyyzzResults[nodeId][0]
                     .Y.ToUnit(_momentUnit);
                   break;
 
-                case (DisplayValue.Zz):
+                case DisplayValue.Zz:
                   t = xxyyzzResults[nodeId][0]
                     .Z.ToUnit(_momentUnit);
                   break;
 
-                case (DisplayValue.ResXxyyzz):
+                case DisplayValue.ResXxyyzz:
                   t = xxyyzzResults[nodeId][0]
                     .Xyz.ToUnit(_momentUnit);
                   break;
@@ -845,7 +866,7 @@ namespace GsaGH.Components {
               break;
           }
 
-          double tnorm = 2 * (t.Value - dmin) / (dmax - dmin) - 1;
+          double tnorm = (2 * (t.Value - dmin) / (dmax - dmin)) - 1;
           Color valcol = ghGradient.ColourAt(tnorm);
           float size = (t.Value >= 0 && dmax != 0)
             ? Math.Max(2, (float)(t.Value / dmax * scale))
@@ -866,24 +887,28 @@ namespace GsaGH.Components {
       var cs = new List<Color>();
 
       for (int i = 0; i < ghGradient.GripCount; i++) {
-        double t = dmin + (dmax - dmin) / ((double)ghGradient.GripCount - 1) * i;
+        double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * i);
         if (t > 1) {
           double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
           scl = Math.Max(scl, 1);
           t = scl * Math.Round(t / scl, 3);
         }
-        else
+        else {
           t = Math.Round(t, significantDigits);
+        }
 
         Color gradientcolour
-          = ghGradient.ColourAt(2 * (double)i / ((double)ghGradient.GripCount - 1) - 1);
+          = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
         cs.Add(gradientcolour);
 
         int starty = i * gripheight;
         int endy = starty + gripheight;
-        for (int y = starty; y < endy; y++)
-          for (int x = 0; x < _legend.Width; x++)
+        for (int y = starty; y < endy; y++) {
+          for (int x = 0; x < _legend.Width; x++) {
             _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+          }
+        }
+
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
               var displacement = new Length(t, _lengthResultUnit);
@@ -920,10 +945,12 @@ namespace GsaGH.Components {
             }
         }
 
-        if (Math.Abs(t) > 1)
+        if (Math.Abs(t) > 1) {
           _legendValues[i] = _legendValues[i]
             .Replace(",", string.Empty); // remove thousand separator
-        _legendValuesPosY.Add(_legend.Height - starty + gripheight / 2 - 2);
+        }
+
+        _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
       }
 
       #endregion
@@ -968,7 +995,7 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2]
           .Attributes.Bounds.Y
-        - gradient.Attributes.Bounds.Height / 4
+        - (gradient.Attributes.Bounds.Height / 4)
         - 6);
 
       Instances.ActiveCanvas.Document.AddObject(gradient, false);
@@ -981,8 +1008,9 @@ namespace GsaGH.Components {
     }
 
     private void Mode1Clicked() {
-      if (_mode == FoldMode.Displacement)
+      if (_mode == FoldMode.Displacement) {
         return;
+      }
 
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Displacement;
@@ -994,8 +1022,9 @@ namespace GsaGH.Components {
     }
 
     private void Mode2Clicked() {
-      if (_mode == FoldMode.Reaction)
+      if (_mode == FoldMode.Reaction) {
         return;
+      }
 
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Reaction;
@@ -1006,8 +1035,9 @@ namespace GsaGH.Components {
     }
 
     private void Mode3Clicked() {
-      if (_mode == FoldMode.Footfall)
+      if (_mode == FoldMode.Footfall) {
         return;
+      }
 
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Footfall;

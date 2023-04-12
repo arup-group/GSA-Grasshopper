@@ -19,14 +19,16 @@ namespace GsaGH.Components {
           "PtResInfo",
       "Get Node Contour Result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Result Point",
-        "P",
-        "Contoured Points with result values",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Result Point",
+                                                                                       "P",
+                                                                                       "Contoured Points with result values",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddPointParameter("Point", "P", "Location of the Node", GH_ParamAccess.item);

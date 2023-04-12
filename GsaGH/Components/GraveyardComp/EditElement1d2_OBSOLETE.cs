@@ -37,8 +37,9 @@ namespace GsaGH.Components {
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      if (!(Params.Input[9] is Param_Number angleParameter))
+      if (!(Params.Input[9] is Param_Number angleParameter)) {
         return;
+      }
 
       _angleUnit = angleParameter.UseDegrees
         ? AngleUnit.Degree
@@ -125,9 +126,11 @@ namespace GsaGH.Components {
         "Set Element to Dummy",
         GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
+
       pManager.HideParameter(0);
       pManager.HideParameter(2);
     }
@@ -198,18 +201,23 @@ namespace GsaGH.Components {
       var gsaElement1d = new GsaElement1d();
       var elem = new GsaElement1d();
       if (da.GetData(0, ref gsaElement1d)) {
-        if (gsaElement1d == null)
+        if (gsaElement1d == null) {
           this.AddRuntimeWarning("Element1D input is null");
+        }
+
         elem = gsaElement1d.Duplicate();
       }
 
-      if (elem == null)
+      if (elem == null) {
         return;
+      }
 
       var ghId = new GH_Integer();
-      if (da.GetData(1, ref ghId))
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+      if (da.GetData(1, ref ghId)) {
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
           elem.Id = id;
+        }
+      }
 
       var ghLine = new GH_Line();
       if (da.GetData(2, ref ghLine)) {
@@ -223,11 +231,13 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo)
+        if (ghTyp.Value is GsaSectionGoo) {
           ghTyp.CastTo(ref section);
+        }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             section = new GsaSection(idd);
+          }
           else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
@@ -239,39 +249,48 @@ namespace GsaGH.Components {
       }
 
       var ghGroup = new GH_Integer();
-      if (da.GetData(4, ref ghGroup))
-        if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both))
+      if (da.GetData(4, ref ghGroup)) {
+        if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both)) {
           elem.Group = grp;
+        }
+      }
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
-        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
+        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
           elem.Type = (ElementType)typeInt;
-        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both))
+        }
+        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           try {
             elem.Type = Mappings.GetElementType(typestring);
           }
           catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Element Type");
           }
+        }
       }
 
       var offset = new GsaOffset();
-      if (da.GetData(6, ref offset))
+      if (da.GetData(6, ref offset)) {
         elem.Offset = offset;
+      }
 
       var start = new GsaBool6();
-      if (da.GetData(7, ref start))
+      if (da.GetData(7, ref start)) {
         elem.ReleaseStart = start;
+      }
 
       var end = new GsaBool6();
-      if (da.GetData(8, ref end))
+      if (da.GetData(8, ref end)) {
         elem.ReleaseEnd = end;
+      }
 
       var ghAngle = new GH_Number();
-      if (da.GetData(9, ref ghAngle))
-        if (GH_Convert.ToDouble(ghAngle, out double angle, GH_Conversion.Both))
+      if (da.GetData(9, ref ghAngle)) {
+        if (GH_Convert.ToDouble(ghAngle, out double angle, GH_Conversion.Both)) {
           elem.OrientationAngle = new Angle(angle, _angleUnit);
+        }
+      }
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(10, ref ghTyp)) {
@@ -280,24 +299,31 @@ namespace GsaGH.Components {
           ghTyp.CastTo(ref node);
           elem.OrientationNode = node;
         }
-        else
+        else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
+        }
       }
 
       var ghName = new GH_String();
-      if (da.GetData(11, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+      if (da.GetData(11, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
           elem.Name = name;
+        }
+      }
 
       var ghColour = new GH_Colour();
-      if (da.GetData(12, ref ghColour))
-        if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
+      if (da.GetData(12, ref ghColour)) {
+        if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
           elem.Colour = col;
+        }
+      }
 
       var ghDummy = new GH_Boolean();
-      if (da.GetData(13, ref ghDummy))
-        if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both))
+      if (da.GetData(13, ref ghDummy)) {
+        if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both)) {
           elem.IsDummy = dum;
+        }
+      }
 
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);

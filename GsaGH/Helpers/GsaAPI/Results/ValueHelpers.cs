@@ -43,8 +43,10 @@ namespace GsaGH.Helpers.GsaApi {
       if (val < 1) {
         string valString = val.ToString().Split('.')[1];
         int digits = 0;
-        while (valString[digits] == '0')
+        while (valString[digits] == '0') {
           digits++;
+        }
+
         factor = Math.Pow(10, digits + 1);
         max *= factor;
         min *= factor;
@@ -58,8 +60,10 @@ namespace GsaGH.Helpers.GsaApi {
         string valString = val.ToString();
         int digits = valString.Split('.')[0].Count();
         int power = 10;
-        if (val < 500)
+        if (val < 500) {
           power = 5;
+        }
+
         factor = Math.Pow(power, digits - 1);
         max /= factor;
         min /= factor;

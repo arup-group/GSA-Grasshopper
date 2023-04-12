@@ -31,22 +31,18 @@ namespace GsaGH.Parameters {
     }
 
     public List<GsaAnalysisCase> Cases { get; set; } = null;
-    public int Id {
-      get => _id;
-      set => _id = value;
-    }
+    public int Id { get; set; } = 0;
     public string Name { get; set; }
     public AnalysisType Type { get; set; }
-    private int _id = 0;
 
     public GsaAnalysisTask() {
-      _id = 0;
+      Id = 0;
       Cases = new List<GsaAnalysisCase>();
       Type = AnalysisType.Static;
     }
 
     internal GsaAnalysisTask(int id, AnalysisTask task, Model model) {
-      _id = id;
+      Id = id;
       Cases = new List<GsaAnalysisCase>();
       foreach (int caseId in task.Cases) {
         string caseName = model.AnalysisCaseName(caseId);
@@ -60,25 +56,28 @@ namespace GsaGH.Parameters {
 
     public GsaAnalysisTask Duplicate() {
       var dup = new GsaAnalysisTask {
-        _id = _id,
+        Id = Id,
       };
-      if (Cases != null)
+      if (Cases != null) {
         dup.Cases = Cases.ToList();
+      }
+
       dup.Type = Type;
       dup.Name = Name;
       return dup;
     }
 
-    public override string ToString()
-      => (Id > 0
-          ? "ID:" + Id
-          : ""
-          + " '"
-          + Name
-          + "' "
-          + Type.ToString()
-            .Replace("_", " ")).Trim()
-        .Replace("  ", " ");
+    public override string ToString() {
+      return (Id > 0
+                                                ? "ID:" + Id
+                                                : ""
+                                                + " '"
+                                                + Name
+                                                + "' "
+                                                + Type.ToString()
+                                                  .Replace("_", " ")).Trim()
+                                              .Replace("  ", " ");
+    }
 
     internal void CreateDeafultCases(GsaModel gsaModel) {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple

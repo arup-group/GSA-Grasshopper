@@ -11,9 +11,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaProp3d {
     public int AxisProperty {
-      get {
-        return _prop3d.AxisProperty;
-      }
+      get => _prop3d.AxisProperty;
       set {
         CloneApiObject();
         value = Math.Min(1, value);
@@ -23,39 +21,31 @@ namespace GsaGH.Parameters {
       }
     }
     public Color Colour {
-      get {
-        return (Color)_prop3d.Colour;
-      }
+      get => (Color)_prop3d.Colour;
       set {
         CloneApiObject();
         _prop3d.Colour = value;
         IsReferencedById = false;
       }
     }
-    public Guid Guid {
-      get {
-        return _guid;
-      }
-    }
+    public Guid Guid => _guid;
     public int Id {
-      get {
-        return _id;
-      }
+      get => _id;
       set {
         _guid = Guid.NewGuid();
         _id = value;
       }
     }
     public GsaMaterial Material {
-      get {
-        return _material;
-      }
+      get => _material;
       set {
         _material = value;
-        if (_prop3d == null)
+        if (_prop3d == null) {
           _prop3d = new Prop3D();
-        else
+        }
+        else {
           CloneApiObject();
+        }
 
         _prop3d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         _prop3d.MaterialAnalysisProperty = _material.AnalysisProperty;
@@ -64,9 +54,7 @@ namespace GsaGH.Parameters {
       }
     }
     public int MaterialId {
-      get {
-        return _prop3d.MaterialAnalysisProperty;
-      }
+      get => _prop3d.MaterialAnalysisProperty;
       set {
         CloneApiObject();
         _prop3d.MaterialAnalysisProperty = value;
@@ -75,9 +63,7 @@ namespace GsaGH.Parameters {
       }
     }
     public string Name {
-      get {
-        return _prop3d.Name;
-      }
+      get => _prop3d.Name;
       set {
         CloneApiObject();
         _prop3d.Name = value;
@@ -85,9 +71,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Prop3D ApiProp3d {
-      get {
-        return _prop3d;
-      }
+      get => _prop3d;
       set {
         _guid = Guid.NewGuid();
         _prop3d = value;
@@ -114,13 +98,17 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaProp3d(IReadOnlyDictionary<int, Prop3D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!pDict.ContainsKey(id))
+      if (!pDict.ContainsKey(id)) {
         return;
+      }
+
       _prop3d = pDict[id];
       IsReferencedById = false;
       // material
-      if (_prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty))
+      if (_prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty)) {
         _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
+      }
+
       _material = new GsaMaterial(this);
     }
 
@@ -132,8 +120,10 @@ namespace GsaGH.Parameters {
         _guid = new Guid(_guid.ToString()),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement)
+      if (cloneApiElement) {
         dup.CloneApiObject();
+      }
+
       return dup;
     }
 
@@ -152,7 +142,9 @@ namespace GsaGH.Parameters {
         AxisProperty = _prop3d.AxisProperty,
       };
       if ((Color)_prop3d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+{
         prop.Colour = _prop3d.Colour;
+      }
 
       _prop3d = prop;
       _guid = Guid.NewGuid();

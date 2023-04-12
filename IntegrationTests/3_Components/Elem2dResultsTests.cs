@@ -75,11 +75,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Fact]
@@ -113,11 +114,12 @@ namespace IntegrationTests.Components {
         -69.62,
         -71.63,
       };
-      for (int i = 0; i < expectedVals.Count; i++)
+      for (int i = 0; i < expectedVals.Count; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           2);
+      }
     }
 
     [Theory]
@@ -177,11 +179,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Theory]
@@ -319,11 +322,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Theory]
@@ -435,11 +439,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     [Theory]
@@ -525,11 +530,12 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
-      for (int i = 0; i < expectedVals.Length; i++)
+      for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i],
           output[i]
             .Value,
           precision);
+      }
     }
 
     private static GH_Document OpenDocument() {

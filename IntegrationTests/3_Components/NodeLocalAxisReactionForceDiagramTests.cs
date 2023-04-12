@@ -9,8 +9,10 @@ namespace IntegrationTests.Components {
   public class NodeLocalAxisReactionForceDiagramTests {
     public static GH_Document Document {
       get {
-        if (s_document == null)
+        if (s_document == null) {
           s_document = OpenDocument();
+        }
+
         return s_document;
       }
     }

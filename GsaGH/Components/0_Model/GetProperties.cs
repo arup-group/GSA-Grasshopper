@@ -23,15 +23,17 @@ namespace GsaGH.Components {
           "GetProps",
       "Get Sections, 2D Properties and Springs from GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some properties",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+                                                                                       "GSA Model",
+                                                                                       "GSA",
+                                                                                       "GSA model containing some properties",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(),
@@ -55,8 +57,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
+      if (!da.GetData(0, ref gsaModel)) {
         return;
+      }
 
       Model model = gsaModel.Model;
 

@@ -64,8 +64,10 @@ namespace GsaGH.Components {
     }
 
     public override bool Read(GH_IReader reader) {
-      if (reader.ChunkExists("ParameterData"))
+      if (reader.ChunkExists("ParameterData")) {
         return base.Read(reader);
+      }
+
       BaseReader.Read(reader, this);
       _isInitialised = true;
       UpdateUIFromSelectedItems();
@@ -83,9 +85,10 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void VariableParameterMaintenance()
-      => Params.Input[4]
-        .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    public override void VariableParameterMaintenance() {
+      Params.Input[4]
+                                                                .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
@@ -152,14 +155,18 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
-      if (!da.GetData(0, ref ghbrep))
+      if (!da.GetData(0, ref ghbrep)) {
         return;
+      }
 
-      if (ghbrep == null)
+      if (ghbrep == null) {
         this.AddRuntimeWarning("Brep input is null");
+      }
+
       var brep = new Brep();
-      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
+      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both)) {
         return;
+      }
 
       if (!brep.IsValidGeometry(out string log)) {
         this.AddRuntimeError("Input Brep is not valid: " + log);
@@ -177,14 +184,15 @@ namespace GsaGH.Components {
       }
 
       if (brep.Surfaces[0]
-        .IsPlanar())
+        .IsPlanar()) {
         this.AddRuntimeRemark(
           "Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
+      }
 
       var ghTypes = new List<GH_ObjectWrapper>();
       var pts = new List<Point3d>();
       var nodes = new List<GsaNode>();
-      if (da.GetDataList(1, ghTypes))
+      if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
           var pt = new Point3d();
           if (ghObjectWrapper.Value is GsaNodeGoo) {
@@ -192,8 +200,9 @@ namespace GsaGH.Components {
             ghObjectWrapper.CastTo(ref gsanode);
             nodes.Add(gsanode.Duplicate(true));
           }
-          else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both))
+          else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
+          }
           else {
             string type = ghObjectWrapper.Value.GetType()
               .ToString();
@@ -204,12 +213,13 @@ namespace GsaGH.Components {
               + " to point or node");
           }
         }
+      }
 
       ghTypes = new List<GH_ObjectWrapper>();
       var crvs = new List<Curve>();
       var elem1ds = new List<GsaElement1d>();
       var mem1ds = new List<GsaMember1d>();
-      if (da.GetDataList(2, ghTypes))
+      if (da.GetDataList(2, ghTypes)) {
         foreach (GH_ObjectWrapper ghType in ghTypes) {
           Curve crv = null;
           switch (ghType.Value) {
@@ -226,8 +236,9 @@ namespace GsaGH.Components {
                 break;
               }
             default: {
-                if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both))
+                if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
                   crvs.Add(crv.DuplicateCurve());
+                }
                 else {
                   string type = ghType.Value.GetType()
                     .ToString();
@@ -242,6 +253,7 @@ namespace GsaGH.Components {
               }
           }
         }
+      }
 
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
 
@@ -260,11 +272,13 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo)
+        if (ghTyp.Value is GsaProp2dGoo) {
           ghTyp.CastTo(ref prop2d);
+        }
         else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
+          }
           else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
@@ -272,20 +286,26 @@ namespace GsaGH.Components {
           }
         }
       }
-      else
+      else {
         prop2d.Id = 0;
+      }
 
       var prop2Ds = new List<GsaProp2d>();
-      for (int i = 0; i < elem2d.ApiElements.Count; i++)
+      for (int i = 0; i < elem2d.ApiElements.Count; i++) {
         prop2Ds.Add(prop2d);
+      }
+
       elem2d.Properties = prop2Ds;
 
       da.SetData(0, new GsaElement2dGoo(elem2d, false));
-      if (tuple.Item2 != null)
+      if (tuple.Item2 != null) {
         da.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n => new GsaNodeGoo(n, false))));
-      if (tuple.Item3 != null)
+      }
+
+      if (tuple.Item3 != null) {
         da.SetDataList(2,
           new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem, false))));
+      }
 
       this.AddRuntimeRemark(
         "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
@@ -304,7 +324,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "")
+      if (_toleranceTxt != "") {
         try {
           var newTolerance = Length.Parse(_toleranceTxt);
           _tolerance = newTolerance;
@@ -313,14 +333,18 @@ namespace GsaGH.Components {
           MessageBox.Show(e.Message);
           return;
         }
+      }
 
       Message = "Tol: " + _tolerance.ToString();
-      if (_tolerance.Meters < 0.001)
+      if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (_tolerance.Meters > 0.25)
+      }
+
+      if (_tolerance.Meters > 0.25) {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
+      }
     }
   }
 }

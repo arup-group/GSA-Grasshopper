@@ -52,9 +52,10 @@ namespace GsaGH.Components {
         "Set Element to Dummy",
         GH_ParamAccess.list);
 
-      for (int i = 1; i < pManager.ParamCount; i++)
+      for (int i = 1; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
 
       pManager.HideParameter(0);
     }
@@ -105,11 +106,14 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaElement3d = new GsaElement3d();
-      if (!da.GetData(0, ref gsaElement3d))
+      if (!da.GetData(0, ref gsaElement3d)) {
         return;
+      }
 
-      if (gsaElement3d == null)
+      if (gsaElement3d == null) {
         this.AddRuntimeWarning("Element3D input is null");
+      }
+
       GsaElement3d elem = gsaElement3d.Duplicate(true);
 
       var ghId = new List<GH_Integer>();
@@ -123,10 +127,11 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (!GH_Convert.ToInt32(ghId[i], out int id, GH_Conversion.Both))
+          if (!GH_Convert.ToInt32(ghId[i], out int id, GH_Conversion.Both)) {
             continue;
+          }
 
-          if (inIds.Contains(id))
+          if (inIds.Contains(id)) {
             if (id > 0) {
               this.AddRuntimeWarning("ID input("
                 + i
@@ -137,6 +142,7 @@ namespace GsaGH.Components {
                 + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
               continue;
             }
+          }
 
           inIds.Add(id);
         }
@@ -148,10 +154,12 @@ namespace GsaGH.Components {
       if (da.GetDataList(2, ghTypes)) {
         var prop3Ds = new List<GsaProp3d>();
         for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.ApiElements.Count)
+          if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input List Length is longer than number of elements."
               + Environment.NewLine
               + "Excess PA's have been ignored");
+          }
+
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var prop3d = new GsaProp3d();
           if (ghTyp.Value is GsaProp3dGoo) {
@@ -159,8 +167,9 @@ namespace GsaGH.Components {
             prop3Ds.Add(prop3d);
           }
           else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop3Ds.Add(new GsaProp3d(id));
+            }
             else {
               this.AddRuntimeError(
                 "Unable to convert PA input to a 2D Property of reference integer");
@@ -183,8 +192,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both)) {
             inGroups.Add(grp);
+          }
         }
 
         elem.Groups = inGroups;
@@ -201,8 +211,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToString(ghStrings[i], out string name, GH_Conversion.Both))
+          if (GH_Convert.ToString(ghStrings[i], out string name, GH_Conversion.Both)) {
             inNames.Add(name);
+          }
         }
 
         elem.Names = inNames;
@@ -219,8 +230,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToColor(ghColours[i], out Color col, GH_Conversion.Both))
+          if (GH_Convert.ToColor(ghColours[i], out Color col, GH_Conversion.Both)) {
             inColours.Add(col);
+          }
         }
 
         elem.Colours = inColours;
@@ -237,8 +249,9 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
+          if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both)) {
             inDummies.Add(dum);
+          }
         }
 
         elem.IsDummies = inDummies;
@@ -256,8 +269,10 @@ namespace GsaGH.Components {
         var faceindex = ngon.FaceIndexList()
           .Select(u => (int)u)
           .ToList();
-        foreach (int index in faceindex)
+        foreach (int index in faceindex) {
           m.Faces.AddFace(x.Faces[index]);
+        }
+
         m.Vertices.CullUnused();
         m.RebuildNormals();
         outMeshes.Add(m);

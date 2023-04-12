@@ -23,8 +23,9 @@ namespace GsaGH.Components {
           "Section",
       "Create GSA Section",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile",
@@ -36,18 +37,21 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaSectionParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaSectionParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaSection = new GsaSection();
       var ghProfile = new GH_String();
-      if (!da.GetData(0, ref ghProfile))
+      if (!da.GetData(0, ref ghProfile)) {
         return;
+      }
 
       if (GH_Convert.ToString(ghProfile, out string profile, GH_Conversion.Both)) {
-        if (GsaSection.ValidProfile(profile))
+        if (GsaSection.ValidProfile(profile)) {
           gsaSection = new GsaSection(profile);
+        }
         else {
           this.AddRuntimeWarning("Invalid profile syntax: " + profile);
           return;
@@ -55,14 +59,13 @@ namespace GsaGH.Components {
 
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(1, ref ghTyp)) {
-          var material = new GsaMaterial();
-          if (ghTyp.Value is GsaMaterialGoo) {
-            ghTyp.CastTo(ref material);
-            gsaSection.Material = material ?? new GsaMaterial();
+          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+            gsaSection.Material = materialGoo.Value ?? new GsaMaterial();
           }
           else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
               gsaSection.Material = new GsaMaterial(idd);
+            }
             else {
               this.AddRuntimeError(
                 "Unable to convert PB input to a Section Property of reference integer");
@@ -70,8 +73,9 @@ namespace GsaGH.Components {
             }
           }
         }
-        else
+        else {
           gsaSection.Material = new GsaMaterial(7);
+        }
       }
 
       da.SetData(0, new GsaSectionGoo(gsaSection));

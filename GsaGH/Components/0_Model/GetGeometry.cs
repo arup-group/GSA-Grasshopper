@@ -85,15 +85,18 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat0()) { }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override void CreateAttributes() {
-      if (!_isInitialised)
+      if (!_isInitialised) {
         InitialiseDropdowns();
+      }
 
       m_attributes = new DropDownComponentAttributes(this,
         SetSelected,
@@ -102,91 +105,114 @@ namespace GsaGH.Components {
         _spacerDescriptions);
     }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
       base.DrawViewportMeshes(args);
       if (Attributes.Selected) {
-        if (_cachedDisplayMeshWithoutParent != null)
+        if (_cachedDisplayMeshWithoutParent != null) {
           args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent, Colours.Element2dFace);
-        if (_cachedDisplayNgonMeshWithoutParent != null)
+        }
+
+        if (_cachedDisplayNgonMeshWithoutParent != null) {
           args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dFace);
+        }
       }
       else {
-        if (_cachedDisplayMeshWithoutParent != null)
+        if (_cachedDisplayMeshWithoutParent != null) {
           args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent,
             Colours.Element2dFaceSelected);
-        if (_cachedDisplayNgonMeshWithoutParent != null)
+        }
+
+        if (_cachedDisplayNgonMeshWithoutParent != null) {
           args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent,
             Colours.Element2dFaceSelected);
+        }
       }
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      if (_cachedDisplayMeshWithParent != null)
+      if (_cachedDisplayMeshWithParent != null) {
         args.Display.DrawMeshWires(_cachedDisplayMeshWithParent,
           Color.FromArgb(255, 229, 229, 229),
           1);
+      }
 
-      if (_cachedDisplayNgonMeshWithParent != null)
+      if (_cachedDisplayNgonMeshWithParent != null) {
         args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithParent,
           Color.FromArgb(255, 229, 229, 229),
           1);
+      }
 
       if (_cachedDisplayMeshWithoutParent != null) {
-        if (Attributes.Selected)
+        if (Attributes.Selected) {
           args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent,
             Colours.Element2dEdgeSelected,
             2);
-        else
+        }
+        else {
           args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdge, 1);
+        }
       }
 
       if (_cachedDisplayNgonMeshWithoutParent != null) {
-        if (Attributes.Selected)
+        if (Attributes.Selected) {
           args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent,
             Colours.Element2dEdgeSelected,
             2);
-        else
+        }
+        else {
           args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dEdge, 1);
+        }
       }
 
-      if (_supportNodes == null)
+      if (_supportNodes == null) {
         return;
+      }
 
       foreach (GsaNodeGoo node in _supportNodes) {
         if (node.Value.Point.IsValid) {
           if (!Attributes.Selected) {
-            if (node.Value.Colour != Color.FromArgb(0, 0, 0))
+            if (node.Value.Colour != Color.FromArgb(0, 0, 0)) {
               args.Display.DrawPoint(node.Value.Point,
                 PointStyle.RoundSimple,
                 3,
                 node.Value.Colour);
+            }
             else {
               Color col = Colours.Node;
               args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3, col);
             }
 
-            if (node.Value._previewSupportSymbol != null)
+            if (node.Value._previewSupportSymbol != null) {
               args.Display.DrawBrepShaded(node.Value._previewSupportSymbol, Colours.SupportSymbol);
-            if (node.Value._previewText != null)
+            }
+
+            if (node.Value._previewText != null) {
               args.Display.Draw3dText(node.Value._previewText, Colours.Support);
+            }
           }
           else {
             args.Display.DrawPoint(node.Value.Point,
               PointStyle.RoundControlPoint,
               3,
               Colours.NodeSelected);
-            if (node.Value._previewSupportSymbol != null)
+            if (node.Value._previewSupportSymbol != null) {
               args.Display.DrawBrepShaded(node.Value._previewSupportSymbol,
                 Colours.SupportSymbolSelected);
-            if (node.Value._previewText != null)
+            }
+
+            if (node.Value._previewText != null) {
               args.Display.Draw3dText(node.Value._previewText, Colours.NodeSelected);
+            }
           }
 
           if (!node.Value.IsGlobalAxis()) {
@@ -219,8 +245,9 @@ namespace GsaGH.Components {
       }
 
       string text;
-      if (data.GetType() == typeof(GH_UnitNumber))
+      if (data.GetType() == typeof(GH_UnitNumber)) {
         text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, s_converter);
+      }
       else {
         object value = data.ScriptVariable();
         try {
@@ -244,8 +271,9 @@ namespace GsaGH.Components {
         ExistingOutputsSerialized[outputIndex][index] = text;
         _outputsAreExpired[outputIndex][index] = true;
       }
-      else
+      else {
         _outputsAreExpired[outputIndex][index] = false;
+      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -298,11 +326,12 @@ namespace GsaGH.Components {
         .Name = "3D Members [" + unitAbbreviation + "]";
 
       i = 1;
-      for (int j = 1; j < 7; j++)
+      for (int j = 1; j < 7; j++) {
         Params.Output[i]
           .Access = _mode == FoldMode.List
           ? GH_ParamAccess.list
           : GH_ParamAccess.tree;
+      }
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -323,28 +352,34 @@ namespace GsaGH.Components {
         for (int i = 0; i < dropdownCount; i++) {
           int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
           var tempcontent = new List<string>();
-          for (int j = 0; j < dropdowncontentsCount; j++)
+          for (int j = 0; j < dropdowncontentsCount; j++) {
             tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+          }
+
           dropDownItems.Add(tempcontent);
         }
       }
-      else
+      else {
         throw new Exception("Component doesnt have 'dropdown' content stored");
+      }
 
       if (reader.GetBoolean("spacer")) {
         int dropdownspacerCount = reader.GetInt32("spacerCount");
         spacerDescriptions = new List<string>();
-        for (int i = 0; i < dropdownspacerCount; i++)
+        for (int i = 0; i < dropdownspacerCount; i++) {
           spacerDescriptions.Add(reader.GetString("spacercontents" + i));
+        }
       }
 
-      if (!reader.GetBoolean("select"))
+      if (!reader.GetBoolean("select")) {
         return;
+      }
 
       int selectionsCount = reader.GetInt32("selectionCount");
       selectedItems = new List<string>();
-      for (int i = 0; i < selectionsCount; i++)
+      for (int i = 0; i < selectionsCount; i++) {
         selectedItems.Add(reader.GetString("selectioncontents" + i));
+      }
     }
 
     internal static GH_IWriter WriteDropDownComponents(
@@ -363,8 +398,9 @@ namespace GsaGH.Components {
             j
             < dropDownItems[i]
               .Count;
-            j++)
+            j++) {
             writer.SetString("dropdowncontents" + i + j, dropDownItems[i][j]);
+          }
         }
 
         dropdown = true;
@@ -375,8 +411,10 @@ namespace GsaGH.Components {
       bool spacer = false;
       if (spacerDescriptions != null) {
         writer.SetInt32("spacerCount", spacerDescriptions.Count);
-        for (int i = 0; i < spacerDescriptions.Count; i++)
+        for (int i = 0; i < spacerDescriptions.Count; i++) {
           writer.SetString("spacercontents" + i, spacerDescriptions[i]);
+        }
+
         spacer = true;
       }
 
@@ -385,8 +423,10 @@ namespace GsaGH.Components {
       bool select = false;
       if (selectedItems != null) {
         writer.SetInt32("selectionCount", selectedItems.Count);
-        for (int i = 0; i < selectedItems.Count; i++)
+        for (int i = 0; i < selectedItems.Count; i++) {
           writer.SetString("selectioncontents" + i, selectedItems[i]);
+        }
+
         select = true;
       }
 
@@ -411,13 +451,16 @@ namespace GsaGH.Components {
 
       SetExpireDownStream();
       if (_outputIsExpired.Count > 0) {
-        for (int i = 0; i < Params.Output.Count; i++)
-          if (_outputIsExpired[i])
+        for (int i = 0; i < Params.Output.Count; i++) {
+          if (_outputIsExpired[i]) {
             Params.Output[i]
               .ExpireSolution(recompute: false);
+          }
+        }
       }
-      else
+      else {
         base.ExpireDownStreamObjects();
+      }
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -509,8 +552,9 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         Task<SolveResults> tsk = null;
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo)
+          if (ghTyp.Value is GsaModelGoo) {
             ghTyp.CastTo(ref gsaModel);
+          }
           else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
@@ -565,8 +609,9 @@ namespace GsaGH.Components {
         var gsaModel = new GsaModel();
         var ghTyp = new GH_ObjectWrapper();
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo)
+          if (ghTyp.Value is GsaModelGoo) {
             ghTyp.CastTo(ref gsaModel);
+          }
           else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
@@ -612,12 +657,14 @@ namespace GsaGH.Components {
             elementLocalAxesDict,
             memberLocalAxesDict);
         }
-        else
+        else {
           return;
+        }
       }
 
-      if (results is null)
+      if (results is null) {
         return;
+      }
 
       if (!(results.Nodes is null)) {
         data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.Id));
@@ -635,25 +682,31 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning(string.Join(" ", invalid1dElem.OrderBy(x => x)));
         }
 
-        if (_mode == FoldMode.List)
+        if (_mode == FoldMode.List) {
           data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
+        }
         else {
           var tree = new DataTree<GsaElement1dGoo>();
-          foreach (GsaElement1dGoo element in results.Elem1ds)
+          foreach (GsaElement1dGoo element in results.Elem1ds) {
             tree.Add(element, new GH_Path(element.Value.Section.Id));
+          }
+
           data.SetDataTree(1, tree);
         }
       }
 
       if (!(results.Elem2ds is null)) {
-        if (_mode == FoldMode.List)
+        if (_mode == FoldMode.List) {
           data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
+        }
         else {
           var tree = new DataTree<GsaElement2dGoo>();
-          foreach (GsaElement2dGoo element in results.Elem2ds)
+          foreach (GsaElement2dGoo element in results.Elem2ds) {
             tree.Add(element,
               new GH_Path(element.Value.Properties.First()
                 .Id));
+          }
+
           data.SetDataTree(2, tree);
         }
 
@@ -666,10 +719,12 @@ namespace GsaGH.Components {
             try {
               int parent = elem.Value.ApiElements[0]
                 .ParentMember.Member;
-              if (parent > 0 && memberKeys.Contains(parent))
+              if (parent > 0 && memberKeys.Contains(parent)) {
                 element2dsShaded.Add(elem);
-              else
+              }
+              else {
                 element2dsNotShaded.Add(elem);
+              }
             }
             catch (Exception) {
               element2dsNotShaded.Add(elem);
@@ -682,12 +737,15 @@ namespace GsaGH.Components {
       }
 
       if (!(results.Elem3ds is null)) {
-        if (_mode == FoldMode.List)
+        if (_mode == FoldMode.List) {
           data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
+        }
         else {
           var tree = new DataTree<GsaElement3dGoo>();
-          foreach (GsaElement3dGoo element in results.Elem3ds)
+          foreach (GsaElement3dGoo element in results.Elem3ds) {
             tree.Add(element, new GH_Path(element.Value.PropertyIDs.First()));
+          }
+
           data.SetDataTree(3, tree);
         }
 
@@ -699,10 +757,12 @@ namespace GsaGH.Components {
             try {
               int parent = elem.Value.ApiElements[0]
                 .ParentMember.Member;
-              if (parent > 0 && memberKeys.Contains(parent))
+              if (parent > 0 && memberKeys.Contains(parent)) {
                 element3dsShaded.Add(elem);
-              else
+              }
+              else {
                 element3dsNotShaded.Add(elem);
+              }
             }
             catch (Exception) {
               element3dsNotShaded.Add(elem);
@@ -724,12 +784,15 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning(string.Join(" ", invalid1dMem.OrderBy(x => x)));
         }
 
-        if (_mode == FoldMode.List)
+        if (_mode == FoldMode.List) {
           data.SetDataList(4, results.Mem1ds.OrderBy(item => item.Value.Id));
+        }
         else {
           var tree = new DataTree<GsaMember1dGoo>();
-          foreach (GsaMember1dGoo element in results.Mem1ds)
+          foreach (GsaMember1dGoo element in results.Mem1ds) {
             tree.Add(element, new GH_Path(element.Value.Section.Id));
+          }
+
           data.SetDataTree(4, tree);
         }
       }
@@ -743,18 +806,22 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning(string.Join(" ", invalid2dMem.OrderBy(x => x)));
         }
 
-        if (_mode == FoldMode.List)
+        if (_mode == FoldMode.List) {
           data.SetDataList(5, results.Mem2ds.OrderBy(item => item.Value.Id));
+        }
         else {
           var tree = new DataTree<GsaMember2dGoo>();
-          foreach (GsaMember2dGoo element in results.Mem2ds)
+          foreach (GsaMember2dGoo element in results.Mem2ds) {
             tree.Add(element, new GH_Path(element.Value.Property.Id));
+          }
+
           data.SetDataTree(5, tree);
         }
       }
 
-      if (results.Mem3ds is null)
+      if (results.Mem3ds is null) {
         return;
+      }
 
       {
         var invalid3dMem = results.Mem3ds.Where(x => !x.IsValid)
@@ -765,12 +832,15 @@ namespace GsaGH.Components {
           this.AddRuntimeWarning(string.Join(" ", invalid3dMem.OrderBy(x => x)));
         }
 
-        if (_mode == FoldMode.List)
+        if (_mode == FoldMode.List) {
           data.SetDataList(6, results.Mem3ds.OrderBy(item => item.Value.Id));
+        }
         else {
           var tree = new DataTree<GsaMember3dGoo>();
-          foreach (GsaMember3dGoo element in results.Mem3ds)
+          foreach (GsaMember3dGoo element in results.Mem3ds) {
             tree.Add(element, new GH_Path(element.Value.Prop3d.Id));
+          }
+
           data.SetDataTree(6, tree);
         }
       }
@@ -855,8 +925,9 @@ namespace GsaGH.Components {
     }
 
     private void GraftModeClicked(object sender, EventArgs e) {
-      if (_mode == FoldMode.Graft)
+      if (_mode == FoldMode.Graft) {
         return;
+      }
 
       RecordUndoEvent("Graft by Property");
       _mode = FoldMode.Graft;
@@ -868,8 +939,9 @@ namespace GsaGH.Components {
     }
 
     private void ListModeClicked(object sender, EventArgs e) {
-      if (_mode == FoldMode.List)
+      if (_mode == FoldMode.List) {
         return;
+      }
 
       RecordUndoEvent("List");
       _mode = FoldMode.List;
@@ -881,17 +953,21 @@ namespace GsaGH.Components {
     }
 
     private void SetExpireDownStream() {
-      if (_outputsAreExpired == null || _outputsAreExpired.Count <= 0)
+      if (_outputsAreExpired == null || _outputsAreExpired.Count <= 0) {
         return;
+      }
 
       _outputIsExpired = new Dictionary<int, bool>();
-      for (int i = 0; i < Params.Output.Count; i++)
-        if (_outputsAreExpired.ContainsKey(i))
+      for (int i = 0; i < Params.Output.Count; i++) {
+        if (_outputsAreExpired.ContainsKey(i)) {
           _outputIsExpired.Add(i,
             _outputsAreExpired[i]
               .Any(c => c));
-        else
+        }
+        else {
           _outputIsExpired.Add(i, value: true);
+        }
+      }
     }
   }
 }

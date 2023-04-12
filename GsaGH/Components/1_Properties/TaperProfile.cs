@@ -21,8 +21,9 @@ namespace GsaGH.Components {
           "Taper",
       "Create a Profile that tapers along its length from start and end profiles",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile Start",
@@ -35,11 +36,12 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddTextParameter("Tapered Profile",
-        "Pf",
-        "Profile tapering along the length of its element",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddTextParameter("Tapered Profile",
+                                                                                         "Pf",
+                                                                                         "Profile tapering along the length of its element",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghProfile = new GH_String();
@@ -75,20 +77,24 @@ namespace GsaGH.Components {
           }
 
           string taper = startParts[0] + " " + startParts[1];
-          for (int i = 2; i < startParts.Length; i++)
+          for (int i = 2; i < startParts.Length; i++) {
             taper = taper + " " + startParts[i];
+          }
 
           taper += " :";
-          for (int i = 2; i < endParts.Length; i++)
+          for (int i = 2; i < endParts.Length; i++) {
             taper = taper + " " + endParts[i];
+          }
 
           da.SetData(0, taper);
         }
-        else
+        else {
           this.AddRuntimeError("Start and End Profile types must be similar");
+        }
       }
-      else
+      else {
         this.AddRuntimeError("Profile type must be 'STD'");
+      }
     }
   }
 }

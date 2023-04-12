@@ -44,13 +44,14 @@ namespace GsaGH.Components {
                               "NodeLoad",
       "Create GSA Node Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
+      SubCategoryName.Cat3()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      if (i == 0)
+      if (i == 0) {
         switch (_selectedItems[0]) {
           case "Node Force":
             _mode = FoldMode.NodeForce;
@@ -76,7 +77,8 @@ namespace GsaGH.Components {
             _selectedItems[1] = Length.GetAbbreviation(_lengthUnit);
             break;
         }
-      else
+      }
+      else {
         switch (_mode) {
           case FoldMode.NodeForce:
             _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
@@ -91,6 +93,7 @@ namespace GsaGH.Components {
             _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
             break;
         }
+      }
 
       base.UpdateUI();
     }
@@ -195,12 +198,13 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Node Load",
-        "Ld",
-        "GSA Node Load",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaLoadParameter(),
+                                                                                         "Node Load",
+                                                                                         "Ld",
+                                                                                         "GSA Node Load",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var nodeLoad = new GsaNodeLoad();
@@ -222,8 +226,10 @@ namespace GsaGH.Components {
 
       int loadCase = 1;
       var ghInteger = new GH_Integer();
-      if (da.GetData(0, ref ghInteger))
+      if (da.GetData(0, ref ghInteger)) {
         GH_Convert.ToInt32(ghInteger, out loadCase, GH_Conversion.Both);
+      }
+
       nodeLoad.NodeLoad.Case = loadCase;
 
       var ghTyp = new GH_ObjectWrapper();
@@ -245,21 +251,26 @@ namespace GsaGH.Components {
           this.AddRuntimeRemark(
             "Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
-        else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both))
+        else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both)) {
           nodeLoad.NodeLoad.Nodes = nodeList;
+        }
       }
 
       var ghName = new GH_String();
-      if (da.GetData(2, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+      if (da.GetData(2, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
           nodeLoad.NodeLoad.Name = name;
+        }
+      }
 
       string dir = "Z";
       Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
-      if (da.GetData(3, ref ghDir))
+      if (da.GetData(3, ref ghDir)) {
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
+      }
+
       dir = dir.ToUpper()
         .Trim();
       switch (dir) {
@@ -287,27 +298,32 @@ namespace GsaGH.Components {
       nodeLoad.NodeLoad.Direction = direc;
 
       double load = 0;
-      if (_mode == FoldMode.NodeForce || _mode == FoldMode.NodeMoment)
+      if (_mode == FoldMode.NodeForce || _mode == FoldMode.NodeMoment) {
         switch (dir) {
           case "X":
           case "Y":
           case "Z":
             load = ((Force)Input.UnitNumber(this, da, 4, _forceUnit)).Newtons;
-            if (_mode != FoldMode.NodeForce)
+            if (_mode != FoldMode.NodeForce) {
               this.AddRuntimeWarning(
                 "Direction input set to imply a 'Force' but type is set to 'Moment'. The output Node Load has been created to be of type 'Force'.");
+            }
+
             break;
 
           case "XX":
           case "YY":
           case "ZZ":
             load = ((Moment)Input.UnitNumber(this, da, 4, _momentUnit)).NewtonMeters;
-            if (_mode != FoldMode.NodeMoment)
+            if (_mode != FoldMode.NodeMoment) {
               this.AddRuntimeWarning(
                 "Direction input set to imply a 'Moment' force but type is set to 'Force'. The output Node Load has been created to be of type 'Moment'.");
+            }
+
             break;
         }
-      else
+      }
+      else {
         switch (dir) {
           case "X":
           case "Y":
@@ -323,6 +339,7 @@ namespace GsaGH.Components {
               "Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
             break;
         }
+      }
 
       nodeLoad.NodeLoad.Value = load;
 

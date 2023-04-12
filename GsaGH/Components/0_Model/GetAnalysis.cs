@@ -23,15 +23,17 @@ namespace GsaGH.Components {
           "GetAnalysisTasks",
       "Get Analysis Tasks and their Cases from GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some Analysis Cases and Tasks",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+                                                                                       "GSA Model",
+                                                                                       "GSA",
+                                                                                       "GSA model containing some Analysis Cases and Tasks",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaAnalysisTaskParameter(),
@@ -48,8 +50,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
+      if (!da.GetData(0, ref gsaModel)) {
         return;
+      }
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = Analyses.GetAnalysisTasksAndCombinations(gsaModel);

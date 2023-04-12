@@ -26,8 +26,9 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaBool6Goo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaBool6))
+      if (data.GetType() == typeof(GsaBool6)) {
         return new GsaBool6Goo((GsaBool6)data);
+      }
 
       var goo = new GsaBool6Goo(new GsaBool6());
       bool flag = goo.CastFrom(data);

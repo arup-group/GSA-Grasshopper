@@ -14,6 +14,8 @@ namespace GsaGH.Parameters {
 
     public GsaCombinationCaseGoo(GsaCombinationCase item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaCombinationCaseGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaCombinationCaseGoo(Value);
+    }
   }
 }

@@ -14,6 +14,8 @@ namespace GsaGH.Parameters {
 
     public GsaSectionModifierGoo(GsaSectionModifier item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaSectionModifierGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaSectionModifierGoo(Value);
+    }
   }
 }

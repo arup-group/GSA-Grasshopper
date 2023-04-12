@@ -46,8 +46,9 @@ namespace IntegrationTests.Parameters {
     }
 
     [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    }
 
     [Fact]
     public void OriginalCaseDescriptionsTest() {

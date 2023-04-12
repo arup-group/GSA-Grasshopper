@@ -28,8 +28,9 @@ namespace GsaGH.Components {
               "PointLoad",
       "Create GSA Grid Point Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
+      SubCategoryName.Cat3()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -115,37 +116,40 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Grid Point Load",
-        "Ld",
-        "GSA Grid Point Load",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaLoadParameter(),
+                                                                                         "Grid Point Load",
+                                                                                         "Ld",
+                                                                                         "GSA Grid Point Load",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaGridPointLoad = new GsaGridPointLoad();
       int loadCase = 1;
       var ghLoadCase = new GH_Integer();
-      if (da.GetData(0, ref ghLoadCase))
+      if (da.GetData(0, ref ghLoadCase)) {
         GH_Convert.ToInt32(ghLoadCase, out loadCase, GH_Conversion.Both);
+      }
+
       gsaGridPointLoad.GridPointLoad.Case = loadCase;
 
       var point3d = new Point3d();
       var ghPt = new GH_Point();
-      if (da.GetData(1, ref ghPt))
+      if (da.GetData(1, ref ghPt)) {
         GH_Convert.ToPoint3d(ghPt, ref point3d, GH_Conversion.Both);
+      }
+
       gsaGridPointLoad.GridPointLoad.X = point3d.X;
       gsaGridPointLoad.GridPointLoad.Y = point3d.Y;
 
       GsaGridPlaneSurface gridPlaneSurface;
       Plane plane = Plane.WorldXY;
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(2, ref ghTyp))
+      if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo _: {
-              var temppln = new GsaGridPlaneSurface();
-              ghTyp.CastTo(ref temppln);
-              gridPlaneSurface = temppln.Duplicate();
+          case GsaGridPlaneSurfaceGoo value: {
+              gridPlaneSurface = value.Value.Duplicate();
               gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
               break;
             }
@@ -171,6 +175,7 @@ namespace GsaGH.Components {
               break;
             }
         }
+      }
       else {
         plane = Plane.WorldXY;
         plane.Origin = point3d;
@@ -182,8 +187,10 @@ namespace GsaGH.Components {
       Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
-      if (da.GetData(3, ref ghDir))
+      if (da.GetData(3, ref ghDir)) {
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
+      }
+
       dir = dir.ToUpper();
       switch (dir) {
         case "X":
@@ -201,14 +208,17 @@ namespace GsaGH.Components {
       var ghAx = new GH_Integer();
       if (da.GetData(4, ref ghAx)) {
         GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
-        if (axis == 0 || axis == -1)
+        if (axis == 0 || axis == -1) {
           gsaGridPointLoad.GridPointLoad.AxisProperty = axis;
+        }
       }
 
       var ghName = new GH_String();
-      if (da.GetData(5, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+      if (da.GetData(5, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
           gsaGridPointLoad.GridPointLoad.Name = name;
+        }
+      }
 
       gsaGridPointLoad.GridPointLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;

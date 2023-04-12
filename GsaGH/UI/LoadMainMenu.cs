@@ -24,8 +24,9 @@ namespace GsaGH.Graphics.Menu {
         Thread.Sleep(321);
       }
 
-      if (!editor.MainMenuStrip.Items.ContainsKey("Oasys"))
+      if (!editor.MainMenuStrip.Items.ContainsKey("Oasys")) {
         editor.MainMenuStrip.Items.Add(s_oasysMenu);
+      }
       else {
         s_oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items["Oasys"];
         lock (s_oasysMenu) {

@@ -14,19 +14,21 @@ namespace GsaGH.Helpers.GH {
 
       IEnumerable<string> elementsToCheck = GetNamesToCheck(valueToFind);
       string result = TryGetStringFrom(reader, elementsToCheck);
-      if (string.IsNullOrEmpty(result))
+      if (string.IsNullOrEmpty(result)) {
         return false;
+      }
 
       foundedValue = (int)Enum.Parse(enumToFind, result.ToPascalCase());
 
       return true;
     }
 
-    private static IEnumerable<string> GetNamesToCheck(string defaultValue)
-      => new List<string> {
+    private static IEnumerable<string> GetNamesToCheck(string defaultValue) {
+      return new List<string> {
         defaultValue,
         $"_{defaultValue}",
       };
+    }
 
     /// <summary>
     /// Try get string for a specified names

@@ -21,7 +21,7 @@ namespace GsaGH.Components {
           "GetLists",
       "Get Entity Lists from GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat0()) { this.Hidden = true; }
+      SubCategoryName.Cat0()) { Hidden = true; }
 
     // sets the initial state of the component to hidden
 

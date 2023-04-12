@@ -106,8 +106,10 @@ namespace GsaGH.Helpers.Import {
             tmpType.Add("A");
             tempvoids.RemoveAt(j);
           }
-          else
+          else {
             tmpType.Add(" ");
+          }
+
           int tpt = int.Parse(tempvoids[j]);
           tmpvds.Add(tpt);
         }
@@ -125,8 +127,10 @@ namespace GsaGH.Helpers.Import {
             tmpType.Add("A");
             templines.RemoveAt(j);
           }
-          else
+          else {
             tmpType.Add(" ");
+          }
+
           int tpt = int.Parse(templines[j]);
           tmplns.Add(tpt);
         }

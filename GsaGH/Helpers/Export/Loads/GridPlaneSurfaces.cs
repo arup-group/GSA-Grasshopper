@@ -65,10 +65,13 @@ namespace GsaGH.Helpers.Export {
     /// <param name="gridsurfaceidcounter"></param>
     internal static void GetGridPlaneSurfaceCounters(List<GsaGridPlaneSurface> gridPlaneSurfaces, ref int gridplaneidcounter, ref int gridsurfaceidcounter) {
       foreach (GsaGridPlaneSurface gps in gridPlaneSurfaces) {
-        if (gps.GridPlaneId > 0)
+        if (gps.GridPlaneId > 0) {
           gridplaneidcounter = Math.Max(gridplaneidcounter, gps.GridPlaneId + 1);
-        if (gps.GridSurfaceId > 0)
+        }
+
+        if (gps.GridSurfaceId > 0) {
           gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, gps.GridSurfaceId + 1);
+        }
       }
     }
 
@@ -85,24 +88,36 @@ namespace GsaGH.Helpers.Export {
 
           switch (load.LoadType) {
             case GsaLoad.LoadTypes.GridArea:
-              if (load.AreaLoad.GridPlaneSurface.GridPlaneId > 0)
+              if (load.AreaLoad.GridPlaneSurface.GridPlaneId > 0) {
                 gridplaneidcounter = Math.Max(gridplaneidcounter, load.AreaLoad.GridPlaneSurface.GridPlaneId + 1);
-              if (load.AreaLoad.GridPlaneSurface.GridSurfaceId > 0)
+              }
+
+              if (load.AreaLoad.GridPlaneSurface.GridSurfaceId > 0) {
                 gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.AreaLoad.GridPlaneSurface.GridSurfaceId + 1);
+              }
+
               break;
 
             case GsaLoad.LoadTypes.GridLine:
-              if (load.LineLoad.GridPlaneSurface.GridPlaneId > 0)
+              if (load.LineLoad.GridPlaneSurface.GridPlaneId > 0) {
                 gridplaneidcounter = Math.Max(gridplaneidcounter, load.LineLoad.GridPlaneSurface.GridPlaneId + 1);
-              if (load.LineLoad.GridPlaneSurface.GridSurfaceId > 0)
+              }
+
+              if (load.LineLoad.GridPlaneSurface.GridSurfaceId > 0) {
                 gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.LineLoad.GridPlaneSurface.GridSurfaceId + 1);
+              }
+
               break;
 
             case GsaLoad.LoadTypes.GridPoint:
-              if (load.PointLoad.GridPlaneSurface.GridPlaneId > 0)
+              if (load.PointLoad.GridPlaneSurface.GridPlaneId > 0) {
                 gridplaneidcounter = Math.Max(gridplaneidcounter, load.PointLoad.GridPlaneSurface.GridPlaneId + 1);
-              if (load.PointLoad.GridPlaneSurface.GridSurfaceId > 0)
+              }
+
+              if (load.PointLoad.GridPlaneSurface.GridSurfaceId > 0) {
                 gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.PointLoad.GridPlaneSurface.GridSurfaceId + 1);
+              }
+
               break;
           }
         }
@@ -122,20 +137,24 @@ namespace GsaGH.Helpers.Export {
 
       Axis axis = gridplanesurface.GetAxis(modelUnit);
 
-      if (axis.Name == "")
+      if (axis.Name == "") {
         axis.Name = "Axis " + axisidcounter;
+      }
 
       if (gridplanesurface.AxisId > 0) {
         gridplanesurface.GridPlane.AxisProperty = axisId;
-        if (existingAxes.ContainsKey(axisId))
+        if (existingAxes.ContainsKey(axisId)) {
           existingAxes[axisId] = axis;
-        else
+        }
+        else {
           existingAxes.Add(axisId, axis);
+        }
       }
       else {
         axisId = Axes.GetExistingAxisId(existingAxes, axis);
-        if (axisId > 0)
+        if (axisId > 0) {
           gridplanesurface.GridPlane.AxisProperty = axisId; // set the id if axis exist
+        }
         else {
           axisId = axisidcounter;
           gridplanesurface.GridPlane.AxisProperty = axisidcounter;
@@ -160,11 +179,13 @@ namespace GsaGH.Helpers.Export {
     /// <returns></returns>
     internal static int SetGridPlane(ref GsaGridPlaneSurface gridplanesurface,
         ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter, ref Dictionary<Guid, int> gpGuid, Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
-      if (existingGridPlanes.Count > 0)
+      if (existingGridPlanes.Count > 0) {
         gridplaneidcounter = Math.Max(existingGridPlanes.Keys.Max() + 1, gridplaneidcounter);
+      }
 
-      if (gridplanesurface.GridPlane.Name == "")
+      if (gridplanesurface.GridPlane.Name == "") {
         gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
+      }
 
       if (gridplanesurface.Elevation != "0") {
         var elevation = new Length();
@@ -172,8 +193,9 @@ namespace GsaGH.Helpers.Export {
           elevation = Length.Parse(gridplanesurface.Elevation);
         }
         catch (Exception) {
-          if (double.TryParse(gridplanesurface.Elevation, out double elev))
+          if (double.TryParse(gridplanesurface.Elevation, out double elev)) {
             elevation = new Length(elev, modelUnit);
+          }
         }
 
         gridplanesurface.GridPlane.Elevation = elevation.Meters;
@@ -185,8 +207,9 @@ namespace GsaGH.Helpers.Export {
           tolerance = Length.Parse(gridplanesurface.StoreyToleranceAbove);
         }
         catch (Exception) {
-          if (double.TryParse(gridplanesurface.StoreyToleranceAbove, out double tol))
+          if (double.TryParse(gridplanesurface.StoreyToleranceAbove, out double tol)) {
             tolerance = new Length(tol, modelUnit);
+          }
         }
 
         gridplanesurface.GridPlane.ToleranceAbove = tolerance.Meters;
@@ -198,8 +221,9 @@ namespace GsaGH.Helpers.Export {
           tolerance = Length.Parse(gridplanesurface.StoreyToleranceBelow);
         }
         catch (Exception) {
-          if (double.TryParse(gridplanesurface.StoreyToleranceBelow, out double tol))
+          if (double.TryParse(gridplanesurface.StoreyToleranceBelow, out double tol)) {
             tolerance = new Length(tol, modelUnit);
+          }
         }
 
         gridplanesurface.GridPlane.ToleranceBelow = tolerance.Meters;
@@ -222,8 +246,9 @@ namespace GsaGH.Helpers.Export {
 
               if (existingGridPlanes[key].Elevation == gridplanesurface.GridPlane.Elevation &
                   existingGridPlanes[key].ToleranceAbove == gridplanesurface.GridPlane.ToleranceAbove &
-                  existingGridPlanes[key].ToleranceBelow == gridplanesurface.GridPlane.ToleranceBelow)
+                  existingGridPlanes[key].ToleranceBelow == gridplanesurface.GridPlane.ToleranceBelow) {
                 return key;
+              }
             }
           }
         }
@@ -265,28 +290,33 @@ namespace GsaGH.Helpers.Export {
     internal static int SetGridSurface(ref GsaGridPlaneSurface gridplanesurface,
         ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter, ref Dictionary<Guid, int> gsGuid,
         Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes, LengthUnit modelUnit, ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers) {
-      if (existingGridSurfaces.Count > 0)
+      if (existingGridSurfaces.Count > 0) {
         gridsurfaceidcounter = Math.Max(existingGridSurfaces.Keys.Max() + 1, gridsurfaceidcounter);
+      }
 
       int gsId = gridplanesurface.GridSurfaceId;
 
-      if (gridplanesurface.GridSurface.Name == "")
+      if (gridplanesurface.GridSurface.Name == "") {
         gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
+      }
 
       var tolerance = new Length();
       try {
         tolerance = Length.Parse(gridplanesurface.Tolerance);
       }
       catch (Exception) {
-        if (double.TryParse(gridplanesurface.Tolerance, out double tol))
+        if (double.TryParse(gridplanesurface.Tolerance, out double tol)) {
           tolerance = new Length(tol, modelUnit);
+        }
       }
 
       gridplanesurface.GridSurface.Tolerance = tolerance.Meters;
 
       if (model != null && gridplanesurface._referenceType != ReferenceType.None) {
-        if (memberElementRelationship == null)
+        if (memberElementRelationship == null) {
           memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+        }
+
         gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(gridplanesurface, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
       }
 
@@ -313,8 +343,9 @@ namespace GsaGH.Helpers.Export {
                     existingGridSurfaces[keySrf].ElementType == gridplanesurface.GridSurface.ElementType &
                     existingGridSurfaces[keySrf].ExpansionType == gridplanesurface.GridSurface.ExpansionType &
                     existingGridSurfaces[keySrf].SpanType == gridplanesurface.GridSurface.SpanType &
-                    existingGridSurfaces[keySrf].Tolerance == gridplanesurface.GridSurface.Tolerance)
+                    existingGridSurfaces[keySrf].Tolerance == gridplanesurface.GridSurface.Tolerance) {
                   return keySrf;
+                }
               }
             }
           }

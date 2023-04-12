@@ -22,8 +22,9 @@ namespace GsaGH.Components {
       GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBucklingLengthFactorsGoo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddNumberParameter("Factor Lsy",
@@ -43,8 +44,9 @@ namespace GsaGH.Components {
       pManager[2].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var fls = new GsaBucklingLengthFactors();

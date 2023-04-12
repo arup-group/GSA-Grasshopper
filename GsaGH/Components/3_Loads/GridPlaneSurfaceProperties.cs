@@ -38,7 +38,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => Update(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
           Enabled = true,
         };
@@ -51,23 +51,31 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("LengthUnit"))
+      if (reader.ItemExists("LengthUnit")) {
         _lengthUnit
           = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
+      }
+      else {
         _lengthUnit = LengthUnit.Meter;
+      }
+
       return base.Read(reader);
     }
 
@@ -89,14 +97,17 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
+    protected override void BeforeSolveInstance() {
+      Message = Length.GetAbbreviation(_lengthUnit);
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Plane Surface",
-        "GPS",
-        "Grid Plane Surface to get a bit more info out of.",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaGridPlaneParameter(),
+                                                                                       "Grid Plane Surface",
+                                                                                       "GPS",
+                                                                                       "Grid Plane Surface to get a bit more info out of.",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddPlaneParameter("Grid Plane",
@@ -170,8 +181,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaGridPlaneSurface = new GsaGridPlaneSurface();
-      if (!da.GetData(0, ref gsaGridPlaneSurface))
+      if (!da.GetData(0, ref gsaGridPlaneSurface)) {
         return;
+      }
 
       if (gsaGridPlaneSurface == null) {
         this.AddRuntimeWarning("Null GridPlaneSurface");
@@ -197,8 +209,9 @@ namespace GsaGH.Components {
             elevation = Length.Parse(gsaGridPlaneSurface.Elevation);
           }
           catch (Exception) {
-            if (double.TryParse(gsaGridPlaneSurface.Elevation, out double elev))
+            if (double.TryParse(gsaGridPlaneSurface.Elevation, out double elev)) {
               elevation = new Length(elev, _lengthUnit);
+            }
           }
 
           axis.OriginZ -= elevation.As(_lengthUnit);

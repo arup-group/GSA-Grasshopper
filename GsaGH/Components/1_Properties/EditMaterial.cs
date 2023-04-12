@@ -23,8 +23,9 @@ namespace GsaGH.Components {
           "MaterialEdit",
       "Modify GSA Material",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(),
@@ -65,9 +66,10 @@ namespace GsaGH.Components {
         "Set Material Grade",
         GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -90,20 +92,20 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaMaterial = new GsaMaterial();
       var material = new GsaMaterial();
-      if (da.GetData(0, ref gsaMaterial))
+      if (da.GetData(0, ref gsaMaterial)) {
         material = gsaMaterial.Duplicate();
+      }
 
       if (material != null) {
         var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId))
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+        if (da.GetData(1, ref ghId)) {
+          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
             material.AnalysisProperty = id;
+          }
+        }
 
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
-          MaterialType materialType = MaterialType.GENERIC;
-          if (ghTyp.Value is MaterialType)
-            ghTyp.CastTo(ref materialType);
           switch (ghTyp.Value) {
             case GH_Integer _: {
                 GH_Convert.ToInt32(ghTyp, out int typ, GH_Conversion.Both);
@@ -140,9 +142,9 @@ namespace GsaGH.Components {
                     material.MaterialType = GsaMaterial.MatType.Generic;
                     break;
                 }
-
                 break;
               }
+
             case GH_String _: {
                 GH_Convert.ToString(ghTyp, out string typ, GH_Conversion.Both);
                 switch (typ.ToUpper()) {
@@ -178,9 +180,9 @@ namespace GsaGH.Components {
                     material.MaterialType = GsaMaterial.MatType.Generic;
                     break;
                 }
-
                 break;
               }
+
             default:
               this.AddRuntimeError("Unable to convert Material Type input");
               return;
@@ -188,8 +190,9 @@ namespace GsaGH.Components {
         }
 
         int grd = 0;
-        if (da.GetData(3, ref grd))
+        if (da.GetData(3, ref grd)) {
           material.GradeProperty = grd;
+        }
 
         da.SetData(0, new GsaMaterialGoo(material));
         da.SetData(1, material.AnalysisProperty);
@@ -201,8 +204,9 @@ namespace GsaGH.Components {
         da.SetData(2, mate);
         da.SetData(3, material.GradeProperty);
       }
-      else
+      else {
         this.AddRuntimeError("Material is Null");
+      }
     }
   }
 }

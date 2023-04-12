@@ -59,10 +59,12 @@ namespace GsaGH.Parameters {
       get => _material;
       set {
         _material = value;
-        if (_prop2d == null)
+        if (_prop2d == null) {
           _prop2d = new Prop2D();
-        else
+        }
+        else {
           CloneApiObject();
+        }
 
         _prop2d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         _prop2d.MaterialAnalysisProperty = _material.AnalysisProperty;
@@ -105,8 +107,10 @@ namespace GsaGH.Parameters {
     }
     public Length Thickness {
       get {
-        if (_prop2d.Description.Length == 0)
+        if (_prop2d.Description.Length == 0) {
           return Length.Zero;
+        }
+
         if (_prop2d.Description.Last() == ')') {
           // thickness could be written as "30.33(in)"
           string unitAbbreviation = _prop2d.Description.Split('(', ')')[1];
@@ -116,8 +120,9 @@ namespace GsaGH.Parameters {
 
           return new Length(val, unit);
         }
-        else
+        else {
           return new Length(double.Parse(_prop2d.Description, CultureInfo.InvariantCulture), LengthUnit.Millimeter);
+        }
       }
       set {
         CloneApiObject();
@@ -165,13 +170,17 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaProp2d(IReadOnlyDictionary<int, Prop2D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) : this(id) {
-      if (!pDict.ContainsKey(id))
+      if (!pDict.ContainsKey(id)) {
         return;
+      }
+
       _prop2d = pDict[id];
       IsReferencedById = false;
       // material
-      if (_prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop2d.MaterialAnalysisProperty))
+      if (_prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop2d.MaterialAnalysisProperty)) {
         _material.AnalysisMaterial = matDict[_prop2d.MaterialAnalysisProperty];
+      }
+
       if (_prop2d.AxisProperty > 0) {
         if (axDict != null && axDict.ContainsKey(_prop2d.AxisProperty)) {
           Axis ax = axDict[_prop2d.AxisProperty];
@@ -196,8 +205,10 @@ namespace GsaGH.Parameters {
         _localAxis = new Plane(_localAxis),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement)
+      if (cloneApiElement) {
         dup.CloneApiObject();
+      }
+
       return dup;
     }
 
@@ -211,7 +222,7 @@ namespace GsaGH.Parameters {
       string supportType = Type == Property2D_Type.LOAD
         ? $"{SupportType}"
         : string.Empty;
-      string referenceEdge = Type == Property2D_Type.LOAD && (SupportType != SupportType.Auto && SupportType != SupportType.AllEdges)
+      string referenceEdge = Type == Property2D_Type.LOAD && SupportType != SupportType.Auto && SupportType != SupportType.AllEdges
         ? $"RefEdge:{ReferenceEdge}"
         : string.Empty;
       return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
@@ -237,8 +248,10 @@ namespace GsaGH.Parameters {
     }
 
     private Prop2D GetApiObject() {
-      if (_prop2d == null)
+      if (_prop2d == null) {
         return new Prop2D();
+      }
+
       var prop = new Prop2D {
         MaterialAnalysisProperty = _prop2d.MaterialAnalysisProperty,
         MaterialGradeProperty = _prop2d.MaterialGradeProperty,
@@ -250,12 +263,15 @@ namespace GsaGH.Parameters {
       };
       if (_prop2d.Type == Property2D_Type.LOAD) {
         prop.SupportType = _prop2d.SupportType;
-        if (_prop2d.SupportType != SupportType.Auto)
+        if (_prop2d.SupportType != SupportType.Auto) {
           prop.ReferenceEdge = _prop2d.ReferenceEdge;
+        }
       }
 
       if ((Color)_prop2d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+{
         prop.Colour = _prop2d.Colour;
+      }
 
       return prop;
     }

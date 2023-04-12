@@ -21,23 +21,27 @@ namespace GsaGH.Parameters {
 
     public GsaElement2dGoo(GsaElement2d item) : base(item) { }
 
-    internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null)
-                                      => Value = duplicate
-        ? item.Duplicate()
-        : item;
+    internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null) {
+      Value = duplicate
+                                                                                     ? item.Duplicate()
+                                                                                     : item;
+    }
 
     public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data
       // into GsaElement.
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
-      if (base.CastFrom(source))
+      if (base.CastFrom(source)) {
         return true;
+      }
 
       if (typeof(Element).IsAssignableFrom(source.GetType())) {
-        if (Value.ApiElements.Count > 1)
+        if (Value.ApiElements.Count > 1) {
           return false; // we cannot convert a list on the fly
+        }
 
         Value.ApiElements[0]
           = (Element)source; //If someone should want to just test if they can convert a Mesh face
@@ -45,8 +49,10 @@ namespace GsaGH.Parameters {
       }
 
       var mesh = new Mesh();
-      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
+      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both)) {
         return false;
+      }
+
       var elem = new GsaElement2d(mesh);
       Value = elem;
       return true;
@@ -55,8 +61,9 @@ namespace GsaGH.Parameters {
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       // instance of GsaElement2D into some other type Q.
-      if (base.CastTo(ref target))
+      if (base.CastTo(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
         target = Value == null
@@ -77,30 +84,43 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) => args.Pipeline.DrawMeshShaded(Value.Mesh,
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      args.Pipeline.DrawMeshShaded(Value.Mesh,
       args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
         ? Colours.Element2dFace
         : Colours.Element2dFaceSelected);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null
         || CentralSettings.PreviewMeshEdges == false
-        || Value.Mesh == null)
+        || Value.Mesh == null) {
         return;
+      }
+
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+{
         args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdge, 1);
-      else
+      }
+      else {
         args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdgeSelected, 2);
+      }
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaElement2dGoo(Value);
+    public override IGH_GeometricGoo Duplicate() {
+      return new GsaElement2dGoo(Value);
+    }
 
-    public override GeometryBase GetGeometry() => Value.Mesh;
+    public override GeometryBase GetGeometry() {
+      return Value.Mesh;
+    }
 
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaElement2dGoo(Value.Morph(xmorph));
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
+      return new GsaElement2dGoo(Value.Morph(xmorph));
+    }
 
-    public override IGH_GeometricGoo Transform(Transform xform)
-      => new GsaElement2dGoo(Value.Transform(xform));
+    public override IGH_GeometricGoo Transform(Transform xform) {
+      return new GsaElement2dGoo(Value.Transform(xform));
+    }
   }
 }

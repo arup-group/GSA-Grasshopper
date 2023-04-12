@@ -35,13 +35,21 @@ namespace GsaGH.Components {
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    public bool CanInsertParameter(GH_ParameterSide side, int index) => false;
+    public bool CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    public bool CanRemoveParameter(GH_ParameterSide side, int index) => false;
+    public bool CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-    public IGH_Param CreateParameter(GH_ParameterSide side, int index) => null;
+    public IGH_Param CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
 
-    public bool DestroyParameter(GH_ParameterSide side, int index) => false;
+    public bool DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
@@ -49,8 +57,9 @@ namespace GsaGH.Components {
     }
 
     public void VariableParameterMaintenance() {
-      if (_mode != FoldMode.GetConnected)
+      if (_mode != FoldMode.GetConnected) {
         return;
+      }
 
       Params.Output[10]
         .NickName = "El";
@@ -76,8 +85,9 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-      => Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaNodeParameter(),
@@ -119,9 +129,10 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
 
       pManager.HideParameter(0);
       pManager.HideParameter(2);
@@ -167,8 +178,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
-      if (_mode != FoldMode.GetConnected)
+      if (_mode != FoldMode.GetConnected) {
         return;
+      }
 
       pManager.AddIntegerParameter("Connected Elements",
         "El",
@@ -187,13 +199,17 @@ namespace GsaGH.Components {
         var tempPt = new Point3d();
         if (ghTyp.Value is GsaNodeGoo) {
           ghTyp.CastTo(ref node);
-          if (node == null)
+          if (node == null) {
             this.AddRuntimeError("Node input is null");
-          if (node.ApiNode == null)
+          }
+
+          if (node.ApiNode == null) {
             this.AddRuntimeError("Node input is null");
+          }
         }
-        else if (GH_Convert.ToPoint3d(ghTyp.Value, ref tempPt, GH_Conversion.Both))
+        else if (GH_Convert.ToPoint3d(ghTyp.Value, ref tempPt, GH_Conversion.Both)) {
           node.Point = tempPt;
+        }
         else {
           this.AddRuntimeError("Unable to convert input to Node");
           return;
@@ -203,58 +219,74 @@ namespace GsaGH.Components {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2]
             .SourceCount
-          == 0)
+          == 0) {
           this.AddRuntimeRemark("New node created at {0, 0, 0}");
+        }
       }
 
       var ghPt = new GH_Point();
       if (da.GetData(2, ref ghPt)) {
         var pt = new Point3d();
-        if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both))
+        if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both)) {
           node.Point = pt;
+        }
       }
 
       // 1 ID (do ID after point, as setting point will clear the Node.ID value
       var ghInt = new GH_Integer();
-      if (da.GetData(1, ref ghInt))
-        if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
+      if (da.GetData(1, ref ghInt)) {
+        if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both)) {
           node.Id = id;
+        }
+      }
 
       var ghPln = new GH_Plane();
       if (da.GetData(3, ref ghPln)) {
         var pln = new Plane();
-        if (GH_Convert.ToPlane(ghPln, ref pln, GH_Conversion.Both))
+        if (GH_Convert.ToPlane(ghPln, ref pln, GH_Conversion.Both)) {
           node.LocalAxis = pln;
+        }
       }
 
       var restraint = new GsaBool6();
-      if (da.GetData(4, ref restraint))
+      if (da.GetData(4, ref restraint)) {
         node.Restraint = restraint;
+      }
 
       ghInt = new GH_Integer();
-      if (da.GetData(5, ref ghInt))
-        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both))
+      if (da.GetData(5, ref ghInt)) {
+        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both)) {
           node.DamperProperty = prop;
+        }
+      }
 
       ghInt = new GH_Integer();
-      if (da.GetData(6, ref ghInt))
-        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both))
+      if (da.GetData(6, ref ghInt)) {
+        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both)) {
           node.MassProperty = prop;
+        }
+      }
 
       ghInt = new GH_Integer();
-      if (da.GetData(7, ref ghInt))
-        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both))
+      if (da.GetData(7, ref ghInt)) {
+        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both)) {
           node.SpringProperty = prop;
+        }
+      }
 
       var ghStr = new GH_String();
-      if (da.GetData(8, ref ghStr))
-        if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
+      if (da.GetData(8, ref ghStr)) {
+        if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both)) {
           node.Name = name;
+        }
+      }
 
       var ghcol = new GH_Colour();
-      if (da.GetData(9, ref ghcol))
-        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
+      if (da.GetData(9, ref ghcol)) {
+        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both)) {
           node.Colour = col;
+        }
+      }
 
       da.SetData(0, new GsaNodeGoo(node));
       da.SetData(1, node.Id);
@@ -268,8 +300,9 @@ namespace GsaGH.Components {
       da.SetData(9, node.Colour);
 
       // only get connected elements/members if enabled (computationally expensive)
-      if (_mode != FoldMode.GetConnected)
+      if (_mode != FoldMode.GetConnected) {
         return;
+      }
 
       try {
         da.SetDataList(10, node.ApiNode?.ConnectedElements);
@@ -291,8 +324,9 @@ namespace GsaGH.Components {
       if (_mode == FoldMode.GetConnected) {
         _mode = FoldMode.DoNotGetConnected;
 
-        while (Params.Output.Count > 10)
+        while (Params.Output.Count > 10) {
           Params.UnregisterOutputParameter(Params.Output[10], true);
+        }
       }
       else {
         _mode = FoldMode.GetConnected;

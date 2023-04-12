@@ -6,19 +6,23 @@ namespace GsaGHTests.Helper {
   internal static class GsaFile {
     internal static string SteelDesignComplex {
       get {
-        if (s_steelDesignComplex == "")
+        if (s_steelDesignComplex == "") {
           s_steelDesignComplex
             = DownloadFile(
               "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
+        }
+
         return s_steelDesignComplex;
       }
     }
     internal static string SteelDesignSimple {
       get {
-        if (s_steelDesignSimple == "")
+        if (s_steelDesignSimple == "") {
           s_steelDesignSimple
             = DownloadFile(
               "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Simple.gwb");
+        }
+
         return s_steelDesignSimple;
       }
     }

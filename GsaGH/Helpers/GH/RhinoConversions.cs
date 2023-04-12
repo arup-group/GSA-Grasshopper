@@ -28,19 +28,22 @@ namespace GsaGH.Helpers.GH {
           crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
           i++;
         }
-        else
+        else {
           crvs.Append(new Line(topology[i], topology[i + 1]));
+        }
       }
       return crvs;
     }
 
     public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1) {
-      if (tolerance < 0)
+      if (tolerance < 0) {
         tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      }
 
       var curves = new CurveList { externalEdge, };
-      if (voidCurves != null)
+      if (voidCurves != null) {
         curves.AddRange(voidCurves);
+      }
 
       Brep[] brep = Brep.CreatePlanarBreps(curves, tolerance);
       if (brep != null) {
@@ -91,8 +94,9 @@ namespace GsaGH.Helpers.GH {
           nodeIds.Add(nodeid++);
         }
       }
-      if (points != null)
+      if (points != null) {
         unroller.AddFollowingGeometry(points);
+      }
 
       unroller.RelativeTolerance = tolerance.As(unit) * 2;
       unroller.AbsoluteTolerance = tolerance.As(unit);
@@ -218,8 +222,10 @@ namespace GsaGH.Helpers.GH {
         elementLocalAxesDict = elemDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
         foreach (KeyValuePair<int, Element> kvp in elemDict) {
           Element elem = kvp.Value;
-          if (elem.Topology.Count != 2)
+          if (elem.Topology.Count != 2) {
             continue;
+          }
+
           Vector3 posS = nodeDict[elem.Topology[0]].Position;
           var start = new Point3d(posS.X, posS.Y, posS.Z);
           flat.ClosestPoint(start, out double us, out double vs);
@@ -252,8 +258,9 @@ namespace GsaGH.Helpers.GH {
 
       if (!m.IsClosed) {
         m.FillHoles();
-        if (!m.IsClosed)
+        if (!m.IsClosed) {
           return null;
+        }
       }
       m.Weld(Math.PI);
       m.Faces.ConvertQuadsToTriangles();
@@ -287,18 +294,23 @@ namespace GsaGH.Helpers.GH {
         polyCurve.Append(curve);
       }
       else {
-        if (tolerance < 0)
+        if (tolerance < 0) {
           tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+        }
+
         if (curve.SpanCount == 1 && curve.Degree > 2) {
           curve = curve.ToPolyline(tolerance, 2, 0, 0);
         }
         if (curve.SpanCount > 1) {
           polyCurve = new PolyCurve();
 
-          if (!curve.IsPolyline())
+          if (!curve.IsPolyline()) {
             curve = curve.ToPolyline(tolerance, 2, 0, 0);
-          if (!curve.IsValid)
+          }
+
+          if (!curve.IsValid) {
             throw new Exception(" Error converting edge or curve to polyline: please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
+          }
 
           Curve[] segments = curve.DuplicateSegments();
 
@@ -326,8 +338,9 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve curve, double tolerance = -1) {
-      if (tolerance < 0)
+      if (tolerance < 0) {
         tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      }
 
       PolyCurve polyCurve = curve.ToArcsAndLines(tolerance, 2, 0, 0);
       Curve[] segments = polyCurve != null
@@ -556,8 +569,9 @@ namespace GsaGH.Helpers.GH {
       var m = (Mesh)mesh.Duplicate();
       if (!m.IsClosed) {
         m.FillHoles();
-        if (!m.IsClosed)
+        if (!m.IsClosed) {
           return null;
+        }
       }
       m.Weld(Math.PI);
       m.Faces.ConvertQuadsToTriangles();
@@ -608,15 +622,17 @@ namespace GsaGH.Helpers.GH {
         }
 
         List<Point3d> ctrlPts;
-        if (edges[0].TryGetPolyline(out Polyline polyline))
+        if (edges[0].TryGetPolyline(out Polyline polyline)) {
           ctrlPts = polyline.ToList();
+        }
         else {
           Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf = ConvertMem2dCrv(edges[0], tolerance);
           ctrlPts = convertBadSrf.Item2;
         }
         Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
-        for (int j = 0; j < edges.Count; j++)
+        for (int j = 0; j < edges.Count; j++) {
           edges[j] = Curve.ProjectToPlane(edges[j], plane);
+        }
       }
 
       Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
@@ -686,17 +702,20 @@ namespace GsaGH.Helpers.GH {
       Curve outer = null;
       var inner = new List<Curve>();
       foreach (BrepLoop brepLoop in brep.Loops) {
-        if (brepLoop.LoopType == BrepLoopType.Outer)
+        if (brepLoop.LoopType == BrepLoopType.Outer) {
           outer = brepLoop.To3dCurve();
-        else
+        }
+        else {
           inner.Add(brepLoop.To3dCurve());
+        }
       }
       var edges = new List<Curve> { outer };
       edges.AddRange(inner);
 
       List<Point3d> ctrlPts;
-      if (edges[0].TryGetPolyline(out Polyline tempCrv))
+      if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
         ctrlPts = tempCrv.ToList();
+      }
       else {
         Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf = ConvertMem2dCrv(edges[0], tolerance);
         ctrlPts = convertBadSrf.Item2;
@@ -708,8 +727,9 @@ namespace GsaGH.Helpers.GH {
           continue;
         }
 
-        for (int j = 0; j < edges.Count; j++)
+        for (int j = 0; j < edges.Count; j++) {
           edges[j] = Curve.ProjectToPlane(edges[j], plane);
+        }
       }
       Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
       PolyCurve edgeCrv = convert.Item1;
@@ -725,8 +745,9 @@ namespace GsaGH.Helpers.GH {
 
       if (inclCrvs != null) {
         for (int i = 0; i < inclCrvs.Count; i++) {
-          if (inclCrvs[i].IsInPlane(plane, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)))
+          if (inclCrvs[i].IsInPlane(plane, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))) {
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
+          }
           else {
             //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
             break;
@@ -742,8 +763,9 @@ namespace GsaGH.Helpers.GH {
         var inclPtsWithinTolerance = new List<Point3d>();
         for (int i = 0; i < inclPts.Count; i++) {
           Point3d tempPt = plane.ClosestPoint(inclPts[i]);
-          if (inclPts[i].DistanceTo(tempPt) <= DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
+          if (inclPts[i].DistanceTo(tempPt) <= DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)) {
             inclPtsWithinTolerance.Add(tempPt);
+          }
         }
         inclPts = inclPtsWithinTolerance;
       }

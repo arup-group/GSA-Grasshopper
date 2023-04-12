@@ -15,8 +15,9 @@ namespace IntegrationTests.Parameters {
     private static GH_Document s_document = null;
 
     [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    }
 
     [Theory]
     [InlineData("PbIds",
@@ -160,23 +161,26 @@ namespace IntegrationTests.Parameters {
     public void TestPAsAreEqual() {
       IGH_Param sectionFromGetPropertyParam = Helper.FindParameter(Document, "PAs");
       var sectionsFromGetProperty = new List<GsaProp2d>();
-      for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++)
+      for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++) {
         sectionsFromGetProperty.Add(
           ((GsaProp2dGoo)sectionFromGetPropertyParam.VolatileData.get_Branch(0)[i]).Value);
+      }
 
       IGH_Param sectionFromGetGeometryElemParam = Helper.FindParameter(Document, "PAsFromElem");
       var sectionFromGetGeometryElem = new List<GsaProp2d>();
-      for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++)
+      for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++) {
         sectionFromGetGeometryElem.Add(
           ((GsaProp2dGoo)sectionFromGetGeometryElemParam.VolatileData.get_Branch(0)[i]).Value);
+      }
 
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryElem));
 
       IGH_Param sectionFromGetGeometryMemParam = Helper.FindParameter(Document, "PAsFromMem");
       var sectionFromGetGeometryMem = new List<GsaProp2d>();
-      for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++)
+      for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++) {
         sectionFromGetGeometryMem.Add(
           ((GsaProp2dGoo)sectionFromGetGeometryMemParam.VolatileData.get_Branch(0)[i]).Value);
+      }
 
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryMem));
     }
@@ -185,23 +189,26 @@ namespace IntegrationTests.Parameters {
     public void TestPBsAreEqual() {
       IGH_Param sectionFromGetPropertyParam = Helper.FindParameter(Document, "PBs");
       var sectionsFromGetProperty = new List<GsaSection>();
-      for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++)
+      for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++) {
         sectionsFromGetProperty.Add(
           ((GsaSectionGoo)sectionFromGetPropertyParam.VolatileData.get_Branch(0)[i]).Value);
+      }
 
       IGH_Param sectionFromGetGeometryElemParam = Helper.FindParameter(Document, "PBsFromElem");
       var sectionFromGetGeometryElem = new List<GsaSection>();
-      for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++)
+      for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++) {
         sectionFromGetGeometryElem.Add(
           ((GsaSectionGoo)sectionFromGetGeometryElemParam.VolatileData.get_Branch(0)[i]).Value);
+      }
 
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryElem));
 
       IGH_Param sectionFromGetGeometryMemParam = Helper.FindParameter(Document, "PBsFromMem");
       var sectionFromGetGeometryMem = new List<GsaSection>();
-      for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++)
+      for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++) {
         sectionFromGetGeometryMem.Add(
           ((GsaSectionGoo)sectionFromGetGeometryMemParam.VolatileData.get_Branch(0)[i]).Value);
+      }
 
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryMem));
     }

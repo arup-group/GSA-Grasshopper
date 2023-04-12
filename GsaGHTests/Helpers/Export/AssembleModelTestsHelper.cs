@@ -365,10 +365,12 @@ namespace GsaGHTests.Helpers.Export {
       Prop2D api = apiProp2ds[expectedId];
       Assert.Equal(expected.ApiProp2d.Description, api.Description);
 
-      if (api.MaterialAnalysisProperty > 0)
+      if (api.MaterialAnalysisProperty > 0) {
         TestAnalysisMaterial(expected.Material, api.MaterialAnalysisProperty, actualModel);
-      else
+      }
+      else {
         Assert.Null(expected.Material.AnalysisMaterial);
+      }
     }
 
     internal void TestProp3d(GsaProp3d expected, int expectedId, GsaModel actualModel) {
@@ -378,10 +380,12 @@ namespace GsaGHTests.Helpers.Export {
 
       Prop3D api = apiProp3ds[expectedId];
 
-      if (api.MaterialAnalysisProperty > 0)
+      if (api.MaterialAnalysisProperty > 0) {
         TestAnalysisMaterial(expected.Material, api.MaterialAnalysisProperty, actualModel);
-      else
+      }
+      else {
         Assert.Null(expected.Material.AnalysisMaterial);
+      }
     }
 
     internal void TestSection(GsaSection expected, int expectedId, GsaModel actualModel) {
@@ -392,10 +396,12 @@ namespace GsaGHTests.Helpers.Export {
       Section api = apiSections[expectedId];
       Assert.Equal(expected.ApiSection.Profile, api.Profile);
 
-      if (api.MaterialAnalysisProperty > 0)
+      if (api.MaterialAnalysisProperty > 0) {
         TestAnalysisMaterial(expected.Material, api.MaterialAnalysisProperty, actualModel);
-      else
+      }
+      else {
         Assert.Null(expected.Material.AnalysisMaterial);
+      }
     }
   }
 }

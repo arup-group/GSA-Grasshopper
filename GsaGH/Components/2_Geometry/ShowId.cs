@@ -33,8 +33,9 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      if (_txts == null)
+      if (_txts == null) {
         return;
+      }
 
       for (int i = 0; i < _txts.Count; i++) {
         Point2d positionOnTheScreen = args.Viewport.WorldToClient(_pts[i]);
@@ -47,11 +48,12 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Node/Element/Member/Result",
-        "Geo",
-        "Node, Element, Member or Point/Line/Mesh result to get ID for.",
-        GH_ParamAccess.tree);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Node/Element/Member/Result",
+                                                                                       "Geo",
+                                                                                       "Node, Element, Member or Point/Line/Mesh result to get ID for.",
+                                                                                       GH_ParamAccess.tree);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddPointParameter("Position",
@@ -66,8 +68,9 @@ namespace GsaGH.Components {
       _pts = new List<Point3d>();
       _txts = new List<string>();
 
-      if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree))
+      if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
         return;
+      }
 
       var ids = new GH_Structure<GH_Integer>();
       var ghPts = new GH_Structure<GH_Point>();

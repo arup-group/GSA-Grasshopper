@@ -140,8 +140,10 @@ namespace GsaGH.Parameters {
         _gridSrfGuid = new Guid(_gridSrfGuid.ToString()),
         _gridPlnGuid = new Guid(_gridPlnGuid.ToString())
       };
-      if (_referenceType == ReferenceType.None)
+      if (_referenceType == ReferenceType.None) {
         return dup;
+      }
+
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
@@ -155,22 +157,27 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (GridPlane == null && GridSurface == null)
+      if (GridPlane == null && GridSurface == null) {
         return "Null";
+      }
+
       string ax = (AxisId == 0)
         ? ""
         : "Ax:" + AxisId.ToString() + " ";
       bool global = false;
       if (Plane.Origin.X == 0
         && Plane.Origin.Y == 0
-        && Plane.Origin.Z == 0)
+        && Plane.Origin.Z == 0) {
         if (Plane.XAxis.X == 1
           && Plane.XAxis.Y == 0
-          && Plane.XAxis.Z == 0)
+          && Plane.XAxis.Z == 0) {
           if (Plane.YAxis.X == 0
             && Plane.YAxis.Y == 1
-            && Plane.YAxis.Z == 0)
+            && Plane.YAxis.Z == 0) {
             global = true;
+          }
+        }
+      }
 
       string gp = (GridPlaneId == 0)
         ? ""
@@ -182,17 +189,23 @@ namespace GsaGH.Parameters {
         ? ""
         : "'" + gpName + "' ";
 
-      if (global)
+      if (global) {
         gp += "Global grid ";
-      else
+      }
+      else {
         gp += $"O:{_pln.Origin}, X:{_pln.XAxis}, Y:{_pln.YAxis}";
-      if (Elevation != "0")
+      }
+
+      if (Elevation != "0") {
         gp += " E:"
           + Elevation.Replace(" ", string.Empty)
             .Replace(",", string.Empty)
           + " ";
-      if (GridPlane.IsStoreyType)
+      }
+
+      if (GridPlane.IsStoreyType) {
         gp += "Storey ";
+      }
 
       string gs = (GridSurfaceId == 0)
         ? ""
@@ -204,20 +217,27 @@ namespace GsaGH.Parameters {
         ? ""
         : "'" + gsName + "' ";
       if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
-        if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY)
+        if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
           gs += "1D, One-way ";
-        else
+        }
+        else {
           gs += "1D, Two-way ";
-        if (GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS)
-          gs += "simplified ";
-      }
-      else
-        gs += "2D ";
+        }
 
-      if (GridSurface.Direction != 0)
+        if (GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS) {
+          gs += "simplified ";
+        }
+      }
+      else {
+        gs += "2D ";
+      }
+
+      if (GridSurface.Direction != 0) {
         gs += new Angle(GridSurface.Direction, AngleUnit.Degree).ToString("g")
             .Replace(" ", string.Empty)
           + " ";
+      }
+
       gs += GridSurface.Elements == "all"
         ? ""
         : GridSurface.Elements;
@@ -239,8 +259,9 @@ namespace GsaGH.Parameters {
           elevation = Length.Parse(Elevation);
         }
         catch (Exception) {
-          if (double.TryParse(Elevation, out double elev))
+          if (double.TryParse(Elevation, out double elev)) {
             elevation = new Length(elev, modelUnit);
+          }
         }
 
         axis.Origin.Z -= elevation.As(modelUnit);

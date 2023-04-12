@@ -26,8 +26,10 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaMaterialGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaMaterial))
+      if (data.GetType() == typeof(GsaMaterial)) {
         return new GsaMaterialGoo((GsaMaterial)data);
+      }
+
       if (!GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         return base.PreferredCast(data);
       }

@@ -42,8 +42,9 @@ namespace GsaGH.Components {
                                   "SectionModifier",
       "Create GSA Section Modifier",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override bool Read(GH_IReader reader) {
       _toMode = reader.GetBoolean("toMode");
@@ -220,7 +221,7 @@ namespace GsaGH.Components {
       _dropDownItems.Add(_optionTypes);
       _selectedItems.Add(_optionTypes[0]);
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.LinearDensity)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.LinearDensity));
       _selectedItems.Add(LinearDensity.GetAbbreviation(_densityUnit));
 
       _dropDownItems.Add(_stressOptions);
@@ -275,13 +276,15 @@ namespace GsaGH.Components {
         GH_ParamAccess.item,
         false);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaSectionModifierParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaSectionModifierParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var modifier = new GsaSectionModifier();
@@ -292,32 +295,45 @@ namespace GsaGH.Components {
 
         if (Params.Input[0]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.AreaModifier = Input.UnitNumber(this, da, 0, areaUnit, true);
+        }
+
         if (Params.Input[1]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.I11Modifier = Input.UnitNumber(this, da, 1, inertiaUnit, true);
+        }
+
         if (Params.Input[2]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.I22Modifier = Input.UnitNumber(this, da, 2, inertiaUnit, true);
+        }
+
         if (Params.Input[3]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.JModifier = Input.UnitNumber(this, da, 3, inertiaUnit, true);
+        }
+
         if (Params.Input[4]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.K11Modifier = Input.RatioInDecimalFractionToDecimalFraction(this, da, 4);
+        }
+
         if (Params.Input[5]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.K22Modifier = Input.RatioInDecimalFractionToDecimalFraction(this, da, 5);
+        }
+
         if (Params.Input[6]
             .SourceCount
-          > 0)
+          > 0) {
           modifier.VolumeModifier = Input.UnitNumber(this, da, 6, volUnit, true);
+        }
       }
       else {
         modifier.AreaModifier = Input.RatioInDecimalFractionToPercentage(this, da, 0);
@@ -332,12 +348,14 @@ namespace GsaGH.Components {
       modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, da, 7, _densityUnit, true);
 
       bool ax = false;
-      if (da.GetData(8, ref ax))
+      if (da.GetData(8, ref ax)) {
         modifier.IsBendingAxesPrincipal = ax;
+      }
 
       bool pt = false;
-      if (da.GetData(9, ref pt))
+      if (da.GetData(9, ref pt)) {
         modifier.IsReferencePointCentroid = pt;
+      }
 
       modifier.StressOption = _stressOption;
 
@@ -349,22 +367,32 @@ namespace GsaGH.Components {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
         _densityUnit
           = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[2]);
-        if (_selectedItems[3] == _stressOptions[0])
+        if (_selectedItems[3] == _stressOptions[0]) {
           _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (_selectedItems[3] == _stressOptions[1])
+        }
+
+        if (_selectedItems[3] == _stressOptions[1]) {
           _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (_selectedItems[3] == _stressOptions[2])
+        }
+
+        if (_selectedItems[3] == _stressOptions[2]) {
           _stressOption = GsaSectionModifier.StressOptionType.UseModified;
+        }
       }
       else {
         _densityUnit
           = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[1]);
-        if (_selectedItems[2] == _stressOptions[0])
+        if (_selectedItems[2] == _stressOptions[0]) {
           _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (_selectedItems[2] == _stressOptions[1])
+        }
+
+        if (_selectedItems[2] == _stressOptions[1]) {
           _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (_selectedItems[2] == _stressOptions[2])
+        }
+
+        if (_selectedItems[2] == _stressOptions[2]) {
           _stressOption = GsaSectionModifier.StressOptionType.UseModified;
+        }
       }
 
       base.UpdateUIFromSelectedItems();

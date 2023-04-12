@@ -22,7 +22,7 @@ namespace GsaGH.Parameters {
         ApiMember.AutomaticOffset.Internal = value;
       }
     }
-    public Brep Brep => _brep;
+    public Brep Brep { get; private set; }
     public Color Colour {
       get => (Color)ApiMember.Colour;
       set {
@@ -45,10 +45,10 @@ namespace GsaGH.Parameters {
         _id = value;
       }
     }
-    public List<List<Point3d>> IncLinesTopology => _inclCrvsTopo;
-    public List<List<string>> IncLinesTopologyType => _inclCrvsTopoType;
+    public List<List<Point3d>> IncLinesTopology { get; private set; }
+    public List<List<string>> IncLinesTopologyType { get; private set; }
     public List<PolyCurve> InclusionLines => _inclCrvs ?? new List<PolyCurve>();
-    public List<Point3d> InclusionPoints => _inclPts;
+    public List<Point3d> InclusionPoints { get; private set; }
     public bool IsDummy {
       get => ApiMember.IsDummy;
       set {
@@ -100,10 +100,10 @@ namespace GsaGH.Parameters {
         ApiMember.OrientationNode = value;
       }
     }
-    public PolyCurve PolyCurve => _edgeCrv;
+    public PolyCurve PolyCurve { get; private set; }
     public GsaProp2d Property { get; set; } = new GsaProp2d();
-    public List<Point3d> Topology => _edgeCrvTopo;
-    public List<string> TopologyType => _edgeCrvTopoType;
+    public List<Point3d> Topology { get; private set; }
+    public List<string> TopologyType { get; private set; }
     public MemberType Type {
       get => ApiMember.Type;
       set {
@@ -118,33 +118,17 @@ namespace GsaGH.Parameters {
         ApiMember.Type2D = value;
       }
     }
-    public List<List<Point3d>> VoidTopology => _voidCrvsTopo;
-    public List<List<string>> VoidTopologyType => _voidCrvsTopoType;
+    public List<List<Point3d>> VoidTopology { get; private set; }
+    public List<List<string>> VoidTopologyType { get; private set; }
     internal Member ApiMember { get; set; } = new Member() {
       Type = MemberType.GENERIC_2D,
     };
-    private Brep _brep;
-    // brep for visualisation /member2d
-    private PolyCurve _edgeCrv;
-    // Polyline for visualisation /member1d/member2d
-    private List<Point3d> _edgeCrvTopo;
-    // list of topology points for visualisation /member1d/member2d
-    private List<string> _edgeCrvTopoType;
+
     // list of polyline curve type (arch or line) for member1d/2d
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
     private List<PolyCurve> _inclCrvs;
-    // converted inclusion lines /member2d
-    private List<List<Point3d>> _inclCrvsTopo;
-    // list of lists of line inclusion topology points /member2d
-    private List<List<string>> _inclCrvsTopoType;
-    // list of polyline curve type (arch or line) for inclusion /member2d
-    private List<Point3d> _inclPts;
     private List<PolyCurve> _voidCrvs;
-    //converted edgecurve /member2d
-    private List<List<Point3d>> _voidCrvsTopo;
-    // list of lists of void points /member2d
-    private List<List<string>> _voidCrvsTopoType;
 
     public GsaMember2d() { }
 
@@ -169,24 +153,25 @@ namespace GsaGH.Parameters {
             List<Point3d>> inclTuple)
         = RhinoConversions.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
 
-      _edgeCrv = edgeTuple.Item1;
-      _edgeCrvTopo = edgeTuple.Item2;
-      _edgeCrvTopoType = edgeTuple.Item3;
+      PolyCurve = edgeTuple.Item1;
+      Topology = edgeTuple.Item2;
+      TopologyType = edgeTuple.Item3;
       _voidCrvs = voidTuple.Item1;
-      _voidCrvsTopo = voidTuple.Item2;
-      _voidCrvsTopoType = voidTuple.Item3;
+      VoidTopology = voidTuple.Item2;
+      VoidTopologyType = voidTuple.Item3;
       _inclCrvs = inclTuple.Item1;
-      _inclCrvsTopo = inclTuple.Item2;
-      _inclCrvsTopoType = inclTuple.Item3;
-      _inclPts = inclTuple.Item4;
+      IncLinesTopology = inclTuple.Item2;
+      IncLinesTopologyType = inclTuple.Item3;
+      InclusionPoints = inclTuple.Item4;
 
-      _brep = RhinoConversions.BuildBrep(_edgeCrv, _voidCrvs);
-      if (_brep == null)
+      Brep = RhinoConversions.BuildBrep(PolyCurve, _voidCrvs);
+      if (Brep == null) {
         throw new Exception(
           " Error with Mem2D: Unable to build Brep, "
           + "please verify input geometry is valid and tolerance "
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
+      }
     }
 
     internal GsaMember2d(
@@ -213,49 +198,58 @@ namespace GsaGH.Parameters {
         topologyType.Add("");
       }
 
-      _edgeCrv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
-      _edgeCrvTopo = topology;
-      _edgeCrvTopoType = topologyType;
+      PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
+      Topology = topology;
+      TopologyType = topologyType;
 
       if (voidTopology != null) {
-        if (_voidCrvs == null)
+        if (_voidCrvs == null) {
           _voidCrvs = new List<PolyCurve>();
+        }
+
         for (int i = 0; i < voidTopology.Count; i++) {
           if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
             voidTopology[i].Add(voidTopology[i][0]);
             voidTopologyType[i].Add("");
           }
 
-          if (voidTopologyType != null)
+          if (voidTopologyType != null) {
             _voidCrvs.Add(
               RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i],
                 voidTopologyType[i]));
-          else
+          }
+          else {
             _voidCrvs.Add(RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
+          }
         }
       }
 
-      _voidCrvsTopo = voidTopology;
-      _voidCrvsTopoType = voidTopologyType;
+      VoidTopology = voidTopology;
+      VoidTopologyType = voidTopologyType;
 
       if (inlcusionLinesTopology != null) {
-        if (_inclCrvs == null)
+        if (_inclCrvs == null) {
           _inclCrvs = new List<PolyCurve>();
-        for (int i = 0; i < inlcusionLinesTopology.Count; i++)
-          if (inclusionTopologyType != null)
+        }
+
+        for (int i = 0; i < inlcusionLinesTopology.Count; i++) {
+          if (inclusionTopologyType != null) {
             _inclCrvs.Add(
               RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i],
                 inclusionTopologyType[i]));
-          else
+          }
+          else {
             _inclCrvs.Add(
               RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
+          }
+        }
       }
 
-      _inclCrvsTopo = inlcusionLinesTopology;
-      _inclCrvsTopoType = inclusionTopologyType;
-      _inclPts = includePoints;
+      IncLinesTopology = inlcusionLinesTopology;
+      IncLinesTopologyType = inclusionTopologyType;
+      InclusionPoints = includePoints;
 
-      _brep = RhinoConversions.BuildBrep(_edgeCrv,
+      Brep = RhinoConversions.BuildBrep(PolyCurve,
         _voidCrvs,
         new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
@@ -269,32 +263,35 @@ namespace GsaGH.Parameters {
         _guid = new Guid(_guid.ToString()),
         ApiMember = ApiMember,
       };
-      if (cloneApiMember)
+      if (cloneApiMember) {
         dup.CloneApiObject();
+      }
+
       dup.Property = Property.Duplicate();
 
-      if (_brep == null)
+      if (Brep == null) {
         return dup;
+      }
 
-      dup._brep = (Brep)_brep.DuplicateShallow();
+      dup.Brep = (Brep)Brep.DuplicateShallow();
 
-      dup._edgeCrv = (PolyCurve)_edgeCrv.DuplicateShallow();
-      dup._edgeCrvTopo = _edgeCrvTopo;
-      dup._edgeCrvTopoType = _edgeCrvTopoType;
+      dup.PolyCurve = (PolyCurve)PolyCurve.DuplicateShallow();
+      dup.Topology = Topology;
+      dup.TopologyType = TopologyType;
 
       var dupVoidCrvs = _voidCrvs.Select(t => (PolyCurve)t.DuplicateShallow())
         .ToList();
       dup._voidCrvs = dupVoidCrvs;
-      dup._voidCrvsTopo = _voidCrvsTopo;
-      dup._voidCrvsTopoType = _voidCrvsTopoType;
+      dup.VoidTopology = VoidTopology;
+      dup.VoidTopologyType = VoidTopologyType;
 
       var dupInclCrvs = _inclCrvs.Select(t => (PolyCurve)t.DuplicateShallow())
         .ToList();
       dup._inclCrvs = dupInclCrvs;
-      dup._inclCrvsTopo = _inclCrvsTopo;
-      dup._inclCrvsTopoType = _inclCrvsTopoType;
+      dup.IncLinesTopology = IncLinesTopology;
+      dup.IncLinesTopologyType = IncLinesTopologyType;
 
-      dup._inclPts = _inclPts;
+      dup.InclusionPoints = InclusionPoints;
 
       return dup;
     }
@@ -303,45 +300,61 @@ namespace GsaGH.Parameters {
       GsaMember2d dup = Duplicate(true);
       dup.Id = 0;
 
-      if (dup._brep != null)
-        xmorph.Morph(dup._brep);
+      if (dup.Brep != null) {
+        xmorph.Morph(dup.Brep);
+      }
 
-      if (dup._edgeCrv != null)
-        xmorph.Morph(_edgeCrv);
-      for (int i = 0; i < dup._edgeCrvTopo.Count; i++)
-        dup._edgeCrvTopo[i] = xmorph.MorphPoint(dup._edgeCrvTopo[i]);
+      if (dup.PolyCurve != null) {
+        xmorph.Morph(PolyCurve);
+      }
+
+      for (int i = 0; i < dup.Topology.Count; i++) {
+        dup.Topology[i] = xmorph.MorphPoint(dup.Topology[i]);
+      }
 
       for (int i = 0; i < _voidCrvs.Count; i++) {
-        if (dup._voidCrvs[i] != null)
+        if (dup._voidCrvs[i] != null) {
           xmorph.Morph(_voidCrvs[i]);
-        for (int j = 0; j < dup._voidCrvsTopo[i].Count; j++)
-          dup._voidCrvsTopo[i][j] = xmorph.MorphPoint(dup._voidCrvsTopo[i][j]);
+        }
+
+        for (int j = 0; j < dup.VoidTopology[i].Count; j++) {
+          dup.VoidTopology[i][j] = xmorph.MorphPoint(dup.VoidTopology[i][j]);
+        }
       }
 
       for (int i = 0; i < _inclCrvs.Count; i++) {
-        if (dup._inclCrvs[i] != null)
+        if (dup._inclCrvs[i] != null) {
           xmorph.Morph(_inclCrvs[i]);
-        for (int j = 0; j < dup._inclCrvsTopo[i].Count; j++)
-          dup._inclCrvsTopo[i][j] = xmorph.MorphPoint(dup._inclCrvsTopo[i][j]);
+        }
+
+        for (int j = 0; j < dup.IncLinesTopology[i].Count; j++) {
+          dup.IncLinesTopology[i][j] = xmorph.MorphPoint(dup.IncLinesTopology[i][j]);
+        }
       }
 
-      for (int i = 0; i < dup._inclPts.Count; i++)
-        dup._inclPts[i] = xmorph.MorphPoint(dup._inclPts[i]);
+      for (int i = 0; i < dup.InclusionPoints.Count; i++) {
+        dup.InclusionPoints[i] = xmorph.MorphPoint(dup.InclusionPoints[i]);
+      }
 
       return dup;
     }
 
     public override string ToString() {
       string incl = "";
-      if (_inclCrvs != null)
-        if (_inclCrvs.Count > 0)
+      if (_inclCrvs != null) {
+        if (_inclCrvs.Count > 0) {
           incl = " Incl.Crv:" + _inclCrvs.Count;
+        }
+      }
 
-      if (_inclPts != null) {
-        if (_inclPts != null && _inclPts.Count > 0)
+      if (InclusionPoints != null) {
+        if (InclusionPoints != null && InclusionPoints.Count > 0) {
           incl += " &";
-        if (_inclPts.Count > 0)
-          incl += " Incl.Pt:" + _inclPts.Count;
+        }
+
+        if (InclusionPoints.Count > 0) {
+          incl += " Incl.Pt:" + InclusionPoints.Count;
+        }
       }
 
       string idd = Id == 0
@@ -359,25 +372,25 @@ namespace GsaGH.Parameters {
       GsaMember2d dup = Duplicate(true);
       dup.Id = 0;
 
-      dup._brep?.Transform(xform);
-      dup._edgeCrv?.Transform(xform);
-      dup._edgeCrvTopo = xform.TransformList(dup._edgeCrvTopo)
+      dup.Brep?.Transform(xform);
+      dup.PolyCurve?.Transform(xform);
+      dup.Topology = xform.TransformList(dup.Topology)
         .ToList();
       for (int i = 0; i < _voidCrvs.Count; i++) {
         dup._voidCrvs[i]
           ?.Transform(xform);
-        dup._voidCrvsTopo[i] = xform.TransformList(dup._voidCrvsTopo[i])
+        dup.VoidTopology[i] = xform.TransformList(dup.VoidTopology[i])
           .ToList();
       }
 
       for (int i = 0; i < _inclCrvs.Count; i++) {
         dup._inclCrvs[i]
           ?.Transform(xform);
-        dup._inclCrvsTopo[i] = xform.TransformList(dup._inclCrvsTopo[i])
+        dup.IncLinesTopology[i] = xform.TransformList(dup.IncLinesTopology[i])
           .ToList();
       }
 
-      dup._inclPts = xform.TransformList(dup._inclPts)
+      dup.InclusionPoints = xform.TransformList(dup.InclusionPoints)
         .ToList();
 
       return dup;
@@ -387,13 +400,18 @@ namespace GsaGH.Parameters {
       Brep brep = null,
       List<Curve> inclCrvs = null,
       List<Point3d> inclPts = null) {
-      if (brep == null && _brep != null)
-        brep = _brep.DuplicateBrep();
-      if (inclCrvs == null && _inclCrvs != null)
+      if (brep == null && Brep != null) {
+        brep = Brep.DuplicateBrep();
+      }
+
+      if (inclCrvs == null && _inclCrvs != null) {
         inclCrvs = _inclCrvs.Select(x => (Curve)x)
           .ToList();
-      if (inclPts == null && _inclPts != null)
-        inclPts = _inclPts.ToList();
+      }
+
+      if (inclPts == null && InclusionPoints != null) {
+        inclPts = InclusionPoints.ToList();
+      }
 
       var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
         Id = Id,
@@ -423,11 +441,14 @@ namespace GsaGH.Parameters {
         Type2D = ApiMember.Type2D,
         AutomaticOffset = ApiMember.AutomaticOffset,
       };
-      if (ApiMember.Topology != string.Empty)
+      if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
+      }
 
       if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+{
         mem.Colour = ApiMember.Colour;
+      }
 
       return mem;
     }

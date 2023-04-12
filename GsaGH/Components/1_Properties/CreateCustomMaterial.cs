@@ -44,15 +44,17 @@ namespace GsaGH.Components {
                           "Material",
       "Create a Custom GSA Analysis Material",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      if (i == 0)
+      if (i == 0) {
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0].ToPascalCase());
-      else
+      }
+      else {
         switch (i) {
           case 1:
             _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
@@ -67,6 +69,7 @@ namespace GsaGH.Components {
               = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
             break;
         }
+      }
 
       base.UpdateUI();
     }
@@ -145,12 +148,13 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMaterialParameter(),
-        "Material",
-        "Mat",
-        "GSA Custom Material",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMaterialParameter(),
+                                                                                         "Material",
+                                                                                         "Mat",
+                                                                                         "GSA Custom Material",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var material = new GsaMaterial();
@@ -166,8 +170,9 @@ namespace GsaGH.Components {
           return;
         }
       }
-      else
+      else {
         material.AnalysisProperty = -1;
+      }
 
       double poisson = 0.3;
       da.GetData(2, ref poisson);

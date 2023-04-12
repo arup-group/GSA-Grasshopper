@@ -9,10 +9,11 @@ namespace GsaGH.Parameters {
     internal GsaList _refList;
     internal Guid _refObjectGuid;
 
-    public GsaBeamLoad()
-                  => BeamLoad = new BeamLoad {
-                    Type = BeamLoadType.UNIFORM,
-                  };
+    public GsaBeamLoad() {
+      BeamLoad = new BeamLoad {
+        Type = BeamLoadType.UNIFORM,
+      };
+    }
 
     public GsaBeamLoad Duplicate() {
       var dup = new GsaBeamLoad {
@@ -56,8 +57,10 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      if (_referenceType == ReferenceType.None)
+      if (_referenceType == ReferenceType.None) {
         return dup;
+      }
+
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
@@ -77,10 +80,11 @@ namespace GsaGH.Parameters {
     internal GsaList _refList;
     internal Guid _refObjectGuid;
 
-    public GsaFaceLoad()
-                  => FaceLoad = new FaceLoad {
-                    Type = FaceLoadType.CONSTANT,
-                  };
+    public GsaFaceLoad() {
+      FaceLoad = new FaceLoad {
+        Type = FaceLoadType.CONSTANT,
+      };
+    }
 
     public GsaFaceLoad Duplicate() {
       var dup = new GsaFaceLoad {
@@ -116,8 +120,10 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      if (_referenceType == ReferenceType.None)
+      if (_referenceType == ReferenceType.None) {
         return dup;
+      }
+
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
@@ -161,8 +167,10 @@ namespace GsaGH.Parameters {
           Factor = GravityLoad.Factor,
         },
       };
-      if (_referenceType == ReferenceType.None)
+      if (_referenceType == ReferenceType.None) {
         return dup;
+      }
+
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
@@ -180,7 +188,9 @@ namespace GsaGH.Parameters {
     public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
 
-    public GsaGridAreaLoad() => GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
+    public GsaGridAreaLoad() {
+      GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
+    }
 
     public GsaGridAreaLoad Duplicate() {
       var dup = new GsaGridAreaLoad {
@@ -206,7 +216,9 @@ namespace GsaGH.Parameters {
     public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
 
-    public GsaGridLineLoad() => GridLineLoad.PolyLineReference = 0;
+    public GsaGridLineLoad() {
+      GridLineLoad.PolyLineReference = 0;
+    }
 
     public GsaGridLineLoad Duplicate() {
       var dup = new GsaGridLineLoad {
@@ -338,20 +350,26 @@ namespace GsaGH.Parameters {
 
         case LoadTypes.GridPoint:
           dup = new GsaLoad(PointLoad.Duplicate());
-          if (PointLoad.GridPlaneSurface != null)
+          if (PointLoad.GridPlaneSurface != null) {
             dup.PointLoad.GridPlaneSurface = PointLoad.GridPlaneSurface.Duplicate();
+          }
+
           return dup;
 
         case LoadTypes.GridLine:
           dup = new GsaLoad(LineLoad.Duplicate());
-          if (LineLoad.GridPlaneSurface != null)
+          if (LineLoad.GridPlaneSurface != null) {
             dup.LineLoad.GridPlaneSurface = LineLoad.GridPlaneSurface.Duplicate();
+          }
+
           return dup;
 
         case LoadTypes.GridArea:
           dup = new GsaLoad(AreaLoad.Duplicate());
-          if (AreaLoad.GridPlaneSurface != null)
+          if (AreaLoad.GridPlaneSurface != null) {
             dup.AreaLoad.GridPlaneSurface = AreaLoad.GridPlaneSurface.Duplicate();
+          }
+
           return dup;
       }
 
@@ -359,8 +377,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (LoadType == LoadTypes.Gravity && GravityLoad == null)
+      if (LoadType == LoadTypes.Gravity && GravityLoad == null) {
         return "Null";
+      }
+
       string name = "";
       switch (LoadType) {
         case LoadTypes.Gravity:
@@ -416,7 +436,9 @@ namespace GsaGH.Parameters {
     internal GsaList _refList;
     internal Point3d _refPoint = Point3d.Unset;
 
-    public GsaNodeLoad() => Type = NodeLoadTypes.NodeLoad;
+    public GsaNodeLoad() {
+      Type = NodeLoadTypes.NodeLoad;
+    }
 
     public GsaNodeLoad Duplicate() {
       var dup = new GsaNodeLoad {
@@ -430,8 +452,10 @@ namespace GsaGH.Parameters {
         },
         Type = Type,
       };
-      if (_refPoint != Point3d.Unset)
+      if (_refPoint != Point3d.Unset) {
         dup._refPoint = new Point3d(_refPoint);
+      }
+
       if (_refList != null) {
         dup._refList = _refList.Duplicate();
       }

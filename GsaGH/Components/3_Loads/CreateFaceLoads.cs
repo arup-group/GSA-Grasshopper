@@ -43,13 +43,14 @@ namespace GsaGH.Components {
                           "FaceLoad",
       "Create GSA Face Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
+      SubCategoryName.Cat3()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      if (i == 0)
+      if (i == 0) {
         switch (_selectedItems[0]) {
           case "Uniform":
             Mode1Clicked();
@@ -67,8 +68,10 @@ namespace GsaGH.Components {
             Mode4Clicked();
             break;
         }
-      else
+      }
+      else {
         _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
+      }
 
       base.UpdateUI();
     }
@@ -265,8 +268,8 @@ namespace GsaGH.Components {
       _dropDownItems.Add(_loadTypeOptions);
       _selectedItems.Add(_mode.ToString());
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
-      _selectedItems.Add(Pressure.GetAbbreviation((_forcePerAreaUnit)));
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerArea));
+      _selectedItems.Add(Pressure.GetAbbreviation(_forcePerAreaUnit));
 
       _isInitialised = true;
     }
@@ -336,23 +339,26 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Face Load",
-        "Ld",
-        "GSA Face Load",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaLoadParameter(),
+                                                                                         "Face Load",
+                                                                                         "Ld",
+                                                                                         "GSA Face Load",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var faceLoad = new GsaFaceLoad();
       int loadCase = 1;
       var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc))
+      if (da.GetData(0, ref ghLc)) {
         GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+      }
+
       faceLoad.FaceLoad.Case = loadCase;
 
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp))
+      if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaListGoo value: {
               if (value.Value.EntityType == Parameters.EntityType.Element || value.Value.EntityType == Parameters.EntityType.Member) {
@@ -376,12 +382,15 @@ namespace GsaGH.Components {
           case GsaMember2dGoo value: {
               faceLoad._refObjectGuid = value.Value.Guid;
               faceLoad._referenceType = ReferenceType.Member;
-              if (_mode != FoldMode.Uniform)
+              if (_mode != FoldMode.Uniform) {
                 this.AddRuntimeWarning(
                   "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-              else
+              }
+              else {
                 this.AddRuntimeRemark(
                   "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
+
               break;
             }
           case GsaProp2dGoo value: {
@@ -390,32 +399,40 @@ namespace GsaGH.Components {
               break;
             }
           default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
                 faceLoad.FaceLoad.Elements = elemList;
+              }
+
               break;
             }
         }
+      }
 
       var ghName = new GH_String();
-      if (da.GetData(2, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+      if (da.GetData(2, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
           faceLoad.FaceLoad.Name = name;
+        }
+      }
 
       faceLoad.FaceLoad.AxisProperty
         = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
       var ghAx = new GH_Integer();
       if (da.GetData(3, ref ghAx)) {
         GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
-        if (axis == 0 || axis == -1)
+        if (axis == 0 || axis == -1) {
           faceLoad.FaceLoad.AxisProperty = axis;
+        }
       }
 
       string dir = "Z";
       Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
-      if (da.GetData(4, ref ghDir))
+      if (da.GetData(4, ref ghDir)) {
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
+      }
+
       dir = dir.ToUpper()
         .Trim();
       switch (dir) {
@@ -437,8 +454,10 @@ namespace GsaGH.Components {
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
-            if (da.GetData(5, ref ghPrj))
+            if (da.GetData(5, ref ghPrj)) {
               GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
+            }
+
             faceLoad.FaceLoad.IsProjected = prj;
 
             var load1 = (Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit);
@@ -453,8 +472,10 @@ namespace GsaGH.Components {
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
-            if (da.GetData(5, ref ghPrj))
+            if (da.GetData(5, ref ghPrj)) {
               GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
+            }
+
             faceLoad.FaceLoad.IsProjected = prj;
             faceLoad.FaceLoad.SetValue(0,
               ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit, true))
@@ -478,8 +499,10 @@ namespace GsaGH.Components {
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
-            if (da.GetData(5, ref ghPrj))
+            if (da.GetData(5, ref ghPrj)) {
               GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
+            }
+
             faceLoad.FaceLoad.IsProjected = prj;
 
             double r = 0;
@@ -547,35 +570,43 @@ namespace GsaGH.Components {
     }
 
     private void Mode1Clicked() {
-      if (!_duringLoad && _mode == FoldMode.Uniform)
+      if (!_duringLoad && _mode == FoldMode.Uniform) {
         return;
+      }
 
       RecordUndoEvent("Uniform Parameters");
       _mode = FoldMode.Uniform;
 
       if (_mode == FoldMode.Edge) {
-        while (Params.Input.Count > 5)
+        while (Params.Input.Count > 5) {
           Params.UnregisterInputParameter(Params.Input[5], true);
+        }
+
         Params.RegisterInputParam(new Param_Boolean());
         Params.RegisterInputParam(new Param_Number());
       }
       else {
-        while (Params.Input.Count > 6)
+        while (Params.Input.Count > 6) {
           Params.UnregisterInputParameter(Params.Input[6], true);
+        }
+
         Params.RegisterInputParam(new Param_Number());
       }
     }
 
     private void Mode2Clicked() {
-      if (!_duringLoad && _mode == FoldMode.Variable)
+      if (!_duringLoad && _mode == FoldMode.Variable) {
         return;
+      }
 
       RecordUndoEvent("Variable Parameters");
       _mode = FoldMode.Variable;
 
       if (_mode == FoldMode.Edge) {
-        while (Params.Input.Count > 5)
+        while (Params.Input.Count > 5) {
           Params.UnregisterInputParameter(Params.Input[5], true);
+        }
+
         Params.RegisterInputParam(new Param_Boolean());
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
@@ -583,8 +614,10 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new Param_Number());
       }
       else {
-        while (Params.Input.Count > 6)
+        while (Params.Input.Count > 6) {
           Params.UnregisterInputParameter(Params.Input[6], true);
+        }
+
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
@@ -593,23 +626,28 @@ namespace GsaGH.Components {
     }
 
     private void Mode3Clicked() {
-      if (!_duringLoad && _mode == FoldMode.Point)
+      if (!_duringLoad && _mode == FoldMode.Point) {
         return;
+      }
 
       RecordUndoEvent("Point Parameters");
       _mode = FoldMode.Point;
 
       if (_mode == FoldMode.Edge) {
-        while (Params.Input.Count > 5)
+        while (Params.Input.Count > 5) {
           Params.UnregisterInputParameter(Params.Input[5], true);
+        }
+
         Params.RegisterInputParam(new Param_Boolean());
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
       }
       else {
-        while (Params.Input.Count > 6)
+        while (Params.Input.Count > 6) {
           Params.UnregisterInputParameter(Params.Input[6], true);
+        }
+
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
         Params.RegisterInputParam(new Param_Number());
@@ -617,14 +655,16 @@ namespace GsaGH.Components {
     }
 
     private void Mode4Clicked() {
-      if (!_duringLoad && _mode == FoldMode.Edge)
+      if (!_duringLoad && _mode == FoldMode.Edge) {
         return;
+      }
 
       RecordUndoEvent("Edge Parameters");
       _mode = FoldMode.Edge;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
 
       Params.RegisterInputParam(new Param_Number());
       Params.RegisterInputParam(new Param_Number());

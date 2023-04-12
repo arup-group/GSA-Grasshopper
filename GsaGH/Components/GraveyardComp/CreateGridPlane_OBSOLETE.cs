@@ -48,8 +48,9 @@ namespace GsaGH.Components {
         InitialiseDropdowns();
       }
 
-      if (_mode != FoldMode.Storey || Params.Input.Count >= 5)
+      if (_mode != FoldMode.Storey || Params.Input.Count >= 5) {
         return base.Read(reader);
+      }
 
       Params.RegisterInputParam(new Param_GenericObject());
       Params.RegisterInputParam(new Param_GenericObject());
@@ -59,7 +60,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      if (i == 0)
+      if (i == 0) {
         switch (_selectedItems[0]) {
           case "General":
             Mode1Clicked();
@@ -69,8 +70,10 @@ namespace GsaGH.Components {
             Mode2Clicked();
             break;
         }
-      else
+      }
+      else {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      }
 
       base.UpdateUI();
     }
@@ -79,8 +82,9 @@ namespace GsaGH.Components {
       Params.Input[2]
         .Name = "Grid Elevation [" + Length.GetAbbreviation(_lengthUnit) + "]";
 
-      if (_mode != FoldMode.Storey)
+      if (_mode != FoldMode.Storey) {
         return;
+      }
 
       if (Params.Input.Count < 5) {
         Params.RegisterInputParam(new Param_GenericObject());
@@ -157,18 +161,20 @@ namespace GsaGH.Components {
       _mode = FoldMode.General;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Plane",
-        "GP",
-        "GSA Grid Plane",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaGridPlaneParameter(),
+                                                                                         "Grid Plane",
+                                                                                         "GP",
+                                                                                         "GSA Grid Plane",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       Plane plane = Plane.WorldXY;
       var ghPlane = new GH_Plane();
-      if (da.GetData(0, ref ghPlane))
+      if (da.GetData(0, ref ghPlane)) {
         GH_Convert.ToPlane(ghPlane, ref plane, GH_Conversion.Both);
+      }
 
       var gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
 
@@ -196,28 +202,33 @@ namespace GsaGH.Components {
       }
 
       var ghtxt = new GH_String();
-      if (da.GetData(3, ref ghtxt))
-        if (GH_Convert.ToString(ghtxt, out string name, GH_Conversion.Both))
+      if (da.GetData(3, ref ghtxt)) {
+        if (GH_Convert.ToString(ghtxt, out string name, GH_Conversion.Both)) {
           gsaGridPlaneSurface.GridPlane.Name = name;
+        }
+      }
 
-      if (_mode == FoldMode.General)
+      if (_mode == FoldMode.General) {
         gsaGridPlaneSurface.GridPlane.IsStoreyType = false;
+      }
       else {
         gsaGridPlaneSurface.GridPlane.IsStoreyType = true;
 
         if (Params.Input[4]
             .SourceCount
-          > 0)
+          > 0) {
           gsaGridPlaneSurface.GridPlane.ToleranceAbove = Input
             .UnitNumber(this, da, 4, _lengthUnit, true)
             .As(LengthUnit.Meter);
+        }
 
         if (Params.Input[5]
             .SourceCount
-          > 0)
+          > 0) {
           gsaGridPlaneSurface.GridPlane.ToleranceBelow = Input
             .UnitNumber(this, da, 5, _lengthUnit, true)
             .As(LengthUnit.Meter);
+        }
       }
 
       da.SetData(0, new GsaGridPlaneSurfaceGoo(gsaGridPlaneSurface));
@@ -230,19 +241,22 @@ namespace GsaGH.Components {
     }
 
     private void Mode1Clicked() {
-      if (_mode == FoldMode.General)
+      if (_mode == FoldMode.General) {
         return;
+      }
 
       RecordUndoEvent("General Parameters");
       _mode = FoldMode.General;
 
-      while (Params.Input.Count > 4)
+      while (Params.Input.Count > 4) {
         Params.UnregisterInputParameter(Params.Input[4], true);
+      }
     }
 
     private void Mode2Clicked() {
-      if (_mode == FoldMode.Storey)
+      if (_mode == FoldMode.Storey) {
         return;
+      }
 
       RecordUndoEvent("Storey Parameters");
       _mode = FoldMode.Storey;

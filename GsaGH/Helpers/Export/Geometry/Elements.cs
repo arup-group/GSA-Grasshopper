@@ -23,8 +23,9 @@ namespace GsaGH.Helpers.Export {
       };
       apiElement.Topology = new ReadOnlyCollection<int>(topo);
 
-      if (element1d.OrientationNode != null)
+      if (element1d.OrientationNode != null) {
         apiElement.OrientationNode = Nodes.AddNode(ref existingNodes, element1d.OrientationNode.Point, unit);
+      }
 
       apiElement.Property = Sections.ConvertSection(element1d.Section,
           ref apiSections, ref apiSectionModifiers, ref apiMaterials);
@@ -38,8 +39,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       element1ds = element1ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaElement1d element1d in element1ds.Where(element1d => element1d != null))
+      foreach (GsaElement1d element1d in element1ds.Where(element1d => element1d != null)) {
         ConvertElement1D(element1d, ref apiElements, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
 
     internal static void ConvertElement2D(GsaElement2d element2d,
@@ -52,8 +54,9 @@ namespace GsaGH.Helpers.Export {
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         var topo = new List<int>();
-        foreach (int mesh in meshVertexIndex)
+        foreach (int mesh in meshVertexIndex) {
           topo.Add(Nodes.AddNode(ref existingNodes, meshVerticies[mesh], unit));
+        }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
 
@@ -72,9 +75,11 @@ namespace GsaGH.Helpers.Export {
       }
 
       element2ds = element2ds.OrderByDescending(e => e.Ids.First()).ToList();
-      foreach (GsaElement2d element2d in element2ds)
-        if (element2d != null)
+      foreach (GsaElement2d element2d in element2ds) {
+        if (element2d != null) {
           ConvertElement2D(element2d, ref apiElements, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
+        }
+      }
     }
 
     internal static void ConvertElement3D(GsaElement3d element3d,
@@ -87,8 +92,9 @@ namespace GsaGH.Helpers.Export {
         List<int> meshVertexIndex = element3d.TopoInt[i];
 
         var topo = new List<int>();
-        foreach (int mesh in meshVertexIndex)
+        foreach (int mesh in meshVertexIndex) {
           topo.Add(Nodes.AddNode(ref existingNodes, meshVerticies[mesh], unit));
+        }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
 
@@ -108,16 +114,20 @@ namespace GsaGH.Helpers.Export {
       }
 
       element3ds = element3ds.OrderByDescending(e => e.Ids.First()).ToList();
-      foreach (GsaElement3d element3d in element3ds)
-        if (element3d != null)
+      foreach (GsaElement3d element3d in element3ds) {
+        if (element3d != null) {
           ConvertElement3D(element3d, ref apiElements, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
+        }
+      }
     }
 
     private static void AddElement(int id, Guid guid, Element apiElement, bool overwrite, ref GsaGuidIntListDictionary<Element> apiElements) {
-      if (id > 0)
+      if (id > 0) {
         apiElements.SetValue(id, guid, apiElement, overwrite);
-      else
+      }
+      else {
         apiElements.AddValue(guid, apiElement);
+      }
     }
   }
 }

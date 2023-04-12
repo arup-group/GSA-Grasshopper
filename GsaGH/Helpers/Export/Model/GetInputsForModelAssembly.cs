@@ -37,10 +37,14 @@ namespace GsaGH.Helpers.Export {
           }
         }
 
-        if (!(inTasks.Count > 0))
+        if (!(inTasks.Count > 0)) {
           inTasks = null;
-        if (!(inComb.Count > 0))
+        }
+
+        if (!(inComb.Count > 0)) {
           inComb = null;
+        }
+
         return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(inTasks, inComb);
       }
 
@@ -62,51 +66,36 @@ namespace GsaGH.Helpers.Export {
       var inMem3ds = new List<GsaMember3d>();
       if (da.GetDataList(inputid, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
-          var ghTyp = new GH_ObjectWrapper();
-          ghTyp = ghTypes[i];
+          GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) { owner.AddRuntimeWarning("Geometry input (index: " + i + ") is null and has been ignored"); continue; }
 
           switch (ghTyp.Value) {
-            case GsaNodeGoo _: {
-                var gsanode = new GsaNode();
-                ghTyp.CastTo(ref gsanode);
-                inNodes.Add(gsanode.Duplicate());
+            case GsaNodeGoo nodeGoo: {
+                inNodes.Add(nodeGoo.Value.Duplicate());
                 break;
               }
-            case GsaElement1dGoo _: {
-                var gsaelem1 = new GsaElement1d();
-                ghTyp.CastTo(ref gsaelem1);
-                inElem1ds.Add(gsaelem1.Duplicate());
+            case GsaElement1dGoo element1dGoo: {
+                inElem1ds.Add(element1dGoo.Value.Duplicate());
                 break;
               }
-            case GsaElement2dGoo _: {
-                var gsaelem2 = new GsaElement2d();
-                ghTyp.CastTo(ref gsaelem2);
-                inElem2ds.Add(gsaelem2.Duplicate());
+            case GsaElement2dGoo element2dGoo: {
+                inElem2ds.Add(element2dGoo.Value.Duplicate());
                 break;
               }
-            case GsaElement3dGoo _: {
-                var gsaelem3 = new GsaElement3d();
-                ghTyp.CastTo(ref gsaelem3);
-                inElem3ds.Add(gsaelem3.Duplicate());
+            case GsaElement3dGoo element3dGoo: {
+                inElem3ds.Add(element3dGoo.Value.Duplicate());
                 break;
               }
-            case GsaMember1dGoo _: {
-                var gsamem1 = new GsaMember1d();
-                ghTyp.CastTo(ref gsamem1);
-                inMem1ds.Add(gsamem1.Duplicate());
+            case GsaMember1dGoo member1dGoo: {
+                inMem1ds.Add(member1dGoo.Value.Duplicate());
                 break;
               }
-            case GsaMember2dGoo _: {
-                var gsamem2 = new GsaMember2d();
-                ghTyp.CastTo(ref gsamem2);
-                inMem2ds.Add(gsamem2.Duplicate());
+            case GsaMember2dGoo member2dGoo: {
+                inMem2ds.Add(member2dGoo.Value.Duplicate());
                 break;
               }
-            case GsaMember3dGoo _: {
-                var gsamem3 = new GsaMember3d();
-                ghTyp.CastTo(ref gsamem3);
-                inMem3ds.Add(gsamem3.Duplicate());
+            case GsaMember3dGoo member3dGoo: {
+                inMem3ds.Add(member3dGoo.Value.Duplicate());
                 break;
               }
             default: {
@@ -120,20 +109,34 @@ namespace GsaGH.Helpers.Export {
           }
         }
 
-        if (!(inNodes.Count > 0))
+        if (!(inNodes.Count > 0)) {
           inNodes = null;
-        if (!(inElem1ds.Count > 0))
+        }
+
+        if (!(inElem1ds.Count > 0)) {
           inElem1ds = null;
-        if (!(inElem2ds.Count > 0))
+        }
+
+        if (!(inElem2ds.Count > 0)) {
           inElem2ds = null;
-        if (!(inElem3ds.Count > 0))
+        }
+
+        if (!(inElem3ds.Count > 0)) {
           inElem3ds = null;
-        if (!(inMem1ds.Count > 0))
+        }
+
+        if (!(inMem1ds.Count > 0)) {
           inMem1ds = null;
-        if (!(inMem2ds.Count > 0))
+        }
+
+        if (!(inMem2ds.Count > 0)) {
           inMem2ds = null;
-        if (!(inMem3ds.Count > 0))
+        }
+
+        if (!(inMem3ds.Count > 0)) {
           inMem3ds = null;
+        }
+
         return new Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>, List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(inNodes, inElem1ds, inElem2ds, inElem3ds, inMem1ds, inMem2ds, inMem3ds);
       }
 
@@ -154,16 +157,12 @@ namespace GsaGH.Helpers.Export {
           if (ghTyp == null) { owner.AddRuntimeWarning("Load input (index: " + i + ") is null and has been ignored"); continue; }
 
           switch (ghTyp.Value) {
-            case GsaLoadGoo _: {
-                GsaLoad gsaload = null;
-                ghTyp.CastTo(ref gsaload);
-                inLoads.Add(gsaload.Duplicate());
+            case GsaLoadGoo loadGoo: {
+                inLoads.Add(loadGoo.Value.Duplicate());
                 break;
               }
-            case GsaGridPlaneSurfaceGoo _: {
-                var gsaGps = new GsaGridPlaneSurface();
-                ghTyp.CastTo(ref gsaGps);
-                inGps.Add(gsaGps.Duplicate());
+            case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo: {
+                inGps.Add(gridPlaneSurfaceGoo.Value.Duplicate());
                 break;
               }
             default: {
@@ -177,10 +176,14 @@ namespace GsaGH.Helpers.Export {
           }
         }
 
-        if (!(inLoads.Count > 0))
+        if (!(inLoads.Count > 0)) {
           inLoads = null;
-        if (!(inGps.Count > 0))
+        }
+
+        if (!(inGps.Count > 0)) {
           inGps = null;
+        }
+
         return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(inLoads, inGps);
       }
       else if (!isOptional) {
@@ -197,27 +200,20 @@ namespace GsaGH.Helpers.Export {
       var inMem3ds = new List<GsaMember3d>();
       if (da.GetDataList(inputid, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
-          var ghTyp = new GH_ObjectWrapper();
-          ghTyp = ghTypes[i];
+          GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) { owner.AddRuntimeWarning("Geometry input (index: " + i + ") is null and has been ignored"); continue; }
 
           switch (ghTyp.Value) {
-            case GsaMember1dGoo _: {
-                var gsamem1 = new GsaMember1d();
-                ghTyp.CastTo(ref gsamem1);
-                inMem1ds.Add(gsamem1.Duplicate());
+            case GsaMember1dGoo member1dGoo: {
+                inMem1ds.Add(member1dGoo.Value.Duplicate());
                 break;
               }
-            case GsaMember2dGoo _: {
-                var gsamem2 = new GsaMember2d();
-                ghTyp.CastTo(ref gsamem2);
-                inMem2ds.Add(gsamem2.Duplicate());
+            case GsaMember2dGoo member2dGoo: {
+                inMem2ds.Add(member2dGoo.Value.Duplicate());
                 break;
               }
-            case GsaMember3dGoo _: {
-                var gsamem3 = new GsaMember3d();
-                ghTyp.CastTo(ref gsamem3);
-                inMem3ds.Add(gsamem3.Duplicate());
+            case GsaMember3dGoo member3dGoo: {
+                inMem3ds.Add(member3dGoo.Value.Duplicate());
                 break;
               }
             default: {
@@ -231,12 +227,18 @@ namespace GsaGH.Helpers.Export {
           }
         }
 
-        if (!(inMem1ds.Count > 0))
+        if (!(inMem1ds.Count > 0)) {
           inMem1ds = null;
-        if (!(inMem2ds.Count > 0))
+        }
+
+        if (!(inMem2ds.Count > 0)) {
           inMem2ds = null;
-        if (!(inMem3ds.Count > 0))
+        }
+
+        if (!(inMem3ds.Count > 0)) {
           inMem3ds = null;
+        }
+
         return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(inMem1ds, inMem2ds, inMem3ds);
       }
 
@@ -258,10 +260,8 @@ namespace GsaGH.Helpers.Export {
             continue;
           }
 
-          if (ghTyp.Value is GsaModelGoo) {
-            var inModel = new GsaModel();
-            ghTyp.CastTo(ref inModel);
-            inModels.Add(inModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            inModels.Add(modelGoo.Value);
           }
           else {
             string type = ghTyp.Value.GetType().ToString();
@@ -297,22 +297,16 @@ namespace GsaGH.Helpers.Export {
           }
 
           switch (ghTyp.Value) {
-            case GsaSectionGoo _: {
-                var gsasection = new GsaSection();
-                ghTyp.CastTo(ref gsasection);
-                inSect.Add(gsasection.Duplicate());
+            case GsaSectionGoo sectionGoo: {
+                inSect.Add(sectionGoo.Value.Duplicate());
                 break;
               }
-            case GsaProp2dGoo _: {
-                var gsaprop = new GsaProp2d();
-                ghTyp.CastTo(ref gsaprop);
-                inProp2d.Add(gsaprop.Duplicate());
+            case GsaProp2dGoo prop2dGoo: {
+                inProp2d.Add(prop2dGoo.Value.Duplicate());
                 break;
               }
-            case GsaProp3dGoo _: {
-                var gsaprop = new GsaProp3d();
-                ghTyp.CastTo(ref gsaprop);
-                inProp3d.Add(gsaprop.Duplicate());
+            case GsaProp3dGoo prop3dGoo: {
+                inProp3d.Add(prop3dGoo.Value.Duplicate());
                 break;
               }
             default: {
@@ -326,12 +320,18 @@ namespace GsaGH.Helpers.Export {
           }
         }
 
-        if (!(inSect.Count > 0))
+        if (!(inSect.Count > 0)) {
           inSect = null;
-        if (!(inProp2d.Count > 0))
+        }
+
+        if (!(inProp2d.Count > 0)) {
           inProp2d = null;
-        if (!(inProp3d.Count > 0))
+        }
+
+        if (!(inProp3d.Count > 0)) {
           inProp3d = null;
+        }
+
         return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(inSect, inProp2d, inProp3d);
       }
 

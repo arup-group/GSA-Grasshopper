@@ -28,8 +28,9 @@ namespace GsaGH.Components {
               "Offset",
       "Create GSA Offset",
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -85,12 +86,14 @@ namespace GsaGH.Components {
         "Z Offset",
         GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
+      }
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaOffsetParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaOffsetParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var offset = new GsaOffset {

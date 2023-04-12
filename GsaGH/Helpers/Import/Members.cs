@@ -44,8 +44,9 @@ namespace GsaGH.Helpers.Import {
                 Vector3 p = node.Position;
                 tempMesh.Vertices.Add(Nodes.Point3dFromNode(node, modelUnit));
               }
-              else
+              else {
                 return;
+              }
             }
             tempMesh.Faces.AddFace(0, 1, 2);
             mList.Add(tempMesh);
@@ -68,13 +69,16 @@ namespace GsaGH.Helpers.Import {
           var topopts = new List<Point3d>();
           bool invalidNode = false;
           foreach (int t in topoInt) {
-            if (nDict.TryGetValue(t, out Node node))
+            if (nDict.TryGetValue(t, out Node node)) {
               topopts.Add(Nodes.Point3dFromNode(node, modelUnit));
-            else
+            }
+            else {
               invalidNode = true; // if node cannot be found continue with next key
+            }
           }
-          if (invalidNode)
+          if (invalidNode) {
             return;
+          }
 
           if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
               mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE) {
@@ -104,8 +108,9 @@ namespace GsaGH.Helpers.Import {
             for (int i = 0; i < voidTopoInt.Count; i++) {
               voidTopo.Add(new List<Point3d>());
               for (int j = 0; j < voidTopoInt[i].Count; j++) {
-                if (nDict.TryGetValue(voidTopoInt[i][j], out Node node))
+                if (nDict.TryGetValue(voidTopoInt[i][j], out Node node)) {
                   voidTopo[i].Add(Nodes.Point3dFromNode(node, modelUnit));
+                }
               }
             }
 
@@ -114,8 +119,9 @@ namespace GsaGH.Helpers.Import {
             for (int i = 0; i < incLinesTopoInt.Count; i++) {
               incLinesTopo.Add(new List<Point3d>());
               for (int j = 0; j < incLinesTopoInt[i].Count; j++) {
-                if (nDict.TryGetValue(incLinesTopoInt[i][j], out Node node))
+                if (nDict.TryGetValue(incLinesTopoInt[i][j], out Node node)) {
                   incLinesTopo[i].Add(Nodes.Point3dFromNode(node, modelUnit));
+                }
               }
             }
 

@@ -175,15 +175,17 @@ namespace GsaGH.Components {
         updateCat = true;
         i = 0;
       }
-      else
+      else {
         _selectedItems[i] = _dropDownItems[i][j];
+      }
 
       if (_selectedItems[0] == "Catalogue") {
         _spacerDescriptions[1] = "Catalogue";
 
         if (_mode != FoldMode.Catalogue | updateCat) {
-          while (_selectedItems.Count > 1)
+          while (_selectedItems.Count > 1) {
             _selectedItems.RemoveAt(1);
+          }
 
           _catalogueIndex = -1;
 
@@ -204,8 +206,9 @@ namespace GsaGH.Components {
           Mode1Clicked();
         }
 
-        while (_dropDownItems.Count > 1)
+        while (_dropDownItems.Count > 1) {
           _dropDownItems.RemoveAt(1);
+        }
 
         _dropDownItems.Add(_catalogueNames);
 
@@ -240,10 +243,11 @@ namespace GsaGH.Components {
             types = _typeNumbers.ToList();
             types.RemoveAt(0);
           }
-          else
+          else {
             types = new List<int> {
               _typeIndex,
             };
+          }
 
           _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types,
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
@@ -254,11 +258,13 @@ namespace GsaGH.Components {
 
         _dropDownItems.Add(_sectionList);
 
-        if (i == 3)
+        if (i == 3) {
           _selectedItems[3] = _sectionList[j];
+        }
 
-        if (_search == "")
+        if (_search == "") {
           UpdateProfileString();
+        }
 
         base.UpdateUI();
       }
@@ -266,8 +272,9 @@ namespace GsaGH.Components {
         _spacerDescriptions[1] = "Measure";
 
         if (_mode != FoldMode.Other) {
-          while (_dropDownItems.Count > 1)
+          while (_dropDownItems.Count > 1) {
             _dropDownItems.RemoveAt(1);
+          }
 
           _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
 
@@ -1257,8 +1264,9 @@ namespace GsaGH.Components {
               Params.Input[i]
                 .Optional = false;
 
-              if (Params.Input.Count == 1)
+              if (Params.Input.Count == 1) {
                 Params.RegisterInputParam(new Param_Plane());
+              }
 
               i++;
               Params.Input[i]
@@ -1327,23 +1335,25 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddTextParameter("Profile",
-        "Pf",
-        "Profile for a GSA Section",
-        GH_ParamAccess.tree);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddTextParameter("Profile",
+                                                                                         "Pf",
+                                                                                         "Profile for a GSA Section",
+                                                                                         GH_ParamAccess.tree);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       ClearRuntimeMessages();
-      foreach (IGH_Param input in Params.Input)
+      foreach (IGH_Param input in Params.Input) {
         input.ClearRuntimeMessages();
+      }
 
       #region catalogue
 
       ClearRuntimeMessages();
       if (_mode == FoldMode.Catalogue) {
         bool incl = false;
-        if (da.GetData(1, ref incl))
+        if (da.GetData(1, ref incl)) {
           if (_inclSs != incl) {
             _inclSs = incl;
             UpdateTypeData();
@@ -1359,6 +1369,7 @@ namespace GsaGH.Components {
 
             base.UpdateUI();
           }
+        }
 
         _search = null;
         string inSearch = "";
@@ -1394,7 +1405,7 @@ namespace GsaGH.Components {
               this.AddRuntimeWarning("No profile found that matches selected profile and search!");
             }
           }
-          else if (_search != "")
+          else if (_search != "") {
             foreach (string section in _sectionList) {
               if (MatchAndAdd(section, _search, ref filteredlist, tryHard)) { }
               else if (!_search.Any(char.IsDigit)) {
@@ -1403,32 +1414,38 @@ namespace GsaGH.Components {
                 test = test.Replace(".", string.Empty);
                 test = test.Replace("-", string.Empty);
                 test = test.ToLower();
-                if (test.Contains(_search))
+                if (test.Contains(_search)) {
                   filteredlist.Add(section);
+                }
               }
             }
+          }
 
           _profileString = new List<string>();
-          if (filteredlist.Count > 0)
-            foreach (string profile in filteredlist)
+          if (filteredlist.Count > 0) {
+            foreach (string profile in filteredlist) {
               _profileString.Add("CAT " + profile);
+            }
+          }
           else {
             this.AddRuntimeWarning("No profile found that matches selection and search!");
             return;
           }
         }
 
-        if (_search == null)
+        if (_search == null) {
           UpdateProfileString();
+        }
 
         var tree = new DataTree<string>();
 
         int pathCount = 0;
         if (Params.Output[0]
             .VolatileDataCount
-          > 0)
+          > 0) {
           pathCount = Params.Output[0]
             .VolatileData.PathCount;
+        }
 
         var path = new GH_Path(new[] {
           pathCount,
@@ -1442,8 +1459,9 @@ namespace GsaGH.Components {
 
       #region std
 
-      if (_mode != FoldMode.Other)
+      if (_mode != FoldMode.Other) {
         return;
+      }
       else {
         string unit = "(" + Length.GetAbbreviation(_lengthUnit, new CultureInfo("en")) + ") ";
         string profile = "STD ";
@@ -1779,8 +1797,9 @@ namespace GsaGH.Components {
 
                   var ctrlPts = new List<Point3d>();
                   if (edges[0]
-                    .TryGetPolyline(out Polyline tempCrv))
+                    .TryGetPolyline(out Polyline tempCrv)) {
                     ctrlPts = tempCrv.ToList();
+                  }
                   else {
                     this.AddRuntimeError("Cannot convert edge to Polyline");
                     return;
@@ -1788,8 +1807,9 @@ namespace GsaGH.Components {
 
                   bool localPlaneNotSet = true;
                   Plane plane = Plane.Unset;
-                  if (da.GetData(1, ref plane))
+                  if (da.GetData(1, ref plane)) {
                     localPlaneNotSet = false;
+                  }
 
                   var origin = new Point3d();
                   if (localPlaneNotSet) {
@@ -1816,16 +1836,15 @@ namespace GsaGH.Components {
 
                     Vector3d normal = plane.Normal;
                     normal.Unitize();
-                    if (normal.X == 1)
-                      plane = Plane.WorldYZ;
-                    else if (normal.Y == 1)
-                      plane = Plane.WorldZX;
-                    else
-                      plane = normal.Z == 1 ? Plane.WorldXY : new Plane(Point3d.Origin, xDirection, yDirection);
+                    plane = normal.X == 1
+                      ? Plane.WorldYZ
+                      : normal.Y == 1 ? Plane.WorldZX : normal.Z == 1 ? Plane.WorldXY : new Plane(Point3d.Origin, xDirection, yDirection);
+
                     plane.Origin = origin;
                   }
-                  else
+                  else {
                     origin = plane.Origin;
+                  }
 
                   var translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
                   var rotation = Transform.ChangeBasis(Vector3d.XAxis,
@@ -1834,13 +1853,14 @@ namespace GsaGH.Components {
                     plane.XAxis,
                     plane.YAxis,
                     plane.ZAxis);
-                  if (localPlaneNotSet)
+                  if (localPlaneNotSet) {
                     rotation = Transform.ChangeBasis(Vector3d.XAxis,
                       Vector3d.YAxis,
                       Vector3d.ZAxis,
                       plane.YAxis,
                       plane.XAxis,
                       plane.ZAxis);
+                  }
 
                   perimeter.GeoType = ProfileHelper.GeoTypes.Perim;
 
@@ -1859,9 +1879,11 @@ namespace GsaGH.Components {
                     for (int i = 1; i < edges.Length; i++) {
                       ctrlPts.Clear();
                       if (!edges[i]
-                        .IsPlanar())
-                        for (int j = 0; j < edges.Length; j++)
+                        .IsPlanar()) {
+                        for (int j = 0; j < edges.Length; j++) {
                           edges[j] = Curve.ProjectToPlane(edges[j], plane);
+                        }
+                      }
 
                       if (edges[i]
                         .TryGetPolyline(out tempCrv)) {
@@ -1964,10 +1986,11 @@ namespace GsaGH.Components {
     private static Tuple<List<string>, List<int>> GetTypesDataFromSqLite(
       int catalogueIndex,
       string filePath,
-      bool inclSuperseeded)
-      => MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(catalogueIndex,
-        filePath,
-        inclSuperseeded);
+      bool inclSuperseeded) {
+      return MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(catalogueIndex,
+                                    filePath,
+                                    inclSuperseeded);
+    }
 
     private static bool MatchAndAdd(
           string item,
@@ -1984,8 +2007,9 @@ namespace GsaGH.Components {
 
       if (!tryHard
         || !Regex.Match(pattern, "he[abcm]", RegexOptions.Singleline)
-          .Success)
+          .Success) {
         return false;
+      }
 
       string[] substring = pattern.Split(new[] {
           "he",
@@ -1995,8 +2019,9 @@ namespace GsaGH.Components {
       if (substring[substring.Length - 1]
           .Length
         > 1
-        && !char.IsNumber(substring[substring.Length - 1][1]))
+        && !char.IsNumber(substring[substring.Length - 1][1])) {
         count = 2;
+      }
 
       pattern = "he"
         + substring[substring.Length - 1]
@@ -2004,16 +2029,18 @@ namespace GsaGH.Components {
         + substring[substring.Length - 1]
           .Substring(0, count);
       if (!Regex.Match(input, pattern, RegexOptions.Singleline)
-        .Success)
+        .Success) {
         return false;
+      }
 
       list.Add(item);
       return true;
     }
 
     private void Mode1Clicked() {
-      while (Params.Input.Count > 0)
+      while (Params.Input.Count > 0) {
         Params.UnregisterInputParameter(Params.Input[0], true);
+      }
 
       Params.RegisterInputParam(new Param_String());
       Params.RegisterInputParam(new Param_Boolean());
@@ -2025,8 +2052,10 @@ namespace GsaGH.Components {
 
     private void Mode2Clicked() {
       if (_mode != FoldMode.Other) {
-        while (Params.Input.Count > 0)
+        while (Params.Input.Count > 0) {
           Params.UnregisterInputParameter(Params.Input[0], true);
+        }
+
         _mode = FoldMode.Other;
       }
 
@@ -2114,46 +2143,55 @@ namespace GsaGH.Components {
       bool isSecantPile = false,
       bool isPerimeter = false) {
       _numberOfInputs = inputs;
-      if (_lastInputWasSecant || isSecantPile || isPerimeter)
+      if (_lastInputWasSecant || isSecantPile || isPerimeter) {
         if (Params.Input.Count > 0) {
           Params.UnregisterInputParameter(Params.Input[Params.Input.Count - 1], true);
           Params.UnregisterInputParameter(Params.Input[Params.Input.Count - 1], true);
         }
+      }
 
-      while (Params.Input.Count > inputs)
+      while (Params.Input.Count > inputs) {
         Params.UnregisterInputParameter(Params.Input[inputs], true);
+      }
 
       if (isSecantPile) {
-        while (Params.Input.Count > inputs + 2)
+        while (Params.Input.Count > inputs + 2) {
           Params.UnregisterInputParameter(Params.Input[inputs + 2], true);
+        }
+
         inputs -= 2;
       }
 
-      while (Params.Input.Count < inputs)
+      while (Params.Input.Count < inputs) {
         Params.RegisterInputParam(new Param_GenericObject());
+      }
 
       if (isSecantPile) {
         Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_Boolean());
         _lastInputWasSecant = true;
       }
-      else
+      else {
         _lastInputWasSecant = false;
+      }
 
-      if (isPerimeter)
+      if (isPerimeter) {
         Params.RegisterInputParam(new Param_Plane());
+      }
     }
 
     private void UpdateProfileString() {
       if (_selectedItems[3] == "All") {
         _profileString = new List<string>();
-        foreach (string profile in _sectionList.Where(profile => profile != "All"))
+        foreach (string profile in _sectionList.Where(profile => profile != "All")) {
           _profileString.Add("CAT " + profile);
+        }
       }
-      else
+      else {
         _profileString = new List<string>() {
           "CAT " + _selectedItems[3],
         };
+      }
     }
 
     private void UpdateTypeData() {

@@ -18,8 +18,12 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int ConvertProp3d(GsaProp3d prop3d, ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (prop3d == null) { return 0; }
-      if (prop3d.IsReferencedById || prop3d.ApiProp3d == null) { return prop3d.Id; }
+      if (prop3d == null) { 
+        return 0; 
+      }
+      if (prop3d.IsReferencedById || prop3d.ApiProp3d == null) { 
+        return prop3d.Id; 
+      }
       return AddProp3d(prop3d, ref apiProp3ds, ref apiMaterials);
     }
 
@@ -29,8 +33,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       prop3Ds = prop3Ds.OrderByDescending(p => p.Id).ToList();
-      foreach (GsaProp3d prop3D in prop3Ds.Where(prop3D => prop3D != null))
+      foreach (GsaProp3d prop3D in prop3Ds.Where(prop3D => prop3D != null)) {
         ConvertProp3d(prop3D, ref apiProp3ds, ref apiMaterials);
+      }
     }
   }
 }

@@ -28,8 +28,9 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      if (member1d.OrientationNode != null)
+      if (member1d.OrientationNode != null) {
         apiMember.OrientationNode = Nodes.AddNode(ref existingNodes, member1d.OrientationNode.Point, unit);
+      }
 
       apiMember.Property = Sections.ConvertSection(member1d.Section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
@@ -44,8 +45,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       member1ds = member1ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember1d member in member1ds.Where(member => member != null))
+      foreach (GsaMember1d member in member1ds.Where(member => member != null)) {
         ConvertMember1D(member, ref apiMembers, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
 
     internal static void ConvertMember2D(GsaMember2d member2d,
@@ -56,16 +58,21 @@ namespace GsaGH.Helpers.Export {
 
       string topo = CreateTopology(member2d.Topology, member2d.TopologyType, ref existingNodes, unit);
 
-      if (member2d.VoidTopology != null)
-        for (int i = 0; i < member2d.VoidTopology.Count; i++)
+      if (member2d.VoidTopology != null) {
+        for (int i = 0; i < member2d.VoidTopology.Count; i++) {
           topo += " V(" + CreateTopology(member2d.VoidTopology[i], member2d.VoidTopologyType[i], ref existingNodes, unit) + ")";
+        }
+      }
 
-      if (member2d.IncLinesTopology != null)
-        for (int i = 0; i < member2d.IncLinesTopology.Count; i++)
+      if (member2d.IncLinesTopology != null) {
+        for (int i = 0; i < member2d.IncLinesTopology.Count; i++) {
           topo += " L(" + CreateTopology(member2d.IncLinesTopology[i], member2d.IncLinesTopologyType[i], ref existingNodes, unit) + ")";
+        }
+      }
 
-      if (member2d.InclusionPoints != null)
+      if (member2d.InclusionPoints != null) {
         topo += " P(" + CreateTopology(member2d.InclusionPoints, null, ref existingNodes, unit) + ")";
+      }
 
       try {
         apiMember.Topology = string.Copy(topo.Replace("( ", "(").Replace("  ", " "));
@@ -89,8 +96,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null))
+      foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null)) {
         ConvertMember2D(member2d, ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
+      }
     }
 
     internal static void ConvertMember3D(GsaMember3d member3d,
@@ -102,11 +110,13 @@ namespace GsaGH.Helpers.Export {
       var topos = new List<string>();
 
       var topoInts = new List<int>();
-      foreach (Point3d verticy in member3d.SolidMesh.TopologyVertices)
+      foreach (Point3d verticy in member3d.SolidMesh.TopologyVertices) {
         topoInts.Add(Nodes.AddNode(ref existingNodes, verticy, unit));
+      }
 
-      for (int j = 0; j < member3d.SolidMesh.Faces.Count; j++)
+      for (int j = 0; j < member3d.SolidMesh.Faces.Count; j++) {
         topos.Add(string.Join(" ", topoInts[member3d.SolidMesh.Faces[j].A], topoInts[member3d.SolidMesh.Faces[j].B], topoInts[member3d.SolidMesh.Faces[j].C]));
+      }
 
       string topo = string.Join("; ", topos);
       apiMember.Topology = string.Copy(topo);
@@ -124,29 +134,36 @@ namespace GsaGH.Helpers.Export {
       }
 
       member3ds = member3ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember3d member3d in member3ds.Where(member3d => member3d != null))
+      foreach (GsaMember3d member3d in member3ds.Where(member3d => member3d != null)) {
         ConvertMember3D(member3d, ref apiMembers, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
+      }
     }
 
     private static void AddMember(int id, Guid guid, Member apiMember, ref GsaGuidDictionary<Member> apiMembers) {
-      if (id > 0)
+      if (id > 0) {
         apiMembers.SetValue(id, guid, apiMember);
-      else
+      }
+      else {
         apiMembers.AddValue(guid, apiMember);
+      }
     }
 
     private static string CreateTopology(IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
       string topo = "";
-      if (topology == null)
+      if (topology == null) {
         return topo;
+      }
+
       for (int j = 0; j < topology.Count; j++) {
         if (topoType != null) {
           if (j > 0) {
             string topologyType = topoType[j];
-            if (topologyType == "" | topologyType == " ")
+            if (topologyType == "" | topologyType == " ") {
               topo += " ";
-            else
+            }
+            else {
               topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
+            }
           }
         }
 

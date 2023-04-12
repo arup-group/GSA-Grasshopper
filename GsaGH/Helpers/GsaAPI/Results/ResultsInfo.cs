@@ -29,10 +29,13 @@ namespace GsaGH.Helpers.GsaApi {
         int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
         var permutationsInCase = Enumerable.Range(1, nP).ToList();
         var path = new GH_Path(caseId);
-        if (permutationsInCase.Count == 0)
+        if (permutationsInCase.Count == 0) {
           perm.Add(null, path);
-        foreach (int p in permutationsInCase)
+        }
+
+        foreach (int p in permutationsInCase) {
           perm.Add(p, path);
+        }
       }
       return new Tuple<List<string>, List<int>, DataTree<int?>>(type, caseIds, perm);
     }

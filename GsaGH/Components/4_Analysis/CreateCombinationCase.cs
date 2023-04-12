@@ -21,8 +21,9 @@ namespace GsaGH.Components {
           "CreateCombination",
       "Create a new GSA Combination Case",
       CategoryName.Name(),
-      SubCategoryName.Cat4())
-      => Hidden = true;
+      SubCategoryName.Cat4()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
@@ -36,8 +37,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaCombinationCaseParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaCombinationCaseParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       string name = "";

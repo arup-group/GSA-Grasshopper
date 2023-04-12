@@ -16,11 +16,7 @@ namespace GsaGH.Helpers.GsaApi {
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class MicrosoftSQLiteReader : MarshalByRefObject {
-    public static MicrosoftSQLiteReader Instance {
-      get {
-        return s_lazy.Value;
-      }
-    }
+    public static MicrosoftSQLiteReader Instance => s_lazy.Value;
     private static readonly Lazy<MicrosoftSQLiteReader> s_lazy = new Lazy<MicrosoftSQLiteReader>(Initialize);
 
     public MicrosoftSQLiteReader() {
@@ -239,8 +235,9 @@ namespace GsaGH.Helpers.GsaApi {
         types = typeData.Item2;
         types.RemoveAt(0);
       }
-      else
+      else {
         types = type_numbers;
+      }
 
       using (SqliteConnection db = Connection(filePath)) {
         foreach (int type in types) {
@@ -300,8 +297,9 @@ namespace GsaGH.Helpers.GsaApi {
         catNumbers = catalogueData.Item2;
         catNumbers.RemoveAt(0);
       }
-      else
+      else {
         catNumbers.Add(catalogue_number);
+      }
 
       using (SqliteConnection db = Connection(filePath)) {
         foreach (int cat in catNumbers) {
@@ -333,7 +331,7 @@ namespace GsaGH.Helpers.GsaApi {
     private static void UEHandler(object sender, UnhandledExceptionEventArgs e) {
       var ex = e.ExceptionObject as Exception;
 
-      string assemblies = AppDomain.CurrentDomain.GetAssemblies().Aggregate("", (current, ass) => current + (ass + "; "));
+      string assemblies = AppDomain.CurrentDomain.GetAssemblies().Aggregate("", (current, ass) => current + ass + "; ");
 
       PostHog.Debug(new Dictionary<string, object>() {
         { "source", "UEHandler" },

@@ -79,10 +79,13 @@ namespace GsaGHTests.Helpers {
     public static void SetInput(GH_Component component, object obj, int index = 0) {
       var input = new Param_GenericObject();
       input.CreateAttributes();
-      if (typeof(IQuantity).IsAssignableFrom(obj.GetType()))
+      if (typeof(IQuantity).IsAssignableFrom(obj.GetType())) {
         input.PersistentData.Append(new GH_UnitNumber((IQuantity)obj));
-      else
+      }
+      else {
         input.PersistentData.Append(new GH_ObjectWrapper(obj));
+      }
+
       component.Params.Input[index]
         .AddSource(input);
     }
@@ -91,8 +94,10 @@ namespace GsaGHTests.Helpers {
       var input = new Param_GenericObject();
       input.CreateAttributes();
       input.Access = GH_ParamAccess.list;
-      foreach (object obj in objs)
+      foreach (object obj in objs) {
         input.PersistentData.Append(new GH_ObjectWrapper(obj));
+      }
+
       component.Params.Input[index]
         .AddSource(input);
     }

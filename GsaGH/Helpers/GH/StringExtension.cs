@@ -16,10 +16,10 @@ namespace GsaGH.Helpers.GH {
 
       return splittedText.Aggregate(returnValue,
         (current, word) => current
-          + (word[0]
+          + word[0]
               .ToString()
               .ToUpper()
-            + word.Substring(1)));
+            + word.Substring(1));
     }
   }
 }

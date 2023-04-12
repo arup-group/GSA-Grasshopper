@@ -19,14 +19,16 @@ namespace GsaGH.Components {
           "LnResInfo",
       "Get Element 1D Contour Result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Result Line",
-        "L",
-        "Contoured Line segments with result values",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Result Line",
+                                                                                       "L",
+                                                                                       "Contoured Line segments with result values",
+                                                                                       GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddLineParameter("Line", "L", "Line Segment", GH_ParamAccess.item);

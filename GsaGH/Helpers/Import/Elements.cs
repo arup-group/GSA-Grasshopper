@@ -23,14 +23,16 @@ namespace GsaGH.Helpers.Import {
           element.Type == ElementType.BRICK8 ||
           element.Type == ElementType.WEDGE6 ||
           element.Type == ElementType.PYRAMID5 ||
-          element.Type == ElementType.TETRA4)
+          element.Type == ElementType.TETRA4) {
         return null;
+      }
 
       var outMesh = new Mesh();
 
       foreach (int t in topo) {
-        if (nodes.TryGetValue(t, out Node node))
+        if (nodes.TryGetValue(t, out Node node)) {
           outMesh.Vertices.Add(Nodes.Point3dFromNode(node, unit));
+        }
       }
 
       switch (topo.Count) {
@@ -107,14 +109,16 @@ namespace GsaGH.Helpers.Import {
         element.Type == ElementType.PYRAMID5,
         element.Type == ElementType.TETRA4
       };
-      if (!check3d.Contains(true))
+      if (!check3d.Contains(true)) {
         return null;
+      }
 
       var outMesh = new Mesh();
 
       foreach (int t in topo) {
-        if (nodes.TryGetValue(t, out Node node))
+        if (nodes.TryGetValue(t, out Node node)) {
           outMesh.Vertices.Add(Nodes.Point3dFromNode(node, unit));
+        }
       }
 
       switch (topo.Count) {
@@ -179,11 +183,13 @@ namespace GsaGH.Helpers.Import {
 
       Parallel.ForEach(elements, elem => {
         int parent = -elem.Value.ParentMember.Member;
-        if (parent == 0)
+        if (parent == 0) {
           parent = elem.Value.Property;
+        }
 
-        if (!sortedElements.ContainsKey(parent))
+        if (!sortedElements.ContainsKey(parent)) {
           sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
+        }
 
         sortedElements[parent][elem.Key] = elem.Value;
       });
@@ -251,11 +257,13 @@ namespace GsaGH.Helpers.Import {
         int parent = -elem.Value.ParentMember.Member;
 
         // if no parent member then split by property
-        if (parent == 0)
+        if (parent == 0) {
           parent = elem.Value.Property;
+        }
 
-        if (!sortedElements.ContainsKey(parent))
+        if (!sortedElements.ContainsKey(parent)) {
           sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
+        }
         // add elements to parent member
         sortedElements[parent][elem.Key] = elem.Value;
       });
@@ -355,12 +363,14 @@ namespace GsaGH.Helpers.Import {
       });
 
       var elem2ds = new ConcurrentBag<GsaElement2dGoo>();
-      if (elem2dDict.Count > 0)
+      if (elem2dDict.Count > 0) {
         elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, axDict, modelUnit, duplicateApiObjects);
+      }
 
       var elem3ds = new ConcurrentBag<GsaElement3dGoo>();
-      if (elem3dDict.Count > 0)
+      if (elem3dDict.Count > 0) {
         elem3ds = ConvertToElement3Ds(elem3dDict, nDict, p3Dict, mDict, modelUnit, duplicateApiObjects);
+      }
 
       return new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
           (elem1ds, elem2ds, elem3ds);

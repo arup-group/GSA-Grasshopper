@@ -65,12 +65,14 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess DA) {
       var list = new GsaList() { EntityType = _type };
       int id = 0;
-      if (DA.GetData(0, ref id))
+      if (DA.GetData(0, ref id)) {
         list.Id = id;
+      }
 
       string name = _type.ToString() + " List";
-      if (DA.GetData(1, ref name))
+      if (DA.GetData(1, ref name)) {
         list.Name = name;
+      }
 
       List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, _type);
 

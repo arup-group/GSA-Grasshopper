@@ -47,8 +47,9 @@ namespace GsaGH.Components {
                                       "Analyse",
       "Assemble and Analyse a GSA Model",
       CategoryName.Name(),
-      SubCategoryName.Cat4())
-      => Hidden = true;
+      SubCategoryName.Cat4()) {
+      Hidden = true;
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
@@ -82,8 +83,10 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
-      if (!_isInitialised)
+      if (!_isInitialised) {
         InitialiseDropdowns();
+      }
+
       m_attributes = new DropDownCheckBoxesComponentAttributes(this,
         SetSelected,
         _dropDownItems,
@@ -106,8 +109,9 @@ namespace GsaGH.Components {
         double tol = reader.GetDouble("Tolerance");
         _tolerance = new Length(tol, _lengthUnit);
       }
-      else
+      else {
         _tolerance = DefaultUnits.Tolerance;
+      }
 
       UpdateMessage();
       return flag;
@@ -125,9 +129,10 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public override void VariableParameterMaintenance()
-      => Params.Input[2]
-        .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    public override void VariableParameterMaintenance() {
+      Params.Input[2]
+                                                                .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("Analyse", _analysis);
@@ -188,13 +193,15 @@ namespace GsaGH.Components {
         "ΣT",
         "GSA Analysis Tasks and Combination Cases to add to the model",
         GH_ParamAccess.list);
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i]
           .Optional = true;
+      }
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       #region GetData
@@ -232,12 +239,14 @@ namespace GsaGH.Components {
       #endregion
 
       var model = new GsaModel();
-      if (models != null)
-        if (models.Count > 0)
+      if (models != null) {
+        if (models.Count > 0) {
           model = models.Count > 1
             ? MergeModels.MergeModel(models, this, _tolerance)
             : models[0]
               .Clone();
+        }
+      }
 
       model.Model = AssembleModel.Assemble(model,
         nodes,
@@ -268,14 +277,17 @@ namespace GsaGH.Components {
             Id = model.Model.AddAnalysisTask(),
           };
           task.CreateDefaultCases(model.Model);
-          if (task.Cases == null || task.Cases.Count == 0)
+          if (task.Cases == null || task.Cases.Count == 0) {
             this.AddRuntimeWarning(
               "Model contains no loads and has not been analysed, but has been assembled.");
+          }
           else {
             this.AddRuntimeRemark(
               "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
-            foreach (GsaAnalysisCase ca in task.Cases)
+            foreach (GsaAnalysisCase ca in task.Cases) {
               model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
+            }
+
             gsaTasks = model.Model.AnalysisTasks();
           }
         }
@@ -288,8 +300,9 @@ namespace GsaGH.Components {
               .Property
             != 0
             || apielems[key]
-              .IsDummy)
+              .IsDummy) {
             continue;
+          }
 
           {
             this.AddRuntimeError("Unable to analyse model. Element ID "
@@ -299,7 +312,7 @@ namespace GsaGH.Components {
           }
         }
 
-        if (tryAnalyse)
+        if (tryAnalyse) {
           if (!SolverRequiredDll.IsCorrectVersionLoaded()) {
             tryAnalyse = false;
             string message
@@ -311,17 +324,22 @@ namespace GsaGH.Components {
               + "Either uninstall the host application or delete the file.";
             this.AddRuntimeError(message);
           }
+        }
 
         if (tryAnalyse) {
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             try {
-              if (model.Model.Analyse(task.Key))
+              if (model.Model.Analyse(task.Key)) {
                 PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse", apielems.Count);
-              else
+              }
+              else {
                 this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
+              }
+
               if (!model.Model.Results()
-                .ContainsKey(task.Key))
+                .ContainsKey(task.Key)) {
                 this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
+              }
             }
             catch (Exception e) {
               this.AddRuntimeError(e.Message);
@@ -351,7 +369,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "")
+      if (_toleranceTxt != "") {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         }
@@ -359,17 +377,21 @@ namespace GsaGH.Components {
           MessageBox.Show(e.Message);
           return;
         }
+      }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
       Message = "Tol: "
         + _tolerance.ToString()
           .Replace(" ", string.Empty);
-      if (_tolerance.Meters < 0.001)
+      if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (_tolerance.Meters > 0.25)
+      }
+
+      if (_tolerance.Meters > 0.25) {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
+      }
     }
   }
 }

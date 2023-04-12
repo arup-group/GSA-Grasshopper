@@ -133,14 +133,16 @@ namespace GsaGH.Helpers.GsaApi {
             string profile = "GEO P" + unit;
             int iPoint = 0;
             foreach (Point2d point in gsaProfile.PerimeterPoints) {
-              if ((iPoint > 0))
+              if (iPoint > 0) {
                 profile += " L";
-              else
+              }
+              else {
                 profile += " M";
+              }
 
-              profile += ("("
-                          + (point.X + ("|"
-                                        + (point.Y + ")"))));
+              profile += "("
+                          + point.X + "|"
+                                        + point.Y + ")";
               iPoint++;
             }
 
@@ -152,14 +154,16 @@ namespace GsaGH.Helpers.GsaApi {
               foreach (List<Point2d> voidPoint in gsaProfile.VoidPoints) {
                 iPoint = 0;
                 foreach (Point2d point in voidPoint) {
-                  if (iPoint > 0)
+                  if (iPoint > 0) {
                     profile += " L";
-                  else
+                  }
+                  else {
                     profile += " M";
+                  }
 
-                  profile += ("("
-                              + (point.X + ("|"
-                                            + (point.Y + ")"))));
+                  profile += "("
+                              + point.X + "|"
+                                            + point.Y + ")";
                   iPoint++;
                 }
               }

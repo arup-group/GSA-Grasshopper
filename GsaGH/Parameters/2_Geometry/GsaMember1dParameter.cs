@@ -31,9 +31,10 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
     }
 
-    protected override GsaMember1dGoo PreferredCast(object data)
-      => data.GetType() == typeof(GsaMember1d)
-        ? new GsaMember1dGoo((GsaMember1d)data)
-        : base.PreferredCast(data);
+    protected override GsaMember1dGoo PreferredCast(object data) {
+      return data.GetType() == typeof(GsaMember1d)
+                                                                         ? new GsaMember1dGoo((GsaMember1d)data)
+                                                                         : base.PreferredCast(data);
+    }
   }
 }

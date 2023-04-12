@@ -14,11 +14,13 @@ namespace GsaGH.Helpers.Export {
         apiSections.SetValue(section.Id, section.Guid, section.ApiSection);
         outId = section.Id;
       }
-      else
+      else {
         outId = apiSections.AddValue(section.Guid, section.ApiSection);
+      }
 
-      if (section.Modifier != null && section.Modifier.IsModified)
+      if (section.Modifier != null && section.Modifier.IsModified) {
         apiSectionModifiers.SetValue(outId, section.Modifier._sectionModifier);
+      }
 
       return outId;
     }
@@ -27,8 +29,12 @@ namespace GsaGH.Helpers.Export {
         ref GsaGuidDictionary<Section> apiSections,
         ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
         ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (section == null) { return 0; }
-      if (section.IsReferencedById || section.ApiSection == null) { return section.Id; }
+      if (section == null) { 
+        return 0; 
+      }
+      if (section.IsReferencedById || section.ApiSection == null) { 
+        return section.Id; 
+      }
       return AddSection(section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
     }
 
@@ -41,8 +47,9 @@ namespace GsaGH.Helpers.Export {
       }
 
       sections = sections.OrderByDescending(s => s.Id).ToList();
-      foreach (GsaSection section in sections.Where(section => section != null))
+      foreach (GsaSection section in sections.Where(section => section != null)) {
         ConvertSection(section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
   }
 }

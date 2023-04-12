@@ -49,8 +49,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat3()) { }
 
     public override bool Read(GH_IReader reader) {
-      if (!reader.ItemExists("Mode"))
+      if (!reader.ItemExists("Mode")) {
         return base.Read(reader);
+      }
 
       _mode = (FoldMode)reader.GetInt32("Mode");
 
@@ -78,7 +79,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      if (i == 0)
+      if (i == 0) {
         switch (_selectedItems[i]) {
           case "1D, One-way span":
             Mode1Clicked();
@@ -92,8 +93,10 @@ namespace GsaGH.Components {
             Mode3Clicked();
             break;
         }
-      else
+      }
+      else {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      }
 
       base.UpdateUI();
     }
@@ -151,13 +154,15 @@ namespace GsaGH.Components {
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      if (_mode != FoldMode.OneDimensionalOneWay)
+      if (_mode != FoldMode.OneDimensionalOneWay) {
         return;
+      }
 
-      if (Params.Input[5] is Param_Number angleParameter)
+      if (Params.Input[5] is Param_Number angleParameter) {
         _angleUnit = angleParameter.UseDegrees
           ? AngleUnit.Degree
           : AngleUnit.Radian;
+      }
     }
 
     protected override void InitialiseDropdowns() {
@@ -229,28 +234,28 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Surface",
-        "GPS",
-        "GSA Grid Surface",
-        GH_ParamAccess.item);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaGridPlaneParameter(),
+                                                                                         "Grid Surface",
+                                                                                         "GPS",
+                                                                                         "GSA Grid Surface",
+                                                                                         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      Plane plane = Plane.Unset;
       GsaGridPlaneSurface gsaGridPlaneSurface;
+      Plane plane = Plane.Unset;
       bool idSet = false;
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaGridPlaneSurfaceGoo) {
-          var temppln = new GsaGridPlaneSurface();
-          ghTyp.CastTo(ref temppln);
-          gsaGridPlaneSurface = temppln.Duplicate();
+        if (ghTyp.Value is GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo) {
+          gsaGridPlaneSurface = gridPlaneSurfaceGoo.Value.Duplicate();
         }
         else {
-          if (ghTyp.CastTo(ref plane))
+          if (ghTyp.CastTo(ref plane)) {
             gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
+          }
           else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               gsaGridPlaneSurface = new GsaGridPlaneSurface {
@@ -275,8 +280,9 @@ namespace GsaGH.Components {
 
       bool changeGs = false;
       var gs = new GridSurface();
-      if (idSet)
+      if (idSet) {
         gs.GridPlane = gsaGridPlaneSurface.GridSurface.GridPlane;
+      }
 
       var ghint = new GH_Integer();
       if (da.GetData(1, ref ghint)) {
@@ -302,18 +308,20 @@ namespace GsaGH.Components {
       }
 
       var ghString = new GH_String();
-      if (da.GetData(2, ref ghString))
+      if (da.GetData(2, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string elem, GH_Conversion.Both)) {
           gs.Elements = elem;
           changeGs = true;
         }
+      }
 
       var ghtxt = new GH_String();
-      if (da.GetData(3, ref ghtxt))
+      if (da.GetData(3, ref ghtxt)) {
         if (GH_Convert.ToString(ghtxt, out string name, GH_Conversion.Both)) {
           gs.Name = name;
           changeGs = true;
         }
+      }
 
       if (Params.Input[4]
           .SourceCount
@@ -331,12 +339,15 @@ namespace GsaGH.Components {
           if (da.GetData(5, ref dir)) {
             var direction = new Angle(dir, _angleUnit);
 
-            if (direction.Degrees > 180 || direction.Degrees < -180)
+            if (direction.Degrees > 180 || direction.Degrees < -180) {
               this.AddRuntimeWarning(
                 "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
+            }
+
             gs.Direction = direction.Degrees;
-            if (dir != 0.0)
+            if (dir != 0.0) {
               changeGs = true;
+            }
           }
 
           break;
@@ -347,8 +358,10 @@ namespace GsaGH.Components {
 
           int exp = 0;
           var ghexp = new GH_Integer();
-          if (da.GetData(5, ref ghexp))
+          if (da.GetData(5, ref ghexp)) {
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
+          }
+
           gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
           switch (exp) {
             case 1:
@@ -366,8 +379,10 @@ namespace GsaGH.Components {
 
           bool simple = true;
           var ghsim = new GH_Boolean();
-          if (da.GetData(6, ref ghsim))
+          if (da.GetData(6, ref ghsim)) {
             GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
+          }
+
           gs.SpanType = simple
             ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS
             : GridSurface.Span_Type.TWO_WAY;
@@ -379,8 +394,9 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (changeGs)
+      if (changeGs) {
         gsaGridPlaneSurface.GridSurface = gs;
+      }
 
       da.SetData(0, new GsaGridPlaneSurfaceGoo(gsaGridPlaneSurface));
     }
@@ -400,20 +416,24 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (_selectedItems.Count > 1)
+      if (_selectedItems.Count > 1) {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+      }
+
       base.UpdateUIFromSelectedItems();
     }
 
     private void Mode1Clicked() {
-      if (_mode == FoldMode.OneDimensionalOneWay)
+      if (_mode == FoldMode.OneDimensionalOneWay) {
         return;
+      }
 
       RecordUndoEvent("1D, one-way Parameters");
       _mode = FoldMode.OneDimensionalOneWay;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
 
       Params.RegisterInputParam(_angleInputParam);
     }
@@ -431,8 +451,9 @@ namespace GsaGH.Components {
       RecordUndoEvent("1D, two-way Parameters");
       _mode = FoldMode.OneDimensionalTwoWay;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
 
       Params.RegisterInputParam(new Param_Integer());
       Params.RegisterInputParam(new Param_Boolean());
@@ -451,8 +472,9 @@ namespace GsaGH.Components {
       RecordUndoEvent("2D Parameters");
       _mode = FoldMode.TwoDimensional;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
     }
   }
 }

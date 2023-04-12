@@ -11,8 +11,10 @@ namespace GsaGHTests.Helpers {
       GH_OasysDropDownComponent comp,
       bool ignoreSpacerDescriptionsCount = false) {
       Assert.True(comp._isInitialised);
-      if (!ignoreSpacerDescriptionsCount)
+      if (!ignoreSpacerDescriptionsCount) {
         Assert.Equal(comp._dropDownItems.Count, comp._spacerDescriptions.Count);
+      }
+
       Assert.Equal(comp._dropDownItems.Count, comp._selectedItems.Count);
 
       for (int i = 0; i < comp._dropDownItems.Count; i++) {

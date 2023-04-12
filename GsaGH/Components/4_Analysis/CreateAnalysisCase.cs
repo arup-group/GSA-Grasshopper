@@ -22,8 +22,9 @@ namespace GsaGH.Components {
       GsaAnalysisCaseGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisCaseGoo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat4())
-      => Hidden = true;
+      SubCategoryName.Cat4()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
@@ -37,8 +38,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaAnalysisCaseParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaAnalysisCaseParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       string name = "";

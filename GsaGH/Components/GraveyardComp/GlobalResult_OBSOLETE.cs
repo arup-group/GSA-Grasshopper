@@ -25,8 +25,9 @@ namespace GsaGH.Components {
           "GlobalResult",
       "Get Global Results from GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("GSA Model",
@@ -92,15 +93,15 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
+      GsaModel model; 
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
+      if (!da.GetData(0, ref ghTyp)) {
         return;
+      }
 
-      #region Inputs
-
-      if (ghTyp.Value is GsaModelGoo)
-        ghTyp.CastTo(ref gsaModel);
+      if (ghTyp.Value is GsaModelGoo modelGoo) {
+        model = modelGoo.Value;
+      }
       else {
         this.AddRuntimeError("Error converting input to GSA Model");
         return;
@@ -110,18 +111,12 @@ namespace GsaGH.Components {
       da.GetData(1, ref ghACase);
       GH_Convert.ToInt32(ghACase, out int analCase, GH_Conversion.Both);
 
-      #endregion
-
-      #region Get results from GSA
-
-      gsaModel.Model.Results()
+      model.Model.Results()
         .TryGetValue(analCase, out AnalysisCaseResult analysisCaseResult);
       if (analysisCaseResult == null) {
         this.AddRuntimeError("No results exist for Analysis Case " + analCase + " in file");
         return;
       }
-
-      #endregion
 
       const double unitfactorForce = 1000;
       const double unitfactorMoment = 1000;
@@ -148,12 +143,14 @@ namespace GsaGH.Components {
         analysisCaseResult.Global.EffectiveMass.Z);
 
       Vector3d effStiff;
-      if (analysisCaseResult.Global.EffectiveInertia != null)
+      if (analysisCaseResult.Global.EffectiveInertia != null) {
         effStiff = new Vector3d(analysisCaseResult.Global.EffectiveInertia.X,
           analysisCaseResult.Global.EffectiveInertia.Y,
           analysisCaseResult.Global.EffectiveInertia.Z);
-      else
+      }
+      else {
         effStiff = new Vector3d();
+      }
 
       var modal = new Vector3d(analysisCaseResult.Global.ModalMass,
         analysisCaseResult.Global.ModalStiffness,

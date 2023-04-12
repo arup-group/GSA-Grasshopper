@@ -17,8 +17,9 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Result Mesh";
     public Mesh ValidMesh {
       get {
-        if (!_finalised)
+        if (!_finalised) {
           Finalise();
+        }
 
         var m = new Mesh();
         Mesh x = Value;
@@ -32,8 +33,10 @@ namespace GsaGH.Parameters {
         foreach (int faceId in ngons.Select(ngon => ngon.FaceIndexList()
             .Select(u => (int)u)
             .ToList())
-          .SelectMany(faceIndex => faceIndex))
+          .SelectMany(faceIndex => faceIndex)) {
           m.Faces.AddFace(x.Faces[faceId]);
+        }
+
         m.RebuildNormals();
         return m;
       }
@@ -89,8 +92,10 @@ namespace GsaGH.Parameters {
       }
 
       var m = new Mesh();
-      if (!GH_Convert.ToMesh(source, ref m, GH_Conversion.Both))
+      if (!GH_Convert.ToMesh(source, ref m, GH_Conversion.Both)) {
         return false;
+      }
+
       Value = m;
       return true;
     }
@@ -110,33 +115,42 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
-      => args.Pipeline.DrawMeshFalseColors(Value);
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      args.Pipeline.DrawMeshFalseColors(Value);
+    }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null)
+      if (Value == null) {
         return;
-      if (CentralSettings.PreviewMeshEdges == false)
+      }
+
+      if (CentralSettings.PreviewMeshEdges == false) {
         return;
+      }
 
       Color color
         = args.Color == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
           ? Colours.Element2dEdge
           : Colours.Element2dEdgeSelected;
 
-      if (Value.Ngons.Count > 0)
-        for (int i = 0; i < Value.TopologyEdges.Count; i++)
+      if (Value.Ngons.Count > 0) {
+        for (int i = 0; i < Value.TopologyEdges.Count; i++) {
           args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), color, 1);
+        }
+      }
 
       args.Pipeline.DrawMeshWires(Value, color, 1);
     }
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-      => new MeshResultGoo(Value, ResultValues, Vertices, ElementIds);
+    public override IGH_GeometricGoo DuplicateGeometry() {
+      return new MeshResultGoo(Value, ResultValues, Vertices, ElementIds);
+    }
 
     public void Finalise() {
-      if (_finalised)
+      if (_finalised) {
         return;
+      }
+
       Value = new Mesh();
       Value.Append(_tempMeshes);
       Value.RebuildNormals();
@@ -162,10 +176,13 @@ namespace GsaGH.Parameters {
       return new MeshResultGoo(m, ResultValues, Vertices, ElementIds);
     }
 
-    public override object ScriptVariable() => Value;
+    public override object ScriptVariable() {
+      return Value;
+    }
 
-    public override string ToString()
-      => $"MeshResult: V:{Value.Vertices.Count:0}, F:{Value.Faces.Count:0}, R:{ResultValues.Count:0}";
+    public override string ToString() {
+      return $"MeshResult: V:{Value.Vertices.Count:0}, F:{Value.Faces.Count:0}, R:{ResultValues.Count:0}";
+    }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
       Mesh m = Value.DuplicateMesh();

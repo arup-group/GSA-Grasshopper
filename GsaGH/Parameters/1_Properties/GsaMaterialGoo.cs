@@ -16,11 +16,13 @@ namespace GsaGH.Parameters {
     public GsaMaterialGoo(GsaMaterial item) : base(item) { }
 
     public override bool CastFrom(object source) {
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
-      if (base.CastFrom(source))
+      if (base.CastFrom(source)) {
         return true;
+      }
 
       if (GH_Convert.ToString(source, out string mat, GH_Conversion.Both)) {
         switch (mat.ToUpper()) {
@@ -69,12 +71,14 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target))
+      if (base.CastTo(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GsaProp3d))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
+        }
         else {
           target = (TQ)(object)new GsaProp3d(Value);
         }
@@ -85,14 +89,17 @@ namespace GsaGH.Parameters {
         return false;
       }
 
-      if (Value == null)
+      if (Value == null) {
         target = default;
+      }
       else {
         target = (TQ)(object)new GsaProp3dGoo(new GsaProp3d(Value));
       }
       return true;
     }
 
-    public override IGH_Goo Duplicate() => new GsaMaterialGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaMaterialGoo(Value);
+    }
   }
 }

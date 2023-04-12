@@ -32,11 +32,13 @@ namespace GsaGH.Components {
                   "Open",
       "Open an existing GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
-    public override void CreateAttributes()
-      => m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
+    public override void CreateAttributes() {
+      m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
+    }
 
     public void OpenFile() {
       var fdi = new OpenFileDialog {
@@ -44,8 +46,9 @@ namespace GsaGH.Components {
       }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
       bool res = fdi.ShowOpenDialog();
 
-      if (!res)
+      if (!res) {
         return;
+      }
 
       _fileName = fdi.FileName;
 
@@ -55,7 +58,7 @@ namespace GsaGH.Components {
         Attributes.DocObject.Attributes.Bounds.Left - panel.Attributes.Bounds.Width - 30,
         Params.Input[0]
           .Attributes.Pivot.Y
-        - panel.Attributes.Bounds.Height / 2);
+        - (panel.Attributes.Bounds.Height / 2));
 
       while (Params.Input[0]
           .Sources.Count
@@ -108,30 +111,34 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() { }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Filename and path",
-        "File",
-        "GSA model to open and work with."
-        + Environment.NewLine
-        + "Input either path component, a text string with path and "
-        + Environment.NewLine
-        + "filename or an existing GSA model created in Grasshopper.",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Filename and path",
+                                                                                       "File",
+                                                                                       "GSA model to open and work with."
+                                                                                       + Environment.NewLine
+                                                                                       + "Input either path component, a text string with path and "
+                                                                                       + Environment.NewLine
+                                                                                       + "filename or an existing GSA model created in Grasshopper.",
+                                                                                       GH_ParamAccess.item);
+    }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new Model();
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp))
+      if (da.GetData(0, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GH_String _: {
-              if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both))
+              if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both)) {
                 _fileName = tempFile;
+              }
 
-              if (!_fileName.EndsWith(".gwb"))
+              if (!_fileName.EndsWith(".gwb")) {
                 _fileName += ".gwb";
+              }
 
               ReturnValue status = model.Open(_fileName);
 
@@ -142,7 +149,7 @@ namespace GsaGH.Components {
                 };
 
                 GetTitles(model);
-                GetUnit(ref gsaModel);
+                //GetUnit(ref gsaModel);
 
                 da.SetData(0, new GsaModelGoo(gsaModel));
 
@@ -169,6 +176,7 @@ namespace GsaGH.Components {
             this.AddRuntimeError("Unable to open Model");
             return;
         }
+      }
       else {
         ReturnValue status = model.Open(_fileName);
 
@@ -179,16 +187,17 @@ namespace GsaGH.Components {
           };
 
           GetTitles(model);
-          GetUnit(ref gsaModel);
+          //GetUnit(ref gsaModel);
 
           da.SetData(0, new GsaModelGoo(gsaModel));
         }
-        else
+        else {
           this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
+        }
       }
     }
 
-    private static void GetUnit(ref GsaModel gsaModel) {
+    //private static void GetUnit(ref GsaModel gsaModel) {
       // none of this works:
       // 1. save as gwa is not possible with GsaAPI
       // 2. Output_UnitFactor and Output_String() both result COM error
@@ -200,7 +209,7 @@ namespace GsaGH.Components {
       //float unit = m.Output_UnitFactor();
 
       //gsaModel.ModelGeometryUnit = (OasysUnits.Units.LengthUnit)OasysGH.Units.Helpers.UnitsHelper.Parse(typeof(OasysUnits.Units.LengthUnit), unit);
-    }
+    //}
 
     private void GetTitles(Model model) {
       Titles.GetTitlesFromGsa(model);
