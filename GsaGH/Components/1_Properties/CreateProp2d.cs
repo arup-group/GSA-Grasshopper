@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -24,39 +26,25 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProp2d();
       switch (_mode) {
-        case FoldMode.PlaneStress:
-          prop.Type = Property2D_Type.PL_STRESS;
-          break;
-
-        case FoldMode.Fabric:
-          prop.Type = Property2D_Type.FABRIC;
-          break;
-
-        case FoldMode.FlatPlate:
-          prop.Type = Property2D_Type.PLATE;
-          break;
-
-        case FoldMode.Shell:
-          prop.Type = Property2D_Type.SHELL;
-          break;
-
-        case FoldMode.CurvedShell:
-          prop.Type = Property2D_Type.CURVED_SHELL;
-          break;
-
-        case FoldMode.LoadPanel:
-          prop.Type = Property2D_Type.LOAD;
+        case Prop2dType.PlaneStress:
+        case Prop2dType.Fabric:
+        case Prop2dType.FlatPlate:
+        case Prop2dType.Shell:
+        case Prop2dType.CurvedShell:
+        case Prop2dType.LoadPanel:
+          prop.Type = (Property2D_Type)(int)_mode;
           break;
 
         default:
+          this.AddRuntimeWarning("Property type is undefined");
           prop.Type = Property2D_Type.UNDEF;
           break;
       }
 
-      if (_mode != FoldMode.LoadPanel) {
+      if (_mode != Prop2dType.LoadPanel) {
         prop.AxisProperty = 0;
 
-        if (_mode != FoldMode.Fabric) {
+        if (_mode != Prop2dType.Fabric) {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
@@ -80,6 +68,17 @@ namespace GsaGH.Components {
         }
         else
           prop.Material = new GsaMaterial(8);
+      }
+      else {
+        prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
+        if (prop.SupportType != SupportType.Auto) {
+          int referenceEdge = 0;
+          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4)
+            prop.ReferenceEdge = referenceEdge;
+          else {
+            this.AddRuntimeError("Reference edge invalid or can't take it from the model");
+          }
+        }
       }
 
       da.SetData(0, new GsaProp2dGoo(prop));
@@ -118,16 +117,27 @@ namespace GsaGH.Components {
 
     #region Custom UI
 
-    private readonly List<string> _dropdownTopLevel = new List<string>(new[] {
-      "Plane Stress",
-      "Fabric",
-      "Flat Plate",
-      "Shell",
-      "Curved Shell",
-      "Load Panel",
-    });
+    private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel = new Dictionary<Prop2dType, string>{
+      { Prop2dType.PlaneStress, "Plane Stress"},
+      { Prop2dType.Fabric, "Fabric"},
+      { Prop2dType.FlatPlate, "Flat Plate"},
+      { Prop2dType.Shell, "Shell"},
+      { Prop2dType.CurvedShell, "Curved Shell"},
+      { Prop2dType.LoadPanel, "Load Panel"},
+    };
+
+    private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string>{
+      { SupportType.Auto, "Automatic"},
+      { SupportType.AllEdges, "All edges"},
+      { SupportType.ThreeEdges, "Three edges"},
+      { SupportType.TwoEdges, "Two edges"},
+      { SupportType.TwoAdjacentEdges, "Two adjacent edges"},
+      { SupportType.OneEdge, "One edge"},
+      { SupportType.Cantilever, "Cantilever"},
+    };
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    private int _supportTypeIndex;
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
@@ -138,8 +148,8 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(_dropdownTopLevel);
-      _selectedItems.Add(_dropdownTopLevel[3]);
+      _dropDownItems.Add(_dropdownTopLevel.Values.ToList());
+      _selectedItems.Add(_dropdownTopLevel.Values.ElementAt(3));
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -150,227 +160,170 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      if (i == 0)
-        switch (_selectedItems[i]) {
-          case "Plane Stress":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode1Clicked();
-            break;
-          case "Fabric":
-            if (_dropDownItems.Count > 1)
-              _dropDownItems.RemoveAt(1);
-            Mode2Clicked();
-            break;
-          case "Flat Plate":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode3Clicked();
-            break;
-          case "Shell":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode4Clicked();
-            break;
-          case "Curved Shell":
-            if (_dropDownItems.Count < 2)
-              _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-            Mode5Clicked();
-            break;
-          case "Load Panel":
-            if (_dropDownItems.Count > 1)
-              _dropDownItems.RemoveAt(1);
-            Mode6Clicked();
-            break;
-        }
-      else
+      Prop2dType mode = GetModeBy(_selectedItems[0]);
+      if (i == 0) {
+        UpdateParameters(mode);
+        UpdateDropDownItems(mode);
+      }
+
+      if (i != 0 && mode != Prop2dType.LoadPanel)
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+
+      if (i == 1 && mode == Prop2dType.LoadPanel) {
+        _supportTypeIndex = j;
+        UpdateParameters(mode);
+        UpdateDropDownItems(mode);
+      }
 
       base.UpdateUI();
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      switch (_selectedItems[0]) {
-        case "Plane Stress":
-          if (_dropDownItems.Count < 2)
-            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode1Clicked();
-          break;
-        case "Fabric":
-          if (_dropDownItems.Count > 1)
-            _dropDownItems.RemoveAt(1);
-          Mode2Clicked();
-          break;
-        case "Flat Plate":
-          if (_dropDownItems.Count < 2)
-            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode3Clicked();
-          break;
-        case "Shell":
-          if (_dropDownItems.Count < 2)
-            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode4Clicked();
-          break;
-        case "Curved Shell":
-          if (_dropDownItems.Count < 2)
-            _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-          Mode5Clicked();
-          break;
-        case "Load Panel":
-          if (_dropDownItems.Count > 1)
-            _dropDownItems.RemoveAt(1);
-          Mode6Clicked();
-          break;
-      }
+      Prop2dType mode = GetModeBy(_selectedItems[0]);
 
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+      if (mode == Prop2dType.LoadPanel)
+        _supportTypeIndex = _supportDropDown.ToList()
+          .FindIndex(x => x.Value == _selectedItems[1]);
+      else if (mode != Prop2dType.Fabric)
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+
+      UpdateDropDownItems(mode);
+      UpdateParameters(mode);
+
       base.UpdateUIFromSelectedItems();
     }
 
     #region update inputs
 
-    private enum FoldMode {
-      PlaneStress,
-      Fabric,
-      FlatPlate,
-      Shell,
-      CurvedShell,
-      LoadPanel,
-    }
+    private Prop2dType _mode = Prop2dType.Shell;
 
-    private FoldMode _mode = FoldMode.Shell;
-
-    private void Mode1Clicked() {
-      if (_mode == FoldMode.PlaneStress)
+    private void UpdateParameters(Prop2dType mode) {
+      if (_mode == mode && mode != Prop2dType.LoadPanel)
         return;
 
-      RecordUndoEvent("Plane Stress Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = FoldMode.PlaneStress;
-    }
-
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Fabric)
-        return;
-
-      RecordUndoEvent("Fabric Parameters");
-      _mode = FoldMode.Fabric;
+      _dropdownTopLevel.TryGetValue(mode, out string eventName);
+      RecordUndoEvent($"{eventName} Parameters");
 
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
 
-      Params.RegisterInputParam(new Param_GenericObject());
-    }
-
-    private void Mode3Clicked() {
-      if (_mode == FoldMode.FlatPlate)
-        return;
-
-      RecordUndoEvent("Flat Plate Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+      switch (mode) {
+        case Prop2dType.Shell:
+        case Prop2dType.PlaneStress:
+        case Prop2dType.FlatPlate:
+        case Prop2dType.CurvedShell:
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new GsaMaterialParameter());
+          break;
+        case Prop2dType.Fabric:
+          Params.RegisterInputParam(new Param_GenericObject());
+          break;
+        case Prop2dType.LoadPanel:
+          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
+            Params.RegisterInputParam(new Param_Integer());
+          break;
       }
 
-      _mode = FoldMode.FlatPlate;
+      _mode = mode;
     }
 
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.Shell)
-        return;
-
-      RecordUndoEvent("Shell Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+    private void UpdateDropDownItems(Prop2dType mode) {
+      ResetDropdownMenus();
+      switch (mode) {
+        case Prop2dType.PlaneStress:
+        case Prop2dType.FlatPlate:
+        case Prop2dType.Shell:
+        case Prop2dType.CurvedShell:
+          AddLengthUnitDropDown();
+          break;
+        case Prop2dType.Fabric:
+          break;
+        case Prop2dType.LoadPanel:
+          AddSupportTypeDropDown();
+          break;
       }
-
-      _mode = FoldMode.Shell;
     }
 
-    private void Mode5Clicked() {
-      if (_mode == FoldMode.CurvedShell)
-        return;
-
-      RecordUndoEvent("Curved Shell Parameters");
-      if (_mode == FoldMode.LoadPanel || _mode == FoldMode.Fabric) {
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
-
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
-      }
-
-      _mode = FoldMode.CurvedShell;
-    }
-
-    private void Mode6Clicked() {
-      if (_mode == FoldMode.LoadPanel)
-        return;
-
-      RecordUndoEvent("Load Panel Parameters");
-      _mode = FoldMode.LoadPanel;
-
-      while (Params.Input.Count > 0)
-        Params.UnregisterInputParameter(Params.Input[0], true);
+    private Prop2dType GetModeBy(string name) {
+      Prop2dType mode = Prop2dType.Shell;
+      foreach (KeyValuePair<Prop2dType, string> item in _dropdownTopLevel)
+        if (item.Value.Equals(name)) {
+          mode = item.Key;
+          return mode;
+        }
+      throw new Exception("Unable to convert " + name + " to Prop2d Type");
     }
 
     #endregion
 
     public override void VariableParameterMaintenance() {
-      if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
-        int i = 0;
-        Params.Input[i]
-          .NickName = "Thk";
-        Params.Input[i]
-          .Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
-        Params.Input[i]
-          .Description = "Section thickness";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = false;
-        i++;
-        Params.Input[i]
-          .NickName = "Mat";
-        Params.Input[i]
-          .Name = "Material";
-        Params.Input[i]
-          .Description = "GSA Material";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
+      switch (_mode) {
+        case Prop2dType.LoadPanel:
+          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges))
+            SetReferenceEdgeInputAt(0);
+          return;
+        case Prop2dType.Fabric:
+          SetMaterialInputAt(0);
+          break;
+        case Prop2dType.Shell:
+        case Prop2dType.PlaneStress:
+        case Prop2dType.FlatPlate:
+        case Prop2dType.CurvedShell:
+          SetInputProperties(index: 0, nickname: "Thk", name: $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", description: "Section thickness", optional: false);
+          SetMaterialInputAt(1);
+          break;
       }
-
-      if (_mode != FoldMode.Fabric)
-        return;
-
-      Params.Input[0]
-        .NickName = "Mat";
-      Params.Input[0]
-        .Name = "Material";
-      Params.Input[0]
-        .Description = "GSA Material";
-      Params.Input[0]
-        .Access = GH_ParamAccess.item;
-      Params.Input[0]
-        .Optional = true;
     }
 
+    private void SetInputProperties(
+      int index,
+      string nickname,
+      string name,
+      string description,
+      GH_ParamAccess access = GH_ParamAccess.item,
+      bool optional = true) {
+      Params.Input[index]
+        .NickName = nickname;
+      Params.Input[index]
+        .Name = name;
+      Params.Input[index]
+        .Description = description;
+      Params.Input[index]
+        .Access = access;
+      Params.Input[index]
+        .Optional = optional;
+    }
+
+    private void SetMaterialInputAt(int index) => SetInputProperties(index, "Mat", "Material", "GSA Material");
+    private void SetReferenceEdgeInputAt(int index) => SetInputProperties(index, "RE", "Reference edge", "Reference edge for automatic support type");
     #endregion
+
+    private void AddLengthUnitDropDown() {
+      _spacerDescriptions.Add("Unit");
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+    }
+
+    private void AddSupportTypeDropDown() {
+      if (_supportTypeIndex < 0 || _supportTypeIndex >= _supportDropDown.Count) {
+        this.AddRuntimeError("Index for selected items out of range!");
+        _supportTypeIndex = 0;
+      }
+
+      _spacerDescriptions.Add("Support Type");
+      _dropDownItems.Add(_supportDropDown.Values.ToList());
+      _selectedItems.Add(_supportDropDown.Values.ElementAt(_supportTypeIndex));
+    }
+
+    private void ResetDropdownMenus() {
+      while (_spacerDescriptions.Count > 1)
+        _spacerDescriptions.RemoveAt(_spacerDescriptions.Count - 1);
+      while (_dropDownItems.Count > 1)
+        _dropDownItems.RemoveAt(_dropDownItems.Count - 1);
+      while (_selectedItems.Count > 1)
+        _selectedItems.RemoveAt(_selectedItems.Count - 1);
+    }
   }
 }

@@ -322,7 +322,6 @@ namespace GsaGH.Components {
         else {
           _dropDownItems[2].Add("-");
         }
-
       }
       else if (_dropDownItems.Count > 2) {
         _dropDownItems.RemoveAt(2);

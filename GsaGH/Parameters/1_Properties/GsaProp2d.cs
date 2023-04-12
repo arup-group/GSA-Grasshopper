@@ -27,9 +27,7 @@ namespace GsaGH.Parameters {
 
     #region properties
     internal Prop2D ApiProp2d {
-      get {
-        return _prop2d;
-      }
+      get => _prop2d;
       set {
         _guid = Guid.NewGuid();
         _prop2d = value;
@@ -38,9 +36,7 @@ namespace GsaGH.Parameters {
       }
     }
     public int Id {
-      get {
-        return _id;
-      }
+      get => _id;
       set {
         _guid = Guid.NewGuid();
         _id = value;
@@ -48,9 +44,7 @@ namespace GsaGH.Parameters {
     }
     internal bool IsReferencedById { get; set; } = false;
     public GsaMaterial Material {
-      get {
-        return _material;
-      }
+      get => _material;
       set {
         _material = value;
         if (_prop2d == null)
@@ -66,9 +60,7 @@ namespace GsaGH.Parameters {
     }
     #region GsaAPI members
     public string Name {
-      get {
-        return _prop2d.Name;
-      }
+      get => _prop2d.Name;
       set {
         CloneApiObject();
         _prop2d.Name = value;
@@ -76,10 +68,7 @@ namespace GsaGH.Parameters {
       }
     }
     public int MaterialId {
-      get {
-        return
-          _prop2d.MaterialAnalysisProperty;
-      }
+      get => _prop2d.MaterialAnalysisProperty;
       set {
         CloneApiObject();
         IsReferencedById = false;
@@ -112,9 +101,7 @@ namespace GsaGH.Parameters {
       }
     }
     public string Description {
-      get {
-        return _prop2d.Description.Replace("%", " ");
-      }
+      get => _prop2d.Description.Replace("%", " ");
       set {
         CloneApiObject();
         _prop2d.Description = value;
@@ -122,9 +109,7 @@ namespace GsaGH.Parameters {
       }
     }
     public int AxisProperty {
-      get {
-        return _prop2d.AxisProperty;
-      }
+      get => _prop2d.AxisProperty;
       set {
         CloneApiObject();
         _prop2d.AxisProperty = value;
@@ -132,19 +117,34 @@ namespace GsaGH.Parameters {
       }
     }
     public Property2D_Type Type {
-      get {
-        return _prop2d.Type;
-      }
+      get => _prop2d.Type;
       set {
         CloneApiObject();
         _prop2d.Type = value;
         IsReferencedById = false;
       }
     }
-    public Color Colour {
-      get {
-        return (Color)_prop2d.Colour;
+
+    public SupportType SupportType {
+      get => _prop2d.SupportType;
+      set {
+        CloneApiObject();
+        _prop2d.SupportType = value;
+        IsReferencedById = false;
       }
+    }
+
+    public int ReferenceEdge {
+      get => _prop2d.ReferenceEdge;
+      set {
+        CloneApiObject();
+        _prop2d.ReferenceEdge = value;
+        IsReferencedById = false;
+      }
+    }
+
+    public Color Colour {
+      get => (Color)_prop2d.Colour;
       set {
         CloneApiObject();
         _prop2d.Colour = value;
@@ -152,15 +152,9 @@ namespace GsaGH.Parameters {
       }
     }
     #endregion
-    public Guid Guid {
-      get {
-        return _guid;
-      }
-    }
+    public Guid Guid => _guid;
     public Plane LocalAxis {
-      get {
-        return _localAxis;
-      }
+      get => _localAxis;
       set {
         _localAxis = value;
         CloneApiObject();
@@ -227,9 +221,17 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string type = Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == _prop2d.Type).Key + " ";
       string desc = Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
-      string mat = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+      string mat = Type != Property2D_Type.LOAD
+        ? Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " "
+        : string.Empty;
       string pa = (Id > 0) ? "PA" + Id + " " : "";
-      return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
+      string supportType = Type == Property2D_Type.LOAD
+        ? $"{SupportType}"
+        : string.Empty;
+      string referenceEdge = Type == Property2D_Type.LOAD && (SupportType != SupportType.Auto && SupportType != SupportType.AllEdges)
+        ? $"RefEdge:{ReferenceEdge}"
+        : string.Empty;
+      return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
@@ -257,11 +259,17 @@ namespace GsaGH.Parameters {
         MaterialAnalysisProperty = _prop2d.MaterialAnalysisProperty,
         MaterialGradeProperty = _prop2d.MaterialGradeProperty,
         MaterialType = _prop2d.MaterialType,
-        Name = _prop2d.Name.ToString(),
-        Description = _prop2d.Description.ToString(),
-        Type = _prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
+        Name = _prop2d.Name,
+        Description = _prop2d.Description,
+        Type = _prop2d.Type,
         AxisProperty = _prop2d.AxisProperty,
       };
+      if (_prop2d.Type == Property2D_Type.LOAD) {
+        prop.SupportType = _prop2d.SupportType;
+        if (_prop2d.SupportType != SupportType.Auto)
+          prop.ReferenceEdge = _prop2d.ReferenceEdge;
+      }
+
       if ((Color)_prop2d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         prop.Colour = _prop2d.Colour;
 
