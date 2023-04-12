@@ -11,40 +11,19 @@ using RhinoInside;
 using Xunit;
 
 namespace IntegrationTests {
-  [CollectionDefinition("GrasshopperFixture collection")]
-  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
-    // This class has no code, and is never created. Its purpose is simply
-    // to be the place to apply [CollectionDefinition] and all the
-    // ICollectionFixture<> interfaces.
-  }
-
   public class GrasshopperFixture : IDisposable {
-    public RhinoCore Core {
-      get {
-        if (null == _core)
-          InitializeCore();
-        return _core as RhinoCore;
-      }
-    }
-    public GH_RhinoScriptInterface GhPlugin {
-      get {
-        if (null == _ghPlugin)
-          InitializeGrasshopperPlugin();
-        return _ghPlugin as GH_RhinoScriptInterface;
-      }
-    }
     public static string InstallPath = Path.Combine(
-              Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
       "Oasys",
       "GSA 10.1");
 
-    private object Doc { get; set; }
-    private object DocIo { get; set; }
-    private static readonly string s_linkFileName = "IntegrationTests.ghlink";
     private static readonly string s_linkFilePath = Path.Combine(
-                  Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
       "Grasshopper",
       "Libraries");
+
+    private static readonly string s_linkFileName = "IntegrationTests.ghlink";
+
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
@@ -70,24 +49,31 @@ namespace IntegrationTests {
       Utility.SetupUnitsDuringLoad(true);
     }
 
+    private object DocIo { get; set; }
+    private object Doc { get; set; }
+
+    public RhinoCore Core {
+      get {
+        if (null == _core)
+          InitializeCore();
+        return _core as RhinoCore;
+      }
+    }
+
+    public GH_RhinoScriptInterface GhPlugin {
+      get {
+        if (null == _ghPlugin)
+          InitializeGrasshopperPlugin();
+        return _ghPlugin as GH_RhinoScriptInterface;
+      }
+    }
+
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
     // ~GrasshopperFixture()
     // {
     //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
     //     Dispose(disposing: false);
     // }
-
-    public static void TryGsaCom() {
-      ComAuto gsa = GsaComObject.Instance;
-      gsa.NewFile();
-    }
-
-    public void AddPluginToGh() {
-      Directory.CreateDirectory(s_linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, s_linkFileName));
-      writer.Write(Environment.CurrentDirectory);
-      writer.Close();
-    }
 
     public void Dispose() {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
@@ -96,12 +82,24 @@ namespace IntegrationTests {
       File.Delete(Path.Combine(s_linkFilePath, s_linkFileName));
     }
 
+    public static void TryGsaCom() {
+      ComAuto gsa = GsaComObject.Instance;
+      gsa.NewFile();
+    }
+
     public void LoadRefs() {
       const string name = "PATH";
       string pathvar = Environment.GetEnvironmentVariable(name);
       string value = pathvar + ";" + InstallPath + "\\";
       EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
       Environment.SetEnvironmentVariable(name, value, target);
+    }
+
+    public void AddPluginToGh() {
+      Directory.CreateDirectory(s_linkFilePath);
+      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, s_linkFileName));
+      writer.Write(Environment.CurrentDirectory);
+      writer.Close();
     }
 
     protected virtual void Dispose(bool disposing) {
@@ -135,5 +133,12 @@ namespace IntegrationTests {
       var ghp = _ghPlugin as GH_RhinoScriptInterface;
       ghp.RunHeadless();
     }
+  }
+
+  [CollectionDefinition("GrasshopperFixture collection")]
+  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
   }
 }
