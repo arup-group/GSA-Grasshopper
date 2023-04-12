@@ -15,14 +15,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditBool6;
+
     public EditBool6() : base("Edit Bool6",
-      "Bool6Edit",
+          "Bool6Edit",
       "Modify GSA Bool6 or just get information about existing",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.EditBool6;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaBool6Parameter(),
         GsaBool6Goo.Name,

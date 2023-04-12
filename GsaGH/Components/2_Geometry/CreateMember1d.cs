@@ -21,8 +21,22 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("8278b67c-425a-4220-b759-79ecdd6aba55");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMem1d;
+    private bool _x1;
+    private bool _x2;
+    private bool _xx1;
+    private bool _xx2;
+    private bool _y1;
+    private bool _y2;
+    private bool _yy1;
+    private bool _yy2;
+    private bool _z1;
+    private bool _z2;
+    private bool _zz1;
+    private bool _zz2;
+
     public CreateMember1d() : base("Create 1D Member",
-      "Mem1D",
+                                                          "Mem1D",
       "Create GSA 1D Member",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -83,7 +97,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateMem1d;
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -170,18 +183,5 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaMember1dGoo(mem));
     }
-
-    private bool _x1;
-    private bool _x2;
-    private bool _xx1;
-    private bool _xx2;
-    private bool _y1;
-    private bool _y2;
-    private bool _yy1;
-    private bool _yy2;
-    private bool _z1;
-    private bool _z2;
-    private bool _zz1;
-    private bool _zz2;
   }
 }

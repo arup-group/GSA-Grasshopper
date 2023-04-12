@@ -18,14 +18,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => Resources.GwaModel;
+
     public GwaCommand() : base("GWA Command",
-      "GWA",
+          "GWA",
       "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
       CategoryName.Name(),
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    protected override System.Drawing.Bitmap Icon => Resources.GwaModel;
     protected override string HtmlHelp_Source()
       => "GOTO:https://docs.oasys-software.com/structural/gsa/references/comautomation.html#gwacommand-function";
 

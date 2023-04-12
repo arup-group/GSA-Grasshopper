@@ -19,11 +19,19 @@ namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class EditNode_OBSOLETE : GH_OasysComponent,
     IGH_VariableParameterComponent {
+    private enum FoldMode {
+      GetConnected,
+      DoNotGetConnected,
+    }
+
     public override Guid ComponentGuid => new Guid("de176ec0-0516-4634-8f04-82017e502e1e");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditNode;
+    private FoldMode _mode = FoldMode.DoNotGetConnected;
+
     public EditNode_OBSOLETE() : base("Edit Node",
-      "NodeEdit",
+              "NodeEdit",
       "Modify GSA Node",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -69,7 +77,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditNode;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
       => Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
 
@@ -239,12 +246,6 @@ namespace GsaGH.Components {
       }
     }
 
-    private enum FoldMode {
-      GetConnected,
-      DoNotGetConnected,
-    }
-
-    private FoldMode _mode = FoldMode.DoNotGetConnected;
     private void FlipMode(object sender, EventArgs e) {
       RecordUndoEvent("GetConnected Parameters");
       if (_mode == FoldMode.GetConnected) {

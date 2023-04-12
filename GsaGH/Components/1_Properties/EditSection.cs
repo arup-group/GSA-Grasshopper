@@ -16,14 +16,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("28dcadbd-4735-4110-8c30-931b37ec5f5a");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditSection;
+
     public EditSection() : base("Edit Section",
-      "SectionEdit",
+          "SectionEdit",
       "Modify GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.EditSection;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(),
         GsaSectionGoo.Name,

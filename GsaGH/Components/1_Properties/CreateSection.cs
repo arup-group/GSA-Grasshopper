@@ -16,15 +16,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    
+
+    protected override Bitmap Icon => Resources.CreateSection;
+
     public CreateSection() : base("Create Section",
-      "Section",
+          "Section",
       "Create GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.CreateSection;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile",
         "Pf",

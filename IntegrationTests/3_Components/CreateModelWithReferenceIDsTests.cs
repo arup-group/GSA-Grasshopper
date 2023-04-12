@@ -7,6 +7,9 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class CreateModelWithReferenceIDsTests {
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void NoRuntimeErrorTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
@@ -31,8 +34,6 @@ namespace IntegrationTests.Components {
       Helper.TestGhPrimitives(param, expected);
     }
 
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;

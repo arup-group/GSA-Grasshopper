@@ -17,14 +17,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e7914f27-ea03-48e4-b7bd-a87121141f1e");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GetSection;
+
     public GetProperties() : base("Get Model Properties",
-      "GetProps",
+          "GetProps",
       "Get Sections, 2D Properties and Springs from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.GetSection;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter(),
         "GSA Model",

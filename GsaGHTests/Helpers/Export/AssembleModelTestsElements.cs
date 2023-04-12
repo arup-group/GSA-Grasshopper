@@ -12,6 +12,7 @@ using Xunit;
 namespace GsaGHTests.Helpers.Export {
   [Collection("GrasshopperFixture collection")]
   public partial class AssembleModelTests {
+
     [Fact]
     public void AssembleModelWithElement1dsTest() {
       string profile1 = "STD I 900 300 9 4";

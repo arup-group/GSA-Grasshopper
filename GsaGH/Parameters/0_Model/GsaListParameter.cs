@@ -12,14 +12,15 @@ namespace GsaGH.Parameters {
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaListGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaListGoo.Name : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ListParam;
+
     public GsaListParameter() : base(new GH_InstanceDescription(
-      GsaListGoo.Name,
+          GsaListGoo.Name,
       GsaListGoo.NickName,
       GsaListGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ListParam;
     protected override GsaListGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaList))
         return new GsaListGoo((GsaList)data);

@@ -18,11 +18,31 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   public class CreateBeamLoads : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      Point,
+      Uniform,
+      Linear,
+      Patch,
+      Trilinear,
+    }
+
     public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.BeamLoad;
+    private readonly List<string> _loadTypeOptions = new List<string>(new[] {
+      "Point",
+      "Uniform",
+      "Linear",
+      "Patch",
+      "Trilinear",
+    });
+    private bool _duringLoad;
+    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+    private FoldMode _mode = FoldMode.Uniform;
+
     public CreateBeamLoads() : base("Create Beam Load",
-      "BeamLoad",
+                          "BeamLoad",
       "Create GSA Beam Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -223,7 +243,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.BeamLoad;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
@@ -535,25 +554,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      Point,
-      Uniform,
-      Linear,
-      Patch,
-      Trilinear,
-    }
-
-    private readonly List<string> _loadTypeOptions = new List<string>(new[] {
-      "Point",
-      "Uniform",
-      "Linear",
-      "Patch",
-      "Trilinear",
-    });
-
-    private bool _duringLoad;
-    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
-    private FoldMode _mode = FoldMode.Uniform;
     private void Mode1Clicked() {
       if (!_duringLoad && _mode == FoldMode.Point)
         return;

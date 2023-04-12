@@ -26,11 +26,40 @@ namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class CreateProp2d_OBSOLETE : GH_OasysComponent,
     IGH_VariableParameterComponent {
+    private enum FoldMode {
+      PlaneStress,
+      Fabric,
+      FlatPlate,
+      Shell,
+      CurvedShell,
+      LoadPanel,
+    }
+
     public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateProp2d;
+    private readonly List<string> _dropdownTopList = new List<string>(new[] {
+      "Plane Stress",
+      "Fabric",
+      "Flat Plate",
+      "Shell",
+      "Curved Shell",
+      "Load Panel",
+    });
+    private List<List<string>> _dropDownItems;
+    private bool _first = true;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private FoldMode _mode = FoldMode.Shell;
+    private List<string> _selectedItems;
+    private List<string> _spacerDescriptions = new List<string>(new[] {
+      "Element Type",
+      "Unit",
+    });
+    private string _unitAbbreviation;
+
     public CreateProp2d_OBSOLETE() : base("Create 2D Property",
-      "Prop2d",
+                                          "Prop2d",
       "Create GSA 2D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -315,7 +344,6 @@ namespace GsaGH.Components {
       return writer;
     }
 
-    protected override Bitmap Icon => Resources.CreateProp2d;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       Params.RegisterInputParam(new Param_GenericObject());
       Params.RegisterInputParam(new Param_Number());
@@ -394,33 +422,6 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaProp2dGoo(prop));
     }
 
-    private enum FoldMode {
-      PlaneStress,
-      Fabric,
-      FlatPlate,
-      Shell,
-      CurvedShell,
-      LoadPanel,
-    }
-
-    private readonly List<string> _dropdownTopList = new List<string>(new[] {
-      "Plane Stress",
-      "Fabric",
-      "Flat Plate",
-      "Shell",
-      "Curved Shell",
-      "Load Panel",
-    });
-    private List<List<string>> _dropDownItems;
-    private bool _first = true;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private FoldMode _mode = FoldMode.Shell;
-    private List<string> _selectedItems;
-    private List<string> _spacerDescriptions = new List<string>(new[] {
-      "Element Type",
-      "Unit",
-    });
-    private string _unitAbbreviation;
     private void Mode1Clicked() {
       if (_mode == FoldMode.PlaneStress)
         return;

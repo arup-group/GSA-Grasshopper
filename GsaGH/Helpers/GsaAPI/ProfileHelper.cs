@@ -7,6 +7,7 @@ namespace GsaGH.Helpers.GsaApi {
   /// Helper class for Profile/Section conversions
   /// </summary>
   public class ConvertSection {
+
     /// <summary>
     /// Method to convert a GsaProfile to a string that can be read by GSA
     /// (in GsaAPI.Section.Profile or GsaGH.Parameters.GsaSection.Section.Profile)

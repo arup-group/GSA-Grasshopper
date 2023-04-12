@@ -6,6 +6,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers.Export {
   public class GsaDictionaryTests {
+
     [Fact]
     public void GsaGuidDictionaryFromEmptyAddTest() {
       var existingDict = new Dictionary<int, string>();

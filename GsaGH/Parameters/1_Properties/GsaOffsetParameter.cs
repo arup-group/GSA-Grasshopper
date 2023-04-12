@@ -16,14 +16,15 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0
       ? GsaOffsetGoo.Name
       : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.OffsetParam;
+
     public GsaOffsetParameter() : base(new GH_InstanceDescription(
-      GsaOffsetGoo.Name,
+          GsaOffsetGoo.Name,
       GsaOffsetGoo.NickName,
       GsaOffsetGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.OffsetParam;
     protected override GsaOffsetGoo PreferredCast(object data) {
       return data.GetType() == typeof(GsaOffset)
         ? new GsaOffsetGoo((GsaOffset)data)

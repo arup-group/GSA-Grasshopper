@@ -14,14 +14,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("72a2666a-aa89-47a5-a922-5e63fc9cd966");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Titles;
+
     public EditGsaTitles_OBSOLETE() : base("Edit GSA Titles",
-      "Title",
+          "Title",
       "Set GSA Titles for this document",
       CategoryName.Name(),
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.Titles;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Job Number",
         "JN",

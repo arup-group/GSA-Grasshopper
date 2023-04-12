@@ -21,8 +21,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.PointLoad;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+
     public CreateGridPointLoad() : base("Create Grid Point Load",
-      "PointLoad",
+              "PointLoad",
       "Create GSA Grid Point Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -40,7 +43,6 @@ namespace GsaGH.Components {
         .Name = "Value [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.PointLoad;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Unit",
@@ -219,7 +221,5 @@ namespace GsaGH.Components {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
   }
 }

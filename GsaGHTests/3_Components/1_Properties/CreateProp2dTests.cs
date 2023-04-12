@@ -10,6 +10,7 @@ using Xunit;
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateProp2dTests {
+
     public static GH_OasysDropDownComponent ComponentMother(bool isLoadType) {
       var comp = new CreateProp2d();
       comp.CreateAttributes();

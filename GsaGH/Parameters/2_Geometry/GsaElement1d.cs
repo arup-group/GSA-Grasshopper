@@ -121,6 +121,17 @@ namespace GsaGH.Parameters {
         ApiElement.Type = value;
       }
     }
+    internal Element ApiElement { get; set; } = new Element();
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private LineCurve _line = new LineCurve();
+    private GsaNode _orientationNode;
+    private GsaBool6 _rel1;
+    private GsaBool6 _rel2;
+
     public GsaElement1d() { }
 
     public GsaElement1d(LineCurve line, int prop = 0, GsaNode orientationNode = null) {
@@ -131,6 +142,51 @@ namespace GsaGH.Parameters {
       Id = Id;
       Section.Id = prop;
       _orientationNode = orientationNode;
+      UpdatePreview();
+    }
+
+    internal GsaElement1d(
+      Element elem,
+      LineCurve line,
+      int id,
+      GsaSection section,
+      GsaNode orientationNode) {
+      ApiElement = elem;
+      _line = line;
+      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
+        .Releases);
+      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
+        .Releases);
+      Id = id;
+      Section = section;
+      _orientationNode = orientationNode;
+      UpdatePreview();
+    }
+
+    internal GsaElement1d(
+      IReadOnlyDictionary<int, Element> eDict,
+      int id,
+      IReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Section> sDict,
+      ReadOnlyDictionary<int, SectionModifier> modDict,
+      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      IDictionary<int, ReadOnlyCollection<double>> localAxesDict,
+      LengthUnit modelUnit) {
+      Id = id;
+      ApiElement = eDict[id];
+      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
+        .Releases);
+      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
+        .Releases);
+      if (ApiElement.OrientationNode > 0)
+        _orientationNode
+          = new GsaNode(Nodes.Point3dFromNode(nDict[ApiElement.OrientationNode], modelUnit));
+
+      _line = new LineCurve(new Line(
+        Nodes.Point3dFromNode(nDict[ApiElement.Topology[0]], modelUnit),
+        Nodes.Point3dFromNode(nDict[ApiElement.Topology[1]], modelUnit)));
+      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
+      Section = new GsaSection(sDict, ApiElement.Property, modDict, matDict);
       UpdatePreview();
     }
 
@@ -198,56 +254,6 @@ namespace GsaGH.Parameters {
       return elem;
     }
 
-    internal Element ApiElement { get; set; } = new Element();
-    internal GsaLocalAxes LocalAxes { get; set; } = null;
-    internal List<Line> _previewGreenLines;
-    internal List<Line> _previewRedLines;
-
-    internal GsaElement1d(
-      Element elem,
-      LineCurve line,
-      int id,
-      GsaSection section,
-      GsaNode orientationNode) {
-      ApiElement = elem;
-      _line = line;
-      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
-        .Releases);
-      Id = id;
-      Section = section;
-      _orientationNode = orientationNode;
-      UpdatePreview();
-    }
-
-    internal GsaElement1d(
-      IReadOnlyDictionary<int, Element> eDict,
-      int id,
-      IReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IDictionary<int, ReadOnlyCollection<double>> localAxesDict,
-      LengthUnit modelUnit) {
-      Id = id;
-      ApiElement = eDict[id];
-      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
-        .Releases);
-      if (ApiElement.OrientationNode > 0)
-        _orientationNode
-          = new GsaNode(Nodes.Point3dFromNode(nDict[ApiElement.OrientationNode], modelUnit));
-
-      _line = new LineCurve(new Line(
-        Nodes.Point3dFromNode(nDict[ApiElement.Topology[0]], modelUnit),
-        Nodes.Point3dFromNode(nDict[ApiElement.Topology[1]], modelUnit)));
-      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
-      Section = new GsaSection(sDict, ApiElement.Property, modDict, matDict);
-      UpdatePreview();
-    }
-
     internal void CloneApiObject() {
       ApiElement = GetApiElementClone();
       _guid = Guid.NewGuid();
@@ -303,12 +309,5 @@ namespace GsaGH.Parameters {
         _previewGreenLines = null;
       }
     }
-
-    private Guid _guid = Guid.NewGuid();
-    private int _id;
-    private LineCurve _line = new LineCurve();
-    private GsaNode _orientationNode;
-    private GsaBool6 _rel1;
-    private GsaBool6 _rel2;
   }
 }

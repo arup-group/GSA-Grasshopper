@@ -24,8 +24,10 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4dc655a2-366e-486e-b8c3-10b2063b7aac");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SectionAlignment;
+
     public SectionAlignment() : base("Section Alignment",
-      "Align",
+          "Align",
       "Automatically create Offset based on desired Alignment and Section profile",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -35,7 +37,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    protected override Bitmap Icon => Resources.SectionAlignment;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Alignment",

@@ -11,6 +11,7 @@ namespace GsaGH.Parameters {
     public static string Name => "Section Modifier";
     public static string NickName => "PBM";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaSectionModifierGoo(GsaSectionModifier item) : base(item) { }
 
     public override IGH_Goo Duplicate() => new GsaSectionModifierGoo(Value);

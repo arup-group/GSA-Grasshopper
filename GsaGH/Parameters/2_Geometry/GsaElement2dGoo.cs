@@ -18,7 +18,13 @@ namespace GsaGH.Parameters {
     public static string Name => "Element2D";
     public static string NickName => "E2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaElement2dGoo(GsaElement2d item) : base(item) { }
+
+    internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null)
+                                      => Value = duplicate
+        ? item.Duplicate()
+        : item;
 
     public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data
@@ -96,10 +102,5 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Transform(Transform xform)
       => new GsaElement2dGoo(Value.Transform(xform));
-
-    internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null)
-                                      => Value = duplicate
-        ? item.Duplicate()
-        : item;
   }
 }

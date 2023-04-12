@@ -157,6 +157,21 @@ namespace GsaGH.Parameters {
         ApiMember.Type1D = value;
       }
     }
+    internal Member ApiMember { get; set; } = new Member();
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
+    private PolyCurve _crv = new PolyCurve();
+    // Polyline for visualisation /member1d/member2d
+    private Guid _guid = Guid.NewGuid();
+    private int _id = 0;
+    private GsaNode _orientationNode;
+    private GsaBool6 _rel1;
+    private GsaBool6 _rel2;
+    private List<Point3d> _topo;
+    // list of topology points for visualisation /member1d/member2d
+    private List<string> _topoType;
+
     public GsaMember1d() { }
 
     public GsaMember1d(Curve crv, int prop = 0) {
@@ -170,6 +185,32 @@ namespace GsaGH.Parameters {
       _topo = convertCrv.Item2;
       _topoType = convertCrv.Item3;
 
+      UpdatePreview();
+    }
+
+    internal GsaMember1d(
+      Member member,
+      int id,
+      List<Point3d> topology,
+      List<string> topoType,
+      ReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Section> sDict,
+      ReadOnlyDictionary<int, SectionModifier> modDict,
+      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict,
+      LengthUnit modelUnit) {
+      ApiMember = member;
+      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
+      _id = id;
+      _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
+      _topo = topology;
+      _topoType = topoType;
+      _rel1 = new GsaBool6(ApiMember.GetEndRelease(0)
+        .Releases);
+      _rel2 = new GsaBool6(ApiMember.GetEndRelease(1)
+        .Releases);
+      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
+      Section = new GsaSection(sDict, ApiMember.Property, modDict, matDict);
       UpdatePreview();
     }
 
@@ -252,37 +293,6 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    internal Member ApiMember { get; set; } = new Member();
-    internal GsaLocalAxes LocalAxes { get; set; } = null;
-    internal List<Line> _previewGreenLines;
-    internal List<Line> _previewRedLines;
-
-    internal GsaMember1d(
-      Member member,
-      int id,
-      List<Point3d> topology,
-      List<string> topoType,
-      ReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict,
-      LengthUnit modelUnit) {
-      ApiMember = member;
-      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      _id = id;
-      _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
-      _topo = topology;
-      _topoType = topoType;
-      _rel1 = new GsaBool6(ApiMember.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiMember.GetEndRelease(1)
-        .Releases);
-      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
-      Section = new GsaSection(sDict, ApiMember.Property, modDict, matDict);
-      UpdatePreview();
-    }
-
     internal void CloneApiObject() {
       ApiMember = GetAPI_MemberClone();
       _guid = Guid.NewGuid();
@@ -327,14 +337,7 @@ namespace GsaGH.Parameters {
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(_topo, _topoType);
     }
 
-    private PolyCurve _crv = new PolyCurve(); // Polyline for visualisation /member1d/member2d
-    private Guid _guid = Guid.NewGuid();
-    private int _id = 0;
-    private GsaNode _orientationNode;
-    private GsaBool6 _rel1;
-    private GsaBool6 _rel2;
-    private List<Point3d> _topo; // list of topology points for visualisation /member1d/member2d
-    private List<string> _topoType; // list of polyline curve type (arch or line) for member1d/2d
+    // list of polyline curve type (arch or line) for member1d/2d
     private void UpdatePreview() {
       if (!(_rel1 != null & _rel2 != null))
         return;

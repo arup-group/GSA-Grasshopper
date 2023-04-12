@@ -13,6 +13,7 @@ namespace GsaGH.Parameters {
     public static string Name => "Analysis Task";
     public static string NickName => "ΣT";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaAnalysisTaskGoo(GsaAnalysisTask item) : base(item) { }
 
     public override bool CastFrom(object source) {

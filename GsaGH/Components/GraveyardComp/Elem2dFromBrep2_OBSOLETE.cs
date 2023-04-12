@@ -27,8 +27,13 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private Length _tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+
     public Elem2dFromBrep2_OBSOLETE() : base("Element2d from Brep",
-      "Elem2dFromBrep",
+                      "Elem2dFromBrep",
       "Mesh a non-planar Brep",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -82,7 +87,6 @@ namespace GsaGH.Components {
       => Params.Input[4]
         .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
 
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       UpdateMessage();
@@ -237,9 +241,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
     private void MaintainText(ToolStripItem tolerance) {
       _toleranceTxt = tolerance.Text;
       tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)

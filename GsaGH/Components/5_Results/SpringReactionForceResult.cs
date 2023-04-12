@@ -28,8 +28,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SpringReactionForces;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+
     public SpringReactionForce() : base("Spring Forces",
-      "SpringForce",
+                  "SpringForce",
       "Spring Reaction Force result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -72,7 +76,6 @@ namespace GsaGH.Components {
         .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.SpringReactionForces;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Force Unit",
@@ -297,8 +300,5 @@ namespace GsaGH.Components {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
   }
 }

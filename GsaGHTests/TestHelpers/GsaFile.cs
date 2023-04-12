@@ -24,6 +24,7 @@ namespace GsaGHTests.Helper {
     }
     private static string s_steelDesignComplex = "";
     private static string s_steelDesignSimple = "";
+
     private static string DownloadFile(string url) {
       string path = Path.GetTempPath();
       string fileName = url.Split('/')

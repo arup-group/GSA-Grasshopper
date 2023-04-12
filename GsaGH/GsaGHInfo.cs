@@ -16,6 +16,10 @@ using Rhino;
 
 namespace GsaGH {
   public static class SolverRequiredDll {
+    internal static string LoadedFromPath { get; private set; }
+    private static bool s_canAnalyse;
+    private static bool s_loaded;
+
     public static bool IsCorrectVersionLoaded() {
       if (!s_loaded || !s_canAnalyse) {
         ProcessModuleCollection dlls = Process.GetCurrentProcess()
@@ -43,15 +47,13 @@ namespace GsaGH {
 
       return !s_loaded || s_canAnalyse;
     }
-
-    internal static string LoadedFromPath { get; private set; }
-    private static bool s_canAnalyse;
-    private static bool s_loaded;
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
     public static string PluginPath => s_pluginPath ?? (s_pluginPath = TryFindPluginPath("GSA.gha"));
     public static string InstallPath = InstallationFolder.GetPath;
+    private static string s_pluginPath;
+
     public override GH_LoadingInstruction PriorityLoad() {
       if (TryFindPluginPath("GSA.gha") == "")
         return GH_LoadingInstruction.Abort;
@@ -130,7 +132,6 @@ namespace GsaGH {
       return GH_LoadingInstruction.Proceed;
     }
 
-    private static string s_pluginPath;
     private static string TryFindPluginPath(string keyword) {
       // initially look in %appdata% folder where package manager will store the plugin
       string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);

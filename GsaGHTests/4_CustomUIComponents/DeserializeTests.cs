@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.CustomComponent {
   [Collection("GrasshopperFixture collection")]
   public class DeserializeTests {
+
     [Theory]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(CreateBool6))]

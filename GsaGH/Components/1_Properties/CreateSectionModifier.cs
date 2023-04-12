@@ -22,8 +22,24 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateSectionModifier;
+    private readonly List<string> _optionTypes = new List<string>(new[] {
+      "Modify by",
+      "Modify to",
+    });
+    private readonly List<string> _stressOptions = new List<string>(new[] {
+      "Don't calculate",
+      "Use unmodified",
+      "Use modified",
+    });
+    private LinearDensityUnit _densityUnit = DefaultUnits.LinearDensityUnit;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    private GsaSectionModifier.StressOptionType _stressOption
+      = GsaSectionModifier.StressOptionType.NoCalculation;
+    private bool _toMode = false;
+
     public CreateSectionModifier() : base("Create Section Modifier",
-      "SectionModifier",
+                                  "SectionModifier",
       "Create GSA Section Modifier",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -191,7 +207,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateSectionModifier;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Modify type",
@@ -354,22 +369,5 @@ namespace GsaGH.Components {
 
       base.UpdateUIFromSelectedItems();
     }
-
-    private readonly List<string> _optionTypes = new List<string>(new[] {
-      "Modify by",
-      "Modify to",
-    });
-
-    private readonly List<string> _stressOptions = new List<string>(new[] {
-      "Don't calculate",
-      "Use unmodified",
-      "Use modified",
-    });
-
-    private LinearDensityUnit _densityUnit = DefaultUnits.LinearDensityUnit;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private GsaSectionModifier.StressOptionType _stressOption
-      = GsaSectionModifier.StressOptionType.NoCalculation;
-    private bool _toMode = false;
   }
 }

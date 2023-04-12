@@ -23,8 +23,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("87ff28e5-a1a6-4d78-ba71-e930e01dca13");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GetLoads;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public GetLoads() : base("Get Model Loads",
-      "GetLoads",
+              "GetLoads",
       "Get Loads and Grid Planes/Surfaces from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0())
@@ -49,7 +52,6 @@ namespace GsaGH.Components {
         .Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.GetLoads;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Unit",
@@ -161,7 +163,5 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

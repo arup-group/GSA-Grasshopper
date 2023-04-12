@@ -41,8 +41,11 @@ namespace GsaGH.Parameters {
     public readonly List<int> ElementIds;
     public readonly List<List<IQuantity>> ResultValues;
     public readonly List<List<Point3d>> Vertices;
+    private bool _finalised;
+    private List<Mesh> _tempMeshes = new List<Mesh>();
+
     public MeshResultGoo(
-      Mesh mesh,
+              Mesh mesh,
       List<List<IQuantity>> results,
       List<List<Point3d>> vertices,
       List<int> ids) : base(mesh) {
@@ -180,8 +183,5 @@ namespace GsaGH.Parameters {
 
       return new MeshResultGoo(m, ResultValues, vertices, ElementIds);
     }
-
-    private bool _finalised;
-    private List<Mesh> _tempMeshes = new List<Mesh>();
   }
 }

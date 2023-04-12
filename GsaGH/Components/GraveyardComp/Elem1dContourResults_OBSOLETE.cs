@@ -36,11 +36,75 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class Elem1dContourResults_OBSOLETE : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
+    private enum FoldMode {
+      Displacement,
+      Force,
+      StrainEnergy,
+    }
+
     public override Guid ComponentGuid => new Guid("dee5c513-197e-4659-998f-09225df9beaa");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result1D;
+    private readonly List<string> _displacement = new List<string>(new[] {
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+      "Rotation Rxx",
+      "Rotation Ryy",
+      "Rotation Rzz",
+      "Resolved |R|",
+    });
+    private readonly List<string> _force = new List<string>(new[] {
+      "Axial Force Fx",
+      "Shear Force Fy",
+      "Shear Force Fz",
+      "Res. Shear |Fyz|",
+      "Torsion Mxx",
+      "Moment Myy",
+      "Moment Mzz",
+      "Res. Moment |Myz|",
+    });
+    private readonly List<string> _strainenergy = new List<string>(new[] {
+      "Intermediate Pts",
+      "Average",
+    });
+    private readonly List<string> _type = new List<string>(new[] {
+      "Displacement",
+      "Force",
+      "Strain Energy",
+    });
+    private string _case = "";
+    private double _defScale = 250;
+    private DisplayValue _disp = DisplayValue.ResXyz;
+    private EnergyUnit _energyResultUnit = DefaultUnits.EnergyUnit;
+    private Bitmap _legend = new Bitmap(15, 120);
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _maxValue = 1000;
+    private double _minValue;
+    private FoldMode _mode = FoldMode.Displacement;
+    private int _noDigits;
+    private string _resType;
+    private bool _showLegend = true;
+    private bool _slider = true;
+
     public Elem1dContourResults_OBSOLETE() : base("1D Contour Results",
-      "ContourElem1d",
+                                                                                          "ContourElem1d",
       "Displays GSA 1D Element Results as Contour",
       CategoryName.Name(),
       SubCategoryName.Cat5()) { }
@@ -211,7 +275,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.Result1D;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -867,68 +930,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private enum FoldMode {
-      Displacement,
-      Force,
-      StrainEnergy,
-    }
-
-    private readonly List<string> _displacement = new List<string>(new[] {
-      "Translation Ux",
-      "Translation Uy",
-      "Translation Uz",
-      "Resolved |U|",
-      "Rotation Rxx",
-      "Rotation Ryy",
-      "Rotation Rzz",
-      "Resolved |R|",
-    });
-    private readonly List<string> _force = new List<string>(new[] {
-      "Axial Force Fx",
-      "Shear Force Fy",
-      "Shear Force Fz",
-      "Res. Shear |Fyz|",
-      "Torsion Mxx",
-      "Moment Myy",
-      "Moment Mzz",
-      "Res. Moment |Myz|",
-    });
-    private readonly List<string> _strainenergy = new List<string>(new[] {
-      "Intermediate Pts",
-      "Average",
-    });
-    private readonly List<string> _type = new List<string>(new[] {
-      "Displacement",
-      "Force",
-      "Strain Energy",
-    });
-    private string _case = "";
-    private double _defScale = 250;
-    private DisplayValue _disp = DisplayValue.ResXyz;
-    private EnergyUnit _energyResultUnit = DefaultUnits.EnergyUnit;
-    private Bitmap _legend = new Bitmap(15, 120);
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private double _maxValue = 1000;
-    private double _minValue;
-    private FoldMode _mode = FoldMode.Displacement;
-    private int _noDigits;
-    private string _resType;
-    private bool _showLegend = true;
-    private bool _slider = true;
     private void CreateGradient() {
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();

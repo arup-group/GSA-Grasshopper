@@ -21,6 +21,11 @@ public class UseCultureAttribute : BeforeAfterTestAttribute {
   ///   Gets the UI culture.
   /// </summary>
   public CultureInfo UiCulture => _uiCulture.Value;
+  private readonly Lazy<CultureInfo> _culture;
+  private readonly Lazy<CultureInfo> _uiCulture;
+  private CultureInfo _originalCulture;
+  private CultureInfo _originalUiCulture;
+
   /// <summary>
   ///   Replaces the culture and UI culture of the current thread with
   ///   <paramref name="culture" />
@@ -74,9 +79,4 @@ public class UseCultureAttribute : BeforeAfterTestAttribute {
     CultureInfo.CurrentCulture.ClearCachedData();
     CultureInfo.CurrentUICulture.ClearCachedData();
   }
-
-  private readonly Lazy<CultureInfo> _culture;
-  private readonly Lazy<CultureInfo> _uiCulture;
-  private CultureInfo _originalCulture;
-  private CultureInfo _originalUiCulture;
 }

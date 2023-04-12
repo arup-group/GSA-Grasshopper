@@ -15,14 +15,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("fd6dd254-c16f-4970-a447-a9b258d116ef");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.TaperProfile;
+
     public TaperProfile() : base("Taper Profile",
-      "Taper",
+          "Taper",
       "Create a Profile that tapers along its length from start and end profiles",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.TaperProfile;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile Start",
         "Pf1",

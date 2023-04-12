@@ -10,6 +10,7 @@ using static GsaGHTests.Helpers.Export.AssembleModelTests;
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class CreateModelTest {
+
     public static GH_OasysDropDownComponent CreateModel(
       List<GsaModel> models,
       List<GsaSection> sections,

@@ -11,6 +11,7 @@ namespace GsaGH.Helpers.Graphics {
   /// Make calls to this class to be able to easy update colours.
   /// </summary>
   internal class Display {
+
     public static Tuple<List<Line>, List<Line>> Preview1D(PolyCurve crv, double angleRadian, GsaBool6 start, GsaBool6 end) {
       var greenLines20 = new List<Line>();
       var redLines10 = new List<Line>();

@@ -15,7 +15,13 @@ namespace GsaGH.Parameters {
     public static string Name => "Element1D";
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaElement1dGoo(GsaElement1d item) : base(item) { }
+
+    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
+                                      => Value = duplicate
+        ? item.Duplicate()
+        : item;
 
     public override bool CastFrom(object source) {
       if (source == null)
@@ -137,10 +143,5 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Transform(Transform xform)
       => new GsaElement1dGoo(Value.Transform(xform));
-
-    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
-                                      => Value = duplicate
-        ? item.Duplicate()
-        : item;
   }
 }

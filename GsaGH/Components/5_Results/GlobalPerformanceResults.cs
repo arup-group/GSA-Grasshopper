@@ -25,8 +25,13 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GlobalPerformance;
+    private ForcePerLengthUnit _forcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
+    private AreaMomentOfInertiaUnit _inertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
+    private MassUnit _massUnit = DefaultUnits.MassUnit;
+
     public GlobalPerformanceResults() : base("Global Performance Results",
-      "GlobalPerformance",
+                      "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -85,7 +90,6 @@ namespace GsaGH.Components {
         .Name = "Modal Geometric Stiffness [" + forceperlengthUnitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.GlobalPerformance;
     protected override void InitialiseDropdowns() {
       if (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot
         | DefaultUnits.LengthUnitGeometry == LengthUnit.Inch) {
@@ -309,9 +313,5 @@ namespace GsaGH.Components {
         = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForcePerLengthUnit _forcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
-    private AreaMomentOfInertiaUnit _inertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
-    private MassUnit _massUnit = DefaultUnits.MassUnit;
   }
 }

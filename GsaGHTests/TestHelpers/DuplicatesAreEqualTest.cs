@@ -7,6 +7,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers {
   public class Duplicates {
+
     public static bool AreEqual(object objA, object objB, bool excludeGuid = false) {
       if (!(excludeGuid && objA.Equals(typeof(Guid))))
         Assert.Equal(objA.ToString(), objB.ToString());

@@ -15,14 +15,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("d8df767a-ef59-4e08-b592-2a39149efde1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateCombinationCase;
+
     public CreateCombinationCase() : base("Create Combination Case",
-      "CreateCombination",
+          "CreateCombination",
       "Create a new GSA Combination Case",
       CategoryName.Name(),
       SubCategoryName.Cat4())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.CreateCombinationCase;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Description",

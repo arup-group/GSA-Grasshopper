@@ -28,11 +28,115 @@ namespace GsaGH.Components {
   ///   Component to create AdSec profile
   /// </summary>
   public class CreateProfile : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      Catalogue,
+      Other,
+    }
+
     public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateProfile;
+    private static readonly List<string> s_easterCat = new List<string>() {
+      "▌─────────────────────────▐█─────▐" + Environment.NewLine +
+      "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine +
+      "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine +
+      "▌───▐█░██▓────────────▓▓░░░▓▌────▐" + Environment.NewLine +
+      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐" + Environment.NewLine +
+      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐" + Environment.NewLine +
+      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐" + Environment.NewLine +
+      "▌─────▓█████░░░░░░░░░░░░▓██──────▐" + Environment.NewLine +
+      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐" + Environment.NewLine +
+      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐" + Environment.NewLine +
+      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐" + Environment.NewLine +
+      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐" + Environment.NewLine +
+      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐" + Environment.NewLine +
+      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐" + Environment.NewLine +
+      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐" + Environment.NewLine +
+      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐" + Environment.NewLine +
+      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐" + Environment.NewLine +
+      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐" + Environment.NewLine +
+      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐" + Environment.NewLine +
+      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐" + Environment.NewLine +
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐" + Environment.NewLine +
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐" + Environment.NewLine +
+      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐" + Environment.NewLine +
+      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐" + Environment.NewLine +
+      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐" + Environment.NewLine +
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐" + Environment.NewLine +
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine +
+      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine +
+      "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐" };
+    private static readonly Dictionary<string, string> s_profileTypes
+                                                                          = new Dictionary<string, string> {
+        {
+          "Angle", "IAngleProfile"
+        }, {
+          "Catalogue", "ICatalogueProfile"
+        }, {
+          "Channel", "IChannelProfile"
+        }, {
+          "Circle Hollow", "ICircleHollowProfile"
+        }, {
+          "Circle", "ICircleProfile"
+        }, {
+          "Cruciform Symmetrical", "ICruciformSymmetricalProfile"
+        }, {
+          "Ellipse Hollow", "IEllipseHollowProfile"
+        }, {
+          "Ellipse", "IEllipseProfile"
+        }, {
+          "General C", "IGeneralCProfile"
+        }, {
+          "General Z", "IGeneralZProfile"
+        }, {
+          "I Beam Asymmetrical", "IIBeamAsymmetricalProfile"
+        }, {
+          "I Beam Cellular", "IIBeamCellularProfile"
+        }, {
+          "I Beam Symmetrical", "IIBeamSymmetricalProfile"
+        }, {
+          "Perimeter", "IPerimeterProfile"
+        }, {
+          "Rectangle Hollow", "IRectangleHollowProfile"
+        }, {
+          "Rectangle", "IRectangleProfile"
+        }, {
+          "Recto Ellipse", "IRectoEllipseProfile"
+        }, {
+          "Recto Circle", "IStadiumProfile"
+        }, {
+          "Secant Pile", "ISecantPileProfile"
+        }, {
+          "Sheet Pile", "ISheetPileProfile"
+        }, {
+          "Trapezoid", "ITrapezoidProfile"
+        }, {
+          "T Section", "ITSectionProfile"
+        },
+      };
+    private readonly Tuple<List<string>, List<int>> _cataloguedata;
+    private int _catalogueIndex = -1;
+    private List<string> _catalogueNames = new List<string>();
+    private List<int> _catalogueNumbers = new List<int>();
+    private bool _inclSs;
+    private bool _lastInputWasSecant;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    private FoldMode _mode = FoldMode.Other;
+    private int _numberOfInputs;
+    private List<string> _profileString = new List<string>() {
+      "CAT HE HE200.B",
+    };
+    private string _search = "";
+    private List<string> _sectionList;
+    private string _type = "IRectangleProfile";
+    private Tuple<List<string>, List<int>> _typedata;
+    private int _typeIndex = -1;
+    private List<string> _typeNames = new List<string>();
+    private List<int> _typeNumbers = new List<int>();
+
     public CreateProfile() : base("Create Profile",
-      "Profile",
+                                                                                      "Profile",
       "Create Profile text-string for a GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
@@ -1185,7 +1289,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateProfile;
     protected override string HtmlHelp_Source() {
       string help
         = "GOTO:https://arup-group.github.io/oasys-combined/adsec-api/api/Oasys.Profiles.html";
@@ -1858,109 +1961,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      Catalogue,
-      Other,
-    }
-
-    private static readonly List<string> s_easterCat = new List<string>() {
-      "▌─────────────────────────▐█─────▐" + Environment.NewLine +
-      "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine +
-      "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine +
-      "▌───▐█░██▓────────────▓▓░░░▓▌────▐" + Environment.NewLine +
-      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐" + Environment.NewLine +
-      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐" + Environment.NewLine +
-      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐" + Environment.NewLine +
-      "▌─────▓█████░░░░░░░░░░░░▓██──────▐" + Environment.NewLine +
-      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐" + Environment.NewLine +
-      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐" + Environment.NewLine +
-      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐" + Environment.NewLine +
-      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐" + Environment.NewLine +
-      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐" + Environment.NewLine +
-      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐" + Environment.NewLine +
-      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐" + Environment.NewLine +
-      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐" + Environment.NewLine +
-      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐" + Environment.NewLine +
-      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐" + Environment.NewLine +
-      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐" + Environment.NewLine +
-      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐" + Environment.NewLine +
-      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐" + Environment.NewLine +
-      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐" + Environment.NewLine +
-      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐" + Environment.NewLine +
-      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐" + Environment.NewLine +
-      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐" + Environment.NewLine +
-      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐" + Environment.NewLine +
-      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine +
-      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine +
-      "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐" };
-    private static readonly Dictionary<string, string> s_profileTypes
-                                                                          = new Dictionary<string, string> {
-        {
-          "Angle", "IAngleProfile"
-        }, {
-          "Catalogue", "ICatalogueProfile"
-        }, {
-          "Channel", "IChannelProfile"
-        }, {
-          "Circle Hollow", "ICircleHollowProfile"
-        }, {
-          "Circle", "ICircleProfile"
-        }, {
-          "Cruciform Symmetrical", "ICruciformSymmetricalProfile"
-        }, {
-          "Ellipse Hollow", "IEllipseHollowProfile"
-        }, {
-          "Ellipse", "IEllipseProfile"
-        }, {
-          "General C", "IGeneralCProfile"
-        }, {
-          "General Z", "IGeneralZProfile"
-        }, {
-          "I Beam Asymmetrical", "IIBeamAsymmetricalProfile"
-        }, {
-          "I Beam Cellular", "IIBeamCellularProfile"
-        }, {
-          "I Beam Symmetrical", "IIBeamSymmetricalProfile"
-        }, {
-          "Perimeter", "IPerimeterProfile"
-        }, {
-          "Rectangle Hollow", "IRectangleHollowProfile"
-        }, {
-          "Rectangle", "IRectangleProfile"
-        }, {
-          "Recto Ellipse", "IRectoEllipseProfile"
-        }, {
-          "Recto Circle", "IStadiumProfile"
-        }, {
-          "Secant Pile", "ISecantPileProfile"
-        }, {
-          "Sheet Pile", "ISheetPileProfile"
-        }, {
-          "Trapezoid", "ITrapezoidProfile"
-        }, {
-          "T Section", "ITSectionProfile"
-        },
-      };
-    private readonly Tuple<List<string>, List<int>> _cataloguedata;
-    private int _catalogueIndex = -1;
-    private List<string> _catalogueNames = new List<string>();
-    private List<int> _catalogueNumbers = new List<int>();
-    private bool _inclSs;
-    private bool _lastInputWasSecant;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private FoldMode _mode = FoldMode.Other;
-    private int _numberOfInputs;
-    private List<string> _profileString = new List<string>() {
-      "CAT HE HE200.B",
-    };
-
-    private string _search = "";
-    private List<string> _sectionList;
-    private string _type = "IRectangleProfile";
-    private Tuple<List<string>, List<int>> _typedata;
-    private int _typeIndex = -1;
-    private List<string> _typeNames = new List<string>();
-    private List<int> _typeNumbers = new List<int>();
     private static Tuple<List<string>, List<int>> GetTypesDataFromSqLite(
       int catalogueIndex,
       string filePath,

@@ -14,8 +14,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateList;
+    private EntityType _type = EntityType.Node;
+
     public CreateList() : base("Create List",
-      "CreateList",
+              "CreateList",
       "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)."
       + System.Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.",
       CategoryName.Name(),
@@ -27,7 +30,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateList;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[]
         {
@@ -105,7 +107,5 @@ namespace GsaGH.Components {
       _type = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private EntityType _type = EntityType.Node;
   }
 }

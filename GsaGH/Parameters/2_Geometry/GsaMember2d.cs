@@ -120,6 +120,32 @@ namespace GsaGH.Parameters {
     }
     public List<List<Point3d>> VoidTopology => _voidCrvsTopo;
     public List<List<string>> VoidTopologyType => _voidCrvsTopoType;
+    internal Member ApiMember { get; set; } = new Member() {
+      Type = MemberType.GENERIC_2D,
+    };
+    private Brep _brep;
+    // brep for visualisation /member2d
+    private PolyCurve _edgeCrv;
+    // Polyline for visualisation /member1d/member2d
+    private List<Point3d> _edgeCrvTopo;
+    // list of topology points for visualisation /member1d/member2d
+    private List<string> _edgeCrvTopoType;
+    // list of polyline curve type (arch or line) for member1d/2d
+    private Guid _guid = Guid.NewGuid();
+    private int _id = 0;
+    private List<PolyCurve> _inclCrvs;
+    // converted inclusion lines /member2d
+    private List<List<Point3d>> _inclCrvsTopo;
+    // list of lists of line inclusion topology points /member2d
+    private List<List<string>> _inclCrvsTopoType;
+    // list of polyline curve type (arch or line) for inclusion /member2d
+    private List<Point3d> _inclPts;
+    private List<PolyCurve> _voidCrvs;
+    //converted edgecurve /member2d
+    private List<List<Point3d>> _voidCrvsTopo;
+    // list of lists of void points /member2d
+    private List<List<string>> _voidCrvsTopoType;
+
     public GsaMember2d() { }
 
     public GsaMember2d(
@@ -161,6 +187,79 @@ namespace GsaGH.Parameters {
           + "please verify input geometry is valid and tolerance "
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
+    }
+
+    internal GsaMember2d(
+      Member member,
+      int id,
+      List<Point3d> topology,
+      List<string> topologyType,
+      List<List<Point3d>> voidTopology,
+      List<List<string>> voidTopologyType,
+      List<List<Point3d>> inlcusionLinesTopology,
+      List<List<string>> inclusionTopologyType,
+      List<Point3d> includePoints,
+      IReadOnlyDictionary<int, Prop2D> properties,
+      IReadOnlyDictionary<int, AnalysisMaterial> materials,
+      IReadOnlyDictionary<int, Axis> axDict,
+      LengthUnit modelUnit) {
+      ApiMember = member;
+      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
+      _id = id;
+
+      if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
+      {
+        topology.Add(topology[0]);
+        topologyType.Add("");
+      }
+
+      _edgeCrv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
+      _edgeCrvTopo = topology;
+      _edgeCrvTopoType = topologyType;
+
+      if (voidTopology != null) {
+        if (_voidCrvs == null)
+          _voidCrvs = new List<PolyCurve>();
+        for (int i = 0; i < voidTopology.Count; i++) {
+          if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
+            voidTopology[i].Add(voidTopology[i][0]);
+            voidTopologyType[i].Add("");
+          }
+
+          if (voidTopologyType != null)
+            _voidCrvs.Add(
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i],
+                voidTopologyType[i]));
+          else
+            _voidCrvs.Add(RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
+        }
+      }
+
+      _voidCrvsTopo = voidTopology;
+      _voidCrvsTopoType = voidTopologyType;
+
+      if (inlcusionLinesTopology != null) {
+        if (_inclCrvs == null)
+          _inclCrvs = new List<PolyCurve>();
+        for (int i = 0; i < inlcusionLinesTopology.Count; i++)
+          if (inclusionTopologyType != null)
+            _inclCrvs.Add(
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i],
+                inclusionTopologyType[i]));
+          else
+            _inclCrvs.Add(
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
+      }
+
+      _inclCrvsTopo = inlcusionLinesTopology;
+      _inclCrvsTopoType = inclusionTopologyType;
+      _inclPts = includePoints;
+
+      _brep = RhinoConversions.BuildBrep(_edgeCrv,
+        _voidCrvs,
+        new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
+
+      Property = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
     }
 
     public GsaMember2d Duplicate(bool cloneApiMember = false) {
@@ -305,82 +404,6 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    internal Member ApiMember { get; set; } = new Member() {
-      Type = MemberType.GENERIC_2D,
-    };
-    internal GsaMember2d(
-      Member member,
-      int id,
-      List<Point3d> topology,
-      List<string> topologyType,
-      List<List<Point3d>> voidTopology,
-      List<List<string>> voidTopologyType,
-      List<List<Point3d>> inlcusionLinesTopology,
-      List<List<string>> inclusionTopologyType,
-      List<Point3d> includePoints,
-      IReadOnlyDictionary<int, Prop2D> properties,
-      IReadOnlyDictionary<int, AnalysisMaterial> materials,
-      IReadOnlyDictionary<int, Axis> axDict,
-      LengthUnit modelUnit) {
-      ApiMember = member;
-      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      _id = id;
-
-      if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
-      {
-        topology.Add(topology[0]);
-        topologyType.Add("");
-      }
-
-      _edgeCrv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
-      _edgeCrvTopo = topology;
-      _edgeCrvTopoType = topologyType;
-
-      if (voidTopology != null) {
-        if (_voidCrvs == null)
-          _voidCrvs = new List<PolyCurve>();
-        for (int i = 0; i < voidTopology.Count; i++) {
-          if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
-            voidTopology[i].Add(voidTopology[i][0]);
-            voidTopologyType[i].Add("");
-          }
-
-          if (voidTopologyType != null)
-            _voidCrvs.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i],
-                voidTopologyType[i]));
-          else
-            _voidCrvs.Add(RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
-        }
-      }
-
-      _voidCrvsTopo = voidTopology;
-      _voidCrvsTopoType = voidTopologyType;
-
-      if (inlcusionLinesTopology != null) {
-        if (_inclCrvs == null)
-          _inclCrvs = new List<PolyCurve>();
-        for (int i = 0; i < inlcusionLinesTopology.Count; i++)
-          if (inclusionTopologyType != null)
-            _inclCrvs.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i],
-                inclusionTopologyType[i]));
-          else
-            _inclCrvs.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
-      }
-
-      _inclCrvsTopo = inlcusionLinesTopology;
-      _inclCrvsTopoType = inclusionTopologyType;
-      _inclPts = includePoints;
-
-      _brep = RhinoConversions.BuildBrep(_edgeCrv,
-        _voidCrvs,
-        new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
-
-      Property = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
-    }
-
     internal void CloneApiObject() {
       ApiMember = GetAPI_MemberClone();
       _guid = Guid.NewGuid();
@@ -409,22 +432,7 @@ namespace GsaGH.Parameters {
       return mem;
     }
 
-    private Brep _brep; // brep for visualisation /member2d
-    private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
-    private List<Point3d> _edgeCrvTopo; // list of topology points for visualisation /member1d/member2d
-    private List<string> _edgeCrvTopoType; // list of polyline curve type (arch or line) for member1d/2d
-    private Guid _guid = Guid.NewGuid();
-    private int _id = 0;
-    private List<PolyCurve> _inclCrvs;
-    // converted inclusion lines /member2d
-    private List<List<Point3d>> _inclCrvsTopo;
-    // list of lists of line inclusion topology points /member2d
-    private List<List<string>> _inclCrvsTopoType;
-    // list of polyline curve type (arch or line) for inclusion /member2d
-    private List<Point3d> _inclPts;
-    private List<PolyCurve> _voidCrvs; //converted edgecurve /member2d
-    private List<List<Point3d>> _voidCrvsTopo; // list of lists of void points /member2d
-    private List<List<string>> _voidCrvsTopoType; // list of polyline curve type (arch or line) for void /member2d
-                                                  //slist of points for inclusion /member2d
+    // list of polyline curve type (arch or line) for void /member2d
+    //slist of points for inclusion /member2d
   }
 }

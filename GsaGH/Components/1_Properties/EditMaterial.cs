@@ -17,14 +17,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("865f73c7-a057-481a-834b-c7e12873dd39");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditMaterial;
+
     public EditMaterial() : base("Edit Material",
-      "MaterialEdit",
+          "MaterialEdit",
       "Modify GSA Material",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.EditMaterial;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(),
         GsaMaterialGoo.Name,

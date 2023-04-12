@@ -28,12 +28,20 @@ namespace GsaGHTests {
     }
     public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
+    private object Doc { get; set; }
+    private object DocIo { get; set; }
+    private const string LinkFileName = "GsaGhTests.ghlink";
+    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
+    private object _core = null;
+    private object _ghPlugin = null;
+    private bool _isDisposed;
+
     static GrasshopperFixture() =>
-      // This MUST be included in a static constructor to ensure that no Rhino DLLs
-      // are loaded before the resolver is set up. Avoid creating other static functions
-      // and members which may reference Rhino assemblies, as that may cause those
-      // assemblies to be loaded before this is called.
-      RhinoInside.Resolver.Initialize();
+                                  // This MUST be included in a static constructor to ensure that no Rhino DLLs
+                                  // are loaded before the resolver is set up. Avoid creating other static functions
+                                  // and members which may reference Rhino assemblies, as that may cause those
+                                  // assemblies to be loaded before this is called.
+                                  RhinoInside.Resolver.Initialize();
 
     public GrasshopperFixture() {
       AddPluginToGh();
@@ -81,13 +89,6 @@ namespace GsaGHTests {
       _isDisposed = true;
     }
 
-    private object Doc { get; set; }
-    private object DocIo { get; set; }
-    private const string LinkFileName = "GsaGhTests.ghlink";
-    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
-    private object _core = null;
-    private object _ghPlugin = null;
-    private bool _isDisposed;
     private void InitializeCore() => _core = new Rhino.Runtime.InProcess.RhinoCore();
 
     private void InitializeGrasshopperPlugin() {

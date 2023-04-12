@@ -22,11 +22,28 @@ using Rhino.Geometry;
 namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class CreateGridSurface_OBSOLETE : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      OneDimensionalOneWay,
+      OneDimensionalTwoWay,
+      TwoDimensional,
+    }
+
     public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridSurface;
+    private readonly List<string> _type = new List<string>(new[] {
+      "1D, One-way span",
+      "1D, Two-way span",
+      "2D",
+    });
+    private IGH_Param _angleInputParam;
+    private AngleUnit _angleUnit = AngleUnit.Radian;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private FoldMode _mode = FoldMode.OneDimensionalOneWay;
+
     public CreateGridSurface_OBSOLETE() : base("Create Grid Surface",
-      "GridSurface",
+                              "GridSurface",
       "Create GSA Grid Surface",
       CategoryName.Name(),
       SubCategoryName.Cat3()) { }
@@ -132,7 +149,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.GridSurface;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (_mode != FoldMode.OneDimensionalOneWay)
@@ -389,22 +405,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      OneDimensionalOneWay,
-      OneDimensionalTwoWay,
-      TwoDimensional,
-    }
-
-    private readonly List<string> _type = new List<string>(new[] {
-      "1D, One-way span",
-      "1D, Two-way span",
-      "2D",
-    });
-
-    private IGH_Param _angleInputParam;
-    private AngleUnit _angleUnit = AngleUnit.Radian;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private FoldMode _mode = FoldMode.OneDimensionalOneWay;
     private void Mode1Clicked() {
       if (_mode == FoldMode.OneDimensionalOneWay)
         return;

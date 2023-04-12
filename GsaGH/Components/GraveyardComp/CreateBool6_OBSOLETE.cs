@@ -20,8 +20,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateBool6;
+    private bool _x;
+    private bool _xx;
+    private bool _y;
+    private bool _yy;
+    private bool _z;
+    private bool _zz;
+
     public CreateBool6_OBSOLETE() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-      GsaBool6Goo.NickName.Replace(" ", string.Empty),
+                                  GsaBool6Goo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -65,7 +73,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateBool6;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
@@ -123,12 +130,5 @@ namespace GsaGH.Components {
       };
       da.SetData(0, new GsaBool6Goo(bool6.Duplicate()));
     }
-
-    private bool _x;
-    private bool _xx;
-    private bool _y;
-    private bool _yy;
-    private bool _z;
-    private bool _zz;
   }
 }

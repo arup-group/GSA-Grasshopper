@@ -9,6 +9,9 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPlaneTests {
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void GridPlaneSurfaceTest() {
       GH_Document doc = Document;
@@ -21,8 +24,6 @@ namespace IntegrationTests.Components {
       Assert.Equal("test", gps.GridPlane.Name);
     }
 
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;

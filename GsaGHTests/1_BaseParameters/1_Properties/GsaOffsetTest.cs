@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaOffsetTest {
+
     [Theory]
     [InlineData(1, 2, 3, 4)]
     public void ConstructorTest1(double x1, double x2, double y, double z) {

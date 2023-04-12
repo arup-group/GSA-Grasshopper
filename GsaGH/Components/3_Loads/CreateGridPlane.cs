@@ -15,11 +15,23 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class CreateGridPlane : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      General,
+      Storey,
+    }
+
     public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridPlane;
+    private readonly List<string> _type = new List<string>(new string[] {
+      "General",
+      "Storey",
+    });
+    private FoldMode _mode = FoldMode.General;
+
     public CreateGridPlane() : base("Create Grid Plane",
-      "GridPlane",
+                  "GridPlane",
       "Create GSA Grid Plane",
       CategoryName.Name(),
       SubCategoryName.Cat3()) { }
@@ -90,7 +102,6 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override Bitmap Icon => Resources.GridPlane;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[] {
         "Type",
@@ -236,17 +247,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      General,
-      Storey,
-    }
-
-    private readonly List<string> _type = new List<string>(new string[] {
-      "General",
-      "Storey",
-    });
-
-    private FoldMode _mode = FoldMode.General;
     private void Mode1Clicked() {
       if (_mode == FoldMode.General)
         return;

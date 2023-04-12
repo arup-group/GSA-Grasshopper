@@ -19,8 +19,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("d808e81f-6ae1-49d9-a8a5-2424a1763a69");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateSupport;
+    private bool _x;
+    private bool _xx;
+    private bool _y;
+    private bool _yy;
+    private bool _z;
+    private bool _zz;
+
     public CreateSupport() : base("Create Support",
-      "Support",
+                                  "Support",
       "Create GSA Node Support",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -75,7 +83,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateSupport;
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -142,12 +149,5 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaNodeGoo(node));
     }
-
-    private bool _x;
-    private bool _xx;
-    private bool _y;
-    private bool _yy;
-    private bool _z;
-    private bool _zz;
   }
 }

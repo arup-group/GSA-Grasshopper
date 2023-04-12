@@ -47,6 +47,11 @@ namespace GsaGH.Components {
       internal ConcurrentBag<GsaNodeGoo> Nodes { get; set; }
     }
 
+    private enum FoldMode {
+      Graft,
+      List,
+    }
+
     public override BoundingBox ClippingBox => _boundingBox;
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
@@ -58,8 +63,24 @@ namespace GsaGH.Components {
     public bool AlwaysExpireDownStream;
     public Dictionary<int, List<string>> ExistingOutputsSerialized
       = new Dictionary<int, List<string>>();
+    protected override Bitmap Icon => Resources.GetGeometry;
+    private static readonly OasysUnitsIQuantityJsonConverter s_converter
+      = new OasysUnitsIQuantityJsonConverter();
+    private BoundingBox _boundingBox;
+    private Mesh _cachedDisplayMeshWithoutParent;
+    private Mesh _cachedDisplayMeshWithParent;
+    private Mesh _cachedDisplayNgonMeshWithoutParent;
+    private Mesh _cachedDisplayNgonMeshWithParent;
+    private ConcurrentBag<GsaElement2dGoo> _element2ds;
+    private ConcurrentBag<GsaElement3dGoo> _element3ds;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private FoldMode _mode = FoldMode.List;
+    private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
+    private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
+    private ConcurrentBag<GsaNodeGoo> _supportNodes;
+
     public GetGeometry() : base("Get Model Geometry",
-      "GetGeo",
+                                                              "GetGeo",
       "Get nodes, elements and members from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0()) { }
@@ -373,8 +394,6 @@ namespace GsaGH.Components {
 
       return writer;
     }
-
-    protected override Bitmap Icon => Resources.GetGeometry;
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
@@ -757,25 +776,6 @@ namespace GsaGH.Components {
       }
     }
 
-    private enum FoldMode {
-      Graft,
-      List,
-    }
-
-    private static readonly OasysUnitsIQuantityJsonConverter s_converter
-      = new OasysUnitsIQuantityJsonConverter();
-    private BoundingBox _boundingBox;
-    private Mesh _cachedDisplayMeshWithoutParent;
-    private Mesh _cachedDisplayMeshWithParent;
-    private Mesh _cachedDisplayNgonMeshWithoutParent;
-    private Mesh _cachedDisplayNgonMeshWithParent;
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    private ConcurrentBag<GsaElement3dGoo> _element3ds;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private FoldMode _mode = FoldMode.List;
-    private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
-    private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
-    private ConcurrentBag<GsaNodeGoo> _supportNodes;
     private SolveResults Compute(
                                                                   ReadOnlyDictionary<int, Node> allnDict,
       ReadOnlyDictionary<int, Axis> axDict,

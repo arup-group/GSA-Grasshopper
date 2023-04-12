@@ -12,6 +12,11 @@ namespace GsaGH.Helpers.GsaApi {
   }
 
   internal partial class ResultHelper {
+    private enum ElementDimension {
+      _1D,
+      _2D,
+    }
+
     internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
 
     internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
@@ -45,11 +50,6 @@ namespace GsaGH.Helpers.GsaApi {
       r.UpdateMinMax();
 
       return r;
-    }
-
-    private enum ElementDimension {
-      _1D,
-      _2D,
     }
 
     private static GsaResultsValues GetElementFootfallResults(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues, ElementDimension typ) {

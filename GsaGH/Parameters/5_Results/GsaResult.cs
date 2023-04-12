@@ -16,31 +16,6 @@ namespace GsaGH.Parameters {
       Combination,
     }
 
-    public GsaResult() { }
-
-    public GsaResult Duplicate() => this;
-
-    public override string ToString() {
-      string txt = "";
-      switch (Type) {
-        case CaseType.AnalysisCase:
-          txt = "A" + CaseId;
-          break;
-
-        case CaseType.Combination: {
-            txt = "C" + CaseId;
-            if (SelectedPermutationIds.Count > 0) {
-              txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count : txt + " p" + SelectedPermutationIds[0];
-            }
-
-            break;
-          }
-      }
-
-      return txt.Trim()
-        .Replace("  ", " ");
-    }
-
     /// <summary>
     ///   Analysis Case 1DElement Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -348,6 +323,9 @@ namespace GsaGH.Parameters {
     /// </summary>
     internal List<int> SelectedPermutationIds { get; set; }
     internal CaseType Type { get; set; }
+
+    public GsaResult() { }
+
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
       AnalysisCaseResult = result;
@@ -377,6 +355,29 @@ namespace GsaGH.Parameters {
       SelectedPermutationIds = new List<int>() {
         permutation,
       };
+    }
+
+    public GsaResult Duplicate() => this;
+
+    public override string ToString() {
+      string txt = "";
+      switch (Type) {
+        case CaseType.AnalysisCase:
+          txt = "A" + CaseId;
+          break;
+
+        case CaseType.Combination: {
+            txt = "C" + CaseId;
+            if (SelectedPermutationIds.Count > 0) {
+              txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count : txt + " p" + SelectedPermutationIds[0];
+            }
+
+            break;
+          }
+      }
+
+      return txt.Trim()
+        .Replace("  ", " ");
     }
 
     /// <summary>
@@ -1102,6 +1103,7 @@ namespace GsaGH.Parameters {
     internal IQuantity Xyz { get; set; }
     internal IQuantity Y { get; set; }
     internal IQuantity Z { get; set; }
+
     internal GsaResultQuantity() { }
   }
 
@@ -1142,6 +1144,7 @@ namespace GsaGH.Parameters {
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XyzResults { get; set; }
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
+
     internal GsaResultsValues() { }
 
     internal void UpdateMinMax() {

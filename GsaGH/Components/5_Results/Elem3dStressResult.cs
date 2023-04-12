@@ -28,8 +28,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c9bdab98-0fe2-4852-b99c-c626515b3781");
     public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Stress3D;
+    private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
+
     public Elem3dStress() : base("3D Stresses",
-      "Stress3D",
+              "Stress3D",
       "3D Element Stress result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -58,7 +61,6 @@ namespace GsaGH.Components {
         .Name = "Stress ZX [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.Stress3D;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Unit",
@@ -274,7 +276,5 @@ namespace GsaGH.Components {
       _stresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
   }
 }

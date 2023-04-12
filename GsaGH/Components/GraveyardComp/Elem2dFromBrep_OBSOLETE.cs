@@ -23,8 +23,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep",
-      "Elem2dFromBrep",
+              "Elem2dFromBrep",
       "Mesh a non-planar Brep",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -50,7 +53,6 @@ namespace GsaGH.Components {
         .Name = "Mesh Size [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[] {
         "Unit",
@@ -212,7 +214,5 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

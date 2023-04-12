@@ -14,6 +14,7 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Elements {
+
     internal static Mesh ConvertElement2D(Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
 

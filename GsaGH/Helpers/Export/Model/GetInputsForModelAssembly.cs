@@ -7,6 +7,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class GetInputsForModelAssembly {
+
     internal static Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>> GetAnalysis(GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {

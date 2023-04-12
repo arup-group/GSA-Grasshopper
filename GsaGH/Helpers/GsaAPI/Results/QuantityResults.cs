@@ -6,6 +6,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.GsaApi {
   internal partial class ResultHelper {
+
     internal static GsaResultQuantity GetQuantityResult(Double6 result, ForceUnit unit, bool isBeam = false) {
       IQuantity x = new Force(new Force(result.X, ForceUnit.Newton).As(unit), unit);
       IQuantity y = new Force(new Force(result.Y, ForceUnit.Newton).As(unit), unit);

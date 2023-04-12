@@ -23,8 +23,24 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c803bba4-a026-4f95-b588-9d76455a53fa");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SelectResult;
+    private readonly List<string> _type = new List<string>(new[] {
+      "AnalysisCase",
+      "Combination",
+    });
+    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
+    private int _caseId = 1;
+    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
+    private GsaModel _gsaModel;
+    private List<int> _permutationIDs = new List<int>() {
+      -1,
+    };
+    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
+      _resultCache;
+    private GsaResult.CaseType _resultType = GsaResult.CaseType.AnalysisCase;
+
     public SelectResult() : base("Select Results",
-      "SelRes",
+                                          "SelRes",
       "Select AnalysisCase or Combination Result from an analysed GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -91,7 +107,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    protected override Bitmap Icon => Resources.SelectResult;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
@@ -363,20 +378,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private readonly List<string> _type = new List<string>(new[] {
-      "AnalysisCase",
-      "Combination",
-    });
-    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
-    private int _caseId = 1;
-    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
-    private GsaModel _gsaModel;
-    private List<int> _permutationIDs = new List<int>() {
-      -1,
-    };
-    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
-      _resultCache;
-    private GsaResult.CaseType _resultType = GsaResult.CaseType.AnalysisCase;
     // this is the cache object!
     private void UpdateDropdowns() {
       if (_gsaModel == null)

@@ -13,6 +13,7 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Loads {
+
     /// <summary>
     /// Method to import Beam Loads from a GSA model.
     /// Will output a list of GsaLoads.

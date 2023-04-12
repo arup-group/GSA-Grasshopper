@@ -20,11 +20,24 @@ using Rhino.Geometry;
 namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class CreateGridPlane_OBSOLETE : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      General,
+      Storey,
+    }
+
     public override Guid ComponentGuid => new Guid("675fd47a-890d-45b8-bdde-fb2e8c1d9cca");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridPlane;
+    private readonly List<string> _type = new List<string>(new string[] {
+      "General",
+      "Storey",
+    });
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private FoldMode _mode = FoldMode.General;
+
     public CreateGridPlane_OBSOLETE() : base("Create Grid Plane",
-      "GridPlane",
+                      "GridPlane",
       "Create GSA Grid Plane",
       CategoryName.Name(),
       SubCategoryName.Cat3()) { }
@@ -97,7 +110,6 @@ namespace GsaGH.Components {
         .Optional = true;
     }
 
-    protected override Bitmap Icon => Resources.GridPlane;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[] {
         "Type",
@@ -217,18 +229,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      General,
-      Storey,
-    }
-
-    private readonly List<string> _type = new List<string>(new string[] {
-      "General",
-      "Storey",
-    });
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private FoldMode _mode = FoldMode.General;
     private void Mode1Clicked() {
       if (_mode == FoldMode.General)
         return;

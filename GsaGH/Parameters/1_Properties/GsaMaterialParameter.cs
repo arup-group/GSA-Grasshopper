@@ -16,14 +16,15 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0
       ? GsaMaterialGoo.Name
       : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.MaterialParam;
+
     public GsaMaterialParameter() : base(new GH_InstanceDescription(
-      GsaMaterialGoo.Name,
+          GsaMaterialGoo.Name,
       GsaMaterialGoo.NickName,
       GsaMaterialGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.MaterialParam;
     protected override GsaMaterialGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaMaterial))
         return new GsaMaterialGoo((GsaMaterial)data);

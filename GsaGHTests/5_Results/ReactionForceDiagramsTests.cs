@@ -11,6 +11,7 @@ using Xunit;
 namespace GsaGHTests {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests {
+
     [Fact]
     public void WhenCreated_ThenComponentGuid_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();

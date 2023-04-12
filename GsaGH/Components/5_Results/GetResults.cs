@@ -20,14 +20,21 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GetResults;
+    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
+    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
+    private Guid _modelGuid;
+    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
+      _result;
+    private int _tempNodeId;
+
     public GetResult() : base("Get Results",
-      "GetRes",
+                              "GetRes",
       "Get AnalysisCase or Combination Result from an analysed GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.GetResults;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(),
         "GSA Model",
@@ -214,14 +221,6 @@ namespace GsaGH.Components {
         new GsaResultGoo(_result[new Tuple<GsaResult.CaseType, int>(resultType, caseId)]));
     }
 
-    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
-    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
-
-    private Guid _modelGuid;
-
-    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
-      _result; // this is the cache object!
-
-    private int _tempNodeId;
+    // this is the cache object!
   }
 }

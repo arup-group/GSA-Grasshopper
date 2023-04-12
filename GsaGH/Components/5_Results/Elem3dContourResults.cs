@@ -38,11 +38,64 @@ namespace GsaGH.Components {
   ///   Component to get Element3d results
   /// </summary>
   public class Elem3dContourResults : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
+    private enum FoldMode {
+      Displacement,
+      Stress,
+    }
+
     public override Guid ComponentGuid => new Guid("033035c6-16d9-4cc7-b2b3-cf5d5fac4108");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result3D;
+    private readonly List<string> _displacement = new List<string>(new[] {
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+    });
+    private readonly List<string> _stress = new List<string>(new[] {
+      "Stress xx",
+      "Stress yy",
+      "Stress zz",
+      "Stress xy",
+      "Stress yz",
+      "Stress zx",
+    });
+    private readonly List<string> _type = new List<string>(new[] {
+      "Displacement",
+      "Stress",
+    });
+    private string _case = "";
+    private double _defScale = 250;
+    private DisplayValue _disp = DisplayValue.ResXyz;
+    private Bitmap _legend = new Bitmap(15, 120);
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _maxValue = 1000;
+    private double _minValue;
+    private FoldMode _mode = FoldMode.Displacement;
+    private int _noDigits;
+    private string _resType;
+    private bool _showLegend = true;
+    private bool _slider = true;
+    private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
+    private bool _undefinedModelLengthUnit;
+
     public Elem3dContourResults() : base("3D Contour Results",
-      "ContourElem3d",
+                                                                                          "ContourElem3d",
       "Displays GSA 3D Element Results as Contour",
       CategoryName.Name(),
       SubCategoryName.Cat5()) { }
@@ -218,7 +271,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.Result3D;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -829,57 +881,6 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 3, resultType, _disp.ToString());
     }
 
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private enum FoldMode {
-      Displacement,
-      Stress,
-    }
-
-    private readonly List<string> _displacement = new List<string>(new[] {
-      "Translation Ux",
-      "Translation Uy",
-      "Translation Uz",
-      "Resolved |U|",
-    });
-    private readonly List<string> _stress = new List<string>(new[] {
-      "Stress xx",
-      "Stress yy",
-      "Stress zz",
-      "Stress xy",
-      "Stress yz",
-      "Stress zx",
-    });
-    private readonly List<string> _type = new List<string>(new[] {
-      "Displacement",
-      "Stress",
-    });
-    private string _case = "";
-    private double _defScale = 250;
-    private DisplayValue _disp = DisplayValue.ResXyz;
-    private Bitmap _legend = new Bitmap(15, 120);
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private double _maxValue = 1000;
-    private double _minValue;
-    private FoldMode _mode = FoldMode.Displacement;
-    private int _noDigits;
-    private string _resType;
-    private bool _showLegend = true;
-    private bool _slider = true;
-    private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
-    private bool _undefinedModelLengthUnit;
     private void CreateGradient() {
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();

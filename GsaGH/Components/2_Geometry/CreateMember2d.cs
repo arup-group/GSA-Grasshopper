@@ -18,13 +18,14 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMem2d;
+
     public CreateMember2d() : base("Create 2D Member",
-      "Mem2D",
+          "Mem2D",
       "Create GSA Member 2D",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    protected override Bitmap Icon => Resources.CreateMem2d;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBrepParameter("Brep",
         "B",

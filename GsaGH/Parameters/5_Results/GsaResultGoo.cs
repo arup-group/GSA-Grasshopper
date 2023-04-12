@@ -11,6 +11,7 @@ namespace GsaGH.Parameters {
     public static string Name => "Result";
     public static string NickName => "Res";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaResultGoo(GsaResult item) : base(item) { }
 
     public override IGH_Goo Duplicate() => this;

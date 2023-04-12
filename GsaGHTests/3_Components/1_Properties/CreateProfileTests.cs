@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateProfileTests {
+
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateProfile();
       comp.CreateAttributes();

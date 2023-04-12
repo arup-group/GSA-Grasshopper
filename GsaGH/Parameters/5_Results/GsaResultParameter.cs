@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaResultGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.ResultParam;
+
     public GsaResultsParameter() : base(new GH_InstanceDescription(GsaResultGoo.Name,
-                      GsaResultGoo.NickName,
+                          GsaResultGoo.NickName,
       GsaResultGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.ResultParam;
 
     protected override GsaResultGoo PreferredCast(object data)
       => data.GetType() == typeof(GsaResult)

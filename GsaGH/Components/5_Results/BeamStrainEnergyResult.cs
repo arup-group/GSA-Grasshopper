@@ -30,8 +30,18 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.StrainEnergyDensity;
+    private readonly List<string> _checkboxText = new List<string>() {
+      "Average",
+    };
+    private bool _average = true;
+    private EnergyUnit _energyUnit = DefaultUnits.EnergyUnit;
+    private List<bool> _initialCheckState = new List<bool>() {
+      true,
+    };
+
     public BeamStrainEnergy() : base("Beam Strain Energy Density",
-      "StrainEnergy",
+                          "StrainEnergy",
       "Element1D Strain Energy Density result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -92,7 +102,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.StrainEnergyDensity;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Energy Unit",
@@ -239,15 +248,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private readonly List<string> _checkboxText = new List<string>() {
-      "Average",
-    };
-
-    private bool _average = true;
-    private EnergyUnit _energyUnit = DefaultUnits.EnergyUnit;
-    private List<bool> _initialCheckState = new List<bool>() {
-      true,
-    };
     private void UpdateInputs() {
       RecordUndoEvent("Toggled Average");
       if (_average)

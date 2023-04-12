@@ -20,8 +20,16 @@ namespace GsaGH.Parameters {
     public readonly int ElementId;
     public readonly IQuantity Result1;
     public readonly IQuantity Result2;
+    internal List<Color> _previewResultColours;
+    internal List<int> _previewResultThk;
+    internal List<Line> _resultLineSegments;
+    private readonly Color _color1;
+    private readonly Color _color2;
+    private readonly float _size1;
+    private readonly float _size2;
+
     public LineResultGoo(
-      Line line,
+                                  Line line,
       IQuantity result1,
       IQuantity result2,
       Color color1,
@@ -156,13 +164,5 @@ namespace GsaGH.Parameters {
         _size2,
         ElementId);
     }
-
-    internal List<Color> _previewResultColours;
-    internal List<int> _previewResultThk;
-    internal List<Line> _resultLineSegments;
-    private readonly Color _color1;
-    private readonly Color _color2;
-    private readonly float _size1;
-    private readonly float _size2;
   }
 }

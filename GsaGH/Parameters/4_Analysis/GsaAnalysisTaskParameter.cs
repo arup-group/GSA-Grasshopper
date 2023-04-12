@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaAnalysisTaskGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.AnalysisTaskParam;
+
     public GsaAnalysisTaskParameter() : base(new GH_InstanceDescription(GsaAnalysisTaskGoo.Name,
-                      GsaAnalysisTaskGoo.NickName,
+                          GsaAnalysisTaskGoo.NickName,
       GsaAnalysisTaskGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.AnalysisTaskParam;
 
     protected override GsaAnalysisTaskGoo PreferredCast(object data) => data.GetType() == typeof(GsaAnalysisTask)
       ? new GsaAnalysisTaskGoo((GsaAnalysisTask)data)

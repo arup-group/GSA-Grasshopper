@@ -12,6 +12,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
   internal class AssembleModel {
+
     /// <summary>
     ///
     /// </summary>

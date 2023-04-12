@@ -5,6 +5,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaAnalysisCaseTest {
+
     [Theory]
     [InlineData(0, "name", "description")]
     [InlineData(100, "name", "description")]

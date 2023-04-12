@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaElement2dGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.Elem2dParam;
+
     public GsaElement2dParameter() : base(new GH_InstanceDescription(GsaElement2dGoo.Name,
-                      GsaElement2dGoo.NickName,
+                          GsaElement2dGoo.NickName,
       GsaElement2dGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.Elem2dParam;
 
     protected override GsaElement2dGoo PreferredCast(object data) => data.GetType() == typeof(GsaElement2d) ? new GsaElement2dGoo((GsaElement2d)data) : base.PreferredCast(data);
   }

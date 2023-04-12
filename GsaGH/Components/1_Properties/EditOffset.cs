@@ -24,8 +24,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("dd2b4e77-c1c7-4a0e-9d12-fe7a8982f9ea");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditOffset;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+
     public EditOffset() : base("Edit Offset",
-      "OffsetEdit",
+              "OffsetEdit",
       "Modify GSA Offset or just get information about existing",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -93,7 +96,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditOffset;
     protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -192,7 +194,6 @@ namespace GsaGH.Components {
       da.SetData(outp, new GH_UnitNumber(offset.Z.ToUnit(_lengthUnit)));
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;

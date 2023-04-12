@@ -7,6 +7,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class ElementListFromReference {
+
     internal static ConcurrentDictionary<int, ConcurrentBag<int>> GetMemberElementRelationship(Model model) {
       var relationships = new ConcurrentDictionary<int, ConcurrentBag<int>>();
       Parallel.ForEach(model.Elements(), item => relationships.GetOrAdd(item.Value.ParentMember.Member, new ConcurrentBag<int>()).Add(item.Key));

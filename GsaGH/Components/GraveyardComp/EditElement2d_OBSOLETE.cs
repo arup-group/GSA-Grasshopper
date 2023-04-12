@@ -21,13 +21,14 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditElem2d;
+
     public EditElement2d_OBSOLETE() : base("Edit 2D Element",
-      "Elem2dEdit",
+          "Elem2dEdit",
       "Modify GSA 2D Element",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    protected override Bitmap Icon => Resources.EditElem2d;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaElement2dParameter(),
         GsaElement2dGoo.Name,

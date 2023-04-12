@@ -26,8 +26,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMem2d;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public CreateMember2d_OBSOLETE() : base("Create 2D Member",
-      "Mem2D",
+              "Mem2D",
       "Create GSA Member 2D",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -59,7 +62,6 @@ namespace GsaGH.Components {
       => Params.Input[4]
         .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
 
-    protected override Bitmap Icon => Resources.CreateMem2d;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Unit",
@@ -173,7 +175,5 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

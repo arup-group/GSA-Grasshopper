@@ -16,14 +16,15 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0
       ? GsaBucklingLengthFactorsGoo.Name
       : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BucklingFactorsParam;
+
     public GsaBucklingLengthFactorsParameter() : base(new GH_InstanceDescription(
-      GsaBucklingLengthFactorsGoo.Name,
+          GsaBucklingLengthFactorsGoo.Name,
       GsaBucklingLengthFactorsGoo.NickName,
       GsaBucklingLengthFactorsGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BucklingFactorsParam;
     protected override GsaBucklingLengthFactorsGoo PreferredCast(object data) {
       return data.GetType() == typeof(GsaBucklingLengthFactors)
         ? new GsaBucklingLengthFactorsGoo((GsaBucklingLengthFactors)data)

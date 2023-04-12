@@ -23,14 +23,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditProp2d;
+
     public EditProp2d2_OBSOLETE() : base("Edit 2D Property",
-      "Prop2dEdit",
+          "Prop2dEdit",
       "Modify GSA 2D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.EditProp2d;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       IQuantity quantity = new Length(0, DefaultUnits.LengthUnitSection);
       string unitAbbreviation = string.Concat(quantity.ToString()

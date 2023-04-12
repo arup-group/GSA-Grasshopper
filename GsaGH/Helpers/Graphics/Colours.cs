@@ -235,6 +235,7 @@ namespace GsaGH.Helpers.Graphics {
     public static Color VoidCutter {
       get { return Color.FromArgb(255, 200, 0, 0); }
     }
+
     public static Color ElementType(global::GsaAPI.ElementType elementType) {
       switch ((int)elementType) {
         case 1:

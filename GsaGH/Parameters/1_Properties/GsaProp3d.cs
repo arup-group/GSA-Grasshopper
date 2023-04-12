@@ -84,6 +84,23 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+    internal Prop3D ApiProp3d {
+      get {
+        return _prop3d;
+      }
+      set {
+        _guid = Guid.NewGuid();
+        _prop3d = value;
+        _material = new GsaMaterial(this);
+        IsReferencedById = false;
+      }
+    }
+    internal bool IsReferencedById { get; set; } = false;
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private GsaMaterial _material = new GsaMaterial();
+    private Prop3D _prop3d = new Prop3D();
+
     public GsaProp3d() {
     }
 
@@ -94,6 +111,17 @@ namespace GsaGH.Parameters {
 
     public GsaProp3d(GsaMaterial material) {
       Material = material;
+    }
+
+    internal GsaProp3d(IReadOnlyDictionary<int, Prop3D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
+      if (!pDict.ContainsKey(id))
+        return;
+      _prop3d = pDict[id];
+      IsReferencedById = false;
+      // material
+      if (_prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty))
+        _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
+      _material = new GsaMaterial(this);
     }
 
     public GsaProp3d Duplicate(bool cloneApiElement = false) {
@@ -115,33 +143,6 @@ namespace GsaGH.Parameters {
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
-    internal Prop3D ApiProp3d {
-      get {
-        return _prop3d;
-      }
-      set {
-        _guid = Guid.NewGuid();
-        _prop3d = value;
-        _material = new GsaMaterial(this);
-        IsReferencedById = false;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
-    internal GsaProp3d(IReadOnlyDictionary<int, Prop3D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!pDict.ContainsKey(id))
-        return;
-      _prop3d = pDict[id];
-      IsReferencedById = false;
-      // material
-      if (_prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty))
-        _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
-      _material = new GsaMaterial(this);
-    }
-
-    private Guid _guid = Guid.NewGuid();
-    private int _id;
-    private GsaMaterial _material = new GsaMaterial();
-    private Prop3D _prop3d = new Prop3D();
     private void CloneApiObject() {
       var prop = new Prop3D {
         MaterialAnalysisProperty = _prop3d.MaterialAnalysisProperty,

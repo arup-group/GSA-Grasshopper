@@ -21,11 +21,21 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class CreateGridAreaLoad : GH_OasysDropDownComponent {
+    private enum ExpansionType {
+      UseGpsSettings = 0,
+      To1D = 1,
+      To2D = 2,
+    }
+
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.AreaLoad;
+    private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
+    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+
     public CreateGridAreaLoad() : base("Create Grid Area Load",
-      "AreaLoad",
+                  "AreaLoad",
       "Create GSA Grid Area Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -62,7 +72,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.AreaLoad;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -335,14 +344,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum ExpansionType {
-      UseGpsSettings = 0,
-      To1D = 1,
-      To2D = 2,
-    }
-
-    private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
-    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
     private void SetUse1D(object s, EventArgs e) {
       _expansionType = ExpansionType.To1D;
       UpdateMessage();

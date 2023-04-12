@@ -9,6 +9,7 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class SectionAlignmentTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new SectionAlignment();
       comp.CreateAttributes();

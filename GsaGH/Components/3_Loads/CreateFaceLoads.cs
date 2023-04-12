@@ -18,11 +18,29 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   public class CreateFaceLoads : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      Uniform,
+      Variable,
+      Point,
+      Edge, //note implementation of edge-load is not yet supported in GsaAPI
+    }
+
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.FaceLoad;
+    private readonly List<string> _loadTypeOptions = new List<string>(new[] {
+      "Uniform",
+      "Variable",
+      "Point",
+      //"Edge" note implementation of edge-load is not yet supported in GsaAPI
+    });
+    private bool _duringLoad;
+    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+    private FoldMode _mode = FoldMode.Uniform;
+
     public CreateFaceLoads() : base("Create Face Load",
-      "FaceLoad",
+                          "FaceLoad",
       "Create GSA Face Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -235,7 +253,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.FaceLoad;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
@@ -529,23 +546,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      Uniform,
-      Variable,
-      Point,
-      Edge, //note implementation of edge-load is not yet supported in GsaAPI
-    }
-
-    private readonly List<string> _loadTypeOptions = new List<string>(new[] {
-      "Uniform",
-      "Variable",
-      "Point",
-      //"Edge" note implementation of edge-load is not yet supported in GsaAPI
-    });
-
-    private bool _duringLoad;
-    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
-    private FoldMode _mode = FoldMode.Uniform;
     private void Mode1Clicked() {
       if (!_duringLoad && _mode == FoldMode.Uniform)
         return;

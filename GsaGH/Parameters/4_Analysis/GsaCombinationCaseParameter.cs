@@ -20,14 +20,14 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaCombinationCaseGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.CombinationCaseParam;
+
     public GsaCombinationCaseParameter() : base(new GH_InstanceDescription(
-                      GsaCombinationCaseGoo.Name,
+                          GsaCombinationCaseGoo.Name,
       GsaCombinationCaseGoo.NickName,
       GsaCombinationCaseGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.CombinationCaseParam;
 
     protected override GsaCombinationCaseGoo PreferredCast(object data) => data.GetType() == typeof(GsaCombinationCase)
       ? new GsaCombinationCaseGoo((GsaCombinationCase)data)

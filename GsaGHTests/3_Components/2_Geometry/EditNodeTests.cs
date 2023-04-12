@@ -11,6 +11,7 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditNodeTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditNode();
       comp.CreateAttributes();

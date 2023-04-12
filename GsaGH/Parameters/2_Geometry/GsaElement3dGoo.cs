@@ -17,7 +17,13 @@ namespace GsaGH.Parameters {
     public static string Name => "Element3D";
     public static string NickName => "E3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaElement3dGoo(GsaElement3d item) : base(item) { }
+
+    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null)
+                                  => Value = duplicate
+        ? item.Duplicate()
+        : item;
 
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
@@ -70,10 +76,5 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Transform(Transform xform)
       => new GsaElement3dGoo(Value.Transform(xform));
-
-    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null)
-                                  => Value = duplicate
-        ? item.Duplicate()
-        : item;
   }
 }

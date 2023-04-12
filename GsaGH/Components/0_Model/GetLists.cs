@@ -15,13 +15,13 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("43495cf4-f2eb-4b14-9b1a-5f91972546ca");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetList;
+
     public GetLists() : base("Get Model Lists",
-      "GetLists",
+          "GetLists",
       "Get Entity Lists from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0()) { this.Hidden = true; }
-
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetList;
 
     // sets the initial state of the component to hidden
 

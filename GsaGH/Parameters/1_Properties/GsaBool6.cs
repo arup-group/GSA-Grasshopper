@@ -53,12 +53,18 @@ namespace GsaGH.Parameters {
         _bool6 = new Bool6(X, Y, Z, Xx, Yy, value);
       }
     }
+    internal Bool6 _bool6;
+
     public GsaBool6() {
       _bool6 = new Bool6(false, false, false, false, false, false);
     }
 
     public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
       _bool6 = new Bool6(x, y, z, xx, yy, zz);
+    }
+
+    internal GsaBool6(Bool6 bool6) {
+      _bool6 = bool6;
     }
 
     public GsaBool6 Duplicate() {
@@ -124,11 +130,6 @@ namespace GsaGH.Parameters {
       }
       else
         return state.Trim();
-    }
-
-    internal Bool6 _bool6;
-    internal GsaBool6(Bool6 bool6) {
-      _bool6 = bool6;
     }
   }
 }

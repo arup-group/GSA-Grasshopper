@@ -31,8 +31,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("955e572d-1293-4ac6-b436-54135f7714f6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditMem2d;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public EditMember2d_OBSOLETE() : base("Edit 2D Member",
-      "Mem2dEdit",
+              "Mem2dEdit",
       "Modify GSA 2D Member",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -73,7 +76,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditMem2d;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       Message = Length.GetAbbreviation(_lengthUnit);
@@ -390,7 +392,6 @@ namespace GsaGH.Components {
       da.SetData(15, mem.ApiMember.Topology);
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;

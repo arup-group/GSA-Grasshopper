@@ -9,6 +9,9 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class Elem1dResultsTests {
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void AverageStrainEnergyDensityTests() {
       GH_Document doc = Document;
@@ -898,8 +901,6 @@ namespace IntegrationTests.Components {
           0.01);
     }
 
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;

@@ -24,8 +24,13 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("7504a99f-a4e2-4e30-8251-de31ea83e8cb");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.MaterialProperties;
+    private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
+    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
+    private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
+
     public GetMaterialProperties() : base("Material Properties",
-      "MatProp",
+                      "MatProp",
       "Get GSA Material Properties for Elastic Isotropic material type",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -130,7 +135,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.MaterialProperties;
     protected override void BeforeSolveInstance() => UpdateMessage();
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -203,9 +207,6 @@ namespace GsaGH.Components {
       da.SetData(3, new GH_UnitNumber(deltaT));
     }
 
-    private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
-    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
-    private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
     private void Update() {
       UpdateMessage();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

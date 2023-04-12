@@ -8,6 +8,7 @@ using static GsaAPI.GridSurface;
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class GridSurfaceTests {
+
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridSurface();
       comp.CreateAttributes();

@@ -26,13 +26,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5aa4635c-b60e-4812-ab45-6af9437255e4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditElem1d;
+    private AngleUnit _angleUnit = AngleUnit.Radian;
+
     public EditElement1d2_OBSOLETE() : base("Edit 1D Element",
-      "Elem1dEdit",
+              "Elem1dEdit",
       "Modify GSA 1D Element",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    protected override Bitmap Icon => Resources.EditElem1d;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (!(Params.Input[9] is Param_Number angleParameter))
@@ -325,7 +327,5 @@ namespace GsaGH.Components {
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
       da.SetDataTree(15, topo);
     }
-
-    private AngleUnit _angleUnit = AngleUnit.Radian;
   }
 }

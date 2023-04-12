@@ -8,6 +8,7 @@ namespace GsaGH.Parameters {
     public double? EquivalentUniformMomentFactor { get; set; }
     public double? MomentAmplificationFactorStrongAxis { get; set; }
     public double? MomentAmplificationFactorWeakAxis { get; set; }
+
     public GsaBucklingLengthFactors() {
     }
 
@@ -15,18 +16,6 @@ namespace GsaGH.Parameters {
       EquivalentUniformMomentFactor = equivalentUniformMomentFactor;
       MomentAmplificationFactorStrongAxis = momentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = momentAmplificationFactorWeakAxis;
-    }
-
-    public GsaBucklingLengthFactors Duplicate() {
-      return (GsaBucklingLengthFactors)MemberwiseClone();
-    }
-
-    public override string ToString() {
-      string y = MomentAmplificationFactorStrongAxis == null ? "" : "fLsy:" + MomentAmplificationFactorStrongAxis;
-      string z = MomentAmplificationFactorWeakAxis == null ? "" : "fLsz:" + MomentAmplificationFactorWeakAxis;
-      string lt = EquivalentUniformMomentFactor == null ? "" : "fLtb:" + EquivalentUniformMomentFactor;
-      string output = string.Join(" ", y, z, lt).Trim();
-      return output == "" ? "Automatic" : output;
     }
 
     internal GsaBucklingLengthFactors(GsaMember1d member) {
@@ -39,6 +28,18 @@ namespace GsaGH.Parameters {
       EquivalentUniformMomentFactor = member.ApiMember.EquivalentUniformMomentFactor;
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
+    }
+
+    public GsaBucklingLengthFactors Duplicate() {
+      return (GsaBucklingLengthFactors)MemberwiseClone();
+    }
+
+    public override string ToString() {
+      string y = MomentAmplificationFactorStrongAxis == null ? "" : "fLsy:" + MomentAmplificationFactorStrongAxis;
+      string z = MomentAmplificationFactorWeakAxis == null ? "" : "fLsz:" + MomentAmplificationFactorWeakAxis;
+      string lt = EquivalentUniformMomentFactor == null ? "" : "fLtb:" + EquivalentUniformMomentFactor;
+      string output = string.Join(" ", y, z, lt).Trim();
+      return output == "" ? "Automatic" : output;
     }
   }
 }

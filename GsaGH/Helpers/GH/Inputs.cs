@@ -6,6 +6,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GH {
   internal class Inputs {
+
     internal static List<object> GetObjectsForLists(GH_Component owner, IGH_DataAccess DA, int inputid, EntityType type) {
       // Get Geometry input
       List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();

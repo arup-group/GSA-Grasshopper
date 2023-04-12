@@ -28,8 +28,10 @@ namespace GsaGH.Components {
       "Fabric",
     };
 
+    protected override Bitmap Icon => Resources.CreateMaterial;
+
     public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      GsaMaterialGoo.Name.Replace(" ", string.Empty),
+          GsaMaterialGoo.Name.Replace(" ", string.Empty),
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -40,7 +42,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    protected override Bitmap Icon => Resources.CreateMaterial;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Material type",

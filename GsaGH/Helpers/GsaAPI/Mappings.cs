@@ -120,6 +120,7 @@ namespace GsaGH.Helpers.GsaApi {
       { "Load Panel", Property2D_Type.LOAD },
       { "Num Type", Property2D_Type.NUM_TYPE },
     };
+
     internal static AlignmentType GetAlignmentType(string typestring) => (AlignmentType)GetValue(typestring, typeof(AlignmentType));
 
     internal static AnalysisOrder GetAnalysisOrder(string input) => (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));

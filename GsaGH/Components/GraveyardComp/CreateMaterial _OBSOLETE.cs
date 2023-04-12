@@ -18,11 +18,37 @@ namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class CreateMaterial_OBSOLETE : GH_OasysComponent,
     IGH_VariableParameterComponent {
+    private enum FoldMode {
+      Generic,
+      Steel,
+      Concrete,
+      Timber,
+      Aluminium,
+      Frp,
+      Glass,
+      Fabric,
+    }
+
     public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMaterial;
+    private readonly List<string> _dropDownItems = new List<string>(new[] {
+      "Generic",
+      "Steel",
+      "Concrete",
+      "Timber",
+      "Aluminium",
+      "Frp",
+      "Glass",
+      "Fabric",
+    });
+    private readonly bool _first = true;
+    private FoldMode _mode = FoldMode.Timber;
+    private string _selecteditem;
+
     public CreateMaterial_OBSOLETE() : base("Create Material",
-      "Material",
+                          "Material",
       "Create GSA Material by reference to existing type and grade",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -108,7 +134,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateMaterial;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Analysis Property Number",
         "ID",
@@ -177,31 +202,6 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaMaterialGoo(material));
     }
 
-    private enum FoldMode {
-      Generic,
-      Steel,
-      Concrete,
-      Timber,
-      Aluminium,
-      Frp,
-      Glass,
-      Fabric,
-    }
-
-    private readonly List<string> _dropDownItems = new List<string>(new[] {
-      "Generic",
-      "Steel",
-      "Concrete",
-      "Timber",
-      "Aluminium",
-      "Frp",
-      "Glass",
-      "Fabric",
-    });
-
-    private readonly bool _first = true;
-    private FoldMode _mode = FoldMode.Timber;
-    private string _selecteditem;
     private void Mode1Clicked() {
       if (_mode == FoldMode.Generic)
         return;

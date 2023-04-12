@@ -9,6 +9,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
+
     /// <summary>
     /// Method to convert a list of GridPlaneSurfaces and set Axes, GridPlanes and GridSurfaces in ref Dictionaries
     /// </summary>

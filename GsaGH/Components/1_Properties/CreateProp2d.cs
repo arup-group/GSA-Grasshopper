@@ -26,8 +26,30 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateProp2d;
+    private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel = new Dictionary<Prop2dType, string>{
+      { Prop2dType.PlaneStress, "Plane Stress"},
+      { Prop2dType.Fabric, "Fabric"},
+      { Prop2dType.FlatPlate, "Flat Plate"},
+      { Prop2dType.Shell, "Shell"},
+      { Prop2dType.CurvedShell, "Curved Shell"},
+      { Prop2dType.LoadPanel, "Load Panel"},
+    };
+    private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string>{
+      { SupportType.Auto, "Automatic"},
+      { SupportType.AllEdges, "All edges"},
+      { SupportType.ThreeEdges, "Three edges"},
+      { SupportType.TwoEdges, "Two edges"},
+      { SupportType.TwoAdjacentEdges, "Two adjacent edges"},
+      { SupportType.OneEdge, "One edge"},
+      { SupportType.Cantilever, "Cantilever"},
+    };
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    private Prop2dType _mode = Prop2dType.Shell;
+    private int _supportTypeIndex;
+
     public CreateProp2d() : base("Create 2D Property",
-      "Prop2d",
+                              "Prop2d",
       "Create GSA 2D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -76,7 +98,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.CreateProp2d;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
@@ -182,28 +203,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel = new Dictionary<Prop2dType, string>{
-      { Prop2dType.PlaneStress, "Plane Stress"},
-      { Prop2dType.Fabric, "Fabric"},
-      { Prop2dType.FlatPlate, "Flat Plate"},
-      { Prop2dType.Shell, "Shell"},
-      { Prop2dType.CurvedShell, "Curved Shell"},
-      { Prop2dType.LoadPanel, "Load Panel"},
-    };
-
-    private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string>{
-      { SupportType.Auto, "Automatic"},
-      { SupportType.AllEdges, "All edges"},
-      { SupportType.ThreeEdges, "Three edges"},
-      { SupportType.TwoEdges, "Two edges"},
-      { SupportType.TwoAdjacentEdges, "Two adjacent edges"},
-      { SupportType.OneEdge, "One edge"},
-      { SupportType.Cantilever, "Cantilever"},
-    };
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private Prop2dType _mode = Prop2dType.Shell;
-    private int _supportTypeIndex;
     private void AddLengthUnitDropDown() {
       _spacerDescriptions.Add("Unit");
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));

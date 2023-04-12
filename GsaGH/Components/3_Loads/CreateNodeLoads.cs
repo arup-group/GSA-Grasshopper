@@ -18,11 +18,30 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class CreateNodeLoad : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      NodeForce,
+      NodeMoment,
+      AppliedDispl,
+      Settlement,
+    }
+
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.NodeLoad;
+    private readonly List<string> _type = new List<string>(new[] {
+      "Node Force",
+      "Node Moment",
+      "Applied Displ",
+      "Settlement",
+    });
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    private FoldMode _mode = FoldMode.NodeForce;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+
     public CreateNodeLoad() : base("Create Node Load",
-      "NodeLoad",
+                              "NodeLoad",
       "Create GSA Node Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -96,7 +115,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.NodeLoad;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
@@ -335,24 +353,5 @@ namespace GsaGH.Components {
 
       base.UpdateUIFromSelectedItems();
     }
-
-    private enum FoldMode {
-      NodeForce,
-      NodeMoment,
-      AppliedDispl,
-      Settlement,
-    }
-
-    private readonly List<string> _type = new List<string>(new[] {
-      "Node Force",
-      "Node Moment",
-      "Applied Displ",
-      "Settlement",
-    });
-
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
-    private FoldMode _mode = FoldMode.NodeForce;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
   }
 }

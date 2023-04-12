@@ -8,6 +8,10 @@ namespace GsaGH.Helpers.Export {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
     internal ReadOnlyDictionary<Guid, int> GuidDictionary => new ReadOnlyDictionary<Guid, int>(_guidDictionary);
+    private readonly IDictionary<int, T> _dictionary;
+    private readonly IDictionary<Guid, int> _guidDictionary;
+    private int _firstEmptyKey = 1;
+
     internal GsaGuidDictionary(ReadOnlyDictionary<int, T> dictionary) {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => kvp.Key);
@@ -27,16 +31,16 @@ namespace GsaGH.Helpers.Export {
       _dictionary[key] = value;
       _guidDictionary[guid] = key;
     }
-
-    private readonly IDictionary<int, T> _dictionary;
-    private readonly IDictionary<Guid, int> _guidDictionary;
-    private int _firstEmptyKey = 1;
   }
 
   internal class GsaGuidIntListDictionary<T> {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
     internal ReadOnlyDictionary<Guid, Collection<int>> GuidDictionary => new ReadOnlyDictionary<Guid, Collection<int>>(_guidDictionary);
+    private readonly IDictionary<int, T> _dictionary;
+    private readonly IDictionary<Guid, Collection<int>> _guidDictionary;
+    private int _firstEmptyKey = 1;
+
     internal GsaGuidIntListDictionary(ReadOnlyDictionary<int, T> dictionary) {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => new Collection<int>() { kvp.Key });
@@ -66,15 +70,14 @@ namespace GsaGH.Helpers.Export {
       else
         _guidDictionary[guid] = new Collection<int>() { key };
     }
-
-    private readonly IDictionary<int, T> _dictionary;
-    private readonly IDictionary<Guid, Collection<int>> _guidDictionary;
-    private int _firstEmptyKey = 1;
   }
 
   internal class GsaIntDictionary<T> {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
+    private readonly IDictionary<int, T> _dictionary;
+    private int _firstEmptyKey = 1;
+
     internal GsaIntDictionary(ReadOnlyDictionary<int, T> dictionary) => _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
     internal int AddValue(T value) {
@@ -85,8 +88,5 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void SetValue(int key, T value) => _dictionary[key] = value;
-
-    private readonly IDictionary<int, T> _dictionary;
-    private int _firstEmptyKey = 1;
   }
 }

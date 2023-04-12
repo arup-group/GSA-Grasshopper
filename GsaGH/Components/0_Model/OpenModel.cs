@@ -24,8 +24,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.OpenModel;
+    private string _fileName;
+    private Guid _panelGuid = Guid.NewGuid();
+
     public OpenModel() : base("Open Model",
-      "Open",
+                  "Open",
       "Open an existing GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0())
@@ -102,7 +106,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.OpenModel;
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -185,8 +188,6 @@ namespace GsaGH.Components {
       }
     }
 
-    private string _fileName;
-    private Guid _panelGuid = Guid.NewGuid();
     private static void GetUnit(ref GsaModel gsaModel) {
       // none of this works:
       // 1. save as gwa is not possible with GsaAPI

@@ -17,11 +17,28 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class CreateGridSurface : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      OneDimensionalOneWay,
+      OneDimensionalTwoWay,
+      TwoDimensional,
+    }
+
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridSurface;
+    private readonly List<string> _type = new List<string>(new[] {
+      "1D, One-way span",
+      "1D, Two-way span",
+      "2D",
+    });
+    private IGH_Param _angleInputParam;
+    private AngleUnit _angleUnit = AngleUnit.Radian;
+    private bool _duringLoad = false;
+    private FoldMode _mode = FoldMode.OneDimensionalOneWay;
+
     public CreateGridSurface() : base("Create Grid Surface",
-      "GridSurface",
+                              "GridSurface",
       "Create GSA Grid Surface",
       CategoryName.Name(),
       SubCategoryName.Cat3()) { }
@@ -122,7 +139,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.GridSurface;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (_mode != FoldMode.OneDimensionalOneWay)
@@ -432,22 +448,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum FoldMode {
-      OneDimensionalOneWay,
-      OneDimensionalTwoWay,
-      TwoDimensional,
-    }
-
-    private readonly List<string> _type = new List<string>(new[] {
-      "1D, One-way span",
-      "1D, Two-way span",
-      "2D",
-    });
-
-    private IGH_Param _angleInputParam;
-    private AngleUnit _angleUnit = AngleUnit.Radian;
-    private bool _duringLoad = false;
-    private FoldMode _mode = FoldMode.OneDimensionalOneWay;
     private void Mode1Clicked() {
       if (!_duringLoad && _mode == FoldMode.OneDimensionalOneWay)
         return;

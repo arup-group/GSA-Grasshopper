@@ -16,14 +16,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4089b9d6-490d-4491-b623-f99ed01630aa");
     public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result2dInfo;
+
     public GetMeshResultsInfo() : base("MeshResultInfo",
-      "MeshResInfo",
+          "MeshResInfo",
       "Get Element 2D or Element 3D Contour Result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.Result2dInfo;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddGenericParameter("Result Mesh",
         "M",

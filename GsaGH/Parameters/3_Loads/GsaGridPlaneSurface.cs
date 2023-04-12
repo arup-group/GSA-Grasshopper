@@ -74,6 +74,18 @@ namespace GsaGH.Parameters {
     ///   or in the format of a OasysUnits.Length ('5 m')
     /// </summary>
     public string Tolerance { get; set; } = "10 mm";
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
+    private int _axisId;
+    private GridPlane _gridPln = new GridPlane();
+    private Guid _gridPlnGuid = Guid.NewGuid();
+    private int _gridPlnId = 0;
+    private GridSurface _gridSrf = new GridSurface();
+    private Guid _gridSrfGuid = Guid.NewGuid();
+    private int _gridSrfId;
+    private Plane _pln = Plane.WorldXY;
+
     public GsaGridPlaneSurface() { }
 
     public GsaGridPlaneSurface(Plane plane, bool tryUseExisting = false) {
@@ -216,9 +228,6 @@ namespace GsaGH.Parameters {
         .Replace("  ", " ");
     }
 
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
     internal Axis GetAxis(LengthUnit modelUnit) {
       var axis = new Axis();
       axis.Origin.X = new Length(Plane.Origin.X, modelUnit).Meters;
@@ -246,15 +255,5 @@ namespace GsaGH.Parameters {
 
       return axis;
     }
-
-    private int _axisId;
-
-    private GridPlane _gridPln = new GridPlane();
-    private Guid _gridPlnGuid = Guid.NewGuid();
-    private int _gridPlnId = 0;
-    private GridSurface _gridSrf = new GridSurface();
-    private Guid _gridSrfGuid = Guid.NewGuid();
-    private int _gridSrfId;
-    private Plane _pln = Plane.WorldXY;
   }
 }

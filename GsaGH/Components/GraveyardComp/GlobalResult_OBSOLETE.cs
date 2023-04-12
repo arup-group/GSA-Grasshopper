@@ -19,14 +19,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("267d8dc3-aa6e-4ed2-b82d-57fc290173cc");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.ResultGlobal;
+
     public GlobalResult_OBSOLETE() : base("Global Results",
-      "GlobalResult",
+          "GlobalResult",
       "Get Global Results from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.ResultGlobal;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("GSA Model",
         "GSA",

@@ -9,6 +9,8 @@ namespace IntegrationTests.Parameters {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetGeometry_TrGen_10_Test {
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void NoRuntimeErrorTest()
       => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
@@ -51,7 +53,6 @@ namespace IntegrationTests.Parameters {
       Helper.TestGhPrimitives(param, expected);
     }
 
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType

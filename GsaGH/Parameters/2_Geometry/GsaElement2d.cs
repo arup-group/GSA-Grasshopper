@@ -18,6 +18,18 @@ namespace GsaGH.Parameters {
   ///   Element2d class, this class defines the basic properties and methods for any Gsa Element 2d
   /// </summary>
   public class GsaElement2d {
+    private enum ApiObjectMember {
+      All,
+      Group,
+      Dummy,
+      Name,
+      OrientationAngle,
+      Offset,
+      Property,
+      Type,
+      Colour,
+    }
+
     public List<Color> Colours {
       get {
         var cols = new List<Color>();
@@ -147,6 +159,20 @@ namespace GsaGH.Parameters {
           null,
           value);
     }
+    internal List<Element> ApiElements {
+      get => _elements;
+      set => _elements = value;
+    }
+    private List<Element> _elements = new List<Element>();
+    private Guid _guid = Guid.NewGuid();
+    private List<int> _ids = new List<int>();
+    private Mesh _mesh = new Mesh();
+    private List<GsaProp2d> _props = new List<GsaProp2d>();
+    // list of topology points for visualisation
+    private List<Point3d> _topo;
+    // list of topology integers referring to the topo list of points
+    private List<List<int>> _topoInt;
+
     public GsaElement2d() { }
 
     public GsaElement2d(Mesh mesh, int prop = 0) {
@@ -191,8 +217,35 @@ namespace GsaGH.Parameters {
       _ids = new List<int>(new int[_mesh.Faces.Count]);
     }
 
+    internal GsaElement2d(Element element, int id, Mesh mesh, GsaProp2d prop2d) {
+      _mesh = mesh;
+      _topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      _topoInt = RhinoConversions.ConvertMeshToElem2d(_mesh);
+      _elements = new List<Element> {
+        element,
+      };
+      _ids = new List<int> {
+        id,
+      };
+      _props = new List<GsaProp2d> {
+        prop2d,
+      };
+    }
+
+    internal GsaElement2d(
+      ConcurrentDictionary<int, Element> elements,
+      Mesh mesh,
+      List<GsaProp2d> prop2ds) {
+      _mesh = mesh;
+      _topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      _topoInt = RhinoConversions.ConvertMeshToElem2d(_mesh);
+      _elements = elements.Values.ToList();
+      _ids = elements.Keys.ToList();
+      _props = prop2ds;
+    }
+
     public static Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
-      Brep brep,
+              Brep brep,
       List<Point3d> points,
       List<GsaNode> nodes,
       List<Curve> curves,
@@ -291,37 +344,6 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    internal List<Element> ApiElements {
-      get => _elements;
-      set => _elements = value;
-    }
-    internal GsaElement2d(Element element, int id, Mesh mesh, GsaProp2d prop2d) {
-      _mesh = mesh;
-      _topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
-      _topoInt = RhinoConversions.ConvertMeshToElem2d(_mesh);
-      _elements = new List<Element> {
-        element,
-      };
-      _ids = new List<int> {
-        id,
-      };
-      _props = new List<GsaProp2d> {
-        prop2d,
-      };
-    }
-
-    internal GsaElement2d(
-      ConcurrentDictionary<int, Element> elements,
-      Mesh mesh,
-      List<GsaProp2d> prop2ds) {
-      _mesh = mesh;
-      _topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
-      _topoInt = RhinoConversions.ConvertMeshToElem2d(_mesh);
-      _elements = elements.Values.ToList();
-      _ids = elements.Keys.ToList();
-      _props = prop2ds;
-    }
-
     internal void CloneApiElements() {
       CloneApiElements(ApiObjectMember.All);
       _guid = Guid.NewGuid();
@@ -351,28 +373,6 @@ namespace GsaGH.Parameters {
           .Type,
       };
 
-    private enum ApiObjectMember {
-      All,
-      Group,
-      Dummy,
-      Name,
-      OrientationAngle,
-      Offset,
-      Property,
-      Type,
-      Colour,
-    }
-
-    private List<Element> _elements = new List<Element>();
-    private Guid _guid = Guid.NewGuid();
-    private List<int> _ids = new List<int>();
-    private Mesh _mesh = new Mesh();
-    private List<GsaProp2d> _props = new List<GsaProp2d>();
-
-    // list of topology points for visualisation
-    private List<Point3d> _topo;
-    // list of topology integers referring to the topo list of points
-    private List<List<int>> _topoInt;
     private void CloneApiElements(
       ApiObjectMember memType,
       IList<int> grp = null,

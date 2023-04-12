@@ -5,10 +5,14 @@ using Rhino.Geometry;
 namespace GsaGH.Parameters {
   public class GsaBeamLoad {
     public BeamLoad BeamLoad { get; set; }
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
+
     public GsaBeamLoad()
-      => BeamLoad = new BeamLoad {
-        Type = BeamLoadType.UNIFORM,
-      };
+                  => BeamLoad = new BeamLoad {
+                    Type = BeamLoadType.UNIFORM,
+                  };
 
     public GsaBeamLoad Duplicate() {
       var dup = new GsaBeamLoad {
@@ -65,18 +69,18 @@ namespace GsaGH.Parameters {
 
       return dup;
     }
-
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
   }
 
   public class GsaFaceLoad {
     public FaceLoad FaceLoad { get; set; }
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
+
     public GsaFaceLoad()
-      => FaceLoad = new FaceLoad {
-        Type = FaceLoadType.CONSTANT,
-      };
+                  => FaceLoad = new FaceLoad {
+                    Type = FaceLoadType.CONSTANT,
+                  };
 
     public GsaFaceLoad Duplicate() {
       var dup = new GsaFaceLoad {
@@ -125,10 +129,6 @@ namespace GsaGH.Parameters {
 
       return dup;
     }
-
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
   }
 
   /// <summary>
@@ -136,6 +136,10 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaGravityLoad {
     public GravityLoad GravityLoad { get; set; } = new GravityLoad();
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
+
     public GsaGravityLoad() {
       GravityLoad.Factor = new Vector3() {
         X = 0,
@@ -170,15 +174,12 @@ namespace GsaGH.Parameters {
 
       return dup;
     }
-
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
   }
 
   public class GsaGridAreaLoad {
     public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+
     public GsaGridAreaLoad() => GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
 
     public GsaGridAreaLoad Duplicate() {
@@ -204,6 +205,7 @@ namespace GsaGH.Parameters {
   public class GsaGridLineLoad {
     public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+
     public GsaGridLineLoad() => GridLineLoad.PolyLineReference = 0;
 
     public GsaGridLineLoad Duplicate() {
@@ -230,6 +232,8 @@ namespace GsaGH.Parameters {
   public class GsaGridPointLoad {
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
     public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
+    internal Point3d _refPoint;
+
     public GsaGridPointLoad() { }
 
     public GsaGridPointLoad Duplicate() {
@@ -248,8 +252,6 @@ namespace GsaGH.Parameters {
       };
       return dup;
     }
-
-    internal Point3d _refPoint;
   }
 
   /// <summary>
@@ -274,6 +276,7 @@ namespace GsaGH.Parameters {
     public GsaNodeLoad NodeLoad { get; set; }
     public GsaGridPointLoad PointLoad { get; set; }
     public LoadTypes LoadType = LoadTypes.Gravity;
+
     public GsaLoad() {
       GravityLoad = new GsaGravityLoad();
       LoadType = LoadTypes.Gravity;
@@ -410,6 +413,9 @@ namespace GsaGH.Parameters {
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
     public NodeLoadTypes Type;
+    internal GsaList _refList;
+    internal Point3d _refPoint = Point3d.Unset;
+
     public GsaNodeLoad() => Type = NodeLoadTypes.NodeLoad;
 
     public GsaNodeLoad Duplicate() {
@@ -431,9 +437,6 @@ namespace GsaGH.Parameters {
       }
       return dup;
     }
-
-    internal GsaList _refList;
-    internal Point3d _refPoint = Point3d.Unset;
   }
 
   /// <summary>

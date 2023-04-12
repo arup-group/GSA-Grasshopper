@@ -21,8 +21,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridPlaneProperties;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public GridPlaneSurfaceProperties() : base("Grid Plane Surface Properties",
-      "GridPlaneSurfaceProp",
+              "GridPlaneSurfaceProp",
       "Get GSA Grid Plane Surface Properties",
       CategoryName.Name(),
       SubCategoryName.Cat3()) { }
@@ -86,7 +89,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.GridPlaneProperties;
     protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -248,7 +250,6 @@ namespace GsaGH.Components {
       da.SetData(17, simple);
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;

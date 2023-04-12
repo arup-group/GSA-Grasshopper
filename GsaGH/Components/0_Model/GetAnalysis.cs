@@ -17,14 +17,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("566a94d2-a022-4f12-a645-0366deb1476c");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GetAnalysisTask;
+
     public GetAnalysis() : base("Get Model Analysis Tasks",
-      "GetAnalysisTasks",
+          "GetAnalysisTasks",
       "Get Analysis Tasks and their Cases from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.GetAnalysisTask;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter(),
         "GSA Model",

@@ -4,6 +4,7 @@ using GH_IO.Serialization;
 
 namespace GsaGH.Helpers.GH {
   public static class FindValueFromReader {
+
     public static bool TryGetEnum(
       this GH_IReader reader,
       string valueToFind,

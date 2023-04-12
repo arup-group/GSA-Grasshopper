@@ -3,6 +3,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Materials {
+
     internal static int AddMaterial(GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       if (material.AnalysisProperty <= 0 || material.AnalysisMaterial == null) {
         return apiMaterials.AddValue(material.Guid, material.AnalysisMaterial);

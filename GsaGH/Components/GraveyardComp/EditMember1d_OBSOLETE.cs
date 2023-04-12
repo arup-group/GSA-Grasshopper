@@ -30,8 +30,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("094f676f-c384-4d49-9d7f-64515004bf4b");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditMem1d;
+    private AngleUnit _angleUnit = AngleUnit.Radian;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public EditMember1d_OBSOLETE() : base("Edit 1D Member",
-      "Mem1dEdit",
+                  "Mem1dEdit",
       "Modify GSA 1D Member",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -72,7 +76,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditMem1d;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (Params.Input[10] is Param_Number angleParameter)
@@ -453,8 +456,6 @@ namespace GsaGH.Components {
       da.SetData(18, mem.ApiMember.Topology);
     }
 
-    private AngleUnit _angleUnit = AngleUnit.Radian;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;

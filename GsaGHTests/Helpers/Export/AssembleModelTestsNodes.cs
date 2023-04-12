@@ -8,6 +8,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers.Export {
   public partial class AssembleModelTests {
+
     [Fact]
     public void AssembleModelWithNodesTest() {
       var node1 = new GsaNodeGoo(new GsaNode());

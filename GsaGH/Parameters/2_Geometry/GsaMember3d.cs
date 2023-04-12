@@ -66,6 +66,14 @@ namespace GsaGH.Parameters {
         UpdatePreview();
       }
     }
+    internal Member ApiMember { get; set; } = new Member();
+    internal List<Line> _previewEdgeLines;
+    internal List<Polyline> _previewHiddenLines;
+    internal List<Point3d> _previewPts;
+    private Guid _guid = Guid.NewGuid();
+    private int _id = 0;
+    private Mesh _mesh = new Mesh();
+
     public GsaMember3d() => ApiMember.Type = MemberType.GENERIC_3D;
 
     public GsaMember3d(Mesh mesh) {
@@ -81,6 +89,15 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
+      UpdatePreview();
+    }
+
+    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop, double meshSize) {
+      ApiMember = member;
+      _id = id;
+      _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
+      Prop3d = prop;
+      MeshSize = meshSize;
       UpdatePreview();
     }
 
@@ -147,20 +164,6 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    internal Member ApiMember { get; set; } = new Member();
-    internal List<Line> _previewEdgeLines;
-    internal List<Polyline> _previewHiddenLines;
-    internal List<Point3d> _previewPts;
-
-    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop, double meshSize) {
-      ApiMember = member;
-      _id = id;
-      _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
-      Prop3d = prop;
-      MeshSize = meshSize;
-      UpdatePreview();
-    }
-
     internal void CloneApiObject() {
       ApiMember = GetAPI_MemberClone();
       _guid = Guid.NewGuid();
@@ -188,9 +191,6 @@ namespace GsaGH.Parameters {
       return mem;
     }
 
-    private Guid _guid = Guid.NewGuid();
-    private int _id = 0;
-    private Mesh _mesh = new Mesh();
     private void UpdatePreview()
       => Display.PreviewMem3d(ref _mesh,
         ref _previewHiddenLines,

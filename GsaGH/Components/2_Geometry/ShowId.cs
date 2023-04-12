@@ -20,8 +20,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.ShowID;
+    private List<Point3d> _pts;
+    private List<string> _txts;
+
     public ShowId() : base("ShowID",
-      "ID",
+                  "ID",
       "Show the ID of a Node, Element, Member geometry or Result parameters",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -43,7 +47,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.ShowID;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddGenericParameter("Node/Element/Member/Result",
         "Geo",
@@ -173,8 +176,5 @@ namespace GsaGH.Components {
       da.SetDataTree(0, ghPts);
       da.SetDataTree(1, ids);
     }
-
-    private List<Point3d> _pts;
-    private List<string> _txts;
   }
 }

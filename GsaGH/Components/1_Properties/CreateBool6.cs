@@ -18,8 +18,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateBool6;
+    private bool _x;
+    private bool _xx;
+    private bool _y;
+    private bool _yy;
+    private bool _z;
+    private bool _zz;
+
     public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-      GsaBool6Goo.NickName.Replace(" ", string.Empty),
+                                  GsaBool6Goo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -64,7 +72,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateBool6;
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -152,12 +159,6 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaBool6Goo(bool6));
     }
 
-    private bool _x;
-    private bool _xx;
-    private bool _y;
-    private bool _yy;
-    private bool _z;
-    private bool _zz;
     private void ReDrawComponent() {
       var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
       CreateAttributes();

@@ -30,11 +30,42 @@ namespace GsaGH.Components {
   ///   Component to display GSA reaction forces
   /// </summary>
   public class ReactionForceDiagrams : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
     public override Guid ComponentGuid => new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.ReactionForceDiagram;
+    private readonly List<string> _reactionStringList = new List<string>(new[] {
+      "Reaction Fx",
+      "Reaction Fy",
+      "Reaction Fz",
+      "Resolved |F|",
+      "Reaction Mxx",
+      "Reaction Myy",
+      "Reaction Mzz",
+      "Resolved |M|",
+    });
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private ConcurrentDictionary<int, VectorResultGoo> _reactionForceVectors
+      = new ConcurrentDictionary<int, VectorResultGoo>();
+    private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
+    private bool _showText = true;
+
     public ReactionForceDiagrams() : base("Reaction Force Diagrams",
-                  "ReactionForce",
+                                                      "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams",
       CategoryName.Name(),
       SubCategoryName.Cat5()) { }
@@ -81,7 +112,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.ReactionForceDiagram;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -205,35 +235,6 @@ namespace GsaGH.Components {
         _selectedDisplayValue.ToString());
     }
 
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private readonly List<string> _reactionStringList = new List<string>(new[] {
-      "Reaction Fx",
-      "Reaction Fy",
-      "Reaction Fz",
-      "Resolved |F|",
-      "Reaction Mxx",
-      "Reaction Myy",
-      "Reaction Mzz",
-      "Resolved |M|",
-    });
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private ConcurrentDictionary<int, VectorResultGoo> _reactionForceVectors
-      = new ConcurrentDictionary<int, VectorResultGoo>();
-    private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
-    private bool _showText = true;
     private static string GetNodeFilters(IGH_DataAccess dataAccess) {
       string nodeList = string.Empty;
       var ghNoList = new GH_String();

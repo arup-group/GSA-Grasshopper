@@ -18,6 +18,7 @@ namespace GsaGH.Parameters {
     public static string Name => "GridPlaneSurface";
     public static string NickName => "GPS";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
 
     public override bool CastFrom(object source) {

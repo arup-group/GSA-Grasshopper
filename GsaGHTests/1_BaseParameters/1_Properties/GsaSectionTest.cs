@@ -10,6 +10,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaSectionTest {
+
     [Fact]
     public void DuplicateTest() {
       var original = new GsaSection {

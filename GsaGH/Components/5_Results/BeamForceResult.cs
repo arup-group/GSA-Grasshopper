@@ -28,8 +28,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.BeamForces;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+
     public BeamForces() : base("Beam Forces and Moments",
-      "BeamForces",
+                  "BeamForces",
       "Element1D Force and Moment result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -72,7 +76,6 @@ namespace GsaGH.Components {
         .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.BeamForces;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Force Unit",
@@ -322,8 +325,5 @@ namespace GsaGH.Components {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
   }
 }

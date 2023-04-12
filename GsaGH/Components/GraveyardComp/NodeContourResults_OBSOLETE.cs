@@ -37,11 +37,68 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class NodeContourResults_OBSOLETE : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
+    private enum FoldMode {
+      Displacement,
+      Reaction,
+    }
+
     public override Guid ComponentGuid => new Guid("47053884-2c22-4f2c-b092-8531fa5751e1");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result0D;
+    private readonly List<string> _displacement = new List<string>(new[] {
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+      "Rotation Rxx",
+      "Rotation Ryy",
+      "Rotation Rzz",
+      "Resolved |R|",
+    });
+    private readonly Bitmap _legend = new Bitmap(15, 120);
+    private readonly List<string> _reaction = new List<string>(new[] {
+      "Reaction Fx",
+      "Reaction Fy",
+      "Reaction Fz",
+      "Resolved |F|",
+      "Reaction Mxx",
+      "Reaction Myy",
+      "Reaction Mzz",
+      "Resolved |M|",
+    });
+    private readonly List<string> _type = new List<string>(new[] {
+      "Displacement",
+      "Reaction",
+    });
+    private string _case = "";
+    private double _defScale = 250;
+    private DisplayValue _disp = DisplayValue.ResXyz;
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _maxValue = 1000;
+    private double _minValue;
+    private FoldMode _mode = FoldMode.Displacement;
+    private int _noDigits;
+    private string _resType;
+    private bool _showLegend = true;
+    private bool _slider = true;
+
     public NodeContourResults_OBSOLETE() : base("Node Contour Results",
-      "ContourNode",
+                                                                                  "ContourNode",
       "Diplays GSA Node Results as Contours",
       CategoryName.Name(),
       SubCategoryName.Cat5()) { }
@@ -188,7 +245,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.Result0D;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -664,61 +720,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private enum FoldMode {
-      Displacement,
-      Reaction,
-    }
-
-    private readonly List<string> _displacement = new List<string>(new[] {
-      "Translation Ux",
-      "Translation Uy",
-      "Translation Uz",
-      "Resolved |U|",
-      "Rotation Rxx",
-      "Rotation Ryy",
-      "Rotation Rzz",
-      "Resolved |R|",
-    });
-    private readonly Bitmap _legend = new Bitmap(15, 120);
-    private readonly List<string> _reaction = new List<string>(new[] {
-      "Reaction Fx",
-      "Reaction Fy",
-      "Reaction Fz",
-      "Resolved |F|",
-      "Reaction Mxx",
-      "Reaction Myy",
-      "Reaction Mzz",
-      "Resolved |M|",
-    });
-    private readonly List<string> _type = new List<string>(new[] {
-      "Displacement",
-      "Reaction",
-    });
-    private string _case = "";
-    private double _defScale = 250;
-    private DisplayValue _disp = DisplayValue.ResXyz;
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private double _maxValue = 1000;
-    private double _minValue;
-    private FoldMode _mode = FoldMode.Displacement;
-    private int _noDigits;
-    private string _resType;
-    private bool _showLegend = true;
-    private bool _slider = true;
     private void CreateGradient() {
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();

@@ -5,6 +5,7 @@
   /// Call this class from all components in plugin for naming consistency
   /// </summary>
   public class CategoryName {
+
     public static string Name() {
       return "GSA";
     }
@@ -19,6 +20,7 @@
   /// to avoid naming each category with a number in front. Spaces will automatically be removed when displayed
   /// </summary>
   internal class SubCategoryName {
+
     public static string Cat0() {
       return new string(' ', 7) + "Model";
     }

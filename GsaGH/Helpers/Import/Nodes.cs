@@ -12,6 +12,7 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Nodes {
+
     /// <summary>
     /// Method to create a Rhino Plane from a GSA Axis
     /// </summary>

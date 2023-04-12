@@ -16,14 +16,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5e28d4d9-a0ab-46a8-8476-71781c315855");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditProp3d;
+
     public EditProp3d() : base("Edit 3D Property",
-      "Prop3dEdit",
+          "Prop3dEdit",
       "Modify GSA 3D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.EditProp3d;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaProp3dParameter(),
         GsaProp3dGoo.Name,

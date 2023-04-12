@@ -10,6 +10,8 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class CreateOffsetTest {
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void NoRuntimeErrorTest()
       => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
@@ -38,7 +40,6 @@ namespace IntegrationTests.Parameters {
       Assert.Equal(new Length(expectedZ, expectedUnit), offset.Z);
     }
 
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType

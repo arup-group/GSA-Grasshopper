@@ -19,8 +19,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.LoadInfo;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public LoadProp() : base("Load Properties",
-      "LoadProp",
+                  "LoadProp",
       "Get properties of a GSA Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -71,7 +75,6 @@ namespace GsaGH.Components {
       }
     }
 
-    protected override Bitmap Icon => Resources.LoadInfo;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Force Unit",
@@ -280,8 +283,5 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

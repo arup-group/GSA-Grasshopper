@@ -20,7 +20,13 @@ namespace GsaGH.Parameters {
     public static string Name => "Node";
     public static string NickName => "No";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaNodeGoo(GsaNode item) : base(item) { }
+
+    internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null)
+                                      => Value = duplicate
+        ? item.Duplicate()
+        : item;
 
     public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data
@@ -148,10 +154,5 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Transform(Transform xform)
       => new GsaNodeGoo(Value.Transform(xform));
-
-    internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null)
-                                      => Value = duplicate
-        ? item.Duplicate()
-        : item;
   }
 }

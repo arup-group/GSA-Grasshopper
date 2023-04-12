@@ -18,14 +18,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    
+
+    protected override Bitmap Icon => Resources.CreateElem2d;
+
     public CreateElement2d() : base("Create 2D Element",
-      "Elem2D",
+          "Elem2D",
       "Create GSA 2D Element",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
-    protected override Bitmap Icon => Resources.CreateElem2d;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp2dParameter());

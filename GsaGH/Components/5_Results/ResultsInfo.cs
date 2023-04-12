@@ -19,14 +19,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6874415d-a86c-4a0d-8c84-36b39f2e5255");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.ResultsInfo;
+    private Guid _modelGuid;
+
     public ResultsInfo() : base("Get Result Cases",
-      "GetCases",
+              "GetCases",
       "Get Analysis or Combination Case IDs from a GSA model with Results",
       CategoryName.Name(),
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.ResultsInfo;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter(),
         "GSA Model",
@@ -81,7 +83,5 @@ namespace GsaGH.Components {
       da.SetDataList(1, modelResults.Item2);
       da.SetDataTree(2, modelResults.Item3);
     }
-
-    private Guid _modelGuid;
   }
 }

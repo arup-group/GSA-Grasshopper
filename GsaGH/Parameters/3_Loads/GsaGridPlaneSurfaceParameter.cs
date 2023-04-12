@@ -20,16 +20,16 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaGridPlaneSurfaceGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.GridPlaneParam;
+
     public GsaGridPlaneParameter() : base(new GH_InstanceDescription(GsaGridPlaneSurfaceGoo.Name,
-                      GsaGridPlaneSurfaceGoo.NickName,
+                          GsaGridPlaneSurfaceGoo.NickName,
       GsaGridPlaneSurfaceGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
     }
-
-    protected override Bitmap Icon => Resources.GridPlaneParam;
 
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) => data.GetType() == typeof(GsaGridPlaneSurface)
         ? new GsaGridPlaneSurfaceGoo((GsaGridPlaneSurface)data)

@@ -17,8 +17,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateAnalysisTask;
+    private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
+
     public CreateAnalysisTask() : base(
-      "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
+              "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisTaskGoo.Description,
       CategoryName.Name(),
@@ -32,7 +35,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    protected override Bitmap Icon => Resources.CreateAnalysisTask;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Solver",
@@ -119,7 +121,5 @@ namespace GsaGH.Components {
         _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
   }
 }

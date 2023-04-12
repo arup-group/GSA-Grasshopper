@@ -15,6 +15,7 @@ using Xunit;
 namespace GsaGHTests.Properties {
   [Collection("GrasshopperFixture collection")]
   public class EditProp2dTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditProp2d();
       comp.CreateAttributes();

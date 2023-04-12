@@ -12,6 +12,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
+
     internal static void ConvertLoad(List<GsaLoad> loads,
         ref List<GravityLoad> gravityLoads, ref List<BeamLoad> beamLoads, ref List<FaceLoad> faceLoads,
         ref List<GridPointLoad> gridPointLoads, ref List<GridLineLoad> gridLineLoads, ref List<GridAreaLoad> gridAreaLoads, ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,

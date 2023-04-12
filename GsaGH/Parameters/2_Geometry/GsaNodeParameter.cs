@@ -21,16 +21,16 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaNodeGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.NodeParam;
+
     public GsaNodeParameter() : base(new GH_InstanceDescription(GsaNodeGoo.Name,
-                      GsaNodeGoo.NickName,
+                          GsaNodeGoo.NickName,
       GsaNodeGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
     }
-
-    protected override Bitmap Icon => Resources.NodeParam;
 
     protected override GsaNodeGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaNode))

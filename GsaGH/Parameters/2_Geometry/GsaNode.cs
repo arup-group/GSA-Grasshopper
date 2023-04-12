@@ -103,11 +103,41 @@ namespace GsaGH.Parameters {
         _node.SpringProperty = value;
       }
     }
+    internal Node ApiNode {
+      get => _node;
+      set {
+        _node = value;
+        UpdatePreview();
+      }
+    }
+    internal Brep _previewSupportSymbol;
+    internal Text3d _previewText;
+    internal Line _previewXaxis;
+    internal Line _previewYaxis;
+    internal Line _previewZaxis;
+    private int _id = 0;
+    private Node _node = new Node();
+    private Plane _plane;
+
     public GsaNode() { }
 
     public GsaNode(Point3d position, int id = 0) {
       Point = position;
       Id = id;
+      UpdatePreview();
+    }
+
+    internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane()) {
+      _node = node;
+      CloneApiObject();
+      if (unit != LengthUnit.Meter) {
+        _node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
+        _node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
+        _node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+      }
+
+      _id = id;
+      _plane = localAxis;
       UpdatePreview();
     }
 
@@ -229,32 +259,6 @@ namespace GsaGH.Parameters {
       ApiNode.Position.Z = new Length(ApiNode.Position.Z, LengthUnit.Meter).As(unit);
     }
 
-    internal Node ApiNode {
-      get => _node;
-      set {
-        _node = value;
-        UpdatePreview();
-      }
-    }
-    internal Brep _previewSupportSymbol;
-    internal Text3d _previewText;
-    internal Line _previewXaxis;
-    internal Line _previewYaxis;
-    internal Line _previewZaxis;
-    internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane()) {
-      _node = node;
-      CloneApiObject();
-      if (unit != LengthUnit.Meter) {
-        _node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
-        _node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
-        _node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
-      }
-
-      _id = id;
-      _plane = localAxis;
-      UpdatePreview();
-    }
-
     internal void CloneApiObject() {
       var node = new Node {
         AxisProperty = _node.AxisProperty,
@@ -373,9 +377,5 @@ namespace GsaGH.Parameters {
       _previewYaxis = new Line(Point, local.YAxis, 0.5);
       _previewZaxis = new Line(Point, local.ZAxis, 0.5);
     }
-
-    private int _id = 0;
-    private Node _node = new Node();
-    private Plane _plane;
   }
 }

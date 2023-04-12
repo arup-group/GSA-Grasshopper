@@ -24,6 +24,13 @@ namespace GsaGH.Parameters {
     public Guid Guid { get; set; } = Guid.NewGuid();
     public Model Model { get; set; } = new Model();
     public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
+    internal GsaAPI.Titles Titles {
+      get {
+        return Model.Titles();
+      }
+    }
+    private BoundingBox _boundingBox = BoundingBox.Empty;
+
     public GsaModel() {
     }
 
@@ -74,12 +81,6 @@ namespace GsaGH.Parameters {
       return s;
     }
 
-    internal GsaAPI.Titles Titles {
-      get {
-        return Model.Titles();
-      }
-    }
-    private BoundingBox _boundingBox = BoundingBox.Empty;
     private BoundingBox GetBoundingBox() {
       var outNodes = new ConcurrentDictionary<int, Node>(Model.Nodes());
       var pts = new ConcurrentBag<Point3d>();

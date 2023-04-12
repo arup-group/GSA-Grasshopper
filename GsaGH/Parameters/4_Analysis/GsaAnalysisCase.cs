@@ -2,9 +2,17 @@
   public class GsaAnalysisCase {
     public string Description { get; set; }
     public string Name { get; set; }
+    internal int Id { get; set; } = 0;
+
     public GsaAnalysisCase() { }
 
     public GsaAnalysisCase(string name, string description) {
+      Name = name;
+      Description = description;
+    }
+
+    internal GsaAnalysisCase(int id, string name, string description = "") {
+      Id = id;
       Name = name;
       Description = description;
     }
@@ -23,13 +31,6 @@
       return string.Join(" ", id.Trim(), s.Trim())
         .Trim()
         .Replace("  ", " ");
-    }
-
-    internal int Id { get; set; } = 0;
-    internal GsaAnalysisCase(int id, string name, string description = "") {
-      Id = id;
-      Name = name;
-      Description = description;
     }
   }
 }

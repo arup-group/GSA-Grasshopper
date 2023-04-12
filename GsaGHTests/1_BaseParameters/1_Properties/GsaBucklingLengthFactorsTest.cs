@@ -11,6 +11,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaBucklingLengthFactorsTest {
+
     [Fact]
     public void AssembleWitMemberTest() {
       var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {

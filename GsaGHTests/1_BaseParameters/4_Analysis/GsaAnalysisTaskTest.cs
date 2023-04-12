@@ -7,6 +7,7 @@ using static GsaGH.Parameters.GsaAnalysisTask;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaAnalysisTaskTest {
+
     [Fact]
     public void DuplicateTest() {
       var original = new GsaAnalysisTask();

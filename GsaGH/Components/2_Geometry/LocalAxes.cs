@@ -21,8 +21,13 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    internal Line _previewXaxis;
+    internal Line _previewYaxis;
+    internal Line _previewZaxis;
+    protected override Bitmap Icon => Resources.LocalAxes;
+
     public LocalAxes() : base("Local Axis",
-      "Axis",
+                      "Axis",
       "Get Element1D or Member1D local axes",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -38,11 +43,6 @@ namespace GsaGH.Components {
         args.Display.DrawLine(_previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
     }
 
-    internal Line _previewXaxis;
-    internal Line _previewYaxis;
-    internal Line _previewZaxis;
-
-    protected override Bitmap Icon => Resources.LocalAxes;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddGenericParameter("Element/Member 1D",
         "G1D",

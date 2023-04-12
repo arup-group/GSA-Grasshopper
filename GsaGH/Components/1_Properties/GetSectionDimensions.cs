@@ -28,8 +28,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SectionDimensions;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+
     public GetSectionDimensions() : base("Section Dimensions",
-      "SectDims",
+              "SectDims",
       "Get GSA Section Dimensions",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -100,7 +103,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.SectionDimensions;
     protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -543,7 +545,6 @@ namespace GsaGH.Components {
       }
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private void SetOutput(IGH_DataAccess da, int outputId, string outputValue, LengthUnit unit) {
       double val = double.Parse(outputValue, CultureInfo.InvariantCulture);
       var length = new Length(val, unit);

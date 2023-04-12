@@ -56,6 +56,18 @@ namespace GsaGH.Parameters {
     }
     public Guid Guid => _guid;
     public MatType MaterialType { get; set; } = MatType.Undef;
+    internal AnalysisMaterial AnalysisMaterial {
+      get => _analysisMaterial;
+      set {
+        _analysisMaterial = value;
+        _guid = Guid.NewGuid();
+      }
+    }
+    private int _analProp = 0;
+    private AnalysisMaterial _analysisMaterial;
+    private int _grade = 1;
+    private Guid _guid = Guid.NewGuid();
+
     public GsaMaterial() {
     }
 
@@ -72,39 +84,6 @@ namespace GsaGH.Parameters {
     /// <param name="typeId"></param>
     public GsaMaterial(int typeId) => MaterialType = (MatType)typeId;
 
-    public GsaMaterial Duplicate() {
-      var dup = new GsaMaterial {
-        MaterialType = MaterialType,
-        _grade = _grade,
-        _analProp = _analProp,
-      };
-      if (_analProp != 0 && _analysisMaterial != null) {
-        dup.AnalysisMaterial = new AnalysisMaterial() {
-          CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
-          Density = AnalysisMaterial.Density,
-          ElasticModulus = AnalysisMaterial.ElasticModulus,
-          PoissonsRatio = AnalysisMaterial.PoissonsRatio
-        };
-      }
-      dup._guid = new Guid(_guid.ToString());
-      return dup;
-    }
-
-    public override string ToString() {
-      string type = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
-      if (_analProp != 0)
-        return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
-      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
-      return (id + type).Trim();
-    }
-
-    internal AnalysisMaterial AnalysisMaterial {
-      get => _analysisMaterial;
-      set {
-        _analysisMaterial = value;
-        _guid = Guid.NewGuid();
-      }
-    }
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
       if (section?.ApiSection == null)
         return;
@@ -144,10 +123,32 @@ namespace GsaGH.Parameters {
       CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty, prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
 
-    private int _analProp = 0;
-    private AnalysisMaterial _analysisMaterial;
-    private int _grade = 1;
-    private Guid _guid = Guid.NewGuid();
+    public GsaMaterial Duplicate() {
+      var dup = new GsaMaterial {
+        MaterialType = MaterialType,
+        _grade = _grade,
+        _analProp = _analProp,
+      };
+      if (_analProp != 0 && _analysisMaterial != null) {
+        dup.AnalysisMaterial = new AnalysisMaterial() {
+          CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
+          Density = AnalysisMaterial.Density,
+          ElasticModulus = AnalysisMaterial.ElasticModulus,
+          PoissonsRatio = AnalysisMaterial.PoissonsRatio
+        };
+      }
+      dup._guid = new Guid(_guid.ToString());
+      return dup;
+    }
+
+    public override string ToString() {
+      string type = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
+      if (_analProp != 0)
+        return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
+      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
+      return (id + type).Trim();
+    }
+
     private static MatType GetType(MaterialType materialType) {
       MatType mType = MatType.Undef;
 

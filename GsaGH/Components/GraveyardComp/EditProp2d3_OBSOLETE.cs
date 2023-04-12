@@ -30,8 +30,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6f18fffc-e03c-45cd-9d4c-b02bb6e2d10a");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditProp2d;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+
     public EditProp2d3_OBSOLETE() : base("Edit 2D Property",
-      "Prop2dEdit",
+              "Prop2dEdit",
       "Modify GSA 2D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -86,7 +89,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditProp2d;
     protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -255,7 +257,6 @@ namespace GsaGH.Components {
         this.AddRuntimeError("Prop2d is Null");
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;

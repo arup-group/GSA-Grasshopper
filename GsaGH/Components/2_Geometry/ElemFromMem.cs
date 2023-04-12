@@ -31,8 +31,14 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateElemsFromMems;
+    private ConcurrentBag<GsaElement2dGoo> _element2ds;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private Length _tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+
     public ElemFromMem() : base("Elements from Members",
-      "ElemFromMem",
+                          "ElemFromMem",
       "Create Elements from Members",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -164,7 +170,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.CreateElemsFromMems;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       UpdateMessage();
@@ -390,10 +395,6 @@ namespace GsaGH.Components {
       _element2ds = elementTuple.Item2;
     }
 
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
     private void MaintainText(ToolStripTextBox tolerance) {
       _toleranceTxt = tolerance.Text;
       tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)

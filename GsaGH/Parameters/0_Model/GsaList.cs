@@ -50,6 +50,16 @@ namespace GsaGH.Parameters {
         _name = value;
       }
     }
+    private List<int> _cases;
+    private string _definition;
+    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
+    private EntityType _entityType = EntityType.Undefined;
+    private int _id;
+    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
+    private GsaModel _model;
+    private string _name;
+    private ConcurrentBag<GsaNodeGoo> _nodes;
+
     public GsaList() { }
 
     public GsaList Duplicate() {
@@ -230,15 +240,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private List<int> _cases;
-    private string _definition;
-    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
-    private EntityType _entityType = EntityType.Undefined;
-    private int _id;
-    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
-    private GsaModel _model;
-    private string _name;
-    private ConcurrentBag<GsaNodeGoo> _nodes;
     //internal GsaList(int id, EntityList list, GsaModel model) {
     //  EntityType = GetEntityFromAPI(list.Type);
     //  Id = id;

@@ -20,16 +20,16 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaMember1dGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.Mem1dParam;
+
     public GsaMember1dParameter() : base(new GH_InstanceDescription(GsaMember1dGoo.Name,
-                      GsaMember1dGoo.NickName,
+                          GsaMember1dGoo.NickName,
       GsaMember1dGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
     }
-
-    protected override Bitmap Icon => Resources.Mem1dParam;
 
     protected override GsaMember1dGoo PreferredCast(object data)
       => data.GetType() == typeof(GsaMember1d)

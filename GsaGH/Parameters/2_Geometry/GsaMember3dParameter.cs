@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaMember3dGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.Mem3dParam;
+
     public GsaMember3dParameter() : base(new GH_InstanceDescription(GsaMember3dGoo.Name,
-                      GsaMember3dGoo.NickName,
+                          GsaMember3dGoo.NickName,
       GsaMember3dGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.Mem3dParam;
 
     protected override GsaMember3dGoo PreferredCast(object data)
       => data.GetType() == typeof(GsaMember3d)

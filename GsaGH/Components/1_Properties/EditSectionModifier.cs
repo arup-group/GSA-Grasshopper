@@ -26,8 +26,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditSectionModifier;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
+
     public EditSectionModifier() : base("Edit Section Modifier",
-      "ModifierEdit",
+                  "ModifierEdit",
       "Modify GSA Section Modifier",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -115,7 +119,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditSectionModifier;
     protected override void BeforeSolveInstance() => UpdateMessage();
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -584,8 +587,6 @@ namespace GsaGH.Components {
       da.SetData(11, (int)modifier.StressOption);
     }
 
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
     private void Update() {
       UpdateMessage();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

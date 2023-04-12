@@ -38,11 +38,77 @@ namespace GsaGH.Components {
   ///   Component to display GSA node result contours
   /// </summary>
   public class NodeContourResults : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
+    private enum FoldMode {
+      Displacement,
+      Reaction,
+      Footfall,
+    }
+
     public override Guid ComponentGuid => new Guid("742b1398-4eee-49e6-98d0-00afac6813e6");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result0D;
+    private readonly List<string> _displacement = new List<string>(new[] {
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+      "Rotation Rxx",
+      "Rotation Ryy",
+      "Rotation Rzz",
+      "Resolved |R|",
+    });
+    private readonly List<string> _footfall = new List<string>(new[] {
+      "Resonant",
+      "Transient",
+    });
+    private readonly List<string> _reaction = new List<string>(new[] {
+      "Reaction Fx",
+      "Reaction Fy",
+      "Reaction Fz",
+      "Resolved |F|",
+      "Reaction Mxx",
+      "Reaction Myy",
+      "Reaction Mzz",
+      "Resolved |M|",
+    });
+    private readonly List<string> _type = new List<string>(new[] {
+      "Displacement",
+      "Reaction",
+      "Footfall",
+    });
+    private string _case = "";
+    private double _defScale = 250;
+    private DisplayValue _disp = DisplayValue.ResXyz;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private Bitmap _legend = new Bitmap(15, 120);
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _maxValue = 1000;
+    private double _minValue;
+    private FoldMode _mode = FoldMode.Displacement;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private int _noDigits;
+    private string _resType;
+    private bool _showLegend = true;
+    private bool _slider = true;
+    private bool _undefinedModelLengthUnit;
+
     public NodeContourResults() : base("Node Contour Results",
-      "ContourNode",
+                                                                                                  "ContourNode",
       "Diplays GSA Node Results as Contours",
       CategoryName.Name(),
       SubCategoryName.Cat5()) { }
@@ -218,7 +284,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.Result0D;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -877,70 +942,6 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 0, resultType, _disp.ToString());
     }
 
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private enum FoldMode {
-      Displacement,
-      Reaction,
-      Footfall,
-    }
-
-    private readonly List<string> _displacement = new List<string>(new[] {
-      "Translation Ux",
-      "Translation Uy",
-      "Translation Uz",
-      "Resolved |U|",
-      "Rotation Rxx",
-      "Rotation Ryy",
-      "Rotation Rzz",
-      "Resolved |R|",
-    });
-    private readonly List<string> _footfall = new List<string>(new[] {
-      "Resonant",
-      "Transient",
-    });
-    private readonly List<string> _reaction = new List<string>(new[] {
-      "Reaction Fx",
-      "Reaction Fy",
-      "Reaction Fz",
-      "Resolved |F|",
-      "Reaction Mxx",
-      "Reaction Myy",
-      "Reaction Mzz",
-      "Resolved |M|",
-    });
-    private readonly List<string> _type = new List<string>(new[] {
-      "Displacement",
-      "Reaction",
-      "Footfall",
-    });
-    private string _case = "";
-    private double _defScale = 250;
-    private DisplayValue _disp = DisplayValue.ResXyz;
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private Bitmap _legend = new Bitmap(15, 120);
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private double _maxValue = 1000;
-    private double _minValue;
-    private FoldMode _mode = FoldMode.Displacement;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private int _noDigits;
-    private string _resType;
-    private bool _showLegend = true;
-    private bool _slider = true;
-    private bool _undefinedModelLengthUnit;
     private void CreateGradient() {
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();

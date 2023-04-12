@@ -15,15 +15,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("0c32af28-5057-4649-bd56-0850541c954b");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateBucklingLengthFactors;
+
     public CreateBucklingFactors() : base(
-      "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
+          "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
       GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBucklingLengthFactorsGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.CreateBucklingLengthFactors;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddNumberParameter("Factor Lsy",
         "fLy",

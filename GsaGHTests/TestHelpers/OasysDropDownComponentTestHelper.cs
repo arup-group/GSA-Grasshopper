@@ -6,6 +6,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers {
   public class OasysDropDownComponentTestHelper {
+
     public static void ChangeDropDownTest(
       GH_OasysDropDownComponent comp,
       bool ignoreSpacerDescriptionsCount = false) {

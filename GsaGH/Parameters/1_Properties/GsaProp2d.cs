@@ -135,6 +135,22 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+    internal Prop2D ApiProp2d {
+      get => _prop2d;
+      set {
+        _guid = Guid.NewGuid();
+        _prop2d = value;
+        _material = new GsaMaterial(this);
+        IsReferencedById = false;
+      }
+    }
+    internal bool IsReferencedById { get; set; } = false;
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private Plane _localAxis = Plane.Unset;
+    private GsaMaterial _material = new GsaMaterial();
+    private Prop2D _prop2d = new Prop2D();
+
     public GsaProp2d() {
     }
 
@@ -146,6 +162,29 @@ namespace GsaGH.Parameters {
     public GsaProp2d(Length thickness, int id = 0) {
       Thickness = thickness;
       _id = id;
+    }
+
+    internal GsaProp2d(IReadOnlyDictionary<int, Prop2D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) : this(id) {
+      if (!pDict.ContainsKey(id))
+        return;
+      _prop2d = pDict[id];
+      IsReferencedById = false;
+      // material
+      if (_prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop2d.MaterialAnalysisProperty))
+        _material.AnalysisMaterial = matDict[_prop2d.MaterialAnalysisProperty];
+      if (_prop2d.AxisProperty > 0) {
+        if (axDict != null && axDict.ContainsKey(_prop2d.AxisProperty)) {
+          Axis ax = axDict[_prop2d.AxisProperty];
+          LocalAxis = new Plane(new Point3d(
+            new Length(ax.Origin.X, LengthUnit.Meter).As(unit),
+            new Length(ax.Origin.Y, LengthUnit.Meter).As(unit),
+            new Length(ax.Origin.Z, LengthUnit.Meter).As(unit)),
+            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z)
+            );
+        }
+      }
+      _material = new GsaMaterial(this);
     }
 
     public GsaProp2d Duplicate(bool cloneApiElement = false) {
@@ -178,39 +217,6 @@ namespace GsaGH.Parameters {
       return string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
 
-    internal Prop2D ApiProp2d {
-      get => _prop2d;
-      set {
-        _guid = Guid.NewGuid();
-        _prop2d = value;
-        _material = new GsaMaterial(this);
-        IsReferencedById = false;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
-    internal GsaProp2d(IReadOnlyDictionary<int, Prop2D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) : this(id) {
-      if (!pDict.ContainsKey(id))
-        return;
-      _prop2d = pDict[id];
-      IsReferencedById = false;
-      // material
-      if (_prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop2d.MaterialAnalysisProperty))
-        _material.AnalysisMaterial = matDict[_prop2d.MaterialAnalysisProperty];
-      if (_prop2d.AxisProperty > 0) {
-        if (axDict != null && axDict.ContainsKey(_prop2d.AxisProperty)) {
-          Axis ax = axDict[_prop2d.AxisProperty];
-          LocalAxis = new Plane(new Point3d(
-            new Length(ax.Origin.X, LengthUnit.Meter).As(unit),
-            new Length(ax.Origin.Y, LengthUnit.Meter).As(unit),
-            new Length(ax.Origin.Z, LengthUnit.Meter).As(unit)),
-            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
-            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z)
-            );
-        }
-      }
-      _material = new GsaMaterial(this);
-    }
-
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
         return Mappings.GetProperty2D_Type(type);
@@ -225,11 +231,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private Guid _guid = Guid.NewGuid();
-    private int _id;
-    private Plane _localAxis = Plane.Unset;
-    private GsaMaterial _material = new GsaMaterial();
-    private Prop2D _prop2d = new Prop2D();
     private void CloneApiObject() {
       _prop2d = GetApiObject();
       _guid = Guid.NewGuid();

@@ -18,14 +18,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("efc2aae5-7ebf-4032-89d5-8fec8830989d");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditAnalysisTask;
+
     public EditAnalysisTask() : base("Edit Analysis Task",
-      "EditTask",
+          "EditTask",
       "Modify GSA Analysis Tasks",
       CategoryName.Name(),
       SubCategoryName.Cat4())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.EditAnalysisTask;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaAnalysisTaskParameter(),
         GsaAnalysisTaskGoo.Name,

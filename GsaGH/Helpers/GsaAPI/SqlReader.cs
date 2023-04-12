@@ -21,6 +21,8 @@ namespace GsaGH.Helpers.GsaApi {
         return s_lazy.Value;
       }
     }
+    private static readonly Lazy<MicrosoftSQLiteReader> s_lazy = new Lazy<MicrosoftSQLiteReader>(Initialize);
+
     public MicrosoftSQLiteReader() {
     }
 
@@ -326,8 +328,6 @@ namespace GsaGH.Helpers.GsaApi {
     public override object InitializeLifetimeService() {
       return null;
     }
-
-    private static readonly Lazy<MicrosoftSQLiteReader> s_lazy = new Lazy<MicrosoftSQLiteReader>(Initialize);
 
     [HandleProcessCorruptedStateExceptions] // access violation
     private static void UEHandler(object sender, UnhandledExceptionEventArgs e) {

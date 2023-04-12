@@ -11,6 +11,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers.Export {
   public partial class AssembleModelTests {
+
     [Fact]
     public void AssembleModelWithMember1dsTest() {
       string profile1 = "STD I 900 300 9 4";

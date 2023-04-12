@@ -16,14 +16,15 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0
       ? GsaModelGoo.Name
       : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.ModelParam;
+
     public GsaModelParameter() : base(new GH_InstanceDescription(
-      GsaModelGoo.Name,
+          GsaModelGoo.Name,
       GsaModelGoo.NickName,
       GsaModelGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.ModelParam;
     protected override GsaModelGoo PreferredCast(object data) {
       return data.GetType() == typeof(GsaModel)
         ? new GsaModelGoo((GsaModel)data)

@@ -16,6 +16,18 @@ namespace GsaGH.Parameters {
   ///   Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
   /// </summary>
   public class GsaElement3d {
+    private enum ApiObjectMember {
+      All,
+      Group,
+      Dummy,
+      Name,
+      OrientationAngle,
+      Offset,
+      Property,
+      Type,
+      Colour,
+    }
+
     public List<Color> Colours {
       get {
         var cols = new List<Color>();
@@ -179,6 +191,21 @@ namespace GsaGH.Parameters {
           null,
           value);
     }
+    internal List<Element> ApiElements {
+      get => _elements;
+      set => _elements = value;
+    }
+    private Mesh _displayMesh;
+    private List<Element> _elements = new List<Element>();
+    private List<List<int>> _faceInt;
+    private Guid _guid = Guid.NewGuid();
+    private List<int> _ids = new List<int>();
+    private Mesh _mesh = new Mesh();
+    private List<GsaProp3d> _props = new List<GsaProp3d>();
+    // list of face integers included in each solid mesh referring to the mesh face list
+    private List<Point3d> _topo;
+    private List<List<int>> _topoInt;
+
     public GsaElement3d() {
     }
 
@@ -196,6 +223,41 @@ namespace GsaGH.Parameters {
       _props = new List<GsaProp3d>();
       for (int i = 0; i < _mesh.Faces.Count; i++)
         _props.Add(new GsaProp3d());
+      UpdatePreview();
+    }
+
+    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProp3d prop3d) {
+      _elements = new List<Element>() {
+        element,
+      };
+      _mesh = mesh;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
+        = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
+      _topo = convertMesh.Item2;
+      _topoInt = convertMesh.Item3;
+      _faceInt = convertMesh.Item4;
+      _ids = new List<int>() {
+        id,
+      };
+      _props = new List<GsaProp3d>() {
+        prop3d,
+      };
+      UpdatePreview();
+    }
+
+    internal GsaElement3d(
+      ConcurrentDictionary<int, Element> elements,
+      Mesh mesh,
+      List<GsaProp3d> prop3ds) {
+      _elements = elements.Values.ToList();
+      _mesh = mesh;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
+        = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
+      _topo = convertMesh.Item2;
+      _topoInt = convertMesh.Item3;
+      _faceInt = convertMesh.Item4;
+      _ids = elements.Keys.ToList();
+      _props = prop3ds;
       UpdatePreview();
     }
 
@@ -272,45 +334,6 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    internal List<Element> ApiElements {
-      get => _elements;
-      set => _elements = value;
-    }
-    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProp3d prop3d) {
-      _elements = new List<Element>() {
-        element,
-      };
-      _mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
-      _topo = convertMesh.Item2;
-      _topoInt = convertMesh.Item3;
-      _faceInt = convertMesh.Item4;
-      _ids = new List<int>() {
-        id,
-      };
-      _props = new List<GsaProp3d>() {
-        prop3d,
-      };
-      UpdatePreview();
-    }
-
-    internal GsaElement3d(
-      ConcurrentDictionary<int, Element> elements,
-      Mesh mesh,
-      List<GsaProp3d> prop3ds) {
-      _elements = elements.Values.ToList();
-      _mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
-      _topo = convertMesh.Item2;
-      _topoInt = convertMesh.Item3;
-      _faceInt = convertMesh.Item4;
-      _ids = elements.Keys.ToList();
-      _props = prop3ds;
-      UpdatePreview();
-    }
-
     internal void CloneApiElements() {
       CloneApiElements(ApiObjectMember.All);
       _guid = Guid.NewGuid();
@@ -362,29 +385,8 @@ namespace GsaGH.Parameters {
       _displayMesh.RebuildNormals();
     }
 
-    private enum ApiObjectMember {
-      All,
-      Group,
-      Dummy,
-      Name,
-      OrientationAngle,
-      Offset,
-      Property,
-      Type,
-      Colour,
-    }
-
-    private Mesh _displayMesh;
-    private List<Element> _elements = new List<Element>();
-    private List<List<int>> _faceInt;
-    private Guid _guid = Guid.NewGuid();
-    private List<int> _ids = new List<int>();
-    private Mesh _mesh = new Mesh();
-    private List<GsaProp3d> _props = new List<GsaProp3d>();
-    // list of face integers included in each solid mesh referring to the mesh face list
-    private List<Point3d> _topo;
-    private List<List<int>> _topoInt; // list of topology integers referring to the topo list of points
-                                      // list of topology points for visualisation
+    // list of topology integers referring to the topo list of points
+    // list of topology points for visualisation
     private void CloneApiElements(
       ApiObjectMember memType,
       IList<int> grp = null,

@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaAnalysisCaseGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.AnalysisCaseParam;
+
     public GsaAnalysisCaseParameter() : base(new GH_InstanceDescription(GsaAnalysisCaseGoo.Name,
-                      GsaAnalysisCaseGoo.NickName,
+                          GsaAnalysisCaseGoo.NickName,
       GsaAnalysisCaseGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.AnalysisCaseParam;
 
     protected override GsaAnalysisCaseGoo PreferredCast(object data) => data.GetType() == typeof(GsaAnalysisCase)
       ? new GsaAnalysisCaseGoo((GsaAnalysisCase)data)

@@ -14,6 +14,7 @@ namespace GsaGH.Parameters {
     public static string Name => "Load";
     public static string NickName => "Ld";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaLoadGoo(GsaLoad item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {

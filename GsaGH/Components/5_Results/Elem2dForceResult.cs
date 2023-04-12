@@ -29,8 +29,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("ea42e671-710e-4fd3-a113-1724049159cf");
     public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Forces2D;
+    private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
+    private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
+
     public Elem2dForces() : base("2D Forces and Moments",
-      "Forces2D",
+                  "Forces2D",
       "2D Projected Force and Moment result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -118,7 +122,6 @@ namespace GsaGH.Components {
         .Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.Forces2D;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Force Unit",
@@ -401,8 +404,5 @@ namespace GsaGH.Components {
       _momentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
-    private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
   }
 }

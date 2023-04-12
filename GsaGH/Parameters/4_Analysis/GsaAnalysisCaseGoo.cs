@@ -13,6 +13,7 @@ namespace GsaGH.Parameters {
     public static string Name => "Analysis Case";
     public static string NickName => "ΣA";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaAnalysisCaseGoo(GsaAnalysisCase item) : base(item) { }
 
     public override bool CastFrom(object source) {

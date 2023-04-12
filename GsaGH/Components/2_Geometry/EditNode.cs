@@ -18,11 +18,19 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditNode : GH_OasysComponent,
     IGH_VariableParameterComponent {
+    private enum FoldMode {
+      GetConnected,
+      DoNotGetConnected,
+    }
+
     public override Guid ComponentGuid => new Guid("418e222d-16b8-4a8e-bb3d-98ad72b913d8");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditNode;
+    private FoldMode _mode = FoldMode.DoNotGetConnected;
+
     public EditNode() : base("Edit Node",
-      "NodeEdit",
+              "NodeEdit",
       "Modify GSA Node",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
@@ -68,7 +76,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.EditNode;
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
       => Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
 
@@ -279,12 +286,6 @@ namespace GsaGH.Components {
       }
     }
 
-    private enum FoldMode {
-      GetConnected,
-      DoNotGetConnected,
-    }
-
-    private FoldMode _mode = FoldMode.DoNotGetConnected;
     private void FlipMode(object sender, EventArgs e) {
       RecordUndoEvent("GetConnected Parameters");
       if (_mode == FoldMode.GetConnected) {

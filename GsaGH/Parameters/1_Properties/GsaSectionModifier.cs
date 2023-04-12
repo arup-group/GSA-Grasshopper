@@ -201,7 +201,13 @@ namespace GsaGH.Parameters {
           : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
       }
     }
+    internal SectionModifier _sectionModifier = new SectionModifier();
+
     public GsaSectionModifier() {
+    }
+
+    internal GsaSectionModifier(SectionModifier sectionModifier) {
+      _sectionModifier = sectionModifier;
     }
 
     public GsaSectionModifier Duplicate(bool cloneApiObject = false) {
@@ -337,11 +343,6 @@ namespace GsaGH.Parameters {
 
       string innerDesc = string.Join(" ", a.Trim(), i11.Trim(), i22.Trim(), j.Trim(), k11.Trim(), k22.Trim(), v.Trim(), mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
       return innerDesc;
-    }
-
-    internal SectionModifier _sectionModifier = new SectionModifier();
-    internal GsaSectionModifier(SectionModifier sectionModifier) {
-      _sectionModifier = sectionModifier;
     }
 
     private static bool IsAttributeModified(SectionModifierAttribute attribute) {

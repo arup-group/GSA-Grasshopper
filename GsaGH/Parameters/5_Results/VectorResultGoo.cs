@@ -24,6 +24,11 @@ namespace GsaGH.Parameters {
     public readonly IQuantity ForceValue;
     public readonly int NodeId;
     public readonly Point3d StartingPoint;
+    private Color _color = Colours.GsaDarkPurple;
+    private bool _drawArrowHead;
+    private Line _reactionForceLine;
+    private bool _showText;
+
     /// <summary>
     ///   Goo wrapper GH_Vector class for reaction force vectors.
     ///   Default color: Gsa_Purple
@@ -142,11 +147,6 @@ namespace GsaGH.Parameters {
       return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
-    private Color _color = Colours.GsaDarkPurple;
-    private bool _drawArrowHead;
-
-    private Line _reactionForceLine;
-    private bool _showText;
     private Point3d CalculateExtraEndOffsetPoint(double pixelsPerUnit, int offset) {
       var point = new Point3d(_reactionForceLine.From);
 

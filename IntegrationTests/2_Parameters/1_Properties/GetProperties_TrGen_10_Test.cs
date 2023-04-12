@@ -12,6 +12,8 @@ namespace IntegrationTests.Parameters {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetProperties_TrGen_10_Test {
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void NoRuntimeErrorTest()
       => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
@@ -204,7 +206,6 @@ namespace IntegrationTests.Parameters {
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryMem));
     }
 
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType

@@ -16,14 +16,15 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0
       ? GsaSectionModifierGoo.Name
       : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionModifierParam;
+
     public GsaSectionModifierParameter() : base(new GH_InstanceDescription(
-      GsaSectionModifierGoo.Name,
+          GsaSectionModifierGoo.Name,
       GsaSectionModifierGoo.NickName,
       GsaSectionModifierGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionModifierParam;
     protected override GsaSectionModifierGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaSectionModifier))
         return new GsaSectionModifierGoo((GsaSectionModifier)data);

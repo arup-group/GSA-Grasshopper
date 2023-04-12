@@ -19,6 +19,7 @@ namespace GsaGH.Helpers.GH {
   /// Helper class to perform some decent geometry approximations from NURBS to poly-geometry
   /// </summary>
   public class RhinoConversions {
+
     public static PolyCurve BuildArcLineCurveFromPtsAndTopoType(List<Point3d> topology, List<string> topoType = null) {
       var crvs = new PolyCurve();
 

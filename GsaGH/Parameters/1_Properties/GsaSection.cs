@@ -162,6 +162,24 @@ namespace GsaGH.Parameters {
         return new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
       }
     }
+    internal Section ApiSection {
+      get {
+        return _section;
+      }
+      set {
+        _guid = Guid.NewGuid();
+        _section = value;
+        _material = new GsaMaterial(this);
+        IsReferencedById = false;
+      }
+    }
+    internal bool IsReferencedById { get; set; } = false;
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private GsaMaterial _material = new GsaMaterial();
+    private GsaSectionModifier _modifier = new GsaSectionModifier();
+    private Section _section = new Section();
+
     public GsaSection() {
     }
 
@@ -177,6 +195,18 @@ namespace GsaGH.Parameters {
     public GsaSection(string profile, int id = 0) {
       _section.Profile = profile;
       _id = id;
+    }
+
+    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
+      if (!sDict.ContainsKey(id))
+        return;
+      _section = sDict[id];
+      IsReferencedById = false;
+      if (modDict.ContainsKey(id))
+        _modifier = new GsaSectionModifier(modDict[id]);
+      if (_section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_section.MaterialAnalysisProperty))
+        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
+      _material = new GsaMaterial(this);
     }
 
     public GsaSection Duplicate(bool cloneApiElement = false) {
@@ -201,40 +231,11 @@ namespace GsaGH.Parameters {
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
     }
 
-    internal Section ApiSection {
-      get {
-        return _section;
-      }
-      set {
-        _guid = Guid.NewGuid();
-        _section = value;
-        _material = new GsaMaterial(this);
-        IsReferencedById = false;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
-    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!sDict.ContainsKey(id))
-        return;
-      _section = sDict[id];
-      IsReferencedById = false;
-      if (modDict.ContainsKey(id))
-        _modifier = new GsaSectionModifier(modDict[id]);
-      if (_section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_section.MaterialAnalysisProperty))
-        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
-      _material = new GsaMaterial(this);
-    }
-
     internal static bool ValidProfile(string profile) {
       var test = new Section { Profile = profile };
       return test.Area != 0;
     }
 
-    private Guid _guid = Guid.NewGuid();
-    private int _id;
-    private GsaMaterial _material = new GsaMaterial();
-    private GsaSectionModifier _modifier = new GsaSectionModifier();
-    private Section _section = new Section();
     private void CloneApiObject() {
       // temp profile clone
       string prfl = _section.Profile.Replace("%", " ");

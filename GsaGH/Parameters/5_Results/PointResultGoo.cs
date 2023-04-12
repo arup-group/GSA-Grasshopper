@@ -20,8 +20,11 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Result Point";
     public readonly int NodeId;
     public readonly IQuantity Result;
+    private readonly Color _color;
+    private readonly float _size;
+
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size, int id)
-      : base(point) {
+              : base(point) {
       Result = result;
       _size = size;
       _color = color;
@@ -112,8 +115,5 @@ namespace GsaGH.Parameters {
       point.Transform(xform);
       return new PointResultGoo(point, Result, _color, _size, NodeId);
     }
-
-    private readonly Color _color;
-    private readonly float _size;
   }
 }

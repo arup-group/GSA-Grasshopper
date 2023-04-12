@@ -8,6 +8,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaSectionModifierTest {
+
     [Fact]
     public void AdditionalMassTest() {
       var modifier = new GsaSectionModifier {

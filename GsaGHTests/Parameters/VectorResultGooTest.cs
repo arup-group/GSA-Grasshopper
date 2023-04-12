@@ -13,6 +13,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class VectorResultGooTests {
+
     [Fact]
     public void WhenCreateInstance_ThenObject_ShouldNotBeNull() {
       var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, null, 0);

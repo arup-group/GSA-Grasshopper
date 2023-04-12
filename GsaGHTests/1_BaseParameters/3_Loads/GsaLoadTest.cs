@@ -11,6 +11,7 @@ using static GsaGH.Parameters.GsaNodeLoad;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaLoadTest {
+
     [Fact]
     public void BeamLoadConstructorTest() {
       var beamLoad = new GsaBeamLoad();

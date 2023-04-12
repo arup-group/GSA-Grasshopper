@@ -30,6 +30,19 @@ namespace GsaGH {
       set { s_title = value; }
     }
 
+    private static string s_calculation;
+    private static bool s_calculationByuser;
+    private static string s_initials;
+    private static bool s_initialsByuser;
+    private static string s_jobnumber;
+    private static bool s_jobnumberByuser;
+    private static string s_notes;
+    private static bool s_notesByuser;
+    private static string s_subtitle;
+    private static bool s_subtitleByuser;
+    private static string s_title;
+    private static bool s_titleByuser;
+
     public static void GetTitlesFromGsa(Model model) {
       GsaAPI.Titles titles = model.Titles();
       if (!s_calculationByuser)
@@ -75,18 +88,5 @@ namespace GsaGH {
       Titles.Title = title;
       s_titleByuser = true;
     }
-
-    private static string s_calculation;
-    private static bool s_calculationByuser;
-    private static string s_initials;
-    private static bool s_initialsByuser;
-    private static string s_jobnumber;
-    private static bool s_jobnumberByuser;
-    private static string s_notes;
-    private static bool s_notesByuser;
-    private static string s_subtitle;
-    private static bool s_subtitleByuser;
-    private static string s_title;
-    private static bool s_titleByuser;
   }
 }

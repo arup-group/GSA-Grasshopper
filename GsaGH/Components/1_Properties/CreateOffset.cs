@@ -21,8 +21,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("ba73abd3-cd48-4dd2-9cd1-d89c921dd108");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateOffset;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public CreateOffset() : base("Create Offset",
-      "Offset",
+              "Offset",
       "Create GSA Offset",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -48,7 +51,6 @@ namespace GsaGH.Components {
         .Name = "Offset Z [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.CreateOffset;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Measure",
@@ -105,7 +107,5 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

@@ -9,6 +9,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal class Elements {
+
     internal static void ConvertElement1D(GsaElement1d element1d,
         ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {

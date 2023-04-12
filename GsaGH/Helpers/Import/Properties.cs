@@ -10,6 +10,7 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Properties {
+
     /// <summary>
     /// Method to import Prop2ds from a GSA model.
     /// Will output a list of GsaProp2dGoo.

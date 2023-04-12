@@ -26,6 +26,7 @@ namespace GsaGH.Graphics {
           .CodeBase);
       }
     }
+
     public AboutBox() {
       GH_AssemblyInfo gsaPlugin
         = Instances.ComponentServer.FindAssembly(new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f"));

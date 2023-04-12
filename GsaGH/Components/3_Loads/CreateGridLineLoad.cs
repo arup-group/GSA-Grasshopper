@@ -22,8 +22,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.LineLoad;
+    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+
     public CreateGridLineLoad() : base("Create Grid Line Load",
-      "LineLoad",
+              "LineLoad",
       "Create GSA Grid Line Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
@@ -44,7 +47,6 @@ namespace GsaGH.Components {
         .Name = "Value End [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.LineLoad;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Unit",
@@ -285,7 +287,5 @@ namespace GsaGH.Components {
         = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
   }
 }

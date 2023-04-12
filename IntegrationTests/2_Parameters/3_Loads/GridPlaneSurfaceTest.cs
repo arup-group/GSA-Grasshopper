@@ -8,6 +8,8 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GridPlaneSurfaceTest {
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Theory]
     [InlineData("DefaultGpElevation", "0cm")]
     [InlineData("DefaultGpTolAbove", "auto")]
@@ -48,7 +50,6 @@ namespace IntegrationTests.Parameters {
       Helper.TestGhPrimitives(param, expected);
     }
 
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType

@@ -3,6 +3,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
   internal class PostHog {
+
     internal static void Debug(Dictionary<string, object> properties) {
       const string eventName = "Debug";
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);

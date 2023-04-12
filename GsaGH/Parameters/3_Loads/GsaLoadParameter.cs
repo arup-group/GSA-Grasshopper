@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
       => SourceCount == 0
         ? GsaLoadGoo.Name
         : base.TypeName;
+    protected override Bitmap Icon => Resources.LoadParam;
+
     public GsaLoadParameter() : base(new GH_InstanceDescription(GsaLoadGoo.Name,
-                      GsaLoadGoo.NickName,
+                          GsaLoadGoo.NickName,
       GsaLoadGoo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override Bitmap Icon => Resources.LoadParam;
 
     protected override GsaLoadGoo PreferredCast(object data) => data.GetType() == typeof(GsaLoad) ? new GsaLoadGoo((GsaLoad)data) : base.PreferredCast(data);
   }

@@ -21,7 +21,13 @@ namespace GsaGH.Parameters {
     public static string Name => "Member2D";
     public static string NickName => "M2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaMember2dGoo(GsaMember2d item) : base(item) { }
+
+    internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null)
+                                      => Value = duplicate
+        ? item.Duplicate()
+        : item;
 
     public override bool CastFrom(object source) {
       // This function is called when Grasshopper needs to convert other data
@@ -282,10 +288,5 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Transform(Transform xform)
       => new GsaMember2dGoo(Value.Transform(xform));
-
-    internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null)
-                                      => Value = duplicate
-        ? item.Duplicate()
-        : item;
   }
 }

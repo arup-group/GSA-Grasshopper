@@ -2,6 +2,7 @@
 
 namespace GsaGH.Helpers.GH {
   public static class IghActiveObjectExtension {
+
     public static void AddRuntimeError(this IGH_ActiveObject activeObject, string text)
       => activeObject.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, text);
 

@@ -16,14 +16,15 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0
       ? GsaBool6Goo.Name
       : base.TypeName;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.Bool6Param;
+
     public GsaBool6Parameter() : base(new GH_InstanceDescription(
-      GsaBool6Goo.Name,
+          GsaBool6Goo.Name,
       GsaBool6Goo.NickName,
       GsaBool6Goo.Description + " parameter",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.Bool6Param;
     protected override GsaBool6Goo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaBool6))
         return new GsaBool6Goo((GsaBool6)data);

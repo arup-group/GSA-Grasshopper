@@ -18,8 +18,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("2fb6f3b8-275b-452c-9387-bdf7ab9b7827");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ListInfo;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public ListInfo() : base("List Info",
-      "ListInfo",
+              "ListInfo",
       "Get information of like ID, Name, Type and Definition, as well as all objects (Nodes, Elements, Members or Cases) from a GSA List",
       CategoryName.Name(),
       SubCategoryName.Cat0()) { }
@@ -35,7 +38,6 @@ namespace GsaGH.Components {
       Params.Output[4].Name = "List Objects [" + unitAbbreviation + "]";
     }
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ListInfo;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[]
         {
@@ -75,7 +77,5 @@ namespace GsaGH.Components {
         DA.SetDataList(4, list.GetListObjects(_lengthUnit));
       }
     }
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

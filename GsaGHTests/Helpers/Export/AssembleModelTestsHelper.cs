@@ -10,6 +10,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers.Export {
   public partial class AssembleModelTests {
+
     internal void TestAnalysisMaterial(GsaMaterial expected, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, AnalysisMaterial> apiMaterials
         = actualModel.Model.AnalysisMaterials();

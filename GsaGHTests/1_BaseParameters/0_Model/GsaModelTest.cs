@@ -13,6 +13,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaModelTest {
+
     [Fact]
     public void GsaModelEqualsTest() {
       var original = new GsaModel();

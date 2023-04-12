@@ -8,6 +8,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal class Nodes {
+
     internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) => existNodes.AddValue(NodeFromPoint(testPoint, unit));
 
     internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) => existNodes.AddValue(node);

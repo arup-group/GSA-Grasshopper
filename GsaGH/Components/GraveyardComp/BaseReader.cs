@@ -6,6 +6,7 @@ using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components.GraveyardComp {
   internal class BaseReader {
+
     internal static bool Read(
       GH_IReader reader,
       GH_Component owner,

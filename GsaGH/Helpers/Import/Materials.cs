@@ -5,6 +5,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
   internal class Materials {
+
     internal static List<GsaMaterialGoo> GetCustomMaterials(ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials) {
       var materials = new List<GsaMaterialGoo>();
 

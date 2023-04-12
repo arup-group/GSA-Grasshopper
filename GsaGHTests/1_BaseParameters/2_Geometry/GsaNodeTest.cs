@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaNodeTest {
+
     [Fact]
     public void GsaNodeEqualsTest() {
       var original = new GsaNode();

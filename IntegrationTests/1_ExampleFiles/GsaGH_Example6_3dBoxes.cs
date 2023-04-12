@@ -10,6 +10,7 @@ namespace IntegrationTests.ExampleFiles {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class Example6_3dBoxes_Test {
+
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;

@@ -7,6 +7,7 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Topology {
+
     /// <summary>
     /// Method to split/untangle a topology list from GSA into separate lists for
     /// Topology, Voids, Inclusion lines and Inclusion points with corrosponding list for topology type.

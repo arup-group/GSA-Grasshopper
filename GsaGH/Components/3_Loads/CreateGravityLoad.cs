@@ -15,14 +15,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GravityLoad;
+
     public CreateGravityLoad() : base("Create Gravity Load",
-      "GravityLoad",
+          "GravityLoad",
       "Create GSA Gravity Load",
       CategoryName.Name(),
       SubCategoryName.Cat3())
       => Hidden = true;
 
-    protected override Bitmap Icon => Resources.GravityLoad;
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Load case",
         "LC",

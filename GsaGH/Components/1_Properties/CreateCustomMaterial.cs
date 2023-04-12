@@ -20,11 +20,28 @@ namespace GsaGH.Components {
   ///   Component to create a new Material
   /// </summary>
   public class CreateCustomMaterial : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      Generic,
+      Steel,
+      Concrete,
+      Timber,
+      Aluminium,
+      Frp,
+      Glass,
+      Fabric,
+    }
+
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CustomMaterial;
+    private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
+    private FoldMode _mode = FoldMode.Timber;
+    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
+    private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
+
     public CreateCustomMaterial() : base("Custom Material",
-      "Material",
+                          "Material",
       "Create a Custom GSA Analysis Material",
       CategoryName.Name(),
       SubCategoryName.Cat1())
@@ -71,7 +88,6 @@ namespace GsaGH.Components {
         .Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.CustomMaterial;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Material Type",
@@ -225,21 +241,5 @@ namespace GsaGH.Components {
         = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private enum FoldMode {
-      Generic,
-      Steel,
-      Concrete,
-      Timber,
-      Aluminium,
-      Frp,
-      Glass,
-      Fabric,
-    }
-
-    private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
-    private FoldMode _mode = FoldMode.Timber;
-    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
-    private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
   }
 }

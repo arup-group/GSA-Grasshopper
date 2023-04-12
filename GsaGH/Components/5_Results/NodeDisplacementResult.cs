@@ -28,8 +28,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.NodeDisplacement;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+
     public NodeDisplacement() : base("Node Displacements",
-      "NodeDisp",
+              "NodeDisp",
       "Node Translation and Rotation result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
@@ -54,7 +57,6 @@ namespace GsaGH.Components {
         .Name = "Translations |XYZ| [" + unitAbbreviation + "]";
     }
 
-    protected override Bitmap Icon => Resources.NodeDisplacement;
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Unit",
@@ -269,7 +271,5 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
   }
 }

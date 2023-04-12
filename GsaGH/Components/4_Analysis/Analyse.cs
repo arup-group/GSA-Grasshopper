@@ -28,8 +28,23 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Analyse;
+    private bool _analysis = true;
+    private List<string> _checkboxTexts = new List<string>() {
+      "Analyse task(s)",
+      "ElemsFromMems",
+    };
+    private List<bool> _initialCheckState = new List<bool>() {
+      true,
+      true,
+    };
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private bool _reMesh = true;
+    private Length _tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+
     public GhAnalyse() : base("Analyse Model",
-      "Analyse",
+                                      "Analyse",
       "Assemble and Analyse a GSA Model",
       CategoryName.Name(),
       SubCategoryName.Cat4())
@@ -121,7 +136,6 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override Bitmap Icon => Resources.Analyse;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       UpdateMessage();
@@ -329,19 +343,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private bool _analysis = true;
-    private List<string> _checkboxTexts = new List<string>() {
-      "Analyse task(s)",
-      "ElemsFromMems",
-    };
-    private List<bool> _initialCheckState = new List<bool>() {
-      true,
-      true,
-    };
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private bool _reMesh = true;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
     private void MaintainText(ToolStripItem tolerance) {
       _toleranceTxt = tolerance.Text;
       tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)

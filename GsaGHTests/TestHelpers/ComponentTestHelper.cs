@@ -9,6 +9,7 @@ using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers {
   public class ComponentTestHelper {
+
     public static object GetOutput(
       GH_Component component,
       int index = 0,

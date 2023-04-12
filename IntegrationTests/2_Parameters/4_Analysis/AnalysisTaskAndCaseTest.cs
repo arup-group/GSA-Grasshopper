@@ -10,6 +10,8 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GetCreateAnalysisTaskAndCaseTest {
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
+
     [Fact]
     public void NewCaseDescriptionsTest() {
       IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
@@ -136,7 +138,6 @@ namespace IntegrationTests.Parameters {
       Assert.Equal("Static", gsaghobject);
     }
 
-    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType

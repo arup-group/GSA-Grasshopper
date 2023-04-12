@@ -10,6 +10,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.GsaApi {
   internal partial class ResultHelper {
+
     /// <summary>
     /// Returns forces result values
     /// </summary>

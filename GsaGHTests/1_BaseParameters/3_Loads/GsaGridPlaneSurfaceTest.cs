@@ -9,6 +9,7 @@ using static GsaAPI.GridSurface;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridPlaneSurfaceTest {
+
     [Theory]
     [InlineData(0,
       0,
