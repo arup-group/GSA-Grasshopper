@@ -7,7 +7,7 @@ using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.GsaAPI {
+namespace GsaGH.Helpers.GsaApi {
   internal partial class ResultHelper {
     public static Tuple<List<string>, List<int>, DataTree<int?>> GetAvalailableResults(GsaModel model) {
       ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();

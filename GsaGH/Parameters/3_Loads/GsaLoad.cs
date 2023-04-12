@@ -15,6 +15,7 @@ namespace GsaGH.Parameters {
     Prop3d,
     Element,
     Member,
+    List
   }
 
   /// <summary>
@@ -23,6 +24,7 @@ namespace GsaGH.Parameters {
   public class GsaGravityLoad {
     internal ReferenceType _referenceType = ReferenceType.None;
     internal Guid _refObjectGuid;
+    internal GsaList _refList;
 
     public GsaGravityLoad() {
       GravityLoad.Factor = new Vector3() {
@@ -49,8 +51,14 @@ namespace GsaGH.Parameters {
       };
       if (_referenceType == ReferenceType.None)
         return dup;
-      dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-      dup._referenceType = _referenceType;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
 
       return dup;
     }
@@ -67,7 +75,7 @@ namespace GsaGH.Parameters {
     }
 
     internal Point3d _refPoint = Point3d.Unset;
-
+    internal GsaList _refList;
     public NodeLoadTypes Type;
 
     public GsaNodeLoad() => Type = NodeLoadTypes.NodeLoad;
@@ -88,6 +96,9 @@ namespace GsaGH.Parameters {
       };
       if (_refPoint != Point3d.Unset)
         dup._refPoint = new Point3d(_refPoint);
+      if (_refList != null) {
+        dup._refList = _refList.Duplicate();
+      }
       return dup;
     }
   }
@@ -95,6 +106,7 @@ namespace GsaGH.Parameters {
   public class GsaBeamLoad {
     internal ReferenceType _referenceType = ReferenceType.None;
     internal Guid _refObjectGuid;
+    internal GsaList _refList;
 
     public GsaBeamLoad()
       => BeamLoad = new BeamLoad {
@@ -143,8 +155,14 @@ namespace GsaGH.Parameters {
 
       if (_referenceType == ReferenceType.None)
         return dup;
-      dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-      dup._referenceType = _referenceType;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
 
       return dup;
     }
@@ -153,6 +171,7 @@ namespace GsaGH.Parameters {
   public class GsaFaceLoad {
     internal ReferenceType _referenceType = ReferenceType.None;
     internal Guid _refObjectGuid;
+    internal GsaList _refList;
 
     public GsaFaceLoad()
       => FaceLoad = new FaceLoad {
@@ -195,8 +214,14 @@ namespace GsaGH.Parameters {
 
       if (_referenceType == ReferenceType.None)
         return dup;
-      dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-      dup._referenceType = _referenceType;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
 
       return dup;
     }

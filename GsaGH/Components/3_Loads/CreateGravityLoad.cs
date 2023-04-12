@@ -29,6 +29,20 @@ namespace GsaGH.Components {
         }
 
         switch (ghTyp.Value) {
+          case GsaListGoo value: {
+              if (value.Value.EntityType == Parameters.EntityType.Element || value.Value.EntityType == Parameters.EntityType.Member) {
+                gravityLoad._refList = value.Value;
+                gravityLoad._referenceType = ReferenceType.List;
+              }
+              else {
+                this.AddRuntimeWarning("List must be of type Element or Member to apply to beam loading");
+              }
+              if (value.Value.EntityType == Parameters.EntityType.Member) {
+                this.AddRuntimeRemark(
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
+              break;
+            }
           case GsaElement2dGoo value: {
             gravityLoad._refObjectGuid = value.Value.Guid;
             gravityLoad._referenceType = ReferenceType.Element;

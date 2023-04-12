@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace GsaGH.Helpers.GsaAPI {
+namespace GsaGH.Helpers.GsaApi {
   /// <summary>
   /// GsaPath class holding the path to the folder containing the GSA installation.
   /// Will be modified to account for different GSA versions etc.

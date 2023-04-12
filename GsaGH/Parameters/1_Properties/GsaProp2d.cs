@@ -4,9 +4,12 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using OasysUnits.Units;
+using OasysGH;
+using System.Collections.ObjectModel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
