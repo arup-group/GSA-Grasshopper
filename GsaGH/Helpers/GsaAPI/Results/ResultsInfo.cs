@@ -32,7 +32,6 @@ namespace GsaGH.Helpers.GsaApi {
           perm.Add(null, path);
         foreach (int p in permutationsInCase)
           perm.Add(p, path);
-
       }
       return new Tuple<List<string>, List<int>, DataTree<int?>>(type, caseIds, perm);
     }

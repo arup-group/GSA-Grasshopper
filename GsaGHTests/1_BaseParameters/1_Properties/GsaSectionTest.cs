@@ -22,6 +22,15 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
+    public void TestCreateGsaSectionCat() {
+      string profile = "CAT HE HE200.B";
+      var section = new GsaSection(profile);
+
+      var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
+      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
+    }
+
+    [Fact]
     public void TestCreateSection() {
       string profile = "STD CHS 200 10";
       double myarea = Math.PI / 4 * Math.Pow(200, 2) - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2);
@@ -56,12 +65,11 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void TestCreateGsaSectionCat() {
-      string profile = "CAT HE HE200.B";
-      var section = new GsaSection(profile);
+    public void TestDuplicateEmptySection() {
+      var section = new GsaSection();
 
-      var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
+      GsaSection dup = section.Duplicate();
+      Assert.NotNull(dup);
     }
 
     [Fact]
@@ -106,14 +114,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MaterialType.TIMBER.ToString().ToPascalCase(), orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal(99, orig.Pool);
-    }
-
-    [Fact]
-    public void TestDuplicateEmptySection() {
-      var section = new GsaSection();
-
-      GsaSection dup = section.Duplicate();
-      Assert.NotNull(dup);
     }
   }
 }

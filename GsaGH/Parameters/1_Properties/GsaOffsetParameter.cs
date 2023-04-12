@@ -8,16 +8,14 @@ namespace GsaGH.Parameters {
   /// This class provides a parameter interface for the <see cref="GsaOffsetGoo"/> type.
   /// </summary>
   public class GsaOffsetParameter : GH_OasysPersistentParam<GsaOffsetGoo> {
+    public override Guid ComponentGuid => new Guid("0b14f16e-bd6a-4da7-991a-359f64aa28fd");
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override string InstanceDescription => m_data.DataCount == 0
-      ? "Empty " + GsaOffsetGoo.Name + " parameter"
+              ? "Empty " + GsaOffsetGoo.Name + " parameter"
       : base.InstanceDescription;
     public override string TypeName => SourceCount == 0
       ? GsaOffsetGoo.Name
       : base.TypeName;
-    public override Guid ComponentGuid => new Guid("0b14f16e-bd6a-4da7-991a-359f64aa28fd");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.OffsetParam;
-
     public GsaOffsetParameter() : base(new GH_InstanceDescription(
       GsaOffsetGoo.Name,
       GsaOffsetGoo.NickName,
@@ -25,6 +23,7 @@ namespace GsaGH.Parameters {
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.OffsetParam;
     protected override GsaOffsetGoo PreferredCast(object data) {
       return data.GetType() == typeof(GsaOffset)
         ? new GsaOffsetGoo((GsaOffset)data)

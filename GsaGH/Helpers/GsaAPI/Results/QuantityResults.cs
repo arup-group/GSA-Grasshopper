@@ -16,11 +16,13 @@ namespace GsaGH.Helpers.GsaApi {
       IQuantity xyz = new Force(new Force(pyth, ForceUnit.Newton).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = xyz };
     }
+
     internal static GsaResultQuantity GetQuantityResult(double result, EnergyUnit unit) {
       IQuantity x = new Energy(new Energy(result, EnergyUnit.Joule).As(unit), unit);
 
       return new GsaResultQuantity() { X = x };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Double6 result, MomentUnit unit, bool isBeam = false) {
       IQuantity xx = new Moment(new Moment(result.XX, MomentUnit.NewtonMeter).As(unit), unit);
       IQuantity yy = new Moment(new Moment(result.YY, MomentUnit.NewtonMeter).As(unit), unit);
@@ -31,6 +33,7 @@ namespace GsaGH.Helpers.GsaApi {
       IQuantity xxyyzz = new Moment(new Moment(pyth, MomentUnit.NewtonMeter).As(unit), unit);
       return new GsaResultQuantity() { X = xx, Y = yy, Z = zz, Xyz = xxyyzz };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Double6 result, LengthUnit unit) {
       IQuantity x = new Length(new Length(result.X, LengthUnit.Meter).As(unit), unit);
       IQuantity y = new Length(new Length(result.Y, LengthUnit.Meter).As(unit), unit);
@@ -39,6 +42,7 @@ namespace GsaGH.Helpers.GsaApi {
       IQuantity xyz = new Length(new Length(pyth, LengthUnit.Meter).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = xyz };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Double3 result, LengthUnit unit) {
       IQuantity x = new Length(new Length(result.X, LengthUnit.Meter).As(unit), unit);
       IQuantity y = new Length(new Length(result.Y, LengthUnit.Meter).As(unit), unit);
@@ -47,6 +51,7 @@ namespace GsaGH.Helpers.GsaApi {
       IQuantity xyz = new Length(new Length(pyth, LengthUnit.Meter).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = xyz };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Double6 result, AngleUnit unit) {
       IQuantity x;
       if (!double.IsNaN(result.XX)) // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
@@ -87,6 +92,7 @@ namespace GsaGH.Helpers.GsaApi {
         : new Angle(new Angle(pyth, AngleUnit.Radian).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = xyz };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Double6 result, PressureUnit unit, bool shear = false) {
       if (shear) {
         IQuantity x = new Pressure(new Pressure(result.XX, PressureUnit.Pascal).As(unit), unit);
@@ -105,23 +111,27 @@ namespace GsaGH.Helpers.GsaApi {
         return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = xyz };
       }
     }
+
     internal static GsaResultQuantity GetQuantityResult(Tensor2 result, ForcePerLengthUnit unit) {
       IQuantity x = new ForcePerLength(new ForcePerLength(result.XX, ForcePerLengthUnit.NewtonPerMeter).As(unit), unit);
       IQuantity y = new ForcePerLength(new ForcePerLength(result.YY, ForcePerLengthUnit.NewtonPerMeter).As(unit), unit);
       IQuantity z = new ForcePerLength(new ForcePerLength(result.XY, ForcePerLengthUnit.NewtonPerMeter).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = null };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Tensor2 result, ForceUnit unit) {
       IQuantity xx = new Force(new Force(result.XX, ForceUnit.Newton).As(unit), unit);
       IQuantity yy = new Force(new Force(result.YY, ForceUnit.Newton).As(unit), unit);
       IQuantity zz = new Force(new Force(result.XY, ForceUnit.Newton).As(unit), unit);
       return new GsaResultQuantity() { X = xx, Y = yy, Z = zz, Xyz = null };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Vector2 result, ForcePerLengthUnit unit) {
       IQuantity x = new ForcePerLength(new ForcePerLength(result.X, ForcePerLengthUnit.NewtonPerMeter).As(unit), unit);
       IQuantity y = new ForcePerLength(new ForcePerLength(result.Y, ForcePerLengthUnit.NewtonPerMeter).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = null, Xyz = null };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Tensor3 result, PressureUnit unit, bool shear = false) {
       if (shear) {
         IQuantity x = new Pressure(new Pressure(result.XY, PressureUnit.Pascal).As(unit), unit);
@@ -136,6 +146,7 @@ namespace GsaGH.Helpers.GsaApi {
         return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = null };
       }
     }
+
     internal static GsaResultQuantity GetQuantityResult(Vector3 result, MassUnit unit) {
       IQuantity x = new Mass(new Mass(result.X, MassUnit.Kilogram).As(unit), unit);
       IQuantity y = new Mass(new Mass(result.Y, MassUnit.Kilogram).As(unit), unit);
@@ -144,6 +155,7 @@ namespace GsaGH.Helpers.GsaApi {
       IQuantity xyz = new Mass(new Mass(pyth, MassUnit.Kilogram).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, Xyz = xyz };
     }
+
     internal static GsaResultQuantity GetQuantityResult(Vector3 result, AreaMomentOfInertiaUnit unit) {
       IQuantity x = new AreaMomentOfInertia(new AreaMomentOfInertia(result.X, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit), unit);
       IQuantity y = new AreaMomentOfInertia(new AreaMomentOfInertia(result.Y, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit), unit);

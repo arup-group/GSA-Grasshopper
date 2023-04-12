@@ -16,22 +16,21 @@ namespace GsaGH.Parameters {
   ///   Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
   /// </summary>
   public class GsaElement1d {
-    #region fields
-
-    internal List<Line> _previewGreenLines;
-    internal List<Line> _previewRedLines;
-
-    private int _id;
-    private Guid _guid = Guid.NewGuid();
-    private LineCurve _line = new LineCurve();
-    private GsaBool6 _rel1;
-    private GsaBool6 _rel2;
-    private GsaNode _orientationNode;
-
-    #endregion
-
-    #region properties
-
+    public Color Colour {
+      get => (Color)ApiElement.Colour;
+      set {
+        CloneApiObject();
+        ApiElement.Colour = value;
+      }
+    }
+    public int Group {
+      get => ApiElement.Group;
+      set {
+        CloneApiObject();
+        ApiElement.Group = value;
+      }
+    }
+    public Guid Guid => _guid;
     public int Id {
       get => _id;
       set {
@@ -39,9 +38,13 @@ namespace GsaGH.Parameters {
         _id = value;
       }
     }
-
-    internal GsaLocalAxes LocalAxes { get; set; } = null;
-
+    public bool IsDummy {
+      get => ApiElement.IsDummy;
+      set {
+        CloneApiObject();
+        ApiElement.IsDummy = value;
+      }
+    }
     public LineCurve Line {
       get => _line;
       set {
@@ -50,60 +53,6 @@ namespace GsaGH.Parameters {
         UpdatePreview();
       }
     }
-
-    public GsaBool6 ReleaseStart {
-      get
-        => new GsaBool6(ApiElement.GetEndRelease(0)
-          .Releases);
-      set {
-        _rel1 = value ?? new GsaBool6();
-
-        CloneApiObject();
-        ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
-        UpdatePreview();
-      }
-    }
-
-    public GsaBool6 ReleaseEnd {
-      get
-        => new GsaBool6(ApiElement.GetEndRelease(1)
-          .Releases);
-      set {
-        _rel2 = value ?? new GsaBool6();
-
-        CloneApiObject();
-        ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
-        UpdatePreview();
-      }
-    }
-
-    public GsaSection Section { get; set; } = new GsaSection();
-    internal Element ApiElement { get; set; } = new Element();
-
-    public Color Colour {
-      get => (Color)ApiElement.Colour;
-      set {
-        CloneApiObject();
-        ApiElement.Colour = value;
-      }
-    }
-
-    public int Group {
-      get => ApiElement.Group;
-      set {
-        CloneApiObject();
-        ApiElement.Group = value;
-      }
-    }
-
-    public bool IsDummy {
-      get => ApiElement.IsDummy;
-      set {
-        CloneApiObject();
-        ApiElement.IsDummy = value;
-      }
-    }
-
     public string Name {
       get => ApiElement.Name;
       set {
@@ -111,7 +60,6 @@ namespace GsaGH.Parameters {
         ApiElement.Name = value;
       }
     }
-
     public GsaOffset Offset {
       get
         => new GsaOffset(ApiElement.Offset.X1,
@@ -126,7 +74,6 @@ namespace GsaGH.Parameters {
         ApiElement.Offset.Z = value.Z.Meters;
       }
     }
-
     public Angle OrientationAngle {
       get => new Angle(ApiElement.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
       set {
@@ -134,7 +81,6 @@ namespace GsaGH.Parameters {
         ApiElement.OrientationAngle = value.Degrees;
       }
     }
-
     public GsaNode OrientationNode {
       get => _orientationNode;
       set {
@@ -142,9 +88,32 @@ namespace GsaGH.Parameters {
         _orientationNode = value;
       }
     }
-
     public int ParentMember => ApiElement.ParentMember.Member;
+    public GsaBool6 ReleaseEnd {
+      get
+        => new GsaBool6(ApiElement.GetEndRelease(1)
+          .Releases);
+      set {
+        _rel2 = value ?? new GsaBool6();
 
+        CloneApiObject();
+        ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
+        UpdatePreview();
+      }
+    }
+    public GsaBool6 ReleaseStart {
+      get
+        => new GsaBool6(ApiElement.GetEndRelease(0)
+          .Releases);
+      set {
+        _rel1 = value ?? new GsaBool6();
+
+        CloneApiObject();
+        ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
+        UpdatePreview();
+      }
+    }
+    public GsaSection Section { get; set; } = new GsaSection();
     public ElementType Type {
       get => ApiElement.Type;
       set {
@@ -152,13 +121,6 @@ namespace GsaGH.Parameters {
         ApiElement.Type = value;
       }
     }
-
-    public Guid Guid => _guid;
-
-    #endregion
-
-    #region constructors
-
     public GsaElement1d() { }
 
     public GsaElement1d(LineCurve line, int prop = 0, GsaNode orientationNode = null) {
@@ -171,6 +133,75 @@ namespace GsaGH.Parameters {
       _orientationNode = orientationNode;
       UpdatePreview();
     }
+
+    public GsaElement1d Duplicate(bool cloneApiElement = false) {
+      var dup = new GsaElement1d {
+        Id = Id,
+        ApiElement = ApiElement,
+        LocalAxes = LocalAxes,
+        _guid = new Guid(_guid.ToString()),
+      };
+      if (cloneApiElement)
+        dup.CloneApiObject();
+
+      dup._line = (LineCurve)_line.DuplicateShallow();
+      if (_rel1 != null)
+        dup._rel1 = _rel1.Duplicate();
+
+      if (_rel2 != null)
+        dup._rel2 = _rel2.Duplicate();
+
+      dup.Section = Section.Duplicate();
+      if (_orientationNode != null)
+        dup._orientationNode = _orientationNode.Duplicate();
+
+      UpdatePreview();
+      return dup;
+    }
+
+    public GsaElement1d Morph(SpaceMorph xmorph) {
+      GsaElement1d elem = Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = Line;
+      xmorph.Morph(xLn);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    public override string ToString() {
+      string idd = Id == 0
+        ? ""
+        : "ID:" + Id + " ";
+      string type = Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == Type)
+          .Key
+        + " ";
+      string pb = Section.Id > 0
+        ? "PB" + Section.Id
+        : Section.Profile;
+      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim())
+        .Trim()
+        .Replace("  ", " ");
+    }
+
+    public GsaElement1d Transform(Transform xform) {
+      GsaElement1d elem = Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    internal Element ApiElement { get; set; } = new Element();
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
 
     internal GsaElement1d(
       Element elem,
@@ -215,74 +246,6 @@ namespace GsaGH.Parameters {
       LocalAxes = new GsaLocalAxes(localAxesDict[id]);
       Section = new GsaSection(sDict, ApiElement.Property, modDict, matDict);
       UpdatePreview();
-    }
-
-    #endregion
-
-    #region methods
-
-    public GsaElement1d Duplicate(bool cloneApiElement = false) {
-      var dup = new GsaElement1d {
-        Id = Id,
-        ApiElement = ApiElement,
-        LocalAxes = LocalAxes,
-        _guid = new Guid(_guid.ToString()),
-      };
-      if (cloneApiElement)
-        dup.CloneApiObject();
-
-      dup._line = (LineCurve)_line.DuplicateShallow();
-      if (_rel1 != null)
-        dup._rel1 = _rel1.Duplicate();
-
-      if (_rel2 != null)
-        dup._rel2 = _rel2.Duplicate();
-
-      dup.Section = Section.Duplicate();
-      if (_orientationNode != null)
-        dup._orientationNode = _orientationNode.Duplicate();
-
-      UpdatePreview();
-      return dup;
-    }
-
-    public GsaElement1d Transform(Transform xform) {
-      GsaElement1d elem = Duplicate(true);
-      elem.Id = 0;
-      elem.LocalAxes = null;
-
-      LineCurve xLn = elem.Line;
-      xLn.Transform(xform);
-      elem.Line = xLn;
-
-      return elem;
-    }
-
-    public GsaElement1d Morph(SpaceMorph xmorph) {
-      GsaElement1d elem = Duplicate(true);
-      elem.Id = 0;
-      elem.LocalAxes = null;
-
-      LineCurve xLn = Line;
-      xmorph.Morph(xLn);
-      elem.Line = xLn;
-
-      return elem;
-    }
-
-    public override string ToString() {
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
-      string type = Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == Type)
-          .Key
-        + " ";
-      string pb = Section.Id > 0
-        ? "PB" + Section.Id
-        : Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim())
-        .Trim()
-        .Replace("  ", " ");
     }
 
     internal void CloneApiObject() {
@@ -341,6 +304,11 @@ namespace GsaGH.Parameters {
       }
     }
 
-    #endregion
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private LineCurve _line = new LineCurve();
+    private GsaNode _orientationNode;
+    private GsaBool6 _rel1;
+    private GsaBool6 _rel2;
   }
 }

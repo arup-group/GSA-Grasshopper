@@ -9,38 +9,6 @@ using Xunit;
 namespace GsaGHTests.Helpers.Export {
   public partial class AssembleModelTests {
     [Fact]
-    public void AssembleModelWithNodeTest() {
-      var node = new GsaNodeGoo(new GsaNode());
-      node.Value.Colour = Color.Red;
-      node.Value.Name = "name Name Name";
-      node.Value.Restraint = new GsaBool6(true,
-        true,
-        true,
-        false,
-        false,
-        true);
-      node.Value.Point = new Point3d(4, 66, -10.0802);
-      node.Value.LocalAxis = new Plane(new Point3d(1, 2, 3), new Vector3d(4, 3, 1));
-      node.Value.DamperProperty = 4;
-      node.Value.MassProperty = 3;
-      node.Value.SpringProperty = 2;
-      node.Value.Id = 42;
-
-      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
-            node,
-          },
-          null,
-          null,
-          null,
-          null,
-          null,
-          ModelUnit.Inch));
-
-      TestNode(node.Value, LengthUnit.Inch, 42, modelGoo.Value);
-    }
-
-    [Fact]
     public void AssembleModelWithNodesTest() {
       var node1 = new GsaNodeGoo(new GsaNode());
       node1.Value.Colour = Color.Red;
@@ -77,6 +45,38 @@ namespace GsaGHTests.Helpers.Export {
 
       TestNode(node1.Value, LengthUnit.Meter, 2, modelGoo.Value);
       TestNode(node2.Value, LengthUnit.Meter, 1, modelGoo.Value);
+    }
+
+    [Fact]
+    public void AssembleModelWithNodeTest() {
+      var node = new GsaNodeGoo(new GsaNode());
+      node.Value.Colour = Color.Red;
+      node.Value.Name = "name Name Name";
+      node.Value.Restraint = new GsaBool6(true,
+        true,
+        true,
+        false,
+        false,
+        true);
+      node.Value.Point = new Point3d(4, 66, -10.0802);
+      node.Value.LocalAxis = new Plane(new Point3d(1, 2, 3), new Vector3d(4, 3, 1));
+      node.Value.DamperProperty = 4;
+      node.Value.MassProperty = 3;
+      node.Value.SpringProperty = 2;
+      node.Value.Id = 42;
+
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
+        CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
+            node,
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          ModelUnit.Inch));
+
+      TestNode(node.Value, LengthUnit.Inch, 42, modelGoo.Value);
     }
   }
 }

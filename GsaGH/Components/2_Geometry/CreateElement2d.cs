@@ -15,6 +15,28 @@ namespace GsaGH.Components {
   ///   Component to create new 2D Element
   /// </summary>
   public class CreateElement2d : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    
+    public CreateElement2d() : base("Create 2D Element",
+      "Elem2D",
+      "Create GSA 2D Element",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    protected override Bitmap Icon => Resources.CreateElem2d;
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp2dParameter());
+      pManager[1]
+        .Optional = true;
+      pManager.HideParameter(0);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaElement2dParameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghmesh = new GH_Mesh();
       if (!da.GetData(0, ref ghmesh))
@@ -48,35 +70,5 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaElement2dGoo(elem));
     }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElem2d;
-
-    public CreateElement2d() : base("Create 2D Element",
-      "Elem2D",
-      "Create GSA 2D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp2dParameter());
-      pManager[1]
-        .Optional = true;
-      pManager.HideParameter(0);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaElement2dParameter());
-
-    #endregion
   }
 }

@@ -9,37 +9,6 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal class Members {
-    #region topologylist
-    private static string CreateTopology(IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
-      string topo = "";
-      if (topology == null)
-        return topo;
-      for (int j = 0; j < topology.Count; j++) {
-        if (topoType != null) {
-          if (j > 0) {
-            string topologyType = topoType[j];
-            if (topologyType == "" | topologyType == " ")
-              topo += " ";
-            else
-              topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-          }
-        }
-
-        topo += Nodes.AddNode(ref existingNodes, topology[j], unit) + " ";
-      }
-
-      return topo.Trim();
-    }
-    #endregion
-
-    private static void AddMember(int id, Guid guid, Member apiMember, ref GsaGuidDictionary<Member> apiMembers) {
-      if (id > 0)
-        apiMembers.SetValue(id, guid, apiMember);
-      else
-        apiMembers.AddValue(guid, apiMember);
-    }
-
-    #region member1d
     internal static void ConvertMember1D(GsaMember1d member1d,
         ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
@@ -77,9 +46,6 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMember1d member in member1ds.Where(member => member != null))
         ConvertMember1D(member, ref apiMembers, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
     }
-    #endregion
-
-    #region member2d
 
     internal static void ConvertMember2D(GsaMember2d member2d,
         ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
@@ -125,9 +91,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null))
         ConvertMember2D(member2d, ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
     }
-    #endregion
 
-    #region member3d
     internal static void ConvertMember3D(GsaMember3d member3d,
         ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
@@ -162,6 +126,33 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMember3d member3d in member3ds.Where(member3d => member3d != null))
         ConvertMember3D(member3d, ref apiMembers, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
     }
-    #endregion
+
+    private static void AddMember(int id, Guid guid, Member apiMember, ref GsaGuidDictionary<Member> apiMembers) {
+      if (id > 0)
+        apiMembers.SetValue(id, guid, apiMember);
+      else
+        apiMembers.AddValue(guid, apiMember);
+    }
+
+    private static string CreateTopology(IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
+      string topo = "";
+      if (topology == null)
+        return topo;
+      for (int j = 0; j < topology.Count; j++) {
+        if (topoType != null) {
+          if (j > 0) {
+            string topologyType = topoType[j];
+            if (topologyType == "" | topologyType == " ")
+              topo += " ";
+            else
+              topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
+          }
+        }
+
+        topo += Nodes.AddNode(ref existingNodes, topology[j], unit) + " ";
+      }
+
+      return topo.Trim();
+    }
   }
 }

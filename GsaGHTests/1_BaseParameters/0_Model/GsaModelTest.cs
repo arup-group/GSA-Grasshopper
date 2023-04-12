@@ -22,31 +22,6 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void TestSaveModel() {
-      var m = new GsaModel();
-      string file = GsaFile.SteelDesignSimple;
-      m.Model.Open(file);
-
-      string tempfilename = Path.GetTempPath() + "GSA-Grasshopper_temp.gwb";
-      ReturnValue returnValue = m.Model.SaveAs(tempfilename);
-
-      Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
-    }
-
-    [Fact]
-    public void TestDuplicateModel() {
-      var m = new GsaModel();
-
-      Guid originalGuid = m.Guid;
-      GsaModel clone = m.Clone();
-      Guid cloneGuid = clone.Guid;
-      Assert.NotEqual(cloneGuid, originalGuid);
-      GsaModel dup = m.Duplicate();
-      Guid dupGuid = dup.Guid;
-      Assert.Equal(dupGuid, originalGuid);
-    }
-
-    [Fact]
     public void TestCreateModelFromModel() {
       var original = new GsaModel();
       original.Model.Open(GsaFile.SteelDesignSimple);
@@ -76,6 +51,19 @@ namespace GsaGHTests.Parameters {
       Duplicates.AreEqual(original, assembled, true);
     }
 
+    [Fact]
+    public void TestDuplicateModel() {
+      var m = new GsaModel();
+
+      Guid originalGuid = m.Guid;
+      GsaModel clone = m.Clone();
+      Guid cloneGuid = clone.Guid;
+      Assert.NotEqual(cloneGuid, originalGuid);
+      GsaModel dup = m.Duplicate();
+      Guid dupGuid = dup.Guid;
+      Assert.Equal(dupGuid, originalGuid);
+    }
+
     [Theory]
     [InlineData(LengthUnit.Meter, 12800.0)]
     [InlineData(LengthUnit.Foot, 452027.734035)]
@@ -86,6 +74,18 @@ namespace GsaGHTests.Parameters {
       BoundingBox bbox = model.BoundingBox;
 
       Assert.Equal(expectedVolume, bbox.Volume, 6);
+    }
+
+    [Fact]
+    public void TestSaveModel() {
+      var m = new GsaModel();
+      string file = GsaFile.SteelDesignSimple;
+      m.Model.Open(file);
+
+      string tempfilename = Path.GetTempPath() + "GSA-Grasshopper_temp.gwb";
+      ReturnValue returnValue = m.Model.SaveAs(tempfilename);
+
+      Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
     }
   }
 }

@@ -10,74 +10,6 @@ namespace GsaGH.Parameters {
   /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop3D"/>
   /// </summary>
   public class GsaProp3d {
-    #region fields
-    private int _id;
-    private Guid _guid = Guid.NewGuid();
-    private Prop3D _prop3d = new Prop3D();
-    private GsaMaterial _material = new GsaMaterial();
-    #endregion
-
-    #region properties
-    internal Prop3D ApiProp3d {
-      get {
-        return _prop3d;
-      }
-      set {
-        _guid = Guid.NewGuid();
-        _prop3d = value;
-        _material = new GsaMaterial(this);
-        IsReferencedById = false;
-      }
-    }
-    public int Id {
-      get {
-        return _id;
-      }
-      set {
-        _guid = Guid.NewGuid();
-        _id = value;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
-    public GsaMaterial Material {
-      get {
-        return _material;
-      }
-      set {
-        _material = value;
-        if (_prop3d == null)
-          _prop3d = new Prop3D();
-        else
-          CloneApiObject();
-
-        _prop3d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
-        _prop3d.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _prop3d.MaterialGradeProperty = _material.GradeProperty;
-        IsReferencedById = false;
-      }
-    }
-    #region GsaAPI members
-    public string Name {
-      get {
-        return _prop3d.Name;
-      }
-      set {
-        CloneApiObject();
-        _prop3d.Name = value;
-        IsReferencedById = false;
-      }
-    }
-    public int MaterialId {
-      get {
-        return _prop3d.MaterialAnalysisProperty;
-      }
-      set {
-        CloneApiObject();
-        _prop3d.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _prop3d.MaterialAnalysisProperty;
-        IsReferencedById = false;
-      }
-    }
     public int AxisProperty {
       get {
         return _prop3d.AxisProperty;
@@ -100,15 +32,58 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    #endregion
     public Guid Guid {
       get {
         return _guid;
       }
     }
-    #endregion
+    public int Id {
+      get {
+        return _id;
+      }
+      set {
+        _guid = Guid.NewGuid();
+        _id = value;
+      }
+    }
+    public GsaMaterial Material {
+      get {
+        return _material;
+      }
+      set {
+        _material = value;
+        if (_prop3d == null)
+          _prop3d = new Prop3D();
+        else
+          CloneApiObject();
 
-    #region constructors
+        _prop3d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
+        _prop3d.MaterialAnalysisProperty = _material.AnalysisProperty;
+        _prop3d.MaterialGradeProperty = _material.GradeProperty;
+        IsReferencedById = false;
+      }
+    }
+    public int MaterialId {
+      get {
+        return _prop3d.MaterialAnalysisProperty;
+      }
+      set {
+        CloneApiObject();
+        _prop3d.MaterialAnalysisProperty = value;
+        _material.AnalysisProperty = _prop3d.MaterialAnalysisProperty;
+        IsReferencedById = false;
+      }
+    }
+    public string Name {
+      get {
+        return _prop3d.Name;
+      }
+      set {
+        CloneApiObject();
+        _prop3d.Name = value;
+        IsReferencedById = false;
+      }
+    }
     public GsaProp3d() {
     }
 
@@ -121,19 +96,6 @@ namespace GsaGH.Parameters {
       Material = material;
     }
 
-    internal GsaProp3d(IReadOnlyDictionary<int, Prop3D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!pDict.ContainsKey(id))
-        return;
-      _prop3d = pDict[id];
-      IsReferencedById = false;
-      // material
-      if (_prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty))
-        _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
-      _material = new GsaMaterial(this);
-    }
-    #endregion
-
-    #region methods
     public GsaProp3d Duplicate(bool cloneApiElement = false) {
       var dup = new GsaProp3d {
         _prop3d = _prop3d,
@@ -153,6 +115,33 @@ namespace GsaGH.Parameters {
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
+    internal Prop3D ApiProp3d {
+      get {
+        return _prop3d;
+      }
+      set {
+        _guid = Guid.NewGuid();
+        _prop3d = value;
+        _material = new GsaMaterial(this);
+        IsReferencedById = false;
+      }
+    }
+    internal bool IsReferencedById { get; set; } = false;
+    internal GsaProp3d(IReadOnlyDictionary<int, Prop3D> pDict, int id, IReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
+      if (!pDict.ContainsKey(id))
+        return;
+      _prop3d = pDict[id];
+      IsReferencedById = false;
+      // material
+      if (_prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty))
+        _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
+      _material = new GsaMaterial(this);
+    }
+
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private GsaMaterial _material = new GsaMaterial();
+    private Prop3D _prop3d = new Prop3D();
     private void CloneApiObject() {
       var prop = new Prop3D {
         MaterialAnalysisProperty = _prop3d.MaterialAnalysisProperty,
@@ -167,6 +156,5 @@ namespace GsaGH.Parameters {
       _prop3d = prop;
       _guid = Guid.NewGuid();
     }
-    #endregion
   }
 }

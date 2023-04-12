@@ -13,6 +13,23 @@ namespace GsaGH.Components {
   ///   Component to create a new Prop2d
   /// </summary>
   public class CreateProp3d : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
+    public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public CreateProp3d() : base("Create 3D Property",
+      "Prop3d",
+      "Create GSA 3D Property",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    protected override Bitmap Icon => Resources.CreateProp3d;
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+      => pManager.AddParameter(new GsaMaterialParameter());
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaProp3dParameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProp3d();
 
@@ -40,31 +57,5 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaProp3dGoo(prop));
     }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
-    public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp3d;
-
-    public CreateProp3d() : base("Create 3D Property",
-      "Prop3d",
-      "Create GSA 3D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaMaterialParameter());
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaProp3dParameter());
-
-    #endregion
   }
 }

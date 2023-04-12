@@ -31,9 +31,11 @@ namespace GsaGH.Components.GraveyardComp {
         case 1:
           owner.IconDisplayMode = GH_IconDisplayMode.name;
           break;
+
         case 2:
           owner.IconDisplayMode = GH_IconDisplayMode.icon;
           break;
+
         default:
           owner.IconDisplayMode = GH_IconDisplayMode.application;
           break;

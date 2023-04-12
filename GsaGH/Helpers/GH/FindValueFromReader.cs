@@ -21,8 +21,6 @@ namespace GsaGH.Helpers.GH {
       return true;
     }
 
-    #region private string helpers
-
     private static IEnumerable<string> GetNamesToCheck(string defaultValue)
       => new List<string> {
         defaultValue,
@@ -46,6 +44,5 @@ namespace GsaGH.Helpers.GH {
 
       return result;
     }
-    #endregion
   }
 }

@@ -21,6 +21,103 @@ namespace GsaGH.Components {
   ///   Component to open an existing GSA model
   /// </summary>
   public class OpenModel : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public OpenModel() : base("Open Model",
+      "Open",
+      "Open an existing GSA model",
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
+      => Hidden = true;
+
+    public override void CreateAttributes()
+      => m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
+
+    public void OpenFile() {
+      var fdi = new OpenFileDialog {
+        Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*",
+      }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
+      bool res = fdi.ShowOpenDialog();
+
+      if (!res)
+        return;
+
+      _fileName = fdi.FileName;
+
+      var panel = new GH_Panel();
+      panel.CreateAttributes();
+      panel.Attributes.Pivot = new PointF(
+        Attributes.DocObject.Attributes.Bounds.Left - panel.Attributes.Bounds.Width - 30,
+        Params.Input[0]
+          .Attributes.Pivot.Y
+        - panel.Attributes.Bounds.Height / 2);
+
+      while (Params.Input[0]
+          .Sources.Count
+        > 0) {
+        IGH_Param input = Params.Input[0]
+          .Sources[0];
+        if (Params.Input[0]
+            .Sources[0]
+            .InstanceGuid
+          == _panelGuid) {
+          panel = input as GH_Panel;
+          panel.UserText = _fileName;
+          panel.ExpireSolution(true);
+        }
+
+        Params.Input[0]
+          .RemoveSource(input);
+      }
+
+      panel.UserText = _fileName;
+      _panelGuid = panel.InstanceGuid;
+      Instances.ActiveCanvas.Document.AddObject(panel, false);
+      Params.Input[0]
+        .AddSource(panel);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      Params.OnParametersChanged();
+
+      ExpireSolution(true);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _fileName = reader.GetString("File");
+      return base.Read(reader);
+    }
+
+    public override void SetSelected(int i, int j) { }
+
+    public override void VariableParameterMaintenance() {
+      Params.Input[0]
+        .Optional = _fileName != null;
+      Params.Input[0]
+        .ClearRuntimeMessages();
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetString("File", _fileName);
+      return base.Write(writer);
+    }
+
+    protected override Bitmap Icon => Resources.OpenModel;
+    protected override void InitialiseDropdowns() { }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+      => pManager.AddGenericParameter("Filename and path",
+        "File",
+        "GSA model to open and work with."
+        + Environment.NewLine
+        + "Input either path component, a text string with path and "
+        + Environment.NewLine
+        + "filename or an existing GSA model created in Grasshopper.",
+        GH_ParamAccess.item);
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaModelParameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new Model();
       var ghTyp = new GH_ObjectWrapper();
@@ -88,13 +185,8 @@ namespace GsaGH.Components {
       }
     }
 
-    private void GetTitles(Model model) {
-      Titles.GetTitlesFromGsa(model);
-      string mes = Path.GetFileName(_fileName);
-      mes = mes.Substring(0, mes.Length - 4);
-      Message = mes;
-    }
-
+    private string _fileName;
+    private Guid _panelGuid = Guid.NewGuid();
     private static void GetUnit(ref GsaModel gsaModel) {
       // none of this works:
       // 1. save as gwa is not possible with GsaAPI
@@ -109,120 +201,11 @@ namespace GsaGH.Components {
       //gsaModel.ModelGeometryUnit = (OasysUnits.Units.LengthUnit)OasysGH.Units.Helpers.UnitsHelper.Parse(typeof(OasysUnits.Units.LengthUnit), unit);
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.OpenModel;
-
-    public OpenModel() : base("Open Model",
-      "Open",
-      "Open an existing GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
-
-    #endregion
-
-    #region Input and output
-
-    private string _fileName;
-    private Guid _panelGuid = Guid.NewGuid();
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Filename and path",
-        "File",
-        "GSA model to open and work with."
-        + Environment.NewLine
-        + "Input either path component, a text string with path and "
-        + Environment.NewLine
-        + "filename or an existing GSA model created in Grasshopper.",
-        GH_ParamAccess.item);
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter());
-
-    #endregion
-
-    #region Custom UI
-
-    public override void SetSelected(int i, int j) { }
-    protected override void InitialiseDropdowns() { }
-
-    public override void CreateAttributes()
-      => m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
-
-    public override void VariableParameterMaintenance() {
-      Params.Input[0]
-        .Optional = _fileName != null;
-      Params.Input[0]
-        .ClearRuntimeMessages();
+    private void GetTitles(Model model) {
+      Titles.GetTitlesFromGsa(model);
+      string mes = Path.GetFileName(_fileName);
+      mes = mes.Substring(0, mes.Length - 4);
+      Message = mes;
     }
-
-    public void OpenFile() {
-      var fdi = new OpenFileDialog {
-        Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*",
-      }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
-      bool res = fdi.ShowOpenDialog();
-
-      if (!res)
-        return;
-
-      _fileName = fdi.FileName;
-
-      var panel = new GH_Panel();
-      panel.CreateAttributes();
-      panel.Attributes.Pivot = new PointF(
-        Attributes.DocObject.Attributes.Bounds.Left - panel.Attributes.Bounds.Width - 30,
-        Params.Input[0]
-          .Attributes.Pivot.Y
-        - panel.Attributes.Bounds.Height / 2);
-
-      while (Params.Input[0]
-          .Sources.Count
-        > 0) {
-        IGH_Param input = Params.Input[0]
-          .Sources[0];
-        if (Params.Input[0]
-            .Sources[0]
-            .InstanceGuid
-          == _panelGuid) {
-          panel = input as GH_Panel;
-          panel.UserText = _fileName;
-          panel.ExpireSolution(true);
-        }
-
-        Params.Input[0]
-          .RemoveSource(input);
-      }
-
-      panel.UserText = _fileName;
-      _panelGuid = panel.InstanceGuid;
-      Instances.ActiveCanvas.Document.AddObject(panel, false);
-      Params.Input[0]
-        .AddSource(panel);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-
-      ExpireSolution(true);
-    }
-
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("File", _fileName);
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _fileName = reader.GetString("File");
-      return base.Read(reader);
-    }
-
-    #endregion
   }
 }

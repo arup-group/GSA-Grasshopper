@@ -15,28 +15,14 @@ namespace GsaGH.Parameters {
       UseUnmodified,
     }
 
-    internal SectionModifier _sectionModifier = new SectionModifier();
-
-    #region properties
-    public bool IsModified {
+    public LinearDensity AdditionalMass {
       get {
-        return IsAttributeModified(_sectionModifier.AreaModifier)
-               || IsAttributeModified(_sectionModifier.I11Modifier)
-               || IsAttributeModified(_sectionModifier.I22Modifier)
-               || IsAttributeModified(_sectionModifier.JModifier)
-               || IsAttributeModified(_sectionModifier.K11Modifier)
-               || IsAttributeModified(_sectionModifier.K22Modifier)
-               || IsAttributeModified(_sectionModifier.VolumeModifier)
-               || IsBendingAxesPrincipal
-               || IsReferencePointCentroid
-               || _sectionModifier.AdditionalMass != 0
-               || _sectionModifier.StressOption != SectionModifierStressType.NO_MOD;
+        return new LinearDensity(_sectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
       }
-    }
-    private static bool IsAttributeModified(SectionModifierAttribute attribute) {
-      if (attribute.Option == SectionModifierOptionType.TO)
-        return true;
-      return attribute.Value != 1;
+      set {
+        CloneApiObject();
+        _sectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
+      }
     }
     public IQuantity AreaModifier {
       get {
@@ -85,7 +71,39 @@ namespace GsaGH.Parameters {
           : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
       }
     }
-
+    public bool IsBendingAxesPrincipal {
+      get {
+        return _sectionModifier.IsBendingAxesPrincipal;
+      }
+      set {
+        CloneApiObject();
+        _sectionModifier.IsBendingAxesPrincipal = value;
+      }
+    }
+    public bool IsModified {
+      get {
+        return IsAttributeModified(_sectionModifier.AreaModifier)
+               || IsAttributeModified(_sectionModifier.I11Modifier)
+               || IsAttributeModified(_sectionModifier.I22Modifier)
+               || IsAttributeModified(_sectionModifier.JModifier)
+               || IsAttributeModified(_sectionModifier.K11Modifier)
+               || IsAttributeModified(_sectionModifier.K22Modifier)
+               || IsAttributeModified(_sectionModifier.VolumeModifier)
+               || IsBendingAxesPrincipal
+               || IsReferencePointCentroid
+               || _sectionModifier.AdditionalMass != 0
+               || _sectionModifier.StressOption != SectionModifierStressType.NO_MOD;
+      }
+    }
+    public bool IsReferencePointCentroid {
+      get {
+        return _sectionModifier.IsReferencePointCentroid;
+      }
+      set {
+        CloneApiObject();
+        _sectionModifier.IsReferencePointCentroid = value;
+      }
+    }
     public IQuantity JModifier {
       get {
         if (_sectionModifier.JModifier.Option == SectionModifierOptionType.BY)
@@ -105,23 +123,6 @@ namespace GsaGH.Parameters {
         }
       }
     }
-    public IQuantity VolumeModifier {
-      get {
-        if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY)
-          return new Ratio(_sectionModifier.VolumeModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-        else
-          return new VolumePerLength(_sectionModifier.VolumeModifier.Value, VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
-      }
-      set {
-        if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
-          throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
-        CloneApiObject();
-        _sectionModifier.VolumeModifier = value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit)
-          ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(VolumePerLengthUnit.CubicMeterPerMeter))
-          : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-      }
-    }
-
     public Ratio K11Modifier {
       get {
         return _sectionModifier.K11Modifier.Option == SectionModifierOptionType.BY
@@ -152,23 +153,15 @@ namespace GsaGH.Parameters {
           new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(RatioUnit.DecimalFraction));
       }
     }
-    public LinearDensity AdditionalMass {
-      get {
-        return new LinearDensity(_sectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
-      }
-      set {
-        CloneApiObject();
-        _sectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
-      }
-    }
-
     public StressOptionType StressOption {
       get {
         switch (_sectionModifier.StressOption) {
           case SectionModifierStressType.USE_MOD:
             return StressOptionType.UseModified;
+
           case SectionModifierStressType.USE_UNMOD:
             return StressOptionType.UseUnmodified;
+
           case SectionModifierStressType.NO_MOD:
           default:
             return StressOptionType.NoCalculation;
@@ -180,9 +173,11 @@ namespace GsaGH.Parameters {
           case StressOptionType.UseModified:
             _sectionModifier.StressOption = SectionModifierStressType.USE_MOD;
             break;
+
           case StressOptionType.UseUnmodified:
             _sectionModifier.StressOption = SectionModifierStressType.USE_UNMOD;
             break;
+
           case StressOptionType.NoCalculation:
           default:
             _sectionModifier.StressOption = SectionModifierStressType.NO_MOD;
@@ -190,54 +185,25 @@ namespace GsaGH.Parameters {
         }
       }
     }
-
-    public bool IsBendingAxesPrincipal {
+    public IQuantity VolumeModifier {
       get {
-        return _sectionModifier.IsBendingAxesPrincipal;
+        if (_sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY)
+          return new Ratio(_sectionModifier.VolumeModifier.Value, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+        else
+          return new VolumePerLength(_sectionModifier.VolumeModifier.Value, VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
       }
       set {
+        if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit) & value.QuantityInfo.UnitType != typeof(RatioUnit))
+          throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
         CloneApiObject();
-        _sectionModifier.IsBendingAxesPrincipal = value;
+        _sectionModifier.VolumeModifier = value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit)
+          ? new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(VolumePerLengthUnit.CubicMeterPerMeter))
+          : new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
       }
     }
-    public bool IsReferencePointCentroid {
-      get {
-        return _sectionModifier.IsReferencePointCentroid;
-      }
-      set {
-        CloneApiObject();
-        _sectionModifier.IsReferencePointCentroid = value;
-      }
-    }
-
-    private void CloneApiObject() {
-      var dup = new SectionModifier {
-        AreaModifier = new SectionModifierAttribute(_sectionModifier.AreaModifier.Option, _sectionModifier.AreaModifier.Value),
-        I11Modifier = new SectionModifierAttribute(_sectionModifier.I11Modifier.Option, _sectionModifier.I11Modifier.Value),
-        I22Modifier = new SectionModifierAttribute(_sectionModifier.I22Modifier.Option, _sectionModifier.I22Modifier.Value),
-        JModifier = new SectionModifierAttribute(_sectionModifier.JModifier.Option, _sectionModifier.JModifier.Value),
-        K11Modifier = new SectionModifierAttribute(_sectionModifier.K11Modifier.Option, _sectionModifier.K11Modifier.Value),
-        K22Modifier = new SectionModifierAttribute(_sectionModifier.K22Modifier.Option, _sectionModifier.K22Modifier.Value),
-        VolumeModifier = new SectionModifierAttribute(_sectionModifier.VolumeModifier.Option, _sectionModifier.VolumeModifier.Value),
-        AdditionalMass = _sectionModifier.AdditionalMass,
-        StressOption = _sectionModifier.StressOption,
-        IsBendingAxesPrincipal = _sectionModifier.IsBendingAxesPrincipal,
-        IsReferencePointCentroid = _sectionModifier.IsReferencePointCentroid
-      };
-      _sectionModifier = dup;
-    }
-    #endregion
-
-    #region constructors
     public GsaSectionModifier() {
     }
 
-    internal GsaSectionModifier(SectionModifier sectionModifier) {
-      _sectionModifier = sectionModifier;
-    }
-    #endregion
-
-    #region methods
     public GsaSectionModifier Duplicate(bool cloneApiObject = false) {
       var dup = new GsaSectionModifier {
         _sectionModifier = _sectionModifier,
@@ -354,9 +320,11 @@ namespace GsaGH.Parameters {
         case SectionModifierStressType.NO_MOD:
           stress = "X";
           break;
+
         case SectionModifierStressType.USE_MOD:
           stress += "UseModified";
           break;
+
         default:
           stress += "UseUnmodified";
           break;
@@ -370,6 +338,33 @@ namespace GsaGH.Parameters {
       string innerDesc = string.Join(" ", a.Trim(), i11.Trim(), i22.Trim(), j.Trim(), k11.Trim(), k22.Trim(), v.Trim(), mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
       return innerDesc;
     }
-    #endregion
+
+    internal SectionModifier _sectionModifier = new SectionModifier();
+    internal GsaSectionModifier(SectionModifier sectionModifier) {
+      _sectionModifier = sectionModifier;
+    }
+
+    private static bool IsAttributeModified(SectionModifierAttribute attribute) {
+      if (attribute.Option == SectionModifierOptionType.TO)
+        return true;
+      return attribute.Value != 1;
+    }
+
+    private void CloneApiObject() {
+      var dup = new SectionModifier {
+        AreaModifier = new SectionModifierAttribute(_sectionModifier.AreaModifier.Option, _sectionModifier.AreaModifier.Value),
+        I11Modifier = new SectionModifierAttribute(_sectionModifier.I11Modifier.Option, _sectionModifier.I11Modifier.Value),
+        I22Modifier = new SectionModifierAttribute(_sectionModifier.I22Modifier.Option, _sectionModifier.I22Modifier.Value),
+        JModifier = new SectionModifierAttribute(_sectionModifier.JModifier.Option, _sectionModifier.JModifier.Value),
+        K11Modifier = new SectionModifierAttribute(_sectionModifier.K11Modifier.Option, _sectionModifier.K11Modifier.Value),
+        K22Modifier = new SectionModifierAttribute(_sectionModifier.K22Modifier.Option, _sectionModifier.K22Modifier.Value),
+        VolumeModifier = new SectionModifierAttribute(_sectionModifier.VolumeModifier.Option, _sectionModifier.VolumeModifier.Value),
+        AdditionalMass = _sectionModifier.AdditionalMass,
+        StressOption = _sectionModifier.StressOption,
+        IsBendingAxesPrincipal = _sectionModifier.IsBendingAxesPrincipal,
+        IsReferencePointCentroid = _sectionModifier.IsReferencePointCentroid
+      };
+      _sectionModifier = dup;
+    }
   }
 }

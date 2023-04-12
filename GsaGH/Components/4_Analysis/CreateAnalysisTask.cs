@@ -14,6 +14,56 @@ namespace GsaGH.Components {
   ///   Component to create a GSA Analysis Task
   /// </summary>
   public class CreateAnalysisTask : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public CreateAnalysisTask() : base(
+      "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
+      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaAnalysisTaskGoo.Description,
+      CategoryName.Name(),
+      SubCategoryName.Cat4())
+      => Hidden = true;
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
+        _selectedItems[i]);
+      base.UpdateUI();
+    }
+
+    protected override Bitmap Icon => Resources.CreateAnalysisTask;
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Solver",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(new List<string>() {
+        GsaAnalysisTask.AnalysisType.Static.ToString(),
+      });
+      _selectedItems.Add(_analtype.ToString());
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Analysis Cases",
+        "ΣAs",
+        "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
+        GH_ParamAccess.list);
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaAnalysisTaskParameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       string name = _analtype.ToString();
       da.GetData(0, ref name);
@@ -64,75 +114,12 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaAnalysisTaskGoo(task));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateAnalysisTask;
-
-    public CreateAnalysisTask() : base(
-      "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
-      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaAnalysisTaskGoo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat4())
-      => Hidden = true;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Analysis Cases",
-        "ΣAs",
-        "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
-        GH_ParamAccess.list);
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaAnalysisTaskParameter());
-
-    #endregion
-
-    #region Custom UI
-
-    private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Solver",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(new List<string>() {
-        GsaAnalysisTask.AnalysisType.Static.ToString(),
-      });
-      _selectedItems.Add(_analtype.ToString());
-
-      _isInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
-        _selectedItems[i]);
-      base.UpdateUI();
-    }
-
     protected override void UpdateUIFromSelectedItems() {
       _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
         _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
-    #endregion
+    private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
   }
 }

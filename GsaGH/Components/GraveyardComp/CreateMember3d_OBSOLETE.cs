@@ -21,6 +21,62 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class CreateMember3d_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public CreateMember3d_OBSOLETE() : base("Create 3D Member",
+      "Mem3D",
+      "Create GSA Member 3D",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance()
+      => Params.Input[2]
+        .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+
+    protected override Bitmap Icon => Resources.CreateMem3d;
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      pManager.AddGeometryParameter("Solid",
+        "S",
+        "Solid Geometry - Closed Brep or Mesh",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp3dParameter());
+      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]",
+        "Ms",
+        "Targe mesh size",
+        GH_ParamAccess.item);
+
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaMember3dParameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp))
@@ -54,24 +110,25 @@ namespace GsaGH.Components {
             ghTyp.CastTo(ref prop3d);
             mem.Prop3d = prop3d;
             break;
-          case GsaMaterialGoo _: {
-            var mat = new GsaMaterial();
-            ghTyp.CastTo(ref mat);
-            prop3d = new GsaProp3d(mat);
-            mem.Prop3d = prop3d;
-            break;
-          }
-          default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
-              mem.Prop3d = new GsaProp3d(id);
-            else {
-              this.AddRuntimeError(
-                "Unable to convert PA input to a 2D Property of reference integer");
-              return;
-            }
 
-            break;
-          }
+          case GsaMaterialGoo _: {
+              var mat = new GsaMaterial();
+              ghTyp.CastTo(ref mat);
+              prop3d = new GsaProp3d(mat);
+              mem.Prop3d = prop3d;
+              break;
+            }
+          default: {
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+                mem.Prop3d = new GsaProp3d(id);
+              else {
+                this.AddRuntimeError(
+                  "Unable to convert PA input to a 2D Property of reference integer");
+                return;
+              }
+
+              break;
+            }
         }
 
       if (Params.Input[2]
@@ -82,80 +139,11 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaMember3dGoo(mem));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem3d;
-
-    public CreateMember3d_OBSOLETE() : base("Create 3D Member",
-      "Mem3D",
-      "Create GSA Member 3D",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      pManager.AddGeometryParameter("Solid",
-        "S",
-        "Solid Geometry - Closed Brep or Mesh",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]",
-        "Ms",
-        "Targe mesh size",
-        GH_ParamAccess.item);
-
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMember3dParameter());
-
-    #endregion
-
-    #region Custom UI
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Unit",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      _isInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      base.UpdateUI();
-    }
-
     protected override void UpdateUIFromSelectedItems() {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance()
-      => Params.Input[2]
-        .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
-
-    #endregion
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

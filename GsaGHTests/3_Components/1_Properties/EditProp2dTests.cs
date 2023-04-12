@@ -55,6 +55,15 @@ namespace GsaGHTests.Properties {
     }
 
     [Fact]
+    public void SetPlaneFromNewComponent() {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
+      var axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
+    }
+
+    [Fact]
     public void SetValuesFromNewComponent() {
       var prop2d = new GsaProp2d();
       GH_OasysComponent comp = ComponentMother();
@@ -120,15 +129,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal("MyPropediprop", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
       Assert.Equal("Load Panel", type.Value);
-    }
-
-    [Fact]
-    public void SetPlaneFromNewComponent() {
-      GH_OasysComponent comp = ComponentMother();
-
-      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
-      var axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
-      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
     }
   }
 }

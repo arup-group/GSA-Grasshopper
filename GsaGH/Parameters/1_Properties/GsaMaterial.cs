@@ -33,24 +33,6 @@ namespace GsaGH.Parameters {
       Barmat = 65280,
     }
 
-    #region fields
-    private int _grade = 1;
-    private Guid _guid = Guid.NewGuid();
-    private int _analProp = 0;
-    private AnalysisMaterial _analysisMaterial;
-    #endregion
-
-    #region properties
-    public MatType MaterialType { get; set; } = MatType.Undef;
-    public int GradeProperty {
-      get => _grade;
-      set {
-        _grade = value;
-        if (_grade > 0)
-          _analProp = 0;
-        _guid = Guid.NewGuid();
-      }
-    }
     public int AnalysisProperty {
       get => _analProp;
       set {
@@ -63,17 +45,17 @@ namespace GsaGH.Parameters {
         _grade = 0;
       }
     }
-    public Guid Guid => _guid;
-    internal AnalysisMaterial AnalysisMaterial {
-      get => _analysisMaterial;
+    public int GradeProperty {
+      get => _grade;
       set {
-        _analysisMaterial = value;
+        _grade = value;
+        if (_grade > 0)
+          _analProp = 0;
         _guid = Guid.NewGuid();
       }
     }
-    #endregion
-
-    #region constructors
+    public Guid Guid => _guid;
+    public MatType MaterialType { get; set; } = MatType.Undef;
     public GsaMaterial() {
     }
 
@@ -90,6 +72,39 @@ namespace GsaGH.Parameters {
     /// <param name="typeId"></param>
     public GsaMaterial(int typeId) => MaterialType = (MatType)typeId;
 
+    public GsaMaterial Duplicate() {
+      var dup = new GsaMaterial {
+        MaterialType = MaterialType,
+        _grade = _grade,
+        _analProp = _analProp,
+      };
+      if (_analProp != 0 && _analysisMaterial != null) {
+        dup.AnalysisMaterial = new AnalysisMaterial() {
+          CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
+          Density = AnalysisMaterial.Density,
+          ElasticModulus = AnalysisMaterial.ElasticModulus,
+          PoissonsRatio = AnalysisMaterial.PoissonsRatio
+        };
+      }
+      dup._guid = new Guid(_guid.ToString());
+      return dup;
+    }
+
+    public override string ToString() {
+      string type = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
+      if (_analProp != 0)
+        return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
+      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
+      return (id + type).Trim();
+    }
+
+    internal AnalysisMaterial AnalysisMaterial {
+      get => _analysisMaterial;
+      set {
+        _analysisMaterial = value;
+        _guid = Guid.NewGuid();
+      }
+    }
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
       if (section?.ApiSection == null)
         return;
@@ -128,33 +143,49 @@ namespace GsaGH.Parameters {
       }
       CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty, prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
-    #endregion
 
-    #region methods
-    public GsaMaterial Duplicate() {
-      var dup = new GsaMaterial {
-        MaterialType = MaterialType,
-        _grade = _grade,
-        _analProp = _analProp,
-      };
-      if (_analProp != 0 && _analysisMaterial != null) {
-        dup.AnalysisMaterial = new AnalysisMaterial() {
-          CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
-          Density = AnalysisMaterial.Density,
-          ElasticModulus = AnalysisMaterial.ElasticModulus,
-          PoissonsRatio = AnalysisMaterial.PoissonsRatio
-        };
+    private int _analProp = 0;
+    private AnalysisMaterial _analysisMaterial;
+    private int _grade = 1;
+    private Guid _guid = Guid.NewGuid();
+    private static MatType GetType(MaterialType materialType) {
+      MatType mType = MatType.Undef;
+
+      switch (materialType) {
+        case GsaAPI.MaterialType.GENERIC:
+          mType = MatType.Generic;
+          break;
+
+        case GsaAPI.MaterialType.STEEL:
+          mType = MatType.Steel;
+          break;
+
+        case GsaAPI.MaterialType.CONCRETE:
+          mType = MatType.Concrete;
+          break;
+
+        case GsaAPI.MaterialType.TIMBER:
+          mType = MatType.Timber;
+          break;
+
+        case GsaAPI.MaterialType.ALUMINIUM:
+          mType = MatType.Aluminium;
+          break;
+
+        case GsaAPI.MaterialType.FRP:
+          mType = MatType.Frp;
+          break;
+
+        case GsaAPI.MaterialType.GLASS:
+          mType = MatType.Glass;
+          break;
+
+        case GsaAPI.MaterialType.FABRIC:
+          mType = MatType.Fabric;
+          break;
       }
-      dup._guid = new Guid(_guid.ToString());
-      return dup;
-    }
 
-    public override string ToString() {
-      string type = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
-      if (_analProp != 0)
-        return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
-      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
-      return (id + type).Trim();
+      return mType;
     }
 
     private void CreateFromApiObject(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial) {
@@ -173,39 +204,5 @@ namespace GsaGH.Parameters {
         PoissonsRatio = analysisMaterial.PoissonsRatio
       };
     }
-
-    private static MatType GetType(MaterialType materialType) {
-      MatType mType = MatType.Undef;
-
-      switch (materialType) {
-        case GsaAPI.MaterialType.GENERIC:
-          mType = MatType.Generic;
-          break;
-        case GsaAPI.MaterialType.STEEL:
-          mType = MatType.Steel;
-          break;
-        case GsaAPI.MaterialType.CONCRETE:
-          mType = MatType.Concrete;
-          break;
-        case GsaAPI.MaterialType.TIMBER:
-          mType = MatType.Timber;
-          break;
-        case GsaAPI.MaterialType.ALUMINIUM:
-          mType = MatType.Aluminium;
-          break;
-        case GsaAPI.MaterialType.FRP:
-          mType = MatType.Frp;
-          break;
-        case GsaAPI.MaterialType.GLASS:
-          mType = MatType.Glass;
-          break;
-        case GsaAPI.MaterialType.FABRIC:
-          mType = MatType.Fabric;
-          break;
-      }
-
-      return mType;
-    }
-    #endregion
   }
 }

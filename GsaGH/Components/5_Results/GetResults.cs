@@ -17,15 +17,47 @@ namespace GsaGH.Components {
   ///   Component to select results from a GSA Model
   /// </summary>
   public class GetResult : GH_OasysComponent {
-    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
-    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
+    public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public GetResult() : base("Get Results",
+      "GetRes",
+      "Get AnalysisCase or Combination Result from an analysed GSA model",
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
+      => Hidden = true;
 
-    private Guid _modelGuid;
+    protected override Bitmap Icon => Resources.GetResults;
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+        "GSA Model",
+        "GSA",
+        "GSA model containing some results",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Result Type",
+        "T",
+        "Result type. "
+        + Environment.NewLine
+        + "Accepted inputs are: "
+        + Environment.NewLine
+        + "'AnalysisCase' or 'Combination'",
+        GH_ParamAccess.item,
+        "A");
+      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item, 1);
+      pManager.AddIntegerParameter("Permutation",
+        "P",
+        "Permutations (only applicable for combination cases).",
+        GH_ParamAccess.list);
+      pManager[3]
+        .Optional = true;
+    }
 
-    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
-      _result; // this is the cache object!
-
-    private int _tempNodeId;
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new GsaModel();
@@ -182,55 +214,14 @@ namespace GsaGH.Components {
         new GsaResultGoo(_result[new Tuple<GsaResult.CaseType, int>(resultType, caseId)]));
     }
 
-    #region Name and Ribbon Layout
+    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
+    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
 
-    public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetResults;
+    private Guid _modelGuid;
 
-    public GetResult() : base("Get Results",
-      "GetRes",
-      "Get AnalysisCase or Combination Result from an analysed GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
+      _result; // this is the cache object!
 
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some results",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Result Type",
-        "T",
-        "Result type. "
-        + Environment.NewLine
-        + "Accepted inputs are: "
-        + Environment.NewLine
-        + "'AnalysisCase' or 'Combination'",
-        GH_ParamAccess.item,
-        "A");
-      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item, 1);
-      pManager.AddIntegerParameter("Permutation",
-        "P",
-        "Permutations (only applicable for combination cases).",
-        GH_ParamAccess.list);
-      pManager[3]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
-        GH_ParamAccess.item);
-
-    #endregion
+    private int _tempNodeId;
   }
 }

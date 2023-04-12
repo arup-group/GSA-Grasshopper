@@ -20,6 +20,90 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class Elem2dFromBrep_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep",
+      "Elem2dFromBrep",
+      "Mesh a non-planar Brep",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      int i = 0;
+      Params.Input[i++]
+        .Name = "Brep [in " + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "Incl. Points or Nodes [in " + unitAbbreviation + "]";
+      Params.Input[i++]
+        .Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
+      i++;
+      Params.Input[i]
+        .Name = "Mesh Size [" + unitAbbreviation + "]";
+    }
+
+    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new string[] {
+        "Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+      pManager.AddBrepParameter("Brep [in " + unitAbbreviation + "]",
+        "B",
+        "Brep (can be non-planar)",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Incl. Points or Nodes [in " + unitAbbreviation + "]",
+        "(P)",
+        "Inclusion points or Nodes",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]",
+        "(C)",
+        "Inclusion curves or 1D Members",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]",
+        "Ms",
+        "Targe mesh size",
+        GH_ParamAccess.item,
+        0);
+
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager.HideParameter(0);
+      pManager.HideParameter(1);
+      pManager.HideParameter(2);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaElement2dParameter(),
+        "2D Elements",
+        "E2D",
+        "GSA 2D Elements",
+        GH_ParamAccess.list);
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep))
@@ -124,108 +208,11 @@ namespace GsaGH.Components {
         "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
-
-    public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep",
-      "Elem2dFromBrep",
-      "Mesh a non-planar Brep",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      pManager.AddBrepParameter("Brep [in " + unitAbbreviation + "]",
-        "B",
-        "Brep (can be non-planar)",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Incl. Points or Nodes [in " + unitAbbreviation + "]",
-        "(P)",
-        "Inclusion points or Nodes",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]",
-        "(C)",
-        "Inclusion curves or 1D Members",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]",
-        "Ms",
-        "Targe mesh size",
-        GH_ParamAccess.item,
-        0);
-
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaElement2dParameter(),
-        "2D Elements",
-        "E2D",
-        "GSA 2D Elements",
-        GH_ParamAccess.list);
-
-    #endregion
-
-    #region Custom UI
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new string[] {
-        "Unit",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      _isInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      base.UpdateUI();
-    }
-
     protected override void UpdateUIFromSelectedItems() {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      int i = 0;
-      Params.Input[i++]
-        .Name = "Brep [in " + unitAbbreviation + "]";
-      Params.Input[i++]
-        .Name = "Incl. Points or Nodes [in " + unitAbbreviation + "]";
-      Params.Input[i++]
-        .Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
-      i++;
-      Params.Input[i]
-        .Name = "Mesh Size [" + unitAbbreviation + "]";
-    }
-
-    #endregion
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
   }
 }

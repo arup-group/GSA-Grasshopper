@@ -8,16 +8,9 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal class Nodes {
-    internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
-        ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
-      if (nodes == null || nodes.Count <= 0) {
-        return;
-      }
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) => existNodes.AddValue(NodeFromPoint(testPoint, unit));
 
-      nodes = nodes.OrderByDescending(n => n.Id).ToList();
-      foreach (GsaNode node in nodes.Where(node => node != null))
-        ConvertNode(node, ref existingNodes, ref existingAxes, modelUnit);
-    }
+    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) => existNodes.AddValue(node);
 
     /// <summary>
     /// Method to convert a GsaNode to GsaAPI.Node
@@ -53,6 +46,17 @@ namespace GsaGH.Helpers.Export {
         AddNode(ref existingNodes, apiNode);
     }
 
+    internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
+                    ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
+      if (nodes == null || nodes.Count <= 0) {
+        return;
+      }
+
+      nodes = nodes.OrderByDescending(n => n.Id).ToList();
+      foreach (GsaNode node in nodes.Where(node => node != null))
+        ConvertNode(node, ref existingNodes, ref existingAxes, modelUnit);
+    }
+
     internal static Node NodeFromPoint(Point3d point, LengthUnit unit) {
       if (unit == LengthUnit.Meter) {
         var pos = new Vector3() { X = point.X, Y = point.Y, Z = point.Z };
@@ -67,8 +71,5 @@ namespace GsaGH.Helpers.Export {
         return new Node() { Position = pos };
       }
     }
-
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) => existNodes.AddValue(NodeFromPoint(testPoint, unit));
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Node node) => existNodes.AddValue(node);
   }
 }

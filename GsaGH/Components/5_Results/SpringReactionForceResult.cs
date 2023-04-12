@@ -25,141 +25,9 @@ namespace GsaGH.Components {
   ///   Component to get GSA spring reaction forces
   /// </summary>
   public class SpringReactionForce : GH_OasysDropDownComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var result = new GsaResult();
-      string nodeList = "All";
-      var ghType = new GH_String();
-      if (da.GetData(1, ref ghType))
-        GH_Convert.ToString(ghType, out nodeList, GH_Conversion.Both);
-
-      if (nodeList.ToLower() == "all" || nodeList == "")
-        nodeList = "All";
-
-      var outTransX = new DataTree<GH_UnitNumber>();
-      var outTransY = new DataTree<GH_UnitNumber>();
-      var outTransZ = new DataTree<GH_UnitNumber>();
-      var outTransXyz = new DataTree<GH_UnitNumber>();
-      var outRotX = new DataTree<GH_UnitNumber>();
-      var outRotY = new DataTree<GH_UnitNumber>();
-      var outRotZ = new DataTree<GH_UnitNumber>();
-      var outRotXyz = new DataTree<GH_UnitNumber>();
-      var outIDs = new DataTree<int>();
-
-      var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes))
-        return;
-
-      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-          case GsaResultGoo goo:
-            result = goo.Value;
-            break;
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
-        }
-
-        Tuple<List<GsaResultsValues>, List<int>> resultgetter
-          = result.SpringReactionForceValues(nodeList, _forceUnit, _momentUnit);
-        List<GsaResultsValues> vals = resultgetter.Item1;
-        List<int> sortedIDs = resultgetter.Item2;
-
-        List<int> permutations = result.SelectedPermutationIds
-          ?? new List<int>() {
-            1,
-          };
-        if (permutations.Count == 1 && permutations[0] == -1)
-          permutations = Enumerable.Range(1, vals.Count)
-            .ToList();
-
-        foreach (int perm in permutations) {
-          var path = new GH_Path(result.CaseId,
-            result.SelectedPermutationIds == null
-              ? 0
-              : perm);
-
-          var transX = new List<GH_UnitNumber>();
-          var transY = new List<GH_UnitNumber>();
-          var transZ = new List<GH_UnitNumber>();
-          var transXyz = new List<GH_UnitNumber>();
-          var rotX = new List<GH_UnitNumber>();
-          var rotY = new List<GH_UnitNumber>();
-          var rotZ = new List<GH_UnitNumber>();
-          var rotXyz = new List<GH_UnitNumber>();
-          var ids = new List<int>();
-
-          Parallel.For(0,
-            2,
-            item => // split into two tasks
-            {
-              switch (item) {
-                case 0: {
-                  foreach (int id in sortedIDs) {
-                    ids.Add(id);
-                    ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1]
-                      .XyzResults[id];
-                    GsaResultQuantity values = res[0]; // there is only one result per node
-                    transX.Add(
-                      new GH_UnitNumber(
-                        values.X.ToUnit(_forceUnit))); // use ToUnit to capture changes in dropdown
-                    transY.Add(new GH_UnitNumber(values.Y.ToUnit(_forceUnit)));
-                    transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_forceUnit)));
-                    transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_forceUnit)));
-                  }
-
-                  break;
-                }
-                case 1: {
-                  foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1]
-                      .XxyyzzResults[id])
-                    .Select(res => res[0])) {
-                    rotX.Add(new GH_UnitNumber(
-                      values.X.ToUnit(_momentUnit))); // use ToUnit to capture changes in dropdown
-                    rotY.Add(new GH_UnitNumber(values.Y.ToUnit(_momentUnit)));
-                    rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(_momentUnit)));
-                    rotXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_momentUnit)));
-                  }
-
-                  break;
-                }
-              }
-            });
-
-          outTransX.AddRange(transX, path);
-          outTransY.AddRange(transY, path);
-          outTransZ.AddRange(transZ, path);
-          outTransXyz.AddRange(transXyz, path);
-          outRotX.AddRange(rotX, path);
-          outRotY.AddRange(rotY, path);
-          outRotZ.AddRange(rotZ, path);
-          outRotXyz.AddRange(rotXyz, path);
-          outIDs.AddRange(ids, path);
-        }
-      }
-
-      da.SetDataTree(0, outTransX);
-      da.SetDataTree(1, outTransY);
-      da.SetDataTree(2, outTransZ);
-      da.SetDataTree(3, outTransXyz);
-      da.SetDataTree(4, outRotX);
-      da.SetDataTree(5, outRotY);
-      da.SetDataTree(6, outRotZ);
-      da.SetDataTree(7, outRotXyz);
-      da.SetDataTree(8, outIDs);
-
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force, "Spring");
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SpringReactionForces;
-
     public SpringReactionForce() : base("Spring Forces",
       "SpringForce",
       "Spring Reaction Force result values",
@@ -167,9 +35,61 @@ namespace GsaGH.Components {
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    #endregion
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      switch (i) {
+        case 0:
+          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[i]);
+          break;
 
-    #region Input and output
+        case 1:
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[i]);
+          break;
+      }
+
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
+      string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
+      int i = 0;
+      Params.Output[i++]
+        .Name = "Force X [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Force Y [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Force Z [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Moment XX [" + momentunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Moment YY [" + momentunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Moment ZZ [" + momentunitAbbreviation + "]";
+      Params.Output[i]
+        .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+    }
+
+    protected override Bitmap Icon => Resources.SpringReactionForces;
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Force Unit",
+        "Moment Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
+      _selectedItems.Add(Moment.GetAbbreviation(_momentUnit));
+
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(),
@@ -242,43 +162,134 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
+      string nodeList = "All";
+      var ghType = new GH_String();
+      if (da.GetData(1, ref ghType))
+        GH_Convert.ToString(ghType, out nodeList, GH_Conversion.Both);
 
-    #region Custom UI
+      if (nodeList.ToLower() == "all" || nodeList == "")
+        nodeList = "All";
 
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+      var outTransX = new DataTree<GH_UnitNumber>();
+      var outTransY = new DataTree<GH_UnitNumber>();
+      var outTransZ = new DataTree<GH_UnitNumber>();
+      var outTransXyz = new DataTree<GH_UnitNumber>();
+      var outRotX = new DataTree<GH_UnitNumber>();
+      var outRotY = new DataTree<GH_UnitNumber>();
+      var outRotZ = new DataTree<GH_UnitNumber>();
+      var outRotXyz = new DataTree<GH_UnitNumber>();
+      var outIDs = new DataTree<int>();
 
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Force Unit",
-        "Moment Unit",
-      });
+      var ghTypes = new List<GH_ObjectWrapper>();
+      if (!da.GetDataList(0, ghTypes))
+        return;
 
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
+      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
+        switch (ghTyp?.Value) {
+          case null:
+            this.AddRuntimeWarning("Input is null");
+            return;
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
+          case GsaResultGoo goo:
+            result = goo.Value;
+            break;
 
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
-      _selectedItems.Add(Moment.GetAbbreviation(_momentUnit));
+          default:
+            this.AddRuntimeError("Error converting input to GSA Result");
+            return;
+        }
 
-      _isInitialised = true;
-    }
+        Tuple<List<GsaResultsValues>, List<int>> resultgetter
+          = result.SpringReactionForceValues(nodeList, _forceUnit, _momentUnit);
+        List<GsaResultsValues> vals = resultgetter.Item1;
+        List<int> sortedIDs = resultgetter.Item2;
 
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      switch (i) {
-        case 0:
-          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[i]);
-          break;
-        case 1:
-          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[i]);
-          break;
+        List<int> permutations = result.SelectedPermutationIds
+          ?? new List<int>() {
+            1,
+          };
+        if (permutations.Count == 1 && permutations[0] == -1)
+          permutations = Enumerable.Range(1, vals.Count)
+            .ToList();
+
+        foreach (int perm in permutations) {
+          var path = new GH_Path(result.CaseId,
+            result.SelectedPermutationIds == null
+              ? 0
+              : perm);
+
+          var transX = new List<GH_UnitNumber>();
+          var transY = new List<GH_UnitNumber>();
+          var transZ = new List<GH_UnitNumber>();
+          var transXyz = new List<GH_UnitNumber>();
+          var rotX = new List<GH_UnitNumber>();
+          var rotY = new List<GH_UnitNumber>();
+          var rotZ = new List<GH_UnitNumber>();
+          var rotXyz = new List<GH_UnitNumber>();
+          var ids = new List<int>();
+
+          Parallel.For(0,
+            2,
+            item => // split into two tasks
+            {
+              switch (item) {
+                case 0: {
+                    foreach (int id in sortedIDs) {
+                      ids.Add(id);
+                      ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1]
+                        .XyzResults[id];
+                      GsaResultQuantity values = res[0]; // there is only one result per node
+                      transX.Add(
+                        new GH_UnitNumber(
+                          values.X.ToUnit(_forceUnit))); // use ToUnit to capture changes in dropdown
+                      transY.Add(new GH_UnitNumber(values.Y.ToUnit(_forceUnit)));
+                      transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_forceUnit)));
+                      transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_forceUnit)));
+                    }
+
+                    break;
+                  }
+                case 1: {
+                    foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1]
+                        .XxyyzzResults[id])
+                      .Select(res => res[0])) {
+                      rotX.Add(new GH_UnitNumber(
+                        values.X.ToUnit(_momentUnit))); // use ToUnit to capture changes in dropdown
+                      rotY.Add(new GH_UnitNumber(values.Y.ToUnit(_momentUnit)));
+                      rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(_momentUnit)));
+                      rotXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_momentUnit)));
+                    }
+
+                    break;
+                  }
+              }
+            });
+
+          outTransX.AddRange(transX, path);
+          outTransY.AddRange(transY, path);
+          outTransZ.AddRange(transZ, path);
+          outTransXyz.AddRange(transXyz, path);
+          outRotX.AddRange(rotX, path);
+          outRotY.AddRange(rotY, path);
+          outRotZ.AddRange(rotZ, path);
+          outRotXyz.AddRange(rotXyz, path);
+          outIDs.AddRange(ids, path);
+        }
       }
 
-      base.UpdateUI();
+      da.SetDataTree(0, outTransX);
+      da.SetDataTree(1, outTransY);
+      da.SetDataTree(2, outTransZ);
+      da.SetDataTree(3, outTransXyz);
+      da.SetDataTree(4, outRotX);
+      da.SetDataTree(5, outRotY);
+      da.SetDataTree(6, outRotZ);
+      da.SetDataTree(7, outRotXyz);
+      da.SetDataTree(8, outIDs);
+
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force, "Spring");
     }
 
     protected override void UpdateUIFromSelectedItems() {
@@ -287,28 +298,7 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance() {
-      string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
-      string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
-      int i = 0;
-      Params.Output[i++]
-        .Name = "Force X [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i]
-        .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
-    }
-
-    #endregion
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
   }
 }

@@ -14,26 +14,32 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d> {
-    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
-
-    internal GsaMember1dGoo(GsaMember1d item, bool duplicate) : base(null)
-      => Value = duplicate
-        ? item.Duplicate()
-        : item;
-
+    public static string Description => "GSA 1D Member";
     public static string Name => "Member1D";
     public static string NickName => "M1D";
-    public static string Description => "GSA 1D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaMember1dGoo(Value);
-    public override GeometryBase GetGeometry() => Value.PolyCurve;
+    public override bool CastFrom(object source) {
+      // This function is called when Grasshopper needs to convert other data
+      // into GsaMember.
+      if (source == null)
+        return false;
 
-    #region casting methods
+      if (base.CastFrom(source))
+        return true;
+
+      Curve crv = null;
+      if (!GH_Convert.ToCurve(source, ref crv, GH_Conversion.Both))
+        return false;
+      var member = new GsaMember1d(crv);
+      Value = member;
+      return true;
+    }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaMember into some other type Q.            
+      // This function is called when Grasshopper needs to convert this
+      // instance of GsaMember into some other type Q.
       if (base.CastTo(ref target))
         return true;
 
@@ -113,38 +119,6 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaMember.
-      if (source == null)
-        return false;
-
-      if (base.CastFrom(source))
-        return true;
-
-      Curve crv = null;
-      if (!GH_Convert.ToCurve(source, ref crv, GH_Conversion.Both))
-        return false;
-      var member = new GsaMember1d(crv);
-      Value = member;
-      return true;
-
-    }
-
-    #endregion
-
-    #region transformation methods
-
-    public override IGH_GeometricGoo Transform(Transform xform)
-      => new GsaMember1dGoo(Value.Transform(xform));
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaMember1dGoo(Value.Morph(xmorph));
-
-    #endregion
-
-    #region drawing methods
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
     }
 
@@ -208,6 +182,19 @@ namespace GsaGH.Parameters {
         args.Pipeline.DrawLine(ln2, Colours.Release);
     }
 
-    #endregion
+    public override IGH_GeometricGoo Duplicate() => new GsaMember1dGoo(Value);
+
+    public override GeometryBase GetGeometry() => Value.PolyCurve;
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+      => new GsaMember1dGoo(Value.Morph(xmorph));
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaMember1dGoo(Value.Transform(xform));
+
+    internal GsaMember1dGoo(GsaMember1d item, bool duplicate) : base(null)
+                                      => Value = duplicate
+        ? item.Duplicate()
+        : item;
   }
 }

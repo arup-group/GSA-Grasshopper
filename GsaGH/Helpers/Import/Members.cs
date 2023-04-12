@@ -77,7 +77,6 @@ namespace GsaGH.Helpers.Import {
 
           if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
               mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE) {
-
             if (topopts.Count < 2) {
               string error = " Invalid topology Mem1D ID: " + key + ".";
               owner?.AddRuntimeWarning(error);

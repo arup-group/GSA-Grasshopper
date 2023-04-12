@@ -14,6 +14,65 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class EditSection_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("27dcadbd-4735-4110-8c30-931b37ec5f5a");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public EditSection_OBSOLETE() : base("Edit Section",
+      "SectionEdit",
+      "Modify GSA Section",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    protected override Bitmap Icon => Resources.EditSection;
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Section",
+        "PB",
+        "GSA Section to get or set information for",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Section Number",
+        "ID",
+        "Set Section Number. If ID is set it will replace any existing 2D Property in the model",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Section Profile",
+        "Pf",
+        "Profile name following GSA naming convention (eg 'STD I 1000 500 15 25')",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Material",
+        "Ma",
+        "Set GSA Material or reference existing material by ID",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
+      pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
+      pManager.AddColourParameter("Section Colour",
+        "Co",
+        "Set Section colour",
+        GH_ParamAccess.item);
+
+      for (int i = 0; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("Section",
+        "PB",
+        "GSA Section with changes",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Section Number",
+        "ID",
+        "Original Section number (ID) if Section ever belonged to a GSA Model",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Section Profile",
+        "Pf",
+        "Profile describtion",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Section Pool", "Po", "Section pool", GH_ParamAccess.item);
+      pManager.AddTextParameter("Section Name", "Na", "Section name", GH_ParamAccess.item);
+      pManager.AddColourParameter("Section Colour", "Co", "Section colour", GH_ParamAccess.item);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var sect = new GsaSection();
       var gsaSection = new GsaSection();
@@ -82,73 +141,5 @@ namespace GsaGH.Components {
       da.SetData(5, nm);
       da.SetData(6, colour);
     }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("27dcadbd-4735-4110-8c30-931b37ec5f5a");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditSection;
-
-    public EditSection_OBSOLETE() : base("Edit Section",
-      "SectionEdit",
-      "Modify GSA Section",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Section",
-        "PB",
-        "GSA Section to get or set information for",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Section Number",
-        "ID",
-        "Set Section Number. If ID is set it will replace any existing 2D Property in the model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Section Profile",
-        "Pf",
-        "Profile name following GSA naming convention (eg 'STD I 1000 500 15 25')",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material",
-        "Ma",
-        "Set GSA Material or reference existing material by ID",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
-      pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
-      pManager.AddColourParameter("Section Colour",
-        "Co",
-        "Set Section colour",
-        GH_ParamAccess.item);
-
-      for (int i = 0; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Section",
-        "PB",
-        "GSA Section with changes",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Section Number",
-        "ID",
-        "Original Section number (ID) if Section ever belonged to a GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Section Profile",
-        "Pf",
-        "Profile describtion",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Section Pool", "Po", "Section pool", GH_ParamAccess.item);
-      pManager.AddTextParameter("Section Name", "Na", "Section name", GH_ParamAccess.item);
-      pManager.AddColourParameter("Section Colour", "Co", "Section colour", GH_ParamAccess.item);
-    }
-
-    #endregion
   }
 }

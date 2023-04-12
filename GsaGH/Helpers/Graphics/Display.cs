@@ -7,7 +7,7 @@ using Rhino.Geometry.Collections;
 
 namespace GsaGH.Helpers.Graphics {
   /// <summary>
-  /// Colour class holding the main colours used in colour scheme. 
+  /// Colour class holding the main colours used in colour scheme.
   /// Make calls to this class to be able to easy update colours.
   /// </summary>
   internal class Display {
@@ -513,6 +513,34 @@ namespace GsaGH.Helpers.Graphics {
       return new Tuple<List<Line>, List<Line>>(greenLines20, redLines10);
     }
 
+    public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts) {
+      MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;
+      if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count)
+        solidMesh.FaceNormals.ComputeFaceNormals();
+
+      hiddenLines = new List<Polyline>();
+      edgeLines = new List<Line>();
+      for (int i = 0; i < alledges.Count; i++) {
+        int[] faceId = alledges.GetConnectedFaces(i);
+        Vector3d vec1 = solidMesh.FaceNormals[faceId[0]];
+        Vector3d vec2 = solidMesh.FaceNormals[faceId[1]];
+        vec1.Unitize();
+        vec2.Unitize();
+        if (!vec1.Equals(vec2) || faceId.Length > 2) {
+          edgeLines.Add(alledges.EdgeLine(i));
+        }
+        else {
+          var hidden = new Polyline {
+            alledges.EdgeLine(i).PointAt(0),
+            alledges.EdgeLine(i).PointAt(1)
+          };
+          hiddenLines.Add(hidden);
+        }
+      }
+
+      pts = new List<Point3d>(solidMesh.Vertices.ToPoint3dArray());
+    }
+
     public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text) {
       if (restraint.X & restraint.Y & restraint.Z &
           !restraint.Xx & !restraint.Yy & !restraint.Zz) {
@@ -552,34 +580,6 @@ namespace GsaGH.Helpers.Graphics {
           VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top,
         };
       }
-    }
-
-    public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts) {
-      MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;
-      if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count)
-        solidMesh.FaceNormals.ComputeFaceNormals();
-
-      hiddenLines = new List<Polyline>();
-      edgeLines = new List<Line>();
-      for (int i = 0; i < alledges.Count; i++) {
-        int[] faceId = alledges.GetConnectedFaces(i);
-        Vector3d vec1 = solidMesh.FaceNormals[faceId[0]];
-        Vector3d vec2 = solidMesh.FaceNormals[faceId[1]];
-        vec1.Unitize();
-        vec2.Unitize();
-        if (!vec1.Equals(vec2) || faceId.Length > 2) {
-          edgeLines.Add(alledges.EdgeLine(i));
-        }
-        else {
-          var hidden = new Polyline {
-            alledges.EdgeLine(i).PointAt(0),
-            alledges.EdgeLine(i).PointAt(1)
-          };
-          hiddenLines.Add(hidden);
-        }
-      }
-
-      pts = new List<Point3d>(solidMesh.Vertices.ToPoint3dArray());
     }
   }
 }

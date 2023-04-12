@@ -23,170 +23,29 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditMember2d3_OBSOLETE : GH_OasysComponent,
     IGH_VariableParameterComponent {
-    private AngleUnit _angleUnit = AngleUnit.Radian;
+    public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public EditMember2d3_OBSOLETE() : base("Edit 2D Member",
+      "Mem2dEdit",
+      "Modify GSA 2D Member",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember2d = new GsaMember2d();
-      var mem = new GsaMember2d();
-      if (da.GetData(0, ref gsaMember2d)) {
-        if (gsaMember2d == null) {
-          this.AddRuntimeWarning("Member2D input is null");
-          return;
-        }
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+      => false;
 
-        mem = gsaMember2d.Duplicate(true);
-      }
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+      => false;
 
-      if (mem == null)
-        return;
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+      => null;
 
-      var ghId = new GH_Integer();
-      if (da.GetData(1, ref ghId))
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
-          mem.Id = id;
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
 
-      Brep brep = mem.Brep;
-      var ghbrep = new GH_Brep();
-      var crvlist = new CurveList(mem.InclusionLines ?? new List<PolyCurve>());
-      var crvs = crvlist.ToList();
-      var ghcrvs = new List<GH_Curve>();
-      var ghpts = new List<GH_Point>();
-      List<Point3d> pts = mem.InclusionPoints;
+    public void VariableParameterMaintenance() { }
 
-      if ((da.GetData(2, ref ghbrep))
-        || (da.GetDataList(3, ghpts))
-        || (da.GetDataList(4, ghcrvs))) {
-        if (da.GetData(2, ref ghbrep))
-          GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
-
-        ghpts = new List<GH_Point>();
-        if (da.GetDataList(3, ghpts)) {
-          pts = new List<Point3d>();
-          foreach (GH_Point ghPoint in ghpts) {
-            var pt = new Point3d();
-            if (GH_Convert.ToPoint3d(ghPoint, ref pt, GH_Conversion.Both))
-              pts.Add(pt);
-          }
-        }
-
-        ghcrvs = new List<GH_Curve>();
-        if (da.GetDataList(4, ghcrvs)) {
-          crvs = new List<Curve>();
-          foreach (GH_Curve curve in ghcrvs) {
-            Curve crv = null;
-            if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both))
-              crvs.Add(crv);
-          }
-        }
-
-        mem = mem.UpdateGeometry(brep, crvs, pts);
-      }
-
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(5, ref ghTyp)) {
-        var prop2d = new GsaProp2d();
-        if (ghTyp.Value is GsaProp2dGoo)
-          ghTyp.CastTo(ref prop2d);
-        else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
-            prop2d = new GsaProp2d(id);
-          else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 2D Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Property = prop2d;
-      }
-
-      var ghgrp = new GH_Integer();
-      if (da.GetData(6, ref ghgrp))
-        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-          mem.Group = grp;
-
-      var ghstring = new GH_String();
-      if (da.GetData(7, ref ghstring)) {
-        if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
-          mem.Type = (MemberType)typeInt;
-        else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
-          try {
-            mem.Type = Mappings.GetMemberType(typestring);
-          }
-          catch (ArgumentException) {
-            this.AddRuntimeError("Unable to change Member Type");
-          }
-      }
-
-      ghstring = new GH_String();
-      if (da.GetData(8, ref ghstring)) {
-        if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
-          mem.Type2D = (AnalysisOrder)typeInt;
-        else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
-          try {
-            mem.Type2D = Mappings.GetAnalysisOrder(typestring);
-          }
-          catch (ArgumentException) {
-            this.AddRuntimeError("Unable to change Analysis Element Type");
-          }
-      }
-
-      var offset = new GsaOffset();
-      if (da.GetData(9, ref offset))
-        mem.Offset = offset;
-
-      double meshSize = 0;
-      if (da.GetData(10, ref meshSize))
-        mem.MeshSize = meshSize;
-
-      var ghbool = new GH_Boolean();
-      if (da.GetData(11, ref ghbool))
-        if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
-          mem.MeshWithOthers = mbool;
-
-      var ghangle = new GH_Number();
-      if (da.GetData(12, ref ghangle))
-        if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-          mem.OrientationAngle = new Angle(angle, _angleUnit);
-
-      var ghnm = new GH_String();
-      if (da.GetData(13, ref ghnm))
-        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-          mem.Name = name;
-
-      var ghcol = new GH_Colour();
-      if (da.GetData(14, ref ghcol))
-        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
-          mem.Colour = col;
-
-      var ghdum = new GH_Boolean();
-      if (da.GetData(15, ref ghdum))
-        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-          mem.IsDummy = dum;
-
-      da.SetData(0, new GsaMember2dGoo(mem));
-      da.SetData(1, mem.Id);
-      da.SetData(2, mem.Brep);
-      da.SetDataList(3, mem.InclusionPoints);
-      da.SetDataList(4, mem.InclusionLines);
-      da.SetData(5, new GsaProp2dGoo(mem.Property));
-      da.SetData(6, mem.Group);
-      da.SetData(7,
-        Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type)
-          .Key);
-      da.SetData(8,
-        Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D)
-          .Key);
-      da.SetData(9, new GsaOffsetGoo(mem.Offset));
-      da.SetData(10, mem.MeshSize);
-      da.SetData(11, mem.MeshWithOthers);
-      da.SetData(12, mem.OrientationAngle.Radians);
-      da.SetData(13, mem.Name);
-      da.SetData(14, mem.Colour);
-      da.SetData(15, mem.IsDummy);
-      da.SetData(16, mem.ApiMember.Topology);
-    }
-
+    protected override Bitmap Icon => Resources.EditMem2d;
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (Params.Input[12] is Param_Number angleParameter)
@@ -194,23 +53,6 @@ namespace GsaGH.Components {
           ? AngleUnit.Degree
           : AngleUnit.Radian;
     }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem2d;
-
-    public EditMember2d3_OBSOLETE() : base("Edit 2D Member",
-      "Mem2dEdit",
-      "Modify GSA 2D Member",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember2dParameter(),
@@ -375,23 +217,168 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaMember2d = new GsaMember2d();
+      var mem = new GsaMember2d();
+      if (da.GetData(0, ref gsaMember2d)) {
+        if (gsaMember2d == null) {
+          this.AddRuntimeWarning("Member2D input is null");
+          return;
+        }
 
-    #region IGH_VariableParameterComponent null implementation
+        mem = gsaMember2d.Duplicate(true);
+      }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
+      if (mem == null)
+        return;
 
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
+      var ghId = new GH_Integer();
+      if (da.GetData(1, ref ghId))
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+          mem.Id = id;
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
+      Brep brep = mem.Brep;
+      var ghbrep = new GH_Brep();
+      var crvlist = new CurveList(mem.InclusionLines ?? new List<PolyCurve>());
+      var crvs = crvlist.ToList();
+      var ghcrvs = new List<GH_Curve>();
+      var ghpts = new List<GH_Point>();
+      List<Point3d> pts = mem.InclusionPoints;
 
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+      if ((da.GetData(2, ref ghbrep))
+        || (da.GetDataList(3, ghpts))
+        || (da.GetDataList(4, ghcrvs))) {
+        if (da.GetData(2, ref ghbrep))
+          GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
 
-    public void VariableParameterMaintenance() { }
+        ghpts = new List<GH_Point>();
+        if (da.GetDataList(3, ghpts)) {
+          pts = new List<Point3d>();
+          foreach (GH_Point ghPoint in ghpts) {
+            var pt = new Point3d();
+            if (GH_Convert.ToPoint3d(ghPoint, ref pt, GH_Conversion.Both))
+              pts.Add(pt);
+          }
+        }
 
-    #endregion
+        ghcrvs = new List<GH_Curve>();
+        if (da.GetDataList(4, ghcrvs)) {
+          crvs = new List<Curve>();
+          foreach (GH_Curve curve in ghcrvs) {
+            Curve crv = null;
+            if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both))
+              crvs.Add(crv);
+          }
+        }
+
+        mem = mem.UpdateGeometry(brep, crvs, pts);
+      }
+
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(5, ref ghTyp)) {
+        var prop2d = new GsaProp2d();
+        if (ghTyp.Value is GsaProp2dGoo)
+          ghTyp.CastTo(ref prop2d);
+        else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+            prop2d = new GsaProp2d(id);
+          else {
+            this.AddRuntimeError(
+              "Unable to convert PA input to a 2D Property of reference integer");
+            return;
+          }
+        }
+
+        mem.Property = prop2d;
+      }
+
+      var ghgrp = new GH_Integer();
+      if (da.GetData(6, ref ghgrp))
+        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
+          mem.Group = grp;
+
+      var ghstring = new GH_String();
+      if (da.GetData(7, ref ghstring)) {
+        if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
+          mem.Type = (MemberType)typeInt;
+        else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          try {
+            mem.Type = Mappings.GetMemberType(typestring);
+          }
+          catch (ArgumentException) {
+            this.AddRuntimeError("Unable to change Member Type");
+          }
+      }
+
+      ghstring = new GH_String();
+      if (da.GetData(8, ref ghstring)) {
+        if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
+          mem.Type2D = (AnalysisOrder)typeInt;
+        else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          try {
+            mem.Type2D = Mappings.GetAnalysisOrder(typestring);
+          }
+          catch (ArgumentException) {
+            this.AddRuntimeError("Unable to change Analysis Element Type");
+          }
+      }
+
+      var offset = new GsaOffset();
+      if (da.GetData(9, ref offset))
+        mem.Offset = offset;
+
+      double meshSize = 0;
+      if (da.GetData(10, ref meshSize))
+        mem.MeshSize = meshSize;
+
+      var ghbool = new GH_Boolean();
+      if (da.GetData(11, ref ghbool))
+        if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
+          mem.MeshWithOthers = mbool;
+
+      var ghangle = new GH_Number();
+      if (da.GetData(12, ref ghangle))
+        if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
+          mem.OrientationAngle = new Angle(angle, _angleUnit);
+
+      var ghnm = new GH_String();
+      if (da.GetData(13, ref ghnm))
+        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+          mem.Name = name;
+
+      var ghcol = new GH_Colour();
+      if (da.GetData(14, ref ghcol))
+        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both))
+          mem.Colour = col;
+
+      var ghdum = new GH_Boolean();
+      if (da.GetData(15, ref ghdum))
+        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
+          mem.IsDummy = dum;
+
+      da.SetData(0, new GsaMember2dGoo(mem));
+      da.SetData(1, mem.Id);
+      da.SetData(2, mem.Brep);
+      da.SetDataList(3, mem.InclusionPoints);
+      da.SetDataList(4, mem.InclusionLines);
+      da.SetData(5, new GsaProp2dGoo(mem.Property));
+      da.SetData(6, mem.Group);
+      da.SetData(7,
+        Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type)
+          .Key);
+      da.SetData(8,
+        Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D)
+          .Key);
+      da.SetData(9, new GsaOffsetGoo(mem.Offset));
+      da.SetData(10, mem.MeshSize);
+      da.SetData(11, mem.MeshWithOthers);
+      da.SetData(12, mem.OrientationAngle.Radians);
+      da.SetData(13, mem.Name);
+      da.SetData(14, mem.Colour);
+      da.SetData(15, mem.IsDummy);
+      da.SetData(16, mem.ApiMember.Topology);
+    }
+
+    private AngleUnit _angleUnit = AngleUnit.Radian;
   }
 }

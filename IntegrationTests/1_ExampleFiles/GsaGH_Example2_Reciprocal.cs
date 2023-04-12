@@ -32,14 +32,14 @@ namespace IntegrationTests.ExampleFiles {
     }
 
     [Fact]
+    public void NoRuntimeErrorsTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+
+    [Fact]
     public void SumLoadForceAssert() {
       IGH_Param param = Helper.FindParameter(Document(), "SumLoadForce");
       var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
       Assert.True(output.Value);
     }
-
-    [Fact]
-    public void NoRuntimeErrorsTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
   }
 }

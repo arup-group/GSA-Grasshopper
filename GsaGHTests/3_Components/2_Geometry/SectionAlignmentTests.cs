@@ -24,33 +24,6 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Theory]
-    [InlineData("Top-Left", -150, -150)]
-    [InlineData("Top-Centre", 0, -150)]
-    [InlineData("Top-Center", 0, -150)]
-    [InlineData("Top", 0, -150)]
-    [InlineData("Top-Right", 150, -150)]
-    [InlineData("Mid-Left", -150, 0)]
-    [InlineData("Left", -150, 0)]
-    [InlineData("Centroid", 0, 0)]
-    [InlineData("Mid-Right", 150, 0)]
-    [InlineData("Right", 150, 0)]
-    [InlineData("Bottom-Left", -150, 150)]
-    [InlineData("Bottom-Centre", 0, 150)]
-    [InlineData("Bottom-Center", 0, 150)]
-    [InlineData("Bottom", 0, 150)]
-    [InlineData("Bottom-Right", 150, 150)]
-    public void AlignmentTest(string alignment, double expectedY, double expectedZ) {
-      GH_OasysComponent comp = ComponentMother();
-
-      ComponentTestHelper.SetInput(comp, alignment, 1);
-
-      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
-
-      Assert.Equal(expectedY, output.Value.Y.Millimeters, 6);
-      Assert.Equal(expectedZ, output.Value.Z.Millimeters, 6);
-    }
-
-    [Theory]
     [InlineData("Top-Left", 10, 10, -150, -150)]
     [InlineData("Top-Centre", -10, -10, 0, -150)]
     [InlineData("Top-Center", 2, 2, 0, -150)]
@@ -83,6 +56,33 @@ namespace GsaGHTests.Components.Geometry {
 
       Assert.Equal(expectedY + y, output.Value.Y.Millimeters, 6);
       Assert.Equal(expectedZ + z, output.Value.Z.Millimeters, 6);
+    }
+
+    [Theory]
+    [InlineData("Top-Left", -150, -150)]
+    [InlineData("Top-Centre", 0, -150)]
+    [InlineData("Top-Center", 0, -150)]
+    [InlineData("Top", 0, -150)]
+    [InlineData("Top-Right", 150, -150)]
+    [InlineData("Mid-Left", -150, 0)]
+    [InlineData("Left", -150, 0)]
+    [InlineData("Centroid", 0, 0)]
+    [InlineData("Mid-Right", 150, 0)]
+    [InlineData("Right", 150, 0)]
+    [InlineData("Bottom-Left", -150, 150)]
+    [InlineData("Bottom-Centre", 0, 150)]
+    [InlineData("Bottom-Center", 0, 150)]
+    [InlineData("Bottom", 0, 150)]
+    [InlineData("Bottom-Right", 150, 150)]
+    public void AlignmentTest(string alignment, double expectedY, double expectedZ) {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetInput(comp, alignment, 1);
+
+      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
+
+      Assert.Equal(expectedY, output.Value.Y.Millimeters, 6);
+      Assert.Equal(expectedZ, output.Value.Z.Millimeters, 6);
     }
   }
 }

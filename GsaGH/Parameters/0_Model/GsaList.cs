@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 //using GsaAPI;
 using GsaGH.Helpers.Import;
 using OasysUnits.Units;
@@ -15,25 +16,11 @@ namespace GsaGH.Parameters {
     Member,
     Case
   }
+
   /// <summary>
   /// EntityList class, this class defines the basic properties and methods for any Gsa List
   /// </summary>
   public class GsaList {
-    #region properties
-    public string Name {
-      get => _name;
-      set {
-        Guid = Guid.NewGuid();
-        _name = value;
-      }
-    }
-    public int Id {
-      get => _id;
-      set {
-        Guid = Guid.NewGuid();
-        _id = value;
-      }
-    }
     public string Definition {
       get => _definition;
       set {
@@ -49,30 +36,22 @@ namespace GsaGH.Parameters {
       }
     }
     public Guid Guid { get; set; } = Guid.NewGuid();
-
-    private string _name;
-    private int _id;
-    private string _definition;
-    private EntityType _entityType = EntityType.Undefined;
-    private GsaModel _model;
-    private ConcurrentBag<GsaNodeGoo> _nodes;
-    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
-    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
-    private List<int> _cases;
-    #endregion
-
-    #region constructors
+    public int Id {
+      get => _id;
+      set {
+        Guid = Guid.NewGuid();
+        _id = value;
+      }
+    }
+    public string Name {
+      get => _name;
+      set {
+        Guid = Guid.NewGuid();
+        _name = value;
+      }
+    }
     public GsaList() { }
-    //internal GsaList(int id, EntityList list, GsaModel model) {
-    //  EntityType = GetEntityFromAPI(list.Type);
-    //  Id = id;
-    //  Name = list.Name;
-    //  Definition = list.Definition;
-    //  _model = model;
-    //}
-    #endregion
 
-    #region methods
     public GsaList Duplicate() {
       var dup = new GsaList {
         Id = Id,
@@ -88,16 +67,19 @@ namespace GsaGH.Parameters {
           if (_nodes != null)
             dup._nodes = new ConcurrentBag<GsaNodeGoo>(_nodes);
           break;
+
         case EntityType.Element:
           if (_elements != null)
             dup._elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
               (_elements.Item1, _elements.Item2, _elements.Item3);
           break;
+
         case EntityType.Member:
           if (_members != null)
             dup._members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
               (_members.Item1, _members.Item2, _members.Item3);
           break;
+
         case EntityType.Case:
           if (_cases != null)
             dup._cases = new List<int>(_cases);
@@ -106,11 +88,87 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
-    //internal GsaAPI.EntityList GetApiList() => new GsaAPI.EntityList {
-    //  Name = Name,
-    //  Definition = Definition,
-    //  Type = GetAPIEntityType(EntityType)
-    //};
+    public override string ToString() {
+      string s = Id > 0 ? ("ID:" + Id + " ") : string.Empty;
+      s += Name + " ";
+      switch (EntityType) {
+        case EntityType.Node:
+          if (_nodes != null && _nodes.Count != 0)
+            s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
+          else
+            s += EntityType.ToString() + "s (" + Definition + ")";
+          break;
+
+        case EntityType.Element:
+          if (_elements != null && (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) != 0)
+            s += "containing " + (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) + " " + EntityType.ToString() + "s";
+          else
+            s += EntityType.ToString() + "s (" + Definition + ")";
+          break;
+
+        case EntityType.Member:
+          if (_members != null && (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) != 0)
+            s += "containing " + (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) + " " + EntityType.ToString() + "s";
+          else
+            s += EntityType.ToString() + "s (" + Definition + ")";
+          break;
+
+        case EntityType.Case:
+        case EntityType.Undefined:
+          s += EntityType.ToString() + " (" + Definition + ")";
+          break;
+      }
+      return s;
+    }
+
+    internal List<object> GetListObjects(LengthUnit unit) {
+      if (_model != null)
+        PopulateListObjectsFromModel(unit);
+      List<object> list = null;
+      switch (EntityType) {
+        case EntityType.Node:
+          if (_nodes == null)
+            return new List<object>();
+          list = new List<object>(_nodes.OrderBy(x => x.Value.Id));
+          break;
+
+        case EntityType.Element:
+          if (_elements == null)
+            return new List<object>();
+          list = new List<object>();
+          if (_elements.Item1 != null)
+            list.AddRange(_elements.Item1.OrderBy(x => x.Value.Id));
+          if (_elements.Item2 != null)
+            list.AddRange(_elements.Item2.OrderBy(x => x.Value.Ids.Min()));
+          if (_elements.Item3 != null)
+            list.AddRange(_elements.Item3.OrderBy(x => x.Value.Ids.Min()));
+          break;
+
+        case EntityType.Member:
+          if (_members == null)
+            return new List<object>();
+          list = new List<object>();
+          if (_members.Item1 != null)
+            list.AddRange(_members.Item1.OrderBy(x => x.Value.Id));
+          if (_members.Item2 != null)
+            list.AddRange(_members.Item2.OrderBy(x => x.Value.Id));
+          if (_members.Item3 != null)
+            list.AddRange(_members.Item3.OrderBy(x => x.Value.Id));
+          break;
+
+        case EntityType.Case:
+          if (_cases == null)
+            return new List<object>();
+          list = new List<object>() { _cases };
+          break;
+
+        case EntityType.Undefined:
+          if (Definition != null && Definition != "")
+            list = new List<object>(new List<string>() { Definition });
+          break;
+      }
+      return list;
+    }
 
     internal void SetListObjects(List<object> objects) {
       var def = new List<string>();
@@ -172,51 +230,27 @@ namespace GsaGH.Parameters {
       }
     }
 
-    internal List<object> GetListObjects(LengthUnit unit) {
-      if (_model != null)
-        PopulateListObjectsFromModel(unit);
-      List<object> list = null;
-      switch (EntityType) {
-        case EntityType.Node:
-          if (_nodes == null)
-            return new List<object>();
-          list = new List<object>(_nodes.OrderBy(x => x.Value.Id));
-          break;
-        case EntityType.Element:
-          if (_elements == null)
-            return new List<object>();
-          list = new List<object>();
-          if (_elements.Item1 != null)
-            list.AddRange(_elements.Item1.OrderBy(x => x.Value.Id));
-          if (_elements.Item2 != null)
-            list.AddRange(_elements.Item2.OrderBy(x => x.Value.Ids.Min()));
-          if (_elements.Item3 != null)
-            list.AddRange(_elements.Item3.OrderBy(x => x.Value.Ids.Min()));
-          break;
-        case EntityType.Member:
-          if (_members == null)
-            return new List<object>();
-          list = new List<object>();
-          if (_members.Item1 != null)
-            list.AddRange(_members.Item1.OrderBy(x => x.Value.Id));
-          if (_members.Item2 != null)
-            list.AddRange(_members.Item2.OrderBy(x => x.Value.Id));
-          if (_members.Item3 != null)
-            list.AddRange(_members.Item3.OrderBy(x => x.Value.Id));
-          break;
-        case EntityType.Case:
-          if (_cases == null)
-            return new List<object>();
-          list = new List<object>() { _cases };
-          break;
-        case EntityType.Undefined:
-          if (Definition != null && Definition != "")
-            list = new List<object>(new List<string>() { Definition });
-          break;
-      }
-      return list;
-    }
-
+    private List<int> _cases;
+    private string _definition;
+    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
+    private EntityType _entityType = EntityType.Undefined;
+    private int _id;
+    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
+    private GsaModel _model;
+    private string _name;
+    private ConcurrentBag<GsaNodeGoo> _nodes;
+    //internal GsaList(int id, EntityList list, GsaModel model) {
+    //  EntityType = GetEntityFromAPI(list.Type);
+    //  Id = id;
+    //  Name = list.Name;
+    //  Definition = list.Definition;
+    //  _model = model;
+    //}
+    //internal GsaAPI.EntityList GetApiList() => new GsaAPI.EntityList {
+    //  Name = Name,
+    //  Definition = Definition,
+    //  Type = GetAPIEntityType(EntityType)
+    //};
     private void PopulateListObjectsFromModel(LengthUnit unit) {
       if (_model == null)
         return;
@@ -259,36 +293,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override string ToString() {
-      string s = Id > 0 ? ("ID:" + Id + " ") : string.Empty;
-      s += Name + " ";
-      switch (EntityType) {
-        case EntityType.Node:
-          if (_nodes != null && _nodes.Count != 0)
-            s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
-          else
-            s += EntityType.ToString() + "s (" + Definition + ")";
-          break;
-        case EntityType.Element:
-          if (_elements != null && (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) != 0)
-            s += "containing " + (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) + " " + EntityType.ToString() + "s";
-          else
-            s += EntityType.ToString() + "s (" + Definition + ")";
-          break;
-        case EntityType.Member:
-          if (_members != null && (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) != 0)
-            s += "containing " + (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) + " " + EntityType.ToString() + "s";
-          else
-            s += EntityType.ToString() + "s (" + Definition + ")";
-          break;
-        case EntityType.Case:
-        case EntityType.Undefined:
-          s += EntityType.ToString() + " (" + Definition + ")";
-          break;
-      }
-      return s;
-    }
-
     //internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type) {
     //  switch (type) {
     //    case GsaAPI.EntityType.Node:
@@ -316,6 +320,5 @@ namespace GsaGH.Parameters {
     //  }
     //  return GsaAPI.EntityType.Undefined;
     //}
-    #endregion
   }
 }

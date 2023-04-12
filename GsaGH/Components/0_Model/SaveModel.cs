@@ -115,6 +115,7 @@ namespace GsaGH.Components {
 
     private string _fileNameLastSaved;
     public override void SetSelected(int i, int j) { }
+
     protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()

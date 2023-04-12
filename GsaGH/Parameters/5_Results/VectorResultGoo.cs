@@ -12,15 +12,18 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class VectorResultGoo : GH_GeometricGoo<GH_Vector>,
     IGH_PreviewData {
+    public override BoundingBox Boundingbox
+      => new BoundingBox(new List<Point3d>() {
+        _reactionForceLine.From,
+        _reactionForceLine.To,
+      });
+    public BoundingBox ClippingBox => Boundingbox;
+    public Vector3d Direction { get; private set; }
+    public override string TypeDescription => "A GSA result vector3d type.";
+    public override string TypeName => "Result Vector3d";
     public readonly IQuantity ForceValue;
     public readonly int NodeId;
     public readonly Point3d StartingPoint;
-    private Color _color = Colours.GsaDarkPurple;
-    private bool _drawArrowHead;
-
-    private Line _reactionForceLine;
-    private bool _showText;
-
     /// <summary>
     ///   Goo wrapper GH_Vector class for reaction force vectors.
     ///   Default color: Gsa_Purple
@@ -42,19 +45,49 @@ namespace GsaGH.Parameters {
       Value = GetGhVector();
     }
 
-    public Vector3d Direction { get; private set; }
+    public override bool CastFrom(object source) {
+      switch (source) {
+        case null:
+          return false;
 
-    public override string TypeName => "Result Vector3d";
+        case Vector3d vector:
+          Value = new GH_Vector(vector);
+          return true;
 
-    public override string TypeDescription => "A GSA result vector3d type.";
+        case GH_Vector lineGoo:
+          Value = lineGoo;
+          return true;
+      }
 
-    public override BoundingBox Boundingbox
-      => new BoundingBox(new List<Point3d>() {
-        _reactionForceLine.From,
-        _reactionForceLine.To,
-      });
+      var vector3d = new Vector3d();
+      if (!GH_Convert.ToVector3d(source, ref vector3d, GH_Conversion.Both))
+        return false;
+      Value = new GH_Vector(vector3d);
 
-    public BoundingBox ClippingBox => Boundingbox;
+      return true;
+    }
+
+    public override bool CastTo<TQ>(out TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(Vector3d))) {
+        target = (TQ)(object)Value;
+        return true;
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
+        target = (TQ)(object)new GH_Vector(Value);
+        return true;
+      }
+
+      target = default;
+      return false;
+    }
+
+    public VectorResultGoo DrawArrowHead(bool drawArrow) {
+      _drawArrowHead = drawArrow;
+      return this;
+    }
+
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
@@ -76,11 +109,6 @@ namespace GsaGH.Parameters {
       args.Pipeline.Draw2dText(ForceValue.ToString(), _color, positionOnTheScreen, true);
     }
 
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public override string ToString()
-      => $"VectorResult: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue:0.0}";
-
     public override IGH_GeometricGoo DuplicateGeometry()
       => new VectorResultGoo(StartingPoint, Direction, ForceValue, NodeId);
 
@@ -91,53 +119,12 @@ namespace GsaGH.Parameters {
       return new BoundingBox(line.From, line.To);
     }
 
-    public override IGH_GeometricGoo Transform(Transform xform) {
-      Point3d sPoint = StartingPoint;
-      sPoint.Transform(xform);
-      return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
-    }
-
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       Point3d sPoint = xmorph.MorphPoint(StartingPoint);
       return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
     public override object ScriptVariable() => Value;
-
-    public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Vector3d))) {
-        target = (TQ)(object)Value;
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
-        target = (TQ)(object)new GH_Vector(Value);
-        return true;
-      }
-
-      target = default;
-      return false;
-    }
-
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null:
-          return false;
-        case Vector3d vector:
-          Value = new GH_Vector(vector);
-          return true;
-        case GH_Vector lineGoo:
-          Value = lineGoo;
-          return true;
-      }
-
-      var vector3d = new Vector3d();
-      if (!GH_Convert.ToVector3d(source, ref vector3d, GH_Conversion.Both))
-        return false;
-      Value = new GH_Vector(vector3d);
-
-      return true;
-    }
 
     public VectorResultGoo SetColor(Color value) {
       _color = value;
@@ -146,34 +133,30 @@ namespace GsaGH.Parameters {
 
     public void ShowText(bool showText) => _showText = showText;
 
-    public VectorResultGoo DrawArrowHead(bool drawArrow) {
-      _drawArrowHead = drawArrow;
-      return this;
+    public override string ToString()
+      => $"VectorResult: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue:0.0}";
+
+    public override IGH_GeometricGoo Transform(Transform xform) {
+      Point3d sPoint = StartingPoint;
+      sPoint.Transform(xform);
+      return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
-    private Point3d CalculateExtraStartOffsetPoint(double pixelsPerUnit, int offset) {
-      var point = new Point3d(_reactionForceLine.To);
+    private Color _color = Colours.GsaDarkPurple;
+    private bool _drawArrowHead;
 
-      return TransformPoint(point, pixelsPerUnit, offset);
-    }
-
+    private Line _reactionForceLine;
+    private bool _showText;
     private Point3d CalculateExtraEndOffsetPoint(double pixelsPerUnit, int offset) {
       var point = new Point3d(_reactionForceLine.From);
 
       return TransformPoint(point, pixelsPerUnit, offset);
     }
 
-    private Point3d TransformPoint(Point3d point, double pixelsPerUnit, int offset) {
-      if (pixelsPerUnit == 0 || offset == 0)
-        return point;
+    private Point3d CalculateExtraStartOffsetPoint(double pixelsPerUnit, int offset) {
+      var point = new Point3d(_reactionForceLine.To);
 
-      Vector3d direction = _reactionForceLine.Direction;
-
-      direction.Unitize();
-      var t = Rhino.Geometry.Transform.Translation(direction * -1 * offset / pixelsPerUnit);
-      point.Transform(t);
-
-      return point;
+      return TransformPoint(point, pixelsPerUnit, offset);
     }
 
     private Line CreateReactionForceLine(Vector3d direction) {
@@ -187,5 +170,18 @@ namespace GsaGH.Parameters {
       => new GH_Vector(new Vector3d(_reactionForceLine.ToX - _reactionForceLine.FromX,
         _reactionForceLine.ToY - _reactionForceLine.FromY,
         _reactionForceLine.ToZ - _reactionForceLine.FromZ));
+
+    private Point3d TransformPoint(Point3d point, double pixelsPerUnit, int offset) {
+      if (pixelsPerUnit == 0 || offset == 0)
+        return point;
+
+      Vector3d direction = _reactionForceLine.Direction;
+
+      direction.Unitize();
+      var t = Rhino.Geometry.Transform.Translation(direction * -1 * offset / pixelsPerUnit);
+      point.Transform(t);
+
+      return point;
+    }
   }
 }

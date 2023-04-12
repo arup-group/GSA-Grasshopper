@@ -7,10 +7,26 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class EditBool6Test {
-    private static GH_Document s_document = null;
-
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
+    [Theory]
+    [InlineData("X", false)]
+    [InlineData("Y", true)]
+    [InlineData("Z", false)]
+    [InlineData("XX", true)]
+    [InlineData("YY", false)]
+    [InlineData("ZZ", true)]
+    public void OutputTest(string groupIdentifier, bool expected) {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
+      var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
+      Assert.Equal(expected, output.Value);
+    }
+
+    private static GH_Document s_document = null;
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod()
           .DeclaringType
@@ -28,23 +44,5 @@ namespace IntegrationTests.Parameters {
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
-
-    [Theory]
-    [InlineData("X", false)]
-    [InlineData("Y", true)]
-    [InlineData("Z", false)]
-    [InlineData("XX", true)]
-    [InlineData("YY", false)]
-    [InlineData("ZZ", true)]
-    public void OutputTest(string groupIdentifier, bool expected) {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-      var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(expected, output.Value);
-    }
-
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
   }
 }

@@ -12,31 +12,34 @@ namespace GsaGH.Parameters {
   /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
   /// </summary>
   public class GsaSection {
-    #region fields
-    private int _id;
-    private Guid _guid = Guid.NewGuid();
-    private GsaMaterial _material = new GsaMaterial();
-    private GsaSectionModifier _modifier = new GsaSectionModifier();
-    private Section _section = new Section();
-    #endregion
-
-    #region properties
-    internal Section ApiSection {
-      get {
-        return _section;
-      }
-      set {
-        _guid = Guid.NewGuid();
-        _section = value;
-        _material = new GsaMaterial(this);
-        IsReferencedById = false;
-      }
-    }
-    #region section properties
     public Area Area {
       get {
         var area = new Area(_section.Area, UnitSystem.SI);
         return new Area(area.As(DefaultUnits.SectionAreaUnit), DefaultUnits.SectionAreaUnit);
+      }
+    }
+    public Color Colour {
+      get {
+        return (Color)_section.Colour;
+      }
+      set {
+        CloneApiObject();
+        _section.Colour = value;
+        IsReferencedById = false;
+      }
+    }
+    public Guid Guid {
+      get {
+        return _guid;
+      }
+    }
+    public int Id {
+      get {
+        return _id;
+      }
+      set {
+        CloneApiObject();
+        _id = value;
       }
     }
     public AreaMomentOfInertia Iyy {
@@ -73,31 +76,6 @@ namespace GsaGH.Parameters {
         return _section.Kz;
       }
     }
-    public IQuantity SurfaceAreaPerLength {
-      get {
-        var area = new Area(_section.SurfaceAreaPerLength, UnitSystem.SI);
-        var len = new Length(1, DefaultUnits.LengthUnitSection);
-        Area unitArea = len * len;
-        var areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
-        return areaOut / len;
-      }
-    }
-    public VolumePerLength VolumePerLength {
-      get {
-        return new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
-      }
-    }
-    #endregion
-    public int Id {
-      get {
-        return _id;
-      }
-      set {
-        CloneApiObject();
-        _id = value;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
     public GsaMaterial Material {
       get {
         return _material;
@@ -115,6 +93,17 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+    public int MaterialId {
+      get {
+        return _section.MaterialAnalysisProperty;
+      }
+      set {
+        CloneApiObject();
+        _section.MaterialAnalysisProperty = value;
+        _material.AnalysisProperty = _section.MaterialAnalysisProperty;
+        IsReferencedById = false;
+      }
+    }
     public GsaSectionModifier Modifier {
       get {
         return _modifier;
@@ -125,7 +114,6 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    #region GsaAPI members
     public string Name {
       get {
         return _section.Name;
@@ -146,17 +134,6 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public int MaterialId {
-      get {
-        return _section.MaterialAnalysisProperty;
-      }
-      set {
-        CloneApiObject();
-        _section.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _section.MaterialAnalysisProperty;
-        IsReferencedById = false;
-      }
-    }
     public string Profile {
       get {
         return _section.Profile.Replace("%", " ");
@@ -171,47 +148,20 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public Color Colour {
+    public IQuantity SurfaceAreaPerLength {
       get {
-        return (Color)_section.Colour;
-      }
-      set {
-        CloneApiObject();
-        _section.Colour = value;
-        IsReferencedById = false;
+        var area = new Area(_section.SurfaceAreaPerLength, UnitSystem.SI);
+        var len = new Length(1, DefaultUnits.LengthUnitSection);
+        Area unitArea = len * len;
+        var areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
+        return areaOut / len;
       }
     }
-    private void CloneApiObject() {
-      // temp profile clone 
-      string prfl = _section.Profile.Replace("%", " ");
-      string[] pfs = prfl.Split(' ');
-      if (pfs.Last() == "S/S")
-        prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
-
-      var sec = new Section() {
-        MaterialAnalysisProperty = _section.MaterialAnalysisProperty,
-        MaterialGradeProperty = _section.MaterialGradeProperty,
-        MaterialType = _section.MaterialType,
-        Name = _section.Name.ToString(),
-        Pool = _section.Pool,
-        Profile = prfl,
-      };
-      if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        sec.Colour = _section.Colour;
-
-      _section = sec;
-      _modifier = Modifier.Duplicate(true);
-      _guid = Guid.NewGuid();
-    }
-    #endregion
-    public Guid Guid {
+    public VolumePerLength VolumePerLength {
       get {
-        return _guid;
+        return new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
       }
     }
-    #endregion
-
-    #region constructors
     public GsaSection() {
     }
 
@@ -229,20 +179,6 @@ namespace GsaGH.Parameters {
       _id = id;
     }
 
-    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!sDict.ContainsKey(id))
-        return;
-      _section = sDict[id];
-      IsReferencedById = false;
-      if (modDict.ContainsKey(id))
-        _modifier = new GsaSectionModifier(modDict[id]);
-      if (_section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_section.MaterialAnalysisProperty))
-        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
-      _material = new GsaMaterial(this);
-    }
-    #endregion
-
-    #region methods
     public GsaSection Duplicate(bool cloneApiElement = false) {
       var dup = new GsaSection {
         _section = _section,
@@ -265,10 +201,61 @@ namespace GsaGH.Parameters {
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
     }
 
+    internal Section ApiSection {
+      get {
+        return _section;
+      }
+      set {
+        _guid = Guid.NewGuid();
+        _section = value;
+        _material = new GsaMaterial(this);
+        IsReferencedById = false;
+      }
+    }
+    internal bool IsReferencedById { get; set; } = false;
+    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
+      if (!sDict.ContainsKey(id))
+        return;
+      _section = sDict[id];
+      IsReferencedById = false;
+      if (modDict.ContainsKey(id))
+        _modifier = new GsaSectionModifier(modDict[id]);
+      if (_section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_section.MaterialAnalysisProperty))
+        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
+      _material = new GsaMaterial(this);
+    }
+
     internal static bool ValidProfile(string profile) {
       var test = new Section { Profile = profile };
       return test.Area != 0;
     }
-    #endregion
+
+    private Guid _guid = Guid.NewGuid();
+    private int _id;
+    private GsaMaterial _material = new GsaMaterial();
+    private GsaSectionModifier _modifier = new GsaSectionModifier();
+    private Section _section = new Section();
+    private void CloneApiObject() {
+      // temp profile clone
+      string prfl = _section.Profile.Replace("%", " ");
+      string[] pfs = prfl.Split(' ');
+      if (pfs.Last() == "S/S")
+        prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
+
+      var sec = new Section() {
+        MaterialAnalysisProperty = _section.MaterialAnalysisProperty,
+        MaterialGradeProperty = _section.MaterialGradeProperty,
+        MaterialType = _section.MaterialType,
+        Name = _section.Name.ToString(),
+        Pool = _section.Pool,
+        Profile = prfl,
+      };
+      if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        sec.Colour = _section.Colour;
+
+      _section = sec;
+      _modifier = Modifier.Duplicate(true);
+      _guid = Guid.NewGuid();
+    }
   }
 }

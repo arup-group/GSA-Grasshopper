@@ -9,38 +9,6 @@ using static GsaAPI.GridSurface;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridPlaneSurfaceTest {
-    [Fact]
-    public void EmptyConstructorTest() {
-      var gps = new GsaGridPlaneSurface();
-
-      Assert.Equal(Plane.WorldXY, gps.Plane);
-      Assert.Equal(0, gps.GridPlane.AxisProperty);
-      Assert.Equal(0, gps.GridPlane.Elevation);
-      Assert.False(gps.GridPlane.IsStoreyType);
-      Assert.Equal("", gps.GridPlane.Name);
-      Assert.Equal(0, gps.GridPlane.ToleranceAbove);
-      Assert.Equal(0, gps.GridPlane.ToleranceBelow);
-      Assert.Equal(0, gps.GridSurface.Direction);
-      Assert.Equal("all", gps.GridSurface.Elements);
-      Assert.Equal(Element_Type.ONE_DIMENSIONAL, gps.GridSurface.ElementType);
-      Assert.Equal(GridSurfaceExpansionType.PLANE_CORNER, gps.GridSurface.ExpansionType);
-      Assert.Equal("", gps.GridSurface.Name);
-      Assert.Equal(Span_Type.TWO_WAY, gps.GridSurface.SpanType);
-      Assert.Equal(0.01, gps.GridSurface.Tolerance);
-      Axis axis = gps.GetAxis(LengthUnit.Meter);
-      Assert.Equal(0, axis.Origin.X);
-      Assert.Equal(0, axis.Origin.Y);
-      Assert.Equal(0, axis.Origin.Z);
-      Assert.Equal(1, axis.XVector.X);
-      Assert.Equal(0, axis.XVector.Y);
-      Assert.Equal(0, axis.XVector.Z);
-      Assert.Equal(0, axis.XYPlane.X);
-      Assert.Equal(1, axis.XYPlane.Y);
-      Assert.Equal(0, axis.XYPlane.Z);
-      Assert.Equal(0, gps.GridSurfaceId);
-      Assert.Equal(0, gps.GridPlaneId);
-    }
-
     [Theory]
     [InlineData(0,
       0,
@@ -180,6 +148,38 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0.01, original.GridSurface.Tolerance);
       Assert.Equal(0, original.GridSurfaceId);
       Assert.Equal(0, original.GridPlaneId);
+    }
+
+    [Fact]
+    public void EmptyConstructorTest() {
+      var gps = new GsaGridPlaneSurface();
+
+      Assert.Equal(Plane.WorldXY, gps.Plane);
+      Assert.Equal(0, gps.GridPlane.AxisProperty);
+      Assert.Equal(0, gps.GridPlane.Elevation);
+      Assert.False(gps.GridPlane.IsStoreyType);
+      Assert.Equal("", gps.GridPlane.Name);
+      Assert.Equal(0, gps.GridPlane.ToleranceAbove);
+      Assert.Equal(0, gps.GridPlane.ToleranceBelow);
+      Assert.Equal(0, gps.GridSurface.Direction);
+      Assert.Equal("all", gps.GridSurface.Elements);
+      Assert.Equal(Element_Type.ONE_DIMENSIONAL, gps.GridSurface.ElementType);
+      Assert.Equal(GridSurfaceExpansionType.PLANE_CORNER, gps.GridSurface.ExpansionType);
+      Assert.Equal("", gps.GridSurface.Name);
+      Assert.Equal(Span_Type.TWO_WAY, gps.GridSurface.SpanType);
+      Assert.Equal(0.01, gps.GridSurface.Tolerance);
+      Axis axis = gps.GetAxis(LengthUnit.Meter);
+      Assert.Equal(0, axis.Origin.X);
+      Assert.Equal(0, axis.Origin.Y);
+      Assert.Equal(0, axis.Origin.Z);
+      Assert.Equal(1, axis.XVector.X);
+      Assert.Equal(0, axis.XVector.Y);
+      Assert.Equal(0, axis.XVector.Z);
+      Assert.Equal(0, axis.XYPlane.X);
+      Assert.Equal(1, axis.XYPlane.Y);
+      Assert.Equal(0, axis.XYPlane.Z);
+      Assert.Equal(0, gps.GridSurfaceId);
+      Assert.Equal(0, gps.GridPlaneId);
     }
   }
 }

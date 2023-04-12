@@ -8,8 +8,6 @@ using GsaGH.Properties;
 
 namespace GsaGH.Graphics.Menu {
   public class MenuLoad {
-    private static ToolStripMenuItem s_oasysMenu;
-
     internal static void OnStartup(GH_Canvas canvas) {
       s_oasysMenu = new ToolStripMenuItem("Oasys") {
         Name = "Oasys",
@@ -37,6 +35,7 @@ namespace GsaGH.Graphics.Menu {
       Instances.CanvasCreated -= OnStartup;
     }
 
+    private static ToolStripMenuItem s_oasysMenu;
     private static void PopulateSub(ToolStripMenuItem menuItem) {
       menuItem.DropDown.Items.Add("GsaGH Documentation",
         Resources.Documentation,

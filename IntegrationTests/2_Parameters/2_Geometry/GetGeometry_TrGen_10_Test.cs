@@ -8,27 +8,10 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetGeometry_TrGen_10_Test {
-    private static GH_Document s_document = null;
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
-
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-      fileName = fileName.Replace("_Test", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "2_Geometry",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
     [Theory]
     [InlineData("NodeCount", 3027)]
@@ -68,8 +51,24 @@ namespace IntegrationTests.Parameters {
       Helper.TestGhPrimitives(param, expected);
     }
 
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    private static GH_Document s_document = null;
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+      fileName = fileName.Replace("_Test", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "2_Geometry",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
   }
 }

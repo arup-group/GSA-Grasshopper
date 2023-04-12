@@ -18,6 +18,28 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditNode : GH_OasysComponent,
     IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("418e222d-16b8-4a8e-bb3d-98ad72b913d8");
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public EditNode() : base("Edit Node",
+      "NodeEdit",
+      "Modify GSA Node",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    public bool CanInsertParameter(GH_ParameterSide side, int index) => false;
+
+    public bool CanRemoveParameter(GH_ParameterSide side, int index) => false;
+
+    public IGH_Param CreateParameter(GH_ParameterSide side, int index) => null;
+
+    public bool DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    public override bool Read(GH_IReader reader) {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      return base.Read(reader);
+    }
+
     public void VariableParameterMaintenance() {
       if (_mode != FoldMode.GetConnected)
         return;
@@ -39,6 +61,116 @@ namespace GsaGH.Components {
         .Description = "Connected Member IDs in Model that Node once belonged to";
       Params.Output[11]
         .Access = GH_ParamAccess.list;
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("Mode", (int)_mode);
+      return base.Write(writer);
+    }
+
+    protected override Bitmap Icon => Resources.EditNode;
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+      => Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaNodeParameter(),
+        GsaNodeGoo.Name,
+        GsaNodeGoo.NickName,
+        GsaNodeGoo.Description
+        + " to get or set information for. Leave blank to create a new "
+        + GsaNodeGoo.Name,
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Node number",
+        "ID",
+        "Set Node number (ID) - if Node ID is set it will replace any existing nodes in the model",
+        GH_ParamAccess.item);
+      pManager.AddPointParameter("Node Position",
+        "Pt",
+        "Set new Position (x, y, z) of Node",
+        GH_ParamAccess.item);
+      pManager.AddPlaneParameter("Node local axis",
+        "Pl",
+        "Set Local axis (Plane) of Node",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(),
+        "Node Restraints",
+        "B6",
+        "Set Restraints (Bool6) of Node",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Damper Property",
+        "DP",
+        "Set Damper Property by reference",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Mass Property",
+        "MP",
+        "Set Mass Property by reference",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Property",
+        "SP",
+        "Set Spring Property by reference",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
+      pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
+
+      for (int i = 0; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+
+      pManager.HideParameter(0);
+      pManager.HideParameter(2);
+      pManager.HideParameter(3);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaNodeParameter(),
+        GsaNodeGoo.Name,
+        GsaNodeGoo.NickName,
+        GsaNodeGoo.Description + " with applied changes.",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Node number",
+        "ID",
+        "Original Node number (ID) if Node ever belonged to a GSA Model",
+        GH_ParamAccess.item);
+      pManager.AddPointParameter("Node Position",
+        "Pt",
+        "Position (x, y, z) of Node. Setting a new position will clear any existing ID",
+        GH_ParamAccess.item);
+      pManager.HideParameter(2);
+      pManager.AddPlaneParameter("Node local axis",
+        "Pl",
+        "Local axis (Plane) of Node",
+        GH_ParamAccess.item);
+      pManager.HideParameter(3);
+      pManager.AddParameter(new GsaBool6Parameter(),
+        "Node Restraints",
+        "B6",
+        "Restraints (Bool6) of Node",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Damper Property",
+        "DP",
+        "Get Damper Property reference",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Mass Property",
+        "MP",
+        "Get Mass Property reference",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Property",
+        "SP",
+        "Get Spring Property reference",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
+      pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
+      if (_mode != FoldMode.GetConnected)
+        return;
+
+      pManager.AddIntegerParameter("Connected Elements",
+        "El",
+        "Connected Element IDs in Model that Node once belonged to",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Connected Members",
+        "Me",
+        "Connected Member IDs in Model that Node once belonged to",
+        GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -147,138 +279,12 @@ namespace GsaGH.Components {
       }
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("418e222d-16b8-4a8e-bb3d-98ad72b913d8");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditNode;
-
-    public EditNode() : base("Edit Node",
-      "NodeEdit",
-      "Modify GSA Node",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaNodeParameter(),
-        GsaNodeGoo.Name,
-        GsaNodeGoo.NickName,
-        GsaNodeGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaNodeGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Node number",
-        "ID",
-        "Set Node number (ID) - if Node ID is set it will replace any existing nodes in the model",
-        GH_ParamAccess.item);
-      pManager.AddPointParameter("Node Position",
-        "Pt",
-        "Set new Position (x, y, z) of Node",
-        GH_ParamAccess.item);
-      pManager.AddPlaneParameter("Node local axis",
-        "Pl",
-        "Set Local axis (Plane) of Node",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Node Restraints",
-        "B6",
-        "Set Restraints (Bool6) of Node",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Damper Property",
-        "DP",
-        "Set Damper Property by reference",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Mass Property",
-        "MP",
-        "Set Mass Property by reference",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Spring Property",
-        "SP",
-        "Set Spring Property by reference",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
-      pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
-
-      for (int i = 0; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-
-      pManager.HideParameter(0);
-      pManager.HideParameter(2);
-      pManager.HideParameter(3);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaNodeParameter(),
-        GsaNodeGoo.Name,
-        GsaNodeGoo.NickName,
-        GsaNodeGoo.Description + " with applied changes.",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Node number",
-        "ID",
-        "Original Node number (ID) if Node ever belonged to a GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddPointParameter("Node Position",
-        "Pt",
-        "Position (x, y, z) of Node. Setting a new position will clear any existing ID",
-        GH_ParamAccess.item);
-      pManager.HideParameter(2);
-      pManager.AddPlaneParameter("Node local axis",
-        "Pl",
-        "Local axis (Plane) of Node",
-        GH_ParamAccess.item);
-      pManager.HideParameter(3);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Node Restraints",
-        "B6",
-        "Restraints (Bool6) of Node",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Damper Property",
-        "DP",
-        "Get Damper Property reference",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Mass Property",
-        "MP",
-        "Get Mass Property reference",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Spring Property",
-        "SP",
-        "Get Spring Property reference",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
-      pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
-      if (_mode != FoldMode.GetConnected)
-        return;
-
-      pManager.AddIntegerParameter("Connected Elements",
-        "El",
-        "Connected Element IDs in Model that Node once belonged to",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Connected Members",
-        "Me",
-        "Connected Member IDs in Model that Node once belonged to",
-        GH_ParamAccess.list);
-    }
-
-    #endregion
-
-    #region menu override
-
     private enum FoldMode {
       GetConnected,
       DoNotGetConnected,
     }
 
     private FoldMode _mode = FoldMode.DoNotGetConnected;
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-      => Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
-
     private void FlipMode(object sender, EventArgs e) {
       RecordUndoEvent("GetConnected Parameters");
       if (_mode == FoldMode.GetConnected) {
@@ -298,30 +304,5 @@ namespace GsaGH.Components {
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetInt32("Mode", (int)_mode);
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      return base.Read(reader);
-    }
-
-    #endregion
-
-    #region IGH_variable parameter null implementation
-
-    public bool CanInsertParameter(GH_ParameterSide side, int index) => false;
-    public bool CanRemoveParameter(GH_ParameterSide side, int index) => false;
-    public IGH_Param CreateParameter(GH_ParameterSide side, int index) => null;
-    public bool DestroyParameter(GH_ParameterSide side, int index) => false;
-
-    #endregion
   }
 }

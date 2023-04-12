@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers;
@@ -16,35 +15,9 @@ namespace GsaGH.Components {
   ///   Component to create a GSA model from GWA string
   /// </summary>
   public class GwaCommand : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      GsaModelGoo gooModel = null;
-      GsaModel model = null;
-      if (da.GetData(0, ref gooModel))
-        model = gooModel.Value;
-      ComAuto m = GsaComHelper.GetGsaComModel(model);
-
-      string gwa = "";
-      var strings = new List<string>();
-      if (da.GetDataList(1, strings))
-        gwa = strings.Aggregate(gwa, (current, s) => current + (s + "\n"));
-
-      da.SetData(1, m.GwaCommand(gwa));
-
-      GsaModel gsaGh = GsaComHelper.GetGsaGhModel();
-      da.SetData(0, new GsaModelGoo(gsaGh));
-      PostHog.Gwa(gwa, Params.Input.Count > 0);
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
-    protected override System.Drawing.Bitmap Icon => Resources.GwaModel;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-
-    protected override string HtmlHelp_Source()
-      => "GOTO:https://docs.oasys-software.com/structural/gsa/references/comautomation.html#gwacommand-function";
-
     public GwaCommand() : base("GWA Command",
       "GWA",
       "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
@@ -52,9 +25,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    #endregion
-
-    #region Input and output
+    protected override System.Drawing.Bitmap Icon => Resources.GwaModel;
+    protected override string HtmlHelp_Source()
+      => "GOTO:https://docs.oasys-software.com/structural/gsa/references/comautomation.html#gwacommand-function";
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(),
@@ -78,6 +51,23 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      GsaModelGoo gooModel = null;
+      GsaModel model = null;
+      if (da.GetData(0, ref gooModel))
+        model = gooModel.Value;
+      ComAuto m = GsaComHelper.GetGsaComModel(model);
+
+      string gwa = "";
+      var strings = new List<string>();
+      if (da.GetDataList(1, strings))
+        gwa = strings.Aggregate(gwa, (current, s) => current + (s + "\n"));
+
+      da.SetData(1, m.GwaCommand(gwa));
+
+      GsaModel gsaGh = GsaComHelper.GetGsaGhModel();
+      da.SetData(0, new GsaModelGoo(gsaGh));
+      PostHog.Gwa(gwa, Params.Input.Count > 0);
+    }
   }
 }

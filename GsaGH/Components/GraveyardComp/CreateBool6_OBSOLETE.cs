@@ -17,6 +17,83 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class CreateBool6_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public CreateBool6_OBSOLETE() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
+      GsaBool6Goo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaBool6Goo.Description,
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    public override void CreateAttributes() {
+      var bool6 = new List<List<bool>>() { new List<bool>() { _x, _y, _z, _xx, _yy, _zz } };
+      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Set 6 DOF" }, bool6, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _x = reader.GetBoolean("x");
+      _y = reader.GetBoolean("y");
+      _z = reader.GetBoolean("z");
+      _xx = reader.GetBoolean("xx");
+      _yy = reader.GetBoolean("yy");
+      _zz = reader.GetBoolean("zz");
+      CreateAttributes();
+      ExpireSolution(true);
+      Params.OnParametersChanged();
+      OnDisplayExpired(true);
+      return base.Read(reader);
+    }
+
+    public void SetReleases(List<List<bool>> bool6) {
+      _x = bool6[0][0];
+      _y = bool6[0][1];
+      _z = bool6[0][2];
+      _xx = bool6[0][3];
+      _yy = bool6[0][4];
+      _zz = bool6[0][5];
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("x", _x);
+      writer.SetBoolean("y", _y);
+      writer.SetBoolean("z", _z);
+      writer.SetBoolean("xx", _xx);
+      writer.SetBoolean("yy", _yy);
+      writer.SetBoolean("zz", _zz);
+      return base.Write(writer);
+    }
+
+    protected override Bitmap Icon => Resources.CreateBool6;
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
+
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager[5]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddGenericParameter("Bool6",
+        "B6",
+        "GSA Bool6 to set releases or restraints",
+        GH_ParamAccess.item);
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghBolX = new GH_Boolean();
       if (da.GetData(0, ref ghBolX))
@@ -47,105 +124,11 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaBool6Goo(bool6.Duplicate()));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateBool6;
-
-    public CreateBool6_OBSOLETE() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-      GsaBool6Goo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBool6Goo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    #endregion
-
-    #region Custom UI
-
-    public override void CreateAttributes() {
-      var bool6 = new List<List<bool>>() { new List<bool>() { _x, _y, _z, _xx, _yy, _zz } };
-      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Set 6 DOF" }, bool6, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
-    }
-
-    public void SetReleases(List<List<bool>> bool6) {
-      _x = bool6[0][0];
-      _y = bool6[0][1];
-      _z = bool6[0][2];
-      _xx = bool6[0][3];
-      _yy = bool6[0][4];
-      _zz = bool6[0][5];
-    }
-
-    #endregion
-
-    #region Input and output
-
     private bool _x;
-    private bool _y;
-    private bool _z;
     private bool _xx;
+    private bool _y;
     private bool _yy;
+    private bool _z;
     private bool _zz;
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetBoolean("x", _x);
-      writer.SetBoolean("y", _y);
-      writer.SetBoolean("z", _z);
-      writer.SetBoolean("xx", _xx);
-      writer.SetBoolean("yy", _yy);
-      writer.SetBoolean("zz", _zz);
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _x = reader.GetBoolean("x");
-      _y = reader.GetBoolean("y");
-      _z = reader.GetBoolean("z");
-      _xx = reader.GetBoolean("xx");
-      _yy = reader.GetBoolean("yy");
-      _zz = reader.GetBoolean("zz");
-      CreateAttributes();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      OnDisplayExpired(true);
-      return base.Read(reader);
-    }
-
-    #endregion
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
-
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager[5]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddGenericParameter("Bool6",
-        "B6",
-        "GSA Bool6 to set releases or restraints",
-        GH_ParamAccess.item);
-
-    #endregion
   }
 }

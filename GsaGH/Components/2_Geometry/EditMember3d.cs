@@ -15,6 +15,115 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditMember3d : GH_OasysComponent,
     IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("e7d66219-2243-4108-9d6e-4a84dbf07d55");
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public EditMember3d() : base("Edit 3D Member",
+      "Mem3dEdit",
+      "Modify GSA 3D Member",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+      => false;
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+      => false;
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+      => null;
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    public void VariableParameterMaintenance() { }
+
+    protected override Bitmap Icon => Resources.EditMem3d;
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaMember3dParameter(),
+        GsaMember3dGoo.Name,
+        GsaMember3dGoo.NickName,
+        GsaMember3dGoo.Description
+        + " to get or set information for. Leave blank to create a new "
+        + GsaMember3dGoo.Name,
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Member3d Number",
+        "ID",
+        "Set Member Number. If ID is set it will replace any existing 3d Member in the model",
+        GH_ParamAccess.item);
+      pManager.AddGeometryParameter("Solid",
+        "S",
+        "Reposition Solid Geometry - Closed Brep or Mesh",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp3dParameter(),
+        "3D Property",
+        "PV",
+        "Set new 3D Property.",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units",
+        "Ms",
+        "Set Member Mesh Size",
+        GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Mesh With Others",
+        "M/o",
+        "Mesh with others?",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Member3d Group",
+        "Gr",
+        "Set Member 3d Group",
+        GH_ParamAccess.item);
+      pManager.AddColourParameter("Member3d Colour",
+        "Co",
+        "Set Member 3d Colour",
+        GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Dummy Member",
+        "Dm",
+        "Set Member to Dummy",
+        GH_ParamAccess.item);
+
+      for (int i = 0; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+
+      pManager.HideParameter(0);
+      pManager.HideParameter(2);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMember3dParameter(),
+        GsaMember3dGoo.Name,
+        GsaMember3dGoo.NickName,
+        GsaMember3dGoo.Description + " with applied changes.",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
+      pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
+      pManager.HideParameter(2);
+      pManager.AddParameter(new GsaProp3dParameter(),
+        "3D Property",
+        "PV",
+        "Get 3D Property",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units",
+        "Ms",
+        "Get Target mesh size",
+        GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Mesh With Others",
+        "M/o",
+        "Get if to mesh with others",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
+      pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Dummy Member",
+        "Dm",
+        "Get if Member is Dummy",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Topology",
+        "Tp",
+        "Get the Member's original topology list referencing node IDs in Model that Model was created from",
+        GH_ParamAccess.item);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaMember3d = new GsaMember3d();
       var mem = new GsaMember3d();
@@ -106,127 +215,5 @@ namespace GsaGH.Components {
       da.SetData(9, mem.IsDummy);
       da.SetData(10, mem.ApiMember.Topology);
     }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("e7d66219-2243-4108-9d6e-4a84dbf07d55");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem3d;
-
-    public EditMember3d() : base("Edit 3D Member",
-      "Mem3dEdit",
-      "Modify GSA 3D Member",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaMember3dParameter(),
-        GsaMember3dGoo.Name,
-        GsaMember3dGoo.NickName,
-        GsaMember3dGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaMember3dGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member3d Number",
-        "ID",
-        "Set Member Number. If ID is set it will replace any existing 3d Member in the model",
-        GH_ParamAccess.item);
-      pManager.AddGeometryParameter("Solid",
-        "S",
-        "Reposition Solid Geometry - Closed Brep or Mesh",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter(),
-        "3D Property",
-        "PV",
-        "Set new 3D Property.",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size in model units",
-        "Ms",
-        "Set Member Mesh Size",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others",
-        "M/o",
-        "Mesh with others?",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member3d Group",
-        "Gr",
-        "Set Member 3d Group",
-        GH_ParamAccess.item);
-      pManager.AddColourParameter("Member3d Colour",
-        "Co",
-        "Set Member 3d Colour",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Member",
-        "Dm",
-        "Set Member to Dummy",
-        GH_ParamAccess.item);
-
-      for (int i = 0; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-
-      pManager.HideParameter(0);
-      pManager.HideParameter(2);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaMember3dParameter(),
-        GsaMember3dGoo.Name,
-        GsaMember3dGoo.NickName,
-        GsaMember3dGoo.Description + " with applied changes.",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
-      pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
-      pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp3dParameter(),
-        "3D Property",
-        "PV",
-        "Get 3D Property",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size in model units",
-        "Ms",
-        "Get Target mesh size",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others",
-        "M/o",
-        "Get if to mesh with others",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
-      pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Member",
-        "Dm",
-        "Get if Member is Dummy",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Topology",
-        "Tp",
-        "Get the Member's original topology list referencing node IDs in Model that Model was created from",
-        GH_ParamAccess.item);
-    }
-
-    #endregion
-
-    #region IGH_VariableParameterComponent null implementation
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-
-    public void VariableParameterMaintenance() { }
-
-    #endregion
   }
 }

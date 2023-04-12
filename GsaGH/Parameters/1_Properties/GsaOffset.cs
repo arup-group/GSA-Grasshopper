@@ -18,14 +18,11 @@ namespace GsaGH.Parameters {
       BottomRight,
     }
 
-    #region properties
     public Length X1 { get; set; } = Length.Zero;
     public Length X2 { get; set; } = Length.Zero;
     public Length Y { get; set; } = Length.Zero;
     public Length Z { get; set; } = Length.Zero;
-    #endregion
 
-    #region constructors
     public GsaOffset() {
     }
 
@@ -39,9 +36,7 @@ namespace GsaGH.Parameters {
     public GsaOffset Duplicate() {
       return (GsaOffset)MemberwiseClone(); // all members are structs
     }
-    #endregion
 
-    #region methods
     public override string ToString() {
       LengthUnit unit = Z.Unit;
       string unitAbbreviation = Length.GetAbbreviation(unit);
@@ -52,6 +47,5 @@ namespace GsaGH.Parameters {
         " Z:" + Z.As(unit).ToString("g") +
         " [" + unitAbbreviation + "]";
     }
-    #endregion
   }
 }

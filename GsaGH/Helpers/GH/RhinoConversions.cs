@@ -19,358 +19,18 @@ namespace GsaGH.Helpers.GH {
   /// Helper class to perform some decent geometry approximations from NURBS to poly-geometry
   /// </summary>
   public class RhinoConversions {
-    public static Plane CreateBestFitUnitisedPlaneFromPts(List<Point3d> ctrlPts, bool round = false) {
-      Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
-      plane.Origin = plane.ClosestPoint(new Point3d(0, 0, 0));
-      int dig = UnitsHelper.SignificantDigits;
-      plane.Normal.Unitize();
-      if (Math.Abs(Math.Round(plane.Normal.Z, dig)) == 1) {
-        plane.XAxis = Vector3d.XAxis;
-        plane.YAxis = Vector3d.YAxis;
-      }
+    public static PolyCurve BuildArcLineCurveFromPtsAndTopoType(List<Point3d> topology, List<string> topoType = null) {
+      var crvs = new PolyCurve();
 
-      if (round) {
-        plane.OriginX = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginX, dig);
-        plane.OriginY = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginY, dig);
-        plane.OriginZ = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginZ, dig);
-
-        plane.XAxis.Unitize();
-        Vector3d xaxis = plane.XAxis;
-        xaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
-        xaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
-        xaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
-        plane.XAxis = xaxis;
-
-        plane.YAxis.Unitize();
-        Vector3d yaxis = plane.YAxis;
-        yaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
-        yaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
-        yaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
-        plane.YAxis = yaxis;
-
-        plane.ZAxis.Unitize();
-        Vector3d zaxis = plane.ZAxis;
-        zaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
-        zaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
-        zaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
-        plane.ZAxis = zaxis;
-      }
-      else {
-        plane.OriginX = Math.Round(plane.OriginX, dig);
-        plane.OriginY = Math.Round(plane.OriginY, dig);
-        plane.OriginZ = Math.Round(plane.OriginZ, dig);
-
-        plane.XAxis.Unitize();
-        Vector3d xaxis = plane.XAxis;
-        xaxis.X = Math.Round(Math.Abs(xaxis.X), dig);
-        xaxis.Y = Math.Round(Math.Abs(xaxis.Y), dig);
-        xaxis.Z = Math.Round(Math.Abs(xaxis.Z), dig);
-        plane.XAxis = xaxis;
-
-        plane.YAxis.Unitize();
-        Vector3d yaxis = plane.YAxis;
-        yaxis.X = Math.Round(Math.Abs(yaxis.X), dig);
-        yaxis.Y = Math.Round(Math.Abs(yaxis.Y), dig);
-        yaxis.Z = Math.Round(Math.Abs(yaxis.Z), dig);
-        plane.YAxis = yaxis;
-
-        plane.ZAxis.Unitize();
-        Vector3d zaxis = plane.ZAxis;
-        zaxis.X = Math.Round(Math.Abs(zaxis.X), dig);
-        zaxis.Y = Math.Round(Math.Abs(zaxis.Y), dig);
-        zaxis.Z = Math.Round(Math.Abs(zaxis.Z), dig);
-        plane.ZAxis = zaxis;
-      }
-
-      return plane;
-    }
-
-    /// <summary>
-    /// Method to convert a NURBS curve into a PolyCurve made of lines and arcs.
-    /// Automatically uses Rhino document tolerance if tolerance is not inputted
-    /// </summary>
-    /// <param name="curve"></param>
-    /// <param name="tolerance"></param>
-    /// <returns></returns>
-    public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem1dCrv(Curve curve, double tolerance = -1) {
-      PolyCurve polyCurve = null;
-      var crvType = new List<string>();
-      var point3ds = new List<Point3d>();
-
-      if (curve.IsArc()) {
-        crvType.Add("");
-        crvType.Add("A");
-        crvType.Add("");
-
-        point3ds.Add(curve.PointAtStart);
-        point3ds.Add(curve.PointAtNormalizedLength(0.5));
-        point3ds.Add(curve.PointAtEnd);
-
-        polyCurve = new PolyCurve();
-        polyCurve.Append(curve);
-      }
-      else {
-        if (tolerance < 0)
-          tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
-        if (curve.SpanCount == 1 && curve.Degree > 2) {
-          curve = curve.ToPolyline(tolerance, 2, 0, 0);
+      for (int i = 0; i < topology.Count - 1; i++) {
+        if (topoType != null & topoType[i + 1] == "A") {
+          crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
+          i++;
         }
-        if (curve.SpanCount > 1) {
-          polyCurve = new PolyCurve();
-
-          if (!curve.IsPolyline())
-            curve = curve.ToPolyline(tolerance, 2, 0, 0);
-          if (!curve.IsValid)
-            throw new Exception(" Error converting edge or curve to polyline: please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
-
-          Curve[] segments = curve.DuplicateSegments();
-
-          foreach (Curve segment in segments) {
-            crvType.Add("");
-            point3ds.Add(segment.PointAtStart);
-            polyCurve.Append(segment);
-          }
-          crvType.Add("");
-          point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-        }
-        else {
-          crvType.Add("");
-          crvType.Add("");
-
-          point3ds.Add(curve.PointAtStart);
-          point3ds.Add(curve.PointAtEnd);
-
-          polyCurve = new PolyCurve();
-          polyCurve.Append(curve);
-        }
-      }
-
-      return new Tuple<PolyCurve, List<Point3d>, List<string>>(polyCurve, point3ds, crvType);
-    }
-
-    public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve curve, double tolerance = -1) {
-      if (tolerance < 0)
-        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
-
-      PolyCurve polyCurve = curve.ToArcsAndLines(tolerance, 2, 0, 0);
-      Curve[] segments = polyCurve != null
-        ? polyCurve.DuplicateSegments()
-        : new[] { curve };
-
-      if (segments.Length == 1) {
-        if (segments[0].IsClosed) {
-          segments = segments[0].Split(0.5);
-        }
-      }
-
-      var crvType = new List<string>();
-      var point3ds = new List<Point3d>();
-
-      foreach (Curve segment in segments) {
-        point3ds.Add(segment.PointAtStart);
-        crvType.Add("");
-        if (!segment.IsArc()) {
-          continue;
-        }
-
-        point3ds.Add(segment.PointAtNormalizedLength(0.5));
-        crvType.Add("A");
-      }
-      point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-      crvType.Add("");
-
-      return new Tuple<PolyCurve, List<Point3d>, List<string>>(polyCurve, point3ds, crvType);
-    }
-
-    /// <summary>
-    /// Method to convert a NURBS Brep into a planar trimmed surface with PolyCurve
-    /// internal and external edges of lines and arcs
-    /// 
-    /// BRep conversion to planar routine first converts the external edge to a PolyCurve
-    /// of lines and arcs and uses these controlpoints to fit a plane through points.
-    /// 
-    /// Will output a Tuple containing:
-    /// - PolyCurve
-    /// - TopologyList of control points
-    /// - TopoTypeList (" " or "a") corrosponding to control points
-    /// - List of PolyCurves for internal (void) curves
-    /// - Corrosponding list of topology points
-    /// - Corrosponding list of topologytypes
-    /// </summary>
-    /// <param name="brep"></param>
-    /// <param name="tolerance"></param>
-    /// <returns></returns>
-    public static Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>>
-        ConvertPolyBrep(Brep brep, double tolerance = -1) {
-      var voidCrvs = new List<PolyCurve>();
-      var voidTopo = new List<List<Point3d>>();
-      var voidTopoType = new List<List<string>>();
-
-      Curve outer = null;
-      var inner = new List<Curve>();
-      foreach (BrepLoop brepLoop in brep.Loops) {
-        if (brepLoop.LoopType == BrepLoopType.Outer) {
-          outer = brepLoop.To3dCurve();
-        }
-        else {
-          inner.Add(brepLoop.To3dCurve());
-        }
-      }
-      var edges = new List<Curve> { outer };
-      edges.AddRange(inner);
-
-      for (int i = 0; i < edges.Count; i++) {
-        if (edges[i].IsPlanar()) {
-          continue;
-        }
-
-        List<Point3d> ctrlPts;
-        if (edges[0].TryGetPolyline(out Polyline polyline))
-          ctrlPts = polyline.ToList();
-        else {
-          Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf = ConvertMem2dCrv(edges[0], tolerance);
-          ctrlPts = convertBadSrf.Item2;
-        }
-        Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
-        for (int j = 0; j < edges.Count; j++)
-          edges[j] = Curve.ProjectToPlane(edges[j], plane);
-      }
-
-      Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
-      PolyCurve edgeCrv = convert.Item1;
-      List<Point3d> point3ds = convert.Item2;
-      List<string> topoType = convert.Item3;
-
-      for (int i = 1; i < edges.Count; i++) {
-        convert = ConvertMem2dCrv(edges[i], tolerance);
-        voidCrvs.Add(convert.Item1);
-        voidTopo.Add(convert.Item2);
-        voidTopoType.Add(convert.Item3);
-      }
-
-      return new Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>>
-          (edgeCrv, point3ds, topoType, voidCrvs, voidTopo, voidTopoType);
-    }
-
-    /// <summary>
-    /// Method to convert a NURBS Brep into a planar trimmed surface with PolyCurve
-    /// internal and external edges of lines and arcs. 
-    /// 
-    /// BRep conversion to planar routine first converts the external edge to a PolyCurve
-    /// of lines and arcs and uses these controlpoints to fit a plane through points.
-    /// 
-    /// Input list of curves and list of points to be included in 2D Member;
-    /// lines and curves will automatically be projected onto planar Brep plane
-    /// 
-    /// Will output 3 Tuples:
-    /// (edgeTuple, voidTuple, inclTuple)
-    /// 
-    /// edgeTuple:
-    /// (edge_crv, m_topo, m_topoType)
-    /// - PolyCurve
-    /// - TopologyList of control points
-    /// - TopoTypeList (" " or "a") corrosponding to control points
-    /// 
-    /// voidTuple:
-    /// (void_crvs, void_topo, void_topoType)
-    /// - List of PolyCurves for internal (void) curves
-    /// - Corrosponding list of topology points
-    /// - Corrosponding list of topologytypes
-    /// 
-    /// inclTuple:
-    /// (incl_crvs, incl_topo, incl_topoType, inclPts)
-    /// - List of PolyCurves for internal (void) curves
-    /// - Corrosponding list of topology points
-    /// - Corrosponding list of topologytypes
-    /// - List of inclusion points
-    /// 
-    /// </summary>
-    /// <param name="brep"></param>
-    /// <param name="inclCrvs"></param>
-    /// <param name="inclPts"></param>
-    /// <param name="tolerance"></param>
-    /// <returns></returns>
-    public static Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
-        ConvertPolyBrepInclusion(Brep brep, List<Curve> inclCrvs = null, List<Point3d> inclPts = null, double tolerance = -1) {
-      var voidCrvs = new List<PolyCurve>();
-      var voidTopo = new List<List<Point3d>>();
-      var voidTopoType = new List<List<string>>();
-
-      var inclPolyCrvs = new List<PolyCurve>();
-      var inclTopo = new List<List<Point3d>>();
-      var inclTopoType = new List<List<string>>();
-
-      Curve outer = null;
-      var inner = new List<Curve>();
-      foreach (BrepLoop brepLoop in brep.Loops) {
-        if (brepLoop.LoopType == BrepLoopType.Outer)
-          outer = brepLoop.To3dCurve();
         else
-          inner.Add(brepLoop.To3dCurve());
+          crvs.Append(new Line(topology[i], topology[i + 1]));
       }
-      var edges = new List<Curve> { outer };
-      edges.AddRange(inner);
-
-      List<Point3d> ctrlPts;
-      if (edges[0].TryGetPolyline(out Polyline tempCrv))
-        ctrlPts = tempCrv.ToList();
-      else {
-        Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf = ConvertMem2dCrv(edges[0], tolerance);
-        ctrlPts = convertBadSrf.Item2;
-      }
-      Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
-
-      for (int i = 0; i < edges.Count; i++) {
-        if (edges[i].IsPlanar()) {
-          continue;
-        }
-
-        for (int j = 0; j < edges.Count; j++)
-          edges[j] = Curve.ProjectToPlane(edges[j], plane);
-      }
-      Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
-      PolyCurve edgeCrv = convert.Item1;
-      List<Point3d> topo = convert.Item2;
-      List<string> topoType = convert.Item3;
-
-      for (int i = 1; i < edges.Count; i++) {
-        convert = ConvertMem2dCrv(edges[i], tolerance);
-        voidCrvs.Add(convert.Item1);
-        voidTopo.Add(convert.Item2);
-        voidTopoType.Add(convert.Item3);
-      }
-
-      if (inclCrvs != null) {
-        for (int i = 0; i < inclCrvs.Count; i++) {
-          if (inclCrvs[i].IsInPlane(plane, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)))
-            inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
-          else {
-            //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
-            break;
-          }
-          convert = ConvertMem2dCrv(inclCrvs[i], tolerance);
-          inclPolyCrvs.Add(convert.Item1);
-          inclTopo.Add(convert.Item2);
-          inclTopoType.Add(convert.Item3);
-        }
-      }
-
-      if (inclPts != null) {
-        var inclPtsWithinTolerance = new List<Point3d>();
-        for (int i = 0; i < inclPts.Count; i++) {
-          Point3d tempPt = plane.ClosestPoint(inclPts[i]);
-          if (inclPts[i].DistanceTo(tempPt) <= DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
-            inclPtsWithinTolerance.Add(tempPt);
-        }
-        inclPts = inclPtsWithinTolerance;
-      }
-
-      var edgeTuple = new Tuple<PolyCurve, List<Point3d>, List<string>>(edgeCrv, topo, topoType);
-      var voidTuple = new Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>(voidCrvs, voidTopo, voidTopoType);
-      var inclTuple = new Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>(inclPolyCrvs, inclTopo, inclTopoType, inclPts);
-
-      return new Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
-          (edgeTuple, voidTuple, inclTuple);
+      return crvs;
     }
 
     public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1) {
@@ -394,206 +54,6 @@ namespace GsaGH.Helpers.GH {
 
       var brep2 = Brep.CreateEdgeSurface(curves);
       return brep2;
-    }
-
-    public static PolyCurve BuildArcLineCurveFromPtsAndTopoType(List<Point3d> topology, List<string> topoType = null) {
-      var crvs = new PolyCurve();
-
-      for (int i = 0; i < topology.Count - 1; i++) {
-        if (topoType != null & topoType[i + 1] == "A") {
-          crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
-          i++;
-        }
-        else
-          crvs.Append(new Line(topology[i], topology[i + 1]));
-      }
-      return crvs;
-    }
-
-    public static List<List<int>> ConvertMeshToElem2d(Mesh mesh) {
-      var topoInts = new List<List<int>>();
-      var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
-
-      foreach (List<int> topo in ngons.Select(ngon => ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList())) {
-        switch (topo.Count) {
-          case 3:
-          case 4:
-            topoInts.Add(topo);
-            break;
-          case 6: {
-              var topo6 = new List<int> {
-              topo[0],
-              topo[2],
-              topo[4],
-              topo[1],
-              topo[3],
-              topo[5],
-            };
-              topoInts.Add(topo6);
-              break;
-            }
-          case 8: {
-              var topo8 = new List<int> {
-              topo[0],
-              topo[2],
-              topo[4],
-              topo[6],
-              topo[1],
-              topo[3],
-              topo[5],
-              topo[7],
-            };
-              topoInts.Add(topo8);
-              break;
-            }
-        }
-      }
-
-      return topoInts;
-    }
-    public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(Mesh mesh, int prop = 1, bool createQuadraticElements = false) {
-      var elems = new List<Element>();
-      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
-      var topoInts = new List<List<int>>();
-      var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
-
-      foreach (MeshNgon ngon in ngons) {
-        var elem = new Element();
-        var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
-
-        switch (topo.Count) {
-          case 3 when createQuadraticElements: {
-              var pt3 = new Point3d(
-                (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
-                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
-                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt3);
-              var pt4 = new Point3d(
-                (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
-                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
-                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt4);
-              var pt5 = new Point3d(
-                (topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
-                (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
-                (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt5);
-
-              elem.Type = ElementType.TRI6;
-              topoInts.Add(topo);
-              break;
-            }
-          case 3:
-            elem.Type = ElementType.TRI3;
-            topoInts.Add(topo);
-            break;
-          case 4 when createQuadraticElements: {
-              var pt3 = new Point3d(
-                (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
-                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
-                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt3);
-              var pt4 = new Point3d(
-                (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
-                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
-                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt4);
-              var pt5 = new Point3d(
-                (topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
-                (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
-                (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt5);
-              var pt6 = new Point3d(
-                (topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
-                (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
-                (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
-              topo.Add(topoPts.Count);
-              topoPts.Add(pt6);
-
-              elem.Type = ElementType.QUAD8;
-              topoInts.Add(topo);
-              break;
-            }
-          case 4:
-            elem.Type = ElementType.QUAD4;
-            topoInts.Add(topo);
-            break;
-          case 6: {
-              elem.Type = ElementType.TRI6;
-              var topo6 = new List<int> {
-              topo[0],
-              topo[2],
-              topo[4],
-              topo[1],
-              topo[3],
-              topo[5],
-            };
-              topoInts.Add(topo6);
-              break;
-            }
-          case 8: {
-              elem.Type = ElementType.QUAD8;
-              var topo8 = new List<int> {
-              topo[0],
-              topo[2],
-              topo[4],
-              topo[6],
-              topo[1],
-              topo[3],
-              topo[5],
-              topo[7],
-            };
-              topoInts.Add(topo8);
-              break;
-            }
-        }
-
-        elem.Property = prop;
-        elems.Add(elem);
-      }
-
-      return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
-    }
-
-    public static Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> ConvertMeshToElem3d(Mesh mesh, int prop = 1) {
-      var elems = new List<Element>();
-      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
-      var topoInts = new List<List<int>>();
-      var faceInts = new List<List<int>>();
-      var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
-
-      foreach (MeshNgon ngon in ngons) {
-        var elem = new Element();
-        var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
-        topoInts.Add(topo);
-        switch (topo.Count) {
-          case 4:
-            elem.Type = ElementType.TETRA4;
-            break;
-          case 5:
-            elem.Type = ElementType.PYRAMID5;
-            break;
-          case 6:
-            elem.Type = ElementType.WEDGE6;
-            break;
-          case 8:
-            elem.Type = ElementType.BRICK8;
-            break;
-        }
-
-        var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
-        faceInts.Add(faces);
-        elem.Property = prop;
-        elems.Add(elem);
-      }
-
-      return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
     }
 
     public static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(Brep brep, List<Point3d> points, List<GsaNode> inNodes, List<Curve> inCurves, List<GsaElement1d> inElem1ds, List<GsaMember1d> inMem1ds, double meshSize, LengthUnit unit, Length tolerance) {
@@ -657,12 +117,14 @@ namespace GsaGH.Helpers.GH {
           case 0:
             curves.Add(crv);
             break;
+
           case 1:
             inElem1ds[id - nCrvs].Line = new LineCurve(crv.PointAtStart, crv.PointAtEnd);
             inElem1ds[id - nCrvs].Id = elemid;
             elemSections.Add(elemid++, inElem1ds[id - nCrvs].Section);
             elem1ds.Add(inElem1ds[id - nCrvs]);
             break;
+
           case 2:
             var mem1d = new GsaMember1d(crv) {
               ApiMember = inMem1ds[id - nCrvs - nElem1ds].GetAPI_MemberClone(),
@@ -777,18 +239,7 @@ namespace GsaGH.Helpers.GH {
 
       return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
     }
-    public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh) {
-      var m = (Mesh)mesh.Duplicate();
-      if (!m.IsClosed) {
-        m.FillHoles();
-        if (!m.IsClosed)
-          return null;
-      }
-      m.Weld(Math.PI);
-      m.Faces.ConvertQuadsToTriangles();
 
-      return m;
-    }
     public static Mesh ConvertBrepToTriMeshSolid(Brep brep) {
       MeshingParameters mparams = MeshingParameters.Minimal;
       mparams.JaggedSeams = false;
@@ -808,6 +259,566 @@ namespace GsaGH.Helpers.GH {
       m.CollapseFacesByEdgeLength(false, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry));
 
       return m;
+    }
+
+    /// <summary>
+    /// Method to convert a NURBS curve into a PolyCurve made of lines and arcs.
+    /// Automatically uses Rhino document tolerance if tolerance is not inputted
+    /// </summary>
+    /// <param name="curve"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem1dCrv(Curve curve, double tolerance = -1) {
+      PolyCurve polyCurve = null;
+      var crvType = new List<string>();
+      var point3ds = new List<Point3d>();
+
+      if (curve.IsArc()) {
+        crvType.Add("");
+        crvType.Add("A");
+        crvType.Add("");
+
+        point3ds.Add(curve.PointAtStart);
+        point3ds.Add(curve.PointAtNormalizedLength(0.5));
+        point3ds.Add(curve.PointAtEnd);
+
+        polyCurve = new PolyCurve();
+        polyCurve.Append(curve);
+      }
+      else {
+        if (tolerance < 0)
+          tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+        if (curve.SpanCount == 1 && curve.Degree > 2) {
+          curve = curve.ToPolyline(tolerance, 2, 0, 0);
+        }
+        if (curve.SpanCount > 1) {
+          polyCurve = new PolyCurve();
+
+          if (!curve.IsPolyline())
+            curve = curve.ToPolyline(tolerance, 2, 0, 0);
+          if (!curve.IsValid)
+            throw new Exception(" Error converting edge or curve to polyline: please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
+
+          Curve[] segments = curve.DuplicateSegments();
+
+          foreach (Curve segment in segments) {
+            crvType.Add("");
+            point3ds.Add(segment.PointAtStart);
+            polyCurve.Append(segment);
+          }
+          crvType.Add("");
+          point3ds.Add(segments[segments.Length - 1].PointAtEnd);
+        }
+        else {
+          crvType.Add("");
+          crvType.Add("");
+
+          point3ds.Add(curve.PointAtStart);
+          point3ds.Add(curve.PointAtEnd);
+
+          polyCurve = new PolyCurve();
+          polyCurve.Append(curve);
+        }
+      }
+
+      return new Tuple<PolyCurve, List<Point3d>, List<string>>(polyCurve, point3ds, crvType);
+    }
+
+    public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve curve, double tolerance = -1) {
+      if (tolerance < 0)
+        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+
+      PolyCurve polyCurve = curve.ToArcsAndLines(tolerance, 2, 0, 0);
+      Curve[] segments = polyCurve != null
+        ? polyCurve.DuplicateSegments()
+        : new[] { curve };
+
+      if (segments.Length == 1) {
+        if (segments[0].IsClosed) {
+          segments = segments[0].Split(0.5);
+        }
+      }
+
+      var crvType = new List<string>();
+      var point3ds = new List<Point3d>();
+
+      foreach (Curve segment in segments) {
+        point3ds.Add(segment.PointAtStart);
+        crvType.Add("");
+        if (!segment.IsArc()) {
+          continue;
+        }
+
+        point3ds.Add(segment.PointAtNormalizedLength(0.5));
+        crvType.Add("A");
+      }
+      point3ds.Add(segments[segments.Length - 1].PointAtEnd);
+      crvType.Add("");
+
+      return new Tuple<PolyCurve, List<Point3d>, List<string>>(polyCurve, point3ds, crvType);
+    }
+
+    public static List<List<int>> ConvertMeshToElem2d(Mesh mesh) {
+      var topoInts = new List<List<int>>();
+      var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+
+      foreach (List<int> topo in ngons.Select(ngon => ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList())) {
+        switch (topo.Count) {
+          case 3:
+          case 4:
+            topoInts.Add(topo);
+            break;
+
+          case 6: {
+              var topo6 = new List<int> {
+              topo[0],
+              topo[2],
+              topo[4],
+              topo[1],
+              topo[3],
+              topo[5],
+            };
+              topoInts.Add(topo6);
+              break;
+            }
+          case 8: {
+              var topo8 = new List<int> {
+              topo[0],
+              topo[2],
+              topo[4],
+              topo[6],
+              topo[1],
+              topo[3],
+              topo[5],
+              topo[7],
+            };
+              topoInts.Add(topo8);
+              break;
+            }
+        }
+      }
+
+      return topoInts;
+    }
+
+    public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(Mesh mesh, int prop = 1, bool createQuadraticElements = false) {
+      var elems = new List<Element>();
+      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      var topoInts = new List<List<int>>();
+      var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+
+      foreach (MeshNgon ngon in ngons) {
+        var elem = new Element();
+        var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
+
+        switch (topo.Count) {
+          case 3 when createQuadraticElements: {
+              var pt3 = new Point3d(
+                (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt3);
+              var pt4 = new Point3d(
+                (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt4);
+              var pt5 = new Point3d(
+                (topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
+                (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
+                (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt5);
+
+              elem.Type = ElementType.TRI6;
+              topoInts.Add(topo);
+              break;
+            }
+          case 3:
+            elem.Type = ElementType.TRI3;
+            topoInts.Add(topo);
+            break;
+
+          case 4 when createQuadraticElements: {
+              var pt3 = new Point3d(
+                (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt3);
+              var pt4 = new Point3d(
+                (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt4);
+              var pt5 = new Point3d(
+                (topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
+                (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
+                (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt5);
+              var pt6 = new Point3d(
+                (topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
+                (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
+                (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt6);
+
+              elem.Type = ElementType.QUAD8;
+              topoInts.Add(topo);
+              break;
+            }
+          case 4:
+            elem.Type = ElementType.QUAD4;
+            topoInts.Add(topo);
+            break;
+
+          case 6: {
+              elem.Type = ElementType.TRI6;
+              var topo6 = new List<int> {
+              topo[0],
+              topo[2],
+              topo[4],
+              topo[1],
+              topo[3],
+              topo[5],
+            };
+              topoInts.Add(topo6);
+              break;
+            }
+          case 8: {
+              elem.Type = ElementType.QUAD8;
+              var topo8 = new List<int> {
+              topo[0],
+              topo[2],
+              topo[4],
+              topo[6],
+              topo[1],
+              topo[3],
+              topo[5],
+              topo[7],
+            };
+              topoInts.Add(topo8);
+              break;
+            }
+        }
+
+        elem.Property = prop;
+        elems.Add(elem);
+      }
+
+      return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
+    }
+
+    public static Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> ConvertMeshToElem3d(Mesh mesh, int prop = 1) {
+      var elems = new List<Element>();
+      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      var topoInts = new List<List<int>>();
+      var faceInts = new List<List<int>>();
+      var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+
+      foreach (MeshNgon ngon in ngons) {
+        var elem = new Element();
+        var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
+        topoInts.Add(topo);
+        switch (topo.Count) {
+          case 4:
+            elem.Type = ElementType.TETRA4;
+            break;
+
+          case 5:
+            elem.Type = ElementType.PYRAMID5;
+            break;
+
+          case 6:
+            elem.Type = ElementType.WEDGE6;
+            break;
+
+          case 8:
+            elem.Type = ElementType.BRICK8;
+            break;
+        }
+
+        var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
+        faceInts.Add(faces);
+        elem.Property = prop;
+        elems.Add(elem);
+      }
+
+      return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
+    }
+
+    public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh) {
+      var m = (Mesh)mesh.Duplicate();
+      if (!m.IsClosed) {
+        m.FillHoles();
+        if (!m.IsClosed)
+          return null;
+      }
+      m.Weld(Math.PI);
+      m.Faces.ConvertQuadsToTriangles();
+
+      return m;
+    }
+
+    /// <summary>
+    /// Method to convert a NURBS Brep into a planar trimmed surface with PolyCurve
+    /// internal and external edges of lines and arcs
+    ///
+    /// BRep conversion to planar routine first converts the external edge to a PolyCurve
+    /// of lines and arcs and uses these controlpoints to fit a plane through points.
+    ///
+    /// Will output a Tuple containing:
+    /// - PolyCurve
+    /// - TopologyList of control points
+    /// - TopoTypeList (" " or "a") corrosponding to control points
+    /// - List of PolyCurves for internal (void) curves
+    /// - Corrosponding list of topology points
+    /// - Corrosponding list of topologytypes
+    /// </summary>
+    /// <param name="brep"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    public static Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>>
+        ConvertPolyBrep(Brep brep, double tolerance = -1) {
+      var voidCrvs = new List<PolyCurve>();
+      var voidTopo = new List<List<Point3d>>();
+      var voidTopoType = new List<List<string>>();
+
+      Curve outer = null;
+      var inner = new List<Curve>();
+      foreach (BrepLoop brepLoop in brep.Loops) {
+        if (brepLoop.LoopType == BrepLoopType.Outer) {
+          outer = brepLoop.To3dCurve();
+        }
+        else {
+          inner.Add(brepLoop.To3dCurve());
+        }
+      }
+      var edges = new List<Curve> { outer };
+      edges.AddRange(inner);
+
+      for (int i = 0; i < edges.Count; i++) {
+        if (edges[i].IsPlanar()) {
+          continue;
+        }
+
+        List<Point3d> ctrlPts;
+        if (edges[0].TryGetPolyline(out Polyline polyline))
+          ctrlPts = polyline.ToList();
+        else {
+          Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf = ConvertMem2dCrv(edges[0], tolerance);
+          ctrlPts = convertBadSrf.Item2;
+        }
+        Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
+        for (int j = 0; j < edges.Count; j++)
+          edges[j] = Curve.ProjectToPlane(edges[j], plane);
+      }
+
+      Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
+      PolyCurve edgeCrv = convert.Item1;
+      List<Point3d> point3ds = convert.Item2;
+      List<string> topoType = convert.Item3;
+
+      for (int i = 1; i < edges.Count; i++) {
+        convert = ConvertMem2dCrv(edges[i], tolerance);
+        voidCrvs.Add(convert.Item1);
+        voidTopo.Add(convert.Item2);
+        voidTopoType.Add(convert.Item3);
+      }
+
+      return new Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>>
+          (edgeCrv, point3ds, topoType, voidCrvs, voidTopo, voidTopoType);
+    }
+
+    /// <summary>
+    /// Method to convert a NURBS Brep into a planar trimmed surface with PolyCurve
+    /// internal and external edges of lines and arcs.
+    ///
+    /// BRep conversion to planar routine first converts the external edge to a PolyCurve
+    /// of lines and arcs and uses these controlpoints to fit a plane through points.
+    ///
+    /// Input list of curves and list of points to be included in 2D Member;
+    /// lines and curves will automatically be projected onto planar Brep plane
+    ///
+    /// Will output 3 Tuples:
+    /// (edgeTuple, voidTuple, inclTuple)
+    ///
+    /// edgeTuple:
+    /// (edge_crv, m_topo, m_topoType)
+    /// - PolyCurve
+    /// - TopologyList of control points
+    /// - TopoTypeList (" " or "a") corrosponding to control points
+    ///
+    /// voidTuple:
+    /// (void_crvs, void_topo, void_topoType)
+    /// - List of PolyCurves for internal (void) curves
+    /// - Corrosponding list of topology points
+    /// - Corrosponding list of topologytypes
+    ///
+    /// inclTuple:
+    /// (incl_crvs, incl_topo, incl_topoType, inclPts)
+    /// - List of PolyCurves for internal (void) curves
+    /// - Corrosponding list of topology points
+    /// - Corrosponding list of topologytypes
+    /// - List of inclusion points
+    ///
+    /// </summary>
+    /// <param name="brep"></param>
+    /// <param name="inclCrvs"></param>
+    /// <param name="inclPts"></param>
+    /// <param name="tolerance"></param>
+    /// <returns></returns>
+    public static Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
+        ConvertPolyBrepInclusion(Brep brep, List<Curve> inclCrvs = null, List<Point3d> inclPts = null, double tolerance = -1) {
+      var voidCrvs = new List<PolyCurve>();
+      var voidTopo = new List<List<Point3d>>();
+      var voidTopoType = new List<List<string>>();
+
+      var inclPolyCrvs = new List<PolyCurve>();
+      var inclTopo = new List<List<Point3d>>();
+      var inclTopoType = new List<List<string>>();
+
+      Curve outer = null;
+      var inner = new List<Curve>();
+      foreach (BrepLoop brepLoop in brep.Loops) {
+        if (brepLoop.LoopType == BrepLoopType.Outer)
+          outer = brepLoop.To3dCurve();
+        else
+          inner.Add(brepLoop.To3dCurve());
+      }
+      var edges = new List<Curve> { outer };
+      edges.AddRange(inner);
+
+      List<Point3d> ctrlPts;
+      if (edges[0].TryGetPolyline(out Polyline tempCrv))
+        ctrlPts = tempCrv.ToList();
+      else {
+        Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf = ConvertMem2dCrv(edges[0], tolerance);
+        ctrlPts = convertBadSrf.Item2;
+      }
+      Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
+
+      for (int i = 0; i < edges.Count; i++) {
+        if (edges[i].IsPlanar()) {
+          continue;
+        }
+
+        for (int j = 0; j < edges.Count; j++)
+          edges[j] = Curve.ProjectToPlane(edges[j], plane);
+      }
+      Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
+      PolyCurve edgeCrv = convert.Item1;
+      List<Point3d> topo = convert.Item2;
+      List<string> topoType = convert.Item3;
+
+      for (int i = 1; i < edges.Count; i++) {
+        convert = ConvertMem2dCrv(edges[i], tolerance);
+        voidCrvs.Add(convert.Item1);
+        voidTopo.Add(convert.Item2);
+        voidTopoType.Add(convert.Item3);
+      }
+
+      if (inclCrvs != null) {
+        for (int i = 0; i < inclCrvs.Count; i++) {
+          if (inclCrvs[i].IsInPlane(plane, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)))
+            inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
+          else {
+            //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
+            break;
+          }
+          convert = ConvertMem2dCrv(inclCrvs[i], tolerance);
+          inclPolyCrvs.Add(convert.Item1);
+          inclTopo.Add(convert.Item2);
+          inclTopoType.Add(convert.Item3);
+        }
+      }
+
+      if (inclPts != null) {
+        var inclPtsWithinTolerance = new List<Point3d>();
+        for (int i = 0; i < inclPts.Count; i++) {
+          Point3d tempPt = plane.ClosestPoint(inclPts[i]);
+          if (inclPts[i].DistanceTo(tempPt) <= DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
+            inclPtsWithinTolerance.Add(tempPt);
+        }
+        inclPts = inclPtsWithinTolerance;
+      }
+
+      var edgeTuple = new Tuple<PolyCurve, List<Point3d>, List<string>>(edgeCrv, topo, topoType);
+      var voidTuple = new Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>(voidCrvs, voidTopo, voidTopoType);
+      var inclTuple = new Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>(inclPolyCrvs, inclTopo, inclTopoType, inclPts);
+
+      return new Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
+          (edgeTuple, voidTuple, inclTuple);
+    }
+
+    public static Plane CreateBestFitUnitisedPlaneFromPts(List<Point3d> ctrlPts, bool round = false) {
+      Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
+      plane.Origin = plane.ClosestPoint(new Point3d(0, 0, 0));
+      int dig = UnitsHelper.SignificantDigits;
+      plane.Normal.Unitize();
+      if (Math.Abs(Math.Round(plane.Normal.Z, dig)) == 1) {
+        plane.XAxis = Vector3d.XAxis;
+        plane.YAxis = Vector3d.YAxis;
+      }
+
+      if (round) {
+        plane.OriginX = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginX, dig);
+        plane.OriginY = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginY, dig);
+        plane.OriginZ = GsaApi.ResultHelper.RoundToSignificantDigits(plane.OriginZ, dig);
+
+        plane.XAxis.Unitize();
+        Vector3d xaxis = plane.XAxis;
+        xaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
+        xaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
+        xaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
+        plane.XAxis = xaxis;
+
+        plane.YAxis.Unitize();
+        Vector3d yaxis = plane.YAxis;
+        yaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
+        yaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
+        yaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
+        plane.YAxis = yaxis;
+
+        plane.ZAxis.Unitize();
+        Vector3d zaxis = plane.ZAxis;
+        zaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
+        zaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
+        zaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
+        plane.ZAxis = zaxis;
+      }
+      else {
+        plane.OriginX = Math.Round(plane.OriginX, dig);
+        plane.OriginY = Math.Round(plane.OriginY, dig);
+        plane.OriginZ = Math.Round(plane.OriginZ, dig);
+
+        plane.XAxis.Unitize();
+        Vector3d xaxis = plane.XAxis;
+        xaxis.X = Math.Round(Math.Abs(xaxis.X), dig);
+        xaxis.Y = Math.Round(Math.Abs(xaxis.Y), dig);
+        xaxis.Z = Math.Round(Math.Abs(xaxis.Z), dig);
+        plane.XAxis = xaxis;
+
+        plane.YAxis.Unitize();
+        Vector3d yaxis = plane.YAxis;
+        yaxis.X = Math.Round(Math.Abs(yaxis.X), dig);
+        yaxis.Y = Math.Round(Math.Abs(yaxis.Y), dig);
+        yaxis.Z = Math.Round(Math.Abs(yaxis.Z), dig);
+        plane.YAxis = yaxis;
+
+        plane.ZAxis.Unitize();
+        Vector3d zaxis = plane.ZAxis;
+        zaxis.X = Math.Round(Math.Abs(zaxis.X), dig);
+        zaxis.Y = Math.Round(Math.Abs(zaxis.Y), dig);
+        zaxis.Z = Math.Round(Math.Abs(zaxis.Z), dig);
+        plane.ZAxis = zaxis;
+      }
+
+      return plane;
     }
   }
 }

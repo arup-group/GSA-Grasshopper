@@ -187,9 +187,11 @@ namespace GsaGH.Helpers.Export {
         case GsaNodeLoad.NodeLoadTypes.AppliedDisp:
           nodeLoadsDispl.Add(load.NodeLoad.NodeLoad);
           break;
+
         case GsaNodeLoad.NodeLoadTypes.NodeLoad:
           nodeLoadsNode.Add(load.NodeLoad.NodeLoad);
           break;
+
         case GsaNodeLoad.NodeLoadTypes.Settlement:
           nodeLoadsSettle.Add(load.NodeLoad.NodeLoad);
           break;
