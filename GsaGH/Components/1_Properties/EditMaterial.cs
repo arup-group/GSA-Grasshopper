@@ -107,9 +107,8 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
           switch (ghTyp.Value) {
-            case GH_Integer _: {
-                GH_Convert.ToInt32(ghTyp, out int typ, GH_Conversion.Both);
-                switch (typ) {
+            case GH_Integer ghInt: {
+                switch (ghInt.Value) {
                   case 1:
                     material.MaterialType = GsaMaterial.MatType.Steel;
                     break;
@@ -145,9 +144,8 @@ namespace GsaGH.Components {
                 break;
               }
 
-            case GH_String _: {
-                GH_Convert.ToString(ghTyp, out string typ, GH_Conversion.Both);
-                switch (typ.ToUpper()) {
+            case GH_String ghString: {
+                switch (ghString.Value.ToUpper()) {
                   case "STEEL":
                     material.MaterialType = GsaMaterial.MatType.Steel;
                     break;
