@@ -10,8 +10,6 @@ using Rhino.Runtime.InProcess;
 using Xunit;
 
 namespace IntegrationTests {
-
-
   public class GrasshopperFixture : IDisposable {
     public RhinoCore Core {
       get {
@@ -33,8 +31,8 @@ namespace IntegrationTests {
     }
     public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
-    private object _doc { get; set; }
-    private object _docIo { get; set; }
+    private object Doc { get; set; }
+    private object DocIo { get; set; }
     private static readonly string s_linkFileName = "IntegrationTests.ghlink";
     private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
     private object _core = null;
@@ -102,8 +100,8 @@ namespace IntegrationTests {
       }
 
       if (disposing) {
-        _doc = null;
-        _docIo = null;
+        Doc = null;
+        DocIo = null;
         GhPlugin.CloseAllDocuments();
         _ghPlugin = null;
         Core.Dispose();
