@@ -15,12 +15,14 @@ namespace GsaGHTests {
     private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
     private const string LinkFileName = "GsaGhTests.ghlink";
 
-    static GrasshopperFixture() =>
+    static GrasshopperFixture() {
       // This MUST be included in a static constructor to ensure that no Rhino DLLs
       // are loaded before the resolver is set up. Avoid creating other static functions
       // and members which may reference Rhino assemblies, as that may cause those
       // assemblies to be loaded before this is called.
       RhinoInside.Resolver.Initialize();
+    }
+
 
     public GrasshopperFixture() {
       AddPluginToGh();

@@ -7,20 +7,13 @@ using Interop.Gsa_10_1;
 using OasysGH.Units;
 using Rhino;
 using Rhino.Runtime.InProcess;
-using RhinoInside;
 using Xunit;
 
 namespace IntegrationTests {
   public class GrasshopperFixture : IDisposable {
-    public static string InstallPath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-      "Oasys",
-      "GSA 10.1");
+    public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
-    private static readonly string s_linkFilePath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-      "Grasshopper",
-      "Libraries");
+    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
 
     private static readonly string s_linkFileName = "IntegrationTests.ghlink";
 
@@ -28,13 +21,13 @@ namespace IntegrationTests {
     private object _ghPlugin = null;
     private bool _isDisposed;
 
-    static GrasshopperFixture()
-      =>
-        // This MUST be included in a static constructor to ensure that no Rhino DLLs
-        // are loaded before the resolver is set up. Avoid creating other static functions
-        // and members which may reference Rhino assemblies, as that may cause those
-        // assemblies to be loaded before this is called.
-        Resolver.Initialize();
+    static GrasshopperFixture() {
+      // This MUST be included in a static constructor to ensure that no Rhino DLLs
+      // are loaded before the resolver is set up. Avoid creating other static functions
+      // and members which may reference Rhino assemblies, as that may cause those
+      // assemblies to be loaded before this is called.
+      RhinoInside.Resolver.Initialize();
+    }
 
     public GrasshopperFixture() {
       AddPluginToGh();
@@ -49,8 +42,8 @@ namespace IntegrationTests {
       Utility.SetupUnitsDuringLoad(true);
     }
 
-    private object DocIo { get; set; }
-    private object Doc { get; set; }
+    private object _docIo { get; set; }
+    private object _doc { get; set; }
 
     public RhinoCore Core {
       get {
@@ -106,8 +99,8 @@ namespace IntegrationTests {
       if (_isDisposed)
         return;
       if (disposing) {
-        Doc = null;
-        DocIo = null;
+        _doc = null;
+        _docIo = null;
         GhPlugin.CloseAllDocuments();
         _ghPlugin = null;
         Core.Dispose();
