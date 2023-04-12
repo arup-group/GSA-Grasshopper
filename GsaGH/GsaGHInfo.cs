@@ -48,7 +48,6 @@ namespace GsaGH {
       }
 
       try {
-        // Try load GSA
         Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
         var gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
         gsaVersion = gsaVers.FileMajorPart

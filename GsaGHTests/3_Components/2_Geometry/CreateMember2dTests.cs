@@ -24,7 +24,7 @@ namespace GsaGHTests.Components.Geometry {
           1),
         0);
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother()),
+        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(false)),
         3);
       ComponentTestHelper.SetInput(comp, 0.5, 4);
 

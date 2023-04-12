@@ -43,9 +43,7 @@ namespace GsaGH.Parameters {
     #region properties
     public MatType MaterialType { get; set; } = MatType.Undef;
     public int GradeProperty {
-      get {
-        return _grade;
-      }
+      get => _grade;
       set {
         _grade = value;
         if (_grade > 0)
@@ -54,9 +52,7 @@ namespace GsaGH.Parameters {
       }
     }
     public int AnalysisProperty {
-      get {
-        return _analProp;
-      }
+      get => _analProp;
       set {
         _analProp = value;
         if (_analProp == 0) {
@@ -67,15 +63,9 @@ namespace GsaGH.Parameters {
         _grade = 0;
       }
     }
-    public Guid Guid {
-      get {
-        return _guid;
-      }
-    }
+    public Guid Guid => _guid;
     internal AnalysisMaterial AnalysisMaterial {
-      get {
-        return _analysisMaterial;
-      }
+      get => _analysisMaterial;
       set {
         _analysisMaterial = value;
         _guid = Guid.NewGuid();
@@ -88,19 +78,17 @@ namespace GsaGH.Parameters {
     }
 
     /// <summary>
-    /// 0 : Generic
-    /// 1 : Steel
-    /// 2 : Concrete
-    /// 3 : Aluminium
-    /// 4 : Glass
-    /// 5 : FRP
-    /// 7 : Timber
-    /// 8 : Fabric
+    /// 0 : Generic<br></br>
+    /// 1 : Steel<br></br>
+    /// 2 : Concrete<br></br>
+    /// 3 : Aluminium<br></br>
+    /// 4 : Glass<br></br>
+    /// 5 : FRP<br></br>
+    /// 7 : Timber<br></br>
+    /// 8 : Fabric<br></br>
     /// </summary>
-    /// <param name="type"></param>
-    public GsaMaterial(int type) {
-      MaterialType = (MatType)type;
-    }
+    /// <param name="typeId"></param>
+    public GsaMaterial(int typeId) => MaterialType = (MatType)typeId;
 
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
       if (section?.ApiSection == null)
