@@ -10,6 +10,7 @@ namespace GsaGHTests.GooWrappers {
   public class GhOasysGooTest {
     [Theory]
     [InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
+    [InlineData(typeof(GsaListGoo), typeof(GsaList))]
     [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     [InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
     [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]

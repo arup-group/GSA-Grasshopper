@@ -5,7 +5,7 @@ using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Helpers.GsaAPI {
+namespace GsaGH.Helpers.GsaApi {
   internal enum FootfallResultType {
     Resonant,
     Transient,

@@ -6,7 +6,7 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;

@@ -23,8 +23,9 @@ namespace GsaGH.Parameters {
 
     private Plane _pln = Plane.WorldXY;
 
-    internal Guid _refObjectGuid;
     internal ReferenceType _referenceType = ReferenceType.None;
+    internal Guid _refObjectGuid;
+    internal GsaList _refList;
 
     #endregion
 
@@ -166,8 +167,14 @@ namespace GsaGH.Parameters {
       };
       if (_referenceType == ReferenceType.None)
         return dup;
-      dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-      dup._referenceType = _referenceType;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
 
       return dup;
     }

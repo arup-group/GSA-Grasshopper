@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GsaGH.Helpers.GsaAPI {
+namespace GsaGH.Helpers.GsaApi {
   internal partial class ResultHelper {
     internal static List<double> SmartRounder(double max, double min) {
       var roundedvals = new List<double>();

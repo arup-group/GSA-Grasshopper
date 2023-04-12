@@ -293,6 +293,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateList {
+            get {
+                object obj = ResourceManager.GetObject("CreateList", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateMaterial {
             get {
                 object obj = ResourceManager.GetObject("CreateMaterial", resourceCulture);
@@ -743,6 +753,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GetList {
+            get {
+                object obj = ResourceManager.GetObject("GetList", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GetLoads {
             get {
                 object obj = ResourceManager.GetObject("GetLoads", resourceCulture);
@@ -886,6 +906,26 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap LineLoad {
             get {
                 object obj = ResourceManager.GetObject("LineLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ListInfo {
+            get {
+                object obj = ResourceManager.GetObject("ListInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ListParam {
+            get {
+                object obj = ResourceManager.GetObject("ListParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
