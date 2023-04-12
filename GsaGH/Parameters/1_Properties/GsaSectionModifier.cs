@@ -210,8 +210,7 @@ namespace GsaGH.Parameters {
     }
     internal SectionModifier _sectionModifier = new SectionModifier();
 
-    public GsaSectionModifier() {
-    }
+    public GsaSectionModifier() { }
 
     internal GsaSectionModifier(SectionModifier sectionModifier) {
       _sectionModifier = sectionModifier;
