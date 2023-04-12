@@ -11,12 +11,9 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
-
   internal class AssembleModel {
-
-    #region Internal Methods
     /// <summary>
-    ///
+    /// 
     /// </summary>
     /// <param name="model">Existing models to be merged</param>
     /// <param name="nodes">List of nodes with properties like support conditions</param>
@@ -54,7 +51,7 @@ namespace GsaGH.Helpers.Export {
       IReadOnlyDictionary<int, Axis> gsaAxes = gsa.Axes();
       var apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       Nodes.ConvertNodes(nodes, ref apiNodes, ref apiaxes, modelUnit);
-      #endregion Nodes
+      #endregion
 
       #region Properties
       var apiSections = new GsaGuidDictionary<Section>(gsa.Sections());
@@ -67,28 +64,28 @@ namespace GsaGH.Helpers.Export {
 
       var apiProp3ds = new GsaGuidDictionary<Prop3D>(gsa.Prop3Ds());
       Prop3ds.ConvertProp3d(prop3Ds, ref apiProp3ds, ref apiMaterials);
-      #endregion Properties
+      #endregion
 
       #region Elements
       var apiElements = new GsaGuidIntListDictionary<Element>(gsa.Elements());
       Elements.ConvertElement1D(elem1ds, ref apiElements, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Elements.ConvertElement2D(elem2ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Elements.ConvertElement3D(elem3ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
-      #endregion Elements
+      #endregion
 
       #region Members
       var apiMembers = new GsaGuidDictionary<Member>(gsa.Members());
       Members.ConvertMember1D(mem1ds, ref apiMembers, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Members.ConvertMember2D(mem2ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
-      #endregion Members
+      #endregion
 
       #region Node loads
       var nodeLoadsNode = new List<NodeLoad>();
       var nodeLoadsDispl = new List<NodeLoad>();
       var nodeLoadsSettle = new List<NodeLoad>();
       Loads.ConvertNodeLoad(loads, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle, ref apiNodes, modelUnit);
-      #endregion Node loads
+      #endregion
 
       #region set geometry in model
       ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.Dictionary;
@@ -166,7 +163,7 @@ namespace GsaGH.Helpers.Export {
               + Environment.NewLine + "Right-click the component to change the tolerance.");
         }
       }
-      #endregion set geometry in model
+      #endregion
 
       #region Loads
       var gravityLoads = new List<GravityLoad>();
@@ -189,7 +186,7 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
 
       Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
-      #endregion Loads
+      #endregion
 
       #region set rest in model
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
@@ -236,11 +233,9 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaCombinationCase co in combinations)
         gsa.AddCombinationCase(co.Name, co.Description);
-      #endregion set rest in model
+      #endregion
 
       return gsa;
     }
-
-    #endregion Internal Methods
   }
 }

@@ -6,15 +6,11 @@ using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
-
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Analyses {
-
-    #region Internal Methods
     internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel) => GetAnalysisTasksAndCombinations(gsaModel.Model);
-
     internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(Model model) {
       ReadOnlyDictionary<int, AnalysisTask> tasks = model.AnalysisTasks();
 
@@ -71,7 +67,5 @@ namespace GsaGH.Helpers.Import {
 
       return new Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>(tasksList, caseList);
     }
-
-    #endregion Internal Methods
   }
 }

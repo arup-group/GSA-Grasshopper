@@ -5,26 +5,34 @@ using OasysGH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaAnalysisTask" /> can be used in Grasshopper.
   /// </summary>
   public class GsaAnalysisTaskGoo : GH_OasysGoo<GsaAnalysisTask> {
-
-    #region Properties + Fields
-    public static string Description => "GSA Analysis Task";
+    public GsaAnalysisTaskGoo(GsaAnalysisTask item) : base(item) { }
     public static string Name => "Analysis Task";
     public static string NickName => "ΣT";
+    public static string Description => "GSA Analysis Task";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion Properties + Fields
 
-    #region Public Constructors
-    public GsaAnalysisTaskGoo(GsaAnalysisTask item) : base(item) {
+    public override IGH_Goo Duplicate() => new GsaAnalysisTaskGoo(Value);
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (base.CastTo(ref target))
+        return true;
+
+      if (!typeof(TQ).IsAssignableFrom(typeof(GH_Integer)))
+        return base.CastTo(ref target);
+      if (Value == null)
+        target = default;
+      else {
+        var ghint = new GH_Integer();
+        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ? (TQ)(object)ghint : default;
+      }
+
+      return true;
     }
 
-    #endregion Public Constructors
-
-    #region Public Methods
     public override bool CastFrom(object source) {
       if (source == null)
         return false;
@@ -47,25 +55,5 @@ namespace GsaGH.Parameters {
 
       return true;
     }
-
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target))
-        return true;
-
-      if (!typeof(TQ).IsAssignableFrom(typeof(GH_Integer)))
-        return base.CastTo(ref target);
-      if (Value == null)
-        target = default;
-      else {
-        var ghint = new GH_Integer();
-        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ? (TQ)(object)ghint : default;
-      }
-
-      return true;
-    }
-
-    public override IGH_Goo Duplicate() => new GsaAnalysisTaskGoo(Value);
-
-    #endregion Public Methods
   }
 }

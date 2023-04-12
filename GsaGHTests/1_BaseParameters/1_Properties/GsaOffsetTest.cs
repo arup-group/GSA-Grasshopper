@@ -5,11 +5,18 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaOffsetTest {
+    [Fact]
+    public void EmptyConstructorTest() {
+      var offset = new GsaOffset();
 
-    #region Public Methods
+      Assert.Equal(Length.Zero, offset.X1);
+      Assert.Equal(Length.Zero, offset.X2);
+      Assert.Equal(Length.Zero, offset.Y);
+      Assert.Equal(Length.Zero, offset.Z);
+    }
+
     [Theory]
     [InlineData(1, 2, 3, 4)]
     public void ConstructorTest1(double x1, double x2, double y, double z) {
@@ -56,17 +63,5 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(new Length(2, LengthUnit.Millimeter), duplicate.Y);
       Assert.Equal(new Length(1, LengthUnit.Millimeter), duplicate.Z);
     }
-
-    [Fact]
-    public void EmptyConstructorTest() {
-      var offset = new GsaOffset();
-
-      Assert.Equal(Length.Zero, offset.X1);
-      Assert.Equal(Length.Zero, offset.X2);
-      Assert.Equal(Length.Zero, offset.Y);
-      Assert.Equal(Length.Zero, offset.Z);
-    }
-
-    #endregion Public Methods
   }
 }

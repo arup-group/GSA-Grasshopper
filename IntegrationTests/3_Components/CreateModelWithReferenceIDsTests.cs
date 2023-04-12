@@ -5,43 +5,11 @@ using Grasshopper.Kernel;
 using Xunit;
 
 namespace IntegrationTests.Components {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateModelWithReferenceIDsTests {
-
-    #region Properties + Fields
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
-    #endregion Properties + Fields
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
-    #region Public Methods
-    [Fact]
-    public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
-    }
-
-    [Theory]
-    [InlineData("Profiles",
-      new string[] {
-        "CAT HE HE240.A",
-        "CAT HE HE260.B",
-      })]
-    [InlineData("SteelE",
-      new double[] {
-        200000,
-        200000,
-      })]
-    [InlineData("Thickness", (double)25)]
-    [InlineData("ConcreteE", (double)18000)]
-    public void Test(string groupIdentifier, object expected) {
-      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected);
-    }
-
-    #endregion Public Methods
-
-    #region Private Methods
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;
@@ -60,6 +28,28 @@ namespace IntegrationTests.Components {
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
-    #endregion Private Methods
+    [Theory]
+    [InlineData("Profiles",
+      new string[] {
+        "CAT HE HE240.A 19920101",
+        "CAT HE HE260.B 19920101",
+      })]
+    [InlineData("SteelE",
+      new double[] {
+        200000,
+        200000,
+      })]
+    [InlineData("Thickness", (double)25)]
+    [InlineData("ConcreteE", (double)18000)]
+    public void Test(string groupIdentifier, object expected) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      Helper.TestGhPrimitives(param, expected);
+    }
+
+    [Fact]
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+    }
   }
 }

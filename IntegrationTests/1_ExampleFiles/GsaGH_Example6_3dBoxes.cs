@@ -7,12 +7,9 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
-
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class Example6_3dBoxes_Test {
-
-    #region Public Methods
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;
@@ -42,7 +39,5 @@ namespace IntegrationTests.ExampleFiles {
     [Fact]
     public void NoRuntimeErrorsTest()
       => Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
-
-    #endregion Public Methods
   }
 }

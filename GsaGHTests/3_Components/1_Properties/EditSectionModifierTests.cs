@@ -9,11 +9,8 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class EditSectionModifierTests {
-
-    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditSectionModifier();
       comp.CreateAttributes();
@@ -150,7 +147,5 @@ namespace GsaGHTests.Properties {
       Assert.Equal(2, stressOptOut.Value);
       Assert.True(modifierdGoo.Value.IsModified);
     }
-
-    #endregion Public Methods
   }
 }

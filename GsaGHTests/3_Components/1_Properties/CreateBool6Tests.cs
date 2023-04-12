@@ -5,11 +5,8 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateBool6Tests {
-
-    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateBool6();
       comp.CreateAttributes();
@@ -36,7 +33,5 @@ namespace GsaGHTests.Components.Properties {
       Assert.True(output.Value.Yy);
       Assert.True(output.Value.Zz);
     }
-
-    #endregion Public Methods
   }
 }

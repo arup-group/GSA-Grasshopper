@@ -8,11 +8,8 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaSectionTest {
-
-    #region Public Methods
     [Fact]
     public void DuplicateTest() {
       var original = new GsaSection {
@@ -22,15 +19,6 @@ namespace GsaGHTests.Parameters {
       GsaSection duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
-    }
-
-    [Fact]
-    public void TestCreateGsaSectionCat() {
-      string profile = "CAT HE HE200.B";
-      var section = new GsaSection(profile);
-
-      var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
     }
 
     [Fact]
@@ -68,11 +56,12 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void TestDuplicateEmptySection() {
-      var section = new GsaSection();
+    public void TestCreateGsaSectionCat() {
+      string profile = "CAT HE HE200.B";
+      var section = new GsaSection(profile);
 
-      GsaSection dup = section.Duplicate();
-      Assert.NotNull(dup);
+      var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
+      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
     }
 
     [Fact]
@@ -103,7 +92,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("STD R 15 20", orig.Profile);
       Assert.Equal(areaExpected.SquareMillimeters, orig.Area.SquareMillimeters);
 
-      Assert.Equal(profile, dup.Profile);
+      Assert.Equal(profile, dup.Profile.Substring(0, profile.Length));
       Assert.Equal(myarea1, dup.Area.SquareMillimeters, 5);
 
       Assert.Equal(0, dup.Material.AnalysisProperty);
@@ -119,6 +108,12 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(99, orig.Pool);
     }
 
-    #endregion Public Methods
+    [Fact]
+    public void TestDuplicateEmptySection() {
+      var section = new GsaSection();
+
+      GsaSection dup = section.Duplicate();
+      Assert.NotNull(dup);
+    }
   }
 }

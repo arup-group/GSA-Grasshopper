@@ -10,20 +10,42 @@ using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   public class GetProperties : GH_OasysComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaModel = new GsaModel();
+      if (!da.GetData(0, ref gsaModel))
+        return;
 
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("f5926fb3-06e5-4b18-b037-6234fff16586");
+      Model model = gsaModel.Model;
+
+      List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(),
+        model.AnalysisMaterials(),
+        model.SectionModifiers());
+      List<GsaProp2dGoo> prop2Ds
+        = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(),
+          model.AnalysisMaterials(),
+          model.Axes());
+      List<GsaProp3dGoo> prop3Ds
+        = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
+
+      List<GsaMaterialGoo> customMaterials = Helpers.Import.Materials.GetCustomMaterials(model.AnalysisMaterials());
+
+      da.SetDataList(0, sections);
+      da.SetDataList(1, prop2Ds);
+      da.SetDataList(2, prop3Ds);
+      da.SetDataList(3, customMaterials);
+    }
+
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("e7914f27-ea03-48e4-b7bd-a87121141f1e");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetSection;
-    #endregion Properties + Fields
 
-    #region Public Constructors
     public GetProperties() : base("Get Model Properties",
       "GetProps",
       "Get Sections, 2D Properties and Springs from GSA model",
@@ -31,9 +53,10 @@ namespace GsaGH.Components {
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Protected Methods
+    #region Input and output
+
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter(),
         "GSA Model",
@@ -57,30 +80,10 @@ namespace GsaGH.Components {
         "PV",
         "3D Properties from GSA Model",
         GH_ParamAccess.list);
+
+      pManager.AddParameter(new GsaMaterialParameter(), "Custom Materials", "Mat", "Custom Materials from GSA Model",  GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
-        return;
-
-      Model model = gsaModel.Model;
-
-      List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(),
-        model.AnalysisMaterials(),
-        model.SectionModifiers());
-      List<GsaProp2dGoo> prop2Ds
-        = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(),
-          model.AnalysisMaterials(),
-          model.Axes());
-      List<GsaProp3dGoo> prop3Ds
-        = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
-
-      da.SetDataList(0, sections);
-      da.SetDataList(1, prop2Ds);
-      da.SetDataList(2, prop3Ds);
-    }
-
-    #endregion Protected Methods
+    #endregion
   }
 }

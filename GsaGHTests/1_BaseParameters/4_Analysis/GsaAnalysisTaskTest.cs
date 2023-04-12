@@ -5,11 +5,18 @@ using Xunit;
 using static GsaGH.Parameters.GsaAnalysisTask;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaAnalysisTaskTest {
+    [Fact]
+    public void EmptyConstructorTest() {
+      var task = new GsaAnalysisTask();
 
-    #region Public Methods
+      Assert.Equal(0, task.Id);
+      Assert.Null(task.Name);
+      Assert.Equal(AnalysisType.Static, task.Type);
+      Assert.Empty(task.Cases);
+    }
+
     [Fact]
     public void DuplicateTest() {
       var original = new GsaAnalysisTask();
@@ -28,17 +35,5 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(AnalysisType.Static, original.Type);
       Assert.Empty(original.Cases);
     }
-
-    [Fact]
-    public void EmptyConstructorTest() {
-      var task = new GsaAnalysisTask();
-
-      Assert.Equal(0, task.Id);
-      Assert.Null(task.Name);
-      Assert.Equal(AnalysisType.Static, task.Type);
-      Assert.Empty(task.Cases);
-    }
-
-    #endregion Public Methods
   }
 }

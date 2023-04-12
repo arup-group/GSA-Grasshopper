@@ -6,26 +6,19 @@ using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaOffset"/> can be used in Grasshopper.
   /// </summary>
   public class GsaOffsetGoo : GH_OasysGoo<GsaOffset> {
-
-    #region Properties + Fields
-    public static string Description => "GSA Offset";
     public static string Name => "Offset";
     public static string NickName => "Off";
+    public static string Description => "GSA Offset";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion Properties + Fields
 
-    #region Public Constructors
-    public GsaOffsetGoo(GsaOffset item) : base(item) {
-    }
+    public GsaOffsetGoo(GsaOffset item) : base(item) { }
 
-    #endregion Public Constructors
+    public override IGH_Goo Duplicate() => new GsaOffsetGoo(Value);
 
-    #region Public Methods
     public override bool CastFrom(object source) {
       if (source == null)
         return false;
@@ -40,10 +33,7 @@ namespace GsaGH.Parameters {
       Value.Z = new Length(myval, DefaultUnits.LengthUnitGeometry);
       // if input to parameter is a single number convert it to the most common Z-offset
       return true;
+
     }
-
-    public override IGH_Goo Duplicate() => new GsaOffsetGoo(Value);
-
-    #endregion Public Methods
   }
 }

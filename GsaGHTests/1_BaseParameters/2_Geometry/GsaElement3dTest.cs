@@ -4,11 +4,8 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaElement3dTest {
-
-    #region Public Methods
     [Fact]
     public void DuplicateTest() {
       var original = new GsaElement3d(new Mesh());
@@ -17,7 +14,5 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
     }
-
-    #endregion Public Methods
   }
 }

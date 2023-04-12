@@ -4,10 +4,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
-
   internal class Sections {
-
-    #region Internal Methods
     internal static int AddSection(GsaSection section, ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       Materials.AddMaterial(ref section, ref apiMaterials);
 
@@ -46,7 +43,5 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaSection section in sections.Where(section => section != null))
         ConvertSection(section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
     }
-
-    #endregion Internal Methods
   }
 }

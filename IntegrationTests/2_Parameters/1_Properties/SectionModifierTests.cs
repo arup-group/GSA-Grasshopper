@@ -4,20 +4,28 @@ using Grasshopper.Kernel;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class SectionModifierTests {
-
-    #region Properties + Fields
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
-    #endregion Properties + Fields
 
-    #region Public Methods
-    [Fact]
-    public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "1_Properties",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
     [Theory]
@@ -94,27 +102,10 @@ namespace IntegrationTests.Parameters {
       Helper.TestGhPrimitives(param, expected);
     }
 
-    #endregion Public Methods
-
-    #region Private Methods
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "1_Properties",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
+    [Fact]
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
-
-    #endregion Private Methods
   }
 }

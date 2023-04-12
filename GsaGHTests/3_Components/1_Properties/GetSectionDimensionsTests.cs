@@ -7,11 +7,8 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class GetSectionDimensionsTests {
-
-    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new GetSectionDimensions();
       comp.CreateAttributes();
@@ -297,7 +294,5 @@ namespace GsaGHTests.Components.Properties {
         Assert.Equal(expectedSpacing, spacing.Value.As(unit), 6);
       Assert.StartsWith(type, expectedType);
     }
-
-    #endregion Public Methods
   }
 }

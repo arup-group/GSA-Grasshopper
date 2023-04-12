@@ -2,13 +2,10 @@
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   /// Offset class, this class defines the basic properties and methods for any Gsa Offset
   /// </summary>
   public class GsaOffset {
-
-    #region Enums
     public enum AlignmentType {
       Centroid,
       TopLeft,
@@ -20,16 +17,15 @@ namespace GsaGH.Parameters {
       BottomCentre,
       BottomRight,
     }
-    #endregion Enums
 
-    #region Properties + Fields
+    #region properties
     public Length X1 { get; set; } = Length.Zero;
     public Length X2 { get; set; } = Length.Zero;
     public Length Y { get; set; } = Length.Zero;
     public Length Z { get; set; } = Length.Zero;
-    #endregion Properties + Fields
+    #endregion
 
-    #region Public Constructors
+    #region constructors
     public GsaOffset() {
     }
 
@@ -40,13 +36,12 @@ namespace GsaGH.Parameters {
       Z = new Length(z, unit);
     }
 
-    #endregion Public Constructors
-
-    #region Public Methods
     public GsaOffset Duplicate() {
       return (GsaOffset)MemberwiseClone(); // all members are structs
     }
+    #endregion
 
+    #region methods
     public override string ToString() {
       LengthUnit unit = Z.Unit;
       string unitAbbreviation = Length.GetAbbreviation(unit);
@@ -57,7 +52,6 @@ namespace GsaGH.Parameters {
         " Z:" + Z.As(unit).ToString("g") +
         " [" + unitAbbreviation + "]";
     }
-
-    #endregion Public Methods
+    #endregion
   }
 }

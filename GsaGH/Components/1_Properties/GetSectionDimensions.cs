@@ -20,151 +20,11 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to get geometric dimensions of a section
   /// </summary>
   public class GetSectionDimensions : GH_OasysComponent,
     IGH_VariableParameterComponent {
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SectionDimensions;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public GetSectionDimensions() : base("Section Dimensions",
-      "SectDims",
-      "Get GSA Section Dimensions",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    #endregion Public Constructors
-
-    #region Public Methods
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
-          Checked = unit == Length.GetAbbreviation(_lengthUnit),
-          Enabled = true,
-        };
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-
-    public override bool Read(GH_IReader reader) {
-      _lengthUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      string abb = Length.GetAbbreviation(_lengthUnit);
-
-      Params.Output[0]
-        .Name = "Depth [" + abb + "]";
-      Params.Output[1]
-        .Name = "Width [" + abb + "]";
-      Params.Output[2]
-        .Name = "Width Top [" + abb + "]";
-      Params.Output[3]
-        .Name = "Width Bottom [" + abb + "]";
-      Params.Output[4]
-        .Name = "Flange Thk Top [" + abb + "]";
-      Params.Output[5]
-        .Name = "Flange Thk Bottom [" + abb + "]";
-      Params.Output[6]
-        .Name = "Web Thk [" + abb + "]";
-      Params.Output[7]
-        .Name = "Radius [" + abb + "]";
-      Params.Output[8]
-        .Name = "Spacing [" + abb + "]";
-    }
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      return base.Write(writer);
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaSectionParameter(),
-        GsaSectionGoo.Name,
-        GsaSectionGoo.NickName,
-        GsaSectionGoo.Description + " to get a bit more info out of.",
-        GH_ParamAccess.item);
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      string abb = Length.GetAbbreviation(_lengthUnit);
-
-      pManager.AddGenericParameter("Depth [" + abb + "]",
-        "D",
-        "Section Depth or Diameter)",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Width [" + abb + "]",
-        "W",
-        "Section Width",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Width Top [" + abb + "]",
-        "Wt",
-        "Section Width Top (will be equal to width if profile is symmetric)",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Width Bottom [" + abb + "]",
-        "Wb",
-        "Section Width Bottom (will be equal to width if profile is symmetric)",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Flange Thk Top [" + abb + "]",
-        "Ftt",
-        "Section Top Flange Thickness",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Flange Thk Bottom [" + abb + "]",
-        "Ftb",
-        "Section Bottom Flange Thickness",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Web Thk [" + abb + "]",
-        "Wt",
-        "Section Web Thickness",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Radius [" + abb + "]",
-        "r",
-        "Section Root Radius (only applicable to catalogue profiles) or hole size for cellular/castellated beams",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Spacing [" + abb + "]",
-        "s",
-        "Spacing/pitch",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "typ", "Profile type description", GH_ParamAccess.item);
-    }
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
@@ -556,13 +416,105 @@ namespace GsaGH.Components {
       }
     }
 
-    #endregion Protected Methods
-
-    #region Private Methods
     private void SetOutput(IGH_DataAccess da, int outputId, string outputValue, LengthUnit unit) {
       double val = double.Parse(outputValue, CultureInfo.InvariantCulture);
       var length = new Length(val, unit);
       da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
+    }
+
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SectionDimensions;
+
+    public GetSectionDimensions() : base("Section Dimensions",
+      "SectDims",
+      "Get GSA Section Dimensions",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+      => pManager.AddParameter(new GsaSectionParameter(),
+        GsaSectionGoo.Name,
+        GsaSectionGoo.NickName,
+        GsaSectionGoo.Description + " to get a bit more info out of.",
+        GH_ParamAccess.item);
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      string abb = Length.GetAbbreviation(_lengthUnit);
+
+      pManager.AddGenericParameter("Depth [" + abb + "]",
+        "D",
+        "Section Depth or Diameter)",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Width [" + abb + "]",
+        "W",
+        "Section Width",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Width Top [" + abb + "]",
+        "Wt",
+        "Section Width Top (will be equal to width if profile is symmetric)",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Width Bottom [" + abb + "]",
+        "Wb",
+        "Section Width Bottom (will be equal to width if profile is symmetric)",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Flange Thk Top [" + abb + "]",
+        "Ftt",
+        "Section Top Flange Thickness",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Flange Thk Bottom [" + abb + "]",
+        "Ftb",
+        "Section Bottom Flange Thickness",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Web Thk [" + abb + "]",
+        "Wt",
+        "Section Web Thickness",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Radius [" + abb + "]",
+        "r",
+        "Section Root Radius (only applicable to catalogue profiles) or hole size for cellular/castellated beams",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Spacing [" + abb + "]",
+        "s",
+        "Spacing/pitch",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Type", "typ", "Profile type description", GH_ParamAccess.item);
+    }
+
+    #endregion
+
+    #region Custom UI
+
+    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
+
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true,
+        };
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
     }
 
     private void Update(string unit) {
@@ -572,6 +524,55 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    #endregion Private Methods
+    public override bool Write(GH_IWriter writer) {
+      writer.SetString("LengthUnit", _lengthUnit.ToString());
+      return base.Write(writer);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _lengthUnit
+        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+      return base.Read(reader);
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      string abb = Length.GetAbbreviation(_lengthUnit);
+
+      Params.Output[0]
+        .Name = "Depth [" + abb + "]";
+      Params.Output[1]
+        .Name = "Width [" + abb + "]";
+      Params.Output[2]
+        .Name = "Width Top [" + abb + "]";
+      Params.Output[3]
+        .Name = "Width Bottom [" + abb + "]";
+      Params.Output[4]
+        .Name = "Flange Thk Top [" + abb + "]";
+      Params.Output[5]
+        .Name = "Flange Thk Bottom [" + abb + "]";
+      Params.Output[6]
+        .Name = "Web Thk [" + abb + "]";
+      Params.Output[7]
+        .Name = "Radius [" + abb + "]";
+      Params.Output[8]
+        .Name = "Spacing [" + abb + "]";
+    }
+
+    #region IGH_VariableParameterComponent null implementation
+
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+      => false;
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+      => false;
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+      => null;
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    #endregion
+
+    #endregion
   }
 }

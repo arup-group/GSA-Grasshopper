@@ -7,11 +7,8 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaMember1dTest {
-
-    #region Public Methods
     [Fact]
     public void CloneApiObjectTest() {
       var member1d = new GsaMember1d {
@@ -151,7 +148,5 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(ElementType.BEAM, orig.Type1D);
       Assert.Equal(MemberType.BEAM, orig.Type);
     }
-
-    #endregion Public Methods
   }
 }

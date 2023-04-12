@@ -2,11 +2,8 @@
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaBool6GooTest {
-
-    #region Public Methods
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -127,7 +124,5 @@ namespace GsaGHTests.GooWrappers {
       Assert.Equal(expectedYy, goo.Value.Yy);
       Assert.Equal(expectedZz, goo.Value.Zz);
     }
-
-    #endregion Public Methods
   }
 }

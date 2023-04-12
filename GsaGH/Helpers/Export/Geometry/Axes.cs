@@ -5,18 +5,9 @@ using GsaAPI;
 using OasysGH.Units;
 
 namespace GsaGH.Helpers.Export {
-
   internal class Axes {
-
-    #region Internal Methods
-    internal static int AddAxis(ref Dictionary<int, Axis> existAxes, Axis axes) {
-      int key = (existAxes.Count > 0) ? existAxes.Keys.Max() + 1 : 1;
-      existAxes.Add(key, axes);
-      return key;
-    }
-
     /// <summary>
-    /// This method checks if the testAxis is within tolerance of an existing axis and returns the
+    /// This method checks if the testAxis is within tolerance of an existing axis and returns the 
     /// axis ID if found. Will return 0 if no existing axis is found within the tolerance.
     /// </summary>
     /// <param name="existAxes">Dictionary of axis to check against [in meters]</param>
@@ -45,6 +36,10 @@ namespace GsaGH.Helpers.Export {
       return 0;
     }
 
-    #endregion Internal Methods
+    internal static int AddAxis(ref Dictionary<int, Axis> existAxes, Axis axes) {
+      int key = (existAxes.Count > 0) ? existAxes.Keys.Max() + 1 : 1;
+      existAxes.Add(key, axes);
+      return key;
+    }
   }
 }

@@ -7,11 +7,8 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaProp2dTests {
-
-    #region Public Methods
     [Fact]
     public void DuplicateTest() {
       var original = new GsaProp2d {
@@ -38,6 +35,8 @@ namespace GsaGHTests.Parameters {
         Name = name,
         Description = description,
         Type = type,
+        SupportType = SupportType.ThreeEdges,
+        ReferenceEdge = 2,
       };
       var mat = new GsaMaterial((int)materialType) {
         GradeProperty = materialGradeProperty,
@@ -51,6 +50,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("mariam", prop.Name);
       Assert.Equal("awesome property", prop.Description);
       Assert.Equal(Property2D_Type.LOAD.ToString(), prop.Type.ToString());
+      Assert.Equal(SupportType.ThreeEdges, prop.SupportType);
+      Assert.Equal(2, prop.ReferenceEdge);
       Assert.Equal(0, prop.Id);
     }
 
@@ -83,7 +84,9 @@ namespace GsaGHTests.Parameters {
       orig.Material.MaterialType = GsaMaterial.MatType.Fabric;
       orig.Name = "kris";
       orig.Description = "less cool property";
-      orig.Type = Property2D_Type.CURVED_SHELL;
+      orig.Type = Property2D_Type.LOAD;
+      orig.SupportType = SupportType.AllEdges;
+      orig.ReferenceEdge = 4;
 
       Assert.Equal(0, dup.AxisProperty);
       Assert.Equal(0, dup.Material.GradeProperty);
@@ -100,10 +103,10 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MaterialType.FABRIC.ToString().ToPascalCase(), orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal("less cool property", orig.Description);
-      Assert.Equal(Property2D_Type.CURVED_SHELL.ToString(), orig.Type.ToString());
+      Assert.Equal(Property2D_Type.LOAD.ToString(), orig.Type.ToString());
+      Assert.Equal(SupportType.AllEdges, orig.SupportType);
+      Assert.Equal(4, orig.ReferenceEdge);
       Assert.Equal(4, orig.Id);
     }
-
-    #endregion Public Methods
   }
 }

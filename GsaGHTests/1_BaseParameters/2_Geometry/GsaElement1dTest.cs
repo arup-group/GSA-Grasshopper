@@ -8,11 +8,8 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaElement1dTest {
-
-    #region Public Methods
     [Fact]
     public void CloneApiObjectTest() {
       var section = new GsaSection {
@@ -80,21 +77,6 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void TestCreateGsaElem1dGetReleases() {
-      var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
-
-      var elem = new GsaElement1d(new LineCurve(ln));
-
-      GsaBool6 rel1 = elem.ReleaseStart;
-      Assert.False(rel1.X);
-      Assert.False(rel1.Y);
-      Assert.False(rel1.Z);
-      Assert.False(rel1.Xx);
-      Assert.False(rel1.Yy);
-      Assert.False(rel1.Zz);
-    }
-
-    [Fact]
     public void TestDuplicateElem1d() {
       var ln = new Line(new Point3d(2, -1, 0), new Point3d(2, -1, 4));
 
@@ -158,6 +140,19 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, orig.OrientationAngle.Radians, 1E-9);
     }
 
-    #endregion Public Methods
+    [Fact]
+    public void TestCreateGsaElem1dGetReleases() {
+      var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
+
+      var elem = new GsaElement1d(new LineCurve(ln));
+
+      GsaBool6 rel1 = elem.ReleaseStart;
+      Assert.False(rel1.X);
+      Assert.False(rel1.Y);
+      Assert.False(rel1.Z);
+      Assert.False(rel1.Xx);
+      Assert.False(rel1.Yy);
+      Assert.False(rel1.Zz);
+    }
   }
 }

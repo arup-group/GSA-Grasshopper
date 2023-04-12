@@ -20,152 +20,11 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to edit a Prop2d and ouput the information
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class EditProp2d_OBSOLETE : GH_OasysComponent {
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("ab8af109-7ebc-4e49-9f5d-d4cb8ee45557");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditProp2d;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public EditProp2d_OBSOLETE() : base("Edit 2D Property",
-      "Prop2dEdit",
-      "Modify GSA 2D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    #endregion Public Constructors
-
-    #region Public Methods
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
-          Checked = unit == Length.GetAbbreviation(_lengthUnit),
-          Enabled = true,
-        };
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("LengthUnit"))
-        _lengthUnit
-          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-        _lengthUnit = DefaultUnits.LengthUnitSection;
-      return base.Read(reader);
-    }
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      return base.Write(writer);
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaProp2dParameter(),
-        GsaProp2dGoo.Name,
-        GsaProp2dGoo.NickName,
-        GsaProp2dGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaProp2dGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Prop2d Number",
-        "ID",
-        "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]",
-        "Th",
-        "Set Property Thickness",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Set Axis as integer: Global (0) or Topological (1)",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour",
-        "Co",
-        "Set 2D Property Colour",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Type",
-        "Ty",
-        "Set 2D Property Type."
-        + Environment.NewLine
-        + "Input either text string or integer:"
-        + Environment.NewLine
-        + "Plane Stress : 1"
-        + Environment.NewLine
-        + "Plane Strain : 2"
-        + Environment.NewLine
-        + "Axis Symmetric : 3"
-        + Environment.NewLine
-        + "Fabric : 4"
-        + Environment.NewLine
-        + "Plate : 5"
-        + Environment.NewLine
-        + "Shell : 6"
-        + Environment.NewLine
-        + "Curved Shell : 7"
-        + Environment.NewLine
-        + "Torsion : 8"
-        + Environment.NewLine
-        + "Wall : 9"
-        + Environment.NewLine
-        + "Load : 10",
-        GH_ParamAccess.item);
-      for (int i = 0; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaProp2dParameter(),
-        GsaProp2dGoo.Name,
-        GsaProp2dGoo.NickName,
-        GsaProp2dGoo.Description + " with applied changes.",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Prop2d Number",
-        "ID",
-        "2D Property Number",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]",
-        "Th",
-        "Get Property Thickness",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Get Axis: Global (0) or Topological (1)",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
-    }
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaProp2d = new GsaProp2d();
       var prop = new GsaProp2d();
@@ -251,15 +110,153 @@ namespace GsaGH.Components {
         this.AddRuntimeError("Prop2d is Null");
     }
 
-    #endregion Protected Methods
+    #region Name and Ribbon Layout
 
-    #region Private Methods
+    public override Guid ComponentGuid => new Guid("ab8af109-7ebc-4e49-9f5d-d4cb8ee45557");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditProp2d;
+
+    public EditProp2d_OBSOLETE() : base("Edit 2D Property",
+      "Prop2dEdit",
+      "Modify GSA 2D Property",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaProp2dParameter(),
+        GsaProp2dGoo.Name,
+        GsaProp2dGoo.NickName,
+        GsaProp2dGoo.Description
+        + " to get or set information for. Leave blank to create a new "
+        + GsaProp2dGoo.Name,
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Prop2d Number",
+        "ID",
+        "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]",
+        "Th",
+        "Set Property Thickness",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Axis",
+        "Ax",
+        "Set Axis as integer: Global (0) or Topological (1)",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Prop2d Colour",
+        "Co",
+        "Set 2D Property Colour",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Type",
+        "Ty",
+        "Set 2D Property Type."
+        + Environment.NewLine
+        + "Input either text string or integer:"
+        + Environment.NewLine
+        + "Plane Stress : 1"
+        + Environment.NewLine
+        + "Plane Strain : 2"
+        + Environment.NewLine
+        + "Axis Symmetric : 3"
+        + Environment.NewLine
+        + "Fabric : 4"
+        + Environment.NewLine
+        + "Plate : 5"
+        + Environment.NewLine
+        + "Shell : 6"
+        + Environment.NewLine
+        + "Curved Shell : 7"
+        + Environment.NewLine
+        + "Torsion : 8"
+        + Environment.NewLine
+        + "Wall : 9"
+        + Environment.NewLine
+        + "Load : 10",
+        GH_ParamAccess.item);
+      for (int i = 0; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaProp2dParameter(),
+        GsaProp2dGoo.Name,
+        GsaProp2dGoo.NickName,
+        GsaProp2dGoo.Description + " with applied changes.",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Prop2d Number",
+        "ID",
+        "2D Property Number",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]",
+        "Th",
+        "Get Property Thickness",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Axis",
+        "Ax",
+        "Get Axis: Global (0) or Topological (1)",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
+      pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
+    }
+
+    #endregion
+
+    #region Custom UI
+
+    protected override void BeforeSolveInstance() => Message = Length.GetAbbreviation(_lengthUnit);
+
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true,
+        };
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
     private void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       ExpireSolution(true);
     }
 
-    #endregion Private Methods
+    public override bool Write(GH_IWriter writer) {
+      writer.SetString("LengthUnit", _lengthUnit.ToString());
+      return base.Write(writer);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      if (reader.ItemExists("LengthUnit"))
+        _lengthUnit
+          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+      else
+        _lengthUnit = DefaultUnits.LengthUnitSection;
+      return base.Read(reader);
+    }
+
+    #endregion
   }
 }

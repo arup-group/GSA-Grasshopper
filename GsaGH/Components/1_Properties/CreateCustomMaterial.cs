@@ -16,37 +16,90 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to create a new Material
   /// </summary>
   public class CreateCustomMaterial : GH_OasysDropDownComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var material = new GsaMaterial();
 
-    #region Enums
-    private enum FoldMode {
-      Generic,
-      Steel,
-      Concrete,
-      Timber,
-      Aluminium,
-      Frp,
-      Glass,
-      Fabric,
+      var ghAnal = new GH_Integer();
+      if (da.GetData(0, ref ghAnal)) {
+        GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
+        material.AnalysisProperty = anal;
+        if (anal == 0) {
+          this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
+            + Environment.NewLine
+            + "Leave blank or use -1 for automatic assigning.");
+          return;
+        }
+      }
+      else
+        material.AnalysisProperty = -1;
+
+      double poisson = 0.3;
+      da.GetData(2, ref poisson);
+
+      CoefficientOfThermalExpansionUnit thermalExpansionUnit
+        = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
+      switch (_temperatureUnit) {
+        case TemperatureUnit.DegreeFahrenheit:
+          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
+          break;
+        case TemperatureUnit.Kelvin:
+          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseKelvin;
+          break;
+      }
+
+      material.AnalysisMaterial = new AnalysisMaterial() {
+        ElasticModulus = Input.UnitNumber(this, da, 1, _stressUnit)
+          .As(PressureUnit.Pascal),
+        PoissonsRatio = poisson,
+        Density = Input.UnitNumber(this, da, 3, _densityUnit)
+          .As(DensityUnit.KilogramPerCubicMeter),
+        CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 4, thermalExpansionUnit, true)
+          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+      };
+
+      material.GradeProperty = 0;
+
+      switch (_mode) {
+        case FoldMode.Generic:
+          material.MaterialType = GsaMaterial.MatType.Generic;
+          break;
+        case FoldMode.Steel:
+          material.MaterialType = GsaMaterial.MatType.Steel;
+          break;
+        case FoldMode.Concrete:
+          material.MaterialType = GsaMaterial.MatType.Concrete;
+          break;
+        case FoldMode.Timber:
+          material.MaterialType = GsaMaterial.MatType.Timber;
+          break;
+        case FoldMode.Aluminium:
+          material.MaterialType = GsaMaterial.MatType.Aluminium;
+          break;
+        case FoldMode.Frp:
+          material.MaterialType = GsaMaterial.MatType.Frp;
+          break;
+        case FoldMode.Glass:
+          material.MaterialType = GsaMaterial.MatType.Glass;
+          break;
+        case FoldMode.Fabric:
+          material.MaterialType = GsaMaterial.MatType.Fabric;
+          break;
+      }
+
+      da.SetData(0, new GsaMaterialGoo(material));
     }
-    #endregion Enums
 
-    #region Properties + Fields
+    #region Name and Ribbon Layout
+
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CustomMaterial;
-    private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
-    private FoldMode _mode = FoldMode.Timber;
-    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
-    private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
-    #endregion Properties + Fields
 
-    #region Public Constructors
     public CreateCustomMaterial() : base("Custom Material",
       "Material",
       "Create a Custom GSA Analysis Material",
@@ -54,88 +107,10 @@ namespace GsaGH.Components {
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Public Methods
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Material Type",
-        "Stress Unit",
-        "Density Unit",
-        "Temperature Unit",
-      });
+    #region Input and output
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(CreateMaterial.MaterialTypes);
-      SelectedItems.Add(_mode.ToString());
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
-      SelectedItems.Add(Pressure.GetAbbreviation(_stressUnit));
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
-      SelectedItems.Add(Density.GetAbbreviation(_densityUnit));
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
-      SelectedItems.Add(Temperature.GetAbbreviation(_temperatureUnit));
-
-      IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-
-      if (i == 0)
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].ToPascalCase());
-      else
-        switch (i) {
-          case 1:
-            _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
-            break;
-
-          case 2:
-            _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), SelectedItems[2]);
-            break;
-
-          case 3:
-            _temperatureUnit
-              = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), SelectedItems[3]);
-            break;
-        }
-
-      base.UpdateUI();
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].ToPascalCase());
-      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), SelectedItems[1]);
-      _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), SelectedItems[2]);
-      _temperatureUnit
-        = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), SelectedItems[3]);
-      base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance() {
-      string stressUnitAbbreviation = Pressure.GetAbbreviation(_stressUnit);
-      string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
-      string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
-
-      int i = 1;
-      Params.Input[i]
-        .Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
-      i++;
-      i++;
-      Params.Input[i]
-        .Name = "Density [" + densityUnitAbbreviation + "]";
-      i++;
-      Params.Input[i]
-        .Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string stressUnitAbbreviation = Pressure.GetAbbreviation(_stressUnit);
       string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
@@ -174,87 +149,101 @@ namespace GsaGH.Components {
         "GSA Custom Material",
         GH_ParamAccess.item);
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+    #endregion
 
-      var ghAnal = new GH_Integer();
-      if (da.GetData(0, ref ghAnal)) {
-        GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
-        if (anal == 0) {
-          this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
-            + Environment.NewLine
-            + "Leave blank or use -1 for automatic assigning.");
-          return;
-        }
-      }
-      else
-        material.AnalysisProperty = -1;
+    #region Custom UI
 
-      double poisson = 0.3;
-      da.GetData(2, ref poisson);
-
-      CoefficientOfThermalExpansionUnit thermalExpansionUnit
-        = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
-      switch (_temperatureUnit) {
-        case TemperatureUnit.DegreeFahrenheit:
-          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
-          break;
-
-        case TemperatureUnit.Kelvin:
-          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseKelvin;
-          break;
-      }
-
-      material.AnalysisMaterial = new AnalysisMaterial() {
-        ElasticModulus = Input.UnitNumber(this, da, 1, _stressUnit)
-          .As(PressureUnit.Pascal),
-        PoissonsRatio = poisson,
-        Density = Input.UnitNumber(this, da, 3, _densityUnit)
-          .As(DensityUnit.KilogramPerCubicMeter),
-        CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 4, thermalExpansionUnit, true)
-          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
-      };
-
-      material.GradeProperty = 0;
-
-      switch (_mode) {
-        case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MatType.Generic;
-          break;
-
-        case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MatType.Steel;
-          break;
-
-        case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MatType.Concrete;
-          break;
-
-        case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MatType.Timber;
-          break;
-
-        case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MatType.Aluminium;
-          break;
-
-        case FoldMode.Frp:
-          material.MaterialType = GsaMaterial.MatType.Frp;
-          break;
-
-        case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MatType.Glass;
-          break;
-
-        case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MatType.Fabric;
-          break;
-      }
-
-      da.SetData(0, new GsaMaterialGoo(material));
+    private enum FoldMode {
+      Generic,
+      Steel,
+      Concrete,
+      Timber,
+      Aluminium,
+      Frp,
+      Glass,
+      Fabric,
     }
 
-    #endregion Protected Methods
+    private FoldMode _mode = FoldMode.Timber;
+
+    private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
+    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
+    private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Material Type",
+        "Stress Unit",
+        "Density Unit",
+        "Temperature Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(CreateMaterial.MaterialTypes);
+      _selectedItems.Add(_mode.ToString());
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
+      _selectedItems.Add(Pressure.GetAbbreviation(_stressUnit));
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
+      _selectedItems.Add(Density.GetAbbreviation(_densityUnit));
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
+      _selectedItems.Add(Temperature.GetAbbreviation(_temperatureUnit));
+
+      _isInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+
+      if (i == 0)
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0].ToPascalCase());
+      else
+        switch (i) {
+          case 1:
+            _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
+            break;
+          case 2:
+            _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), _selectedItems[2]);
+            break;
+          case 3:
+            _temperatureUnit
+              = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
+            break;
+        }
+
+      base.UpdateUI();
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0].ToPascalCase());
+      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
+      _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), _selectedItems[2]);
+      _temperatureUnit
+        = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string stressUnitAbbreviation = Pressure.GetAbbreviation(_stressUnit);
+      string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
+      string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
+
+      int i = 1;
+      Params.Input[i]
+        .Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
+      i++;
+      i++;
+      Params.Input[i]
+        .Name = "Density [" + densityUnitAbbreviation + "]";
+      i++;
+      Params.Input[i]
+        .Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
+    }
+
+    #endregion
   }
 }

@@ -5,11 +5,8 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPlaneTests {
-
-    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridPlane();
       comp.CreateAttributes();
@@ -33,7 +30,5 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal("10", gridPlane.Elevation);
       Assert.Equal("test", gridPlane.GridPlane.Name);
     }
-
-    #endregion Public Methods
   }
 }

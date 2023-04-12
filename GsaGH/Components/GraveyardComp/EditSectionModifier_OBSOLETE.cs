@@ -19,23 +19,281 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to edit a Material and ouput the information
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class EditSectionModifier_OBSOLETE : GH_OasysComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var modifier = new GsaSectionModifier();
+      var gsaModifier = new GsaSectionModifier();
+      if (da.GetData(0, ref gsaModifier))
+        modifier = gsaModifier.Duplicate();
 
-    #region Properties + Fields
+      if (modifier == null)
+        return;
+
+      if (Params.Input[1]
+          .SourceCount
+        > 0) {
+        var ghTyp = new GH_ObjectWrapper();
+        da.GetData(1, ref ghTyp);
+        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
+          if (Area.TryParse(txt, out Area res))
+            modifier.AreaModifier = res;
+          else
+            try {
+              modifier.AreaModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true)
+                .Value;
+            }
+            catch (Exception e) {
+              this.AddRuntimeError(e.Message);
+              return;
+            }
+        }
+      }
+
+      if (Params.Input[2]
+          .SourceCount
+        > 0) {
+        var ghTyp = new GH_ObjectWrapper();
+        da.GetData(2, ref ghTyp);
+        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
+          if (AreaMomentOfInertia.TryParse(txt, out AreaMomentOfInertia res))
+            modifier.I11Modifier = res;
+          else
+            try {
+              modifier.I11Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 2, true)
+                .Value;
+            }
+            catch (Exception e) {
+              this.AddRuntimeError(e.Message);
+              return;
+            }
+        }
+      }
+
+      if (Params.Input[3]
+          .SourceCount
+        > 0) {
+        var ghTyp = new GH_ObjectWrapper();
+        da.GetData(3, ref ghTyp);
+        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
+          if (AreaMomentOfInertia.TryParse(txt, out AreaMomentOfInertia res))
+            modifier.I22Modifier = res;
+          else
+            try {
+              modifier.I22Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 3, true)
+                .Value;
+            }
+            catch (Exception e) {
+              this.AddRuntimeError(e.Message);
+              return;
+            }
+        }
+      }
+
+      if (Params.Input[4]
+          .SourceCount
+        > 0) {
+        var ghTyp = new GH_ObjectWrapper();
+        da.GetData(4, ref ghTyp);
+        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
+          if (AreaMomentOfInertia.TryParse(txt, out AreaMomentOfInertia res))
+            modifier.JModifier = res;
+          else
+            try {
+              modifier.JModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 4, true)
+                .Value;
+            }
+            catch (Exception e) {
+              this.AddRuntimeError(e.Message);
+              return;
+            }
+        }
+      }
+
+      if (Params.Input[5]
+          .SourceCount
+        > 0)
+        modifier.K11Modifier = Input.RatioInDecimalFractionToPercentage(this, da, 5);
+
+      if (Params.Input[6]
+          .SourceCount
+        > 0)
+        modifier.K22Modifier = Input.RatioInDecimalFractionToPercentage(this, da, 6);
+
+      if (Params.Input[7]
+          .SourceCount
+        > 0) {
+        var ghTyp = new GH_ObjectWrapper();
+        da.GetData(7, ref ghTyp);
+        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
+          if (VolumePerLength.TryParse(txt, out VolumePerLength res))
+            modifier.VolumeModifier = res;
+          else
+            try {
+              modifier.VolumeModifier = Input
+                .UnitNumberOrDoubleAsRatioToPercentage(this, da, 7, true)
+                .Value;
+            }
+            catch (Exception e) {
+              this.AddRuntimeError(e.Message);
+              return;
+            }
+        }
+      }
+
+      if (Params.Input[8]
+          .SourceCount
+        > 0) {
+        var ghTyp = new GH_ObjectWrapper();
+        if (da.GetData(8, ref ghTyp)) {
+          if (ghTyp.Value is GH_UnitNumber unitNumber) {
+            if (unitNumber.Value.QuantityInfo.UnitType != typeof(LinearDensityUnit)) {
+              this.AddRuntimeError("Error in "
+                + Params.Input[8]
+                  .NickName
+                + " input: Wrong unit type"
+                + Environment.NewLine
+                + "Unit type is "
+                + unitNumber.Value.QuantityInfo.Name
+                + " but must be LinearDensity");
+              return;
+            }
+
+            modifier.AdditionalMass = (LinearDensity)unitNumber.Value;
+          }
+          else if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
+            if (LinearDensity.TryParse(txt, out LinearDensity res))
+              modifier.AdditionalMass = res;
+            else
+              this.AddRuntimeError("Unable to convert "
+                + Params.Input[8]
+                  .NickName
+                + " to LinearDensity");
+          }
+          else if (GH_Convert.ToDouble(ghTyp.Value, out double val, GH_Conversion.Both))
+            modifier.AdditionalMass = new LinearDensity(val, _linearDensityUnit);
+          else {
+            this.AddRuntimeError("Unable to convert "
+              + Params.Input[8]
+                .NickName
+              + " to UnitNumber");
+            return;
+          }
+        }
+      }
+
+      bool ax = false;
+      if (da.GetData(9, ref ax))
+        modifier.IsBendingAxesPrincipal = ax;
+
+      bool pt = false;
+      if (da.GetData(10, ref pt))
+        modifier.IsReferencePointCentroid = pt;
+
+      var obj = new GH_ObjectWrapper();
+      if (da.GetData(11, ref obj)) {
+        if (GH_Convert.ToInt32(obj, out int stress, GH_Conversion.Both))
+          switch (stress) {
+            case 0:
+              modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+              break;
+            case 1:
+              modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+              break;
+            case 2:
+              modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+              break;
+            default:
+              this.AddRuntimeError("Error in "
+                + Params.Input[11]
+                  .NickName
+                + " input: Must be either 0, 1 or 2 but is "
+                + stress);
+              return;
+          }
+        else if (GH_Convert.ToString(obj, out string stressString, GH_Conversion.Both)) {
+          if (stressString.ToLower()
+            .Contains("no"))
+            modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+          else if (stressString.ToLower()
+            .Replace(" ", string.Empty)
+            .Contains("unmod"))
+            modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+          else if (stressString.ToLower()
+            .Replace(" ", string.Empty)
+            .Contains("mod"))
+            modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+          else {
+            this.AddRuntimeError("Error in "
+              + Params.Input[11]
+                .NickName
+              + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '"
+              + stress
+              + "'");
+            return;
+          }
+        }
+        else {
+          this.AddRuntimeError("Error in "
+            + Params.Input[11]
+              .NickName
+            + " input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is "
+            + stress
+            + "'");
+          return;
+        }
+      }
+
+      da.SetData(0, new GsaSectionModifierGoo(modifier));
+      da.SetData(1,
+        modifier._sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY
+          ? new GH_UnitNumber(modifier.AreaModifier)
+          : new GH_UnitNumber(modifier.AreaModifier.ToUnit(UnitsHelper.GetAreaUnit(_lengthUnit))));
+
+      da.SetData(2,
+        modifier._sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY
+          ? new GH_UnitNumber(modifier.I11Modifier)
+          : new GH_UnitNumber(
+            modifier.I11Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
+
+      da.SetData(3,
+        modifier._sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY
+          ? new GH_UnitNumber(modifier.I22Modifier)
+          : new GH_UnitNumber(
+            modifier.I22Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
+
+      da.SetData(4,
+        modifier._sectionModifier.JModifier.Option == SectionModifierOptionType.BY
+          ? new GH_UnitNumber(modifier.JModifier)
+          : new GH_UnitNumber(
+            modifier.JModifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
+
+      da.SetData(5, new GH_UnitNumber(modifier.K11Modifier));
+      da.SetData(6, new GH_UnitNumber(modifier.K22Modifier));
+
+      da.SetData(7,
+        modifier._sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY
+          ? new GH_UnitNumber(modifier.VolumeModifier)
+          : new GH_UnitNumber(
+            modifier.VolumeModifier.ToUnit(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit))));
+
+      da.SetData(8, new GH_UnitNumber(modifier.AdditionalMass.ToUnit(_linearDensityUnit)));
+
+      da.SetData(9, modifier.IsBendingAxesPrincipal);
+      da.SetData(10, modifier.IsReferencePointCentroid);
+      da.SetData(11, (int)modifier.StressOption);
+    }
+
+    #region Name and Ribbon Layout
+
     public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditSectionModifier;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
-    #endregion Properties + Fields
 
-    #region Public Constructors
     public EditSectionModifier_OBSOLETE() : base("Edit Section Modifier",
       "ModifierEdit",
       "Modify GSA Section Modifier",
@@ -43,116 +301,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat1())
       => Hidden = true;
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Public Methods
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var lengthUnitsMenu = new ToolStripMenuItem("Length") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem
-          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var densityUnitsMenu = new ToolStripMenuItem("Density") {
-        Enabled = true,
-      };
-      foreach (string unit in
-        UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.LinearDensity)) {
-        var toolStripMenuItem
-          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateDensity(unit); }) {
-            Checked = unit == LinearDensity.GetAbbreviation(_linearDensityUnit),
-            Enabled = true,
-          };
-        densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
-      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-        lengthUnitsMenu,
-        densityUnitsMenu,
-      });
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("LengthUnit")) {
-        _lengthUnit
-          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-        _linearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
-
-        if (reader.ItemExists("dropdown"))
-          return base.Read(reader);
-
-        GH_IReader attributes = reader.FindChunk("Attributes");
-        Attributes.Bounds = (RectangleF)attributes.Items[0]
-          .InternalData;
-        Attributes.Pivot = (PointF)attributes.Items[1]
-          .InternalData;
-
-        int num = Params.Input.Count - 1;
-        bool flag = true;
-        for (int i = 0; i <= num; i++) {
-          GH_IReader ghIReader = reader.FindChunk("param_input", i);
-          if (ghIReader == null)
-            continue;
-
-          GH_ParamAccess access = Params.Input[i]
-            .Access;
-          flag &= Params.Input[i]
-            .Read(ghIReader);
-          if (!(Params.Input[i] is Param_ScriptVariable))
-            Params.Input[i]
-              .Access = access;
-        }
-
-        int num2 = Params.Output.Count - 1;
-        for (int j = 0; j <= num2; j++) {
-          GH_IReader ghIReader = reader.FindChunk("param_output", j);
-          if (ghIReader == null) {
-            reader.AddMessage("Output parameter chunk is missing. Archive is corrupt.",
-              GH_Message_Type.error);
-            continue;
-          }
-
-          GH_ParamAccess access2 = Params.Output[j]
-            .Access;
-          flag &= Params.Output[j]
-            .Read(ghIReader);
-          Params.Output[j]
-            .Access = access2;
-        }
-
-        return true;
-      }
-      else {
-        _lengthUnit = DefaultUnits.LengthUnitSection;
-        _linearDensityUnit = DefaultUnits.LinearDensityUnit;
-        return base.Read(reader);
-      }
-    }
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      writer.SetString("DensityUnit", _linearDensityUnit.ToString());
-      return base.Write(writer);
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-    protected override void BeforeSolveInstance() => UpdateMessage();
+    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaSectionModifierParameter(),
@@ -354,283 +505,53 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var modifier = new GsaSectionModifier();
-      var gsaModifier = new GsaSectionModifier();
-      if (da.GetData(0, ref gsaModifier))
-        modifier = gsaModifier.Duplicate();
+    #endregion
 
-      if (modifier == null)
-        return;
+    #region Custom UI
 
-      if (Params.Input[1]
-          .SourceCount
-        > 0) {
-        var ghTyp = new GH_ObjectWrapper();
-        da.GetData(1, ref ghTyp);
-        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
-          if (Area.TryParse(txt, out Area res))
-            modifier.AreaModifier = res;
-          else
-            try {
-              modifier.AreaModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true)
-                .Value;
-            }
-            catch (Exception e) {
-              this.AddRuntimeError(e.Message);
-              return;
-            }
-        }
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
+    private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
+
+    protected override void BeforeSolveInstance() => UpdateMessage();
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var lengthUnitsMenu = new ToolStripMenuItem("Length") {
+        Enabled = true,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem
+          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
+            Checked = unit == Length.GetAbbreviation(_lengthUnit),
+            Enabled = true,
+          };
+        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      if (Params.Input[2]
-          .SourceCount
-        > 0) {
-        var ghTyp = new GH_ObjectWrapper();
-        da.GetData(2, ref ghTyp);
-        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
-          if (AreaMomentOfInertia.TryParse(txt, out AreaMomentOfInertia res))
-            modifier.I11Modifier = res;
-          else
-            try {
-              modifier.I11Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 2, true)
-                .Value;
-            }
-            catch (Exception e) {
-              this.AddRuntimeError(e.Message);
-              return;
-            }
-        }
+      var densityUnitsMenu = new ToolStripMenuItem("Density") {
+        Enabled = true,
+      };
+      foreach (string unit in
+        UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.LinearDensity)) {
+        var toolStripMenuItem
+          = new ToolStripMenuItem(unit, null, (s, e) => { UpdateDensity(unit); }) {
+            Checked = unit == LinearDensity.GetAbbreviation(_linearDensityUnit),
+            Enabled = true,
+          };
+        densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      if (Params.Input[3]
-          .SourceCount
-        > 0) {
-        var ghTyp = new GH_ObjectWrapper();
-        da.GetData(3, ref ghTyp);
-        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
-          if (AreaMomentOfInertia.TryParse(txt, out AreaMomentOfInertia res))
-            modifier.I22Modifier = res;
-          else
-            try {
-              modifier.I22Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 3, true)
-                .Value;
-            }
-            catch (Exception e) {
-              this.AddRuntimeError(e.Message);
-              return;
-            }
-        }
-      }
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
+        densityUnitsMenu,
+      });
+      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
-      if (Params.Input[4]
-          .SourceCount
-        > 0) {
-        var ghTyp = new GH_ObjectWrapper();
-        da.GetData(4, ref ghTyp);
-        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
-          if (AreaMomentOfInertia.TryParse(txt, out AreaMomentOfInertia res))
-            modifier.JModifier = res;
-          else
-            try {
-              modifier.JModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 4, true)
-                .Value;
-            }
-            catch (Exception e) {
-              this.AddRuntimeError(e.Message);
-              return;
-            }
-        }
-      }
+      menu.Items.Add(unitsMenu);
 
-      if (Params.Input[5]
-          .SourceCount
-        > 0)
-        modifier.K11Modifier = Input.RatioInDecimalFractionToPercentage(this, da, 5);
-
-      if (Params.Input[6]
-          .SourceCount
-        > 0)
-        modifier.K22Modifier = Input.RatioInDecimalFractionToPercentage(this, da, 6);
-
-      if (Params.Input[7]
-          .SourceCount
-        > 0) {
-        var ghTyp = new GH_ObjectWrapper();
-        da.GetData(7, ref ghTyp);
-        if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
-          if (VolumePerLength.TryParse(txt, out VolumePerLength res))
-            modifier.VolumeModifier = res;
-          else
-            try {
-              modifier.VolumeModifier = Input
-                .UnitNumberOrDoubleAsRatioToPercentage(this, da, 7, true)
-                .Value;
-            }
-            catch (Exception e) {
-              this.AddRuntimeError(e.Message);
-              return;
-            }
-        }
-      }
-
-      if (Params.Input[8]
-          .SourceCount
-        > 0) {
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(8, ref ghTyp)) {
-          if (ghTyp.Value is GH_UnitNumber unitNumber) {
-            if (unitNumber.Value.QuantityInfo.UnitType != typeof(LinearDensityUnit)) {
-              this.AddRuntimeError("Error in "
-                + Params.Input[8]
-                  .NickName
-                + " input: Wrong unit type"
-                + Environment.NewLine
-                + "Unit type is "
-                + unitNumber.Value.QuantityInfo.Name
-                + " but must be LinearDensity");
-              return;
-            }
-
-            modifier.AdditionalMass = (LinearDensity)unitNumber.Value;
-          }
-          else if (GH_Convert.ToString(ghTyp.Value, out string txt, GH_Conversion.Both)) {
-            if (LinearDensity.TryParse(txt, out LinearDensity res))
-              modifier.AdditionalMass = res;
-            else
-              this.AddRuntimeError("Unable to convert "
-                + Params.Input[8]
-                  .NickName
-                + " to LinearDensity");
-          }
-          else if (GH_Convert.ToDouble(ghTyp.Value, out double val, GH_Conversion.Both))
-            modifier.AdditionalMass = new LinearDensity(val, _linearDensityUnit);
-          else {
-            this.AddRuntimeError("Unable to convert "
-              + Params.Input[8]
-                .NickName
-              + " to UnitNumber");
-            return;
-          }
-        }
-      }
-
-      bool ax = false;
-      if (da.GetData(9, ref ax))
-        modifier.IsBendingAxesPrincipal = ax;
-
-      bool pt = false;
-      if (da.GetData(10, ref pt))
-        modifier.IsReferencePointCentroid = pt;
-
-      var obj = new GH_ObjectWrapper();
-      if (da.GetData(11, ref obj)) {
-        if (GH_Convert.ToInt32(obj, out int stress, GH_Conversion.Both))
-          switch (stress) {
-            case 0:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-              break;
-
-            case 1:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
-              break;
-
-            case 2:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-              break;
-
-            default:
-              this.AddRuntimeError("Error in "
-                + Params.Input[11]
-                  .NickName
-                + " input: Must be either 0, 1 or 2 but is "
-                + stress);
-              return;
-          }
-        else if (GH_Convert.ToString(obj, out string stressString, GH_Conversion.Both)) {
-          if (stressString.ToLower()
-            .Contains("no"))
-            modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-          else if (stressString.ToLower()
-            .Replace(" ", string.Empty)
-            .Contains("unmod"))
-            modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-          else if (stressString.ToLower()
-            .Replace(" ", string.Empty)
-            .Contains("mod"))
-            modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
-          else {
-            this.AddRuntimeError("Error in "
-              + Params.Input[11]
-                .NickName
-              + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '"
-              + stress
-              + "'");
-            return;
-          }
-        }
-        else {
-          this.AddRuntimeError("Error in "
-            + Params.Input[11]
-              .NickName
-            + " input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is "
-            + stress
-            + "'");
-          return;
-        }
-      }
-
-      da.SetData(0, new GsaSectionModifierGoo(modifier));
-      da.SetData(1,
-        modifier._sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY
-          ? new GH_UnitNumber(modifier.AreaModifier)
-          : new GH_UnitNumber(modifier.AreaModifier.ToUnit(UnitsHelper.GetAreaUnit(_lengthUnit))));
-
-      da.SetData(2,
-        modifier._sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY
-          ? new GH_UnitNumber(modifier.I11Modifier)
-          : new GH_UnitNumber(
-            modifier.I11Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
-
-      da.SetData(3,
-        modifier._sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY
-          ? new GH_UnitNumber(modifier.I22Modifier)
-          : new GH_UnitNumber(
-            modifier.I22Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
-
-      da.SetData(4,
-        modifier._sectionModifier.JModifier.Option == SectionModifierOptionType.BY
-          ? new GH_UnitNumber(modifier.JModifier)
-          : new GH_UnitNumber(
-            modifier.JModifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
-
-      da.SetData(5, new GH_UnitNumber(modifier.K11Modifier));
-      da.SetData(6, new GH_UnitNumber(modifier.K22Modifier));
-
-      da.SetData(7,
-        modifier._sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY
-          ? new GH_UnitNumber(modifier.VolumeModifier)
-          : new GH_UnitNumber(
-            modifier.VolumeModifier.ToUnit(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit))));
-
-      da.SetData(8, new GH_UnitNumber(modifier.AdditionalMass.ToUnit(_linearDensityUnit)));
-
-      da.SetData(9, modifier.IsBendingAxesPrincipal);
-      da.SetData(10, modifier.IsReferencePointCentroid);
-      da.SetData(11, (int)modifier.StressOption);
-    }
-
-    #endregion Protected Methods
-
-    #region Private Methods
-    private void Update() {
-      UpdateMessage();
-      ExpireSolution(true);
-    }
-
-    private void UpdateDensity(string unit) {
-      _linearDensityUnit = LinearDensity.ParseUnit(unit);
-      Update();
+      Menu_AppendSeparator(menu);
     }
 
     private void UpdateLength(string unit) {
@@ -638,11 +559,84 @@ namespace GsaGH.Components {
       Update();
     }
 
+    private void UpdateDensity(string unit) {
+      _linearDensityUnit = LinearDensity.ParseUnit(unit);
+      Update();
+    }
+
+    private void Update() {
+      UpdateMessage();
+      ExpireSolution(true);
+    }
+
     private void UpdateMessage()
       => Message = Length.GetAbbreviation(_lengthUnit)
         + ", "
         + LinearDensity.GetAbbreviation(_linearDensityUnit);
 
-    #endregion Private Methods
+    public override bool Write(GH_IWriter writer) {
+      writer.SetString("LengthUnit", _lengthUnit.ToString());
+      writer.SetString("DensityUnit", _linearDensityUnit.ToString());
+      return base.Write(writer);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      if (reader.ItemExists("LengthUnit")) {
+        _lengthUnit
+          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        _linearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
+
+        if (reader.ItemExists("dropdown"))
+          return base.Read(reader);
+
+        GH_IReader attributes = reader.FindChunk("Attributes");
+        Attributes.Bounds = (RectangleF)attributes.Items[0]
+          .InternalData;
+        Attributes.Pivot = (PointF)attributes.Items[1]
+          .InternalData;
+
+        int num = Params.Input.Count - 1;
+        bool flag = true;
+        for (int i = 0; i <= num; i++) {
+          GH_IReader ghIReader = reader.FindChunk("param_input", i);
+          if (ghIReader == null)
+            continue;
+
+          GH_ParamAccess access = Params.Input[i]
+            .Access;
+          flag &= Params.Input[i]
+            .Read(ghIReader);
+          if (!(Params.Input[i] is Param_ScriptVariable))
+            Params.Input[i]
+              .Access = access;
+        }
+
+        int num2 = Params.Output.Count - 1;
+        for (int j = 0; j <= num2; j++) {
+          GH_IReader ghIReader = reader.FindChunk("param_output", j);
+          if (ghIReader == null) {
+            reader.AddMessage("Output parameter chunk is missing. Archive is corrupt.",
+              GH_Message_Type.error);
+            continue;
+          }
+
+          GH_ParamAccess access2 = Params.Output[j]
+            .Access;
+          flag &= Params.Output[j]
+            .Read(ghIReader);
+          Params.Output[j]
+            .Access = access2;
+        }
+
+        return true;
+      }
+      else {
+        _lengthUnit = DefaultUnits.LengthUnitSection;
+        _linearDensityUnit = DefaultUnits.LinearDensityUnit;
+        return base.Read(reader);
+      }
+    }
+
+    #endregion
   }
 }

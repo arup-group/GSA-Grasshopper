@@ -3,28 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GsaGH.Helpers.GsaAPI {
-
   internal partial class ResultHelper {
-
-    #region Internal Methods
-    internal static double RoundToSignificantDigits(double d, int digits) {
-      if (d == 0.0) {
-        return 0.0;
-      }
-
-      double leftSideNumbers = Math.Floor(Math.Log10(Math.Abs(d))) + 1;
-      double scale = Math.Pow(10, leftSideNumbers);
-      double result = scale * Math.Round(d / scale, digits, MidpointRounding.AwayFromZero);
-
-      if ((int)leftSideNumbers >= digits) {
-        return Math.Round(result, 0, MidpointRounding.AwayFromZero);
-      }
-
-      return Math.Abs(digits - (int)leftSideNumbers) > 15
-        ? 0.0
-        : Math.Round(result, digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
-    }
-
     internal static List<double> SmartRounder(double max, double min) {
       var roundedvals = new List<double>();
       if (max == 0 & min == 0) {
@@ -78,7 +57,23 @@ namespace GsaGH.Helpers.GsaAPI {
 
       return roundedvals;
     }
+    internal static double RoundToSignificantDigits(double d, int digits) {
 
-    #endregion Internal Methods
+      if (d == 0.0) {
+        return 0.0;
+      }
+
+      double leftSideNumbers = Math.Floor(Math.Log10(Math.Abs(d))) + 1;
+      double scale = Math.Pow(10, leftSideNumbers);
+      double result = scale * Math.Round(d / scale, digits, MidpointRounding.AwayFromZero);
+
+      if ((int)leftSideNumbers >= digits) {
+        return Math.Round(result, 0, MidpointRounding.AwayFromZero);
+      }
+
+      return Math.Abs(digits - (int)leftSideNumbers) > 15
+        ? 0.0
+        : Math.Round(result, digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
+    }
   }
 }

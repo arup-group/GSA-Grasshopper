@@ -6,13 +6,38 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
-
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Properties {
+    /// <summary>
+    /// Method to import Sections from a GSA model.
+    /// Will output a list of GsaSectionsGoo.
+    /// </summary>
+    /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
+    /// <param name="analysisMaterials"></param>
+    /// <param name="modDict"></param>
+    /// <returns></returns>
+    internal static List<GsaSectionGoo> GetSections(IReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials, IReadOnlyDictionary<int, SectionModifier> modDict) {
+      var sections = new List<GsaSectionGoo>();
 
-    #region Internal Methods
+      foreach (int key in sDict.Keys) {
+        if (!sDict.TryGetValue(key, out Section apisection)) {
+          continue;
+        }
+
+        var sect = new GsaSection(key) { ApiSection = apisection };
+        if (sect.ApiSection.MaterialAnalysisProperty != 0) {
+          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty))
+            sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+        }
+        if (modDict.Keys.Contains(key))
+          sect.Modifier = new GsaSectionModifier(modDict[key]);
+        sections.Add(new GsaSectionGoo(sect));
+      }
+      return sections;
+    }
+
     /// <summary>
     /// Method to import Prop2ds from a GSA model.
     /// Will output a list of GsaProp2dGoo.
@@ -50,7 +75,6 @@ namespace GsaGH.Helpers.Import {
       }
       return prop2ds;
     }
-
     internal static List<GsaProp3dGoo> GetProp3ds(IReadOnlyDictionary<int, Prop3D> pDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials) {
       var prop2ds = new List<GsaProp3dGoo>();
 
@@ -69,35 +93,5 @@ namespace GsaGH.Helpers.Import {
       }
       return prop2ds;
     }
-
-    /// <summary>
-    /// Method to import Sections from a GSA model.
-    /// Will output a list of GsaSectionsGoo.
-    /// </summary>
-    /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
-    /// <param name="analysisMaterials"></param>
-    /// <param name="modDict"></param>
-    /// <returns></returns>
-    internal static List<GsaSectionGoo> GetSections(IReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials, IReadOnlyDictionary<int, SectionModifier> modDict) {
-      var sections = new List<GsaSectionGoo>();
-
-      foreach (int key in sDict.Keys) {
-        if (!sDict.TryGetValue(key, out Section apisection)) {
-          continue;
-        }
-
-        var sect = new GsaSection(key) { ApiSection = apisection };
-        if (sect.ApiSection.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty))
-            sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-        }
-        if (modDict.Keys.Contains(key))
-          sect.Modifier = new GsaSectionModifier(modDict[key]);
-        sections.Add(new GsaSectionGoo(sect));
-      }
-      return sections;
-    }
-
-    #endregion Internal Methods
   }
 }

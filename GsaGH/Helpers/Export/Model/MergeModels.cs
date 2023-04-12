@@ -10,10 +10,7 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
-
   public class MergeModels {
-
-    #region Public Methods
     public static GsaModel MergeModel(List<GsaModel> models, GH_Component owner, Length tolerance) {
       if (models == null) {
         return null;
@@ -97,7 +94,5 @@ namespace GsaGH.Helpers.Export {
       mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, tolerance, false, owner);
       return mainModel;
     }
-
-    #endregion Public Methods
   }
 }

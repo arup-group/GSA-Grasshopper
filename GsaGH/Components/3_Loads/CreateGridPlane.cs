@@ -14,164 +14,7 @@ using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
-
   public class CreateGridPlane : GH_OasysDropDownComponent {
-
-    #region Enums
-    private enum FoldMode {
-      General,
-      Storey,
-    }
-    #endregion Enums
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridPlane;
-
-    private readonly List<string> _type = new List<string>(new string[] {
-      "General",
-      "Storey",
-    });
-
-    private FoldMode _mode = FoldMode.General;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public CreateGridPlane() : base("Create Grid Plane",
-      "GridPlane",
-      "Create GSA Grid Plane",
-      CategoryName.Name(),
-      SubCategoryName.Cat3()) { }
-
-    #endregion Public Constructors
-
-    #region Public Methods
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new string[] {
-        "Type",
-      });
-
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(_type);
-      SelectedItems.Add(_mode.ToString());
-
-      IsInitialised = true;
-    }
-
-    public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("Mode")) {
-        _mode = (FoldMode)reader.GetInt32("Mode");
-        InitialiseDropdowns();
-      }
-
-      if (_mode != FoldMode.Storey || Params.Input.Count >= 5)
-        return base.Read(reader);
-
-      Params.RegisterInputParam(new Param_GenericObject());
-      Params.RegisterInputParam(new Param_GenericObject());
-
-      return base.Read(reader);
-    }
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      if (i == 0)
-        switch (SelectedItems[0]) {
-          case "General":
-            Mode1Clicked();
-            break;
-
-          case "Storey":
-            Mode2Clicked();
-            break;
-        }
-
-      base.UpdateUI();
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
-      base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance() {
-      Params.Input[2]
-        .Name = "Grid Elevation in model units";
-
-      if (_mode != FoldMode.Storey)
-        return;
-
-      if (Params.Input.Count < 5) {
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new Param_GenericObject());
-      }
-
-      Params.Input[4]
-        .NickName = "tA";
-      Params.Input[4]
-        .Name = "Tolerance Above";
-      Params.Input[4]
-        .Description = "Tolerance Above Grid Plane";
-      Params.Input[4]
-        .Access = GH_ParamAccess.item;
-      Params.Input[4]
-        .Optional = true;
-
-      Params.Input[5]
-        .NickName = "tB";
-      Params.Input[5]
-        .Name = "Tolerance Below";
-      Params.Input[5]
-        .Description = "Tolerance Below Grid Plane";
-      Params.Input[5]
-        .Access = GH_ParamAccess.item;
-      Params.Input[5]
-        .Optional = true;
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Plane",
-        "P",
-        "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 "
-        + "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Grid Plane ID",
-        "ID",
-        "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model",
-        GH_ParamAccess.item,
-        0);
-      pManager.AddGenericParameter("Grid Elevation in model units",
-        "Ev",
-        "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
-
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-
-      _mode = FoldMode.General;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Plane",
-        "GP",
-        "GSA Grid Plane",
-        GH_ParamAccess.item);
-
     protected override void SolveInstance(IGH_DataAccess da) {
       Plane pln = Plane.WorldXY;
 
@@ -262,9 +105,163 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
     }
 
-    #endregion Protected Methods
+    #region (de)serialization
 
-    #region Private Methods
+    public override bool Read(GH_IReader reader) {
+      if (reader.ItemExists("Mode")) {
+        _mode = (FoldMode)reader.GetInt32("Mode");
+        InitialiseDropdowns();
+      }
+
+      if (_mode != FoldMode.Storey || Params.Input.Count >= 5)
+        return base.Read(reader);
+
+      Params.RegisterInputParam(new Param_GenericObject());
+      Params.RegisterInputParam(new Param_GenericObject());
+
+      return base.Read(reader);
+    }
+
+    #endregion
+
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridPlane;
+
+    public CreateGridPlane() : base("Create Grid Plane",
+      "GridPlane",
+      "Create GSA Grid Plane",
+      CategoryName.Name(),
+      SubCategoryName.Cat3()) { }
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Plane",
+        "P",
+        "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 "
+        + "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Grid Plane ID",
+        "ID",
+        "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model",
+        GH_ParamAccess.item,
+        0);
+      pManager.AddGenericParameter("Grid Elevation in model units",
+        "Ev",
+        "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
+
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+
+      _mode = FoldMode.General;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaGridPlaneParameter(),
+        "Grid Plane",
+        "GP",
+        "GSA Grid Plane",
+        GH_ParamAccess.item);
+
+    #endregion
+
+    #region Custom UI
+
+    private enum FoldMode {
+      General,
+      Storey,
+    }
+
+    private readonly List<string> _type = new List<string>(new string[] {
+      "General",
+      "Storey",
+    });
+
+    private FoldMode _mode = FoldMode.General;
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new string[] {
+        "Type",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_mode.ToString());
+
+      _isInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      if (i == 0)
+        switch (_selectedItems[0]) {
+          case "General":
+            Mode1Clicked();
+            break;
+          case "Storey":
+            Mode2Clicked();
+            break;
+        }
+
+      base.UpdateUI();
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance() {
+      Params.Input[2]
+        .Name = "Grid Elevation in model units";
+
+      if (_mode != FoldMode.Storey)
+        return;
+
+      if (Params.Input.Count < 5) {
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new Param_GenericObject());
+      }
+
+      Params.Input[4]
+        .NickName = "tA";
+      Params.Input[4]
+        .Name = "Tolerance Above";
+      Params.Input[4]
+        .Description = "Tolerance Above Grid Plane";
+      Params.Input[4]
+        .Access = GH_ParamAccess.item;
+      Params.Input[4]
+        .Optional = true;
+
+      Params.Input[5]
+        .NickName = "tB";
+      Params.Input[5]
+        .Name = "Tolerance Below";
+      Params.Input[5]
+        .Description = "Tolerance Below Grid Plane";
+      Params.Input[5]
+        .Access = GH_ParamAccess.item;
+      Params.Input[5]
+        .Optional = true;
+    }
+
     private void Mode1Clicked() {
       if (_mode == FoldMode.General)
         return;
@@ -287,6 +284,6 @@ namespace GsaGH.Components {
       Params.RegisterInputParam(new Param_GenericObject());
     }
 
-    #endregion Private Methods
+    #endregion
   }
 }

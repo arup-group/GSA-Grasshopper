@@ -12,57 +12,31 @@ using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaMember2d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2d>,
     IGH_PreviewData {
+    public GsaMember2dGoo(GsaMember2d item) : base(item) { }
 
-    #region Properties + Fields
-    public static string Description => "GSA 2D Member";
-    public static string Name => "Member2D";
-    public static string NickName => "M2D";
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public GsaMember2dGoo(GsaMember2d item) : base(item) {
-    }
-
-    #endregion Public Constructors
-
-    #region Internal Constructors
     internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null)
       => Value = duplicate
         ? item.Duplicate()
         : item;
 
-    #endregion Internal Constructors
+    public static string Name => "Member2D";
+    public static string NickName => "M2D";
+    public static string Description => "GSA 2D Member";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region Public Methods
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaMember.
-      if (source == null)
-        return false;
+    public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(Value);
+    public override GeometryBase GetGeometry() => Value.Brep;
 
-      if (base.CastFrom(source))
-        return true;
-
-      var brep = new Brep();
-      if (!GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
-        return false;
-      var pts = new List<Point3d>();
-      var crvs = new List<Curve>();
-      var mem = new GsaMember2d(brep, crvs, pts);
-      Value = mem;
-      return true;
-    }
+    #region casting methods
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaMember into some other type Q.
+      // This function is called when Grasshopper needs to convert this 
+      // instance of GsaMember into some other type Q.            
       if (base.CastTo(ref target))
         return true;
 
@@ -181,6 +155,39 @@ namespace GsaGH.Parameters {
       return false;
     }
 
+    public override bool CastFrom(object source) {
+      // This function is called when Grasshopper needs to convert other data 
+      // into GsaMember.
+      if (source == null)
+        return false;
+
+      if (base.CastFrom(source))
+        return true;
+
+      var brep = new Brep();
+      if (!GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
+        return false;
+      var pts = new List<Point3d>();
+      var crvs = new List<Curve>();
+      var mem = new GsaMember2d(brep, crvs, pts);
+      Value = mem;
+      return true;
+    }
+
+    #endregion
+
+    #region transformation methods
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaMember2dGoo(Value.Transform(xform));
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+      => new GsaMember2dGoo(Value.Morph(xmorph));
+
+    #endregion
+
+    #region drawing methods
+
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       if (Value.Brep == null)
         return;
@@ -291,16 +298,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(Value);
-
-    public override GeometryBase GetGeometry() => Value.Brep;
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaMember2dGoo(Value.Morph(xmorph));
-
-    public override IGH_GeometricGoo Transform(Transform xform)
-          => new GsaMember2dGoo(Value.Transform(xform));
-
-    #endregion Public Methods
+    #endregion
   }
 }

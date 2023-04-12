@@ -4,13 +4,10 @@ using GsaAPI;
 using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   /// Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial"/>
   /// </summary>
   public class GsaMaterial {
-
-    #region Enums
     public enum MatType {
       Undef = -2,
       None = -1,
@@ -35,13 +32,27 @@ namespace GsaGH.Parameters {
       Argfrp = 5632,
       Barmat = 65280,
     }
-    #endregion Enums
 
-    #region Properties + Fields
-    public int AnalysisProperty {
-      get {
-        return _analProp;
+    #region fields
+    private int _grade = 1;
+    private Guid _guid = Guid.NewGuid();
+    private int _analProp = 0;
+    private AnalysisMaterial _analysisMaterial;
+    #endregion
+
+    #region properties
+    public MatType MaterialType { get; set; } = MatType.Undef;
+    public int GradeProperty {
+      get => _grade;
+      set {
+        _grade = value;
+        if (_grade > 0)
+          _analProp = 0;
+        _guid = Guid.NewGuid();
       }
+    }
+    public int AnalysisProperty {
+      get => _analProp;
       set {
         _analProp = value;
         if (_analProp == 0) {
@@ -52,64 +63,33 @@ namespace GsaGH.Parameters {
         _grade = 0;
       }
     }
-
-    public int GradeProperty {
-      get {
-        return _grade;
-      }
-      set {
-        _grade = value;
-        if (_grade > 0)
-          _analProp = 0;
-        _guid = Guid.NewGuid();
-      }
-    }
-
-    public Guid Guid {
-      get {
-        return _guid;
-      }
-    }
-
-    public MatType MaterialType { get; set; } = MatType.Undef;
+    public Guid Guid => _guid;
     internal AnalysisMaterial AnalysisMaterial {
-      get {
-        return _analysisMaterial;
-      }
+      get => _analysisMaterial;
       set {
         _analysisMaterial = value;
         _guid = Guid.NewGuid();
       }
     }
+    #endregion
 
-    private int _analProp = 0;
-    private AnalysisMaterial _analysisMaterial;
-    private int _grade = 1;
-    private Guid _guid = Guid.NewGuid();
-    #endregion Properties + Fields
-
-    #region Public Constructors
+    #region constructors
     public GsaMaterial() {
     }
 
     /// <summary>
-    /// 0 : Generic
-    /// 1 : Steel
-    /// 2 : Concrete
-    /// 3 : Aluminium
-    /// 4 : Glass
-    /// 5 : FRP
-    /// 7 : Timber
-    /// 8 : Fabric
+    /// 0 : Generic<br></br>
+    /// 1 : Steel<br></br>
+    /// 2 : Concrete<br></br>
+    /// 3 : Aluminium<br></br>
+    /// 4 : Glass<br></br>
+    /// 5 : FRP<br></br>
+    /// 7 : Timber<br></br>
+    /// 8 : Fabric<br></br>
     /// </summary>
-    /// <param name="materialId"></param>
-    public GsaMaterial(int materialId) {
-      MaterialType = (MatType)materialId;
-    }
+    /// <param name="typeId"></param>
+    public GsaMaterial(int typeId) => MaterialType = (MatType)typeId;
 
-    #endregion Public Constructors
-
-    #region Internal Constructors
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
       if (section?.ApiSection == null)
         return;
@@ -148,10 +128,9 @@ namespace GsaGH.Parameters {
       }
       CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty, prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
+    #endregion
 
-    #endregion Internal Constructors
-
-    #region Public Methods
+    #region methods
     public GsaMaterial Duplicate() {
       var dup = new GsaMaterial {
         MaterialType = MaterialType,
@@ -178,49 +157,6 @@ namespace GsaGH.Parameters {
       return (id + type).Trim();
     }
 
-    #endregion Public Methods
-
-    #region Private Methods
-    private static MatType GetType(MaterialType materialType) {
-      MatType mType = MatType.Undef;
-
-      switch (materialType) {
-        case GsaAPI.MaterialType.GENERIC:
-          mType = MatType.Generic;
-          break;
-
-        case GsaAPI.MaterialType.STEEL:
-          mType = MatType.Steel;
-          break;
-
-        case GsaAPI.MaterialType.CONCRETE:
-          mType = MatType.Concrete;
-          break;
-
-        case GsaAPI.MaterialType.TIMBER:
-          mType = MatType.Timber;
-          break;
-
-        case GsaAPI.MaterialType.ALUMINIUM:
-          mType = MatType.Aluminium;
-          break;
-
-        case GsaAPI.MaterialType.FRP:
-          mType = MatType.Frp;
-          break;
-
-        case GsaAPI.MaterialType.GLASS:
-          mType = MatType.Glass;
-          break;
-
-        case GsaAPI.MaterialType.FABRIC:
-          mType = MatType.Fabric;
-          break;
-      }
-
-      return mType;
-    }
-
     private void CreateFromApiObject(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial) {
       MaterialType = GetType(materialType);
       GradeProperty = gradeProp;
@@ -238,6 +174,38 @@ namespace GsaGH.Parameters {
       };
     }
 
-    #endregion Private Methods
+    private static MatType GetType(MaterialType materialType) {
+      MatType mType = MatType.Undef;
+
+      switch (materialType) {
+        case GsaAPI.MaterialType.GENERIC:
+          mType = MatType.Generic;
+          break;
+        case GsaAPI.MaterialType.STEEL:
+          mType = MatType.Steel;
+          break;
+        case GsaAPI.MaterialType.CONCRETE:
+          mType = MatType.Concrete;
+          break;
+        case GsaAPI.MaterialType.TIMBER:
+          mType = MatType.Timber;
+          break;
+        case GsaAPI.MaterialType.ALUMINIUM:
+          mType = MatType.Aluminium;
+          break;
+        case GsaAPI.MaterialType.FRP:
+          mType = MatType.Frp;
+          break;
+        case GsaAPI.MaterialType.GLASS:
+          mType = MatType.Glass;
+          break;
+        case GsaAPI.MaterialType.FABRIC:
+          mType = MatType.Fabric;
+          break;
+      }
+
+      return mType;
+    }
+    #endregion
   }
 }

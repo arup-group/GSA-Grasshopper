@@ -13,13 +13,10 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
-
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Members {
-
-    #region Internal Methods
     internal static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
         GetMembers(ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, Prop3D> p3Dict,
@@ -80,6 +77,7 @@ namespace GsaGH.Helpers.Import {
 
           if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
               mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE) {
+
             if (topopts.Count < 2) {
               string error = " Invalid topology Mem1D ID: " + key + ".";
               owner?.AddRuntimeWarning(error);
@@ -139,7 +137,5 @@ namespace GsaGH.Helpers.Import {
       return new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(
           mem1ds, mem2ds, mem3ds);
     }
-
-    #endregion Internal Methods
   }
 }

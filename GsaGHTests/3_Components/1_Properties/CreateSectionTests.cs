@@ -6,11 +6,8 @@ using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateSectionTests {
-
-    #region Public Methods
     public static GH_OasysComponent ComponentMother(string profile) {
       var comp = new CreateSection();
       comp.CreateAttributes();
@@ -38,7 +35,5 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(profile, output.Value.Profile);
       Assert.Equal(MatType.Timber, output.Value.Material.MaterialType);
     }
-
-    #endregion Public Methods
   }
 }

@@ -4,27 +4,20 @@ using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   /// This class provides a parameter interface for the <see cref="GsaSectionGoo"/> type.
   /// </summary>
   public class GsaSectionParameter : GH_OasysPersistentParam<GsaSectionGoo> {
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("8500f335-fad7-46a0-b1be-bdad22ab1474");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override string InstanceDescription => m_data.DataCount == 0
-              ? "Empty " + GsaSectionGoo.Name + " parameter"
+      ? "Empty " + GsaSectionGoo.Name + " parameter"
       : base.InstanceDescription;
-
     public override string TypeName => SourceCount == 0
       ? GsaSectionGoo.Name
       : base.TypeName;
-
+    public override Guid ComponentGuid => new Guid("8500f335-fad7-46a0-b1be-bdad22ab1474");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.SectionParam;
-    #endregion Properties + Fields
 
-    #region Public Constructors
     public GsaSectionParameter() : base(new GH_InstanceDescription(
       GsaSectionGoo.Name,
       GsaSectionGoo.NickName,
@@ -32,9 +25,6 @@ namespace GsaGH.Parameters {
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    #endregion Public Constructors
-
-    #region Protected Methods
     protected override GsaSectionGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaSection))
         return new GsaSectionGoo((GsaSection)data);
@@ -57,7 +47,5 @@ namespace GsaGH.Parameters {
         return new GsaSectionGoo(section);
       }
     }
-
-    #endregion Protected Methods
   }
 }

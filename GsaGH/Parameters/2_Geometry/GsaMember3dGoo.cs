@@ -8,65 +8,30 @@ using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaMember3d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>,
     IGH_PreviewData {
+    public GsaMember3dGoo(GsaMember3d item) : base(item) { }
 
-    #region Properties + Fields
-    public static string Description => "GSA 3D Member";
-    public static string Name => "Member3D";
-    public static string NickName => "M3D";
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public GsaMember3dGoo(GsaMember3d item) : base(item) {
-    }
-
-    #endregion Public Constructors
-
-    #region Internal Constructors
     internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null)
       => Value = duplicate
         ? item.Duplicate()
         : item;
 
-    #endregion Internal Constructors
+    public static string Name => "Member3D";
+    public static string NickName => "M3D";
+    public static string Description => "GSA 3D Member";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public override IGH_GeometricGoo Duplicate() => new GsaMember3dGoo(Value);
+    public override GeometryBase GetGeometry() => Value.SolidMesh;
 
-    #region Public Methods
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaMember.
-      if (source == null)
-        return false;
-
-      if (base.CastFrom(source))
-        return true;
-
-      var brep = new Brep();
-      if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both)) {
-        var member = new GsaMember3d(brep);
-        Value = member;
-        return true;
-      }
-
-      var mesh = new Mesh();
-
-      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
-        return false;
-      else {
-        var member = new GsaMember3d(mesh);
-        Value = member;
-        return true;
-      }
-    }
+    #region casting methods
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaMember into some other type Q.
+      // This function is called when Grasshopper needs to convert this 
+      // instance of GsaMember into some other type Q.            
       if (base.CastTo(ref target))
         return true;
 
@@ -105,6 +70,47 @@ namespace GsaGH.Parameters {
       target = default;
       return false;
     }
+
+    public override bool CastFrom(object source) {
+      // This function is called when Grasshopper needs to convert other data 
+      // into GsaMember.
+      if (source == null)
+        return false;
+
+      if (base.CastFrom(source))
+        return true;
+
+      var brep = new Brep();
+      if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both)) {
+        var member = new GsaMember3d(brep);
+        Value = member;
+        return true;
+      }
+
+      var mesh = new Mesh();
+
+      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
+        return false;
+      else {
+        var member = new GsaMember3d(mesh);
+        Value = member;
+        return true;
+      }
+    }
+
+    #endregion
+
+    #region transformation methods
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaMember3dGoo(Value.Transform(xform));
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+      => new GsaMember3dGoo(Value.Morph(xmorph));
+
+    #endregion
+
+    #region drawing methods
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       if (Value?.SolidMesh == null)
@@ -158,16 +164,6 @@ namespace GsaGH.Parameters {
             Colours.Member1dNodeSelected);
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaMember3dGoo(Value);
-
-    public override GeometryBase GetGeometry() => Value.SolidMesh;
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaMember3dGoo(Value.Morph(xmorph));
-
-    public override IGH_GeometricGoo Transform(Transform xform)
-          => new GsaMember3dGoo(Value.Transform(xform));
-
-    #endregion Public Methods
+    #endregion
   }
 }

@@ -6,10 +6,7 @@ using System.Reflection;
 using Xunit;
 
 namespace GsaGHTests.Helpers {
-
   public class Duplicates {
-
-    #region Public Methods
     public static bool AreEqual(object objA, object objB, bool excludeGuid = false) {
       if (!(excludeGuid && objA.Equals(typeof(Guid))))
         Assert.Equal(objA.ToString(), objB.ToString());
@@ -124,7 +121,5 @@ namespace GsaGHTests.Helpers {
 
       return true;
     }
-
-    #endregion Public Methods
   }
 }

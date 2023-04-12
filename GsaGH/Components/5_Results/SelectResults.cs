@@ -16,205 +16,10 @@ using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to select results from a GSA Model
   /// </summary>
   public class SelectResult : GH_OasysDropDownComponent {
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("c803bba4-a026-4f95-b588-9d76455a53fa");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SelectResult;
-
-    private readonly List<string> _type = new List<string>(new[] {
-      "AnalysisCase",
-      "Combination",
-    });
-
-    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
-    private int _caseId = 1;
-    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
-    private GsaModel _gsaModel;
-
-    private List<int> _permutationIDs = new List<int>() {
-      -1,
-    };
-
-    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
-      _resultCache;
-
-    private GsaResult.CaseType _resultType = GsaResult.CaseType.AnalysisCase;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    // this is the cache object!
-    public SelectResult() : base("Select Results",
-      "SelRes",
-      "Select AnalysisCase or Combination Result from an analysed GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
-
-    #endregion Public Constructors
-
-    #region Public Methods
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Type",
-        "Case ID",
-        "Permutation",
-      });
-
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(_type);
-      SelectedItems.Add(DropDownItems[0][0]);
-
-      DropDownItems.Add(new List<string>() {
-        "   ",
-      });
-      SelectedItems.Add("   ");
-
-      IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-
-      switch (i) {
-        case 0 when SelectedItems[i] == _type[0]: {
-            if (_resultType == GsaResult.CaseType.AnalysisCase)
-              return;
-            _resultType = GsaResult.CaseType.AnalysisCase;
-            UpdateDropdowns();
-            break;
-          }
-        case 0: {
-            if (SelectedItems[i] == _type[1]) {
-              if (_resultType == GsaResult.CaseType.Combination)
-                return;
-              _resultType = GsaResult.CaseType.Combination;
-              UpdateDropdowns();
-            }
-
-            break;
-          }
-        case 1 when SelectedItems[i]
-            .ToLower()
-          == "all":
-          _caseId = -1;
-          break;
-
-        case 1: {
-            int newId = int.Parse(string.Join("",
-              SelectedItems[i]
-                .ToCharArray()
-                .Where(char.IsDigit)));
-            if (newId != _caseId) {
-              _caseId = newId;
-              if (_resultType == GsaResult.CaseType.Combination)
-                UpdatePermutations();
-            }
-
-            break;
-          }
-        case 2 when SelectedItems[i]
-            .ToLower()
-          != "all":
-          _permutationIDs = new List<int>() {
-            int.Parse(string.Join("",
-              SelectedItems[i]
-                .ToCharArray()
-                .Where(char.IsDigit))),
-          };
-          break;
-
-        case 2:
-          _permutationIDs = new List<int>() {
-            -1,
-          };
-          break;
-      }
-
-      base.UpdateUI();
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      if (SelectedItems[0] == _type[0])
-        _resultType = GsaResult.CaseType.AnalysisCase;
-      else if (SelectedItems[0] == _type[1])
-        _resultType = GsaResult.CaseType.Combination;
-
-      if (SelectedItems[1]
-          .ToLower()
-        == "all")
-        _caseId = -1;
-      else {
-        int newId = int.Parse(string.Join("",
-          SelectedItems[1]
-            .ToCharArray()
-            .Where(char.IsDigit)));
-        if (newId != _caseId)
-          _caseId = newId;
-      }
-
-      if (SelectedItems.Count > 2)
-        _permutationIDs = SelectedItems[2]
-            .ToLower()
-          == "all"
-            ? new List<int>() {
-              -1,
-            }
-            : new List<int>() {
-              int.Parse(string.Join("",
-                SelectedItems[2]
-                  .ToCharArray()
-                  .Where(char.IsDigit))),
-            };
-
-      base.UpdateUIFromSelectedItems();
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some results",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Result Type",
-        "T",
-        "Result type. "
-        + Environment.NewLine
-        + "Accepted inputs are: "
-        + Environment.NewLine
-        + "'AnalysisCase' or 'Combination'",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Permutation",
-        "P",
-        "Permutations (only applicable for combination cases).",
-        GH_ParamAccess.list);
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
-        GH_ParamAccess.item);
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var inModel = new GsaModel();
       var ghTyp = new GH_ObjectWrapper();
@@ -249,18 +54,18 @@ namespace GsaGH.Components {
           if (type.ToUpper()
             .StartsWith("A")) {
             _resultType = GsaResult.CaseType.AnalysisCase;
-            SelectedItems[0] = DropDownItems[0][0];
+            _selectedItems[0] = _dropDownItems[0][0];
             if (_resultType != GsaResult.CaseType.AnalysisCase) {
               _resultType = GsaResult.CaseType.AnalysisCase;
-              if (DropDownItems.Count > 2) {
-                DropDownItems.RemoveAt(2);
-                if (SelectedItems.Count > 2)
-                  SelectedItems.RemoveAt(2);
+              if (_dropDownItems.Count > 2) {
+                _dropDownItems.RemoveAt(2);
+                if (_selectedItems.Count > 2)
+                  _selectedItems.RemoveAt(2);
               }
 
-              if (SelectedItems[1] != "   ") {
-                if (SelectedItems[1] != "All")
-                  SelectedItems[1] = "A" + _caseId.ToString();
+              if (_selectedItems[1] != "   ") {
+                if (_selectedItems[1] != "All")
+                  _selectedItems[1] = "A" + _caseId.ToString();
                 else
                   UpdateDropdowns();
               }
@@ -268,20 +73,20 @@ namespace GsaGH.Components {
           }
           else if (type.ToUpper()
             .StartsWith("C")) {
-            SelectedItems[0] = DropDownItems[0][1];
+            _selectedItems[0] = _dropDownItems[0][1];
             if (_resultType != GsaResult.CaseType.Combination) {
               _resultType = GsaResult.CaseType.Combination;
-              if (DropDownItems.Count < 3) {
-                DropDownItems.Add(new List<string>() {
+              if (_dropDownItems.Count < 3) {
+                _dropDownItems.Add(new List<string>() {
                   "All",
                 });
-                if (SelectedItems.Count < 3)
-                  SelectedItems.Add("All");
+                if (_selectedItems.Count < 3)
+                  _selectedItems.Add("All");
               }
 
-              if (SelectedItems[1] != "   ") {
-                if (SelectedItems[1] != "All")
-                  SelectedItems[1] = "C" + _caseId.ToString();
+              if (_selectedItems[1] != "   ") {
+                if (_selectedItems[1] != "All")
+                  _selectedItems[1] = "C" + _caseId.ToString();
                 else
                   UpdateDropdowns();
               }
@@ -296,9 +101,9 @@ namespace GsaGH.Components {
             UpdatePermutations();
           _caseId = analCase;
           if (analCase < 1)
-            SelectedItems[1] = "All";
+            _selectedItems[1] = "All";
           else
-            SelectedItems[1] = (_resultType == GsaResult.CaseType.AnalysisCase)
+            _selectedItems[1] = (_resultType == GsaResult.CaseType.AnalysisCase)
               ? "A" + analCase
               : "C" + analCase;
         }
@@ -310,15 +115,16 @@ namespace GsaGH.Components {
           _permutationIDs = ghPermutations;
           if (_permutationIDs.Count == 1) {
             if (_permutationIDs[0] < 1)
-              SelectedItems[2] = "All";
+              _selectedItems[2] = "All";
             else
-              SelectedItems[2] = "P" + _permutationIDs[0];
+              _selectedItems[2] = "P" + _permutationIDs[0];
           }
           else
-            SelectedItems[2] = "from input";
+            _selectedItems[2] = "from input";
         }
       }
 
+      var key = new Tuple<GsaResult.CaseType, int>(_resultType, _caseId);
       switch (_resultType) {
         case GsaResult.CaseType.AnalysisCase:
           if (_analysisCaseResults == null) {
@@ -333,12 +139,10 @@ namespace GsaGH.Components {
             this.AddRuntimeError("Analysis Case A" + _caseId + " does not exist in model");
             return;
           }
-
-          if (!_resultCache.ContainsKey(
-            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, _caseId)))
-            _resultCache.Add(
-              new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, _caseId),
-              new GsaResult(_gsaModel, _analysisCaseResults[_caseId], _caseId));
+          if (!_resultCache.ContainsKey(key)) {
+            var result = new GsaResult(_gsaModel, _analysisCaseResults[_caseId], _caseId);
+            _resultCache.Add(key, result);
+          }
           break;
 
         case GsaResult.CaseType.Combination:
@@ -382,24 +186,96 @@ namespace GsaGH.Components {
             }
           }
 
-          if (!_resultCache.ContainsKey(
-            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, _caseId)))
-            _resultCache.Add(
-              new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, _caseId),
-              new GsaResult(_gsaModel, _combinationCaseResults[_caseId], _caseId, _permutationIDs));
-          else
-            _resultCache[new Tuple<GsaResult.CaseType, int>(_resultType, _caseId)]
-              .SelectedPermutationIds = _permutationIDs;
+          if (!_resultCache.ContainsKey(key)) {
+            var result = new GsaResult(_gsaModel, _combinationCaseResults[_caseId], _caseId, _permutationIDs);
+            _resultCache.Add(key, result);
+          }
+          else {
+            _resultCache[key].SelectedPermutationIds = _permutationIDs;
+          }
           break;
       }
 
-      da.SetData(0,
-        new GsaResultGoo(_resultCache[new Tuple<GsaResult.CaseType, int>(_resultType, _caseId)]));
+      GsaResult item = _resultCache[key];
+      da.SetData(0, new GsaResultGoo(item));
     }
 
-    #endregion Protected Methods
+    #region Name and Ribbon Layout
 
-    #region Private Methods
+    public override Guid ComponentGuid => new Guid("c803bba4-a026-4f95-b588-9d76455a53fa");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SelectResult;
+
+    private GsaResult.CaseType _resultType = GsaResult.CaseType.AnalysisCase;
+    private int _caseId = 1;
+
+    private List<int> _permutationIDs = new List<int>() {
+      -1,
+    };
+
+    private GsaModel _gsaModel;
+
+    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>
+      _resultCache; // this is the cache object!
+
+    private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
+    private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
+
+    public SelectResult() : base("Select Results",
+      "SelRes",
+      "Select AnalysisCase or Combination Result from an analysed GSA model",
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
+      => Hidden = true;
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(),
+        "GSA Model",
+        "GSA",
+        "GSA model containing some results",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Result Type",
+        "T",
+        "Result type. "
+        + Environment.NewLine
+        + "Accepted inputs are: "
+        + Environment.NewLine
+        + "'AnalysisCase' or 'Combination'",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Permutation",
+        "P",
+        "Permutations (only applicable for combination cases).",
+        GH_ParamAccess.list);
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
+
+    #endregion
+
+    #region Custom UI
+
+    private readonly List<string> _type = new List<string>(new[] {
+      "AnalysisCase",
+      "Combination",
+    });
+
     private void UpdateDropdowns() {
       if (_gsaModel == null)
         return;
@@ -419,32 +295,37 @@ namespace GsaGH.Components {
             .ToString());
       }
 
-      DropDownItems[1] = cases;
-      SelectedItems[1] = type[0] + _caseId.ToString();
+      _dropDownItems[1] = cases;
+      _selectedItems[1] = type[0] + _caseId.ToString();
 
       if (_resultType == GsaResult.CaseType.Combination) {
-        if (DropDownItems.Count < 3) {
-          DropDownItems.Add(new List<string>() {
+        if (_dropDownItems.Count < 3) {
+          _dropDownItems.Add(new List<string>() {
             "All",
           });
-          SelectedItems.Add("All");
+          _selectedItems.Add("All");
           UpdatePermutations();
         }
         else {
-          DropDownItems[2] = new List<string>() {
+          _dropDownItems[2] = new List<string>() {
             "All",
           };
-          SelectedItems[2] = "All";
+          _selectedItems[2] = "All";
         }
 
         List<int?> ints = modelResults.Item3.Branch(new GH_Path(_caseId));
-        DropDownItems[2]
-          .AddRange(ints.Select(x => "P" + x.ToString())
-            .ToList());
+        if (ints != null) {
+          _dropDownItems[2]
+            .AddRange(ints.Select(x => "P" + x.ToString())
+              .ToList());
+        }
+        else {
+          _dropDownItems[2].Add("-");
+        }
       }
-      else if (DropDownItems.Count > 2) {
-        DropDownItems.RemoveAt(2);
-        SelectedItems.RemoveAt(2);
+      else if (_dropDownItems.Count > 2) {
+        _dropDownItems.RemoveAt(2);
+        _selectedItems.RemoveAt(2);
       }
     }
 
@@ -454,6 +335,9 @@ namespace GsaGH.Components {
 
       if (_combinationCaseResults == null)
         _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
+      if (_combinationCaseResults.Count == 0) {
+        return;
+      }
       IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
         = _combinationCaseResults[_caseId]
           .NodeResults(_gsaModel.Model.Nodes()
@@ -463,15 +347,15 @@ namespace GsaGH.Components {
         .Count;
       var permutationsInCase = Enumerable.Range(1, nP)
         .ToList();
-      if (DropDownItems.Count < 3)
-        DropDownItems.Add(new List<string>());
-      DropDownItems[2] = new List<string> {
+      if (_dropDownItems.Count < 3)
+        _dropDownItems.Add(new List<string>());
+      _dropDownItems[2] = new List<string> {
         "All",
       };
-      if (SelectedItems.Count < 3)
-        SelectedItems.Add("");
-      SelectedItems[2] = "All";
-      DropDownItems[2]
+      if (_selectedItems.Count < 3)
+        _selectedItems.Add("");
+      _selectedItems[2] = "All";
+      _dropDownItems[2]
         .AddRange(permutationsInCase.Select(x => "P" + x.ToString())
           .ToList());
       _permutationIDs = new List<int>() {
@@ -479,6 +363,122 @@ namespace GsaGH.Components {
       };
     }
 
-    #endregion Private Methods
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Type",
+        "Case ID",
+        "Permutation",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_dropDownItems[0][0]);
+
+      _dropDownItems.Add(new List<string>() {
+        "   ",
+      });
+      _selectedItems.Add("   ");
+
+      _isInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+
+      switch (i) {
+        case 0 when _selectedItems[i] == _type[0]: {
+            if (_resultType == GsaResult.CaseType.AnalysisCase)
+              return;
+            _resultType = GsaResult.CaseType.AnalysisCase;
+            UpdateDropdowns();
+            break;
+          }
+        case 0: {
+            if (_selectedItems[i] == _type[1]) {
+              if (_resultType == GsaResult.CaseType.Combination)
+                return;
+              _resultType = GsaResult.CaseType.Combination;
+              UpdateDropdowns();
+            }
+
+            break;
+          }
+        case 1 when _selectedItems[i]
+            .ToLower()
+          == "all":
+          _caseId = -1;
+          break;
+        case 1: {
+            int newId = int.Parse(string.Join("",
+              _selectedItems[i]
+                .ToCharArray()
+                .Where(char.IsDigit)));
+            if (newId != _caseId) {
+              _caseId = newId;
+              if (_resultType == GsaResult.CaseType.Combination)
+                UpdatePermutations();
+            }
+
+            break;
+          }
+        case 2 when _selectedItems[i]
+            .ToLower()
+          != "all":
+          _permutationIDs = new List<int>() {
+            int.Parse(string.Join("",
+              _selectedItems[i]
+                .ToCharArray()
+                .Where(char.IsDigit))),
+          };
+          break;
+        case 2:
+          _permutationIDs = new List<int>() {
+            -1,
+          };
+          break;
+      }
+
+      base.UpdateUI();
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      if (_selectedItems[0] == _type[0])
+        _resultType = GsaResult.CaseType.AnalysisCase;
+      else if (_selectedItems[0] == _type[1])
+        _resultType = GsaResult.CaseType.Combination;
+
+      if (_selectedItems[1]
+          .ToLower()
+        == "all")
+        _caseId = -1;
+      else {
+        int newId = int.Parse(string.Join("",
+          _selectedItems[1]
+            .ToCharArray()
+            .Where(char.IsDigit)));
+        if (newId != _caseId)
+          _caseId = newId;
+      }
+
+      if (_selectedItems.Count > 2)
+        _permutationIDs = _selectedItems[2]
+            .ToLower()
+          == "all"
+            ? new List<int>() {
+              -1,
+            }
+            : new List<int>() {
+              int.Parse(string.Join("",
+                _selectedItems[2]
+                  .ToCharArray()
+                  .Where(char.IsDigit))),
+            };
+
+      base.UpdateUIFromSelectedItems();
+    }
+
+    #endregion
   }
 }

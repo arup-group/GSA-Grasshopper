@@ -6,21 +6,11 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.GsaAPI {
-
+  internal enum FootfallResultType {
+    Resonant,
+    Transient,
+  }
   internal partial class ResultHelper {
-
-    #region Enums
-    private enum ElementDimension {
-      _1D,
-      _2D,
-    }
-    #endregion Enums
-
-    #region Internal Methods
-    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
-
-    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
-
     internal static GsaResultsValues GetNodeFootfallResultValues(string nodelist, GsaModel model, FootfallResultType type, int caseId) {
       if (model == null) { return null; }
 
@@ -52,9 +42,13 @@ namespace GsaGH.Helpers.GsaAPI {
       return r;
     }
 
-    #endregion Internal Methods
+    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
 
-    #region Private Methods
+    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
+    private enum ElementDimension {
+      _1D,
+      _2D,
+    }
     private static GsaResultsValues GetElementFootfallResults(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues, ElementDimension typ) {
       if (model == null) { return null; }
 
@@ -92,12 +86,5 @@ namespace GsaGH.Helpers.GsaAPI {
 
       return r;
     }
-
-    #endregion Private Methods
-  }
-
-  internal enum FootfallResultType {
-    Resonant,
-    Transient,
   }
 }

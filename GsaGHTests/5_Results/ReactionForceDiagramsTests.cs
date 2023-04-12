@@ -9,55 +9,21 @@ using GsaGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests {
-
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests {
-
-    #region Public Methods
     [Fact]
-    public void WhenCreated_ThenComponentGuid_ShouldBeValid() {
+    private void WhenSetSelected_ThenSelectedItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      var expectedGuid = new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
-      Assert.Equal(expectedGuid, obj.ComponentGuid);
+      string defaultValue = obj._dropDownItems[0][3];
+      string expectedValue = obj._dropDownItems[0][0];
+
+      Assert.Equal(obj._selectedItems[0], defaultValue);
+
+      obj.SetSelected(0, 0);
+
+      Assert.Equal(obj._selectedItems[0], expectedValue);
     }
 
-    [Fact]
-    public void WhenCreated_ThenExposureValue_ShouldBeValid() {
-      var obj = new ReactionForceDiagrams();
-      Assert.Equal(GH_Exposure.secondary, obj.Exposure);
-    }
-
-    [Fact]
-    public void WhenCreated_ThenObject_ShouldNotBeEmpty() {
-      var obj = new ReactionForceDiagrams();
-      Assert.NotNull(obj);
-    }
-
-    [Fact]
-    public void WhenCreated_ThenPluginInfoValue_ShouldBeValid() {
-      var obj = new ReactionForceDiagrams();
-      Assert.Equal(PluginInfo.Instance, obj.PluginInfo);
-    }
-
-    [Fact]
-    public void WhenCreated_ThenVariablesSetByConstructor_ShouldBeValid() {
-      var obj = new ReactionForceDiagrams();
-      string expectedName = "Reaction Force Diagrams";
-      string expectedNickName = "ReactionForce";
-      string expectedDesc = "Diplays GSA Node Reaction Force Results as Vector Diagrams";
-      string expectedCategory = CategoryName.Name();
-      string expectedSubCategory = SubCategoryName.Cat5();
-
-      Assert.Equal(expectedName, obj.Name);
-      Assert.Equal(expectedNickName, obj.NickName);
-      Assert.Equal(expectedDesc, obj.Description);
-      Assert.Equal(expectedCategory, obj.Category);
-      Assert.Equal(expectedSubCategory, obj.SubCategory);
-    }
-
-    #endregion Public Methods
-
-    #region Private Methods
     [Fact]
     private void InputParamsAreValid() {
       var obj = new ReactionForceDiagrams();
@@ -176,24 +142,52 @@ namespace GsaGHTests {
       Assert.Equal(actualOutputs.Count, expectedOutputs.Count);
     }
 
-    [Fact]
-    private void WhenCreateAttributes_ThenAttributes_ShouldBeSet() {
-      var obj = new ReactionForceDiagrams();
-      obj.CreateAttributes();
+    #region creating instance
 
-      Assert.NotNull(obj.Attributes);
+    [Fact]
+    public void WhenCreated_ThenObject_ShouldNotBeEmpty() {
+      var obj = new ReactionForceDiagrams();
+      Assert.NotNull(obj);
     }
 
     [Fact]
-    private void WhenCreateAttributesCalledBeforeInitialised_ThenInitialising_ShouldBeCalled() {
+    public void WhenCreated_ThenVariablesSetByConstructor_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      obj.CreateAttributes();
+      string expectedName = "Reaction Force Diagrams";
+      string expectedNickName = "ReactionForce";
+      string expectedDesc = "Diplays GSA Node Reaction Force Results as Vector Diagrams";
+      string expectedCategory = CategoryName.Name();
+      string expectedSubCategory = SubCategoryName.Cat5();
 
-      Assert.NotNull(obj.SpacerDescriptions);
-      Assert.NotNull(obj.DropDownItems);
-      Assert.NotNull(obj.SelectedItems);
-      Assert.True(obj.IsInitialised);
+      Assert.Equal(expectedName, obj.Name);
+      Assert.Equal(expectedNickName, obj.NickName);
+      Assert.Equal(expectedDesc, obj.Description);
+      Assert.Equal(expectedCategory, obj.Category);
+      Assert.Equal(expectedSubCategory, obj.SubCategory);
     }
+
+    [Fact]
+    public void WhenCreated_ThenComponentGuid_ShouldBeValid() {
+      var obj = new ReactionForceDiagrams();
+      var expectedGuid = new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
+      Assert.Equal(expectedGuid, obj.ComponentGuid);
+    }
+
+    [Fact]
+    public void WhenCreated_ThenExposureValue_ShouldBeValid() {
+      var obj = new ReactionForceDiagrams();
+      Assert.Equal(GH_Exposure.secondary, obj.Exposure);
+    }
+
+    [Fact]
+    public void WhenCreated_ThenPluginInfoValue_ShouldBeValid() {
+      var obj = new ReactionForceDiagrams();
+      Assert.Equal(PluginInfo.Instance, obj.PluginInfo);
+    }
+
+    #endregion
+
+    #region Initialise Dropdowns
 
     [Fact]
     private void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeValid() {
@@ -212,15 +206,7 @@ namespace GsaGHTests {
           "Resolved |M|",
         },
       };
-      Assert.Equal(expectedValues, obj.DropDownItems);
-    }
-
-    [Fact]
-    private void WhenInitialiseDropdowns_ThenIsInitialisedValue_ShouldBeTrue() {
-      var obj = new ReactionForceDiagrams();
-      obj.InitialiseDropdowns();
-
-      Assert.True(obj.IsInitialised);
+      Assert.Equal(expectedValues, obj._dropDownItems);
     }
 
     [Fact]
@@ -231,7 +217,15 @@ namespace GsaGHTests {
       var expectedValues = new List<string> {
         "Resolved |F|",
       };
-      Assert.Equal(expectedValues, obj.SelectedItems);
+      Assert.Equal(expectedValues, obj._selectedItems);
+    }
+
+    [Fact]
+    private void WhenInitialiseDropdowns_ThenIsInitialisedValue_ShouldBeTrue() {
+      var obj = new ReactionForceDiagrams();
+      obj.InitialiseDropdowns();
+
+      Assert.True(obj._isInitialised);
     }
 
     [Fact]
@@ -239,25 +233,35 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.Equal(obj.SpacerDescriptions,
+      Assert.Equal(obj._spacerDescriptions,
         new List<string>() {
           "Component",
         });
     }
 
+    #endregion
+
+    #region CreateAttributes
+
     [Fact]
-    private void WhenSetSelected_ThenSelectedItems_ShouldBeValid() {
+    private void WhenCreateAttributesCalledBeforeInitialised_ThenInitialising_ShouldBeCalled() {
       var obj = new ReactionForceDiagrams();
-      string defaultValue = obj.DropDownItems[0][3];
-      string expectedValue = obj.DropDownItems[0][0];
+      obj.CreateAttributes();
 
-      Assert.Equal(obj.SelectedItems[0], defaultValue);
-
-      obj.SetSelected(0, 0);
-
-      Assert.Equal(obj.SelectedItems[0], expectedValue);
+      Assert.NotNull(obj._spacerDescriptions);
+      Assert.NotNull(obj._dropDownItems);
+      Assert.NotNull(obj._selectedItems);
+      Assert.True(obj._isInitialised);
     }
 
-    #endregion Private Methods
+    [Fact]
+    private void WhenCreateAttributes_ThenAttributes_ShouldBeSet() {
+      var obj = new ReactionForceDiagrams();
+      obj.CreateAttributes();
+
+      Assert.NotNull(obj.Attributes);
+    }
+
+    #endregion
   }
 }

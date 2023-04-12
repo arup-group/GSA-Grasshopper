@@ -19,33 +19,85 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to assemble and analyse a GSA model
   /// </summary>
   public class CreateModel : GH_OasysDropDownComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      #region GetData
 
-    #region Properties + Fields
+      List<GsaModel> models = GetInputsForModelAssembly.GetModels(this, da, 0, true);
+
+      (List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds)
+        = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
+
+      (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
+        List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
+        List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
+
+      (List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
+        = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
+
+      (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
+        = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
+
+      if (models is null
+        & nodes is null
+        & elem1ds is null
+        & elem2ds is null
+        & mem1ds is null
+        & mem2ds is null
+        & mem3ds is null
+        & sections is null
+        & prop2Ds is null
+        & loads is null
+        & gridPlaneSurfaces is null) {
+        this.AddRuntimeWarning("Input parameters failed to collect data");
+        return;
+      }
+
+      #endregion
+
+      var model = new GsaModel();
+      if (models != null)
+        if (models.Count > 0)
+          model = models.Count > 1
+            ? MergeModels.MergeModel(models, this, _tolerance)
+            : models[0]
+              .Clone();
+
+      model.Model = AssembleModel.Assemble(model,
+        nodes,
+        elem1ds,
+        elem2ds,
+        elem3ds,
+        mem1ds,
+        mem2ds,
+        mem3ds,
+        sections,
+        prop2Ds,
+        prop3Ds,
+        loads,
+        gridPlaneSurfaces,
+        analysisTasks,
+        combinationCases,
+        _lengthUnit,
+        _tolerance,
+        _reMesh,
+        this);
+
+      UpdateMessage();
+
+      da.SetData(0, new GsaModelGoo(model));
+    }
+
+    #region Name and Ribbon Layout
+
     public override Guid ComponentGuid => new Guid("326aa021-10b3-45a0-8286-eefb3dc3e2e1");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateModel;
 
-    private readonly List<string> _checkboxTexts = new List<string>() {
-      "ElemsFromMems",
-    };
-
-    private List<bool> _initialCheckState = new List<bool>() {
-      true,
-    };
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private bool _reMesh = true;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
-    #endregion Properties + Fields
-
-    #region Public Constructors
     public CreateModel() : base("Create Model",
       "Model",
       "Assemble a GSA Model",
@@ -53,130 +105,9 @@ namespace GsaGH.Components {
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Public Methods
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit)
-        .ToString()
-        .Replace(" ", string.Empty);
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      //only for init submenu
-      var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1]
-        .MouseUp += (s, e) => {
-          UpdateMessage();
-          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-          ExpireSolution(true);
-        };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-    }
-
-    public override void CreateAttributes() {
-      if (!IsInitialised)
-        InitialiseDropdowns();
-      m_attributes = new DropDownCheckBoxesComponentAttributes(this,
-        SetSelected,
-        DropDownItems,
-        SelectedItems,
-        SetAnalysis,
-        _initialCheckState,
-        _checkboxTexts,
-        SpacerDescriptions);
-    }
-
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Unit",
-        "Settings",
-      });
-
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      IsInitialised = true;
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _reMesh = reader.GetBoolean("ReMesh");
-      _initialCheckState = new List<bool>() {
-        _reMesh,
-      };
-      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
-        base.Read(reader);
-      else {
-        BaseReader.Read(reader, this, true);
-        IsInitialised = true;
-        UpdateUIFromSelectedItems();
-      }
-
-      GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
-
-      if (reader.ItemExists("Tolerance")) {
-        double tol = reader.GetDouble("Tolerance");
-        _tolerance = new Length(tol, _lengthUnit);
-      }
-      else
-        _tolerance = DefaultUnits.Tolerance;
-
-      UpdateMessage();
-      return base.Read(reader);
-    }
-
-    public void SetAnalysis(List<bool> value) => _reMesh = value[0];
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
-      UpdateMessage();
-      base.UpdateUI();
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
-      base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance()
-      => Params.Input[2]
-        .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetBoolean("ReMesh", _reMesh);
-      writer.SetDouble("Tolerance", _tolerance.Value);
-      return base.Write(writer);
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-      UpdateMessage();
-    }
+    #region input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(),
@@ -218,78 +149,107 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter());
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    #endregion
 
-      #region GetData
+    #region Custom UI
 
-      List<GsaModel> models = GetInputsForModelAssembly.GetModels(this, da, 0, true);
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-      (List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds)
-        = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
+    private readonly List<string> _checkboxTexts = new List<string>() {
+      "ElemsFromMems",
+    };
 
-      (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
-        List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
-        List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
+    private List<bool> _initialCheckState = new List<bool>() {
+      true,
+    };
 
-      (List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
-        = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
+    private bool _reMesh = true;
+    private Length _tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
 
-      (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
-        = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
-
-      if (models is null
-        & nodes is null
-        & elem1ds is null
-        & elem2ds is null
-        & mem1ds is null
-        & mem2ds is null
-        & mem3ds is null
-        & sections is null
-        & prop2Ds is null
-        & loads is null
-        & gridPlaneSurfaces is null) {
-        this.AddRuntimeWarning("Input parameters failed to collect data");
-        return;
-      }
-
-      #endregion GetData
-
-      var model = new GsaModel();
-      if (models != null)
-        if (models.Count > 0)
-          model = models.Count > 1
-            ? MergeModels.MergeModel(models, this, _tolerance)
-            : models[0]
-              .Clone();
-
-      model.Model = AssembleModel.Assemble(model,
-        nodes,
-        elem1ds,
-        elem2ds,
-        elem3ds,
-        mem1ds,
-        mem2ds,
-        mem3ds,
-        sections,
-        prop2Ds,
-        prop3Ds,
-        loads,
-        gridPlaneSurfaces,
-        analysisTasks,
-        combinationCases,
-        _lengthUnit,
-        _tolerance,
-        _reMesh,
-        this);
-
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
       UpdateMessage();
-
-      da.SetData(0, new GsaModelGoo(model));
     }
 
-    #endregion Protected Methods
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Unit",
+        "Settings",
+      });
 
-    #region Private Methods
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      _isInitialised = true;
+    }
+
+    public override void CreateAttributes() {
+      if (!_isInitialised)
+        InitialiseDropdowns();
+      m_attributes = new DropDownCheckBoxesComponentAttributes(this,
+        SetSelected,
+        _dropDownItems,
+        _selectedItems,
+        SetAnalysis,
+        _initialCheckState,
+        _checkboxTexts,
+        _spacerDescriptions);
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      UpdateMessage();
+      base.UpdateUI();
+    }
+
+    public void SetAnalysis(List<bool> value) => _reMesh = value[0];
+
+    protected override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance()
+      => Params.Input[2]
+        .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var tolerance = new ToolStripTextBox();
+      _toleranceTxt = _tolerance.ToUnit(_lengthUnit)
+        .ToString()
+        .Replace(" ", string.Empty);
+      tolerance.Text = _toleranceTxt;
+      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+
+      //only for init submenu
+      var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1]
+        .MouseUp += (s, e) => {
+          UpdateMessage();
+          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+          ExpireSolution(true);
+        };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+    }
+
     private void MaintainText(ToolStripItem tolerance) {
       _toleranceTxt = tolerance.Text;
       tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)
@@ -319,6 +279,46 @@ namespace GsaGH.Components {
           "Set tolerance is quite large, you can change this by right-clicking the component.");
     }
 
-    #endregion Private Methods
+    #endregion
+
+    #region (de)serialization
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("ReMesh", _reMesh);
+      writer.SetDouble("Tolerance", _tolerance.Value);
+      return base.Write(writer);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _reMesh = reader.GetBoolean("ReMesh");
+      _initialCheckState = new List<bool>() {
+        _reMesh,
+      };
+      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
+        base.Read(reader);
+      else {
+        BaseReader.Read(reader, this, true);
+        _isInitialised = true;
+        UpdateUIFromSelectedItems();
+      }
+
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      Attributes.Bounds = (RectangleF)attributes.Items[0]
+        .InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1]
+        .InternalData;
+
+      if (reader.ItemExists("Tolerance")) {
+        double tol = reader.GetDouble("Tolerance");
+        _tolerance = new Length(tol, _lengthUnit);
+      }
+      else
+        _tolerance = DefaultUnits.Tolerance;
+
+      UpdateMessage();
+      return base.Read(reader);
+    }
+
+    #endregion
   }
 }

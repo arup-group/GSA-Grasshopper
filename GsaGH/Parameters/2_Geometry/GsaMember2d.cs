@@ -11,14 +11,60 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   ///   Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
   /// </summary>
   public class GsaMember2d {
+    #region fields
 
-    #region Properties + Fields
+    private Brep _brep; // brep for visualisation /member2d
+    private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
+    private List<Point3d> _edgeCrvTopo; // list of topology points for visualisation /member1d/member2d
+    private List<string> _edgeCrvTopoType; // list of polyline curve type (arch or line) for member1d/2d
+    private List<PolyCurve> _voidCrvs; //converted edgecurve /member2d
+    private List<List<Point3d>> _voidCrvsTopo; // list of lists of void points /member2d
+    private List<List<string>> _voidCrvsTopoType; // list of polyline curve type (arch or line) for void /member2d
+    private List<PolyCurve> _inclCrvs; // converted inclusion lines /member2d
+    private List<List<Point3d>> _inclCrvsTopo; // list of lists of line inclusion topology points /member2d
+    private List<List<string>> _inclCrvsTopoType; // list of polyline curve type (arch or line) for inclusion /member2d
+    private List<Point3d> _inclPts; //slist of points for inclusion /member2d
+
+    private Guid _guid = Guid.NewGuid();
+    private int _id = 0;
+
+    #endregion
+
+    #region properties
+
+    public int Id {
+      get => _id;
+      set {
+        CloneApiObject();
+        _id = value;
+      }
+    }
+
+    internal Member ApiMember { get; set; } = new Member() {
+      Type = MemberType.GENERIC_2D,
+    };
+
+    // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
+    public double MeshSize { get; set; } = 0;
+    public GsaProp2d Property { get; set; } = new GsaProp2d();
+    public PolyCurve PolyCurve => _edgeCrv;
     public Brep Brep => _brep;
+    public List<Point3d> Topology => _edgeCrvTopo;
+    public List<string> TopologyType => _edgeCrvTopoType;
+    public List<List<Point3d>> VoidTopology => _voidCrvsTopo;
+    public List<List<string>> VoidTopologyType => _voidCrvsTopoType;
+    public List<PolyCurve> InclusionLines => _inclCrvs ?? new List<PolyCurve>();
+    public List<List<Point3d>> IncLinesTopology => _inclCrvsTopo;
+    public List<List<string>> IncLinesTopologyType => _inclCrvsTopoType;
+    public List<Point3d> InclusionPoints => _inclPts;
+    public Guid Guid => _guid;
+
+    #region GsaAPI.Member members
+
     public Color Colour {
       get => (Color)ApiMember.Colour;
       set {
@@ -35,19 +81,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public Guid Guid => _guid;
-    public int Id {
-      get => _id;
-      set {
-        CloneApiObject();
-        _id = value;
-      }
-    }
-
-    public List<List<Point3d>> IncLinesTopology => _inclCrvsTopo;
-    public List<List<string>> IncLinesTopologyType => _inclCrvsTopoType;
-    public List<PolyCurve> InclusionLines => _inclCrvs ?? new List<PolyCurve>();
-    public List<Point3d> InclusionPoints => _inclPts;
     public bool IsDummy {
       get => ApiMember.IsDummy;
       set {
@@ -56,22 +89,19 @@ namespace GsaGH.Parameters {
       }
     }
 
-    // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
-    public double MeshSize { get; set; } = 0;
+    public string Name {
+      get => ApiMember.Name;
+      set {
+        CloneApiObject();
+        ApiMember.Name = value;
+      }
+    }
 
     public bool MeshWithOthers {
       get => ApiMember.IsIntersector;
       set {
         CloneApiObject();
         ApiMember.IsIntersector = value;
-      }
-    }
-
-    public string Name {
-      get => ApiMember.Name;
-      set {
-        CloneApiObject();
-        ApiMember.Name = value;
       }
     }
 
@@ -87,6 +117,14 @@ namespace GsaGH.Parameters {
         ApiMember.Offset.X2 = value.X2.Meters;
         ApiMember.Offset.Y = value.Y.Meters;
         ApiMember.Offset.Z = value.Z.Meters;
+      }
+    }
+
+    public bool AutomaticInternalOffset {
+      get => ApiMember.AutomaticOffset.Internal;
+      set {
+        CloneApiObject();
+        ApiMember.AutomaticOffset.Internal = value;
       }
     }
 
@@ -106,10 +144,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public PolyCurve PolyCurve => _edgeCrv;
-    public GsaProp2d Property { get; set; } = new GsaProp2d();
-    public List<Point3d> Topology => _edgeCrvTopo;
-    public List<string> TopologyType => _edgeCrvTopoType;
     public MemberType Type {
       get => ApiMember.Type;
       set {
@@ -126,43 +160,24 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public List<List<Point3d>> VoidTopology => _voidCrvsTopo;
-    public List<List<string>> VoidTopologyType => _voidCrvsTopoType;
-    internal Member ApiMember { get; set; } = new Member() {
-      Type = MemberType.GENERIC_2D,
-    };
+    internal void CloneApiObject() {
+      ApiMember = GetAPI_MemberClone();
+      _guid = Guid.NewGuid();
+    }
 
-    private Brep _brep; // brep for visualisation /member2d
-    private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
-    private List<Point3d> _edgeCrvTopo; // list of topology points for visualisation /member1d/member2d
-    private List<string> _edgeCrvTopoType; // list of polyline curve type (arch or line) for member1d/2d
-    private Guid _guid = Guid.NewGuid();
-    private int _id = 0;
-    private List<PolyCurve> _inclCrvs;
+    #endregion
 
-    // converted inclusion lines /member2d
-    private List<List<Point3d>> _inclCrvsTopo;
+    #endregion
 
-    // list of lists of line inclusion topology points /member2d
-    private List<List<string>> _inclCrvsTopoType;
+    #region constructors
 
-    // list of polyline curve type (arch or line) for inclusion /member2d
-    private List<Point3d> _inclPts;
-
-    private List<PolyCurve> _voidCrvs; //converted edgecurve /member2d
-    private List<List<Point3d>> _voidCrvsTopo; // list of lists of void points /member2d
-    private List<List<string>> _voidCrvsTopoType;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    // list of polyline curve type (arch or line) for void /member2d
     public GsaMember2d() { }
 
     public GsaMember2d(
-          Brep brep,
-          List<Curve> includeCurves = null,
-          List<Point3d> includePoints = null,
-          int prop = 0) {
+      Brep brep,
+      List<Curve> includeCurves = null,
+      List<Point3d> includePoints = null,
+      int prop = 0) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
         Property = prop,
@@ -199,23 +214,20 @@ namespace GsaGH.Parameters {
           + "Settings or if unset under Rhino unit settings");
     }
 
-    #endregion Public Constructors
-
-    #region Internal Constructors
     internal GsaMember2d(
-          Member member,
-          int id,
-          List<Point3d> topology,
-          List<string> topologyType,
-          List<List<Point3d>> voidTopology,
-          List<List<string>> voidTopologyType,
-          List<List<Point3d>> inlcusionLinesTopology,
-          List<List<string>> inclusionTopologyType,
-          List<Point3d> includePoints,
-          IReadOnlyDictionary<int, Prop2D> properties,
-          IReadOnlyDictionary<int, AnalysisMaterial> materials,
-          IReadOnlyDictionary<int, Axis> axDict,
-          LengthUnit modelUnit) {
+      Member member,
+      int id,
+      List<Point3d> topology,
+      List<string> topologyType,
+      List<List<Point3d>> voidTopology,
+      List<List<string>> voidTopologyType,
+      List<List<Point3d>> inlcusionLinesTopology,
+      List<List<string>> inclusionTopologyType,
+      List<Point3d> includePoints,
+      IReadOnlyDictionary<int, Prop2D> properties,
+      IReadOnlyDictionary<int, AnalysisMaterial> materials,
+      IReadOnlyDictionary<int, Axis> axDict,
+      LengthUnit modelUnit) {
       ApiMember = member;
       MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = id;
@@ -275,9 +287,10 @@ namespace GsaGH.Parameters {
       Property = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
     }
 
-    #endregion Internal Constructors
+    #endregion
 
-    #region Public Methods
+    #region methods
+
     public GsaMember2d Duplicate(bool cloneApiMember = false) {
       var dup = new GsaMember2d {
         Id = Id,
@@ -311,6 +324,78 @@ namespace GsaGH.Parameters {
       dup._inclCrvsTopoType = _inclCrvsTopoType;
 
       dup._inclPts = _inclPts;
+
+      return dup;
+    }
+
+    internal Member GetAPI_MemberClone() {
+      var mem = new Member {
+        Group = ApiMember.Group,
+        IsDummy = ApiMember.IsDummy,
+        MeshSize = ApiMember.MeshSize,
+        Name = ApiMember.Name.ToString(),
+        Offset = ApiMember.Offset,
+        OrientationAngle = ApiMember.OrientationAngle,
+        OrientationNode = ApiMember.OrientationNode,
+        Property = ApiMember.Property,
+        Type = ApiMember.Type,
+        Type2D = ApiMember.Type2D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
+      };
+      if (ApiMember.Topology != string.Empty)
+        mem.Topology = ApiMember.Topology;
+
+      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        mem.Colour = ApiMember.Colour;
+
+      return mem;
+    }
+
+    public GsaMember2d UpdateGeometry(
+      Brep brep = null,
+      List<Curve> inclCrvs = null,
+      List<Point3d> inclPts = null) {
+      if (brep == null && _brep != null)
+        brep = _brep.DuplicateBrep();
+      if (inclCrvs == null && _inclCrvs != null)
+        inclCrvs = _inclCrvs.Select(x => (Curve)x)
+          .ToList();
+      if (inclPts == null && _inclPts != null)
+        inclPts = _inclPts.ToList();
+
+      var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
+        Id = Id,
+        ApiMember = ApiMember,
+        Property = Property.Duplicate(),
+      };
+
+      return dup;
+    }
+
+    public GsaMember2d Transform(Transform xform) {
+      GsaMember2d dup = Duplicate(true);
+      dup.Id = 0;
+
+      dup._brep?.Transform(xform);
+      dup._edgeCrv?.Transform(xform);
+      dup._edgeCrvTopo = xform.TransformList(dup._edgeCrvTopo)
+        .ToList();
+      for (int i = 0; i < _voidCrvs.Count; i++) {
+        dup._voidCrvs[i]
+          ?.Transform(xform);
+        dup._voidCrvsTopo[i] = xform.TransformList(dup._voidCrvsTopo[i])
+          .ToList();
+      }
+
+      for (int i = 0; i < _inclCrvs.Count; i++) {
+        dup._inclCrvs[i]
+          ?.Transform(xform);
+        dup._inclCrvsTopo[i] = xform.TransformList(dup._inclCrvsTopo[i])
+          .ToList();
+      }
+
+      dup._inclPts = xform.TransformList(dup._inclPts)
+        .ToList();
 
       return dup;
     }
@@ -371,86 +456,6 @@ namespace GsaGH.Parameters {
         .Replace("  ", " ");
     }
 
-    public GsaMember2d Transform(Transform xform) {
-      GsaMember2d dup = Duplicate(true);
-      dup.Id = 0;
-
-      dup._brep?.Transform(xform);
-      dup._edgeCrv?.Transform(xform);
-      dup._edgeCrvTopo = xform.TransformList(dup._edgeCrvTopo)
-        .ToList();
-      for (int i = 0; i < _voidCrvs.Count; i++) {
-        dup._voidCrvs[i]
-          ?.Transform(xform);
-        dup._voidCrvsTopo[i] = xform.TransformList(dup._voidCrvsTopo[i])
-          .ToList();
-      }
-
-      for (int i = 0; i < _inclCrvs.Count; i++) {
-        dup._inclCrvs[i]
-          ?.Transform(xform);
-        dup._inclCrvsTopo[i] = xform.TransformList(dup._inclCrvsTopo[i])
-          .ToList();
-      }
-
-      dup._inclPts = xform.TransformList(dup._inclPts)
-        .ToList();
-
-      return dup;
-    }
-
-    public GsaMember2d UpdateGeometry(
-          Brep brep = null,
-          List<Curve> inclCrvs = null,
-          List<Point3d> inclPts = null) {
-      if (brep == null && _brep != null)
-        brep = _brep.DuplicateBrep();
-      if (inclCrvs == null && _inclCrvs != null)
-        inclCrvs = _inclCrvs.Select(x => (Curve)x)
-          .ToList();
-      if (inclPts == null && _inclPts != null)
-        inclPts = _inclPts.ToList();
-
-      var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
-        Id = Id,
-        ApiMember = ApiMember,
-        Property = Property.Duplicate(),
-      };
-
-      return dup;
-    }
-
-    #endregion Public Methods
-
-    #region Internal Methods
-    //slist of points for inclusion /member2d
-    internal void CloneApiObject() {
-      ApiMember = GetAPI_MemberClone();
-      _guid = Guid.NewGuid();
-    }
-
-    internal Member GetAPI_MemberClone() {
-      var mem = new Member {
-        Group = ApiMember.Group,
-        IsDummy = ApiMember.IsDummy,
-        MeshSize = ApiMember.MeshSize,
-        Name = ApiMember.Name.ToString(),
-        Offset = ApiMember.Offset,
-        OrientationAngle = ApiMember.OrientationAngle,
-        OrientationNode = ApiMember.OrientationNode,
-        Property = ApiMember.Property,
-        Type = ApiMember.Type,
-        Type2D = ApiMember.Type2D,
-      };
-      if (ApiMember.Topology != string.Empty)
-        mem.Topology = ApiMember.Topology;
-
-      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = ApiMember.Colour;
-
-      return mem;
-    }
-
-    #endregion Internal Methods
+    #endregion
   }
 }

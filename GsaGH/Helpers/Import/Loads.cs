@@ -9,13 +9,78 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
-
   /// <summary>
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Loads {
+    /// <summary>
+    /// Method to import Gravity Loads from a GSA model.
+    /// Will output a list of GsaLoadsGoo.
+    /// </summary>
+    /// <param name="gravityLoads">Collection of gravity loads to import</param>
+    /// <returns></returns>
+    internal static List<GsaLoadGoo> GetGravityLoads(ReadOnlyCollection<GravityLoad> gravityLoads) {
+      var loads = new List<GsaLoadGoo>();
 
-    #region Internal Methods
+      var gloads = gravityLoads.ToList();
+
+      foreach (GravityLoad gload in gloads) {
+        var myload = new GsaGravityLoad { GravityLoad = gload };
+        var load = new GsaLoad(myload);
+        loads.Add(new GsaLoadGoo(load));
+      }
+      return loads;
+    }
+    /// <summary>
+    /// Method to import all Node Loads from a GSA model.
+    /// 
+    /// GSA Node loads vary by type, to get all node loads easiest
+    /// method seems to be toogling through all enum types which
+    /// requeres the entire model to be inputted to this method.
+    /// 
+    /// Will output a list of GsaLoads.
+    /// </summary>
+    /// <param name="model">GSA model containing node loads</param>
+    /// <returns></returns>
+    internal static List<GsaLoadGoo> GetNodeLoads(Model model) {
+      var loads = new List<GsaLoadGoo>();
+
+      // NodeLoads come in varioys types, depending on GsaAPI.NodeLoadType:
+      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
+        try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
+        {
+          var gsaloads = model.NodeLoads(typ).ToList();
+          GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
+          switch (typ) {
+            case NodeLoadType.APPL_DISP:
+              ntyp = GsaNodeLoad.NodeLoadTypes.AppliedDisp;
+              break;
+            case NodeLoadType.GRAVITY:
+              ntyp = GsaNodeLoad.NodeLoadTypes.Gravity;
+              break;
+            case NodeLoadType.NODE_LOAD:
+              ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
+              break;
+            case NodeLoadType.NUM_TYPES:
+              ntyp = GsaNodeLoad.NodeLoadTypes.NumTypes;
+              break;
+            case NodeLoadType.SETTLEMENT:
+              ntyp = GsaNodeLoad.NodeLoadTypes.Settlement;
+              break;
+          }
+
+          foreach (NodeLoad gsaLoad in gsaloads) {
+            var myload = new GsaNodeLoad { NodeLoad = gsaLoad, Type = ntyp };
+            var load = new GsaLoad(myload);
+            loads.Add(new GsaLoadGoo(load));
+          }
+        }
+        catch (Exception) {
+          // ignored
+        }
+      }
+      return loads;
+    }
     /// <summary>
     /// Method to import Beam Loads from a GSA model.
     /// Will output a list of GsaLoads.
@@ -34,7 +99,6 @@ namespace GsaGH.Helpers.Import {
       }
       return loads;
     }
-
     /// <summary>
     /// Method to import Face Loads from a GSA model.
     /// Will output a list of GsaLoads.
@@ -55,45 +119,27 @@ namespace GsaGH.Helpers.Import {
     }
 
     /// <summary>
-    /// Method to import Gravity Loads from a GSA model.
-    /// Will output a list of GsaLoadsGoo.
-    /// </summary>
-    /// <param name="gravityLoads">Collection of gravity loads to import</param>
-    /// <returns></returns>
-    internal static List<GsaLoadGoo> GetGravityLoads(ReadOnlyCollection<GravityLoad> gravityLoads) {
-      var loads = new List<GsaLoadGoo>();
-
-      var gloads = gravityLoads.ToList();
-
-      foreach (GravityLoad gload in gloads) {
-        var myload = new GsaGravityLoad { GravityLoad = gload };
-        var load = new GsaLoad(myload);
-        loads.Add(new GsaLoadGoo(load));
-      }
-      return loads;
-    }
-
-    /// <summary>
-    /// Method to import Grid Area Loads from a GSA model.
+    /// Method to import Grid Point Loads from a GSA model.
     /// Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="areaLoads">Collection of Grid Area loads to be imported</param>
+    /// <param name="pointLoads">Collection of Grid Point loads to be imported</param>
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
     /// <param name="unit"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> GetGridAreaLoads(ReadOnlyCollection<GridAreaLoad> areaLoads,
+    internal static List<GsaLoadGoo> GetGridPointLoads(ReadOnlyCollection<GridPointLoad> pointLoads,
         IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) {
       var loads = new List<GsaLoadGoo>();
 
-      var gsaloads = areaLoads.ToList();
+      var gsaloads = pointLoads.ToList();
 
-      foreach (GridAreaLoad gridAreaLoad in gsaloads) {
-        var myload = new GsaGridAreaLoad {
-          GridAreaLoad = gridAreaLoad,
-          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit),
+      foreach (GridPointLoad gridPointLoad in gsaloads) {
+        var myload = new GsaGridPointLoad {
+          GridPointLoad = gridPointLoad,
+          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit)
         };
+
         var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
@@ -128,13 +174,40 @@ namespace GsaGH.Helpers.Import {
     }
 
     /// <summary>
-    /// Method to create GsaGridPlaneSurface including
+    /// Method to import Grid Area Loads from a GSA model.
+    /// Will output a list of GsaLoads.
+    /// </summary>
+    /// <param name="areaLoads">Collection of Grid Area loads to be imported</param>
+    /// <param name="srfDict">Grid Surface Dictionary</param>
+    /// <param name="plnDict">Grid Plane Dictionary</param>
+    /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="unit"></param>
+    /// <returns></returns>
+    internal static List<GsaLoadGoo> GetGridAreaLoads(ReadOnlyCollection<GridAreaLoad> areaLoads,
+        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) {
+      var loads = new List<GsaLoadGoo>();
+
+      var gsaloads = areaLoads.ToList();
+
+      foreach (GridAreaLoad gridAreaLoad in gsaloads) {
+        var myload = new GsaGridAreaLoad {
+          GridAreaLoad = gridAreaLoad,
+          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit),
+        };
+        var load = new GsaLoad(myload);
+        loads.Add(new GsaLoadGoo(load));
+      }
+      return loads;
+    }
+
+    /// <summary>
+    /// Method to create GsaGridPlaneSurface including 
     /// grid surface, grid plane and axis from GSA Model
-    ///
+    /// 
     /// Grid Surface references a Grid Plane
     /// Grid Plane references an Axis
     /// Only Grid Surface ID is required, the others will be found by ref
-    ///
+    /// 
     /// Will output a new GsaGridPlaneSurface.
     /// </summary>
     /// <param name="srfDict">Grid Surface Dictionary</param>
@@ -183,90 +256,5 @@ namespace GsaGH.Helpers.Import {
 
       return gps;
     }
-
-    /// <summary>
-    /// Method to import Grid Point Loads from a GSA model.
-    /// Will output a list of GsaLoads.
-    /// </summary>
-    /// <param name="pointLoads">Collection of Grid Point loads to be imported</param>
-    /// <param name="srfDict">Grid Surface Dictionary</param>
-    /// <param name="plnDict">Grid Plane Dictionary</param>
-    /// <param name="axDict">Axes Dictionary</param>
-    /// <param name="unit"></param>
-    /// <returns></returns>
-    internal static List<GsaLoadGoo> GetGridPointLoads(ReadOnlyCollection<GridPointLoad> pointLoads,
-        IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) {
-      var loads = new List<GsaLoadGoo>();
-
-      var gsaloads = pointLoads.ToList();
-
-      foreach (GridPointLoad gridPointLoad in gsaloads) {
-        var myload = new GsaGridPointLoad {
-          GridPointLoad = gridPointLoad,
-          GridPlaneSurface = GetGridPlaneSurface(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit)
-        };
-
-        var load = new GsaLoad(myload);
-        loads.Add(new GsaLoadGoo(load));
-      }
-      return loads;
-    }
-
-    /// <summary>
-    /// Method to import all Node Loads from a GSA model.
-    ///
-    /// GSA Node loads vary by type, to get all node loads easiest
-    /// method seems to be toogling through all enum types which
-    /// requeres the entire model to be inputted to this method.
-    ///
-    /// Will output a list of GsaLoads.
-    /// </summary>
-    /// <param name="model">GSA model containing node loads</param>
-    /// <returns></returns>
-    internal static List<GsaLoadGoo> GetNodeLoads(Model model) {
-      var loads = new List<GsaLoadGoo>();
-
-      // NodeLoads come in varioys types, depending on GsaAPI.NodeLoadType:
-      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
-        try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
-        {
-          var gsaloads = model.NodeLoads(typ).ToList();
-          GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
-          switch (typ) {
-            case NodeLoadType.APPL_DISP:
-              ntyp = GsaNodeLoad.NodeLoadTypes.AppliedDisp;
-              break;
-
-            case NodeLoadType.GRAVITY:
-              ntyp = GsaNodeLoad.NodeLoadTypes.Gravity;
-              break;
-
-            case NodeLoadType.NODE_LOAD:
-              ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
-              break;
-
-            case NodeLoadType.NUM_TYPES:
-              ntyp = GsaNodeLoad.NodeLoadTypes.NumTypes;
-              break;
-
-            case NodeLoadType.SETTLEMENT:
-              ntyp = GsaNodeLoad.NodeLoadTypes.Settlement;
-              break;
-          }
-
-          foreach (NodeLoad gsaLoad in gsaloads) {
-            var myload = new GsaNodeLoad { NodeLoad = gsaLoad, Type = ntyp };
-            var load = new GsaLoad(myload);
-            loads.Add(new GsaLoadGoo(load));
-          }
-        }
-        catch (Exception) {
-          // ignored
-        }
-      }
-      return loads;
-    }
-
-    #endregion Internal Methods
   }
 }

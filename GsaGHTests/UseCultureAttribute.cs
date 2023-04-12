@@ -13,25 +13,11 @@ using Xunit.Sdk;
   AllowMultiple = false,
   Inherited = true)]
 public class UseCultureAttribute : BeforeAfterTestAttribute {
-
-  #region Properties + Fields
-  /// <summary>
-  ///   Gets the culture.
-  /// </summary>
-  public CultureInfo Culture => _culture.Value;
-
-  /// <summary>
-  ///   Gets the UI culture.
-  /// </summary>
-  public CultureInfo UiCulture => _uiCulture.Value;
-
   private readonly Lazy<CultureInfo> _culture;
   private readonly Lazy<CultureInfo> _uiCulture;
   private CultureInfo _originalCulture;
   private CultureInfo _originalUiCulture;
-  #endregion Properties + Fields
 
-  #region Public Constructors
   /// <summary>
   ///   Replaces the culture and UI culture of the current thread with
   ///   <paramref name="culture" />
@@ -56,21 +42,15 @@ public class UseCultureAttribute : BeforeAfterTestAttribute {
     _uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture, false));
   }
 
-  #endregion Public Constructors
-
-  #region Public Methods
   /// <summary>
-  ///   Restores the original <see cref="CultureInfo.CurrentCulture" /> and
-  ///   <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />
+  ///   Gets the culture.
   /// </summary>
-  /// <param name="methodUnderTest">The method under test</param>
-  public override void After(MethodInfo methodUnderTest) {
-    Thread.CurrentThread.CurrentCulture = _originalCulture;
-    Thread.CurrentThread.CurrentUICulture = _originalUiCulture;
+  public CultureInfo Culture => _culture.Value;
 
-    CultureInfo.CurrentCulture.ClearCachedData();
-    CultureInfo.CurrentUICulture.ClearCachedData();
-  }
+  /// <summary>
+  ///   Gets the UI culture.
+  /// </summary>
+  public CultureInfo UiCulture => _uiCulture.Value;
 
   /// <summary>
   ///   Stores the current <see cref="Thread.CurrentPrincipal" />
@@ -89,5 +69,16 @@ public class UseCultureAttribute : BeforeAfterTestAttribute {
     CultureInfo.CurrentUICulture.ClearCachedData();
   }
 
-  #endregion Public Methods
+  /// <summary>
+  ///   Restores the original <see cref="CultureInfo.CurrentCulture" /> and
+  ///   <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />
+  /// </summary>
+  /// <param name="methodUnderTest">The method under test</param>
+  public override void After(MethodInfo methodUnderTest) {
+    Thread.CurrentThread.CurrentCulture = _originalCulture;
+    Thread.CurrentThread.CurrentUICulture = _originalUiCulture;
+
+    CultureInfo.CurrentCulture.ClearCachedData();
+    CultureInfo.CurrentUICulture.ClearCachedData();
+  }
 }

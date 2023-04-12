@@ -11,65 +11,10 @@ using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to create new 2D Member
   /// </summary>
   public class CreateMember2d : GH_OasysComponent {
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("01450bfc-7ac1-4c51-97a2-42d81d6476b6");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem2d;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public CreateMember2d() : base("Create 2D Member",
-      "Mem2D",
-      "Create GSA Member 2D",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion Public Constructors
-
-    #region Protected Methods
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddBrepParameter("Brep",
-        "B",
-        "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))",
-        GH_ParamAccess.item);
-      pManager.AddPointParameter("Incl. Points",
-        "(P)",
-        "Inclusion points (will automatically be projected onto Brep)",
-        GH_ParamAccess.list);
-      pManager.AddCurveParameter("Incl. Curves",
-        "(C)",
-        "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddNumberParameter("Mesh Size in model units",
-        "Ms",
-        "Target mesh size",
-        GH_ParamAccess.item);
-
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
-
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMember2dParameter());
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep))
@@ -108,7 +53,7 @@ namespace GsaGH.Components {
       }
 
       var ghTyp = new GH_ObjectWrapper();
-      var prop2d = new GsaProp2d();
+      GsaProp2d prop2d = null;
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProp2dGoo) {
           ghTyp.CastTo(ref prop2d);
@@ -127,9 +72,66 @@ namespace GsaGH.Components {
       if (da.GetData(4, ref meshSize))
         mem.MeshSize = meshSize;
 
+      var ioData = new GH_Boolean();
+      if (da.GetData(5, ref ioData))
+        if (GH_Convert.ToBoolean(ioData, out bool ioBool, GH_Conversion.Both))
+          mem.AutomaticInternalOffset = ioBool;
+
       da.SetData(0, new GsaMember2dGoo(mem));
     }
 
-    #endregion Protected Methods
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateMem2d;
+
+    public CreateMember2d() : base("Create 2D Member",
+      "Mem2D",
+      "Create GSA Member 2D",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+    #endregion
+
+    #region Input and output
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddBrepParameter("Brep",
+        "B",
+        "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))",
+        GH_ParamAccess.item);
+      pManager.AddPointParameter("Incl. Points",
+        "(P)",
+        "Inclusion points (will automatically be projected onto Brep)",
+        GH_ParamAccess.list);
+      pManager.AddCurveParameter("Incl. Curves",
+        "(C)",
+        "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddNumberParameter("Mesh Size in model units",
+        "Ms",
+        "Target mesh size",
+        GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Internal Offset",
+        "IO",
+        "Set Automatic Internal Offset of Member",
+        GH_ParamAccess.item,
+        false);
+
+      pManager.HideParameter(0);
+      pManager.HideParameter(1);
+      pManager.HideParameter(2);
+
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaMember2dParameter());
+
+    #endregion
   }
 }

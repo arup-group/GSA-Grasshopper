@@ -8,15 +8,41 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class EditOffsetTests {
-
-    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditOffset();
       comp.CreateAttributes();
       return comp;
+    }
+
+    [Theory]
+    [InlineData(6.7, 4.5, -4, -3.7, LengthUnit.Centimeter)]
+    [InlineData(500, 400, -350, -300.7, LengthUnit.Millimeter)]
+    public void GetValuesFromExistingComponent(
+      double x1,
+      double x2,
+      double y,
+      double z,
+      LengthUnit unit) {
+      var offset = new GsaOffset(x1, x2, y, z, unit);
+
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(offset));
+
+      int i = 0;
+      var offsetGoo = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, i++);
+      var x1Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
+      var x2Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
+      var yOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
+      var zOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i);
+
+      Duplicates.AreEqual(offset, offsetGoo.Value);
+      Assert.NotEqual(offset, offsetGoo.Value);
+      Assert.Equal(x1, x1Out.Value.As(unit), 6);
+      Assert.Equal(x2, x2Out.Value.As(unit), 6);
+      Assert.Equal(y, yOut.Value.As(unit), 6);
+      Assert.Equal(z, zOut.Value.As(unit), 6);
     }
 
     [Theory]
@@ -70,36 +96,5 @@ namespace GsaGHTests.Properties {
       Assert.Equal(y, yOut.Value.As(unit), 6);
       Assert.Equal(z, zOut.Value.As(unit), 6);
     }
-
-    [Theory]
-    [InlineData(6.7, 4.5, -4, -3.7, LengthUnit.Centimeter)]
-    [InlineData(500, 400, -350, -300.7, LengthUnit.Millimeter)]
-    public void GetValuesFromExistingComponent(
-      double x1,
-      double x2,
-      double y,
-      double z,
-      LengthUnit unit) {
-      var offset = new GsaOffset(x1, x2, y, z, unit);
-
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(offset));
-
-      int i = 0;
-      var offsetGoo = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, i++);
-      var x1Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      var x2Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      var yOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      var zOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i);
-
-      Duplicates.AreEqual(offset, offsetGoo.Value);
-      Assert.NotEqual(offset, offsetGoo.Value);
-      Assert.Equal(x1, x1Out.Value.As(unit), 6);
-      Assert.Equal(x2, x2Out.Value.As(unit), 6);
-      Assert.Equal(y, yOut.Value.As(unit), 6);
-      Assert.Equal(z, zOut.Value.As(unit), 6);
-    }
-
-    #endregion Public Methods
   }
 }

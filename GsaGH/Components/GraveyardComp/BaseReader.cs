@@ -5,10 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components.GraveyardComp {
-
   internal class BaseReader {
-
-    #region Internal Methods
     internal static bool Read(
       GH_IReader reader,
       GH_Component owner,
@@ -34,11 +31,9 @@ namespace GsaGH.Components.GraveyardComp {
         case 1:
           owner.IconDisplayMode = GH_IconDisplayMode.name;
           break;
-
         case 2:
           owner.IconDisplayMode = GH_IconDisplayMode.icon;
           break;
-
         default:
           owner.IconDisplayMode = GH_IconDisplayMode.application;
           break;
@@ -130,7 +125,5 @@ namespace GsaGH.Components.GraveyardComp {
 
       return true;
     }
-
-    #endregion Internal Methods
   }
 }

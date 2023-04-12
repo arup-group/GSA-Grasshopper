@@ -9,10 +9,230 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.GsaAPI {
-
   internal partial class ResultHelper {
+    /// <summary>
+    /// Returns displacement result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="resultLengthUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
+        LengthUnit resultLengthUnit) {
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Displacement,
+      };
 
-    #region Internal Methods
+      Parallel.ForEach(globalResults.Keys, key => {
+        Element3DResult elementResults = globalResults[key];
+        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+
+        ReadOnlyCollection<Double3> transVals = elementResults.Displacement;
+        Parallel.For(1, transVals.Count, i => xyzRes[i] = GetQuantityResult(transVals[i], resultLengthUnit));
+        xyzRes[transVals.Count] = GetQuantityResult(transVals[0], resultLengthUnit); // add centre point at the end
+        r.XyzResults.TryAdd(key, xyzRes);
+      });
+
+      r.UpdateMinMax();
+      return r;
+    }
+    /// <summary>
+    /// Returns stress result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="stressUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
+        PressureUnit stressUnit) {
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Stress,
+      };
+
+      Parallel.ForEach(globalResults.Keys, key => {
+        Element3DResult elementResults = globalResults[key];
+        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzzRes.AsParallel().AsOrdered();
+
+        ReadOnlyCollection<Tensor3> stressVals = elementResults.Stress;
+        Parallel.For(1, stressVals.Count * 2, i => {
+          if (i == stressVals.Count)
+            return;
+          if (i < stressVals.Count)
+            xyzRes[i] = GetQuantityResult(stressVals[i], stressUnit);
+          else
+            xxyyzzRes[i - stressVals.Count] = GetQuantityResult(stressVals[i - stressVals.Count], stressUnit, true);
+        });
+        xyzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit); // add centre point at the end
+        xxyyzzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit, true);
+
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
+      });
+
+      r.UpdateMinMax();
+      return r;
+    }
+    /// <summary>
+    /// Returns stress result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="stressUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        PressureUnit stressUnit) {
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Stress,
+      };
+
+      Parallel.ForEach(globalResults.Keys, key => {
+        Element2DResult elementResults = globalResults[key];
+        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzzRes.AsParallel().AsOrdered();
+
+        ReadOnlyCollection<Tensor3> stresses = elementResults.Stress;
+        Parallel.For(1, stresses.Count * 2, i => {
+          if (i == stresses.Count)
+            return;
+          if (i < stresses.Count)
+            xyzRes[i] = GetQuantityResult(stresses[i], stressUnit);
+          else
+            xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
+        });
+        xyzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit); // add centre point at the end
+        xxyyzzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit, true);
+
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
+      });
+
+      r.UpdateMinMax();
+      return r;
+    }
+    /// <summary>
+    /// Returns shear result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="forceUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        ForcePerLengthUnit forceUnit) {
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Shear,
+      };
+
+      Parallel.ForEach(globalResults.Keys, key => {
+        Element2DResult elementResults = globalResults[key];
+        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzzRes.AsParallel().AsOrdered();
+
+        ReadOnlyCollection<Vector2> shears = elementResults.Shear;
+        Parallel.For(1, shears.Count, i => xyzRes[i] = GetQuantityResult(shears[i], forceUnit));
+        xyzRes[shears.Count] = GetQuantityResult(shears[0], forceUnit); // add centre point at the end
+
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
+      });
+
+      r.UpdateMinMax();
+      return r;
+    }
+    /// <summary>
+    /// Returns force & moment result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="forceUnit"></param>
+    /// <param name="momentUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        ForcePerLengthUnit forceUnit, ForceUnit momentUnit) {
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Force,
+      };
+
+      Parallel.ForEach(globalResults.Keys, key => {
+        Element2DResult elementResults = globalResults[key];
+        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzzRes.AsParallel().AsOrdered();
+
+        ReadOnlyCollection<Tensor2> forces = elementResults.Force;
+        ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
+        Parallel.For(1, forces.Count + moments.Count, i => {
+          if (i == forces.Count)
+            return;
+          if (i < forces.Count)
+            xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
+          else
+            xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
+        });
+        xyzRes[forces.Count] = GetQuantityResult(forces[0], forceUnit); // add centre point at the end
+        xxyyzzRes[moments.Count] = GetQuantityResult(moments[0], momentUnit);
+
+        Parallel.ForEach(xxyyzzRes.Keys, i => {
+          xyzRes[i].Xyz = new Force(
+                    xxyyzzRes[i].X.Value
+                    + Math.Sign(xxyyzzRes[i].X.Value)
+                    * Math.Abs(xxyyzzRes[i].Z.Value),
+                    momentUnit);
+          xxyyzzRes[i].Xyz = new Force(
+                    xxyyzzRes[i].Y.Value
+                    + Math.Sign(xxyyzzRes[i].Y.Value)
+                    * Math.Abs(xxyyzzRes[i].Z.Value),
+                    momentUnit);
+        });
+
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
+      });
+
+      r.UpdateMinMax();
+      return r;
+    }
+    /// <summary>
+    /// Returns displacement result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="resultLengthUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        LengthUnit resultLengthUnit) {
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Displacement,
+      };
+
+      Parallel.ForEach(globalResults.Keys, key => {
+        Element2DResult elementResults = globalResults[key];
+        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzzRes.AsParallel().AsOrdered();
+
+        ReadOnlyCollection<Double6> disp = elementResults.Displacement;
+        Parallel.For(1, disp.Count * 2, i => {
+          if (i == disp.Count)
+            return;
+          if (i < disp.Count)
+            xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
+          else
+            xxyyzzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
+        });
+        xyzRes[disp.Count] = GetQuantityResult(disp[0], resultLengthUnit); // add centre point at the end
+        xxyyzzRes[disp.Count - disp.Count] = GetQuantityResult(disp[0], AngleUnit.Radian);
+
+        r.XyzResults.TryAdd(key, xyzRes);
+        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
+      });
+
+      r.UpdateMinMax();
+      return r;
+    }
     /// <summary>
     /// Returns forces result values
     /// </summary>
@@ -79,7 +299,6 @@ namespace GsaGH.Helpers.GsaAPI {
       r.UpdateMinMax();
       return r;
     }
-
     /// <summary>
     /// Returns displacement result values
     /// </summary>
@@ -112,231 +331,29 @@ namespace GsaGH.Helpers.GsaAPI {
     }
 
     /// <summary>
-    /// Returns stress result values
-    /// </summary>
-    /// <param name="globalResults"></param>
-    /// <param name="stressUnit"></param>
-    /// <returns></returns>
-    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
-        PressureUnit stressUnit) {
-      var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Stress,
-      };
-
-      Parallel.ForEach(globalResults.Keys, key => {
-        Element2DResult elementResults = globalResults[key];
-        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyzRes.AsParallel().AsOrdered();
-        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xxyyzzRes.AsParallel().AsOrdered();
-
-        ReadOnlyCollection<Tensor3> stresses = elementResults.Stress;
-        Parallel.For(1, stresses.Count * 2, i => {
-          if (i == stresses.Count)
-            return;
-          if (i < stresses.Count)
-            xyzRes[i] = GetQuantityResult(stresses[i], stressUnit);
-          else
-            xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
-        });
-        xyzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit); // add centre point at the end
-        xxyyzzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit, true);
-
-        r.XyzResults.TryAdd(key, xyzRes);
-        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
-      });
-
-      r.UpdateMinMax();
-      return r;
-    }
-
-    /// <summary>
-    /// Returns shear result values
-    /// </summary>
-    /// <param name="globalResults"></param>
-    /// <param name="forceUnit"></param>
-    /// <returns></returns>
-    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
-        ForcePerLengthUnit forceUnit) {
-      var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Shear,
-      };
-
-      Parallel.ForEach(globalResults.Keys, key => {
-        Element2DResult elementResults = globalResults[key];
-        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyzRes.AsParallel().AsOrdered();
-        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xxyyzzRes.AsParallel().AsOrdered();
-
-        ReadOnlyCollection<Vector2> shears = elementResults.Shear;
-        Parallel.For(1, shears.Count, i => xyzRes[i] = GetQuantityResult(shears[i], forceUnit));
-        xyzRes[shears.Count] = GetQuantityResult(shears[0], forceUnit); // add centre point at the end
-
-        r.XyzResults.TryAdd(key, xyzRes);
-        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
-      });
-
-      r.UpdateMinMax();
-      return r;
-    }
-
-    /// <summary>
-    /// Returns force & moment result values
-    /// </summary>
-    /// <param name="globalResults"></param>
-    /// <param name="forceUnit"></param>
-    /// <param name="momentUnit"></param>
-    /// <returns></returns>
-    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
-        ForcePerLengthUnit forceUnit, ForceUnit momentUnit) {
-      var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Force,
-      };
-
-      Parallel.ForEach(globalResults.Keys, key => {
-        Element2DResult elementResults = globalResults[key];
-        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyzRes.AsParallel().AsOrdered();
-        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xxyyzzRes.AsParallel().AsOrdered();
-
-        ReadOnlyCollection<Tensor2> forces = elementResults.Force;
-        ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
-        Parallel.For(1, forces.Count + moments.Count, i => {
-          if (i == forces.Count)
-            return;
-          if (i < forces.Count)
-            xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
-          else
-            xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
-        });
-        xyzRes[forces.Count] = GetQuantityResult(forces[0], forceUnit); // add centre point at the end
-        xxyyzzRes[moments.Count] = GetQuantityResult(moments[0], momentUnit);
-
-        Parallel.ForEach(xxyyzzRes.Keys, i => {
-          xyzRes[i].Xyz = new Force(
-                    xxyyzzRes[i].X.Value
-                    + Math.Sign(xxyyzzRes[i].X.Value)
-                    * Math.Abs(xxyyzzRes[i].Z.Value),
-                    momentUnit);
-          xxyyzzRes[i].Xyz = new Force(
-                    xxyyzzRes[i].Y.Value
-                    + Math.Sign(xxyyzzRes[i].Y.Value)
-                    * Math.Abs(xxyyzzRes[i].Z.Value),
-                    momentUnit);
-        });
-
-        r.XyzResults.TryAdd(key, xyzRes);
-        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
-      });
-
-      r.UpdateMinMax();
-      return r;
-    }
-
-    /// <summary>
     /// Returns displacement result values
     /// </summary>
     /// <param name="globalResults"></param>
     /// <param name="resultLengthUnit"></param>
     /// <returns></returns>
-    internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+    internal static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
         LengthUnit resultLengthUnit) {
-      var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Displacement,
-      };
+      var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Force };
 
-      Parallel.ForEach(globalResults.Keys, key => {
-        Element2DResult elementResults = globalResults[key];
-        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyzRes.AsParallel().AsOrdered();
-        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xxyyzzRes.AsParallel().AsOrdered();
+      Parallel.ForEach(globalResults.Keys, nodeId => {
+        NodeResult result = globalResults[nodeId];
+        Double6 values = result.Displacement;
 
-        ReadOnlyCollection<Double6> disp = elementResults.Displacement;
-        Parallel.For(1, disp.Count * 2, i => {
-          if (i == disp.Count)
-            return;
-          if (i < disp.Count)
-            xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
-          else
-            xxyyzzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
-        });
-        xyzRes[disp.Count] = GetQuantityResult(disp[0], resultLengthUnit); // add centre point at the end
-        xxyyzzRes[disp.Count - disp.Count] = GetQuantityResult(disp[0], AngleUnit.Radian);
-
-        r.XyzResults.TryAdd(key, xyzRes);
-        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
+        var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
+        r.XyzResults.TryAdd(nodeId, xyz);
+        var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
+        r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
       });
 
       r.UpdateMinMax();
-      return r;
-    }
 
-    /// <summary>
-    /// Returns displacement result values
-    /// </summary>
-    /// <param name="globalResults"></param>
-    /// <param name="resultLengthUnit"></param>
-    /// <returns></returns>
-    internal static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
-        LengthUnit resultLengthUnit) {
-      var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Displacement,
-      };
-
-      Parallel.ForEach(globalResults.Keys, key => {
-        Element3DResult elementResults = globalResults[key];
-        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyzRes.AsParallel().AsOrdered();
-
-        ReadOnlyCollection<Double3> transVals = elementResults.Displacement;
-        Parallel.For(1, transVals.Count, i => xyzRes[i] = GetQuantityResult(transVals[i], resultLengthUnit));
-        xyzRes[transVals.Count] = GetQuantityResult(transVals[0], resultLengthUnit); // add centre point at the end
-        r.XyzResults.TryAdd(key, xyzRes);
-      });
-
-      r.UpdateMinMax();
-      return r;
-    }
-
-    /// <summary>
-    /// Returns stress result values
-    /// </summary>
-    /// <param name="globalResults"></param>
-    /// <param name="stressUnit"></param>
-    /// <returns></returns>
-    internal static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
-        PressureUnit stressUnit) {
-      var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Stress,
-      };
-
-      Parallel.ForEach(globalResults.Keys, key => {
-        Element3DResult elementResults = globalResults[key];
-        var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyzRes.AsParallel().AsOrdered();
-        var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xxyyzzRes.AsParallel().AsOrdered();
-
-        ReadOnlyCollection<Tensor3> stressVals = elementResults.Stress;
-        Parallel.For(1, stressVals.Count * 2, i => {
-          if (i == stressVals.Count)
-            return;
-          if (i < stressVals.Count)
-            xyzRes[i] = GetQuantityResult(stressVals[i], stressUnit);
-          else
-            xxyyzzRes[i - stressVals.Count] = GetQuantityResult(stressVals[i - stressVals.Count], stressUnit, true);
-        });
-        xyzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit); // add centre point at the end
-        xxyyzzRes[stressVals.Count] = GetQuantityResult(stressVals[0], stressUnit, true);
-
-        r.XyzResults.TryAdd(key, xyzRes);
-        r.XxyyzzResults.TryAdd(key, xxyyzzRes);
-      });
-
-      r.UpdateMinMax();
       return r;
     }
 
@@ -375,33 +392,6 @@ namespace GsaGH.Helpers.GsaAPI {
     }
 
     /// <summary>
-    /// Returns displacement result values
-    /// </summary>
-    /// <param name="globalResults"></param>
-    /// <param name="resultLengthUnit"></param>
-    /// <returns></returns>
-    internal static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
-        LengthUnit resultLengthUnit) {
-      var r = new GsaResultsValues { Type = GsaResultsValues.ResultType.Force };
-
-      Parallel.ForEach(globalResults.Keys, nodeId => {
-        NodeResult result = globalResults[nodeId];
-        Double6 values = result.Displacement;
-
-        var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
-        r.XyzResults.TryAdd(nodeId, xyz);
-        var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
-        xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
-        r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
-      });
-
-      r.UpdateMinMax();
-
-      return r;
-    }
-
-    /// <summary>
     /// Returns spring reaction forces result values
     /// </summary>
     /// <param name="globalResults"></param>
@@ -434,7 +424,5 @@ namespace GsaGH.Helpers.GsaAPI {
       r.UpdateMinMax();
       return r;
     }
-
-    #endregion Internal Methods
   }
 }

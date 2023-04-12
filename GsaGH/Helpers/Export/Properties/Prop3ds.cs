@@ -4,10 +4,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
-
   internal class Prop3ds {
-
-    #region Internal Methods
     internal static int AddProp3d(GsaProp3d prop, ref GsaGuidDictionary<Prop3D> apiProp3d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       Materials.AddMaterial(ref prop, ref apiMaterials);
 
@@ -34,7 +31,5 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaProp3d prop3D in prop3Ds.Where(prop3D => prop3D != null))
         ConvertProp3d(prop3D, ref apiProp3ds, ref apiMaterials);
     }
-
-    #endregion Internal Methods
   }
 }

@@ -5,10 +5,81 @@ using GsaGH.Helpers.Export;
 using Xunit;
 
 namespace GsaGHTests.Helpers.Export {
-
   public class GsaDictionaryTests {
+    #region IntDictionary
 
-    #region Public Methods
+    [Fact]
+    public void GsaIntDictionaryFromEmptyAddTest() {
+      var existingDict = new Dictionary<int, string>();
+      var dictionary
+        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      int expectedId = dictionary.AddValue("first");
+
+      Assert.Equal(1, expectedId);
+      Assert.Equal(1, dictionary.Count);
+      Assert.Equal("first", dictionary.Dictionary[1]);
+    }
+
+    [Fact]
+    public void GsaIntDictionaryWithExistingAddTest() {
+      var existingDict = new Dictionary<int, string> {
+        {
+          1, "first"
+        }, {
+          5, "second"
+        },
+      };
+      var dictionary
+        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      int expectedId = dictionary.AddValue("myFirst");
+
+      Assert.Equal(2, expectedId);
+      Assert.Equal(3, dictionary.Count);
+      Assert.Equal("myFirst", dictionary.Dictionary[2]);
+    }
+
+    [Fact]
+    public void GsaIntDictionaryWithExistingSetTest() {
+      var existingDict = new Dictionary<int, string> {
+        {
+          1, "first"
+        }, {
+          5, "second"
+        },
+      };
+      var dictionary
+        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      dictionary.SetValue(3, "myFirst");
+
+      Assert.Equal(3, dictionary.Count);
+      Assert.Equal("myFirst", dictionary.Dictionary[3]);
+    }
+
+    [Fact]
+    public void GsaIntDictionaryWithExistingSetOverwriteTest() {
+      var existingDict = new Dictionary<int, string> {
+        {
+          1, "first"
+        }, {
+          5, "second"
+        },
+      };
+      var dictionary
+        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      dictionary.SetValue(5, "myFirst");
+
+      Assert.Equal(2, dictionary.Count);
+      Assert.Equal("myFirst", dictionary.Dictionary[5]);
+    }
+
+    #endregion
+
+    #region Guid dictionary
+
     [Fact]
     public void GsaGuidDictionaryFromEmptyAddTest() {
       var existingDict = new Dictionary<int, string>();
@@ -69,124 +140,6 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     [Fact]
-    public void GsaGuidIntListDictionaryFromEmptyAddTest() {
-      var existingDict = new Dictionary<int, string>();
-      var dictionary
-        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
-
-      var guid = Guid.NewGuid();
-      var expectedIDs = new List<int> {
-        dictionary.AddValue(guid, "first"),
-        dictionary.AddValue(guid, "second")
-      };
-
-      Assert.Equal(1, expectedIDs[0]);
-      Assert.Equal(2, expectedIDs[1]);
-      Assert.Equal(2, dictionary.Count);
-      Assert.Equal("first", dictionary.Dictionary[1]);
-      Assert.Equal("second", dictionary.Dictionary[2]);
-    }
-
-    [Fact]
-    public void GsaGuidIntListDictionaryWithExistingAddTest() {
-      var existingDict = new Dictionary<int, string> {
-        {
-          1, "first"
-        }, {
-          5, "second"
-        },
-      };
-      var dictionary
-        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
-
-      var guid = Guid.NewGuid();
-      var expectedIDs = new List<int> {
-        dictionary.AddValue(guid, "myFirst"),
-        dictionary.AddValue(guid, "mySecond")
-      };
-
-      Assert.Equal(2, expectedIDs[0]);
-      Assert.Equal(3, expectedIDs[1]);
-      Assert.Equal(4, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[2]);
-      Assert.Equal("mySecond", dictionary.Dictionary[3]);
-    }
-
-    [Fact]
-    public void GsaGuidIntListDictionaryWithExistingSetOverwriteTest() {
-      var existingDict = new Dictionary<int, string> {
-        {
-          1, "first"
-        }, {
-          5, "second"
-        },
-      };
-      var dictionary
-        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
-
-      var guid = Guid.NewGuid();
-      dictionary.SetValue(3, guid, "myFirst", true);
-
-      Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[3]);
-      Assert.Equal(3, dictionary.Dictionary.Count);
-      Assert.Single(dictionary.GuidDictionary[guid]);
-
-      dictionary.SetValue(3, guid, "mySecond", true);
-      Assert.Equal("mySecond", dictionary.Dictionary[3]);
-      Assert.Single(dictionary.GuidDictionary[guid]);
-    }
-
-    [Fact]
-    public void GsaGuidIntListDictionaryWithExistingSetTest() {
-      var existingDict = new Dictionary<int, string> {
-        {
-          1, "first"
-        }, {
-          5, "second"
-        },
-      };
-      var dictionary
-        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
-
-      var guid = Guid.NewGuid();
-      dictionary.SetValue(5, guid, "myFirst", true);
-      dictionary.AddValue(guid, "mySecond");
-
-      Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[5]);
-      Assert.Equal(2,
-        dictionary.GuidDictionary[guid]
-          .Count);
-
-      Assert.Equal("mySecond", dictionary.Dictionary[2]);
-    }
-
-    [Fact]
-    public void GsaGuidIntListDictionaryWithExistingTestMax() {
-      var existingDict = new Dictionary<int, string> {
-        {
-          1, "first"
-        },
-      };
-      var dictionary
-        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
-
-      var guid2 = Guid.NewGuid();
-      dictionary.SetValue(2, guid2, "second", false);
-
-      var guid3 = Guid.NewGuid();
-      dictionary.SetValue(2, guid3, "mySecond", true);
-      var guid4 = Guid.NewGuid();
-      Assert.Equal(3, dictionary.AddValue(guid4, "myThird"));
-
-      var guid5 = Guid.NewGuid();
-      dictionary.SetValue(4, guid5, "myNewHighest", true);
-      var guid6 = Guid.NewGuid();
-      Assert.Equal(5, dictionary.AddValue(guid6, "myFifth"));
-    }
-
-    [Fact]
     public void GsaGuidtDictionaryWithExistingSetOverwriteTest() {
       var existingDict = new Dictionary<int, string> {
         {
@@ -232,58 +185,31 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(5, dictionary.AddValue(guid6, "myFifth"));
     }
 
+    #endregion
+
+    #region Guid list<int> dictionary
+
     [Fact]
-    public void GsaIntDictionaryFromEmptyAddTest() {
+    public void GsaGuidIntListDictionaryFromEmptyAddTest() {
       var existingDict = new Dictionary<int, string>();
       var dictionary
-        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
 
-      int expectedId = dictionary.AddValue("first");
-
-      Assert.Equal(1, expectedId);
-      Assert.Equal(1, dictionary.Count);
-      Assert.Equal("first", dictionary.Dictionary[1]);
-    }
-
-    [Fact]
-    public void GsaIntDictionaryWithExistingAddTest() {
-      var existingDict = new Dictionary<int, string> {
-        {
-          1, "first"
-        }, {
-          5, "second"
-        },
+      var guid = Guid.NewGuid();
+      var expectedIDs = new List<int> {
+        dictionary.AddValue(guid, "first"),
+        dictionary.AddValue(guid, "second")
       };
-      var dictionary
-        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
 
-      int expectedId = dictionary.AddValue("myFirst");
-
-      Assert.Equal(2, expectedId);
-      Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[2]);
-    }
-
-    [Fact]
-    public void GsaIntDictionaryWithExistingSetOverwriteTest() {
-      var existingDict = new Dictionary<int, string> {
-        {
-          1, "first"
-        }, {
-          5, "second"
-        },
-      };
-      var dictionary
-        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
-
-      dictionary.SetValue(5, "myFirst");
-
+      Assert.Equal(1, expectedIDs[0]);
+      Assert.Equal(2, expectedIDs[1]);
       Assert.Equal(2, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[5]);
+      Assert.Equal("first", dictionary.Dictionary[1]);
+      Assert.Equal("second", dictionary.Dictionary[2]);
     }
 
     [Fact]
-    public void GsaIntDictionaryWithExistingSetTest() {
+    public void GsaGuidIntListDictionaryWithExistingAddTest() {
       var existingDict = new Dictionary<int, string> {
         {
           1, "first"
@@ -292,14 +218,95 @@ namespace GsaGHTests.Helpers.Export {
         },
       };
       var dictionary
-        = new GsaIntDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
 
-      dictionary.SetValue(3, "myFirst");
+      var guid = Guid.NewGuid();
+      var expectedIDs = new List<int> {
+        dictionary.AddValue(guid, "myFirst"),
+        dictionary.AddValue(guid, "mySecond")
+      };
+
+      Assert.Equal(2, expectedIDs[0]);
+      Assert.Equal(3, expectedIDs[1]);
+      Assert.Equal(4, dictionary.Count);
+      Assert.Equal("myFirst", dictionary.Dictionary[2]);
+      Assert.Equal("mySecond", dictionary.Dictionary[3]);
+    }
+
+    [Fact]
+    public void GsaGuidIntListDictionaryWithExistingSetTest() {
+      var existingDict = new Dictionary<int, string> {
+        {
+          1, "first"
+        }, {
+          5, "second"
+        },
+      };
+      var dictionary
+        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      var guid = Guid.NewGuid();
+      dictionary.SetValue(5, guid, "myFirst", true);
+      dictionary.AddValue(guid, "mySecond");
+
+      Assert.Equal(3, dictionary.Count);
+      Assert.Equal("myFirst", dictionary.Dictionary[5]);
+      Assert.Equal(2,
+        dictionary.GuidDictionary[guid]
+          .Count);
+
+      Assert.Equal("mySecond", dictionary.Dictionary[2]);
+    }
+
+    [Fact]
+    public void GsaGuidIntListDictionaryWithExistingSetOverwriteTest() {
+      var existingDict = new Dictionary<int, string> {
+        {
+          1, "first"
+        }, {
+          5, "second"
+        },
+      };
+      var dictionary
+        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      var guid = Guid.NewGuid();
+      dictionary.SetValue(3, guid, "myFirst", true);
 
       Assert.Equal(3, dictionary.Count);
       Assert.Equal("myFirst", dictionary.Dictionary[3]);
+      Assert.Equal(3, dictionary.Dictionary.Count);
+      Assert.Single(dictionary.GuidDictionary[guid]);
+
+      dictionary.SetValue(3, guid, "mySecond", true);
+      Assert.Equal("mySecond", dictionary.Dictionary[3]);
+      Assert.Single(dictionary.GuidDictionary[guid]);
     }
 
-    #endregion Public Methods
+    [Fact]
+    public void GsaGuidIntListDictionaryWithExistingTestMax() {
+      var existingDict = new Dictionary<int, string> {
+        {
+          1, "first"
+        },
+      };
+      var dictionary
+        = new GsaGuidIntListDictionary<string>(new ReadOnlyDictionary<int, string>(existingDict));
+
+      var guid2 = Guid.NewGuid();
+      dictionary.SetValue(2, guid2, "second", false);
+
+      var guid3 = Guid.NewGuid();
+      dictionary.SetValue(2, guid3, "mySecond", true);
+      var guid4 = Guid.NewGuid();
+      Assert.Equal(3, dictionary.AddValue(guid4, "myThird"));
+
+      var guid5 = Guid.NewGuid();
+      dictionary.SetValue(4, guid5, "myNewHighest", true);
+      var guid6 = Guid.NewGuid();
+      Assert.Equal(5, dictionary.AddValue(guid6, "myFifth"));
+    }
+
+    #endregion
   }
 }

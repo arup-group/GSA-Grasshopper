@@ -5,11 +5,8 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaNodeTest {
-
-    #region Public Methods
     [Fact]
     public void GsaNodeEqualsTest() {
       var original = new GsaNode();
@@ -30,6 +27,32 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(10, node.Point.X);
       Assert.Equal(15, node.Point.Y);
       Assert.Equal(7.8, node.Point.Z);
+    }
+
+    [Fact]
+    public void TestCreateGsaNodeRestrained() {
+      var bool6 = new GsaBool6 {
+        X = true,
+        Y = false,
+        Z = true,
+        Xx = false,
+        Yy = true,
+        Zz = false,
+      };
+
+      var node = new GsaNode(new Point3d(5.3, 9.9, 2017)) {
+        Restraint = bool6,
+      };
+
+      Assert.Equal(5.3, node.Point.X);
+      Assert.Equal(9.9, node.Point.Y);
+      Assert.Equal(2017, node.Point.Z);
+      Assert.True(node.Restraint.X);
+      Assert.False(node.Restraint.Y);
+      Assert.True(node.Restraint.Z);
+      Assert.False(node.Restraint.Xx);
+      Assert.True(node.Restraint.Yy);
+      Assert.False(node.Restraint.Zz);
     }
 
     [Fact]
@@ -72,32 +95,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, node.LocalAxis.Normal.X);
       Assert.Equal(1, node.LocalAxis.Normal.Y);
       Assert.Equal(0, node.LocalAxis.Normal.Z);
-    }
-
-    [Fact]
-    public void TestCreateGsaNodeRestrained() {
-      var bool6 = new GsaBool6 {
-        X = true,
-        Y = false,
-        Z = true,
-        Xx = false,
-        Yy = true,
-        Zz = false,
-      };
-
-      var node = new GsaNode(new Point3d(5.3, 9.9, 2017)) {
-        Restraint = bool6,
-      };
-
-      Assert.Equal(5.3, node.Point.X);
-      Assert.Equal(9.9, node.Point.Y);
-      Assert.Equal(2017, node.Point.Z);
-      Assert.True(node.Restraint.X);
-      Assert.False(node.Restraint.Y);
-      Assert.True(node.Restraint.Z);
-      Assert.False(node.Restraint.Xx);
-      Assert.True(node.Restraint.Yy);
-      Assert.False(node.Restraint.Zz);
     }
 
     [Fact]
@@ -148,7 +145,5 @@ namespace GsaGHTests.Parameters {
       Assert.NotEqual(node.Colour, duplicate.Colour);
       Assert.NotEqual(node.Name, duplicate.Name);
     }
-
-    #endregion Public Methods
   }
 }

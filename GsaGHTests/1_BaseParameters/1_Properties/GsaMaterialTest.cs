@@ -3,11 +3,8 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaMaterialTest {
-
-    #region Public Methods
     [Fact]
     public void DuplicateTest() {
       var original = new GsaMaterial {
@@ -17,7 +14,5 @@ namespace GsaGHTests.Parameters {
       GsaMaterial duplicate = original.Duplicate();
       Duplicates.AreEqual(original, duplicate);
     }
-
-    #endregion Public Methods
   }
 }

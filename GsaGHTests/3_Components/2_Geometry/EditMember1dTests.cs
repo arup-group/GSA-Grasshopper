@@ -9,11 +9,8 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
-
   [Collection("GrasshopperFixture collection")]
   public class EditMember1dTests {
-
-    #region Public Methods
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditMember1d();
       comp.CreateAttributes();
@@ -39,15 +36,20 @@ namespace GsaGHTests.Components.Geometry {
       var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
-      var output10 = (GH_Number)ComponentTestHelper.GetOutput(comp, 10);
-      var output11 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 11);
-      var output12 = (GH_Number)ComponentTestHelper.GetOutput(comp, 12);
-      var output13 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 13);
-      var output14 = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp, 14);
-      var output15 = (GH_String)ComponentTestHelper.GetOutput(comp, 15);
-      var output16 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 16);
+
+      var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
+
+      var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
+
+      var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
+      var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
+      var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GH_String)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
+      var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
+      var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
+      var output22 = (GH_String)ComponentTestHelper.GetOutput(comp, 22);
 
       Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.X);
       Assert.Equal(-1, output0.Value.PolyCurve.PointAtStart.Y);
@@ -83,20 +85,21 @@ namespace GsaGHTests.Components.Geometry {
       Assert.False(output9.Value.Xx);
       Assert.False(output9.Value.Yy);
       Assert.False(output9.Value.Zz);
-      Assert.Equal(0, output10.Value);
-      Assert.Null(output11.Value);
-      Assert.Equal(0.5, output12.Value);
-      Assert.True(output13.Value);
-      Assert.Null(output14.Value.MomentAmplificationFactorStrongAxis);
-      Assert.Null(output14.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Null(output14.Value.LateralTorsionalBucklingFactor);
-      Assert.True(output14.Value.LengthIsSet);
-      Assert.Equal("", output15.Value);
-      Assert.Equal(0, output16.Value.R);
-      Assert.Equal(0, output16.Value.G);
-      Assert.Equal(0, output16.Value.B);
-      Assert.False(output17.Value);
-      Assert.Equal("", output18.Value);
+      Assert.False(output10.Value);
+      Assert.False(output12.Value);
+      Assert.Equal(0, output14.Value);
+      Assert.Null(output15.Value);
+      Assert.Equal(0.5, output16.Value);
+      Assert.True(output17.Value);
+      Assert.Null(output18.Value.MomentAmplificationFactorStrongAxis);
+      Assert.Null(output18.Value.MomentAmplificationFactorWeakAxis);
+      Assert.Null(output18.Value.EquivalentUniformMomentFactor);
+      Assert.Equal("", output19.Value);
+      Assert.Equal(0, output20.Value.R);
+      Assert.Equal(0, output20.Value.G);
+      Assert.Equal(0, output20.Value.B);
+      Assert.False(output21.Value);
+      Assert.Equal("", output22.Value);
     }
 
     [Fact]
@@ -127,16 +130,18 @@ namespace GsaGHTests.Components.Geometry {
           true,
           true)),
         9);
-      ComponentTestHelper.SetInput(comp, Math.PI, 10);
-      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 11);
-      ComponentTestHelper.SetInput(comp, 0.7, 12);
-      ComponentTestHelper.SetInput(comp, false, 13);
+      ComponentTestHelper.SetInput(comp, true, 10);
+      ComponentTestHelper.SetInput(comp, true, 11);
+      ComponentTestHelper.SetInput(comp, Math.PI, 12);
+      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 13);
+      ComponentTestHelper.SetInput(comp, 0.7, 14);
+      ComponentTestHelper.SetInput(comp, false, 15);
       ComponentTestHelper.SetInput(comp,
         new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)),
-        14);
-      ComponentTestHelper.SetInput(comp, "name", 15);
-      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 16);
-      ComponentTestHelper.SetInput(comp, true, 17);
+        16);
+      ComponentTestHelper.SetInput(comp, "name", 17);
+      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
+      ComponentTestHelper.SetInput(comp, true, 19);
 
       var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
@@ -148,15 +153,19 @@ namespace GsaGHTests.Components.Geometry {
       var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
-      var output10 = (GH_Number)ComponentTestHelper.GetOutput(comp, 10);
-      var output11 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 11);
-      var output12 = (GH_Number)ComponentTestHelper.GetOutput(comp, 12);
-      var output13 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 13);
-      var output14 = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp, 14);
-      var output15 = (GH_String)ComponentTestHelper.GetOutput(comp, 15);
-      var output16 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 16);
+      var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
+
+      var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
+
+      var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
+      var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
+      var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GH_String)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
+      var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
+      var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
+      var output22 = (GH_String)ComponentTestHelper.GetOutput(comp, 22);
 
       Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.X);
       Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.Y);
@@ -192,25 +201,24 @@ namespace GsaGHTests.Components.Geometry {
       Assert.True(output9.Value.Xx);
       Assert.True(output9.Value.Yy);
       Assert.True(output9.Value.Zz);
-      Assert.Equal(Math.PI, output10.Value);
-      Assert.Equal(1, output11.Value.Point.X);
-      Assert.Equal(2, output11.Value.Point.Y);
-      Assert.Equal(3, output11.Value.Point.Z);
-      Assert.Equal(99, output11.Value.Id);
-      Assert.Equal(0.7, output12.Value);
-      Assert.False(output13.Value);
-      Assert.Equal(1, output14.Value.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(2, output14.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(3, output14.Value.LateralTorsionalBucklingFactor);
-      Assert.True(output14.Value.LengthIsSet);
-      Assert.Equal("name", output15.Value);
-      Assert.Equal(255, output16.Value.R);
-      Assert.Equal(255, output16.Value.G);
-      Assert.Equal(255, output16.Value.B);
-      Assert.True(output17.Value);
-      Assert.Equal("", output18.Value);
+      Assert.True(output10.Value);
+      Assert.True(output12.Value);
+      Assert.Equal(Math.PI, output14.Value);
+      Assert.Equal(1, output15.Value.Point.X);
+      Assert.Equal(2, output15.Value.Point.Y);
+      Assert.Equal(3, output15.Value.Point.Z);
+      Assert.Equal(99, output15.Value.Id);
+      Assert.Equal(0.7, output16.Value);
+      Assert.False(output17.Value);
+      Assert.Equal(1, output18.Value.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(2, output18.Value.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(3, output18.Value.EquivalentUniformMomentFactor);
+      Assert.Equal("name", output19.Value);
+      Assert.Equal(255, output20.Value.R);
+      Assert.Equal(255, output20.Value.G);
+      Assert.Equal(255, output20.Value.B);
+      Assert.True(output21.Value);
+      Assert.Equal("", output22.Value);
     }
-
-    #endregion Public Methods
   }
 }

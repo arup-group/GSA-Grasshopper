@@ -6,16 +6,29 @@ using Grasshopper.Kernel;
 using Xunit;
 
 namespace IntegrationTests.Components {
-
   [Collection("GrasshopperFixture collection")]
   public class Prop2dAxisTests {
-
-    #region Properties + Fields
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
-    #endregion Properties + Fields
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
-    #region Public Methods
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
     [Theory]
     [InlineData("RotationAngleTest", 0.994838, 6)]
     [InlineData("paOrigX", 3.5)]
@@ -50,28 +63,5 @@ namespace IntegrationTests.Components {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expecteds.ToArray(), tolerance);
     }
-
-    #endregion Public Methods
-
-    #region Private Methods
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
-
-    #endregion Private Methods
   }
 }

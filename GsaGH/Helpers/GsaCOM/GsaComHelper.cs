@@ -3,29 +3,15 @@ using System.IO;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
-
   public sealed class GsaComObject {
-
-    #region Properties + Fields
-    public static Interop.Gsa_10_1.ComAuto Instance { get { return s_lazy.Value; } }
     private static readonly Lazy<Interop.Gsa_10_1.ComAuto> s_lazy = new Lazy<Interop.Gsa_10_1.ComAuto>(() => new Interop.Gsa_10_1.ComAuto());
-    #endregion Properties + Fields
-
-    #region Private Constructors
-    private GsaComObject() {
-    }
-
-    #endregion Private Constructors
+    public static Interop.Gsa_10_1.ComAuto Instance { get { return s_lazy.Value; } }
+    private GsaComObject() { }
   }
 
   internal static class GsaComHelper {
-
-    #region Properties + Fields
     private static Guid s_guid = Guid.NewGuid();
     private static string s_tempPath = Path.GetTempPath() + s_guid.ToString() + ".gwb";
-    #endregion Properties + Fields
-
-    #region Internal Methods
     internal static Interop.Gsa_10_1.ComAuto GetGsaComModel(GsaModel model) {
       Interop.Gsa_10_1.ComAuto gsa = GsaComObject.Instance;
 
@@ -54,7 +40,5 @@ namespace GsaGH.Helpers {
       gsaGh.Model.Open(s_tempPath);
       return gsaGh;
     }
-
-    #endregion Internal Methods
   }
 }

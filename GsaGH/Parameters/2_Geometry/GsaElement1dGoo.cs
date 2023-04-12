@@ -7,49 +7,26 @@ using OasysGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaElement1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
 
-    #region Properties + Fields
-    public static string Description => "GSA 1D Element";
-    public static string Name => "Element1D";
-    public static string NickName => "E1D";
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public GsaElement1dGoo(GsaElement1d item) : base(item) {
-    }
-
-    #endregion Public Constructors
-
-    #region Internal Constructors
     internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
       => Value = duplicate
         ? item.Duplicate()
         : item;
 
-    #endregion Internal Constructors
+    public static string Name => "Element1D";
+    public static string NickName => "E1D";
+    public static string Description => "GSA 1D Element";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region Public Methods
-    public override bool CastFrom(object source) {
-      if (source == null)
-        return false;
+    public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(Value);
+    public override GeometryBase GetGeometry() => Value.Line;
 
-      if (base.CastFrom(source))
-        return true;
-
-      var ln = new Line();
-      if (!GH_Convert.ToLine(source, ref ln, GH_Conversion.Both))
-        return false;
-      var crv = new LineCurve(ln);
-      var elem = new GsaElement1d(crv);
-      Value = elem;
-      return true;
-    }
+    #region casting
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (base.CastTo(ref target))
@@ -105,6 +82,25 @@ namespace GsaGH.Parameters {
       return false;
     }
 
+    public override bool CastFrom(object source) {
+      if (source == null)
+        return false;
+
+      if (base.CastFrom(source))
+        return true;
+
+      var ln = new Line();
+      if (!GH_Convert.ToLine(source, ref ln, GH_Conversion.Both))
+        return false;
+      var crv = new LineCurve(ln);
+      var elem = new GsaElement1d(crv);
+      Value = elem;
+      return true;
+
+    }
+    #endregion
+    #region drawing methods
+
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
     }
 
@@ -146,16 +142,16 @@ namespace GsaGH.Parameters {
         args.Pipeline.DrawLine(ln2, Colours.Release);
     }
 
-    public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(Value);
+    #endregion
 
-    public override GeometryBase GetGeometry() => Value.Line;
+    #region transformation methods
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaElement1dGoo(Value.Transform(xform));
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
       => new GsaElement1dGoo(Value.Morph(xmorph));
 
-    public override IGH_GeometricGoo Transform(Transform xform)
-          => new GsaElement1dGoo(Value.Transform(xform));
-
-    #endregion Public Methods
+    #endregion
   }
 }

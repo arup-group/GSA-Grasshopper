@@ -7,11 +7,8 @@ using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateOffsetTests {
-
-    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateOffset();
       comp.CreateAttributes();
@@ -34,7 +31,5 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(1.99, output.Value.Y.As(LengthUnit.Meter));
       Assert.Equal(0.99, output.Value.Z.As(LengthUnit.Meter));
     }
-
-    #endregion Public Methods
   }
 }

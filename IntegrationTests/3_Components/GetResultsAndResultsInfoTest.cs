@@ -7,16 +7,29 @@ using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Components {
-
   [Collection("GrasshopperFixture collection")]
   public class GetResultsAndResultsInfoTest {
-
-    #region Properties + Fields
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
-    #endregion Properties + Fields
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
 
-    #region Public Methods
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Test", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
     [Fact]
     public void Test() {
       GH_Document doc = Document;
@@ -52,28 +65,5 @@ namespace IntegrationTests.Components {
       Assert.Equal(-118828.126112, myy4.Value, 6);
       Assert.Equal(-0.001112, myy5.Value, 6);
     }
-
-    #endregion Public Methods
-
-    #region Private Methods
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Test", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
-
-    #endregion Private Methods
   }
 }

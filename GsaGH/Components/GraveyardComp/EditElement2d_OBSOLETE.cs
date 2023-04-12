@@ -13,115 +13,11 @@ using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to edit a 2D Element
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class EditElement2d_OBSOLETE : GH_OasysComponent {
-
-    #region Properties + Fields
-    public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditElem2d;
-    #endregion Properties + Fields
-
-    #region Public Constructors
-    public EditElement2d_OBSOLETE() : base("Edit 2D Element",
-      "Elem2dEdit",
-      "Modify GSA 2D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion Public Constructors
-
-    #region Protected Methods
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaElement2dParameter(),
-        GsaElement2dGoo.Name,
-        GsaElement2dGoo.NickName,
-        GsaElement2dGoo.Description + " to get or set information for." + GsaElement2dGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Element2d Number",
-        "ID",
-        "Set Element Number. If ID is set it will replace any existing 2D Element in the model",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter(),
-        "2D Property",
-        "PA",
-        "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Element2d Group",
-        "Gr",
-        "Set Element Group",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Set Element Offset",
-        GH_ParamAccess.list);
-      pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
-      pManager.AddColourParameter("Element2d Colour",
-        "Co",
-        "Set Element Colour",
-        GH_ParamAccess.list);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Set Element to Dummy",
-        GH_ParamAccess.list);
-
-      for (int i = 1; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-
-      pManager.HideParameter(0);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement2dParameter(),
-        GsaElement2dGoo.Name,
-        GsaElement2dGoo.NickName,
-        GsaElement2dGoo.Description + " with applied changes.",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
-      pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
-      pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp2dParameter(),
-        "2D Property",
-        "PA",
-        "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
-      pManager.AddTextParameter("Element Type",
-        "eT",
-        "Get Element 2D Type."
-        + Environment.NewLine
-        + "Type can not be set; it is either Tri3 or Quad4"
-        + Environment.NewLine
-        + "depending on Rhino/Grasshopper mesh face type",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Get Element Offset",
-        GH_ParamAccess.list);
-      pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
-      pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Get if Element is Dummy",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Parent Members",
-        "pM",
-        "Get Parent Member IDs in Model that Element was created from",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Topology",
-        "Tp",
-        "Get the Element's original topology list referencing node IDs in Model that Element was created from",
-        GH_ParamAccess.list);
-    }
-
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaElement2d = new GsaElement2d();
       if (!da.GetData(0, ref gsaElement2d))
@@ -315,6 +211,108 @@ namespace GsaGH.Components {
       da.SetDataTree(11, elem.TopologyIDs);
     }
 
-    #endregion Protected Methods
+    #region Name and Ribbon Layout
+
+    public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditElem2d;
+
+    public EditElement2d_OBSOLETE() : base("Edit 2D Element",
+      "Elem2dEdit",
+      "Modify GSA 2D Element",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    #endregion
+
+    #region Input and output
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaElement2dParameter(),
+        GsaElement2dGoo.Name,
+        GsaElement2dGoo.NickName,
+        GsaElement2dGoo.Description + " to get or set information for." + GsaElement2dGoo.Name,
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Element2d Number",
+        "ID",
+        "Set Element Number. If ID is set it will replace any existing 2D Element in the model",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter(),
+        "2D Property",
+        "PA",
+        "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Element2d Group",
+        "Gr",
+        "Set Element Group",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaOffsetParameter(),
+        "Offset",
+        "Of",
+        "Set Element Offset",
+        GH_ParamAccess.list);
+      pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
+      pManager.AddColourParameter("Element2d Colour",
+        "Co",
+        "Set Element Colour",
+        GH_ParamAccess.list);
+      pManager.AddBooleanParameter("Dummy Element",
+        "Dm",
+        "Set Element to Dummy",
+        GH_ParamAccess.list);
+
+      for (int i = 1; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+
+      pManager.HideParameter(0);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaElement2dParameter(),
+        GsaElement2dGoo.Name,
+        GsaElement2dGoo.NickName,
+        GsaElement2dGoo.Description + " with applied changes.",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
+      pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
+      pManager.HideParameter(2);
+      pManager.AddParameter(new GsaProp2dParameter(),
+        "2D Property",
+        "PA",
+        "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
+      pManager.AddTextParameter("Element Type",
+        "eT",
+        "Get Element 2D Type."
+        + Environment.NewLine
+        + "Type can not be set; it is either Tri3 or Quad4"
+        + Environment.NewLine
+        + "depending on Rhino/Grasshopper mesh face type",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaOffsetParameter(),
+        "Offset",
+        "Of",
+        "Get Element Offset",
+        GH_ParamAccess.list);
+      pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
+      pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
+      pManager.AddBooleanParameter("Dummy Element",
+        "Dm",
+        "Get if Element is Dummy",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Parent Members",
+        "pM",
+        "Get Parent Member IDs in Model that Element was created from",
+        GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Topology",
+        "Tp",
+        "Get the Element's original topology list referencing node IDs in Model that Element was created from",
+        GH_ParamAccess.list);
+    }
+
+    #endregion
   }
 }

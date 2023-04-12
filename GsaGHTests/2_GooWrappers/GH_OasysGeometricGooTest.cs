@@ -6,11 +6,8 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
-
   [Collection("GrasshopperFixture collection")]
   public class GhOasysGeometricGooTest {
-
-    #region Public Methods
     [Theory]
     [InlineData(typeof(GsaElement1dGoo), typeof(GsaElement1d))]
     [InlineData(typeof(GsaElement2dGoo), typeof(GsaElement2d))]
@@ -84,7 +81,5 @@ namespace GsaGHTests.GooWrappers {
       Assert.True(hasNickName);
       Assert.True(hasDescription);
     }
-
-    #endregion Public Methods
   }
 }

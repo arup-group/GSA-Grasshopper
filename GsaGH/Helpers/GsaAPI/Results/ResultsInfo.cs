@@ -8,10 +8,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GsaAPI {
-
   internal partial class ResultHelper {
-
-    #region Public Methods
     public static Tuple<List<string>, List<int>, DataTree<int?>> GetAvalailableResults(GsaModel model) {
       ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();
       ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults = model.Model.CombinationCaseResults();
@@ -35,10 +32,9 @@ namespace GsaGH.Helpers.GsaAPI {
           perm.Add(null, path);
         foreach (int p in permutationsInCase)
           perm.Add(p, path);
+
       }
       return new Tuple<List<string>, List<int>, DataTree<int?>>(type, caseIds, perm);
     }
-
-    #endregion Public Methods
   }
 }

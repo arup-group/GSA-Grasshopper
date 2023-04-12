@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using GH_IO.Serialization;
 
 namespace GsaGH.Helpers.GH {
-
   public static class FindValueFromReader {
-
-    #region Public Methods
     public static bool TryGetEnum(
       this GH_IReader reader,
       string valueToFind,
@@ -24,9 +21,8 @@ namespace GsaGH.Helpers.GH {
       return true;
     }
 
-    #endregion Public Methods
+    #region private string helpers
 
-    #region Private Methods
     private static IEnumerable<string> GetNamesToCheck(string defaultValue)
       => new List<string> {
         defaultValue,
@@ -50,7 +46,6 @@ namespace GsaGH.Helpers.GH {
 
       return result;
     }
-
-    #endregion Private Methods
+    #endregion
   }
 }

@@ -8,10 +8,15 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
-
   internal class Elements {
+    private static void AddElement(int id, Guid guid, Element apiElement, bool overwrite, ref GsaGuidIntListDictionary<Element> apiElements) {
+      if (id > 0)
+        apiElements.SetValue(id, guid, apiElement, overwrite);
+      else
+        apiElements.AddValue(guid, apiElement);
+    }
 
-    #region Internal Methods
+    #region element1d
     internal static void ConvertElement1D(GsaElement1d element1d,
         ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
@@ -43,7 +48,9 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaElement1d element1d in element1ds.Where(element1d => element1d != null))
         ConvertElement1D(element1d, ref apiElements, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
     }
+    #endregion
 
+    #region element2d
     internal static void ConvertElement2D(GsaElement2d element2d,
         ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes) {
@@ -78,7 +85,9 @@ namespace GsaGH.Helpers.Export {
         if (element2d != null)
           ConvertElement2D(element2d, ref apiElements, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
     }
+    #endregion
 
+    #region element3d
     internal static void ConvertElement3D(GsaElement3d element3d,
         ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
@@ -114,17 +123,6 @@ namespace GsaGH.Helpers.Export {
         if (element3d != null)
           ConvertElement3D(element3d, ref apiElements, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
     }
-
-    #endregion Internal Methods
-
-    #region Private Methods
-    private static void AddElement(int id, Guid guid, Element apiElement, bool overwrite, ref GsaGuidIntListDictionary<Element> apiElements) {
-      if (id > 0)
-        apiElements.SetValue(id, guid, apiElement, overwrite);
-      else
-        apiElements.AddValue(guid, apiElement);
-    }
-
-    #endregion Private Methods
+    #endregion
   }
 }

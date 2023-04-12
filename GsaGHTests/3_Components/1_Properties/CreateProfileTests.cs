@@ -5,11 +5,8 @@ using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateProfileTests {
-
-    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateProfile();
       comp.CreateAttributes();
@@ -47,7 +44,5 @@ namespace GsaGHTests.Components.Properties {
       var output = (GH_String)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(profile, output.Value);
     }
-
-    #endregion Public Methods
   }
 }

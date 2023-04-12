@@ -9,18 +9,97 @@ using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
-
   [Collection("GrasshopperFixture collection")]
   public class GsaBucklingLengthFactorsTest {
+    [Fact]
+    public void EmptyConstructorTest() {
+      var factors = new GsaBucklingLengthFactors();
 
-    #region Public Methods
+      Assert.Null(factors.MomentAmplificationFactorStrongAxis);
+      Assert.Null(factors.MomentAmplificationFactorWeakAxis);
+      Assert.Null(factors.EquivalentUniformMomentFactor);
+    }
+
+    [Theory]
+    [InlineData(1, 2, 3)]
+    public void ConstructorTest1(double factor1, double factor2, double factor3) {
+      var factors = new GsaBucklingLengthFactors(factor1, factor2, factor3);
+
+      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
+    }
+
+    [Theory]
+    [InlineData(1, 2, 3)]
+    public void ConstructorTest2(double factor1, double factor2, double factor3) {
+      var member = new GsaMember1d {
+        ApiMember = {
+          MomentAmplificationFactorStrongAxis = factor1,
+          MomentAmplificationFactorWeakAxis = factor2,
+          EquivalentUniformMomentFactor = factor3,
+        },
+      };
+
+      var factors = new GsaBucklingLengthFactors(member);
+
+      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
+    }
+
+    [Theory]
+    [InlineData(1, 2, 3, LengthUnit.Meter)]
+    public void ConstructorTest3(double factor1, double factor2, double factor3, LengthUnit unit) {
+      var member = new GsaMember1d {
+        PolyCurve = new PolyCurve(),
+        ApiMember = {
+          MomentAmplificationFactorStrongAxis = factor1,
+          MomentAmplificationFactorWeakAxis = factor2,
+          EquivalentUniformMomentFactor = factor3,
+        },
+      };
+
+      var factors = new GsaBucklingLengthFactors(member, unit);
+
+      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
+    }
+
+    [Theory]
+    [InlineData(1, 2, 3)]
+    public void DuplicateTest(double factor1, double factor2, double factor3) {
+      var member = new GsaMember1d {
+        ApiMember = {
+          MomentAmplificationFactorStrongAxis = factor1,
+          MomentAmplificationFactorWeakAxis = factor2,
+          EquivalentUniformMomentFactor = factor3,
+        },
+      };
+
+      var original = new GsaBucklingLengthFactors(member);
+
+      GsaBucklingLengthFactors duplicate = original.Duplicate();
+
+      Duplicates.AreEqual(original, duplicate);
+
+      duplicate.MomentAmplificationFactorStrongAxis = 10;
+      duplicate.MomentAmplificationFactorWeakAxis = 20;
+      duplicate.EquivalentUniformMomentFactor = 30;
+
+      Assert.Equal(factor1, original.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, original.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, original.EquivalentUniformMomentFactor);
+    }
+
     [Fact]
     public void AssembleWitMemberTest() {
       var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = 1.5,
           MomentAmplificationFactorWeakAxis = 2.5,
-          LateralTorsionalBucklingFactor = 0.75,
+          EquivalentUniformMomentFactor = 0.75,
         },
       };
 
@@ -52,97 +131,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
       Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(0.75, assembledMem1d.LateralTorsionalBucklingFactor);
+      Assert.Equal(0.75, assembledMem1d.EquivalentUniformMomentFactor);
     }
-
-    [Theory]
-    [InlineData(1, 2, 3)]
-    public void ConstructorTest1(double factor1, double factor2, double factor3) {
-      var factors = new GsaBucklingLengthFactors(factor1, factor2, factor3);
-
-      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(factor3, factors.LateralTorsionalBucklingFactor);
-      Assert.False(factors.LengthIsSet);
-    }
-
-    [Theory]
-    [InlineData(1, 2, 3)]
-    public void ConstructorTest2(double factor1, double factor2, double factor3) {
-      var member = new GsaMember1d {
-        ApiMember = {
-          MomentAmplificationFactorStrongAxis = factor1,
-          MomentAmplificationFactorWeakAxis = factor2,
-          LateralTorsionalBucklingFactor = factor3,
-        },
-      };
-
-      var factors = new GsaBucklingLengthFactors(member);
-
-      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(factor3, factors.LateralTorsionalBucklingFactor);
-      Assert.False(factors.LengthIsSet);
-    }
-
-    [Theory]
-    [InlineData(1, 2, 3, LengthUnit.Meter)]
-    public void ConstructorTest3(double factor1, double factor2, double factor3, LengthUnit unit) {
-      var member = new GsaMember1d {
-        PolyCurve = new PolyCurve(),
-        ApiMember = {
-          MomentAmplificationFactorStrongAxis = factor1,
-          MomentAmplificationFactorWeakAxis = factor2,
-          LateralTorsionalBucklingFactor = factor3,
-        },
-      };
-
-      var factors = new GsaBucklingLengthFactors(member, unit);
-
-      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(factor3, factors.LateralTorsionalBucklingFactor);
-      Assert.True(factors.LengthIsSet);
-      Assert.Equal(0, factors.Length.As(unit));
-    }
-
-    [Theory]
-    [InlineData(1, 2, 3)]
-    public void DuplicateTest(double factor1, double factor2, double factor3) {
-      var member = new GsaMember1d {
-        ApiMember = {
-          MomentAmplificationFactorStrongAxis = factor1,
-          MomentAmplificationFactorWeakAxis = factor2,
-          LateralTorsionalBucklingFactor = factor3,
-        },
-      };
-
-      var original = new GsaBucklingLengthFactors(member);
-
-      GsaBucklingLengthFactors duplicate = original.Duplicate();
-
-      Duplicates.AreEqual(original, duplicate);
-
-      duplicate.MomentAmplificationFactorStrongAxis = 10;
-      duplicate.MomentAmplificationFactorWeakAxis = 20;
-      duplicate.LateralTorsionalBucklingFactor = 30;
-
-      Assert.Equal(factor1, original.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(factor2, original.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(factor3, original.LateralTorsionalBucklingFactor);
-      Assert.False(original.LengthIsSet);
-    }
-
-    [Fact]
-    public void EmptyConstructorTest() {
-      var factors = new GsaBucklingLengthFactors();
-
-      Assert.Null(factors.MomentAmplificationFactorStrongAxis);
-      Assert.Null(factors.MomentAmplificationFactorWeakAxis);
-      Assert.Null(factors.LateralTorsionalBucklingFactor);
-      Assert.False(factors.LengthIsSet);
-    }
-
-    #endregion Public Methods
   }
 }

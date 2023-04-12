@@ -5,26 +5,37 @@ using OasysGH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
-
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaAnalysisCase" /> can be used in Grasshopper.
   /// </summary>
   public class GsaAnalysisCaseGoo : GH_OasysGoo<GsaAnalysisCase> {
-
-    #region Properties + Fields
-    public static string Description => "GSA Analysis Case (Load Case or Combination)";
+    public GsaAnalysisCaseGoo(GsaAnalysisCase item) : base(item) { }
     public static string Name => "Analysis Case";
     public static string NickName => "ΣA";
+    public static string Description => "GSA Analysis Case (Load Case or Combination)";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion Properties + Fields
 
-    #region Public Constructors
-    public GsaAnalysisCaseGoo(GsaAnalysisCase item) : base(item) {
+    public override IGH_Goo Duplicate() => new GsaAnalysisCaseGoo(Value);
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (base.CastTo(ref target))
+        return true;
+
+      if (!typeof(TQ).IsAssignableFrom(typeof(GH_Integer)))
+        return false;
+      if (Value == null)
+        target = default;
+      else {
+        var ghint = new GH_Integer();
+        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
+          ? (TQ)(object)ghint
+          : default;
+      }
+
+      return true;
+
     }
 
-    #endregion Public Constructors
-
-    #region Public Methods
     public override bool CastFrom(object source) {
       if (source == null)
         return false;
@@ -45,6 +56,7 @@ namespace GsaGH.Parameters {
         Value = new GsaAnalysisCase(id, name);
         return true;
       }
+
       else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both)) {
         Value = new GsaAnalysisCase(id, id.ToString());
         return true;
@@ -52,27 +64,5 @@ namespace GsaGH.Parameters {
 
       return false;
     }
-
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target))
-        return true;
-
-      if (!typeof(TQ).IsAssignableFrom(typeof(GH_Integer)))
-        return false;
-      if (Value == null)
-        target = default;
-      else {
-        var ghint = new GH_Integer();
-        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
-          ? (TQ)(object)ghint
-          : default;
-      }
-
-      return true;
-    }
-
-    public override IGH_Goo Duplicate() => new GsaAnalysisCaseGoo(Value);
-
-    #endregion Public Methods
   }
 }

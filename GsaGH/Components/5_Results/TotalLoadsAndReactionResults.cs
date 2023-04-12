@@ -18,22 +18,83 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to get GSA total model load and reactions
   /// </summary>
   public class TotalLoadsAndReactionResults : GH_OasysDropDownComponent {
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
+      var ghTyp = new GH_ObjectWrapper();
+      if (!da.GetData(0, ref ghTyp))
+        return;
 
-    #region Properties + Fields
+      #region Inputs
+
+      switch (ghTyp?.Value) {
+        case null:
+          this.AddRuntimeWarning("Input is null");
+          return;
+        case GsaResultGoo goo: {
+          result = goo.Value;
+          if (result.Type == GsaResult.CaseType.Combination) {
+            this.AddRuntimeError("Global Result only available for Analysis Cases");
+            return;
+          }
+
+          break;
+        }
+        default:
+          this.AddRuntimeError("Error converting input to GSA Result");
+          return;
+      }
+
+      #endregion
+
+      #region Get results from GSA
+
+      AnalysisCaseResult analysisCaseResult = result.AnalysisCaseResult;
+
+      #endregion
+
+      int i = 0;
+      GsaResultQuantity f
+        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _forceUnit);
+      da.SetData(i++, new GH_UnitNumber(f.X));
+      da.SetData(i++, new GH_UnitNumber(f.Y));
+      da.SetData(i++, new GH_UnitNumber(f.Z));
+      da.SetData(i++, new GH_UnitNumber(f.Xyz));
+
+      GsaResultQuantity m
+        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _momentUnit);
+      da.SetData(i++, new GH_UnitNumber(m.X));
+      da.SetData(i++, new GH_UnitNumber(m.Y));
+      da.SetData(i++, new GH_UnitNumber(m.Z));
+      da.SetData(i++, new GH_UnitNumber(m.Xyz));
+
+      GsaResultQuantity rf
+        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _forceUnit);
+      da.SetData(i++, new GH_UnitNumber(rf.X));
+      da.SetData(i++, new GH_UnitNumber(rf.Y));
+      da.SetData(i++, new GH_UnitNumber(rf.Z));
+      da.SetData(i++, new GH_UnitNumber(rf.Xyz));
+
+      GsaResultQuantity rm
+        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _momentUnit);
+      da.SetData(i++, new GH_UnitNumber(rm.X));
+      da.SetData(i++, new GH_UnitNumber(rm.Y));
+      da.SetData(i++, new GH_UnitNumber(rm.Z));
+      da.SetData(i, new GH_UnitNumber(rm.Xyz));
+
+      PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
+    }
+
+    #region Name and Ribbon Layout
+
     public override Guid ComponentGuid => new Guid("00a195ef-b8f2-4b91-ac47-a8ae12d48b8e");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.TotalLoadAndReaction;
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    #endregion Properties + Fields
 
-    #region Public Constructors
     public TotalLoadsAndReactionResults() : base("Total Loads & Reactions",
       "TotalResults",
       "Get Total Loads and Reaction Results from a GSA model",
@@ -41,73 +102,10 @@ namespace GsaGH.Components {
       SubCategoryName.Cat5())
       => Hidden = true;
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Public Methods
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Force Unit",
-        "Moment Unit",
-      });
+    #region Input and output
 
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
-      SelectedItems.Add(Moment.GetAbbreviation(_momentUnit));
-
-      IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      switch (i) {
-        case 0:
-          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[i]);
-          break;
-
-        case 1:
-          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[i]);
-          break;
-      }
-
-      base.UpdateUI();
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[0]);
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[1]);
-      base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance() {
-      string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
-      string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
-      int i = 0;
-      Params.Output[i++]
-        .Name = "Force X [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i]
-        .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
-    }
-
-    #endregion Public Methods
-
-    #region Protected Methods
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaResultsParameter(),
         "Result",
@@ -185,73 +183,73 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var result = new GsaResult();
-      var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp))
-        return;
+    #endregion
 
-      #region Inputs
+    #region Custom UI
 
-      switch (ghTyp?.Value) {
-        case null:
-          this.AddRuntimeWarning("Input is null");
-          return;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-        case GsaResultGoo goo: {
-            result = goo.Value;
-            if (result.Type == GsaResult.CaseType.Combination) {
-              this.AddRuntimeError("Global Result only available for Analysis Cases");
-              return;
-            }
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Force Unit",
+        "Moment Unit",
+      });
 
-            break;
-          }
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
-      }
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
 
-      #endregion Inputs
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      #region Get results from GSA
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
+      _selectedItems.Add(Moment.GetAbbreviation(_momentUnit));
 
-      AnalysisCaseResult analysisCaseResult = result.AnalysisCaseResult;
-
-      #endregion Get results from GSA
-
-      int i = 0;
-      GsaResultQuantity f
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _forceUnit);
-      da.SetData(i++, new GH_UnitNumber(f.X));
-      da.SetData(i++, new GH_UnitNumber(f.Y));
-      da.SetData(i++, new GH_UnitNumber(f.Z));
-      da.SetData(i++, new GH_UnitNumber(f.Xyz));
-
-      GsaResultQuantity m
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _momentUnit);
-      da.SetData(i++, new GH_UnitNumber(m.X));
-      da.SetData(i++, new GH_UnitNumber(m.Y));
-      da.SetData(i++, new GH_UnitNumber(m.Z));
-      da.SetData(i++, new GH_UnitNumber(m.Xyz));
-
-      GsaResultQuantity rf
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _forceUnit);
-      da.SetData(i++, new GH_UnitNumber(rf.X));
-      da.SetData(i++, new GH_UnitNumber(rf.Y));
-      da.SetData(i++, new GH_UnitNumber(rf.Z));
-      da.SetData(i++, new GH_UnitNumber(rf.Xyz));
-
-      GsaResultQuantity rm
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _momentUnit);
-      da.SetData(i++, new GH_UnitNumber(rm.X));
-      da.SetData(i++, new GH_UnitNumber(rm.Y));
-      da.SetData(i++, new GH_UnitNumber(rm.Z));
-      da.SetData(i, new GH_UnitNumber(rm.Xyz));
-
-      PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
+      _isInitialised = true;
     }
 
-    #endregion Protected Methods
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      switch (i) {
+        case 0:
+          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[i]);
+          break;
+        case 1:
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[i]);
+          break;
+      }
+
+      base.UpdateUI();
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
+      string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
+      int i = 0;
+      Params.Output[i++]
+        .Name = "Force X [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Force Y [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Force Z [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Moment XX [" + momentunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Moment YY [" + momentunitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "Moment ZZ [" + momentunitAbbreviation + "]";
+      Params.Output[i]
+        .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+    }
+
+    #endregion
   }
 }

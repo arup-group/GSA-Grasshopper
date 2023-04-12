@@ -6,11 +6,8 @@ using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Properties {
-
   [Collection("GrasshopperFixture collection")]
   public class CreateMaterialTests {
-
-    #region Public Methods
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateMaterial();
       comp.CreateAttributes();
@@ -29,7 +26,5 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(1, output.Value.GradeProperty);
       Assert.Equal(MatType.Timber, output.Value.MaterialType);
     }
-
-    #endregion Public Methods
   }
 }

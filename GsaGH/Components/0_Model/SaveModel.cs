@@ -22,7 +22,6 @@ using Rhino.UI;
 #pragma warning disable IDE0059
 
 namespace GsaGH.Components {
-
   /// <summary>
   ///   Component to open an existing GSA model
   /// </summary>
@@ -89,7 +88,7 @@ namespace GsaGH.Components {
       SubCategoryName.Cat0())
       => Hidden = true;
 
-    #endregion Name and Ribbon Layout
+    #endregion
 
     #region Input and output
 
@@ -110,16 +109,13 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter());
 
-    #endregion Input and output
+    #endregion
 
     #region Custom UI
 
     private string _fileNameLastSaved;
-    public override void SetSelected(int i, int j) {
-    }
-
-    public override void InitialiseDropdowns() {
-    }
+    public override void SetSelected(int i, int j) { }
+    protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()
       => m_attributes = new ThreeButtonAtrributes(this,
@@ -181,6 +177,6 @@ namespace GsaGH.Components {
       return flag;
     }
 
-    #endregion Custom UI
+    #endregion
   }
 }
