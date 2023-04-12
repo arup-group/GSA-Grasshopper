@@ -44,7 +44,7 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      GsaModel gsaModel = new GsaModel();
+      var gsaModel = new GsaModel();
       if (DA.GetData(0, ref gsaModel))
       {
         List<GsaList> lists = Helpers.Import.Lists.GetLists(gsaModel);
