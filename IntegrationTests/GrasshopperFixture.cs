@@ -7,16 +7,10 @@ using Interop.Gsa_10_1;
 using OasysGH.Units;
 using Rhino;
 using Rhino.Runtime.InProcess;
-using RhinoInside;
 using Xunit;
 
 namespace IntegrationTests {
-  [CollectionDefinition("GrasshopperFixture collection")]
-  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
-    // This class has no code, and is never created. Its purpose is simply
-    // to be the place to apply [CollectionDefinition] and all the
-    // ICollectionFixture<> interfaces.
-  }
+
 
   public class GrasshopperFixture : IDisposable {
     public RhinoCore Core {
@@ -37,18 +31,12 @@ namespace IntegrationTests {
         return _ghPlugin as GH_RhinoScriptInterface;
       }
     }
-    public static string InstallPath = Path.Combine(
-              Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-      "Oasys",
-      "GSA 10.1");
+    public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
-    private object Doc { get; set; }
-    private object DocIo { get; set; }
+    private object _doc { get; set; }
+    private object _docIo { get; set; }
     private static readonly string s_linkFileName = "IntegrationTests.ghlink";
-    private static readonly string s_linkFilePath = Path.Combine(
-                  Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-      "Grasshopper",
-      "Libraries");
+    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
@@ -58,7 +46,7 @@ namespace IntegrationTests {
       // are loaded before the resolver is set up. Avoid creating other static functions
       // and members which may reference Rhino assemblies, as that may cause those
       // assemblies to be loaded before this is called.
-      Resolver.Initialize();
+      RhinoInside.Resolver.Initialize();
     }
 
     public GrasshopperFixture() {
@@ -114,8 +102,8 @@ namespace IntegrationTests {
       }
 
       if (disposing) {
-        Doc = null;
-        DocIo = null;
+        _doc = null;
+        _docIo = null;
         GhPlugin.CloseAllDocuments();
         _ghPlugin = null;
         Core.Dispose();
@@ -144,5 +132,12 @@ namespace IntegrationTests {
       var ghp = _ghPlugin as GH_RhinoScriptInterface;
       ghp.RunHeadless();
     }
+  }
+
+  [CollectionDefinition("GrasshopperFixture collection")]
+  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
   }
 }

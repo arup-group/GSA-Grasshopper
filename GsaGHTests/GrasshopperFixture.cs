@@ -4,13 +4,6 @@ using System.Reflection;
 using Xunit;
 
 namespace GsaGHTests {
-  [CollectionDefinition("GrasshopperFixture collection")]
-  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
-    // This class has no code, and is never created. Its purpose is simply
-    // to be the place to apply [CollectionDefinition] and all the
-    // ICollectionFixture<> interfaces.
-  }
-
   public class GrasshopperFixture : IDisposable {
     public Rhino.Runtime.InProcess.RhinoCore Core {
       get {
@@ -114,5 +107,12 @@ namespace GsaGHTests {
       var ghp = _ghPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
       ghp?.RunHeadless();
     }
+  }
+
+  [CollectionDefinition("GrasshopperFixture collection")]
+  public class GrasshopperCollection : ICollectionFixture<GrasshopperFixture> {
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
   }
 }
