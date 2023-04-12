@@ -46,7 +46,7 @@ namespace GsaGHTests.Properties {
       var k22Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var volOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var addMassOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      //var isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
+      i++;//var isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       var isRefPtOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       var stressOptOut = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
 
@@ -82,7 +82,7 @@ namespace GsaGHTests.Properties {
       var k22Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var volOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       var addMassOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      //var isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
+      i++;//var isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       var isRefPtOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       var stressOptOut = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
 
@@ -133,8 +133,8 @@ namespace GsaGHTests.Properties {
       k22Out = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       volOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       addMassOut = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      //isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
-      //isRefPtOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
+      i++;//isBendingOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
+      i++;//isRefPtOut = (GH_Boolean)ComponentTestHelper.GetOutput(comp, i++);
       stressOptOut = (GH_Integer)ComponentTestHelper.GetOutput(comp, i);
 
       Assert.Equal(1.2, areaOut.Value.As(AreaUnit.SquareMeter), 6);
