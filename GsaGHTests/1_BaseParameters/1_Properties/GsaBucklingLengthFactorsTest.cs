@@ -82,8 +82,8 @@ namespace GsaGHTests.Parameters {
     }
 
     [Theory]
-    [InlineData(1, 2, 3, LengthUnit.Meter)]
-    public void ConstructorTest3(double factor1, double factor2, double factor3, LengthUnit unit) {
+    [InlineData(1, 2, 3)]
+    public void ConstructorTest3(double factor1, double factor2, double factor3) {
       var member = new GsaMember1d {
         PolyCurve = new PolyCurve(),
         ApiMember = {
