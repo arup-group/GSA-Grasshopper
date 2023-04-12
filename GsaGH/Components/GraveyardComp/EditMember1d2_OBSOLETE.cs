@@ -22,175 +22,16 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class EditMember1d2_OBSOLETE : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember1d = new GsaMember1d();
-      if (!da.GetData(0, ref gsaMember1d))
-        return;
-
-      if (gsaMember1d == null)
-        this.AddRuntimeWarning("Member1D input is null");
-      GsaMember1d mem = gsaMember1d.Duplicate();
-
-      var ghId = new GH_Integer();
-      if (da.GetData(1, ref ghId))
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
-          mem.Id = id;
-
-      var ghCurve = new GH_Curve();
-      if (da.GetData(2, ref ghCurve)) {
-        Curve crv = null;
-        if (GH_Convert.ToCurve(ghCurve, ref crv, GH_Conversion.Both)) {
-          if (crv is PolyCurve curve)
-            mem.PolyCurve = curve;
-          else {
-            var tempMem = new GsaMember1d(crv);
-            mem.PolyCurve = tempMem.PolyCurve;
-          }
-        }
-      }
-
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo)
-          ghTyp.CastTo(ref section);
-        else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
-            section = new GsaSection(idd);
-          else {
-            this.AddRuntimeError(
-              "Unable to convert PB input to a Section Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Section = section;
-      }
-
-      var ghGroup = new GH_Integer();
-      if (da.GetData(4, ref ghGroup))
-        if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both))
-          mem.Group = grp;
-
-      var ghInteger = new GH_Integer();
-      if (da.GetData(5, ref ghInteger))
-        if (GH_Convert.ToInt32(ghInteger, out int type, GH_Conversion.Both))
-          mem.Type = (MemberType)type;
-
-      var integer = new GH_Integer();
-      if (da.GetData(6, ref integer))
-        if (GH_Convert.ToInt32(integer, out int type, GH_Conversion.Both))
-          mem.Type1D = (ElementType)type;
-
-      var offset = new GsaOffset();
-      if (da.GetData(7, ref offset))
-        mem.Offset = offset;
-
-      var start = new GsaBool6();
-      if (da.GetData(8, ref start))
-        mem.ReleaseStart = start;
-
-      var end = new GsaBool6();
-      if (da.GetData(9, ref end))
-        mem.ReleaseEnd = end;
-
-      var ghAngle = new GH_Number();
-      if (da.GetData(10, ref ghAngle))
-        if (GH_Convert.ToDouble(ghAngle, out double angle, GH_Conversion.Both))
-          mem.OrientationAngle = new Angle(angle, AngleUnit.Degree);
-
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(11, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          mem.OrientationNode = node;
-        }
-        else
-          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
-      }
-
-      if (Params.Input[12]
-          .Sources.Count
-        > 0) {
-        mem.MeshSize
-          = ((Length)Input.UnitNumber(this, da, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
-        if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter)
-          this.AddRuntimeRemark("Mesh size input set in ["
-            + string.Concat(mem.MeshSize.ToString()
-              .Where(char.IsLetter))
-            + "]. "
-            + Environment.NewLine
-            + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
-      }
-
-      var ghBoolean = new GH_Boolean();
-      if (da.GetData(13, ref ghBoolean))
-        if (GH_Convert.ToBoolean(ghBoolean, out bool mbool, GH_Conversion.Both))
-          if (mem.MeshWithOthers != mbool)
-            mem.MeshWithOthers = mbool;
-
-      var ghName = new GH_String();
-      if (da.GetData(14, ref ghName))
-        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
-          mem.Name = name;
-
-      var ghColour = new GH_Colour();
-      if (da.GetData(15, ref ghColour))
-        if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
-          mem.Colour = col;
-
-      var ghDummy = new GH_Boolean();
-      if (da.GetData(16, ref ghDummy))
-        if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both))
-          mem.IsDummy = dum;
-
-      da.SetData(0, new GsaMember1dGoo(mem));
-      da.SetData(1, mem.Id);
-      da.SetData(2, mem.PolyCurve);
-      da.SetData(3, new GsaSectionGoo(mem.Section));
-      da.SetData(4, mem.Group);
-      da.SetData(5, mem.Type);
-      da.SetData(6, mem.Type1D);
-
-      da.SetData(7, new GsaOffsetGoo(mem.Offset));
-
-      da.SetData(8, mem.ReleaseStart);
-      da.SetData(9, mem.ReleaseEnd);
-
-      da.SetData(10, mem.OrientationAngle);
-      da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
-
-      da.SetData(12,
-        new GH_UnitNumber(
-          new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry)));
-      da.SetData(13, mem.MeshWithOthers);
-
-      da.SetData(14, mem.Name);
-
-      da.SetData(15, mem.Colour);
-      da.SetData(16, mem.IsDummy);
-      da.SetData(17, mem.ApiMember.Topology);
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("2a121578-f9ff-4d80-ae90-2982faa425a6");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditMem1d;
 
     public EditMember1d2_OBSOLETE() : base("Edit 1D Member",
-      "Mem1dEdit",
+          "Mem1dEdit",
       "Modify GSA 1D Member",
       CategoryName.Name(),
       SubCategoryName.Cat2()) { }
-
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-
-    protected override Bitmap Icon => Resources.EditMem1d;
-
-    #endregion
-
-    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("1D Member",
@@ -353,6 +194,155 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaMember1d = new GsaMember1d();
+      if (!da.GetData(0, ref gsaMember1d))
+        return;
+
+      if (gsaMember1d == null)
+        this.AddRuntimeWarning("Member1D input is null");
+      GsaMember1d mem = gsaMember1d.Duplicate();
+
+      var ghId = new GH_Integer();
+      if (da.GetData(1, ref ghId))
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+          mem.Id = id;
+
+      var ghCurve = new GH_Curve();
+      if (da.GetData(2, ref ghCurve)) {
+        Curve crv = null;
+        if (GH_Convert.ToCurve(ghCurve, ref crv, GH_Conversion.Both)) {
+          if (crv is PolyCurve curve)
+            mem.PolyCurve = curve;
+          else {
+            var tempMem = new GsaMember1d(crv);
+            mem.PolyCurve = tempMem.PolyCurve;
+          }
+        }
+      }
+
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(3, ref ghTyp)) {
+        var section = new GsaSection();
+        if (ghTyp.Value is GsaSectionGoo)
+          ghTyp.CastTo(ref section);
+        else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+            section = new GsaSection(idd);
+          else {
+            this.AddRuntimeError(
+              "Unable to convert PB input to a Section Property of reference integer");
+            return;
+          }
+        }
+
+        mem.Section = section;
+      }
+
+      var ghGroup = new GH_Integer();
+      if (da.GetData(4, ref ghGroup))
+        if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both))
+          mem.Group = grp;
+
+      var ghInteger = new GH_Integer();
+      if (da.GetData(5, ref ghInteger))
+        if (GH_Convert.ToInt32(ghInteger, out int type, GH_Conversion.Both))
+          mem.Type = (MemberType)type;
+
+      var integer = new GH_Integer();
+      if (da.GetData(6, ref integer))
+        if (GH_Convert.ToInt32(integer, out int type, GH_Conversion.Both))
+          mem.Type1D = (ElementType)type;
+
+      var offset = new GsaOffset();
+      if (da.GetData(7, ref offset))
+        mem.Offset = offset;
+
+      var start = new GsaBool6();
+      if (da.GetData(8, ref start))
+        mem.ReleaseStart = start;
+
+      var end = new GsaBool6();
+      if (da.GetData(9, ref end))
+        mem.ReleaseEnd = end;
+
+      var ghAngle = new GH_Number();
+      if (da.GetData(10, ref ghAngle))
+        if (GH_Convert.ToDouble(ghAngle, out double angle, GH_Conversion.Both))
+          mem.OrientationAngle = new Angle(angle, AngleUnit.Degree);
+
+      ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(11, ref ghTyp)) {
+        var node = new GsaNode();
+        if (ghTyp.Value is GsaNodeGoo) {
+          ghTyp.CastTo(ref node);
+          mem.OrientationNode = node;
+        }
+        else
+          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
+      }
+
+      if (Params.Input[12]
+          .Sources.Count
+        > 0) {
+        mem.MeshSize
+          = ((Length)Input.UnitNumber(this, da, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
+        if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter)
+          this.AddRuntimeRemark("Mesh size input set in ["
+            + string.Concat(mem.MeshSize.ToString()
+              .Where(char.IsLetter))
+            + "]. "
+            + Environment.NewLine
+            + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
+      }
+
+      var ghBoolean = new GH_Boolean();
+      if (da.GetData(13, ref ghBoolean))
+        if (GH_Convert.ToBoolean(ghBoolean, out bool mbool, GH_Conversion.Both))
+          if (mem.MeshWithOthers != mbool)
+            mem.MeshWithOthers = mbool;
+
+      var ghName = new GH_String();
+      if (da.GetData(14, ref ghName))
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
+          mem.Name = name;
+
+      var ghColour = new GH_Colour();
+      if (da.GetData(15, ref ghColour))
+        if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both))
+          mem.Colour = col;
+
+      var ghDummy = new GH_Boolean();
+      if (da.GetData(16, ref ghDummy))
+        if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both))
+          mem.IsDummy = dum;
+
+      da.SetData(0, new GsaMember1dGoo(mem));
+      da.SetData(1, mem.Id);
+      da.SetData(2, mem.PolyCurve);
+      da.SetData(3, new GsaSectionGoo(mem.Section));
+      da.SetData(4, mem.Group);
+      da.SetData(5, mem.Type);
+      da.SetData(6, mem.Type1D);
+
+      da.SetData(7, new GsaOffsetGoo(mem.Offset));
+
+      da.SetData(8, mem.ReleaseStart);
+      da.SetData(9, mem.ReleaseEnd);
+
+      da.SetData(10, mem.OrientationAngle);
+      da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
+
+      da.SetData(12,
+        new GH_UnitNumber(
+          new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry)));
+      da.SetData(13, mem.MeshWithOthers);
+
+      da.SetData(14, mem.Name);
+
+      da.SetData(15, mem.Colour);
+      da.SetData(16, mem.IsDummy);
+      da.SetData(17, mem.ApiMember.Topology);
+    }
   }
 }

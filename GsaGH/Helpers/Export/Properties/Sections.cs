@@ -5,6 +5,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Sections {
+
     internal static int AddSection(GsaSection section, ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       Materials.AddMaterial(ref section, ref apiMaterials);
 

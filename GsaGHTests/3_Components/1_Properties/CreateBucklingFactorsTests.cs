@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateBucklingFactorsTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateBucklingFactors();
       comp.CreateAttributes();

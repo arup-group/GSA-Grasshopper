@@ -2,7 +2,7 @@
 
 namespace GsaGH {
   /// <summary>
-  /// Class to hold Titles used in Grasshopper GSA file. 
+  /// Class to hold Titles used in Grasshopper GSA file.
   /// </summary>
   public static class Titles {
     public static string Calculation {
@@ -29,7 +29,7 @@ namespace GsaGH {
       get { return s_title; }
       set { s_title = value; }
     }
-    #region fields
+
     private static string s_calculation;
     private static bool s_calculationByuser;
     private static string s_initials;
@@ -42,7 +42,6 @@ namespace GsaGH {
     private static bool s_subtitleByuser;
     private static string s_title;
     private static bool s_titleByuser;
-    #endregion
 
     public static void GetTitlesFromGsa(Model model) {
       GsaAPI.Titles titles = model.Titles();
@@ -64,22 +63,27 @@ namespace GsaGH {
       Titles.Calculation = calculation;
       s_calculationByuser = true;
     }
+
     public static void SetInitials(string initials) {
       Titles.Initials = initials;
       s_initialsByuser = true;
     }
+
     public static void SetJobNumber(string jobnumber) {
       Titles.JobNumber = jobnumber;
       s_jobnumberByuser = true;
     }
+
     public static void SetNotes(string notes) {
       Titles.Notes = notes;
       s_notesByuser = true;
     }
+
     public static void SetSubTitle(string subtitle) {
       Titles.SubTitle = subtitle;
       s_subtitleByuser = true;
     }
+
     public static void SetTitle(string title) {
       Titles.Title = title;
       s_titleByuser = true;

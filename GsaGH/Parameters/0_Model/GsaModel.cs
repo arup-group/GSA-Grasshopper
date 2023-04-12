@@ -13,11 +13,6 @@ namespace GsaGH.Parameters {
   /// </summary>
   [Serializable]
   public class GsaModel {
-    #region properties
-    public Model Model { get; set; } = new Model();
-    public string FileNameAndPath { get; set; }
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     public BoundingBox BoundingBox {
       get {
         if (!_boundingBox.IsValid)
@@ -25,21 +20,20 @@ namespace GsaGH.Parameters {
         return _boundingBox;
       }
     }
-    private BoundingBox _boundingBox = BoundingBox.Empty;
-
+    public string FileNameAndPath { get; set; }
+    public Guid Guid { get; set; } = Guid.NewGuid();
+    public Model Model { get; set; } = new Model();
+    public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     internal GsaAPI.Titles Titles {
       get {
         return Model.Titles();
       }
     }
-    #endregion
+    private BoundingBox _boundingBox = BoundingBox.Empty;
 
-    #region constructors
     public GsaModel() {
     }
-    #endregion
 
-    #region methods
     /// <summary>
     /// Clones this model so we can make changes safely
     /// </summary>
@@ -101,8 +95,6 @@ namespace GsaGH.Parameters {
       double factor = 1 / new Length(1, ModelUnit).Meters;
       var scale = Transform.Scale(new Point3d(0, 0, 0), factor);
       return new BoundingBox(pts, scale);
-
     }
-    #endregion
   }
 }

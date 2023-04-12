@@ -8,6 +8,7 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class GwaCommandTest {
+
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;

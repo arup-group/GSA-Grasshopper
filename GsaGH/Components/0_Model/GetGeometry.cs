@@ -36,8 +36,319 @@ namespace GsaGH.Components {
   /// </summary>
   public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>,
     IGH_VariableParameterComponent {
+    public class SolveResults {
+      internal ConcurrentBag<GsaNodeGoo> DisplaySupports { get; set; }
+      internal ConcurrentBag<GsaElement1dGoo> Elem1ds { get; set; }
+      internal ConcurrentBag<GsaElement2dGoo> Elem2ds { get; set; }
+      internal ConcurrentBag<GsaElement3dGoo> Elem3ds { get; set; }
+      internal ConcurrentBag<GsaMember1dGoo> Mem1ds { get; set; }
+      internal ConcurrentBag<GsaMember2dGoo> Mem2ds { get; set; }
+      internal ConcurrentBag<GsaMember3dGoo> Mem3ds { get; set; }
+      internal ConcurrentBag<GsaNodeGoo> Nodes { get; set; }
+    }
+
+    private enum FoldMode {
+      Graft,
+      List,
+    }
+
+    public override BoundingBox ClippingBox => _boundingBox;
+    public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public List<List<string>> _dropDownItems;
+    public bool _isInitialised;
+    public List<string> _selectedItems;
+    public List<string> _spacerDescriptions;
+    public bool AlwaysExpireDownStream;
+    public Dictionary<int, List<string>> ExistingOutputsSerialized
+      = new Dictionary<int, List<string>>();
+    protected override Bitmap Icon => Resources.GetGeometry;
+    private static readonly OasysUnitsIQuantityJsonConverter s_converter
+      = new OasysUnitsIQuantityJsonConverter();
+    private BoundingBox _boundingBox;
+    private Mesh _cachedDisplayMeshWithoutParent;
+    private Mesh _cachedDisplayMeshWithParent;
+    private Mesh _cachedDisplayNgonMeshWithoutParent;
+    private Mesh _cachedDisplayNgonMeshWithParent;
+    private ConcurrentBag<GsaElement2dGoo> _element2ds;
+    private ConcurrentBag<GsaElement3dGoo> _element3ds;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private FoldMode _mode = FoldMode.List;
+    private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
+    private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
+    private ConcurrentBag<GsaNodeGoo> _supportNodes;
+
+    public GetGeometry() : base("Get Model Geometry",
+                                                              "GetGeo",
+      "Get nodes, elements and members from GSA model",
+      CategoryName.Name(),
+      SubCategoryName.Cat0()) { }
+
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+      => false;
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+      => false;
+
+    public override void CreateAttributes() {
+      if (!_isInitialised)
+        InitialiseDropdowns();
+
+      m_attributes = new DropDownComponentAttributes(this,
+        SetSelected,
+        _dropDownItems,
+        _selectedItems,
+        _spacerDescriptions);
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+      => null;
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
+      base.DrawViewportMeshes(args);
+      if (Attributes.Selected) {
+        if (_cachedDisplayMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent, Colours.Element2dFace);
+        if (_cachedDisplayNgonMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dFace);
+      }
+      else {
+        if (_cachedDisplayMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent,
+            Colours.Element2dFaceSelected);
+        if (_cachedDisplayNgonMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent,
+            Colours.Element2dFaceSelected);
+      }
+    }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+
+      if (_cachedDisplayMeshWithParent != null)
+        args.Display.DrawMeshWires(_cachedDisplayMeshWithParent,
+          Color.FromArgb(255, 229, 229, 229),
+          1);
+
+      if (_cachedDisplayNgonMeshWithParent != null)
+        args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithParent,
+          Color.FromArgb(255, 229, 229, 229),
+          1);
+
+      if (_cachedDisplayMeshWithoutParent != null) {
+        if (Attributes.Selected)
+          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent,
+            Colours.Element2dEdgeSelected,
+            2);
+        else
+          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdge, 1);
+      }
+
+      if (_cachedDisplayNgonMeshWithoutParent != null) {
+        if (Attributes.Selected)
+          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent,
+            Colours.Element2dEdgeSelected,
+            2);
+        else
+          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dEdge, 1);
+      }
+
+      if (_supportNodes == null)
+        return;
+
+      foreach (GsaNodeGoo node in _supportNodes) {
+        if (node.Value.Point.IsValid) {
+          if (!Attributes.Selected) {
+            if (node.Value.Colour != Color.FromArgb(0, 0, 0))
+              args.Display.DrawPoint(node.Value.Point,
+                PointStyle.RoundSimple,
+                3,
+                node.Value.Colour);
+            else {
+              Color col = Colours.Node;
+              args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3, col);
+            }
+
+            if (node.Value._previewSupportSymbol != null)
+              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol, Colours.SupportSymbol);
+            if (node.Value._previewText != null)
+              args.Display.Draw3dText(node.Value._previewText, Colours.Support);
+          }
+          else {
+            args.Display.DrawPoint(node.Value.Point,
+              PointStyle.RoundControlPoint,
+              3,
+              Colours.NodeSelected);
+            if (node.Value._previewSupportSymbol != null)
+              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol,
+                Colours.SupportSymbolSelected);
+            if (node.Value._previewText != null)
+              args.Display.Draw3dText(node.Value._previewText, Colours.NodeSelected);
+          }
+
+          if (!node.Value.IsGlobalAxis()) {
+            args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
+            args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
+            args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+          }
+        }
+      }
+    }
+
+    public void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      _isInitialised = true;
+    }
+
+    public void OutputChanged<T>(T data, int outputIndex, int index) where T : IGH_Goo {
+      if (!ExistingOutputsSerialized.ContainsKey(outputIndex)) {
+        ExistingOutputsSerialized.Add(outputIndex, new List<string>());
+        _outputsAreExpired.Add(outputIndex, new List<bool>());
+      }
+
+      string text;
+      if (data.GetType() == typeof(GH_UnitNumber))
+        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, s_converter);
+      else {
+        object value = data.ScriptVariable();
+        try {
+          text = JsonConvert.SerializeObject(value);
+        }
+        catch (Exception) {
+          text = data.GetHashCode()
+            .ToString();
+        }
+      }
+
+      if (ExistingOutputsSerialized[outputIndex]
+          .Count
+        == index) {
+        ExistingOutputsSerialized[outputIndex]
+          .Add(text);
+        _outputsAreExpired[outputIndex]
+          .Add(item: true);
+      }
+      else if (ExistingOutputsSerialized[outputIndex][index] != text) {
+        ExistingOutputsSerialized[outputIndex][index] = text;
+        _outputsAreExpired[outputIndex][index] = true;
+      }
+      else
+        _outputsAreExpired[outputIndex][index] = false;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      ReadDropDownComponents(ref reader,
+        ref _dropDownItems,
+        ref _selectedItems,
+        ref _spacerDescriptions);
+      _isInitialised = true;
+      UpdateUiFrom_selectedItems();
+      return base.Read(reader);
+    }
+
+    public void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      UpdateUi();
+    }
+
+    public virtual void UpdateUi() {
+      ((IGH_VariableParameterComponent)this).VariableParameterMaintenance();
+      ExpireSolution(recompute: true);
+      Params.OnParametersChanged();
+      OnDisplayExpired(redraw: true);
+    }
+
+    public void UpdateUiFrom_selectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      CreateAttributes();
+      UpdateUi();
+    }
+
+    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      int i = 0;
+      Params.Output[i++]
+        .Name = "Nodes [" + unitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "1D Elements [" + unitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "2D Elements [" + unitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "3D Elements [" + unitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "1D Members [" + unitAbbreviation + "]";
+      Params.Output[i++]
+        .Name = "2D Members [" + unitAbbreviation + "]";
+      Params.Output[i]
+        .Name = "3D Members [" + unitAbbreviation + "]";
+
+      i = 1;
+      for (int j = 1; j < 7; j++)
+        Params.Output[i]
+          .Access = _mode == FoldMode.List
+          ? GH_ParamAccess.list
+          : GH_ParamAccess.tree;
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("Mode", (int)_mode);
+      WriteDropDownComponents(ref writer, _dropDownItems, _selectedItems, _spacerDescriptions);
+
+      return base.Write(writer);
+    }
+
+    internal static void ReadDropDownComponents(
+      ref GH_IReader reader,
+      ref List<List<string>> dropDownItems,
+      ref List<string> selectedItems,
+      ref List<string> spacerDescriptions) {
+      if (reader.GetBoolean("dropdown")) {
+        int dropdownCount = reader.GetInt32("dropdownCount");
+        dropDownItems = new List<List<string>>();
+        for (int i = 0; i < dropdownCount; i++) {
+          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+          var tempcontent = new List<string>();
+          for (int j = 0; j < dropdowncontentsCount; j++)
+            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+          dropDownItems.Add(tempcontent);
+        }
+      }
+      else
+        throw new Exception("Component doesnt have 'dropdown' content stored");
+
+      if (reader.GetBoolean("spacer")) {
+        int dropdownspacerCount = reader.GetInt32("spacerCount");
+        spacerDescriptions = new List<string>();
+        for (int i = 0; i < dropdownspacerCount; i++)
+          spacerDescriptions.Add(reader.GetString("spacercontents" + i));
+      }
+
+      if (!reader.GetBoolean("select"))
+        return;
+
+      int selectionsCount = reader.GetInt32("selectionCount");
+      selectedItems = new List<string>();
+      for (int i = 0; i < selectionsCount; i++)
+        selectedItems.Add(reader.GetString("selectioncontents" + i));
+    }
+
     internal static GH_IWriter WriteDropDownComponents(
-      ref GH_IWriter writer,
+                                                                                                                      ref GH_IWriter writer,
       List<List<string>> dropDownItems,
       List<string> selectedItems,
       List<string> spacerDescriptions) {
@@ -84,58 +395,30 @@ namespace GsaGH.Components {
       return writer;
     }
 
-    internal static void ReadDropDownComponents(
-      ref GH_IReader reader,
-      ref List<List<string>> dropDownItems,
-      ref List<string> selectedItems,
-      ref List<string> spacerDescriptions) {
-      if (reader.GetBoolean("dropdown")) {
-        int dropdownCount = reader.GetInt32("dropdownCount");
-        dropDownItems = new List<List<string>>();
-        for (int i = 0; i < dropdownCount; i++) {
-          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
-          var tempcontent = new List<string>();
-          for (int j = 0; j < dropdowncontentsCount; j++)
-            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
-          dropDownItems.Add(tempcontent);
-        }
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
       }
-      else
-        throw new Exception("Component doesnt have 'dropdown' content stored");
-
-      if (reader.GetBoolean("spacer")) {
-        int dropdownspacerCount = reader.GetInt32("spacerCount");
-        spacerDescriptions = new List<string>();
-        for (int i = 0; i < dropdownspacerCount; i++)
-          spacerDescriptions.Add(reader.GetString("spacercontents" + i));
-      }
-
-      if (!reader.GetBoolean("select"))
-        return;
-
-      int selectionsCount = reader.GetInt32("selectionCount");
-      selectedItems = new List<string>();
-      for (int i = 0; i < selectionsCount; i++)
-        selectedItems.Add(reader.GetString("selectioncontents" + i));
+      Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
+      Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
     }
 
-    #region Name and Ribbon Layout
+    protected override void ExpireDownStreamObjects() {
+      if (AlwaysExpireDownStream) {
+        base.ExpireDownStreamObjects();
+        return;
+      }
 
-    public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
-
-    public GetGeometry() : base("Get Model Geometry",
-      "GetGeo",
-      "Get nodes, elements and members from GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat0()) { }
-
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetGeometry;
-
-    #endregion
-
-    #region Input and output
+      SetExpireDownStream();
+      if (_outputIsExpired.Count > 0) {
+        for (int i = 0; i < Params.Output.Count; i++)
+          if (_outputIsExpired[i])
+            Params.Output[i]
+              .ExpireSolution(recompute: false);
+      }
+      else
+        base.ExpireDownStreamObjects();
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(),
@@ -217,97 +500,6 @@ namespace GsaGH.Components {
         "M3D",
         "3D Members (Design Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.tree);
-    }
-
-    #endregion
-
-    #region solve
-
-    public class SolveResults {
-      internal ConcurrentBag<GsaNodeGoo> Nodes { get; set; }
-      internal ConcurrentBag<GsaNodeGoo> DisplaySupports { get; set; }
-      internal ConcurrentBag<GsaElement1dGoo> Elem1ds { get; set; }
-      internal ConcurrentBag<GsaElement2dGoo> Elem2ds { get; set; }
-      internal ConcurrentBag<GsaElement3dGoo> Elem3ds { get; set; }
-      internal ConcurrentBag<GsaMember1dGoo> Mem1ds { get; set; }
-      internal ConcurrentBag<GsaMember2dGoo> Mem2ds { get; set; }
-      internal ConcurrentBag<GsaMember3dGoo> Mem3ds { get; set; }
-    }
-
-    private SolveResults Compute(
-      ReadOnlyDictionary<int, Node> allnDict,
-      ReadOnlyDictionary<int, Axis> axDict,
-      ReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Element> eDict,
-      ReadOnlyDictionary<int, Member> mDict,
-      ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, Prop2D> pDict,
-      ReadOnlyDictionary<int, Prop3D> p3Dict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
-      Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict) {
-      var results = new SolveResults();
-      var steps = new List<int> {
-        0,
-        1,
-        2,
-      };
-
-      try {
-        Parallel.ForEach(steps,
-          i => {
-            switch (i) {
-              case 0:
-                results.Nodes = Nodes.GetNodes(nDict, _lengthUnit, axDict);
-                results.DisplaySupports
-                  = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
-                break;
-              case 1:
-                Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-                  ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(eDict,
-                  allnDict,
-                  sDict,
-                  pDict,
-                  p3Dict,
-                  matDict,
-                  modDict,
-                  elementLocalAxesDict,
-                  axDict,
-                  _lengthUnit,
-                  false);
-
-                results.Elem1ds = elementTuple.Item1;
-                results.Elem2ds = elementTuple.Item2;
-                results.Elem3ds = elementTuple.Item3;
-                break;
-              case 2:
-                Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-                  ConcurrentBag<GsaMember3dGoo>> memberTuple = Members.GetMembers(mDict,
-                  allnDict,
-                  sDict,
-                  pDict,
-                  p3Dict,
-                  matDict,
-                  modDict,
-                  memberLocalAxesDict,
-                  axDict,
-                  _lengthUnit,
-                  false,
-                  this);
-
-                results.Mem1ds = memberTuple.Item1;
-                results.Mem2ds = memberTuple.Item2;
-                results.Mem3ds = memberTuple.Item3;
-                break;
-            }
-          });
-      }
-      catch (Exception e) {
-        this.AddRuntimeWarning(e.InnerException?.Message);
-      }
-
-      return results;
     }
 
     protected override void SolveInstance(IGH_DataAccess data) {
@@ -584,213 +776,82 @@ namespace GsaGH.Components {
       }
     }
 
-    #endregion
+    private SolveResults Compute(
+                                                                  ReadOnlyDictionary<int, Node> allnDict,
+      ReadOnlyDictionary<int, Axis> axDict,
+      ReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Element> eDict,
+      ReadOnlyDictionary<int, Member> mDict,
+      ReadOnlyDictionary<int, Section> sDict,
+      ReadOnlyDictionary<int, SectionModifier> modDict,
+      ReadOnlyDictionary<int, Prop2D> pDict,
+      ReadOnlyDictionary<int, Prop3D> p3Dict,
+      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
+      Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict) {
+      var results = new SolveResults();
+      var steps = new List<int> {
+        0,
+        1,
+        2,
+      };
 
-    #region custom preview
+      try {
+        Parallel.ForEach(steps,
+          i => {
+            switch (i) {
+              case 0:
+                results.Nodes = Nodes.GetNodes(nDict, _lengthUnit, axDict);
+                results.DisplaySupports
+                  = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
+                break;
 
-    private BoundingBox _boundingBox;
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    private ConcurrentBag<GsaElement3dGoo> _element3ds;
-    private Mesh _cachedDisplayMeshWithParent;
-    private Mesh _cachedDisplayMeshWithoutParent;
-    private Mesh _cachedDisplayNgonMeshWithParent;
-    private Mesh _cachedDisplayNgonMeshWithoutParent;
-    private ConcurrentBag<GsaNodeGoo> _supportNodes;
-    public override BoundingBox ClippingBox => _boundingBox;
+              case 1:
+                Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
+                  ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(eDict,
+                  allnDict,
+                  sDict,
+                  pDict,
+                  p3Dict,
+                  matDict,
+                  modDict,
+                  elementLocalAxesDict,
+                  axDict,
+                  _lengthUnit,
+                  false);
 
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
-      base.DrawViewportMeshes(args);
-      if (Attributes.Selected) {
-        if (_cachedDisplayMeshWithoutParent != null)
-          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent, Colours.Element2dFace);
-        if (_cachedDisplayNgonMeshWithoutParent != null)
-          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dFace);
-      }
-      else {
-        if (_cachedDisplayMeshWithoutParent != null)
-          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent,
-            Colours.Element2dFaceSelected);
-        if (_cachedDisplayNgonMeshWithoutParent != null)
-          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent,
-            Colours.Element2dFaceSelected);
-      }
-    }
+                results.Elem1ds = elementTuple.Item1;
+                results.Elem2ds = elementTuple.Item2;
+                results.Elem3ds = elementTuple.Item3;
+                break;
 
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
+              case 2:
+                Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+                  ConcurrentBag<GsaMember3dGoo>> memberTuple = Members.GetMembers(mDict,
+                  allnDict,
+                  sDict,
+                  pDict,
+                  p3Dict,
+                  matDict,
+                  modDict,
+                  memberLocalAxesDict,
+                  axDict,
+                  _lengthUnit,
+                  false,
+                  this);
 
-      if (_cachedDisplayMeshWithParent != null)
-        args.Display.DrawMeshWires(_cachedDisplayMeshWithParent,
-          Color.FromArgb(255, 229, 229, 229),
-          1);
-
-      if (_cachedDisplayNgonMeshWithParent != null)
-        args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithParent,
-          Color.FromArgb(255, 229, 229, 229),
-          1);
-
-      if (_cachedDisplayMeshWithoutParent != null) {
-        if (Attributes.Selected)
-          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent,
-            Colours.Element2dEdgeSelected,
-            2);
-        else
-          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdge, 1);
-      }
-
-      if (_cachedDisplayNgonMeshWithoutParent != null) {
-        if (Attributes.Selected)
-          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent,
-            Colours.Element2dEdgeSelected,
-            2);
-        else
-          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dEdge, 1);
-      }
-
-      if (_supportNodes == null)
-        return;
-
-      foreach (GsaNodeGoo node in _supportNodes) {
-        if (node.Value.Point.IsValid) {
-          if (!Attributes.Selected) {
-            if (node.Value.Colour != Color.FromArgb(0, 0, 0))
-              args.Display.DrawPoint(node.Value.Point,
-                PointStyle.RoundSimple,
-                3,
-                node.Value.Colour);
-            else {
-              Color col = Colours.Node;
-              args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3, col);
+                results.Mem1ds = memberTuple.Item1;
+                results.Mem2ds = memberTuple.Item2;
+                results.Mem3ds = memberTuple.Item3;
+                break;
             }
-
-            if (node.Value._previewSupportSymbol != null)
-              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol, Colours.SupportSymbol);
-            if (node.Value._previewText != null)
-              args.Display.Draw3dText(node.Value._previewText, Colours.Support);
-          }
-          else {
-            args.Display.DrawPoint(node.Value.Point,
-              PointStyle.RoundControlPoint,
-              3,
-              Colours.NodeSelected);
-            if (node.Value._previewSupportSymbol != null)
-              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol,
-                Colours.SupportSymbolSelected);
-            if (node.Value._previewText != null)
-              args.Display.Draw3dText(node.Value._previewText, Colours.NodeSelected);
-          }
-
-          if (!node.Value.IsGlobalAxis()) {
-            args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
-            args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
-            args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
-          }
-        }
+          });
       }
-    }
-
-    #endregion
-
-    #region custom UI
-
-    public List<List<string>> _dropDownItems;
-
-    public List<string> _selectedItems;
-
-    public List<string> _spacerDescriptions;
-
-    public bool _isInitialised;
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    public override void CreateAttributes() {
-      if (!_isInitialised)
-        InitialiseDropdowns();
-
-      m_attributes = new DropDownComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        _spacerDescriptions);
-    }
-
-    public void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Unit",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      _isInitialised = true;
-    }
-
-    public void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      UpdateUi();
-    }
-
-    public void UpdateUiFrom_selectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
-      CreateAttributes();
-      UpdateUi();
-    }
-
-    public virtual void UpdateUi() {
-      ((IGH_VariableParameterComponent)this).VariableParameterMaintenance();
-      ExpireSolution(recompute: true);
-      Params.OnParametersChanged();
-      OnDisplayExpired(redraw: true);
-    }
-
-    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      int i = 0;
-      Params.Output[i++]
-        .Name = "Nodes [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "1D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "2D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "3D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "1D Members [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Output[i]
-        .Name = "3D Members [" + unitAbbreviation + "]";
-
-      i = 1;
-      for (int j = 1; j < 7; j++)
-        Params.Output[i]
-          .Access = _mode == FoldMode.List
-          ? GH_ParamAccess.list
-          : GH_ParamAccess.tree;
-    }
-
-    #endregion
-
-    #region right-click menu item
-
-    private enum FoldMode {
-      Graft,
-      List,
-    }
-
-    private FoldMode _mode = FoldMode.List;
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
+      catch (Exception e) {
+        this.AddRuntimeWarning(e.InnerException?.Message);
       }
-      Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
-      Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
+
+      return results;
     }
 
     private void GraftModeClicked(object sender, EventArgs e) {
@@ -819,39 +880,6 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    #endregion
-
-    #region expire downstream
-
-    private static readonly OasysUnitsIQuantityJsonConverter s_converter
-      = new OasysUnitsIQuantityJsonConverter();
-
-    public bool AlwaysExpireDownStream;
-
-    public Dictionary<int, List<string>> ExistingOutputsSerialized
-      = new Dictionary<int, List<string>>();
-
-    private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
-
-    private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
-
-    protected override void ExpireDownStreamObjects() {
-      if (AlwaysExpireDownStream) {
-        base.ExpireDownStreamObjects();
-        return;
-      }
-
-      SetExpireDownStream();
-      if (_outputIsExpired.Count > 0) {
-        for (int i = 0; i < Params.Output.Count; i++)
-          if (_outputIsExpired[i])
-            Params.Output[i]
-              .ExpireSolution(recompute: false);
-      }
-      else
-        base.ExpireDownStreamObjects();
-    }
-
     private void SetExpireDownStream() {
       if (_outputsAreExpired == null || _outputsAreExpired.Count <= 0)
         return;
@@ -865,80 +893,5 @@ namespace GsaGH.Components {
         else
           _outputIsExpired.Add(i, value: true);
     }
-
-    public void OutputChanged<T>(T data, int outputIndex, int index) where T : IGH_Goo {
-      if (!ExistingOutputsSerialized.ContainsKey(outputIndex)) {
-        ExistingOutputsSerialized.Add(outputIndex, new List<string>());
-        _outputsAreExpired.Add(outputIndex, new List<bool>());
-      }
-
-      string text;
-      if (data.GetType() == typeof(GH_UnitNumber))
-        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, s_converter);
-      else {
-        object value = data.ScriptVariable();
-        try {
-          text = JsonConvert.SerializeObject(value);
-        }
-        catch (Exception) {
-          text = data.GetHashCode()
-            .ToString();
-        }
-      }
-
-      if (ExistingOutputsSerialized[outputIndex]
-          .Count
-        == index) {
-        ExistingOutputsSerialized[outputIndex]
-          .Add(text);
-        _outputsAreExpired[outputIndex]
-          .Add(item: true);
-      }
-      else if (ExistingOutputsSerialized[outputIndex][index] != text) {
-        ExistingOutputsSerialized[outputIndex][index] = text;
-        _outputsAreExpired[outputIndex][index] = true;
-      }
-      else
-        _outputsAreExpired[outputIndex][index] = false;
-    }
-
-    #endregion
-
-    #region deserialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetInt32("Mode", (int)_mode);
-      WriteDropDownComponents(ref writer, _dropDownItems, _selectedItems, _spacerDescriptions);
-
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      ReadDropDownComponents(ref reader,
-        ref _dropDownItems,
-        ref _selectedItems,
-        ref _spacerDescriptions);
-      _isInitialised = true;
-      UpdateUiFrom_selectedItems();
-      return base.Read(reader);
-    }
-
-    #endregion
-
-    #region variable component null implementation
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-      => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-      => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-      => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-
-    #endregion
   }
 }

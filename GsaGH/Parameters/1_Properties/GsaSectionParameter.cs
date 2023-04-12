@@ -8,18 +8,18 @@ namespace GsaGH.Parameters {
   /// This class provides a parameter interface for the <see cref="GsaSectionGoo"/> type.
   /// </summary>
   public class GsaSectionParameter : GH_OasysPersistentParam<GsaSectionGoo> {
+    public override Guid ComponentGuid => new Guid("8500f335-fad7-46a0-b1be-bdad22ab1474");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override string InstanceDescription => m_data.DataCount == 0
-      ? "Empty " + GsaSectionGoo.Name + " parameter"
+              ? "Empty " + GsaSectionGoo.Name + " parameter"
       : base.InstanceDescription;
     public override string TypeName => SourceCount == 0
       ? GsaSectionGoo.Name
       : base.TypeName;
-    public override Guid ComponentGuid => new Guid("8500f335-fad7-46a0-b1be-bdad22ab1474");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.SectionParam;
 
     public GsaSectionParameter() : base(new GH_InstanceDescription(
-      GsaSectionGoo.Name,
+          GsaSectionGoo.Name,
       GsaSectionGoo.NickName,
       GsaSectionGoo.Description + " parameter",
       CategoryName.Name(),

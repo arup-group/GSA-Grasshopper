@@ -14,28 +14,34 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaGridPlaneSurfaceGoo : GH_OasysGeometricGoo<GsaGridPlaneSurface>,
     IGH_PreviewData {
-    public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
+    public static string Description => "GSA Grid Plane Surface";
     public static string Name => "GridPlaneSurface";
     public static string NickName => "GPS";
-    public static string Description => "GSA Grid Plane Surface";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public override IGH_GeometricGoo Duplicate() => new GsaGridPlaneSurfaceGoo(Value);
 
-    public override GeometryBase GetGeometry() {
-      if (Value?.Plane.Origin == null)
-        return null;
-      Point3d pt1 = Value.Plane.Origin;
-      pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
-      Point3d pt2 = Value.Plane.Origin;
-      pt2.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / -2;
-      var ln = new Line(pt1, pt2);
-      return new LineCurve(ln);
+    public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
+
+    public override bool CastFrom(object source) {
+      // This function is called when Grasshopper needs to convert other data
+      // into GsaGridPlane.
+      if (source == null)
+        return false;
+
+      if (typeof(GsaGridPlaneSurface).IsAssignableFrom(source.GetType())) {
+        Value = (GsaGridPlaneSurface)source;
+        return true;
+      }
+
+      var pln = new Plane();
+      if (!GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both))
+        return false;
+      var gridplane = new GsaGridPlaneSurface(pln);
+      Value = gridplane;
+      return true;
     }
 
-    #region casting methods
-
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this 
+      // This function is called when Grasshopper needs to convert this
       if (base.CastTo<TQ>(ref target))
         return true;
 
@@ -54,54 +60,6 @@ namespace GsaGH.Parameters {
       target = default;
       return false;
     }
-
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaGridPlane.
-      if (source == null)
-        return false;
-
-      if (typeof(GsaGridPlaneSurface).IsAssignableFrom(source.GetType())) {
-        Value = (GsaGridPlaneSurface)source;
-        return true;
-      }
-
-      var pln = new Plane();
-      if (!GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both))
-        return false;
-      var gridplane = new GsaGridPlaneSurface(pln);
-      Value = gridplane;
-      return true;
-
-    }
-
-    #endregion
-
-    #region transformation methods
-
-    public override IGH_GeometricGoo Transform(Transform xform) {
-      if (Value?.Plane == null)
-        return null;
-      GsaGridPlaneSurface dup = Value.Duplicate();
-      Plane pln = dup.Plane;
-      pln.Transform(xform);
-      var gridplane = new GsaGridPlaneSurface(pln);
-      return new GsaGridPlaneSurfaceGoo(gridplane);
-    }
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      if (Value?.Plane == null)
-        return null;
-      GsaGridPlaneSurface dup = Value.Duplicate();
-      Plane pln = dup.Plane;
-      xmorph.Morph(ref pln);
-      var gridplane = new GsaGridPlaneSurface(pln);
-      return new GsaGridPlaneSurfaceGoo(gridplane);
-    }
-
-    #endregion
-
-    #region drawing methods
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
     }
@@ -137,6 +95,37 @@ namespace GsaGH.Parameters {
       }
     }
 
-    #endregion
+    public override IGH_GeometricGoo Duplicate() => new GsaGridPlaneSurfaceGoo(Value);
+
+    public override GeometryBase GetGeometry() {
+      if (Value?.Plane.Origin == null)
+        return null;
+      Point3d pt1 = Value.Plane.Origin;
+      pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
+      Point3d pt2 = Value.Plane.Origin;
+      pt2.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / -2;
+      var ln = new Line(pt1, pt2);
+      return new LineCurve(ln);
+    }
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
+      if (Value?.Plane == null)
+        return null;
+      GsaGridPlaneSurface dup = Value.Duplicate();
+      Plane pln = dup.Plane;
+      xmorph.Morph(ref pln);
+      var gridplane = new GsaGridPlaneSurface(pln);
+      return new GsaGridPlaneSurfaceGoo(gridplane);
+    }
+
+    public override IGH_GeometricGoo Transform(Transform xform) {
+      if (Value?.Plane == null)
+        return null;
+      GsaGridPlaneSurface dup = Value.Duplicate();
+      Plane pln = dup.Plane;
+      pln.Transform(xform);
+      var gridplane = new GsaGridPlaneSurface(pln);
+      return new GsaGridPlaneSurfaceGoo(gridplane);
+    }
   }
 }

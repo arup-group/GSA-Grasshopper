@@ -11,13 +11,46 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaBucklingLengthFactorsTest {
-    [Fact]
-    public void EmptyConstructorTest() {
-      var factors = new GsaBucklingLengthFactors();
 
-      Assert.Null(factors.MomentAmplificationFactorStrongAxis);
-      Assert.Null(factors.MomentAmplificationFactorWeakAxis);
-      Assert.Null(factors.EquivalentUniformMomentFactor);
+    [Fact]
+    public void AssembleWitMemberTest() {
+      var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
+        ApiMember = {
+          MomentAmplificationFactorStrongAxis = 1.5,
+          MomentAmplificationFactorWeakAxis = 2.5,
+          EquivalentUniformMomentFactor = 0.75,
+        },
+      };
+
+      var assembled = new GsaModel {
+        Model = AssembleModel.Assemble(null,
+        null,
+        null,
+        null,
+        null,
+        new List<GsaMember1d>() {
+          m1d,
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        LengthUnit.Meter,
+        Length.Zero,
+        false,
+        null),
+      };
+
+      Member assembledMem1d = assembled.Model.Members()[1];
+
+      Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(0.75, assembledMem1d.EquivalentUniformMomentFactor);
     }
 
     [Theory]
@@ -94,44 +127,12 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void AssembleWitMemberTest() {
-      var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
-        ApiMember = {
-          MomentAmplificationFactorStrongAxis = 1.5,
-          MomentAmplificationFactorWeakAxis = 2.5,
-          EquivalentUniformMomentFactor = 0.75,
-        },
-      };
+    public void EmptyConstructorTest() {
+      var factors = new GsaBucklingLengthFactors();
 
-      var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null,
-        null,
-        null,
-        null,
-        null,
-        new List<GsaMember1d>() {
-          m1d,
-        },
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        LengthUnit.Meter,
-        Length.Zero,
-        false,
-        null),
-      };
-
-      Member assembledMem1d = assembled.Model.Members()[1];
-
-      Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(0.75, assembledMem1d.EquivalentUniformMomentFactor);
+      Assert.Null(factors.MomentAmplificationFactorStrongAxis);
+      Assert.Null(factors.MomentAmplificationFactorWeakAxis);
+      Assert.Null(factors.EquivalentUniformMomentFactor);
     }
   }
 }

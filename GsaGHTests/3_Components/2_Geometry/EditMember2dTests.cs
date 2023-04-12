@@ -13,6 +13,7 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditMember2dTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditMember2d();
       comp.CreateAttributes();

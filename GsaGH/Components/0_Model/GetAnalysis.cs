@@ -14,35 +14,17 @@ namespace GsaGH.Components {
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   public class GetAnalysis : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
-        return;
-
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
-
-      da.SetDataList(0, tuple.Item1);
-      da.SetDataList(1, tuple.Item2);
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("566a94d2-a022-4f12-a645-0366deb1476c");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAnalysisTask;
 
     public GetAnalysis() : base("Get Model Analysis Tasks",
-      "GetAnalysisTasks",
+          "GetAnalysisTasks",
       "Get Analysis Tasks and their Cases from GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0())
       => Hidden = true;
-
-    #endregion
-
-    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddParameter(new GsaModelParameter(),
@@ -64,6 +46,16 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaModel = new GsaModel();
+      if (!da.GetData(0, ref gsaModel))
+        return;
+
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
+        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
+
+      da.SetDataList(0, tuple.Item1);
+      da.SetDataList(1, tuple.Item2);
+    }
   }
 }

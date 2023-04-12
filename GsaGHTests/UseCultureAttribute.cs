@@ -13,6 +13,14 @@ using Xunit.Sdk;
   AllowMultiple = false,
   Inherited = true)]
 public class UseCultureAttribute : BeforeAfterTestAttribute {
+  /// <summary>
+  ///   Gets the culture.
+  /// </summary>
+  public CultureInfo Culture => _culture.Value;
+  /// <summary>
+  ///   Gets the UI culture.
+  /// </summary>
+  public CultureInfo UiCulture => _uiCulture.Value;
   private readonly Lazy<CultureInfo> _culture;
   private readonly Lazy<CultureInfo> _uiCulture;
   private CultureInfo _originalCulture;
@@ -43,14 +51,17 @@ public class UseCultureAttribute : BeforeAfterTestAttribute {
   }
 
   /// <summary>
-  ///   Gets the culture.
+  ///   Restores the original <see cref="CultureInfo.CurrentCulture" /> and
+  ///   <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />
   /// </summary>
-  public CultureInfo Culture => _culture.Value;
+  /// <param name="methodUnderTest">The method under test</param>
+  public override void After(MethodInfo methodUnderTest) {
+    Thread.CurrentThread.CurrentCulture = _originalCulture;
+    Thread.CurrentThread.CurrentUICulture = _originalUiCulture;
 
-  /// <summary>
-  ///   Gets the UI culture.
-  /// </summary>
-  public CultureInfo UiCulture => _uiCulture.Value;
+    CultureInfo.CurrentCulture.ClearCachedData();
+    CultureInfo.CurrentUICulture.ClearCachedData();
+  }
 
   /// <summary>
   ///   Stores the current <see cref="Thread.CurrentPrincipal" />
@@ -64,19 +75,6 @@ public class UseCultureAttribute : BeforeAfterTestAttribute {
 
     Thread.CurrentThread.CurrentCulture = Culture;
     Thread.CurrentThread.CurrentUICulture = UiCulture;
-
-    CultureInfo.CurrentCulture.ClearCachedData();
-    CultureInfo.CurrentUICulture.ClearCachedData();
-  }
-
-  /// <summary>
-  ///   Restores the original <see cref="CultureInfo.CurrentCulture" /> and
-  ///   <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />
-  /// </summary>
-  /// <param name="methodUnderTest">The method under test</param>
-  public override void After(MethodInfo methodUnderTest) {
-    Thread.CurrentThread.CurrentCulture = _originalCulture;
-    Thread.CurrentThread.CurrentUICulture = _originalUiCulture;
 
     CultureInfo.CurrentCulture.ClearCachedData();
     CultureInfo.CurrentUICulture.ClearCachedData();

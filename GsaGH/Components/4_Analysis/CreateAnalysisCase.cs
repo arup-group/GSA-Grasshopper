@@ -12,34 +12,18 @@ namespace GsaGH.Components {
   ///   Component to create a GSA Analysis Case
   /// </summary>
   public class CreateAnalysisCase : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      string name = "";
-      da.GetData(0, ref name);
-
-      string desc = "";
-      da.GetData(1, ref desc);
-
-      da.SetData(0, new GsaAnalysisCaseGoo(new GsaAnalysisCase(name, desc)));
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("75bf9454-92c4-4a3c-8abf-75f1d449bb85");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisCase;
 
     public CreateAnalysisCase() : base(
-      "Create " + GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty),
+          "Create " + GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty),
       GsaAnalysisCaseGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisCaseGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat4())
       => Hidden = true;
-
-    #endregion
-
-    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
@@ -56,6 +40,14 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaAnalysisCaseParameter());
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      string name = "";
+      da.GetData(0, ref name);
+
+      string desc = "";
+      da.GetData(1, ref desc);
+
+      da.SetData(0, new GsaAnalysisCaseGoo(new GsaAnalysisCase(name, desc)));
+    }
   }
 }

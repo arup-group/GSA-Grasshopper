@@ -15,6 +15,7 @@ using Xunit;
 namespace GsaGHTests.Properties {
   [Collection("GrasshopperFixture collection")]
   public class EditProp2dTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new EditProp2d();
       comp.CreateAttributes();
@@ -52,6 +53,15 @@ namespace GsaGHTests.Properties {
       Assert.Equal("", name.Value);
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal("Shell", type.Value);
+    }
+
+    [Fact]
+    public void SetPlaneFromNewComponent() {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
+      var axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
     }
 
     [Fact]
@@ -120,15 +130,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal("MyPropediprop", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
       Assert.Equal("Load Panel", type.Value);
-    }
-
-    [Fact]
-    public void SetPlaneFromNewComponent() {
-      GH_OasysComponent comp = ComponentMother();
-
-      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
-      var axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
-      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
     }
   }
 }

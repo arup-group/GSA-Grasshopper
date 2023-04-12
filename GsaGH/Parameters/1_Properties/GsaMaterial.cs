@@ -33,24 +33,6 @@ namespace GsaGH.Parameters {
       Barmat = 65280,
     }
 
-    #region fields
-    private int _grade = 1;
-    private Guid _guid = Guid.NewGuid();
-    private int _analProp = 0;
-    private AnalysisMaterial _analysisMaterial;
-    #endregion
-
-    #region properties
-    public MatType MaterialType { get; set; } = MatType.Undef;
-    public int GradeProperty {
-      get => _grade;
-      set {
-        _grade = value;
-        if (_grade > 0)
-          _analProp = 0;
-        _guid = Guid.NewGuid();
-      }
-    }
     public int AnalysisProperty {
       get => _analProp;
       set {
@@ -63,7 +45,17 @@ namespace GsaGH.Parameters {
         _grade = 0;
       }
     }
+    public int GradeProperty {
+      get => _grade;
+      set {
+        _grade = value;
+        if (_grade > 0)
+          _analProp = 0;
+        _guid = Guid.NewGuid();
+      }
+    }
     public Guid Guid => _guid;
+    public MatType MaterialType { get; set; } = MatType.Undef;
     internal AnalysisMaterial AnalysisMaterial {
       get => _analysisMaterial;
       set {
@@ -71,9 +63,11 @@ namespace GsaGH.Parameters {
         _guid = Guid.NewGuid();
       }
     }
-    #endregion
+    private int _analProp = 0;
+    private AnalysisMaterial _analysisMaterial;
+    private int _grade = 1;
+    private Guid _guid = Guid.NewGuid();
 
-    #region constructors
     public GsaMaterial() {
     }
 
@@ -128,9 +122,7 @@ namespace GsaGH.Parameters {
       }
       CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty, prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
-    #endregion
 
-    #region methods
     public GsaMaterial Duplicate() {
       var dup = new GsaMaterial {
         MaterialType = MaterialType,
@@ -157,6 +149,46 @@ namespace GsaGH.Parameters {
       return (id + type).Trim();
     }
 
+    private static MatType GetType(MaterialType materialType) {
+      MatType mType = MatType.Undef;
+
+      switch (materialType) {
+        case GsaAPI.MaterialType.GENERIC:
+          mType = MatType.Generic;
+          break;
+
+        case GsaAPI.MaterialType.STEEL:
+          mType = MatType.Steel;
+          break;
+
+        case GsaAPI.MaterialType.CONCRETE:
+          mType = MatType.Concrete;
+          break;
+
+        case GsaAPI.MaterialType.TIMBER:
+          mType = MatType.Timber;
+          break;
+
+        case GsaAPI.MaterialType.ALUMINIUM:
+          mType = MatType.Aluminium;
+          break;
+
+        case GsaAPI.MaterialType.FRP:
+          mType = MatType.Frp;
+          break;
+
+        case GsaAPI.MaterialType.GLASS:
+          mType = MatType.Glass;
+          break;
+
+        case GsaAPI.MaterialType.FABRIC:
+          mType = MatType.Fabric;
+          break;
+      }
+
+      return mType;
+    }
+
     private void CreateFromApiObject(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial) {
       MaterialType = GetType(materialType);
       GradeProperty = gradeProp;
@@ -173,39 +205,5 @@ namespace GsaGH.Parameters {
         PoissonsRatio = analysisMaterial.PoissonsRatio
       };
     }
-
-    private static MatType GetType(MaterialType materialType) {
-      MatType mType = MatType.Undef;
-
-      switch (materialType) {
-        case GsaAPI.MaterialType.GENERIC:
-          mType = MatType.Generic;
-          break;
-        case GsaAPI.MaterialType.STEEL:
-          mType = MatType.Steel;
-          break;
-        case GsaAPI.MaterialType.CONCRETE:
-          mType = MatType.Concrete;
-          break;
-        case GsaAPI.MaterialType.TIMBER:
-          mType = MatType.Timber;
-          break;
-        case GsaAPI.MaterialType.ALUMINIUM:
-          mType = MatType.Aluminium;
-          break;
-        case GsaAPI.MaterialType.FRP:
-          mType = MatType.Frp;
-          break;
-        case GsaAPI.MaterialType.GLASS:
-          mType = MatType.Glass;
-          break;
-        case GsaAPI.MaterialType.FABRIC:
-          mType = MatType.Fabric;
-          break;
-      }
-
-      return mType;
-    }
-    #endregion
   }
 }

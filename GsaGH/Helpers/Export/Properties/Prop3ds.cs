@@ -5,6 +5,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Prop3ds {
+
     internal static int AddProp3d(GsaProp3d prop, ref GsaGuidDictionary<Prop3D> apiProp3d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       Materials.AddMaterial(ref prop, ref apiMaterials);
 

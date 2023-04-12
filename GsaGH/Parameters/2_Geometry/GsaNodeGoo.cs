@@ -16,36 +16,44 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaNodeGoo : GH_OasysGeometricGoo<GsaNode>,
     IGH_PreviewData {
+    public static string Description => "GSA Node";
+    public static string Name => "Node";
+    public static string NickName => "No";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaNodeGoo(GsaNode item) : base(item) { }
 
     internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null)
-      => Value = duplicate
+                                      => Value = duplicate
         ? item.Duplicate()
         : item;
 
-    public static string Name => "Node";
-    public static string NickName => "No";
-    public static string Description => "GSA Node";
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public override bool CastFrom(object source) {
+      // This function is called when Grasshopper needs to convert other data
+      // into GsaNode.
+      if (source == null)
+        return false;
 
-    public override IGH_GeometricGoo Duplicate() => new GsaNodeGoo(Value);
+      if (base.CastFrom(source))
+        return true;
 
-    public override GeometryBase GetGeometry() {
-      if (Value?.Point == null)
-        return null;
-      Point3d pt1 = Value.Point;
-      pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
-      Point3d pt2 = Value.Point;
-      pt2.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / -2;
-      var ln = new Line(pt1, pt2);
-      return new LineCurve(ln);
+      if (typeof(Node).IsAssignableFrom(source.GetType())) {
+        Value = new GsaNode {
+          ApiNode = (Node)source,
+        };
+        return true;
+      }
+
+      var pt = new Point3d();
+      if (!GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both))
+        return false;
+      Value = new GsaNode(pt);
+      return true;
     }
 
-    #region casting methods
-
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaNode into some other type Q.            
+      // This function is called when Grasshopper needs to convert this
+      // instance of GsaNode into some other type Q.
       if (base.CastTo(ref target))
         return true;
 
@@ -88,44 +96,6 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaNode.
-      if (source == null)
-        return false;
-
-      if (base.CastFrom(source))
-        return true;
-
-      if (typeof(Node).IsAssignableFrom(source.GetType())) {
-        Value = new GsaNode {
-          ApiNode = (Node)source,
-        };
-        return true;
-      }
-
-      var pt = new Point3d();
-      if (!GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both))
-        return false;
-      Value = new GsaNode(pt);
-      return true;
-
-    }
-
-    #endregion
-
-    #region transformation methods
-
-    public override IGH_GeometricGoo Transform(Transform xform)
-      => new GsaNodeGoo(Value.Transform(xform));
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaNodeGoo(Value.Morph(xmorph));
-
-    #endregion
-
-    #region drawing methods
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
     }
 
@@ -166,6 +136,23 @@ namespace GsaGH.Parameters {
       }
     }
 
-    #endregion
+    public override IGH_GeometricGoo Duplicate() => new GsaNodeGoo(Value);
+
+    public override GeometryBase GetGeometry() {
+      if (Value?.Point == null)
+        return null;
+      Point3d pt1 = Value.Point;
+      pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
+      Point3d pt2 = Value.Point;
+      pt2.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / -2;
+      var ln = new Line(pt1, pt2);
+      return new LineCurve(ln);
+    }
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+      => new GsaNodeGoo(Value.Morph(xmorph));
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaNodeGoo(Value.Transform(xform));
   }
 }

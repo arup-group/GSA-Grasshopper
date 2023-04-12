@@ -4,6 +4,7 @@ using Xunit;
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaBool6GooTest {
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

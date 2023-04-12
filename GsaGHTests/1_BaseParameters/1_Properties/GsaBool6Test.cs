@@ -10,88 +10,6 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaBool6Test {
-    [Theory]
-    [InlineData(true,
-      true,
-      true,
-      true,
-      true,
-      true)]
-    [InlineData(false,
-      false,
-      false,
-      false,
-      false,
-      false)]
-    public void ConstructorTest(
-      bool x,
-      bool y,
-      bool z,
-      bool xx,
-      bool yy,
-      bool zz) {
-
-      var b6 = new GsaBool6(x,
-        y,
-        z,
-        xx,
-        yy,
-        zz);
-
-      Assert.Equal(x, b6.X);
-      Assert.Equal(y, b6.Y);
-      Assert.Equal(z, b6.Z);
-      Assert.Equal(xx, b6.Xx);
-      Assert.Equal(yy, b6.Yy);
-      Assert.Equal(zz, b6.Zz);
-    }
-
-    [Theory]
-    [InlineData(true,
-      true,
-      true,
-      true,
-      true,
-      true)]
-    [InlineData(false,
-      false,
-      false,
-      false,
-      false,
-      false)]
-    public void DuplicateTest(
-      bool x,
-      bool y,
-      bool z,
-      bool xx,
-      bool yy,
-      bool zz) {
-
-      var original = new GsaBool6(x,
-        y,
-        z,
-        xx,
-        yy,
-        zz);
-
-      GsaBool6 duplicate = original.Duplicate();
-
-      _ = Duplicates.AreEqual(original, duplicate);
-
-      duplicate.X = false;
-      duplicate.Y = true;
-      duplicate.Z = false;
-      duplicate.Xx = true;
-      duplicate.Yy = false;
-      duplicate.Zz = true;
-
-      Assert.Equal(x, original.X);
-      Assert.Equal(y, original.Y);
-      Assert.Equal(z, original.Z);
-      Assert.Equal(xx, original.Xx);
-      Assert.Equal(yy, original.Yy);
-      Assert.Equal(zz, original.Zz);
-    }
 
     [Fact]
     public void AssembleWithElementTest() {
@@ -193,6 +111,87 @@ namespace GsaGHTests.Parameters {
 
       _ = Duplicates.AreEqual(m1d.ReleaseStart, startAssembled);
       _ = Duplicates.AreEqual(m1d.ReleaseEnd, endAssembled);
+    }
+
+    [Theory]
+    [InlineData(true,
+      true,
+      true,
+      true,
+      true,
+      true)]
+    [InlineData(false,
+      false,
+      false,
+      false,
+      false,
+      false)]
+    public void ConstructorTest(
+      bool x,
+      bool y,
+      bool z,
+      bool xx,
+      bool yy,
+      bool zz) {
+      var b6 = new GsaBool6(x,
+        y,
+        z,
+        xx,
+        yy,
+        zz);
+
+      Assert.Equal(x, b6.X);
+      Assert.Equal(y, b6.Y);
+      Assert.Equal(z, b6.Z);
+      Assert.Equal(xx, b6.Xx);
+      Assert.Equal(yy, b6.Yy);
+      Assert.Equal(zz, b6.Zz);
+    }
+
+    [Theory]
+    [InlineData(true,
+      true,
+      true,
+      true,
+      true,
+      true)]
+    [InlineData(false,
+      false,
+      false,
+      false,
+      false,
+      false)]
+    public void DuplicateTest(
+      bool x,
+      bool y,
+      bool z,
+      bool xx,
+      bool yy,
+      bool zz) {
+      var original = new GsaBool6(x,
+        y,
+        z,
+        xx,
+        yy,
+        zz);
+
+      GsaBool6 duplicate = original.Duplicate();
+
+      _ = Duplicates.AreEqual(original, duplicate);
+
+      duplicate.X = false;
+      duplicate.Y = true;
+      duplicate.Z = false;
+      duplicate.Xx = true;
+      duplicate.Yy = false;
+      duplicate.Zz = true;
+
+      Assert.Equal(x, original.X);
+      Assert.Equal(y, original.Y);
+      Assert.Equal(z, original.Z);
+      Assert.Equal(xx, original.Xx);
+      Assert.Equal(yy, original.Yy);
+      Assert.Equal(zz, original.Zz);
     }
   }
 }

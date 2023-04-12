@@ -21,6 +21,160 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class CreateGridAreaLoad : GH_OasysDropDownComponent {
+    private enum ExpansionType {
+      UseGpsSettings = 0,
+      To1D = 1,
+      To2D = 2,
+    }
+
+    public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.AreaLoad;
+    private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
+    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+
+    public CreateGridAreaLoad() : base("Create Grid Area Load",
+                  "AreaLoad",
+      "Create GSA Grid Area Load",
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
+      => Hidden = true;
+
+    public override bool Read(GH_IReader reader) {
+      //for obsolete string written value
+      try {
+        _expansionType = reader.TryGetEnum("Mode", typeof(ExpansionType), out int value)
+          ? (ExpansionType)value
+          : (ExpansionType)reader.GetInt32("Mode");
+      }
+      catch {
+        this.AddRuntimeError("Can't parse Mode field to the ExpansionType enum.");
+      }
+
+      return base.Read(reader);
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[i]);
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
+      Params.Input[7]
+        .Name = "Value [" + unitAbbreviation + "]";
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("Mode", (int)_expansionType);
+      return base.Write(writer);
+    }
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+      bool noGps = Params.Input[2].SourceCount == 0;
+      Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGps, !noGps, _expansionType == ExpansionType.UseGpsSettings);
+      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, noGps, _expansionType == ExpansionType.To1D);
+      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, noGps, _expansionType == ExpansionType.To2D);
+    }
+
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      UpdateMessage();
+    }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      _selectedItems.Add(Pressure.GetAbbreviation(_forcePerAreaUnit));
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
+
+      pManager.AddIntegerParameter("Load case",
+        "LC",
+        "Load case number (default 1)",
+        GH_ParamAccess.item,
+        1);
+      pManager.AddBrepParameter("Brep",
+        "B",
+        "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Grid Plane Surface",
+        "GPS",
+        "Grid Plane Surface or Plane (optional). If no input here then the brep's best-fit plane will be used",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Direction",
+        "Di",
+        "Load direction (default z)."
+        + Environment.NewLine
+        + "Accepted inputs are:"
+        + Environment.NewLine
+        + "x"
+        + Environment.NewLine
+        + "y"
+        + Environment.NewLine
+        + "z",
+        GH_ParamAccess.item,
+        "z");
+      pManager.AddIntegerParameter("Axis",
+        "Ax",
+        "Load axis (default Global). "
+        + Environment.NewLine
+        + "Accepted inputs are:"
+        + Environment.NewLine
+        + "0 : Global"
+        + Environment.NewLine
+        + "-1 : Local",
+        GH_ParamAccess.item,
+        0);
+      pManager.AddBooleanParameter("Projected",
+        "Pj",
+        "Projected (default not)",
+        GH_ParamAccess.item,
+        false);
+      pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Value [" + unitAbbreviation + "]",
+        "V",
+        "Load Value",
+        GH_ParamAccess.item);
+
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager[5]
+        .Optional = true;
+      pManager[6]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaLoadParameter(),
+        "Grid Area Load",
+        "Ld",
+        "GSA Grid Area Load",
+        GH_ParamAccess.item);
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var gridareaload = new GsaGridAreaLoad();
       int loadCase = 1;
@@ -51,6 +205,7 @@ namespace GsaGH.Components {
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             planeSet = true;
             break;
+
           default: {
               if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
                 gridareaload.GridAreaLoad.GridSurface = id;
@@ -127,6 +282,7 @@ namespace GsaGH.Components {
           case ExpansionType.To1D:
             gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
             break;
+
           case ExpansionType.To2D:
             gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
             break;
@@ -151,6 +307,7 @@ namespace GsaGH.Components {
         case "X":
           direc = Direction.X;
           break;
+
         case "Y":
           direc = Direction.Y;
           break;
@@ -182,167 +339,9 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.AreaLoad;
-
-    public CreateGridAreaLoad() : base("Create Grid Area Load",
-      "AreaLoad",
-      "Create GSA Grid Area Load",
-      CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
-
-    #endregion
-
-    #region input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
-
-      pManager.AddIntegerParameter("Load case",
-        "LC",
-        "Load case number (default 1)",
-        GH_ParamAccess.item,
-        1);
-      pManager.AddBrepParameter("Brep",
-        "B",
-        "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Grid Plane Surface",
-        "GPS",
-        "Grid Plane Surface or Plane (optional). If no input here then the brep's best-fit plane will be used",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Direction",
-        "Di",
-        "Load direction (default z)."
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "x"
-        + Environment.NewLine
-        + "y"
-        + Environment.NewLine
-        + "z",
-        GH_ParamAccess.item,
-        "z");
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Load axis (default Global). "
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "0 : Global"
-        + Environment.NewLine
-        + "-1 : Local",
-        GH_ParamAccess.item,
-        0);
-      pManager.AddBooleanParameter("Projected",
-        "Pj",
-        "Projected (default not)",
-        GH_ParamAccess.item,
-        false);
-      pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Value [" + unitAbbreviation + "]",
-        "V",
-        "Load Value",
-        GH_ParamAccess.item);
-
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager[5]
-        .Optional = true;
-      pManager[6]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Grid Area Load",
-        "Ld",
-        "GSA Grid Area Load",
-        GH_ParamAccess.item);
-
-    #endregion
-
-    #region Custom UI
-
-    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
-
-    private enum ExpansionType {
-      UseGpsSettings = 0,
-      To1D = 1,
-      To2D = 2,
-    }
-
-    private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
-
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-      UpdateMessage();
-    }
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Unit",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
-      _selectedItems.Add(Pressure.GetAbbreviation(_forcePerAreaUnit));
-
-      _isInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[i]);
-      base.UpdateUI();
-    }
-
     protected override void UpdateUIFromSelectedItems() {
       _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
-      Params.Input[7]
-        .Name = "Value [" + unitAbbreviation + "]";
-    }
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
-      }
-      bool noGps = Params.Input[2].SourceCount == 0;
-      Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGps, !noGps, _expansionType == ExpansionType.UseGpsSettings);
-      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, noGps, _expansionType == ExpansionType.To1D);
-      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, noGps, _expansionType == ExpansionType.To2D);
-    }
-
-    private void UpdateMessage()
-      => Message = "Expansion: "
-        + _expansionType.ToString()
-          .Replace("_", " ");
-
-    private void SetUseGps(object s, EventArgs e) {
-      _expansionType = ExpansionType.UseGpsSettings;
-      UpdateMessage();
-      base.UpdateUI();
     }
 
     private void SetUse1D(object s, EventArgs e) {
@@ -357,29 +356,15 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    #endregion
-
-    #region deserialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetInt32("Mode", (int)_expansionType);
-      return base.Write(writer);
+    private void SetUseGps(object s, EventArgs e) {
+      _expansionType = ExpansionType.UseGpsSettings;
+      UpdateMessage();
+      base.UpdateUI();
     }
 
-    public override bool Read(GH_IReader reader) {
-      //for obsolete string written value
-      try {
-        _expansionType = reader.TryGetEnum("Mode", typeof(ExpansionType), out int value)
-          ? (ExpansionType)value
-          : (ExpansionType)reader.GetInt32("Mode");
-      }
-      catch {
-        this.AddRuntimeError("Can't parse Mode field to the ExpansionType enum.");
-      }
-
-      return base.Read(reader);
-    }
-
-    #endregion
+    private void UpdateMessage()
+                  => Message = "Expansion: "
+        + _expansionType.ToString()
+          .Replace("_", " ");
   }
 }

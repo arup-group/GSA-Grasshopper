@@ -3,28 +3,142 @@ using GsaAPI;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  #region internal load classes
+  public class GsaBeamLoad {
+    public BeamLoad BeamLoad { get; set; }
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
 
-  /// <summary>
-  ///   When referencing load by GsaGH object through Guid, use this to set the type of object
-  /// </summary>
-  internal enum ReferenceType {
-    None,
-    Section,
-    Prop2d,
-    Prop3d,
-    Element,
-    Member,
-    List
+    public GsaBeamLoad()
+                  => BeamLoad = new BeamLoad {
+                    Type = BeamLoadType.UNIFORM,
+                  };
+
+    public GsaBeamLoad Duplicate() {
+      var dup = new GsaBeamLoad {
+        BeamLoad = {
+          AxisProperty = BeamLoad.AxisProperty,
+          Case = BeamLoad.Case,
+          Direction = BeamLoad.Direction,
+          Elements = BeamLoad.Elements.ToString(),
+          Name = BeamLoad.Name.ToString(),
+          IsProjected = BeamLoad.IsProjected,
+          Type = BeamLoad.Type,
+        },
+      };
+      switch (BeamLoad.Type) {
+        case BeamLoadType.POINT:
+          dup.BeamLoad.SetPosition(0, BeamLoad.Position(0));
+          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
+          break;
+
+        case BeamLoadType.UNIFORM:
+          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
+          break;
+
+        case BeamLoadType.LINEAR:
+          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
+          dup.BeamLoad.SetValue(1, BeamLoad.Value(1));
+          break;
+
+        case BeamLoadType.PATCH:
+          dup.BeamLoad.SetPosition(0, BeamLoad.Position(0));
+          dup.BeamLoad.SetPosition(1, BeamLoad.Position(1));
+          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
+          dup.BeamLoad.SetValue(1, BeamLoad.Value(1));
+          break;
+
+        case BeamLoadType.TRILINEAR:
+          dup.BeamLoad.SetPosition(0, BeamLoad.Position(0));
+          dup.BeamLoad.SetPosition(1, BeamLoad.Position(1));
+          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
+          dup.BeamLoad.SetValue(1, BeamLoad.Value(1));
+          break;
+      }
+
+      if (_referenceType == ReferenceType.None)
+        return dup;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
+
+      return dup;
+    }
+  }
+
+  public class GsaFaceLoad {
+    public FaceLoad FaceLoad { get; set; }
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
+
+    public GsaFaceLoad()
+                  => FaceLoad = new FaceLoad {
+                    Type = FaceLoadType.CONSTANT,
+                  };
+
+    public GsaFaceLoad Duplicate() {
+      var dup = new GsaFaceLoad {
+        FaceLoad = {
+          AxisProperty = FaceLoad.AxisProperty,
+          Case = FaceLoad.Case,
+          Direction = FaceLoad.Direction,
+          Elements = FaceLoad.Elements.ToString(),
+          Name = FaceLoad.Name.ToString(),
+          Type = FaceLoad.Type,
+        },
+      };
+      switch (FaceLoad.Type) {
+        case FaceLoadType.CONSTANT:
+          dup.FaceLoad.IsProjected = FaceLoad.IsProjected;
+          dup.FaceLoad.SetValue(0, FaceLoad.Value(0));
+          break;
+
+        case FaceLoadType.GENERAL:
+          dup.FaceLoad.IsProjected = FaceLoad.IsProjected;
+          dup.FaceLoad.SetValue(0, FaceLoad.Value(0));
+          dup.FaceLoad.SetValue(1, FaceLoad.Value(1));
+          dup.FaceLoad.SetValue(2, FaceLoad.Value(2));
+          dup.FaceLoad.SetValue(3, FaceLoad.Value(3));
+          break;
+
+        case FaceLoadType.POINT:
+          dup.FaceLoad.IsProjected = FaceLoad.IsProjected;
+          dup.FaceLoad.SetValue(0, FaceLoad.Value(0));
+          dup.FaceLoad.Position = FaceLoad.Position; // todo
+          //note Vector2 currently only get in GsaAPI
+          // duplicate Position.X and Position.Y when fixed
+          break;
+      }
+
+      if (_referenceType == ReferenceType.None)
+        return dup;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
+
+      return dup;
+    }
   }
 
   /// <summary>
   ///   Individual load type classes holding GsaAPI load type along with any required geometry objects
   /// </summary>
   public class GsaGravityLoad {
+    public GravityLoad GravityLoad { get; set; } = new GravityLoad();
     internal ReferenceType _referenceType = ReferenceType.None;
-    internal Guid _refObjectGuid;
     internal GsaList _refList;
+    internal Guid _refObjectGuid;
 
     public GsaGravityLoad() {
       GravityLoad.Factor = new Vector3() {
@@ -36,8 +150,6 @@ namespace GsaGH.Parameters {
       GravityLoad.Elements = "all";
       GravityLoad.Nodes = "all";
     }
-
-    public GravityLoad GravityLoad { get; set; } = new GravityLoad();
 
     public GsaGravityLoad Duplicate() {
       var dup = new GsaGravityLoad {
@@ -64,188 +176,25 @@ namespace GsaGH.Parameters {
     }
   }
 
-  public class GsaNodeLoad {
-    public enum NodeLoadTypes // direct copy from GSA API enums
-    {
-      NodeLoad = 0,
-      AppliedDisp = 1,
-      Settlement = 2,
-      Gravity = 3,
-      NumTypes = 4,
-    }
-
-    internal Point3d _refPoint = Point3d.Unset;
-    internal GsaList _refList;
-    public NodeLoadTypes Type;
-
-    public GsaNodeLoad() => Type = NodeLoadTypes.NodeLoad;
-
-    public NodeLoad NodeLoad { get; set; } = new NodeLoad();
-
-    public GsaNodeLoad Duplicate() {
-      var dup = new GsaNodeLoad {
-        NodeLoad = {
-          AxisProperty = NodeLoad.AxisProperty,
-          Case = NodeLoad.Case,
-          Direction = NodeLoad.Direction,
-          Nodes = NodeLoad.Nodes.ToString(),
-          Name = NodeLoad.Name.ToString(),
-          Value = NodeLoad.Value,
-        },
-        Type = Type,
-      };
-      if (_refPoint != Point3d.Unset)
-        dup._refPoint = new Point3d(_refPoint);
-      if (_refList != null) {
-        dup._refList = _refList.Duplicate();
-      }
-      return dup;
-    }
-  }
-
-  public class GsaBeamLoad {
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal Guid _refObjectGuid;
-    internal GsaList _refList;
-
-    public GsaBeamLoad()
-      => BeamLoad = new BeamLoad {
-        Type = BeamLoadType.UNIFORM,
-      };
-
-    public BeamLoad BeamLoad { get; set; }
-
-    public GsaBeamLoad Duplicate() {
-      var dup = new GsaBeamLoad {
-        BeamLoad = {
-          AxisProperty = BeamLoad.AxisProperty,
-          Case = BeamLoad.Case,
-          Direction = BeamLoad.Direction,
-          Elements = BeamLoad.Elements.ToString(),
-          Name = BeamLoad.Name.ToString(),
-          IsProjected = BeamLoad.IsProjected,
-          Type = BeamLoad.Type,
-        },
-      };
-      switch (BeamLoad.Type) {
-        case BeamLoadType.POINT:
-          dup.BeamLoad.SetPosition(0, BeamLoad.Position(0));
-          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
-          break;
-        case BeamLoadType.UNIFORM:
-          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
-          break;
-        case BeamLoadType.LINEAR:
-          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
-          dup.BeamLoad.SetValue(1, BeamLoad.Value(1));
-          break;
-        case BeamLoadType.PATCH:
-          dup.BeamLoad.SetPosition(0, BeamLoad.Position(0));
-          dup.BeamLoad.SetPosition(1, BeamLoad.Position(1));
-          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
-          dup.BeamLoad.SetValue(1, BeamLoad.Value(1));
-          break;
-        case BeamLoadType.TRILINEAR:
-          dup.BeamLoad.SetPosition(0, BeamLoad.Position(0));
-          dup.BeamLoad.SetPosition(1, BeamLoad.Position(1));
-          dup.BeamLoad.SetValue(0, BeamLoad.Value(0));
-          dup.BeamLoad.SetValue(1, BeamLoad.Value(1));
-          break;
-      }
-
-      if (_referenceType == ReferenceType.None)
-        return dup;
-      if (_referenceType == ReferenceType.List) {
-        dup._referenceType = ReferenceType.List;
-        dup._refList = _refList.Duplicate();
-      }
-      else {
-        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-        dup._referenceType = _referenceType;
-      }
-
-      return dup;
-    }
-  }
-
-  public class GsaFaceLoad {
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal Guid _refObjectGuid;
-    internal GsaList _refList;
-
-    public GsaFaceLoad()
-      => FaceLoad = new FaceLoad {
-        Type = FaceLoadType.CONSTANT,
-      };
-
-    public FaceLoad FaceLoad { get; set; }
-
-    public GsaFaceLoad Duplicate() {
-      var dup = new GsaFaceLoad {
-        FaceLoad = {
-          AxisProperty = FaceLoad.AxisProperty,
-          Case = FaceLoad.Case,
-          Direction = FaceLoad.Direction,
-          Elements = FaceLoad.Elements.ToString(),
-          Name = FaceLoad.Name.ToString(),
-          Type = FaceLoad.Type,
-        },
-      };
-      switch (FaceLoad.Type) {
-        case FaceLoadType.CONSTANT:
-          dup.FaceLoad.IsProjected = FaceLoad.IsProjected;
-          dup.FaceLoad.SetValue(0, FaceLoad.Value(0));
-          break;
-        case FaceLoadType.GENERAL:
-          dup.FaceLoad.IsProjected = FaceLoad.IsProjected;
-          dup.FaceLoad.SetValue(0, FaceLoad.Value(0));
-          dup.FaceLoad.SetValue(1, FaceLoad.Value(1));
-          dup.FaceLoad.SetValue(2, FaceLoad.Value(2));
-          dup.FaceLoad.SetValue(3, FaceLoad.Value(3));
-          break;
-        case FaceLoadType.POINT:
-          dup.FaceLoad.IsProjected = FaceLoad.IsProjected;
-          dup.FaceLoad.SetValue(0, FaceLoad.Value(0));
-          dup.FaceLoad.Position = FaceLoad.Position; // todo
-          //note Vector2 currently only get in GsaAPI
-          // duplicate Position.X and Position.Y when fixed
-          break;
-      }
-
-      if (_referenceType == ReferenceType.None)
-        return dup;
-      if (_referenceType == ReferenceType.List) {
-        dup._referenceType = ReferenceType.List;
-        dup._refList = _refList.Duplicate();
-      }
-      else {
-        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-        dup._referenceType = _referenceType;
-      }
-
-      return dup;
-    }
-  }
-
-  public class GsaGridPointLoad {
-    internal Point3d _refPoint;
-
-    public GsaGridPointLoad() { }
-
-    public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
+  public class GsaGridAreaLoad {
+    public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
 
-    public GsaGridPointLoad Duplicate() {
-      var dup = new GsaGridPointLoad {
-        GridPointLoad = {
-          AxisProperty = GridPointLoad.AxisProperty,
-          Case = GridPointLoad.Case,
-          Direction = GridPointLoad.Direction,
-          GridSurface = GridPointLoad.GridSurface,
-          Name = GridPointLoad.Name.ToString(),
-          X = GridPointLoad.X,
-          Y = GridPointLoad.Y,
-          Value = GridPointLoad.Value,
+    public GsaGridAreaLoad() => GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
+
+    public GsaGridAreaLoad Duplicate() {
+      var dup = new GsaGridAreaLoad {
+        GridAreaLoad = {
+          AxisProperty = GridAreaLoad.AxisProperty,
+          Case = GridAreaLoad.Case,
+          Direction = GridAreaLoad.Direction,
+          GridSurface = GridAreaLoad.GridSurface,
+          IsProjected = GridAreaLoad.IsProjected,
+          Name = GridAreaLoad.Name.ToString(),
+          PolyLineDefinition = GridAreaLoad.PolyLineDefinition.ToString(),
+          PolyLineReference = GridAreaLoad.PolyLineReference,
+          Type = GridAreaLoad.Type,
+          Value = GridAreaLoad.Value,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
       };
@@ -254,10 +203,10 @@ namespace GsaGH.Parameters {
   }
 
   public class GsaGridLineLoad {
-    public GsaGridLineLoad() => GridLineLoad.PolyLineReference = 0;
-
     public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+
+    public GsaGridLineLoad() => GridLineLoad.PolyLineReference = 0;
 
     public GsaGridLineLoad Duplicate() {
       var dup = new GsaGridLineLoad {
@@ -280,33 +229,30 @@ namespace GsaGH.Parameters {
     }
   }
 
-  public class GsaGridAreaLoad {
-    public GsaGridAreaLoad() => GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
-
-    public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
+  public class GsaGridPointLoad {
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+    public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
+    internal Point3d _refPoint;
 
-    public GsaGridAreaLoad Duplicate() {
-      var dup = new GsaGridAreaLoad {
-        GridAreaLoad = {
-          AxisProperty = GridAreaLoad.AxisProperty,
-          Case = GridAreaLoad.Case,
-          Direction = GridAreaLoad.Direction,
-          GridSurface = GridAreaLoad.GridSurface,
-          IsProjected = GridAreaLoad.IsProjected,
-          Name = GridAreaLoad.Name.ToString(),
-          PolyLineDefinition = GridAreaLoad.PolyLineDefinition.ToString(),
-          PolyLineReference = GridAreaLoad.PolyLineReference,
-          Type = GridAreaLoad.Type,
-          Value = GridAreaLoad.Value,
+    public GsaGridPointLoad() { }
+
+    public GsaGridPointLoad Duplicate() {
+      var dup = new GsaGridPointLoad {
+        GridPointLoad = {
+          AxisProperty = GridPointLoad.AxisProperty,
+          Case = GridPointLoad.Case,
+          Direction = GridPointLoad.Direction,
+          GridSurface = GridPointLoad.GridSurface,
+          Name = GridPointLoad.Name.ToString(),
+          X = GridPointLoad.X,
+          Y = GridPointLoad.Y,
+          Value = GridPointLoad.Value,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
       };
       return dup;
     }
   }
-
-  #endregion
 
   /// <summary>
   ///   GsaLoad class holding all load types
@@ -322,31 +268,14 @@ namespace GsaGH.Parameters {
       GridArea,
     }
 
-    #region fields
-
-    public LoadTypes LoadType = LoadTypes.Gravity;
-
-    #endregion
-
-    #region properties
-
-    public GsaGravityLoad GravityLoad { get; set; }
-
-    public GsaNodeLoad NodeLoad { get; set; }
-
-    public GsaBeamLoad BeamLoad { get; set; }
-
-    public GsaFaceLoad FaceLoad { get; set; }
-
-    public GsaGridPointLoad PointLoad { get; set; }
-
-    public GsaGridLineLoad LineLoad { get; set; }
-
     public GsaGridAreaLoad AreaLoad { get; set; }
-
-    #endregion
-
-    #region constructors
+    public GsaBeamLoad BeamLoad { get; set; }
+    public GsaFaceLoad FaceLoad { get; set; }
+    public GsaGravityLoad GravityLoad { get; set; }
+    public GsaGridLineLoad LineLoad { get; set; }
+    public GsaNodeLoad NodeLoad { get; set; }
+    public GsaGridPointLoad PointLoad { get; set; }
+    public LoadTypes LoadType = LoadTypes.Gravity;
 
     public GsaLoad() {
       GravityLoad = new GsaGravityLoad();
@@ -388,35 +317,37 @@ namespace GsaGH.Parameters {
       LoadType = LoadTypes.GridArea;
     }
 
-    #endregion
-
-    #region methods
-
     public GsaLoad Duplicate() {
       GsaLoad dup;
       switch (LoadType) {
         case LoadTypes.Gravity:
           dup = new GsaLoad(GravityLoad.Duplicate());
           return dup;
+
         case LoadTypes.Node:
           dup = new GsaLoad(NodeLoad.Duplicate());
           return dup;
+
         case LoadTypes.Beam:
           dup = new GsaLoad(BeamLoad.Duplicate());
           return dup;
+
         case LoadTypes.Face:
           dup = new GsaLoad(FaceLoad.Duplicate());
           return dup;
+
         case LoadTypes.GridPoint:
           dup = new GsaLoad(PointLoad.Duplicate());
           if (PointLoad.GridPlaneSurface != null)
             dup.PointLoad.GridPlaneSurface = PointLoad.GridPlaneSurface.Duplicate();
           return dup;
+
         case LoadTypes.GridLine:
           dup = new GsaLoad(LineLoad.Duplicate());
           if (LineLoad.GridPlaneSurface != null)
             dup.LineLoad.GridPlaneSurface = LineLoad.GridPlaneSurface.Duplicate();
           return dup;
+
         case LoadTypes.GridArea:
           dup = new GsaLoad(AreaLoad.Duplicate());
           if (AreaLoad.GridPlaneSurface != null)
@@ -435,21 +366,27 @@ namespace GsaGH.Parameters {
         case LoadTypes.Gravity:
           name = GravityLoad.GravityLoad.Name;
           break;
+
         case LoadTypes.Node:
           name = NodeLoad.NodeLoad.Name;
           break;
+
         case LoadTypes.Beam:
           name = BeamLoad.BeamLoad.Name;
           break;
+
         case LoadTypes.Face:
           name = FaceLoad.FaceLoad.Name;
           break;
+
         case LoadTypes.GridPoint:
           name = PointLoad.GridPointLoad.Name;
           break;
+
         case LoadTypes.GridLine:
           name = LineLoad.GridLineLoad.Name;
           break;
+
         case LoadTypes.GridArea:
           name = AreaLoad.GridAreaLoad.Name;
           break;
@@ -462,7 +399,56 @@ namespace GsaGH.Parameters {
         .Trim()
         .Replace("  ", " ");
     }
+  }
 
-    #endregion
+  public class GsaNodeLoad {
+    public enum NodeLoadTypes // direct copy from GSA API enums
+    {
+      NodeLoad = 0,
+      AppliedDisp = 1,
+      Settlement = 2,
+      Gravity = 3,
+      NumTypes = 4,
+    }
+
+    public NodeLoad NodeLoad { get; set; } = new NodeLoad();
+    public NodeLoadTypes Type;
+    internal GsaList _refList;
+    internal Point3d _refPoint = Point3d.Unset;
+
+    public GsaNodeLoad() => Type = NodeLoadTypes.NodeLoad;
+
+    public GsaNodeLoad Duplicate() {
+      var dup = new GsaNodeLoad {
+        NodeLoad = {
+          AxisProperty = NodeLoad.AxisProperty,
+          Case = NodeLoad.Case,
+          Direction = NodeLoad.Direction,
+          Nodes = NodeLoad.Nodes.ToString(),
+          Name = NodeLoad.Name.ToString(),
+          Value = NodeLoad.Value,
+        },
+        Type = Type,
+      };
+      if (_refPoint != Point3d.Unset)
+        dup._refPoint = new Point3d(_refPoint);
+      if (_refList != null) {
+        dup._refList = _refList.Duplicate();
+      }
+      return dup;
+    }
+  }
+
+  /// <summary>
+  ///   When referencing load by GsaGH object through Guid, use this to set the type of object
+  /// </summary>
+  internal enum ReferenceType {
+    None,
+    Section,
+    Prop2d,
+    Prop3d,
+    Element,
+    Member,
+    List
   }
 }

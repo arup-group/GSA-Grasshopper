@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.CustomComponent {
   [Collection("GrasshopperFixture collection")]
   public class DropDownComponentTests {
+
     [Theory]
     [InlineData(typeof(CreateModel), true)]
     [InlineData(typeof(GetLoads))]

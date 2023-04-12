@@ -7,6 +7,7 @@ using Xunit;
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPlaneTests {
+
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridPlane();
       comp.CreateAttributes();

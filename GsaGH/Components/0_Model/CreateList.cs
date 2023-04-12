@@ -6,31 +6,50 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
-namespace GsaGH.Components
-{
+namespace GsaGH.Components {
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject
-  {
-    #region Name and Ribbon Layout
+  public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateList;
+    private EntityType _type = EntityType.Node;
 
     public CreateList() : base("Create List",
-      "CreateList",
+              "CreateList",
       "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)."
       + System.Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.",
       CategoryName.Name(),
-      SubCategoryName.Cat0())
-    { }
-    #endregion
+      SubCategoryName.Cat0()) { }
 
-    #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _type = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[i]);
+      base.UpdateUI();
+    }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new string[]
+        {
+          "Type"
+        });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(new List<string>() {
+        EntityType.Node.ToString(),
+        EntityType.Element.ToString(),
+        EntityType.Member.ToString(),
+        EntityType.Case.ToString() });
+      _selectedItems.Add(_dropDownItems[0][0]);
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Index", "ID", "(Optional) List Number - set this to 0 to append it to the end of the list of lists, or set the ID to overwrite an existing list.", GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Name", "Na", "(Optional) List Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Definition", "Def", "Definition as text or list of object (Nodes, Elements, Members)", GH_ParamAccess.list);
@@ -38,15 +57,12 @@ namespace GsaGH.Components
       pManager[1].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaListParameter(), "GSA List", "L", "GSA Entity List parameter."
       + System.Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
-    #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
+    protected override void SolveInstance(IGH_DataAccess DA) {
       var list = new GsaList() { EntityType = _type };
       int id = 0;
       if (DA.GetData(0, ref id))
@@ -58,15 +74,12 @@ namespace GsaGH.Components
 
       List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, _type);
 
-      try
-      {
+      try {
         list.SetListObjects(listObjects);
       }
-      catch (System.ArgumentException)
-      {
+      catch (System.ArgumentException) {
         string message = "";
-        switch (_type)
-        {
+        switch (_type) {
           case EntityType.Node:
             message = "Invalid node list\n\nThe node list should take the form:\n 1 11 to 72 step 2 not (XY3 31 to 45)\nwhere:\nPS(n)  ->  Springs (of property n)\nPM(n)  ->  Masses (of property n)\nPD(n)  ->  Dampers (of property n)\nXn  ->  Nodes on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Nodes on global XY plane through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of a node number to refer to\nthe highest numbered node.";
             break;
@@ -90,41 +103,9 @@ namespace GsaGH.Components
       DA.SetData(0, list);
     }
 
-    #region Custom UI
-    private EntityType _type = EntityType.Node;
-
-    protected override void InitialiseDropdowns()
-    {
-      _spacerDescriptions = new List<string>(new string[]
-        {
-          "Type"
-        });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(new List<string>() {
-        EntityType.Node.ToString(),
-        EntityType.Element.ToString(),
-        EntityType.Member.ToString(),
-        EntityType.Case.ToString() });
-      _selectedItems.Add(_dropDownItems[0][0]);
-
-      _isInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j)
-    {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _type = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[i]);
-      base.UpdateUI();
-    }
-
-    protected override void UpdateUIFromSelectedItems()
-    {
+    protected override void UpdateUIFromSelectedItems() {
       _type = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-    #endregion
   }
 }

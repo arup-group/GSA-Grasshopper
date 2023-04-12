@@ -10,14 +10,25 @@ namespace GsaGH.Parameters {
   /// Goo wrapper class, makes sure <see cref="GsaProp2d"/> can be used in Grasshopper.
   /// </summary>
   public class GsaProp2dGoo : GH_OasysGoo<GsaProp2d> {
+    public static string Description => "GSA Area Property";
     public static string Name => "Prop2D";
     public static string NickName => "PA";
-    public static string Description => "GSA Area Property";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaProp2dGoo(GsaProp2d item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaProp2dGoo(Value);
+    public override bool CastFrom(object source) {
+      if (source == null)
+        return false;
+
+      if (base.CastFrom(source))
+        return true;
+
+      if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both)) {
+        Value = new GsaProp2d(new Length(thk, DefaultUnits.LengthUnitSection));
+      }
+      return false;
+    }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (base.CastTo(ref target))
@@ -40,17 +51,6 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override bool CastFrom(object source) {
-      if (source == null)
-        return false;
-
-      if (base.CastFrom(source))
-        return true;
-
-      if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both)) {
-        Value = new GsaProp2d(new Length(thk, DefaultUnits.LengthUnitSection));
-      }
-      return false;
-    }
+    public override IGH_Goo Duplicate() => new GsaProp2dGoo(Value);
   }
 }

@@ -8,6 +8,7 @@ using static GsaGH.Parameters.GsaMaterial;
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateProp3dTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateProp3d();
       comp.CreateAttributes();

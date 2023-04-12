@@ -26,6 +26,7 @@ namespace GsaGH.Components {
   ///   Component to open an existing GSA model
   /// </summary>
   public class SaveModel : GH_OasysDropDownComponent {
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       Message = "";
@@ -114,7 +115,9 @@ namespace GsaGH.Components {
     #region Custom UI
 
     private string _fileNameLastSaved;
+
     public override void SetSelected(int i, int j) { }
+
     protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes()

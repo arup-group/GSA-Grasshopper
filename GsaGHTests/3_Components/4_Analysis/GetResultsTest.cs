@@ -9,6 +9,7 @@ using Xunit;
 namespace GsaGHTests.Analysis {
   [Collection("GrasshopperFixture collection")]
   public class GetResultsTest {
+
     [Fact]
     public void TestAnalysisNoInputs() {
       var comp = new GetResult();

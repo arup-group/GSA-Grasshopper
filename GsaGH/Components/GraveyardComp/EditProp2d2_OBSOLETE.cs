@@ -20,6 +20,76 @@ namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class EditProp2d2_OBSOLETE : GH_OasysComponent,
     IGH_PreviewObject {
+    public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.EditProp2d;
+
+    public EditProp2d2_OBSOLETE() : base("Edit 2D Property",
+          "Prop2dEdit",
+      "Modify GSA 2D Property",
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitSection);
+      string unitAbbreviation = string.Concat(quantity.ToString()
+        .Where(char.IsLetter));
+
+      pManager.AddGenericParameter("2D Property",
+        "PA",
+        "GSA 2D Property to get or set information for",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Prop2d Number",
+        "ID",
+        "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Material",
+        "Ma",
+        "Set GSA Material or reference existing material by ID",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]",
+        "Th",
+        "Set Property Thickness",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Axis",
+        "Ax",
+        "Set Axis as integer: Global (0) or Topological (1)",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Prop2d Colour",
+        "Co",
+        "Set 2D Property Colour",
+        GH_ParamAccess.item);
+      for (int i = 1; i < pManager.ParamCount; i++)
+        pManager[i]
+          .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("2D Property",
+        "PA",
+        "GSA 2D Property with changes",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Prop2d Number",
+        "ID",
+        "2D Property Number",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Material", "Ma", "Get GSA Material", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Thickness",
+        "Th",
+        "Get Property Thickness",
+        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Axis",
+        "Ax",
+        "Get Axis: Global (0) or Topological (1)",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaProp2d = new GsaProp2d();
       var prop = new GsaProp2d();
@@ -101,84 +171,5 @@ namespace GsaGH.Components {
             .Replace("_", " ");
       da.SetData(7, str);
     }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
-
-    public EditProp2d2_OBSOLETE() : base("Edit 2D Property",
-      "Prop2dEdit",
-      "Modify GSA 2D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditProp2d;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitSection);
-      string unitAbbreviation = string.Concat(quantity.ToString()
-        .Where(char.IsLetter));
-
-      pManager.AddGenericParameter("2D Property",
-        "PA",
-        "GSA 2D Property to get or set information for",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Prop2d Number",
-        "ID",
-        "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material",
-        "Ma",
-        "Set GSA Material or reference existing material by ID",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]",
-        "Th",
-        "Set Property Thickness",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Set Axis as integer: Global (0) or Topological (1)",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour",
-        "Co",
-        "Set 2D Property Colour",
-        GH_ParamAccess.item);
-      for (int i = 1; i < pManager.ParamCount; i++)
-        pManager[i]
-          .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("2D Property",
-        "PA",
-        "GSA 2D Property with changes",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Prop2d Number",
-        "ID",
-        "2D Property Number",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material", "Ma", "Get GSA Material", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Thickness",
-        "Th",
-        "Get Property Thickness",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Get Axis: Global (0) or Topological (1)",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
-    }
-
-    #endregion
   }
 }

@@ -38,6 +38,386 @@ namespace GsaGH.Components {
   ///   Component to get Element3d results
   /// </summary>
   public class Elem3dContourResults : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
+    private enum FoldMode {
+      Displacement,
+      Stress,
+    }
+
+    public override Guid ComponentGuid => new Guid("033035c6-16d9-4cc7-b2b3-cf5d5fac4108");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result3D;
+    private readonly List<string> _displacement = new List<string>(new[] {
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+    });
+    private readonly List<string> _stress = new List<string>(new[] {
+      "Stress xx",
+      "Stress yy",
+      "Stress zz",
+      "Stress xy",
+      "Stress yz",
+      "Stress zx",
+    });
+    private readonly List<string> _type = new List<string>(new[] {
+      "Displacement",
+      "Stress",
+    });
+    private string _case = "";
+    private double _defScale = 250;
+    private DisplayValue _disp = DisplayValue.ResXyz;
+    private Bitmap _legend = new Bitmap(15, 120);
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _maxValue = 1000;
+    private double _minValue;
+    private FoldMode _mode = FoldMode.Displacement;
+    private int _noDigits;
+    private string _resType;
+    private bool _showLegend = true;
+    private bool _slider = true;
+    private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
+    private bool _undefinedModelLengthUnit;
+
+    public Elem3dContourResults() : base("3D Contour Results",
+                                                                                          "ContourElem3d",
+      "Displays GSA 3D Element Results as Contour",
+      CategoryName.Name(),
+      SubCategoryName.Cat5()) { }
+
+    public override void CreateAttributes() {
+      if (!_isInitialised)
+        InitialiseDropdowns();
+      m_attributes = new DropDownSliderComponentAttributes(this,
+        SetSelected,
+        _dropDownItems,
+        _selectedItems,
+        _slider,
+        SetVal,
+        SetMaxMin,
+        _defScale,
+        _maxValue,
+        _minValue,
+        _noDigits,
+        _spacerDescriptions);
+    }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+      if (!(_legendValues != null & _showLegend))
+        return;
+
+      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
+      for (int i = 0; i < _legendValues.Count; i++)
+        args.Display.Draw2dText(_legendValues[i],
+          Color.Black,
+          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]),
+          false);
+      args.Display.Draw2dText(_resType,
+        Color.Black,
+        new Point2d(args.Viewport.Bounds.Right - 110, 7),
+        false);
+      args.Display.Draw2dText(_case,
+        Color.Black,
+        new Point2d(args.Viewport.Bounds.Right - 110, 145),
+        false);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      _disp = (DisplayValue)reader.GetInt32("Display");
+      _slider = reader.GetBoolean("slider");
+      _noDigits = reader.GetInt32("noDec");
+      _maxValue = reader.GetDouble("valMax");
+      _minValue = reader.GetDouble("valMin");
+      _defScale = reader.GetDouble("val");
+      _showLegend = reader.GetBoolean("legend");
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
+      _lengthResultUnit
+        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
+      _stressUnitResult
+        = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
+      return base.Read(reader);
+    }
+
+    public void SetMaxMin(double max, double min) {
+      _maxValue = max;
+      _minValue = min;
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      switch (i) {
+        case 0: {
+            switch (j) {
+              case 0: {
+                  if (_dropDownItems[1] != _displacement) {
+                    _dropDownItems[1] = _displacement;
+                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+
+                    _disp = (DisplayValue)3; // Resolved XYZ
+                    DeformationModeClicked();
+                  }
+
+                  break;
+                }
+              case 1: {
+                  if (_dropDownItems[1] != _stress) {
+                    _dropDownItems[1] = _stress;
+                    _selectedItems[1] = _dropDownItems[1][2];
+
+                    _disp = (DisplayValue)2;
+                    StressModeClicked();
+                  }
+
+                  break;
+                }
+            }
+
+            break;
+          }
+        case 1: {
+            bool redraw = false;
+            _selectedItems[1] = _dropDownItems[1][j];
+            if (_mode == FoldMode.Displacement) {
+              if ((int)_disp > 3 & j < 4) {
+                redraw = true;
+                _slider = true;
+              }
+
+              if ((int)_disp < 4 & j > 3) {
+                redraw = true;
+                _slider = false;
+              }
+
+              _disp = (DisplayValue)j;
+            }
+            else
+              _disp = j < 3
+                ? (DisplayValue)j
+                : (DisplayValue)(j + 1);
+
+            if (redraw)
+              ReDrawComponent();
+            break;
+          }
+      }
+
+      base.UpdateUI();
+    }
+
+    public void SetVal(double value) => _defScale = value;
+
+    public override void VariableParameterMaintenance() {
+      if (Params.Input.Count != 4) {
+        Params.RegisterInputParam(new Param_Interval());
+        Params.Input[3]
+          .Name = "Min/Max Domain";
+        Params.Input[3]
+          .NickName = "I";
+        Params.Input[3]
+          .Description = "Opitonal Domain for custom Min to Max contour colours";
+        Params.Input[3]
+          .Optional = true;
+        Params.Input[3]
+          .Access = GH_ParamAccess.item;
+      }
+
+      switch (_mode) {
+        case FoldMode.Displacement when (int)_disp < 4:
+          Params.Output[2]
+            .Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
+          break;
+
+        case FoldMode.Displacement:
+          Params.Output[2]
+            .Name = "Values [rad]";
+          break;
+
+        case FoldMode.Stress:
+          Params.Output[2]
+            .Name = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
+          break;
+      }
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("Mode", (int)_mode);
+      writer.SetInt32("Display", (int)_disp);
+      writer.SetBoolean("slider", _slider);
+      writer.SetInt32("noDec", _noDigits);
+      writer.SetDouble("valMax", _maxValue);
+      writer.SetDouble("valMin", _minValue);
+      writer.SetDouble("val", _defScale);
+      writer.SetBoolean("legend", _showLegend);
+      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
+      writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
+      writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
+      return base.Write(writer);
+    }
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+      Menu_AppendSeparator(menu);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
+
+      var gradient = new GH_GradientControl();
+      gradient.CreateAttributes();
+      var extract = new ToolStripMenuItem("Extract Default Gradient",
+        gradient.Icon_24x24,
+        (s, e) => CreateGradient());
+      menu.Items.Add(extract);
+
+      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") { Enabled = true };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
+          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
+          Enabled = true,
+        };
+        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      var stressUnitsMenu = new ToolStripMenuItem("Stress") { Enabled = true };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
+          Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
+          Enabled = true,
+        };
+        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+
+      if (_undefinedModelLengthUnit) {
+        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
+          Enabled = true,
+        };
+        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
+            Checked = unit == Length.GetAbbreviation(_lengthUnit),
+            Enabled = true,
+          };
+          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+        }
+
+        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+          modelUnitsMenu,
+          lengthUnitsMenu,
+          stressUnitsMenu,
+        });
+      }
+      else
+        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+          lengthUnitsMenu,
+          stressUnitsMenu,
+        });
+
+      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    protected override void BeforeSolveInstance() {
+      switch (_mode) {
+        case FoldMode.Displacement:
+          Message = Length.GetAbbreviation(_lengthResultUnit);
+          break;
+
+        case FoldMode.Stress:
+          Message = Pressure.GetAbbreviation(_stressUnitResult);
+          break;
+      }
+    }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Result Type",
+        "Component",
+        "Deform Shape",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_dropDownItems[0][0]);
+
+      _dropDownItems.Add(_displacement);
+      _selectedItems.Add(_dropDownItems[1][3]);
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Element filter list",
+        "El",
+        "Filter import by list."
+        + Environment.NewLine
+        + "Element list should take the form:"
+        + Environment.NewLine
+        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
+        + Environment.NewLine
+        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        GH_ParamAccess.item,
+        "All");
+      pManager.AddColourParameter("Colour",
+        "Co",
+        "Optional list of colours to override default colours"
+        + Environment.NewLine
+        + "A new gradient will be created from the input list of colours",
+        GH_ParamAccess.list);
+      pManager.AddIntervalParameter("Min/Max Domain",
+        "I",
+        "Opitonal Domain for custom Min to Max contour colours",
+        GH_ParamAccess.item);
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      IQuantity length = new Length(0, _lengthResultUnit);
+      string lengthunitAbbreviation = string.Concat(length.ToString()
+        .Where(char.IsLetter));
+
+      pManager.AddGenericParameter("Ngon Mesh",
+        "M",
+        "Ngon Mesh with coloured result values",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]",
+        "LT",
+        "Legend Values",
+        GH_ParamAccess.list);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
       var ghTyp = new GH_ObjectWrapper();
@@ -50,6 +430,7 @@ namespace GsaGH.Components {
         case null:
           this.AddRuntimeWarning("Input is null");
           return;
+
         case GsaResultGoo goo: {
             result = goo.Value;
             switch (result.Type) {
@@ -63,9 +444,11 @@ namespace GsaGH.Components {
                   + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
                 _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
                 break;
+
               case GsaResult.CaseType.Combination:
                 _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
                 break;
+
               case GsaResult.CaseType.AnalysisCase:
                 _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
                 break;
@@ -174,12 +557,14 @@ namespace GsaGH.Components {
             case FoldMode.Displacement:
               _resType = "Translation, Ux";
               break;
+
             case FoldMode.Stress:
               _resType = "Stress, xx";
               break;
           }
 
           break;
+
         case (DisplayValue.Y):
           dmax = dmaxY;
           dmin = dminY;
@@ -187,12 +572,14 @@ namespace GsaGH.Components {
             case FoldMode.Displacement:
               _resType = "Translation, Uy";
               break;
+
             case FoldMode.Stress:
               _resType = "2D Stress, yy";
               break;
           }
 
           break;
+
         case (DisplayValue.Z):
           dmax = dmaxZ;
           dmin = dminZ;
@@ -200,32 +587,38 @@ namespace GsaGH.Components {
             case FoldMode.Displacement:
               _resType = "Translation, Uz";
               break;
+
             case FoldMode.Stress:
               _resType = "Stress, zz";
               break;
           }
 
           break;
+
         case (DisplayValue.ResXyz):
           dmax = dmaxXyz;
           dmin = dminXyz;
           _resType = "Res. Trans., |U|";
           break;
+
         case (DisplayValue.Xx):
           dmax = dmaxXx;
           dmin = dminXx;
           _resType = "Stress, xy";
           break;
+
         case (DisplayValue.Yy):
           dmax = dmaxYy;
           dmin = dminYy;
           _resType = "Stress, yz";
           break;
+
         case (DisplayValue.Zz):
           dmax = dmaxZz;
           dmin = dminZz;
           _resType = "Stress, zy";
           break;
+
         case (DisplayValue.ResXxyyzz):
           dmax = dmaxXxyyzz;
           dmin = dminXxyyzz;
@@ -334,16 +727,19 @@ namespace GsaGH.Components {
                 .Select(item => item.Value.X.ToUnit(xxyyzzunit))
                 .ToList();
               break;
+
             case (DisplayValue.Yy):
               vals = xxyyzzResults[key]
                 .Select(item => item.Value.Y.ToUnit(xxyyzzunit))
                 .ToList();
               break;
+
             case (DisplayValue.Zz):
               vals = xxyyzzResults[key]
                 .Select(item => item.Value.Z.ToUnit(xxyyzzunit))
                 .ToList();
               break;
+
             case (DisplayValue.ResXxyyzz):
               vals = xxyyzzResults[key]
                 .Select(item => item.Value.Xyz.ToUnit(xxyyzzunit))
@@ -485,403 +881,6 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 3, resultType, _disp.ToString());
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("033035c6-16d9-4cc7-b2b3-cf5d5fac4108");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result3D;
-
-    public Elem3dContourResults() : base("3D Contour Results",
-      "ContourElem3d",
-      "Displays GSA 3D Element Results as Contour",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Element filter list",
-        "El",
-        "Filter import by list."
-        + Environment.NewLine
-        + "Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
-      pManager.AddColourParameter("Colour",
-        "Co",
-        "Optional list of colours to override default colours"
-        + Environment.NewLine
-        + "A new gradient will be created from the input list of colours",
-        GH_ParamAccess.list);
-      pManager.AddIntervalParameter("Min/Max Domain",
-        "I",
-        "Opitonal Domain for custom Min to Max contour colours",
-        GH_ParamAccess.item);
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      IQuantity length = new Length(0, _lengthResultUnit);
-      string lengthunitAbbreviation = string.Concat(length.ToString()
-        .Where(char.IsLetter));
-
-      pManager.AddGenericParameter("Ngon Mesh",
-        "M",
-        "Ngon Mesh with coloured result values",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]",
-        "LT",
-        "Legend Values",
-        GH_ParamAccess.list);
-    }
-
-    #endregion
-
-    #region Custom UI
-
-    private enum FoldMode {
-      Displacement,
-      Stress,
-    }
-
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private readonly List<string> _type = new List<string>(new[] {
-      "Displacement",
-      "Stress",
-    });
-
-    private readonly List<string> _displacement = new List<string>(new[] {
-      "Translation Ux",
-      "Translation Uy",
-      "Translation Uz",
-      "Resolved |U|",
-    });
-
-    private readonly List<string> _stress = new List<string>(new[] {
-      "Stress xx",
-      "Stress yy",
-      "Stress zz",
-      "Stress xy",
-      "Stress yz",
-      "Stress zx",
-    });
-
-    private double _minValue;
-    private double _maxValue = 1000;
-    private double _defScale = 250;
-    private int _noDigits;
-    private bool _slider = true;
-    private string _case = "";
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private bool _undefinedModelLengthUnit;
-    private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
-    private FoldMode _mode = FoldMode.Displacement;
-    private DisplayValue _disp = DisplayValue.ResXyz;
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Result Type",
-        "Component",
-        "Deform Shape",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(_type);
-      _selectedItems.Add(_dropDownItems[0][0]);
-
-      _dropDownItems.Add(_displacement);
-      _selectedItems.Add(_dropDownItems[1][3]);
-
-      _isInitialised = true;
-    }
-
-    public override void CreateAttributes() {
-      if (!_isInitialised)
-        InitialiseDropdowns();
-      m_attributes = new DropDownSliderComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        _slider,
-        SetVal,
-        SetMaxMin,
-        _defScale,
-        _maxValue,
-        _minValue,
-        _noDigits,
-        _spacerDescriptions);
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      switch (i) {
-        case 0: {
-            switch (j) {
-              case 0: {
-                  if (_dropDownItems[1] != _displacement) {
-                    _dropDownItems[1] = _displacement;
-                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
-
-                    _disp = (DisplayValue)3; // Resolved XYZ
-                    DeformationModeClicked();
-                  }
-
-                  break;
-                }
-              case 1: {
-                  if (_dropDownItems[1] != _stress) {
-                    _dropDownItems[1] = _stress;
-                    _selectedItems[1] = _dropDownItems[1][2];
-
-                    _disp = (DisplayValue)2;
-                    StressModeClicked();
-                  }
-
-                  break;
-                }
-            }
-
-            break;
-          }
-        case 1: {
-            bool redraw = false;
-            _selectedItems[1] = _dropDownItems[1][j];
-            if (_mode == FoldMode.Displacement) {
-              if ((int)_disp > 3 & j < 4) {
-                redraw = true;
-                _slider = true;
-              }
-
-              if ((int)_disp < 4 & j > 3) {
-                redraw = true;
-                _slider = false;
-              }
-
-              _disp = (DisplayValue)j;
-            }
-            else
-              _disp = j < 3
-                ? (DisplayValue)j
-                : (DisplayValue)(j + 1);
-
-            if (redraw)
-              ReDrawComponent();
-            break;
-          }
-      }
-
-      base.UpdateUI();
-    }
-
-    public void SetVal(double value) => _defScale = value;
-
-    public void SetMaxMin(double max, double min) {
-      _maxValue = max;
-      _minValue = min;
-    }
-
-    public override void VariableParameterMaintenance() {
-      if (Params.Input.Count != 4) {
-        Params.RegisterInputParam(new Param_Interval());
-        Params.Input[3]
-          .Name = "Min/Max Domain";
-        Params.Input[3]
-          .NickName = "I";
-        Params.Input[3]
-          .Description = "Opitonal Domain for custom Min to Max contour colours";
-        Params.Input[3]
-          .Optional = true;
-        Params.Input[3]
-          .Access = GH_ParamAccess.item;
-      }
-
-      switch (_mode) {
-        case FoldMode.Displacement when (int)_disp < 4:
-          Params.Output[2]
-            .Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
-          break;
-        case FoldMode.Displacement:
-          Params.Output[2]
-            .Name = "Values [rad]";
-          break;
-        case FoldMode.Stress:
-          Params.Output[2]
-            .Name = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
-          break;
-      }
-    }
-
-    #endregion
-
-    #region menu override
-
-    protected override void BeforeSolveInstance() {
-      switch (_mode) {
-        case FoldMode.Displacement:
-          Message = Length.GetAbbreviation(_lengthResultUnit);
-          break;
-
-        case FoldMode.Stress:
-          Message = Pressure.GetAbbreviation(_stressUnitResult);
-          break;
-      }
-    }
-
-    private void ReDrawComponent() {
-      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
-      CreateAttributes();
-      Attributes.Pivot = pivot;
-      Attributes.ExpireLayout();
-      Attributes.PerformLayout();
-    }
-
-    private void DeformationModeClicked() {
-      if (_mode == FoldMode.Displacement)
-        return;
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Displacement;
-
-      _slider = true;
-      _defScale = 100;
-
-      ReDrawComponent();
-    }
-
-    private void StressModeClicked() {
-      if (_mode == FoldMode.Stress)
-        return;
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Stress;
-
-      _slider = false;
-      _defScale = 0;
-
-      ReDrawComponent();
-    }
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
-      }
-      Menu_AppendSeparator(menu);
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
-
-      var gradient = new GH_GradientControl();
-      gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient",
-        gradient.Icon_24x24,
-        (s, e) => CreateGradient());
-      menu.Items.Add(extract);
-
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") { Enabled = true };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
-          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
-          Enabled = true,
-        };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var stressUnitsMenu = new ToolStripMenuItem("Stress") { Enabled = true };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
-          Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
-          Enabled = true,
-        };
-        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
-
-      if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-        }
-
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          modelUnitsMenu,
-          lengthUnitsMenu,
-          stressUnitsMenu,
-        });
-      }
-      else
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          lengthUnitsMenu,
-          stressUnitsMenu,
-        });
-
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-
-    private void UpdateModel(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateLength(string unit) {
-      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateStress(string unit) {
-      _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private bool _showLegend = true;
-
-    private void ShowLegend(object sender, EventArgs e) {
-      _showLegend = !_showLegend;
-      ExpirePreview(true);
-    }
-
     private void CreateGradient() {
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -920,72 +919,61 @@ namespace GsaGH.Components {
       UpdateUI();
     }
 
-    #endregion
-
-    #region draw _legend
-
-    private Bitmap _legend = new Bitmap(15, 120);
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
-    private string _resType;
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend))
+    private void DeformationModeClicked() {
+      if (_mode == FoldMode.Displacement)
         return;
 
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
-      for (int i = 0; i < _legendValues.Count; i++)
-        args.Display.Draw2dText(_legendValues[i],
-          Color.Black,
-          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]),
-          false);
-      args.Display.Draw2dText(_resType,
-        Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 7),
-        false);
-      args.Display.Draw2dText(_case,
-        Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 145),
-        false);
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Displacement;
+
+      _slider = true;
+      _defScale = 100;
+
+      ReDrawComponent();
     }
 
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetInt32("Mode", (int)_mode);
-      writer.SetInt32("Display", (int)_disp);
-      writer.SetBoolean("slider", _slider);
-      writer.SetInt32("noDec", _noDigits);
-      writer.SetDouble("valMax", _maxValue);
-      writer.SetDouble("valMin", _minValue);
-      writer.SetDouble("val", _defScale);
-      writer.SetBoolean("legend", _showLegend);
-      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
-      writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
-      writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
-      return base.Write(writer);
+    private void ReDrawComponent() {
+      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
+      CreateAttributes();
+      Attributes.Pivot = pivot;
+      Attributes.ExpireLayout();
+      Attributes.PerformLayout();
     }
 
-    public override bool Read(GH_IReader reader) {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      _disp = (DisplayValue)reader.GetInt32("Display");
-      _slider = reader.GetBoolean("slider");
-      _noDigits = reader.GetInt32("noDec");
-      _maxValue = reader.GetDouble("valMax");
-      _minValue = reader.GetDouble("valMin");
-      _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("legend");
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
-      _lengthResultUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
-      _stressUnitResult
-        = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
-      return base.Read(reader);
+    private void ShowLegend(object sender, EventArgs e) {
+      _showLegend = !_showLegend;
+      ExpirePreview(true);
     }
 
-    #endregion
+    private void StressModeClicked() {
+      if (_mode == FoldMode.Stress)
+        return;
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Stress;
+
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
+    }
+
+    private void UpdateLength(string unit) {
+      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    private void UpdateModel(string unit) {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    private void UpdateStress(string unit) {
+      _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
   }
 }

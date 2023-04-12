@@ -9,6 +9,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaMember1dTest {
+
     [Fact]
     public void CloneApiObjectTest() {
       var member1d = new GsaMember1d {

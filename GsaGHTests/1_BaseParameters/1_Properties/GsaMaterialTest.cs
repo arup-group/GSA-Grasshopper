@@ -5,6 +5,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaMaterialTest {
+
     [Fact]
     public void DuplicateTest() {
       var original = new GsaMaterial {

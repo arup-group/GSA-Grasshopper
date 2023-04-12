@@ -8,6 +8,7 @@ using Xunit;
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GhOasysGooTest {
+
     [Theory]
     [InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
     [InlineData(typeof(GsaListGoo), typeof(GsaList))]

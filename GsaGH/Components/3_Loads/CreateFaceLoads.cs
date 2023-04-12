@@ -18,6 +18,331 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   public class CreateFaceLoads : GH_OasysDropDownComponent {
+    private enum FoldMode {
+      Uniform,
+      Variable,
+      Point,
+      Edge, //note implementation of edge-load is not yet supported in GsaAPI
+    }
+
+    public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.FaceLoad;
+    private readonly List<string> _loadTypeOptions = new List<string>(new[] {
+      "Uniform",
+      "Variable",
+      "Point",
+      //"Edge" note implementation of edge-load is not yet supported in GsaAPI
+    });
+    private bool _duringLoad;
+    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+    private FoldMode _mode = FoldMode.Uniform;
+
+    public CreateFaceLoads() : base("Create Face Load",
+                          "FaceLoad",
+      "Create GSA Face Load",
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
+      => Hidden = true;
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+
+      if (i == 0)
+        switch (_selectedItems[0]) {
+          case "Uniform":
+            Mode1Clicked();
+            break;
+
+          case "Variable":
+            Mode2Clicked();
+            break;
+
+          case "Point":
+            Mode3Clicked();
+            break;
+
+          case "Edge":
+            Mode4Clicked();
+            break;
+        }
+      else
+        _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
+
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
+
+      switch (_mode) {
+        case FoldMode.Uniform:
+          Params.Input[5]
+            .NickName = "Pj";
+          Params.Input[5]
+            .Name = "Projected";
+          Params.Input[5]
+            .Description = "Projected (default not)";
+          Params.Input[5]
+            .Access = GH_ParamAccess.item;
+          Params.Input[5]
+            .Optional = true;
+
+          Params.Input[6]
+            .NickName = "V";
+          Params.Input[6]
+            .Name = "Value [" + unitAbbreviation + "]";
+          Params.Input[6]
+            .Description = "Load Value";
+          Params.Input[6]
+            .Access = GH_ParamAccess.item;
+          Params.Input[6]
+            .Optional = false;
+          break;
+
+        case FoldMode.Variable:
+          Params.Input[5]
+            .NickName = "Pj";
+          Params.Input[5]
+            .Name = "Projected";
+          Params.Input[5]
+            .Description = "Projected (default not)";
+          Params.Input[5]
+            .Access = GH_ParamAccess.item;
+          Params.Input[5]
+            .Optional = true;
+
+          Params.Input[6]
+            .NickName = "V1";
+          Params.Input[6]
+            .Name = "Value 1 [" + unitAbbreviation + "]";
+          Params.Input[6]
+            .Description = "Load Value Corner 1";
+          Params.Input[6]
+            .Access = GH_ParamAccess.item;
+          Params.Input[6]
+            .Optional = true;
+
+          Params.Input[7]
+            .NickName = "V2";
+          Params.Input[7]
+            .Name = "Value 2 [" + unitAbbreviation + "]";
+          Params.Input[7]
+            .Description = "Load Value Corner 2";
+          Params.Input[7]
+            .Access = GH_ParamAccess.item;
+          Params.Input[7]
+            .Optional = true;
+
+          Params.Input[8]
+            .NickName = "V3";
+          Params.Input[8]
+            .Name = "Value 3 [" + unitAbbreviation + "]";
+          Params.Input[8]
+            .Description = "Load Value Corner 3";
+          Params.Input[8]
+            .Access = GH_ParamAccess.item;
+          Params.Input[8]
+            .Optional = true;
+
+          Params.Input[9]
+            .NickName = "V4";
+          Params.Input[9]
+            .Name = "Value 4 [" + unitAbbreviation + "]";
+          Params.Input[9]
+            .Description = "Load Value Corner 4";
+          Params.Input[9]
+            .Access = GH_ParamAccess.item;
+          Params.Input[9]
+            .Optional = true;
+          break;
+
+        case FoldMode.Point:
+          Params.Input[5]
+            .NickName = "Pj";
+          Params.Input[5]
+            .Name = "Projected";
+          Params.Input[5]
+            .Description = "Projected (default not)";
+          Params.Input[5]
+            .Access = GH_ParamAccess.item;
+          Params.Input[5]
+            .Optional = true;
+
+          Params.Input[6]
+            .NickName = "V";
+          Params.Input[6]
+            .Name = "Value [" + unitAbbreviation + "]";
+          Params.Input[6]
+            .Description = "Load Value Corner 1";
+          Params.Input[6]
+            .Access = GH_ParamAccess.item;
+          Params.Input[6]
+            .Optional = false;
+
+          Params.Input[7]
+            .NickName = "r";
+          Params.Input[7]
+            .Name = "Position r";
+          Params.Input[7]
+              .Description = "The position r of the point load to be specified in ( r , s )"
+            + Environment.NewLine
+            + "coordinates based on two-dimensional shape function."
+            + Environment.NewLine
+            + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8."
+            + Environment.NewLine
+            + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
+          Params.Input[7]
+            .Access = GH_ParamAccess.item;
+          Params.Input[7]
+            .Optional = true;
+
+          Params.Input[8]
+            .NickName = "s";
+          Params.Input[8]
+            .Name = "Position s";
+          Params.Input[8]
+              .Description = "The position s of the point load to be specified in ( r , s )"
+            + Environment.NewLine
+            + "coordinates based on two-dimensional shape function."
+            + Environment.NewLine
+            + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8."
+            + Environment.NewLine
+            + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
+          Params.Input[8]
+            .Access = GH_ParamAccess.item;
+          Params.Input[8]
+            .Optional = true;
+          break;
+
+        case FoldMode.Edge:
+          Params.Input[5]
+            .NickName = "Ed";
+          Params.Input[5]
+            .Name = "Edge";
+          Params.Input[5]
+            .Description = "Edge (1, 2, 3 or 4)";
+          Params.Input[5]
+            .Access = GH_ParamAccess.item;
+          Params.Input[5]
+            .Optional = false;
+
+          Params.Input[6]
+            .NickName = "V1";
+          Params.Input[6]
+            .Name = "Value 1 [" + unitAbbreviation + "]";
+          Params.Input[6]
+            .Description = "Load Value Corner 1";
+          Params.Input[6]
+            .Access = GH_ParamAccess.item;
+          Params.Input[6]
+            .Optional = false;
+
+          Params.Input[7]
+            .NickName = "V2";
+          Params.Input[7]
+            .Name = "Value 2 [" + unitAbbreviation + "]";
+          Params.Input[7]
+            .Description = "Load Value Corner 2";
+          Params.Input[7]
+            .Access = GH_ParamAccess.item;
+          Params.Input[7]
+            .Optional = false;
+          break;
+      }
+    }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Type",
+        "Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(_loadTypeOptions);
+      _selectedItems.Add(_mode.ToString());
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      _selectedItems.Add(Pressure.GetAbbreviation((_forcePerAreaUnit)));
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
+
+      pManager.AddIntegerParameter("Load case",
+        "LC",
+        "Load case number (default 1)",
+        GH_ParamAccess.item,
+        1);
+      pManager.AddGenericParameter("Element list",
+        "G2D",
+        "Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
+        + Environment.NewLine
+        + "Text string with Element list should take the form:"
+        + Environment.NewLine
+        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
+        + Environment.NewLine
+        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Axis",
+        "Ax",
+        "Load axis (default Local). "
+        + Environment.NewLine
+        + "Accepted inputs are:"
+        + Environment.NewLine
+        + "0 : Global"
+        + Environment.NewLine
+        + "-1 : Local",
+        GH_ParamAccess.item,
+        -1);
+      pManager.AddTextParameter("Direction",
+        "Di",
+        "Load direction (default z)."
+        + Environment.NewLine
+        + "Accepted inputs are:"
+        + Environment.NewLine
+        + "x"
+        + Environment.NewLine
+        + "y"
+        + Environment.NewLine
+        + "z",
+        GH_ParamAccess.item,
+        "z");
+      pManager.AddBooleanParameter("Projected",
+        "Pj",
+        "Projected (default not)",
+        GH_ParamAccess.item,
+        false);
+      pManager.AddNumberParameter("Value [" + unitAbbreviation + "]",
+        "V",
+        "Load Value",
+        GH_ParamAccess.item);
+
+      pManager[0]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager[5]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaLoadParameter(),
+        "Face Load",
+        "Ld",
+        "GSA Face Load",
+        GH_ParamAccess.item);
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var faceLoad = new GsaFaceLoad();
       int loadCase = 1;
@@ -44,31 +369,31 @@ namespace GsaGH.Components {
               break;
             }
           case GsaElement2dGoo value: {
-            faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.Element;
-            break;
-          }
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Element;
+              break;
+            }
           case GsaMember2dGoo value: {
-            faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.Member;
-            if (_mode != FoldMode.Uniform)
-              this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-            else
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Member;
+              if (_mode != FoldMode.Uniform)
+                this.AddRuntimeWarning(
+                  "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+              else
+                this.AddRuntimeRemark(
+                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
           case GsaProp2dGoo value: {
-            faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.Prop2d;
-            break;
-          }
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Prop2d;
+              break;
+            }
           default: {
-            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
-              faceLoad.FaceLoad.Elements = elemList;
-            break;
-          }
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
+                faceLoad.FaceLoad.Elements = elemList;
+              break;
+            }
         }
 
       var ghName = new GH_String();
@@ -97,6 +422,7 @@ namespace GsaGH.Components {
         case "X":
           direc = Direction.X;
           break;
+
         case "Y":
           direc = Direction.Y;
           break;
@@ -194,159 +520,6 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.FaceLoad;
-
-    public CreateFaceLoads() : base("Create Face Load",
-      "FaceLoad",
-      "Create GSA Face Load",
-      CategoryName.Name(),
-      SubCategoryName.Cat3())
-      => Hidden = true;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
-
-      pManager.AddIntegerParameter("Load case",
-        "LC",
-        "Load case number (default 1)",
-        GH_ParamAccess.item,
-        1);
-      pManager.AddGenericParameter("Element list",
-        "G2D",
-        "Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
-        + Environment.NewLine
-        + "Text string with Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Load axis (default Local). "
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "0 : Global"
-        + Environment.NewLine
-        + "-1 : Local",
-        GH_ParamAccess.item,
-        -1);
-      pManager.AddTextParameter("Direction",
-        "Di",
-        "Load direction (default z)."
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "x"
-        + Environment.NewLine
-        + "y"
-        + Environment.NewLine
-        + "z",
-        GH_ParamAccess.item,
-        "z");
-      pManager.AddBooleanParameter("Projected",
-        "Pj",
-        "Projected (default not)",
-        GH_ParamAccess.item,
-        false);
-      pManager.AddNumberParameter("Value [" + unitAbbreviation + "]",
-        "V",
-        "Load Value",
-        GH_ParamAccess.item);
-
-      pManager[0]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager[5]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaLoadParameter(),
-        "Face Load",
-        "Ld",
-        "GSA Face Load",
-        GH_ParamAccess.item);
-
-    #endregion
-
-    #region Custom UI
-
-    private enum FoldMode {
-      Uniform,
-      Variable,
-      Point,
-      Edge, //note implementation of edge-load is not yet supported in GsaAPI
-    }
-
-    private readonly List<string> _loadTypeOptions = new List<string>(new[] {
-      "Uniform",
-      "Variable",
-      "Point",
-      //"Edge" note implementation of edge-load is not yet supported in GsaAPI
-    });
-
-    private FoldMode _mode = FoldMode.Uniform;
-    private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Type",
-        "Unit",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      _dropDownItems.Add(_loadTypeOptions);
-      _selectedItems.Add(_mode.ToString());
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
-      _selectedItems.Add(Pressure.GetAbbreviation((_forcePerAreaUnit)));
-
-      _isInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-
-      if (i == 0)
-        switch (_selectedItems[0]) {
-          case "Uniform":
-            Mode1Clicked();
-            break;
-          case "Variable":
-            Mode2Clicked();
-            break;
-          case "Point":
-            Mode3Clicked();
-            break;
-          case "Edge":
-            Mode4Clicked();
-            break;
-        }
-      else
-        _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
-
-      base.UpdateUI();
-    }
-
     protected override void UpdateUIFromSelectedItems() {
       _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
       _duringLoad = true;
@@ -354,12 +527,15 @@ namespace GsaGH.Components {
         case "Uniform":
           Mode1Clicked();
           break;
+
         case "Variable":
           Mode2Clicked();
           break;
+
         case "Point":
           Mode3Clicked();
           break;
+
         case "Edge":
           Mode4Clicked();
           break;
@@ -369,189 +545,6 @@ namespace GsaGH.Components {
       _forcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
-
-    public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
-
-      switch (_mode) {
-        case FoldMode.Uniform:
-          Params.Input[5]
-            .NickName = "Pj";
-          Params.Input[5]
-            .Name = "Projected";
-          Params.Input[5]
-            .Description = "Projected (default not)";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
-
-          Params.Input[6]
-            .NickName = "V";
-          Params.Input[6]
-            .Name = "Value [" + unitAbbreviation + "]";
-          Params.Input[6]
-            .Description = "Load Value";
-          Params.Input[6]
-            .Access = GH_ParamAccess.item;
-          Params.Input[6]
-            .Optional = false;
-          break;
-        case FoldMode.Variable:
-          Params.Input[5]
-            .NickName = "Pj";
-          Params.Input[5]
-            .Name = "Projected";
-          Params.Input[5]
-            .Description = "Projected (default not)";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
-
-          Params.Input[6]
-            .NickName = "V1";
-          Params.Input[6]
-            .Name = "Value 1 [" + unitAbbreviation + "]";
-          Params.Input[6]
-            .Description = "Load Value Corner 1";
-          Params.Input[6]
-            .Access = GH_ParamAccess.item;
-          Params.Input[6]
-            .Optional = true;
-
-          Params.Input[7]
-            .NickName = "V2";
-          Params.Input[7]
-            .Name = "Value 2 [" + unitAbbreviation + "]";
-          Params.Input[7]
-            .Description = "Load Value Corner 2";
-          Params.Input[7]
-            .Access = GH_ParamAccess.item;
-          Params.Input[7]
-            .Optional = true;
-
-          Params.Input[8]
-            .NickName = "V3";
-          Params.Input[8]
-            .Name = "Value 3 [" + unitAbbreviation + "]";
-          Params.Input[8]
-            .Description = "Load Value Corner 3";
-          Params.Input[8]
-            .Access = GH_ParamAccess.item;
-          Params.Input[8]
-            .Optional = true;
-
-          Params.Input[9]
-            .NickName = "V4";
-          Params.Input[9]
-            .Name = "Value 4 [" + unitAbbreviation + "]";
-          Params.Input[9]
-            .Description = "Load Value Corner 4";
-          Params.Input[9]
-            .Access = GH_ParamAccess.item;
-          Params.Input[9]
-            .Optional = true;
-          break;
-        case FoldMode.Point:
-          Params.Input[5]
-            .NickName = "Pj";
-          Params.Input[5]
-            .Name = "Projected";
-          Params.Input[5]
-            .Description = "Projected (default not)";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
-
-          Params.Input[6]
-            .NickName = "V";
-          Params.Input[6]
-            .Name = "Value [" + unitAbbreviation + "]";
-          Params.Input[6]
-            .Description = "Load Value Corner 1";
-          Params.Input[6]
-            .Access = GH_ParamAccess.item;
-          Params.Input[6]
-            .Optional = false;
-
-          Params.Input[7]
-            .NickName = "r";
-          Params.Input[7]
-            .Name = "Position r";
-          Params.Input[7]
-              .Description = "The position r of the point load to be specified in ( r , s )"
-            + Environment.NewLine
-            + "coordinates based on two-dimensional shape function."
-            + Environment.NewLine
-            + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8."
-            + Environment.NewLine
-            + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
-          Params.Input[7]
-            .Access = GH_ParamAccess.item;
-          Params.Input[7]
-            .Optional = true;
-
-          Params.Input[8]
-            .NickName = "s";
-          Params.Input[8]
-            .Name = "Position s";
-          Params.Input[8]
-              .Description = "The position s of the point load to be specified in ( r , s )"
-            + Environment.NewLine
-            + "coordinates based on two-dimensional shape function."
-            + Environment.NewLine
-            + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8."
-            + Environment.NewLine
-            + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
-          Params.Input[8]
-            .Access = GH_ParamAccess.item;
-          Params.Input[8]
-            .Optional = true;
-          break;
-        case FoldMode.Edge:
-          Params.Input[5]
-            .NickName = "Ed";
-          Params.Input[5]
-            .Name = "Edge";
-          Params.Input[5]
-            .Description = "Edge (1, 2, 3 or 4)";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = false;
-
-          Params.Input[6]
-            .NickName = "V1";
-          Params.Input[6]
-            .Name = "Value 1 [" + unitAbbreviation + "]";
-          Params.Input[6]
-            .Description = "Load Value Corner 1";
-          Params.Input[6]
-            .Access = GH_ParamAccess.item;
-          Params.Input[6]
-            .Optional = false;
-
-          Params.Input[7]
-            .NickName = "V2";
-          Params.Input[7]
-            .Name = "Value 2 [" + unitAbbreviation + "]";
-          Params.Input[7]
-            .Description = "Load Value Corner 2";
-          Params.Input[7]
-            .Access = GH_ParamAccess.item;
-          Params.Input[7]
-            .Optional = false;
-          break;
-      }
-    }
-
-    #endregion
-
-    #region menu override
-
-    private bool _duringLoad;
 
     private void Mode1Clicked() {
       if (!_duringLoad && _mode == FoldMode.Uniform)
@@ -637,7 +630,5 @@ namespace GsaGH.Components {
       Params.RegisterInputParam(new Param_Number());
       Params.RegisterInputParam(new Param_Number());
     }
-
-    #endregion
   }
 }

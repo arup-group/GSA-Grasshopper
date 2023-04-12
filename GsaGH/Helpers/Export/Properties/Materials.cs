@@ -3,14 +3,6 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Materials {
-    internal static MaterialType ConvertType(GsaMaterial material) {
-      MaterialType matType = MaterialType.NONE;
-
-      if (material != null)
-        matType = (MaterialType)(int)material.MaterialType;
-
-      return matType;
-    }
 
     internal static int AddMaterial(GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       if (material.AnalysisProperty <= 0 || material.AnalysisMaterial == null) {
@@ -18,12 +10,6 @@ namespace GsaGH.Helpers.Export {
       }
       apiMaterials.SetValue(material.AnalysisProperty, material.Guid, material.AnalysisMaterial);
       return material.AnalysisProperty;
-    }
-
-    internal static int ConvertCustomMaterial(GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      return material == null
-        ? 0
-        : AddMaterial(material, ref apiMaterials);
     }
 
     internal static void AddMaterial(ref GsaSection section, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
@@ -39,6 +25,21 @@ namespace GsaGH.Helpers.Export {
     internal static void AddMaterial(ref GsaProp3d prop3d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
       if (prop3d.ApiProp3d.MaterialAnalysisProperty != 0 && prop3d.Material != null && prop3d.Material.AnalysisMaterial != null)
         prop3d.ApiProp3d.MaterialAnalysisProperty = ConvertCustomMaterial(prop3d.Material, ref apiMaterials);
+    }
+
+    internal static int ConvertCustomMaterial(GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      return material == null
+        ? 0
+        : AddMaterial(material, ref apiMaterials);
+    }
+
+    internal static MaterialType ConvertType(GsaMaterial material) {
+      MaterialType matType = MaterialType.NONE;
+
+      if (material != null)
+        matType = (MaterialType)(int)material.MaterialType;
+
+      return matType;
     }
   }
 }

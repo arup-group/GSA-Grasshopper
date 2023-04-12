@@ -5,14 +5,6 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaAnalysisCaseTest {
-    [Fact]
-    public void EmptyConstructorTest() {
-      var analysisCase = new GsaAnalysisCase();
-
-      Assert.Equal(0, analysisCase.Id);
-      Assert.Null(analysisCase.Name);
-      Assert.Null(analysisCase.Description);
-    }
 
     [Theory]
     [InlineData(0, "name", "description")]
@@ -40,6 +32,15 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, original.Id);
       Assert.Equal("name", original.Name);
       Assert.Equal("description", original.Description);
+    }
+
+    [Fact]
+    public void EmptyConstructorTest() {
+      var analysisCase = new GsaAnalysisCase();
+
+      Assert.Equal(0, analysisCase.Id);
+      Assert.Null(analysisCase.Name);
+      Assert.Null(analysisCase.Description);
     }
   }
 }

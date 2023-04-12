@@ -7,34 +7,43 @@ using Interop.Gsa_10_1;
 using OasysGH.Units;
 using Rhino;
 using Rhino.Runtime.InProcess;
-using RhinoInside;
 using Xunit;
 
 namespace IntegrationTests {
+
+
   public class GrasshopperFixture : IDisposable {
-    public static string InstallPath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-      "Oasys",
-      "GSA 10.1");
+    public RhinoCore Core {
+      get {
+        if (null == _core)
+          InitializeCore();
+        return _core as RhinoCore;
+      }
+    }
+    public GH_RhinoScriptInterface GhPlugin {
+      get {
+        if (null == _ghPlugin)
+          InitializeGrasshopperPlugin();
+        return _ghPlugin as GH_RhinoScriptInterface;
+      }
+    }
+    public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
-    private static readonly string s_linkFilePath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-      "Grasshopper",
-      "Libraries");
-
+    private object _doc { get; set; }
+    private object _docIo { get; set; }
     private static readonly string s_linkFileName = "IntegrationTests.ghlink";
-
+    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
 
-    static GrasshopperFixture()
-      =>
-        // This MUST be included in a static constructor to ensure that no Rhino DLLs
-        // are loaded before the resolver is set up. Avoid creating other static functions
-        // and members which may reference Rhino assemblies, as that may cause those
-        // assemblies to be loaded before this is called.
-        Resolver.Initialize();
+    static GrasshopperFixture() {
+      // This MUST be included in a static constructor to ensure that no Rhino DLLs
+      // are loaded before the resolver is set up. Avoid creating other static functions
+      // and members which may reference Rhino assemblies, as that may cause those
+      // assemblies to be loaded before this is called.
+      RhinoInside.Resolver.Initialize();
+    }
 
     public GrasshopperFixture() {
       AddPluginToGh();
@@ -49,25 +58,6 @@ namespace IntegrationTests {
       Utility.SetupUnitsDuringLoad(true);
     }
 
-    private object DocIo { get; set; }
-    private object Doc { get; set; }
-
-    public RhinoCore Core {
-      get {
-        if (null == _core)
-          InitializeCore();
-        return _core as RhinoCore;
-      }
-    }
-
-    public GH_RhinoScriptInterface GhPlugin {
-      get {
-        if (null == _ghPlugin)
-          InitializeGrasshopperPlugin();
-        return _ghPlugin as GH_RhinoScriptInterface;
-      }
-    }
-
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
     // ~GrasshopperFixture()
     // {
@@ -75,16 +65,23 @@ namespace IntegrationTests {
     //     Dispose(disposing: false);
     // }
 
+    public static void TryGsaCom() {
+      ComAuto gsa = GsaComObject.Instance;
+      gsa.NewFile();
+    }
+
+    public void AddPluginToGh() {
+      Directory.CreateDirectory(s_linkFilePath);
+      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, s_linkFileName));
+      writer.Write(Environment.CurrentDirectory);
+      writer.Close();
+    }
+
     public void Dispose() {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
       Dispose(disposing: true);
       GC.SuppressFinalize(this);
       File.Delete(Path.Combine(s_linkFilePath, s_linkFileName));
-    }
-
-    public static void TryGsaCom() {
-      ComAuto gsa = GsaComObject.Instance;
-      gsa.NewFile();
     }
 
     public void LoadRefs() {
@@ -95,19 +92,12 @@ namespace IntegrationTests {
       Environment.SetEnvironmentVariable(name, value, target);
     }
 
-    public void AddPluginToGh() {
-      Directory.CreateDirectory(s_linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, s_linkFileName));
-      writer.Write(Environment.CurrentDirectory);
-      writer.Close();
-    }
-
     protected virtual void Dispose(bool disposing) {
       if (_isDisposed)
         return;
       if (disposing) {
-        Doc = null;
-        DocIo = null;
+        _doc = null;
+        _docIo = null;
         GhPlugin.CloseAllDocuments();
         _ghPlugin = null;
         Core.Dispose();
