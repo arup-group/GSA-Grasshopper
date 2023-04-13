@@ -40,7 +40,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess DA) {
       var gsaModel = new GsaModel();
       if (DA.GetData(0, ref gsaModel)) {
-        List<GsaList> lists = Lists.GetLists(gsaModel);
+        List<GsaList> lists = Lists.GetLists();
         DA.SetDataList(0, lists.Select(x => new GsaListGoo(x)));
       }
     }
