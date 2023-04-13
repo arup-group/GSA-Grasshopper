@@ -8,8 +8,7 @@ namespace GsaGHTests.Helpers {
   public class OasysDropDownComponentTestHelper {
 
     public static void ChangeDropDownTest(
-      GH_OasysDropDownComponent comp,
-      bool ignoreSpacerDescriptionsCount = false) {
+      GH_OasysDropDownComponent comp, bool ignoreSpacerDescriptionsCount = false) {
       Assert.True(comp._isInitialised);
       if (!ignoreSpacerDescriptionsCount) {
         Assert.Equal(comp._dropDownItems.Count, comp._spacerDescriptions.Count);
@@ -35,13 +34,12 @@ namespace GsaGHTests.Helpers {
       doc.AddObject(comp, true);
 
       var serialize = new GH_DocumentIO {
-        Document = doc
+        Document = doc,
       };
       var originalComponent = (GH_Component)serialize.Document.Objects[0];
       originalComponent.Attributes.PerformLayout();
       originalComponent.ExpireSolution(true);
-      originalComponent.Params.Output[0]
-        .CollectData();
+      originalComponent.Params.Output[0].CollectData();
 
       string path = Path.Combine(Environment.CurrentDirectory, "GH-Test-Files");
       Directory.CreateDirectory(path);
@@ -55,8 +53,7 @@ namespace GsaGHTests.Helpers {
       var deserializedComponent = (GH_Component)deserialize.Document.Objects[0];
       deserializedComponent.Attributes.PerformLayout();
       deserializedComponent.ExpireSolution(true);
-      deserializedComponent.Params.Output[0]
-        .CollectData();
+      deserializedComponent.Params.Output[0].CollectData();
 
       Duplicates.AreEqual(originalComponent, deserializedComponent, true);
     }

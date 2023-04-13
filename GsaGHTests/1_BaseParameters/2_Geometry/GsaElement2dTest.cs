@@ -32,8 +32,7 @@ namespace GsaGHTests.Parameters {
       var pol = new Polyline(pts);
 
       var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-        MeshingParameters.DefaultAnalysisMesh,
-        0.001);
+        MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var elem = new GsaElement2d(mesh);
       int elid = 14;
@@ -44,8 +43,7 @@ namespace GsaGHTests.Parameters {
       var off = new List<GsaOffset>();
       for (int i = 0; i < elem.Count; i++) {
         elem.Ids[i] = elid++;
-        elem.Properties[i]
-          .Id = secid++;
+        elem.Properties[i].Id = secid++;
         grps.Add(22);
         dum.Add(true);
         nms.Add("Shahin");
@@ -58,30 +56,19 @@ namespace GsaGHTests.Parameters {
       elem.Offsets = off;
 
       for (int i = 0; i < elem.Topology.Count; i++) {
-        Assert.Equal(mesh.Vertices[i]
-            .X,
-          elem.Topology[i]
-            .X);
-        Assert.Equal(mesh.Vertices[i]
-            .Y,
-          elem.Topology[i]
-            .Y);
-        Assert.Equal(mesh.Vertices[i]
-            .Z,
-          elem.Topology[i]
-            .Z);
+        Assert.Equal(mesh.Vertices[i].X, elem.Topology[i].X);
+        Assert.Equal(mesh.Vertices[i].Y, elem.Topology[i].Y);
+        Assert.Equal(mesh.Vertices[i].Z, elem.Topology[i].Z);
       }
 
       int chelid = 14;
       int chsecid = 3;
       for (int i = 0; i < elem.Count; i++) {
-        if (mesh.Faces[i]
-          .IsTriangle) {
+        if (mesh.Faces[i].IsTriangle) {
           Assert.True(elem.Types[i] == ElementType.TRI3);
         }
 
-        if (mesh.Faces[i]
-          .IsQuad) {
+        if (mesh.Faces[i].IsQuad) {
           Assert.True(elem.Types[i] == ElementType.QUAD4);
         }
 
@@ -112,15 +99,11 @@ namespace GsaGHTests.Parameters {
         }
 
         Assert.Equal(chelid++, elem.Ids[i]);
-        Assert.Equal(chsecid++,
-          elem.Properties[i]
-            .Id);
+        Assert.Equal(chsecid++, elem.Properties[i].Id);
         Assert.Equal(22, elem.Groups[i]);
         Assert.True(elem.IsDummies[i]);
         Assert.Equal("Shahin", elem.Names[i]);
-        Assert.Equal(0.1,
-          elem.Offsets[i]
-            .Z.Value);
+        Assert.Equal(0.1, elem.Offsets[i].Z.Value);
       }
     }
 
@@ -136,8 +119,7 @@ namespace GsaGHTests.Parameters {
       var pol = new Polyline(pts);
 
       var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-        MeshingParameters.DefaultAnalysisMesh,
-        0.001);
+        MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var origi = new GsaElement2d(mesh);
       int elid = 3;
@@ -149,8 +131,7 @@ namespace GsaGHTests.Parameters {
       for (int i = 0; i < origi.Count; i++) {
         origi.Ids[i] = elid++;
         origi.Properties.Add(new GsaProp2d());
-        origi.Properties[i]
-          .Id = secid++;
+        origi.Properties[i].Id = secid++;
         grps.Add(2);
         dum.Add(false);
         nms.Add("Esmaeil");
@@ -165,28 +146,17 @@ namespace GsaGHTests.Parameters {
       GsaElement2d dup = origi.Duplicate();
 
       for (int i = 0; i < dup.Topology.Count; i++) {
-        Assert.Equal(mesh.Vertices[i]
-            .X,
-          dup.Topology[i]
-            .X);
-        Assert.Equal(mesh.Vertices[i]
-            .Y,
-          dup.Topology[i]
-            .Y);
-        Assert.Equal(mesh.Vertices[i]
-            .Z,
-          origi.Topology[i]
-            .Z);
+        Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X);
+        Assert.Equal(mesh.Vertices[i].Y, dup.Topology[i].Y);
+        Assert.Equal(mesh.Vertices[i].Z, origi.Topology[i].Z);
       }
 
       for (int i = 0; i < dup.Count; i++) {
-        if (mesh.Faces[i]
-          .IsTriangle) {
+        if (mesh.Faces[i].IsTriangle) {
           Assert.True(dup.Types[i] == ElementType.TRI3);
         }
 
-        if (mesh.Faces[i]
-          .IsQuad) {
+        if (mesh.Faces[i].IsQuad) {
           Assert.True(dup.Types[i] == ElementType.QUAD4);
         }
 
@@ -228,13 +198,11 @@ namespace GsaGHTests.Parameters {
       var off2 = new List<GsaOffset>();
       for (int i = 0; i < origi.Count; i++) {
         origi.Ids[i] = elid++;
-        origi.Properties[i]
-          .Id = secid++;
+        origi.Properties[i].Id = secid++;
         origi.Groups[i] = 4;
         origi.IsDummies[i] = true;
         origi.Names[i] = "Mani";
-        origi.Offsets[i]
-          .Z = new Length(-0.17, LengthUnit.Meter);
+        origi.Offsets[i].Z = new Length(-0.17, LengthUnit.Meter);
         grps2.Add(4);
         dum2.Add(true);
         nms2.Add("Mani");
@@ -251,15 +219,11 @@ namespace GsaGHTests.Parameters {
       int chsecid = 4;
       for (int i = 0; i < dup.Count; i++) {
         Assert.Equal(chelid++, dup.Ids[i]);
-        Assert.Equal(chsecid++,
-          dup.Properties[i]
-            .Id);
+        Assert.Equal(chsecid++, dup.Properties[i].Id);
         Assert.Equal(2, dup.Groups[i]);
         Assert.False(dup.IsDummies[i]);
         Assert.Equal("Esmaeil", dup.Names[i]);
-        Assert.Equal(-0.15,
-          dup.Offsets[i]
-            .Z.Value);
+        Assert.Equal(-0.15, dup.Offsets[i].Z.Value);
       }
 
       // check that values in original are changed
@@ -268,15 +232,11 @@ namespace GsaGHTests.Parameters {
       for (int i = 0; i < origi.Count; i++) {
         // check other members are valid
         Assert.Equal(chelid++, origi.Ids[i]);
-        Assert.Equal(chsecid++,
-          origi.Properties[i]
-            .Id);
+        Assert.Equal(chsecid++, origi.Properties[i].Id);
         Assert.Equal(4, origi.Groups[i]);
         Assert.True(origi.IsDummies[i]);
         Assert.Equal("Mani", origi.Names[i]);
-        Assert.Equal(-0.17,
-          origi.Offsets[i]
-            .Z.Value);
+        Assert.Equal(-0.17, origi.Offsets[i].Z.Value);
       }
     }
   }

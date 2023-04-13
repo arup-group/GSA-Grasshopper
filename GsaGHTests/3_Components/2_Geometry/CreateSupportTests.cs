@@ -24,8 +24,7 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, Plane.WorldYZ, 1);
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()),
-        2);
+        ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()), 2);
 
       var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.ApiNode.Position.X);
@@ -35,13 +34,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(-1, output.Value.Point.Y);
       Assert.Equal(0, output.Value.Point.Z);
       Assert.True(output.Value.IsSupport);
-      Duplicates.AreEqual(new GsaBool6(true,
-          true,
-          true,
-          true,
-          true,
-          true),
-        output.Value.Restraint);
+      Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true), output.Value.Restraint);
       Assert.Equal(0, output.Value.Id);
       Duplicates.AreEqual(Plane.WorldYZ, output.Value.LocalAxis);
       Assert.Equal(0, output.Value.DamperProperty);

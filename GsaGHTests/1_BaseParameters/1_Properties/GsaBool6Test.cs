@@ -14,48 +14,20 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void AssembleWithElementTest() {
       var e1d = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
-        ReleaseStart = new GsaBool6(true,
-        false,
-        true,
-        false,
-        true,
-        false),
-        ReleaseEnd = new GsaBool6(false,
-        true,
-        false,
-        true,
-        false,
-        true),
+        ReleaseStart = new GsaBool6(true, false, true, false, true, false),
+        ReleaseEnd = new GsaBool6(false, true, false, true, false, true),
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null,
-        null,
-        new List<GsaElement1d>() {
-          e1d,
-        },
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        LengthUnit.Meter,
-        Length.Zero,
-        false,
-        null),
+        Model = AssembleModel.Assemble(null, null, new List<GsaElement1d>() {
+            e1d,
+          }, null, null, null, null, null, null, null, null, null, null, null, null,
+          LengthUnit.Meter,
+          Length.Zero, false, null),
       };
 
-      var startAssembled = new GsaBool6(assembled.Model.Elements()[1]
-        .Release(0));
-      var endAssembled = new GsaBool6(assembled.Model.Elements()[1]
-        .Release(1));
+      var startAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(0));
+      var endAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(1));
 
       _ = Duplicates.AreEqual(e1d.ReleaseStart, startAssembled);
       _ = Duplicates.AreEqual(e1d.ReleaseEnd, endAssembled);
@@ -64,81 +36,29 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void AssembleWitMemberTest() {
       var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
-        ReleaseStart = new GsaBool6(true,
-        false,
-        true,
-        false,
-        true,
-        false),
-        ReleaseEnd = new GsaBool6(false,
-        true,
-        false,
-        true,
-        false,
-        true)
+        ReleaseStart = new GsaBool6(true, false, true, false, true, false),
+        ReleaseEnd = new GsaBool6(false, true, false, true, false, true),
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null,
-        null,
-        null,
-        null,
-        null,
-        new List<GsaMember1d>() {
-          m1d,
-        },
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        LengthUnit.Meter,
-        Length.Zero,
-        false,
-        null)
+        Model = AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() {
+            m1d,
+          }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero,
+          false, null),
       };
 
-      var startAssembled = new GsaBool6(assembled.Model.Members()[1]
-        .GetEndRelease(0)
-        .Releases);
-      var endAssembled = new GsaBool6(assembled.Model.Members()[1]
-        .GetEndRelease(1)
-        .Releases);
+      var startAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(0).Releases);
+      var endAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(1).Releases);
 
       _ = Duplicates.AreEqual(m1d.ReleaseStart, startAssembled);
       _ = Duplicates.AreEqual(m1d.ReleaseEnd, endAssembled);
     }
 
     [Theory]
-    [InlineData(true,
-      true,
-      true,
-      true,
-      true,
-      true)]
-    [InlineData(false,
-      false,
-      false,
-      false,
-      false,
-      false)]
-    public void ConstructorTest(
-      bool x,
-      bool y,
-      bool z,
-      bool xx,
-      bool yy,
-      bool zz) {
-      var b6 = new GsaBool6(x,
-        y,
-        z,
-        xx,
-        yy,
-        zz);
+    [InlineData(true, true, true, true, true, true)]
+    [InlineData(false, false, false, false, false, false)]
+    public void ConstructorTest(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
+      var b6 = new GsaBool6(x, y, z, xx, yy, zz);
 
       Assert.Equal(x, b6.X);
       Assert.Equal(y, b6.Y);
@@ -149,31 +69,10 @@ namespace GsaGHTests.Parameters {
     }
 
     [Theory]
-    [InlineData(true,
-      true,
-      true,
-      true,
-      true,
-      true)]
-    [InlineData(false,
-      false,
-      false,
-      false,
-      false,
-      false)]
-    public void DuplicateTest(
-      bool x,
-      bool y,
-      bool z,
-      bool xx,
-      bool yy,
-      bool zz) {
-      var original = new GsaBool6(x,
-        y,
-        z,
-        xx,
-        yy,
-        zz);
+    [InlineData(true, true, true, true, true, true)]
+    [InlineData(false, false, false, false, false, false)]
+    public void DuplicateTest(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
+      var original = new GsaBool6(x, y, z, xx, yy, zz);
 
       GsaBool6 duplicate = original.Duplicate();
 

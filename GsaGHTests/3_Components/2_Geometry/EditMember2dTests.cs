@@ -19,8 +19,7 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateMember2dTests.ComponentMother()),
-        0);
+        ComponentTestHelper.GetOutput(CreateMember2dTests.ComponentMother()), 0);
 
       return comp;
     }
@@ -78,15 +77,10 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 7, 1);
       ComponentTestHelper.SetInput(comp,
-        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0),
-          new Point3d(4, 0, 0),
-          new Point3d(4, 4, 0),
-          new Point3d(0, 4, 0),
-          1),
-        2);
+        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0),
+          new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
       ComponentTestHelper.SetInput(comp,
-        new GsaProp2dGoo(new GsaProp2d(new Length(200, LengthUnit.Millimeter))),
-        5);
+        new GsaProp2dGoo(new GsaProp2d(new Length(200, LengthUnit.Millimeter))), 5);
       ComponentTestHelper.SetInput(comp, 1, 6);
       ComponentTestHelper.SetInput(comp, "Ribbed Slab", 7);
       ComponentTestHelper.SetInput(comp, "Rigid Diaphragm", 8);
@@ -146,12 +140,8 @@ namespace GsaGHTests.Components.Geometry {
     public void CreateComponentTest3() {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp,
-        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0),
-          new Point3d(4, 0, 0),
-          new Point3d(4, 4, 0),
-          new Point3d(0, 4, 0),
-          1),
-        2);
+        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0),
+          new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
       ComponentTestHelper.SetInput(comp, new Point3d(2, 2, 0), 3);
       ComponentTestHelper.SetInput(comp, new Line(new Point3d(3, 0, 0), new Point3d(3, 3, 0)), 4);
 

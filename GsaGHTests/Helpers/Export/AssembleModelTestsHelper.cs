@@ -26,10 +26,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestElement1d(
-      GsaElement1d expected,
-      LengthUnit unit,
-      int expectedId,
-      GsaModel actualModel) {
+      GsaElement1d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Element> apiElements = actualModel.Model.Elements();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Element with id " + expectedId + " is not present in model");
@@ -62,51 +59,24 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.ReleaseStart.X,
-        api.GetEndRelease(0)
-          .Releases.X);
-      Assert.Equal(expected.ReleaseStart.Y,
-        api.GetEndRelease(0)
-          .Releases.Y);
-      Assert.Equal(expected.ReleaseStart.Z,
-        api.GetEndRelease(0)
-          .Releases.Z);
-      Assert.Equal(expected.ReleaseStart.Xx,
-        api.GetEndRelease(0)
-          .Releases.XX);
-      Assert.Equal(expected.ReleaseStart.Yy,
-        api.GetEndRelease(0)
-          .Releases.YY);
-      Assert.Equal(expected.ReleaseStart.Zz,
-        api.GetEndRelease(0)
-          .Releases.ZZ);
-      Assert.Equal(expected.ReleaseEnd.X,
-        api.GetEndRelease(1)
-          .Releases.X);
-      Assert.Equal(expected.ReleaseEnd.Y,
-        api.GetEndRelease(1)
-          .Releases.Y);
-      Assert.Equal(expected.ReleaseEnd.Z,
-        api.GetEndRelease(1)
-          .Releases.Z);
-      Assert.Equal(expected.ReleaseEnd.Xx,
-        api.GetEndRelease(1)
-          .Releases.XX);
-      Assert.Equal(expected.ReleaseEnd.Yy,
-        api.GetEndRelease(1)
-          .Releases.YY);
-      Assert.Equal(expected.ReleaseEnd.Zz,
-        api.GetEndRelease(1)
-          .Releases.ZZ);
+      Assert.Equal(expected.ReleaseStart.X, api.GetEndRelease(0).Releases.X);
+      Assert.Equal(expected.ReleaseStart.Y, api.GetEndRelease(0).Releases.Y);
+      Assert.Equal(expected.ReleaseStart.Z, api.GetEndRelease(0).Releases.Z);
+      Assert.Equal(expected.ReleaseStart.Xx, api.GetEndRelease(0).Releases.XX);
+      Assert.Equal(expected.ReleaseStart.Yy, api.GetEndRelease(0).Releases.YY);
+      Assert.Equal(expected.ReleaseStart.Zz, api.GetEndRelease(0).Releases.ZZ);
+      Assert.Equal(expected.ReleaseEnd.X, api.GetEndRelease(1).Releases.X);
+      Assert.Equal(expected.ReleaseEnd.Y, api.GetEndRelease(1).Releases.Y);
+      Assert.Equal(expected.ReleaseEnd.Z, api.GetEndRelease(1).Releases.Z);
+      Assert.Equal(expected.ReleaseEnd.Xx, api.GetEndRelease(1).Releases.XX);
+      Assert.Equal(expected.ReleaseEnd.Yy, api.GetEndRelease(1).Releases.YY);
+      Assert.Equal(expected.ReleaseEnd.Zz, api.GetEndRelease(1).Releases.ZZ);
 
       TestSection(expected.Section, api.Property, actualModel);
     }
 
     internal void TestElement2d(
-      GsaElement2d expected,
-      LengthUnit unit,
-      List<int> expectedIds,
-      GsaModel actualModel) {
+      GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel) {
       ReadOnlyDictionary<int, Element> apiElements = actualModel.Model.Elements();
       ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
       int j = 0;
@@ -127,35 +97,25 @@ namespace GsaGHTests.Helpers.Export {
           Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
         }
 
-        int group = (i > expected.Groups.Count - 1)
-          ? expected.Groups.Last()
-          : expected.Groups[i];
+        int group = (i > expected.Groups.Count - 1) ? expected.Groups.Last() : expected.Groups[i];
         Assert.Equal(group, api.Group);
-        bool dummy = (i > expected.IsDummies.Count - 1)
-          ? expected.IsDummies.Last()
-          : expected.IsDummies[i];
+        bool dummy = (i > expected.IsDummies.Count - 1) ? expected.IsDummies.Last() :
+          expected.IsDummies[i];
         Assert.Equal(dummy, api.IsDummy);
-        string name = (i > expected.Names.Count - 1)
-          ? expected.Names.Last()
-          : expected.Names[i];
+        string name = (i > expected.Names.Count - 1) ? expected.Names.Last() : expected.Names[i];
         Assert.Equal(name, api.Name);
-        GsaOffset offset = (i > expected.Offsets.Count - 1)
-          ? expected.Offsets.Last()
-          : expected.Offsets[i];
+        GsaOffset offset = (i > expected.Offsets.Count - 1) ? expected.Offsets.Last() :
+          expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
-        GsaProp2d prop = (i > expected.Properties.Count - 1)
-          ? expected.Properties.Last()
-          : expected.Properties[i];
+        GsaProp2d prop = (i > expected.Properties.Count - 1) ? expected.Properties.Last() :
+          expected.Properties[i];
         TestProp2d(prop, api.Property, actualModel);
       }
     }
 
     internal void TestMember1d(
-      GsaMember1d expected,
-      LengthUnit unit,
-      int expectedId,
-      GsaModel actualModel) {
+      GsaMember1d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Member> apiElements = actualModel.Model.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
@@ -192,51 +152,24 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.ReleaseStart.X,
-        api.GetEndRelease(0)
-          .Releases.X);
-      Assert.Equal(expected.ReleaseStart.Y,
-        api.GetEndRelease(0)
-          .Releases.Y);
-      Assert.Equal(expected.ReleaseStart.Z,
-        api.GetEndRelease(0)
-          .Releases.Z);
-      Assert.Equal(expected.ReleaseStart.Xx,
-        api.GetEndRelease(0)
-          .Releases.XX);
-      Assert.Equal(expected.ReleaseStart.Yy,
-        api.GetEndRelease(0)
-          .Releases.YY);
-      Assert.Equal(expected.ReleaseStart.Zz,
-        api.GetEndRelease(0)
-          .Releases.ZZ);
-      Assert.Equal(expected.ReleaseEnd.X,
-        api.GetEndRelease(1)
-          .Releases.X);
-      Assert.Equal(expected.ReleaseEnd.Y,
-        api.GetEndRelease(1)
-          .Releases.Y);
-      Assert.Equal(expected.ReleaseEnd.Z,
-        api.GetEndRelease(1)
-          .Releases.Z);
-      Assert.Equal(expected.ReleaseEnd.Xx,
-        api.GetEndRelease(1)
-          .Releases.XX);
-      Assert.Equal(expected.ReleaseEnd.Yy,
-        api.GetEndRelease(1)
-          .Releases.YY);
-      Assert.Equal(expected.ReleaseEnd.Zz,
-        api.GetEndRelease(1)
-          .Releases.ZZ);
+      Assert.Equal(expected.ReleaseStart.X, api.GetEndRelease(0).Releases.X);
+      Assert.Equal(expected.ReleaseStart.Y, api.GetEndRelease(0).Releases.Y);
+      Assert.Equal(expected.ReleaseStart.Z, api.GetEndRelease(0).Releases.Z);
+      Assert.Equal(expected.ReleaseStart.Xx, api.GetEndRelease(0).Releases.XX);
+      Assert.Equal(expected.ReleaseStart.Yy, api.GetEndRelease(0).Releases.YY);
+      Assert.Equal(expected.ReleaseStart.Zz, api.GetEndRelease(0).Releases.ZZ);
+      Assert.Equal(expected.ReleaseEnd.X, api.GetEndRelease(1).Releases.X);
+      Assert.Equal(expected.ReleaseEnd.Y, api.GetEndRelease(1).Releases.Y);
+      Assert.Equal(expected.ReleaseEnd.Z, api.GetEndRelease(1).Releases.Z);
+      Assert.Equal(expected.ReleaseEnd.Xx, api.GetEndRelease(1).Releases.XX);
+      Assert.Equal(expected.ReleaseEnd.Yy, api.GetEndRelease(1).Releases.YY);
+      Assert.Equal(expected.ReleaseEnd.Zz, api.GetEndRelease(1).Releases.ZZ);
 
       TestSection(expected.Section, api.Property, actualModel);
     }
 
     internal void TestMember2d(
-      GsaMember2d expected,
-      LengthUnit unit,
-      int expectedId,
-      GsaModel actualModel) {
+      GsaMember2d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Member> apiElements = actualModel.Model.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
@@ -266,10 +199,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestMember3d(
-      GsaMember3d expected,
-      LengthUnit unit,
-      int expectedId,
-      GsaModel actualModel) {
+      GsaMember3d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Member> apiElements = actualModel.Model.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
@@ -279,8 +209,7 @@ namespace GsaGHTests.Helpers.Export {
       string[] faces = api.Topology.Split(';');
       int faceId = 0;
       foreach (string face in faces) {
-        string[] topo = face.Trim()
-          .Split(' ');
+        string[] topo = face.Trim().Split(' ');
         MeshFace mface = expected.SolidMesh.Faces[faceId++];
 
         Node apiNode = apiNodes[int.Parse(topo[0])];
@@ -312,10 +241,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestNode(
-      GsaNode expected,
-      LengthUnit unit,
-      int expectedId,
-      GsaModel actualModel) {
+      GsaNode expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
       Assert.True(apiNodes.ContainsKey(expectedId),
         "Node with id " + expectedId + " is not present in model");
@@ -367,8 +293,7 @@ namespace GsaGHTests.Helpers.Export {
 
       if (api.MaterialAnalysisProperty > 0) {
         TestAnalysisMaterial(expected.Material, api.MaterialAnalysisProperty, actualModel);
-      }
-      else {
+      } else {
         Assert.Null(expected.Material.AnalysisMaterial);
       }
     }
@@ -382,8 +307,7 @@ namespace GsaGHTests.Helpers.Export {
 
       if (api.MaterialAnalysisProperty > 0) {
         TestAnalysisMaterial(expected.Material, api.MaterialAnalysisProperty, actualModel);
-      }
-      else {
+      } else {
         Assert.Null(expected.Material.AnalysisMaterial);
       }
     }
@@ -398,8 +322,7 @@ namespace GsaGHTests.Helpers.Export {
 
       if (api.MaterialAnalysisProperty > 0) {
         TestAnalysisMaterial(expected.Material, api.MaterialAnalysisProperty, actualModel);
-      }
-      else {
+      } else {
         Assert.Null(expected.Material.AnalysisMaterial);
       }
     }

@@ -21,8 +21,7 @@ namespace GsaGHTests.Components.Geometry {
       box.Z = new Interval(0, 10);
       ComponentTestHelper.SetInput(comp, box, 0);
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateProp3dTests.ComponentMother()),
-        1);
+        ComponentTestHelper.GetOutput(CreateProp3dTests.ComponentMother()), 1);
       ComponentTestHelper.SetInput(comp, 0.5, 2);
 
       return comp;

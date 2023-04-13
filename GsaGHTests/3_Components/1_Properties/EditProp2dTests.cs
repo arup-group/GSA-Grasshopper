@@ -98,8 +98,7 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_Integer(49), i++);
       expectedMat = new GsaMaterial(8);
       ComponentTestHelper.SetInput(comp, new GsaMaterialGoo(expectedMat), i++);
-      ComponentTestHelper.SetInput(comp,
-        new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
+      ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
         i++);
       ComponentTestHelper.SetInput(comp, new GH_Integer(7), i++);
       ComponentTestHelper.SetInput(comp, new GH_String("Load Panel"), 9);

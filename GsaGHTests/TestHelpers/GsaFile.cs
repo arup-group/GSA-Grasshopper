@@ -31,8 +31,7 @@ namespace GsaGHTests.Helper {
 
     private static string DownloadFile(string url) {
       string path = Path.GetTempPath();
-      string fileName = url.Split('/')
-        .Last();
+      string fileName = url.Split('/').Last();
       var webClient = new WebClient();
       webClient.DownloadFile(url, path + fileName);
       return path + fileName;

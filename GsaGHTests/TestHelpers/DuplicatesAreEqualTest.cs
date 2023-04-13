@@ -27,8 +27,7 @@ namespace GsaGHTests.Helpers {
 
         if (!propertyA.CanWrite && !propertyB.CanWrite) {
           continue;
-        }
-        else if (!propertyA.CanWrite || !propertyB.CanWrite) {
+        } else if (!propertyA.CanWrite || !propertyB.CanWrite) {
           Assert.Equal(objA, objB);
         }
 
@@ -59,47 +58,34 @@ namespace GsaGHTests.Helpers {
               && !typeof(string).IsAssignableFrom(propertyTypeB)) {
               if (objPropertyValueA == null || objPropertyValueB == null) {
                 Assert.Equal(objPropertyValueA, objPropertyValueB);
-              }
-              else {
+              } else {
                 IEnumerable<object> enumerableA = ((IEnumerable)objPropertyValueA).Cast<object>();
                 IEnumerable<object> enumerableB = ((IEnumerable)objPropertyValueB).Cast<object>();
 
                 Type enumrableTypeA = null;
                 Type enumrableTypeB = null;
-                if (enumerableA.GetType()
-                    .GetGenericArguments()
-                    .Length
-                  > 0) {
-                  enumrableTypeA = enumerableA.GetType()
-                    .GetGenericArguments()[0];
+                if (enumerableA.GetType().GetGenericArguments().Length > 0) {
+                  enumrableTypeA = enumerableA.GetType().GetGenericArguments()[0];
                 }
 
-                if (enumerableB.GetType()
-                    .GetGenericArguments()
-                    .Length
-                  > 0) {
-                  enumrableTypeB = enumerableB.GetType()
-                    .GetGenericArguments()[0];
+                if (enumerableB.GetType().GetGenericArguments().Length > 0) {
+                  enumrableTypeB = enumerableB.GetType().GetGenericArguments()[0];
                 }
 
                 Assert.Equal(enumrableTypeA, enumrableTypeB);
 
                 if (enumrableTypeA.ToString() is "System.Object") {
                   if (enumerableA.Any()) {
-                    enumrableTypeA = enumerableA.First()
-                      .GetType();
-                  }
-                  else {
+                    enumrableTypeA = enumerableA.First().GetType();
+                  } else {
                     continue;
                   }
                 }
 
                 if (enumrableTypeB.ToString() is "System.Object") {
                   if (enumerableB.Any()) {
-                    enumrableTypeB = enumerableB.First()
-                      .GetType();
-                  }
-                  else {
+                    enumrableTypeB = enumerableB.First().GetType();
+                  } else {
                     continue;
                   }
                 }
@@ -117,29 +103,22 @@ namespace GsaGHTests.Helpers {
                   }
                 }
               }
-            }
-            else {
+            } else {
               Assert.Equal(objPropertyValueA, objPropertyValueB);
             }
-          }
-          else if (propertyTypeA.IsValueType
-            || propertyTypeA.IsEnum
+          } else if (propertyTypeA.IsValueType || propertyTypeA.IsEnum
             || propertyTypeA.Equals(typeof(string))) {
             if (excludeGuid && propertyTypeA.Equals(typeof(Guid))) {
               continue;
             }
 
             Assert.Equal(objPropertyValueA, objPropertyValueB);
-          }
-          else if (objPropertyValueA == null || objPropertyValueB == null) {
+          } else if (objPropertyValueA == null || objPropertyValueB == null) {
             Assert.Equal(objPropertyValueA, objPropertyValueB);
-          }
-          else {
+          } else {
             AreEqual(objPropertyValueA, objPropertyValueB, excludeGuid);
           }
-        }
-        catch (TargetParameterCountException) {
-        }
+        } catch (TargetParameterCountException) { }
       }
 
       return true;

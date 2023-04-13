@@ -16,8 +16,7 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateMember3dTests.ComponentMother()),
-        0);
+        ComponentTestHelper.GetOutput(CreateMember3dTests.ComponentMother()), 0);
 
       return comp;
     }

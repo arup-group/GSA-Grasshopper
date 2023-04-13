@@ -41,17 +41,12 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData("Bottom", 13, 13, 0, 150)]
     [InlineData("Bottom-Right", -14, -14, 150, 150)]
     public void AlignmentOffsetTest(
-      string alignment,
-      double y,
-      double z,
-      double expectedY,
-      double expectedZ) {
+      string alignment, double y, double z, double expectedY, double expectedZ) {
       GH_OasysComponent comp = ComponentMother();
 
       ComponentTestHelper.SetInput(comp, alignment, 1);
       ComponentTestHelper.SetInput(comp,
-        new GsaOffsetGoo(new GsaOffset(0, 0, y, z, LengthUnit.Millimeter)),
-        2);
+        new GsaOffsetGoo(new GsaOffset(0, 0, y, z, LengthUnit.Millimeter)), 2);
 
       var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
 

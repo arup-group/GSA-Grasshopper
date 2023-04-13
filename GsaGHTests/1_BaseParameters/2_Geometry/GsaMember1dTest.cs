@@ -56,24 +56,14 @@ namespace GsaGHTests.Parameters {
         Type = MemberType.BEAM,
       };
 
-      Assert.Equal(mem.PolyCurve.PointAtStart.X,
-        mem.Topology[0]
-          .X);
-      Assert.Equal(mem.PolyCurve.PointAtStart.Y,
-        mem.Topology[0]
-          .Y);
-      Assert.Equal(mem.PolyCurve.PointAtEnd.X,
-        mem.Topology[mem.Topology.Count - 1]
-          .X);
-      Assert.Equal(mem.PolyCurve.PointAtEnd.Y,
-        mem.Topology[mem.Topology.Count - 1]
-          .Y);
+      Assert.Equal(mem.PolyCurve.PointAtStart.X, mem.Topology[0].X);
+      Assert.Equal(mem.PolyCurve.PointAtStart.Y, mem.Topology[0].Y);
+      Assert.Equal(mem.PolyCurve.PointAtEnd.X, mem.Topology[mem.Topology.Count - 1].X);
+      Assert.Equal(mem.PolyCurve.PointAtEnd.Y, mem.Topology[mem.Topology.Count - 1].Y);
 
       for (int i = 0; i < mem.PolyCurve.SegmentCount; i++) {
-        Assert.True(mem.PolyCurve.SegmentCurve(i)
-            .IsLinear()
-          || mem.PolyCurve.SegmentCurve(i)
-            .IsArc());
+        Assert.True(mem.PolyCurve.SegmentCurve(i).IsLinear()
+          || mem.PolyCurve.SegmentCurve(i).IsArc());
       }
 
       Assert.Equal(Color.FromArgb(255, 255, 0, 0), mem.Colour);

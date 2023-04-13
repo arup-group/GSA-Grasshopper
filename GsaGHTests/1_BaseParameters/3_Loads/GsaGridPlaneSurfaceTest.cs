@@ -11,60 +11,17 @@ namespace GsaGHTests.Parameters {
   public class GsaGridPlaneSurfaceTest {
 
     [Theory]
-    [InlineData(0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      1)]
-    [InlineData(1,
-      1,
-      1,
-      0,
-      1,
-      0,
-      0,
-      0,
-      1,
-      1,
-      0,
-      0)]
-    [InlineData(-1,
-      -1,
-      -1,
-      -1,
-      0,
-      0,
-      0,
-      -1,
-      0,
-      0,
-      0,
-      -1)]
+    [InlineData(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)]
+    [InlineData(1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0)]
+    [InlineData(-1, -1, -1, -1, 0, 0, 0, -1, 0, 0, 0, -1)]
     public void ConstructorTest(
-      double originX,
-      double originY,
-      double originZ,
-      double xAxisX,
-      double xAxisY,
-      double xAxisZ,
-      double yAxisX,
-      double yAxisY,
-      double yAxisZ,
-      double zAxisX,
-      double zAxisY,
-      double zAxisZ) {
+      double originX, double originY, double originZ, double xAxisX, double xAxisY, double xAxisZ,
+      double yAxisX, double yAxisY, double yAxisZ, double zAxisX, double zAxisY, double zAxisZ) {
       var plane = new Plane {
         Origin = new Point3d(originX, originY, originZ),
         XAxis = new Vector3d(xAxisX, xAxisY, xAxisZ),
         YAxis = new Vector3d(yAxisX, yAxisY, yAxisZ),
-        ZAxis = new Vector3d(zAxisX, zAxisY, zAxisZ)
+        ZAxis = new Vector3d(zAxisX, zAxisY, zAxisZ),
       };
 
       var gps = new GsaGridPlaneSurface(plane);

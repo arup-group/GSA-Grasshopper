@@ -47,7 +47,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, prop.AxisProperty);
       Assert.Equal(4, prop.Material.GradeProperty);
       Assert.Equal(0, prop.Material.AnalysisProperty);
-      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(), prop.Material.MaterialType.ToString());
+      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
+        prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.Name);
       Assert.Equal("awesome property", prop.Description);
       Assert.Equal(Property2D_Type.LOAD.ToString(), prop.Type.ToString());
@@ -92,7 +93,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, dup.AxisProperty);
       Assert.Equal(0, dup.Material.GradeProperty);
       Assert.Equal(13, dup.Material.AnalysisProperty);
-      Assert.Equal(MaterialType.UNDEF.ToString().ToPascalCase(), dup.Material.MaterialType.ToString());
+      Assert.Equal(MaterialType.UNDEF.ToString().ToPascalCase(),
+        dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
       Assert.Equal("awesome property", dup.Description);
       Assert.Equal(Property2D_Type.SHELL.ToString(), dup.Type.ToString());
@@ -101,7 +103,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, orig.AxisProperty);
       Assert.Equal(0, orig.Material.GradeProperty);
       Assert.Equal(42, orig.Material.AnalysisProperty);
-      Assert.Equal(MaterialType.FABRIC.ToString().ToPascalCase(), orig.Material.MaterialType.ToString());
+      Assert.Equal(MaterialType.FABRIC.ToString().ToPascalCase(),
+        orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal("less cool property", orig.Description);
       Assert.Equal(Property2D_Type.LOAD.ToString(), orig.Type.ToString());

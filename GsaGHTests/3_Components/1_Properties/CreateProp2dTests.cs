@@ -20,8 +20,7 @@ namespace GsaGHTests.Components.Properties {
 
       if (isLoadType) {
         ComponentTestHelper.SetInput(comp, 2, 0);
-      }
-      else {
+      } else {
         ComponentTestHelper.SetInput(comp, 14, 0);
         ComponentTestHelper.SetInput(comp, CreateCustomMaterialTests.ComponentMother(), 1);
       }

@@ -22,97 +22,20 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Theory]
-    [InlineData("free",
-      false,
-      false,
-      false,
-      false,
-      false,
-      false)]
-    [InlineData("pin",
-      true,
-      true,
-      true,
-      false,
-      false,
-      false)]
-    [InlineData("pinned",
-      true,
-      true,
-      true,
-      false,
-      false,
-      false)]
-    [InlineData("fix",
-      true,
-      true,
-      true,
-      true,
-      true,
-      true)]
-    [InlineData("fixed",
-      true,
-      true,
-      true,
-      true,
-      true,
-      true)]
-    [InlineData("release",
-      false,
-      false,
-      false,
-      false,
-      true,
-      true)]
-    [InlineData("released",
-      false,
-      false,
-      false,
-      false,
-      true,
-      true)]
-    [InlineData("hinge",
-      false,
-      false,
-      false,
-      false,
-      true,
-      true)]
-    [InlineData("hinged",
-      false,
-      false,
-      false,
-      false,
-      true,
-      true)]
-    [InlineData("charnier",
-      false,
-      false,
-      false,
-      false,
-      true,
-      true)]
-    [InlineData("rrrrrr",
-      false,
-      false,
-      false,
-      false,
-      false,
-      false)]
-    [InlineData("ffffff",
-      true,
-      true,
-      true,
-      true,
-      true,
-      true)]
+    [InlineData("free", false, false, false, false, false, false)]
+    [InlineData("pin", true, true, true, false, false, false)]
+    [InlineData("pinned", true, true, true, false, false, false)]
+    [InlineData("fix", true, true, true, true, true, true)]
+    [InlineData("fixed", true, true, true, true, true, true)]
+    [InlineData("release", false, false, false, false, true, true)]
+    [InlineData("released", false, false, false, false, true, true)]
+    [InlineData("hinge", false, false, false, false, true, true)]
+    [InlineData("hinged", false, false, false, false, true, true)]
+    [InlineData("charnier", false, false, false, false, true, true)]
+    [InlineData("rrrrrr", false, false, false, false, false, false)]
+    [InlineData("ffffff", true, true, true, true, true, true)]
     public void CastFromStringtest(
-      string s,
-      bool expectedX,
-      bool expectedY,
-      bool expectedZ,
-      bool expectedXx,
-      bool expectedYy,
+      string s, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy,
       bool expectedZz) {
       var goo = new GsaBool6Goo(new GsaBool6());
 

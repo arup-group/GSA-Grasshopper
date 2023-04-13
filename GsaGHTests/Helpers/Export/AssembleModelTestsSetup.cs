@@ -85,9 +85,7 @@ namespace GsaGHTests.Helpers.Export {
     public static GsaProp2dGoo Prop2d(Length thickness, bool useConcrete) {
       var comp = new CreateProp2d();
       comp.CreateAttributes();
-      GsaMaterialGoo material = useConcrete
-        ? CustomMaterialConcrete()
-        : CustomMaterialSteel();
+      GsaMaterialGoo material = useConcrete ? CustomMaterialConcrete() : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(thickness), 0);
       ComponentTestHelper.SetInput(comp, material, 1);
       return (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp);
@@ -96,9 +94,7 @@ namespace GsaGHTests.Helpers.Export {
     public static GsaProp3dGoo Prop3d(bool useConcrete) {
       var comp = new CreateProp3d();
       comp.CreateAttributes();
-      GsaMaterialGoo material = useConcrete
-        ? CustomMaterialConcrete()
-        : CustomMaterialSteel();
+      GsaMaterialGoo material = useConcrete ? CustomMaterialConcrete() : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, material, 0);
       return (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
     }
@@ -106,9 +102,7 @@ namespace GsaGHTests.Helpers.Export {
     public static GsaSectionGoo Section(string profile, bool useConcrete) {
       var comp = new CreateSection();
       comp.CreateAttributes();
-      GsaMaterialGoo material = useConcrete
-        ? CustomMaterialConcrete()
-        : CustomMaterialSteel();
+      GsaMaterialGoo material = useConcrete ? CustomMaterialConcrete() : CustomMaterialSteel();
       ComponentTestHelper.SetInput(comp, profile, 0);
       ComponentTestHelper.SetInput(comp, material, 1);
       return (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
