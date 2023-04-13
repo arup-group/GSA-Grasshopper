@@ -1,19 +1,14 @@
-﻿
-using OasysUnits;
-using OasysUnits.Units;
+﻿using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
   /// Buckling Length Factors for a <see cref="GsaAPI.Member"/>
   /// </summary>
   public class GsaBucklingLengthFactors {
-    #region properties
+    public double? EquivalentUniformMomentFactor { get; set; }
     public double? MomentAmplificationFactorStrongAxis { get; set; }
     public double? MomentAmplificationFactorWeakAxis { get; set; }
-    public double? EquivalentUniformMomentFactor { get; set; }
-    #endregion
 
-    #region constructors
     public GsaBucklingLengthFactors() {
     }
 
@@ -34,9 +29,7 @@ namespace GsaGH.Parameters {
       MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
-    #endregion
 
-    #region methods
     public GsaBucklingLengthFactors Duplicate() {
       return (GsaBucklingLengthFactors)MemberwiseClone();
     }
@@ -48,6 +41,5 @@ namespace GsaGH.Parameters {
       string output = string.Join(" ", y, z, lt).Trim();
       return output == "" ? "Automatic" : output;
     }
-    #endregion
   }
 }

@@ -16,7 +16,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -37,6 +37,422 @@ namespace GsaGH.Components {
   /// </summary>
   // ReSharper disable once InconsistentNaming
   public class Elem2dContourResults_OBSOLETE : GH_OasysDropDownComponent {
+    private enum DisplayValue {
+      X,
+      Y,
+      Z,
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
+    }
+
+    private enum FoldMode {
+      Displacement,
+      Force,
+      Stress,
+    }
+
+    public override Guid ComponentGuid => new Guid("935d359a-9394-42fc-a76e-ea08ccb84135");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.Result2D;
+    private readonly List<string> _displacement = new List<string>(new[] {
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+    });
+    private readonly List<string> _force = new List<string>(new[] {
+      "Force Nx",
+      "Force Ny",
+      "Force Nxy",
+      "Shear Qx",
+      "Shear Qy",
+      "Moment Mx",
+      "Moment My",
+      "Moment Mxy",
+    });
+    private readonly List<string> _layer = new List<string>(new[] {
+      "Top",
+      "Middle",
+      "Bottom",
+    });
+    private readonly List<string> _stress = new List<string>(new[] {
+      "Stress xx",
+      "Stress yy",
+      "Stress zz",
+      "Stress xy",
+      "Stress yz",
+      "Stress zx",
+    });
+    private readonly List<string> _type = new List<string>(new[] {
+      "Displacement",
+      "Force",
+      "Stress",
+    });
+    private string _case = "";
+    private double _defScale = 250;
+    private DisplayValue _disp = DisplayValue.ResXyz;
+    private int _flayer;
+    private bool _isShear;
+    private Bitmap _legend = new Bitmap(15, 120);
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _maxValue = 1000;
+    private double _minValue;
+    private FoldMode _mode = FoldMode.Displacement;
+    private int _noDigits;
+    private string _resType;
+    private bool _showLegend = true;
+    private bool _slider = true;
+
+    public Elem2dContourResults_OBSOLETE() : base("2D Contour Results",
+                                                                                                  "ContourElem2d",
+      "Displays GSA 2D Element Results as Contour",
+      CategoryName.Name(),
+      SubCategoryName.Cat5()) { }
+
+    public override void CreateAttributes() {
+      if (!_isInitialised)
+        InitialiseDropdowns();
+      m_attributes = new DropDownSliderComponentAttributes(this,
+        SetSelected,
+        _dropDownItems,
+        _selectedItems,
+        _slider,
+        SetVal,
+        SetMaxMin,
+        _defScale,
+        _maxValue,
+        _minValue,
+        _noDigits,
+        _spacerDescriptions);
+    }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+      if (!(_legendValues != null & _showLegend))
+        return;
+
+      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
+      for (int i = 0; i < _legendValues.Count; i++)
+        args.Display.Draw2dText(_legendValues[i],
+          Color.Black,
+          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]),
+          false);
+      args.Display.Draw2dText(_resType,
+        Color.Black,
+        new Point2d(args.Viewport.Bounds.Right - 110, 7),
+        false);
+      args.Display.Draw2dText(_case,
+        Color.Black,
+        new Point2d(args.Viewport.Bounds.Right - 110, 145),
+        false);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      _disp = (DisplayValue)reader.GetInt32("Display");
+      _flayer = reader.GetInt32("flayer");
+      _slider = reader.GetBoolean("slider");
+      _noDigits = reader.GetInt32("noDec");
+      _maxValue = reader.GetDouble("valMax");
+      _minValue = reader.GetDouble("valMin");
+      _defScale = reader.GetDouble("val");
+      _showLegend = reader.GetBoolean("legend");
+      return base.Read(reader);
+    }
+
+    public void SetMaxMin(double max, double min) {
+      _maxValue = max;
+      _minValue = min;
+    }
+
+    public override void SetSelected(int dropdownlistidd, int selectedidd) {
+      switch (dropdownlistidd) {
+        case 0: {
+            switch (selectedidd) {
+              case 0: {
+                  if (_dropDownItems[1] != _displacement) {
+                    if (_dropDownItems.Count == 4) // if coming from stress we remove the layer dropdown
+                    {
+                      _dropDownItems.RemoveAt(2);
+                      _selectedItems.RemoveAt(2);
+                      _spacerDescriptions.RemoveAt(2);
+                    }
+
+                    _dropDownItems[1] = _displacement;
+                    _dropDownItems[2] = FilteredUnits.FilteredLengthUnits;
+
+                    _selectedItems[0] = _dropDownItems[0][0]; // displacement
+                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+                    _selectedItems[2] = Length.GetAbbreviation(_lengthUnit);
+
+                    _disp = (DisplayValue)3;
+                    _isShear = false;
+                    _flayer = 0;
+                    Mode1Clicked();
+                  }
+
+                  break;
+                }
+              case 1: {
+                  if (_dropDownItems[1] != _force) {
+                    if (_dropDownItems.Count == 4) // if coming from stress we remove the layer dropdown
+                    {
+                      _dropDownItems.RemoveAt(2);
+                      _selectedItems.RemoveAt(2);
+                      _spacerDescriptions.RemoveAt(2);
+                    }
+
+                    _dropDownItems[1] = _force;
+
+                    _selectedItems[0] = _dropDownItems[0][1];
+                    _selectedItems[1] = _dropDownItems[1][0];
+                    _selectedItems[2] = Length.GetAbbreviation(_lengthUnit);
+
+                    _disp = 0;
+                    _isShear = false;
+                    _flayer = 0;
+                    Mode2Clicked();
+                  }
+
+                  break;
+                }
+              case 2: {
+                  if (_dropDownItems[1] != _stress) {
+                    if (_dropDownItems.Count < 4) {
+                      _dropDownItems.Insert(2, _layer);
+                      _spacerDescriptions.Insert(2, "Layer");
+                    }
+
+                    _dropDownItems[1] = _stress;
+
+                    _selectedItems[0] = _dropDownItems[0][2];
+                    _selectedItems[1] = _dropDownItems[1][0];
+
+                    if (_selectedItems.Count < 4)
+                      _selectedItems.Insert(2, _dropDownItems[2][1]);
+                    else
+                      _selectedItems[2] = _dropDownItems[2][1];
+
+                    _selectedItems[3] = Length.GetAbbreviation(_lengthUnit);
+
+                    _disp = 0;
+                    _isShear = false;
+                    Mode4Clicked();
+                  }
+
+                  break;
+                }
+            }
+
+            break;
+          }
+        case 1: {
+            bool redraw = false;
+            _selectedItems[1] = _dropDownItems[1][selectedidd];
+            if (_mode == FoldMode.Displacement) {
+              if ((int)_disp > 3 & selectedidd < 4) {
+                redraw = true;
+                _slider = true;
+              }
+
+              if ((int)_disp < 4 & selectedidd > 3) {
+                redraw = true;
+                _slider = false;
+              }
+            }
+
+            _disp = (DisplayValue)selectedidd;
+            if (_dropDownItems[1] != _displacement) {
+              _isShear = false;
+              if (_mode == FoldMode.Force) {
+                if (selectedidd == 3 | selectedidd == 4) {
+                  _disp = (DisplayValue)selectedidd - 3;
+                  _isShear = true;
+                }
+                else if (selectedidd > 4)
+                  _disp = (DisplayValue)selectedidd - 1;
+              }
+              else if (_mode == FoldMode.Force)
+                if (selectedidd > 2)
+                  _disp = (DisplayValue)selectedidd + 1;
+            }
+
+            if (redraw)
+              ReDrawComponent();
+            break;
+          }
+        case 2 when _mode == FoldMode.Stress: {
+            switch (selectedidd) {
+              case 0:
+                _flayer = 1;
+                break;
+
+              case 1:
+                _flayer = 0;
+                break;
+
+              case 2:
+                _flayer = -1;
+                break;
+            }
+
+            break;
+          }
+        default:
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[2]);
+          break;
+      }
+
+      base.UpdateUI();
+    }
+
+    public void SetVal(double value) => _defScale = value;
+
+    public override void VariableParameterMaintenance() {
+      string lengthunitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      switch (_mode) {
+        case FoldMode.Displacement when (int)_disp < 4:
+          Params.Output[2]
+            .Name = "Values [" + lengthunitAbbreviation + "]";
+          break;
+
+        case FoldMode.Displacement:
+          Params.Output[2]
+            .Name = "Values [rad]";
+          break;
+
+        case FoldMode.Force when (int)_disp < 4 | _isShear:
+          Params.Output[2]
+              .Name = "Legend Values ["
+            + ForcePerLength.GetAbbreviation(DefaultUnits.ForcePerLengthUnit)
+            + "/"
+            + lengthunitAbbreviation
+            + "]";
+          break;
+
+        case FoldMode.Force:
+          Params.Output[2]
+              .Name = "Legend Values ["
+            + Force.GetAbbreviation(DefaultUnits.ForceUnit)
+            + "·"
+            + lengthunitAbbreviation
+            + "/"
+            + lengthunitAbbreviation
+            + "]";
+          break;
+
+        case FoldMode.Stress:
+          Params.Output[2]
+              .Name = "Legend Values ["
+            + Pressure.GetAbbreviation(DefaultUnits.StressUnitResult)
+            + "]";
+          break;
+      }
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("Mode", (int)_mode);
+      writer.SetInt32("Display", (int)_disp);
+      writer.SetInt32("flayer", _flayer);
+      writer.SetBoolean("slider", _slider);
+      writer.SetInt32("noDec", _noDigits);
+      writer.SetDouble("valMax", _maxValue);
+      writer.SetDouble("valMin", _minValue);
+      writer.SetDouble("val", _defScale);
+      writer.SetBoolean("legend", _showLegend);
+      return base.Write(writer);
+    }
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+      Menu_AppendSeparator(menu);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
+
+      var gradient = new GH_GradientControl();
+      gradient.CreateAttributes();
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
+      menu.Items.Add(extract);
+      Menu_AppendSeparator(menu);
+    }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Result Type",
+        "Component",
+        "Geometry Unit",
+        "Deform Shape",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(_type);
+      _selectedItems.Add(_dropDownItems[0][0]);
+
+      _dropDownItems.Add(_displacement);
+      _selectedItems.Add(_dropDownItems[1][3]);
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaResultsParameter(),
+        "Result",
+        "Res",
+        "GSA Result",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Element filter list",
+        "El",
+        "Filter import by list."
+        + Environment.NewLine
+        + "Element list should take the form:"
+        + Environment.NewLine
+        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
+        + Environment.NewLine
+        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        GH_ParamAccess.item,
+        "All");
+      pManager.AddColourParameter("Colour",
+        "Co",
+        "Optional list of colours to override default colours"
+        + Environment.NewLine
+        + "A new gradient will be created from the input list of colours",
+        GH_ParamAccess.list);
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      IQuantity length = new Length(0, _lengthResultUnit);
+      string lengthunitAbbreviation = string.Concat(length.ToString()
+        .Where(char.IsLetter));
+
+      pManager.AddGenericParameter("Mesh",
+        "M",
+        "Mesh with coloured result values",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]",
+        "LT",
+        "Legend Values",
+        GH_ParamAccess.list);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
       var ghTyp = new GH_ObjectWrapper();
@@ -56,9 +472,11 @@ namespace GsaGH.Components {
               + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             break;
+
           case GsaResult.CaseType.Combination:
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             break;
+
           case GsaResult.CaseType.AnalysisCase:
             _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
             break;
@@ -99,6 +517,7 @@ namespace GsaGH.Components {
             DefaultUnits.ForceUnit)[0];
           resShear = result.Element2DShearValues(elementlist, DefaultUnits.ForcePerLengthUnit)[0];
           break;
+
         case FoldMode.Stress:
           res = result.Element2DStressValues(elementlist,
             _flayer,
@@ -123,6 +542,7 @@ namespace GsaGH.Components {
           xyzunit = DefaultUnits.ForcePerLengthUnit;
           xxyyzzunit = DefaultUnits.ForceUnit;
           break;
+
         case FoldMode.Stress:
           xyzunit = DefaultUnits.StressUnitResult;
           xxyyzzunit = DefaultUnits.StressUnitResult;
@@ -187,6 +607,7 @@ namespace GsaGH.Components {
           else if (_mode == FoldMode.Stress)
             _resType = "Stress, xx";
           break;
+
         case (DisplayValue.Y):
           dmax = dmaxY;
           dmin = dminY;
@@ -199,6 +620,7 @@ namespace GsaGH.Components {
           else if (_mode == FoldMode.Stress)
             _resType = "2D Stress, yy";
           break;
+
         case (DisplayValue.Z):
           dmax = dmaxZ;
           dmin = dminZ;
@@ -209,12 +631,14 @@ namespace GsaGH.Components {
           else if (_mode == FoldMode.Stress)
             _resType = "Stress, zz";
           break;
+
         case (DisplayValue.ResXyz):
           dmax = dmaxXyz;
           dmin = dminXyz;
           if (_mode == FoldMode.Displacement)
             _resType = "Res. Trans., |U|";
           break;
+
         case (DisplayValue.Xx):
           dmax = dmaxXx;
           dmin = dminXx;
@@ -223,6 +647,7 @@ namespace GsaGH.Components {
           else if (_mode == FoldMode.Stress)
             _resType = "Stress, xy";
           break;
+
         case (DisplayValue.Yy):
           dmax = dmaxYy;
           dmin = dminYy;
@@ -231,6 +656,7 @@ namespace GsaGH.Components {
           else if (_mode == FoldMode.Stress)
             _resType = "Stress, yz";
           break;
+
         case (DisplayValue.Zz):
           dmax = dmaxZz;
           dmin = dminZz;
@@ -239,6 +665,7 @@ namespace GsaGH.Components {
           else if (_mode == FoldMode.Stress)
             _resType = "Stress, zy";
           break;
+
         case (DisplayValue.ResXxyyzz):
           dmax = dmaxXxyyzz;
           dmin = dminXxyyzz;
@@ -322,16 +749,19 @@ namespace GsaGH.Components {
                 .Select(item => item.Value.X.ToUnit(xxyyzzunit))
                 .ToList();
               break;
+
             case (DisplayValue.Yy):
               vals = xxyyzzResults[key]
                 .Select(item => item.Value.Y.ToUnit(xxyyzzunit))
                 .ToList();
               break;
+
             case (DisplayValue.Zz):
               vals = xxyyzzResults[key]
                 .Select(item => item.Value.Z.ToUnit(xxyyzzunit))
                 .ToList();
               break;
+
             case (DisplayValue.ResXxyyzz):
               vals = xxyyzzResults[key]
                 .Select(item => item.Value.Xyz.ToUnit(xxyyzzunit))
@@ -490,441 +920,9 @@ namespace GsaGH.Components {
       da.SetDataList(2, ts);
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("935d359a-9394-42fc-a76e-ea08ccb84135");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result2D;
-
-    public Elem2dContourResults_OBSOLETE() : base("2D Contour Results",
-      "ContourElem2d",
-      "Displays GSA 2D Element Results as Contour",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Element filter list",
-        "El",
-        "Filter import by list."
-        + Environment.NewLine
-        + "Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
-      pManager.AddColourParameter("Colour",
-        "Co",
-        "Optional list of colours to override default colours"
-        + Environment.NewLine
-        + "A new gradient will be created from the input list of colours",
-        GH_ParamAccess.list);
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      IQuantity length = new Length(0, _lengthResultUnit);
-      string lengthunitAbbreviation = string.Concat(length.ToString()
-        .Where(char.IsLetter));
-
-      pManager.AddGenericParameter("Mesh",
-        "M",
-        "Mesh with coloured result values",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]",
-        "LT",
-        "Legend Values",
-        GH_ParamAccess.list);
-    }
-
-    #endregion
-
-    #region Custom UI
-
-    private enum FoldMode {
-      Displacement,
-      Force,
-      Stress,
-    }
-
-    private enum DisplayValue {
-      X,
-      Y,
-      Z,
-      ResXyz,
-      Xx,
-      Yy,
-      Zz,
-      ResXxyyzz,
-    }
-
-    private readonly List<string> _type = new List<string>(new[] {
-      "Displacement",
-      "Force",
-      "Stress",
-    });
-
-    private readonly List<string> _displacement = new List<string>(new[] {
-      "Translation Ux",
-      "Translation Uy",
-      "Translation Uz",
-      "Resolved |U|",
-    });
-
-    private readonly List<string> _force = new List<string>(new[] {
-      "Force Nx",
-      "Force Ny",
-      "Force Nxy",
-      "Shear Qx",
-      "Shear Qy",
-      "Moment Mx",
-      "Moment My",
-      "Moment Mxy",
-    });
-
-    private readonly List<string> _stress = new List<string>(new[] {
-      "Stress xx",
-      "Stress yy",
-      "Stress zz",
-      "Stress xy",
-      "Stress yz",
-      "Stress zx",
-    });
-
-    private readonly List<string> _layer = new List<string>(new[] {
-      "Top",
-      "Middle",
-      "Bottom",
-    });
-
-    private double _minValue;
-    private double _maxValue = 1000;
-    private double _defScale = 250;
-    private int _noDigits;
-    private bool _slider = true;
-    private string _case = "";
-    private bool _isShear;
-    private int _flayer;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private FoldMode _mode = FoldMode.Displacement;
-    private DisplayValue _disp = DisplayValue.ResXyz;
-
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Result Type",
-        "Component",
-        "Geometry Unit",
-        "Deform Shape",
-      });
-
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(_type);
-      SelectedItems.Add(DropDownItems[0][0]);
-
-      DropDownItems.Add(_displacement);
-      SelectedItems.Add(DropDownItems[1][3]);
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      IsInitialised = true;
-    }
-
-    public override void CreateAttributes() {
-      if (!IsInitialised)
-        InitialiseDropdowns();
-      m_attributes = new DropDownSliderComponentAttributes(this,
-        SetSelected,
-        DropDownItems,
-        SelectedItems,
-        _slider,
-        SetVal,
-        SetMaxMin,
-        _defScale,
-        _maxValue,
-        _minValue,
-        _noDigits,
-        SpacerDescriptions);
-    }
-
-    public override void SetSelected(int dropdownlistidd, int selectedidd) {
-      switch (dropdownlistidd) {
-        case 0: {
-            switch (selectedidd) {
-              case 0: {
-                  if (DropDownItems[1] != _displacement) {
-                    if (DropDownItems.Count == 4) // if coming from stress we remove the layer dropdown
-                    {
-                      DropDownItems.RemoveAt(2);
-                      SelectedItems.RemoveAt(2);
-                      SpacerDescriptions.RemoveAt(2);
-                    }
-
-                    DropDownItems[1] = _displacement;
-                    DropDownItems[2] = FilteredUnits.FilteredLengthUnits;
-
-                    SelectedItems[0] = DropDownItems[0][0]; // displacement
-                    SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
-                    SelectedItems[2] = Length.GetAbbreviation(_lengthUnit);
-
-                    _disp = (DisplayValue)3;
-                    _isShear = false;
-                    _flayer = 0;
-                    Mode1Clicked();
-                  }
-
-                  break;
-                }
-              case 1: {
-                  if (DropDownItems[1] != _force) {
-                    if (DropDownItems.Count == 4) // if coming from stress we remove the layer dropdown
-                    {
-                      DropDownItems.RemoveAt(2);
-                      SelectedItems.RemoveAt(2);
-                      SpacerDescriptions.RemoveAt(2);
-                    }
-
-                    DropDownItems[1] = _force;
-
-                    SelectedItems[0] = DropDownItems[0][1];
-                    SelectedItems[1] = DropDownItems[1][0];
-                    SelectedItems[2] = Length.GetAbbreviation(_lengthUnit);
-
-                    _disp = 0;
-                    _isShear = false;
-                    _flayer = 0;
-                    Mode2Clicked();
-                  }
-
-                  break;
-                }
-              case 2: {
-                  if (DropDownItems[1] != _stress) {
-                    if (DropDownItems.Count < 4) {
-                      DropDownItems.Insert(2, _layer);
-                      SpacerDescriptions.Insert(2, "Layer");
-                    }
-
-                    DropDownItems[1] = _stress;
-
-                    SelectedItems[0] = DropDownItems[0][2];
-                    SelectedItems[1] = DropDownItems[1][0];
-
-                    if (SelectedItems.Count < 4)
-                      SelectedItems.Insert(2, DropDownItems[2][1]);
-                    else
-                      SelectedItems[2] = DropDownItems[2][1];
-
-                    SelectedItems[3] = Length.GetAbbreviation(_lengthUnit);
-
-                    _disp = 0;
-                    _isShear = false;
-                    Mode4Clicked();
-                  }
-
-                  break;
-                }
-            }
-
-            break;
-          }
-        case 1: {
-            bool redraw = false;
-            SelectedItems[1] = DropDownItems[1][selectedidd];
-            if (_mode == FoldMode.Displacement) {
-              if ((int)_disp > 3 & selectedidd < 4) {
-                redraw = true;
-                _slider = true;
-              }
-
-              if ((int)_disp < 4 & selectedidd > 3) {
-                redraw = true;
-                _slider = false;
-              }
-            }
-
-            _disp = (DisplayValue)selectedidd;
-            if (DropDownItems[1] != _displacement) {
-              _isShear = false;
-              if (_mode == FoldMode.Force) {
-                if (selectedidd == 3 | selectedidd == 4) {
-                  _disp = (DisplayValue)selectedidd - 3;
-                  _isShear = true;
-                }
-                else if (selectedidd > 4)
-                  _disp = (DisplayValue)selectedidd - 1;
-              }
-              else if (_mode == FoldMode.Force)
-                if (selectedidd > 2)
-                  _disp = (DisplayValue)selectedidd + 1;
-            }
-
-            if (redraw)
-              ReDrawComponent();
-            break;
-          }
-        case 2 when _mode == FoldMode.Stress: {
-            switch (selectedidd) {
-              case 0:
-                _flayer = 1;
-                break;
-              case 1:
-                _flayer = 0;
-                break;
-              case 2:
-                _flayer = -1;
-                break;
-            }
-
-            break;
-          }
-        default:
-          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[2]);
-          break;
-      }
-
-      base.UpdateUI();
-    }
-
-    public void SetVal(double value) => _defScale = value;
-
-    public void SetMaxMin(double max, double min) {
-      _maxValue = max;
-      _minValue = min;
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[2]);
+    protected override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance() {
-      string lengthunitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      switch (_mode) {
-        case FoldMode.Displacement when (int)_disp < 4:
-          Params.Output[2]
-            .Name = "Values [" + lengthunitAbbreviation + "]";
-          break;
-        case FoldMode.Displacement:
-          Params.Output[2]
-            .Name = "Values [rad]";
-          break;
-        case FoldMode.Force when (int)_disp < 4 | _isShear:
-          Params.Output[2]
-              .Name = "Legend Values ["
-            + ForcePerLength.GetAbbreviation(DefaultUnits.ForcePerLengthUnit)
-            + "/"
-            + lengthunitAbbreviation
-            + "]";
-          break;
-        case FoldMode.Force:
-          Params.Output[2]
-              .Name = "Legend Values ["
-            + Force.GetAbbreviation(DefaultUnits.ForceUnit)
-            + "·"
-            + lengthunitAbbreviation
-            + "/"
-            + lengthunitAbbreviation
-            + "]";
-          break;
-        case FoldMode.Stress:
-          Params.Output[2]
-              .Name = "Legend Values ["
-            + Pressure.GetAbbreviation(DefaultUnits.StressUnitResult)
-            + "]";
-          break;
-      }
-    }
-
-    #endregion
-
-    #region menu override
-
-    private void ReDrawComponent() {
-      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
-      CreateAttributes();
-      Attributes.Pivot = pivot;
-      Attributes.ExpireLayout();
-      Attributes.PerformLayout();
-    }
-
-    private void Mode1Clicked() {
-      if (_mode == FoldMode.Displacement)
-        return;
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Displacement;
-
-      _slider = true;
-      _defScale = 100;
-
-      ReDrawComponent();
-    }
-
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Force)
-        return;
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Force;
-
-      _slider = false;
-      _defScale = 0;
-      SpacerDescriptions[2] = "Deform Shape";
-
-      ReDrawComponent();
-    }
-
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.Stress)
-        return;
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Stress;
-
-      _slider = false;
-      _defScale = 0;
-
-      ReDrawComponent();
-    }
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
-
-      var gradient = new GH_GradientControl();
-      gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient",
-        gradient.Icon_24x24,
-        (s, e) => CreateGradient());
-      menu.Items.Add(extract);
-      Menu_AppendSeparator(menu);
-    }
-
-    private bool _showLegend = true;
-
-    private void ShowLegend(object sender, EventArgs e) {
-      _showLegend = !_showLegend;
-      ExpirePreview(true);
     }
 
     private void CreateGradient() {
@@ -965,66 +963,57 @@ namespace GsaGH.Components {
       UpdateUI();
     }
 
-    #endregion
-
-    #region draw _legend
-
-    private Bitmap _legend = new Bitmap(15, 120);
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
-    private string _resType;
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend))
+    private void Mode1Clicked() {
+      if (_mode == FoldMode.Displacement)
         return;
 
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
-      for (int i = 0; i < _legendValues.Count; i++)
-        args.Display.Draw2dText(_legendValues[i],
-          Color.Black,
-          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]),
-          false);
-      args.Display.Draw2dText(_resType,
-        Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 7),
-        false);
-      args.Display.Draw2dText(_case,
-        Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 145),
-        false);
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Displacement;
+
+      _slider = true;
+      _defScale = 100;
+
+      ReDrawComponent();
     }
 
-    #endregion
+    private void Mode2Clicked() {
+      if (_mode == FoldMode.Force)
+        return;
 
-    #region (de)serialization
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Force;
 
-    public override bool Write(GH_IWriter writer) {
-      writer.SetInt32("Mode", (int)_mode);
-      writer.SetInt32("Display", (int)_disp);
-      writer.SetInt32("flayer", _flayer);
-      writer.SetBoolean("slider", _slider);
-      writer.SetInt32("noDec", _noDigits);
-      writer.SetDouble("valMax", _maxValue);
-      writer.SetDouble("valMin", _minValue);
-      writer.SetDouble("val", _defScale);
-      writer.SetBoolean("legend", _showLegend);
-      return base.Write(writer);
+      _slider = false;
+      _defScale = 0;
+      _spacerDescriptions[2] = "Deform Shape";
+
+      ReDrawComponent();
     }
 
-    public override bool Read(GH_IReader reader) {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      _disp = (DisplayValue)reader.GetInt32("Display");
-      _flayer = reader.GetInt32("flayer");
-      _slider = reader.GetBoolean("slider");
-      _noDigits = reader.GetInt32("noDec");
-      _maxValue = reader.GetDouble("valMax");
-      _minValue = reader.GetDouble("valMin");
-      _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("legend");
-      return base.Read(reader);
+    private void Mode4Clicked() {
+      if (_mode == FoldMode.Stress)
+        return;
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Stress;
+
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
     }
 
-    #endregion
+    private void ReDrawComponent() {
+      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
+      CreateAttributes();
+      Attributes.Pivot = pivot;
+      Attributes.ExpireLayout();
+      Attributes.PerformLayout();
+    }
+
+    private void ShowLegend(object sender, EventArgs e) {
+      _showLegend = !_showLegend;
+      ExpirePreview(true);
+    }
   }
 }

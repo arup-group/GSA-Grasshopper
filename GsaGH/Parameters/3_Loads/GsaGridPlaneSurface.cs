@@ -9,55 +9,6 @@ namespace GsaGH.Parameters {
   ///   Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
   /// </summary>
   public class GsaGridPlaneSurface {
-    #region fields
-
-    private int _axisId;
-
-    private int _gridSrfId;
-    private Guid _gridSrfGuid = Guid.NewGuid();
-    private GridSurface _gridSrf = new GridSurface();
-
-    private int _gridPlnId = 0;
-    private Guid _gridPlnGuid = Guid.NewGuid();
-    private GridPlane _gridPln = new GridPlane();
-
-    private Plane _pln = Plane.WorldXY;
-
-    internal Guid _refObjectGuid;
-    internal ReferenceType _referenceType = ReferenceType.None;
-
-    #endregion
-
-    #region properties
-
-    /// <summary>
-    ///   String either in the format of a double (will be converted into Model Units)
-    ///   or in the format of a OasysUnits.Length ('5 m')
-    /// </summary>
-    public string Elevation { get; set; } = "0";
-
-    /// <summary>
-    ///   String either in the format of a double (will be converted into Model Units)
-    ///   or in the format of a OasysUnits.Length ('5 m')
-    /// </summary>
-    public string Tolerance { get; set; } = "10 mm";
-
-    /// <summary>
-    ///   String either in the format of a double (will be converted into Model Units)
-    ///   or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
-    /// </summary>
-    public string StoreyToleranceAbove { get; set; } = "auto";
-
-    /// <summary>
-    ///   String either in the format of a double (will be converted into Model Units)
-    ///   or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
-    /// </summary>
-    public string StoreyToleranceBelow { get; set; } = "auto";
-
-    public string AxisName { get; set; } = "";
-    public Guid GridSurfaceGuid => _gridSrfGuid;
-    public Guid GridPlaneGuid => _gridPlnGuid;
-
     public int AxisId {
       get => _axisId;
       set {
@@ -65,23 +16,12 @@ namespace GsaGH.Parameters {
         _axisId = value;
       }
     }
-
-    public GridSurface GridSurface {
-      get => _gridSrf;
-      set {
-        _gridSrfGuid = Guid.NewGuid();
-        _gridSrf = value;
-      }
-    }
-
-    public int GridSurfaceId {
-      get => _gridSrfId;
-      set {
-        _gridSrfGuid = Guid.NewGuid();
-        _gridSrfId = value;
-      }
-    }
-
+    public string AxisName { get; set; } = "";
+    /// <summary>
+    ///   String either in the format of a double (will be converted into Model Units)
+    ///   or in the format of a OasysUnits.Length ('5 m')
+    /// </summary>
+    public string Elevation { get; set; } = "0";
     public GridPlane GridPlane {
       get => _gridPln;
       set {
@@ -89,7 +29,7 @@ namespace GsaGH.Parameters {
         _gridPln = value;
       }
     }
-
+    public Guid GridPlaneGuid => _gridPlnGuid;
     public int GridPlaneId {
       get => _gridPlnId;
       set {
@@ -97,7 +37,21 @@ namespace GsaGH.Parameters {
         _gridPlnId = value;
       }
     }
-
+    public GridSurface GridSurface {
+      get => _gridSrf;
+      set {
+        _gridSrfGuid = Guid.NewGuid();
+        _gridSrf = value;
+      }
+    }
+    public Guid GridSurfaceGuid => _gridSrfGuid;
+    public int GridSurfaceId {
+      get => _gridSrfId;
+      set {
+        _gridSrfGuid = Guid.NewGuid();
+        _gridSrfId = value;
+      }
+    }
     public Plane Plane {
       get => _pln;
       set {
@@ -105,10 +59,32 @@ namespace GsaGH.Parameters {
         _pln = value;
       }
     }
-
-    #endregion
-
-    #region constructors
+    /// <summary>
+    ///   String either in the format of a double (will be converted into Model Units)
+    ///   or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
+    /// </summary>
+    public string StoreyToleranceAbove { get; set; } = "auto";
+    /// <summary>
+    ///   String either in the format of a double (will be converted into Model Units)
+    ///   or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
+    /// </summary>
+    public string StoreyToleranceBelow { get; set; } = "auto";
+    /// <summary>
+    ///   String either in the format of a double (will be converted into Model Units)
+    ///   or in the format of a OasysUnits.Length ('5 m')
+    /// </summary>
+    public string Tolerance { get; set; } = "10 mm";
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
+    private int _axisId;
+    private GridPlane _gridPln = new GridPlane();
+    private Guid _gridPlnGuid = Guid.NewGuid();
+    private int _gridPlnId = 0;
+    private GridSurface _gridSrf = new GridSurface();
+    private Guid _gridSrfGuid = Guid.NewGuid();
+    private int _gridSrfId;
+    private Plane _pln = Plane.WorldXY;
 
     public GsaGridPlaneSurface() { }
 
@@ -166,15 +142,17 @@ namespace GsaGH.Parameters {
       };
       if (_referenceType == ReferenceType.None)
         return dup;
-      dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-      dup._referenceType = _referenceType;
+      if (_referenceType == ReferenceType.List) {
+        dup._referenceType = ReferenceType.List;
+        dup._refList = _refList.Duplicate();
+      }
+      else {
+        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
+        dup._referenceType = _referenceType;
+      }
 
       return dup;
     }
-
-    #endregion
-
-    #region methods
 
     public override string ToString() {
       if (GridPlane == null && GridSurface == null)
@@ -277,7 +255,5 @@ namespace GsaGH.Parameters {
 
       return axis;
     }
-
-    #endregion
   }
 }

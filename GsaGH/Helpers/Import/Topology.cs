@@ -7,31 +7,32 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Topology {
+
     /// <summary>
     /// Method to split/untangle a topology list from GSA into separate lists for
     /// Topology, Voids, Inclusion lines and Inclusion points with corrosponding list for topology type.
-    /// 
+    ///
     /// Output tuple with three sub-tubles for:
     /// - Topology: (Topology integers and topology types)
     /// - Voids: (List of integers and list of topology types)
     /// - Lines: (List of integers and list of topology types)
     /// - Points: (Topology integers)
-    /// 
-    /// Example: gsa_topology = 
+    ///
+    /// Example: gsa_topology =
     /// "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84"
     /// will results in:
-    /// 
+    ///
     /// Tuple1, Item1: Topology: (7, 8, 9, 10, 11, 7, 94, 84)
     /// Tuple1, Item2: TopoType: ( ,  ,  ,  a,   ,  ,   ,   )
-    /// 
+    ///
     /// Tuple2, Item1: List(Voids): (12, 13, 14, 15)
     /// Tuple2, Item2: List(VType): (  ,   ,  a,   )
-    /// 
+    ///
     /// Tuple3, Item1: List(Lines): (16, 18, 17) (23, 24)
     /// Tuple3, Item2: List(LType): (  ,  a,   ) (  ,   )
-    /// 
+    ///
     /// Points: (20, 19, 21, 22)
-    /// 
+    ///
     /// </summary>
     /// <param name="gsaTopology"></param>
     /// <returns></returns>
@@ -198,7 +199,7 @@ namespace GsaGH.Helpers.Import {
     /// <param name="gsaTopology">Topology list as string</param>
     /// <returns></returns>
     internal static List<List<int>> Topology_detangler_Mem3d(string gsaTopology) {
-      // Example input string ‘1 2 4 3; 5 6 8 7; 1 5 2 6 3 7 4 8 1 5’ 
+      // Example input string ‘1 2 4 3; 5 6 8 7; 1 5 2 6 3 7 4 8 1 5’
       // we want to create a triangular mesh for Member3D SolidMesh
       var topolist = new List<List<int>>();
 
@@ -228,13 +229,12 @@ namespace GsaGH.Helpers.Import {
             // remove the first two verticies from list
             tempverticies.RemoveAt(0);
           }
-          // put the second remove outside the if to also remove if we only 
+          // put the second remove outside the if to also remove if we only
           // have 3 verticies to bring count below 3 and exit while loop
           tempverticies.RemoveAt(0);
         }
       }
       return topolist;
-
     }
   }
 }

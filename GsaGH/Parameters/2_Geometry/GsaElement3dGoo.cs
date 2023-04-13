@@ -13,28 +13,21 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>,
     IGH_PreviewData {
+    public static string Description => "GSA 3D Element(s)";
+    public static string Name => "Element3D";
+    public static string NickName => "E3D";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     public GsaElement3dGoo(GsaElement3d item) : base(item) { }
 
     internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null)
-      => Value = duplicate
+                                  => Value = duplicate
         ? item.Duplicate()
         : item;
 
-    public static string Name => "Element3D";
-    public static string NickName => "E3D";
-    public static string Description => "GSA 3D Element(s)";
-
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-
-    public override IGH_GeometricGoo Duplicate() => new GsaElement3dGoo(Value);
-
-    public override GeometryBase GetGeometry() => Value.DisplayMesh;
-
-    #region casting methods
-
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaElement3D into some other type Q.            
+      // This function is called when Grasshopper needs to convert this
+      // instance of GsaElement3D into some other type Q.
       if (base.CastTo(ref target))
         return true;
 
@@ -57,20 +50,6 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    #endregion
-
-    #region transformation methods
-
-    public override IGH_GeometricGoo Transform(Transform xform)
-      => new GsaElement3dGoo(Value.Transform(xform));
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-      => new GsaElement3dGoo(Value.Morph(xmorph));
-
-    #endregion
-
-    #region drawing methods
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) => args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
         args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
           ? Colours.Element3dFace
@@ -88,6 +67,14 @@ namespace GsaGH.Parameters {
         args.Pipeline.DrawMeshWires(Value.DisplayMesh, Colours.Element2dEdgeSelected, 2);
     }
 
-    #endregion
+    public override IGH_GeometricGoo Duplicate() => new GsaElement3dGoo(Value);
+
+    public override GeometryBase GetGeometry() => Value.DisplayMesh;
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+      => new GsaElement3dGoo(Value.Morph(xmorph));
+
+    public override IGH_GeometricGoo Transform(Transform xform)
+      => new GsaElement3dGoo(Value.Transform(xform));
   }
 }

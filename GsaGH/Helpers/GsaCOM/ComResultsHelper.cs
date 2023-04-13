@@ -5,12 +5,22 @@ using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Helpers.GsaAPI {
+namespace GsaGH.Helpers.GsaApi {
   internal enum FootfallResultType {
     Resonant,
     Transient,
   }
+
   internal partial class ResultHelper {
+    private enum ElementDimension {
+      _1D,
+      _2D,
+    }
+
+    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
+
+    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
+
     internal static GsaResultsValues GetNodeFootfallResultValues(string nodelist, GsaModel model, FootfallResultType type, int caseId) {
       if (model == null) { return null; }
 
@@ -42,13 +52,6 @@ namespace GsaGH.Helpers.GsaAPI {
       return r;
     }
 
-    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
-
-    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) => GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
-    private enum ElementDimension {
-      _1D,
-      _2D,
-    }
     private static GsaResultsValues GetElementFootfallResults(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues, ElementDimension typ) {
       if (model == null) { return null; }
 

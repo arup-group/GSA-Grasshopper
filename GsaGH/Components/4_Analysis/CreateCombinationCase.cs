@@ -12,31 +12,17 @@ namespace GsaGH.Components {
   ///   Component to create GSA Combination Case
   /// </summary>
   public class CreateCombinationCase : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      string name = "";
-      da.GetData(0, ref name);
-      string desc = "";
-      da.GetData(1, ref desc);
-      da.SetData(0, new GsaCombinationCaseGoo(new GsaCombinationCase(name, desc)));
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("d8df767a-ef59-4e08-b592-2a39149efde1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateCombinationCase;
 
     public CreateCombinationCase() : base("Create Combination Case",
-      "CreateCombination",
+          "CreateCombination",
       "Create a new GSA Combination Case",
       CategoryName.Name(),
       SubCategoryName.Cat4())
       => Hidden = true;
-
-    #endregion
-
-    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
@@ -53,6 +39,12 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
       => pManager.AddParameter(new GsaCombinationCaseParameter());
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      string name = "";
+      da.GetData(0, ref name);
+      string desc = "";
+      da.GetData(1, ref desc);
+      da.SetData(0, new GsaCombinationCaseGoo(new GsaCombinationCase(name, desc)));
+    }
   }
 }

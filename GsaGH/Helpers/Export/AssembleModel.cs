@@ -12,8 +12,9 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
   internal class AssembleModel {
+
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="model">Existing models to be merged</param>
     /// <param name="nodes">List of nodes with properties like support conditions</param>

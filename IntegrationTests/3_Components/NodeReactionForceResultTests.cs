@@ -8,6 +8,7 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class NodeReactionForceResultTests {
+
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod()
         .DeclaringType;
@@ -24,6 +25,19 @@ namespace IntegrationTests.Components {
       });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
+    [Fact]
+    public void FAssert() {
+      IGH_Param param = Helper.FindParameter(Document(), "F");
+      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
+      Assert.Equal(209.900, output1.Value, 1);
+      Assert.Equal(205.700, output2.Value, 1);
+      Assert.Equal(209.900, output3.Value, 1);
+      Assert.Equal(205.700, output4.Value, 1);
     }
 
     [Fact]
@@ -66,16 +80,16 @@ namespace IntegrationTests.Components {
     }
 
     [Fact]
-    public void FAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "F");
+    public void MAssert() {
+      IGH_Param param = Helper.FindParameter(Document(), "M");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(209.900, output1.Value, 1);
-      Assert.Equal(205.700, output2.Value, 1);
-      Assert.Equal(209.900, output3.Value, 1);
-      Assert.Equal(205.700, output4.Value, 1);
+      Assert.Equal(51.740, output1.Value, 2);
+      Assert.Equal(42.250, output2.Value, 2);
+      Assert.Equal(51.740, output3.Value, 2);
+      Assert.Equal(42.250, output4.Value, 2);
     }
 
     [Fact]
@@ -115,19 +129,6 @@ namespace IntegrationTests.Components {
       Assert.Equal(-0.4818, output2.Value, 4);
       Assert.Equal(-0.00007976, output3.Value, 8);
       Assert.Equal(0.4818, output4.Value, 4);
-    }
-
-    [Fact]
-    public void MAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "M");
-      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(51.740, output1.Value, 2);
-      Assert.Equal(42.250, output2.Value, 2);
-      Assert.Equal(51.740, output3.Value, 2);
-      Assert.Equal(42.250, output4.Value, 2);
     }
 
     [Fact]

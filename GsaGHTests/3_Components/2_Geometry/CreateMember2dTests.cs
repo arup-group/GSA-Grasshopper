@@ -12,6 +12,7 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateMember2dTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateMember2d();
       comp.CreateAttributes();
@@ -24,7 +25,7 @@ namespace GsaGHTests.Components.Geometry {
           1),
         0);
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother()),
+        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(false)),
         3);
       ComponentTestHelper.SetInput(comp, 0.5, 4);
 

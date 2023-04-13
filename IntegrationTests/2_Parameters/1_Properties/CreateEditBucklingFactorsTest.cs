@@ -7,28 +7,16 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class CreateEditBucklingFactorsTest {
+    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
 
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-      fileName = fileName.Replace("Test", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "1_Properties",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
+    [Fact]
+    public void NoRuntimeWarningTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
 
     [Fact]
     public void OutputTest() {
@@ -51,12 +39,23 @@ namespace IntegrationTests.Parameters {
       Assert.Equal(0, outputInteger.Value);
     }
 
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+      fileName = fileName.Replace("Test", string.Empty);
 
-    [Fact]
-    public void NoRuntimeWarningTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "1_Properties",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
   }
 }

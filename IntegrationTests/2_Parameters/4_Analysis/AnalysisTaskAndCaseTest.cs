@@ -9,26 +9,98 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GetCreateAnalysisTaskAndCaseTest {
-    private static GH_Document s_document = null;
     public static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
 
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-      fileName = fileName.Replace("Test", string.Empty);
+    [Fact]
+    public void NewCaseDescriptionsTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "4_Analysis",
-      });
+      Assert.Equal("1.5L2", output1.Value);
+      Assert.Equal("0.9L1", output2.Value);
+    }
 
-      return Helper.CreateDocument(Path.Combine(path, fileName));
+    [Fact]
+    public void NewCaseIDsTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
+
+      Assert.Equal(0, output1.Value);
+      Assert.Equal(0, output2.Value);
+    }
+
+    [Fact]
+    public void NewCaseNamesTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
+
+      Assert.Equal("acase1", output1.Value);
+      Assert.Equal("acase2", output2.Value);
+    }
+
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+
+    [Fact]
+    public void OriginalCaseDescriptionsTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
+
+      Assert.Equal("L1", output1.Value);
+      Assert.Equal("L2", output2.Value);
+    }
+
+    [Fact]
+    public void OriginalCaseIDsTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
+
+      Assert.Equal(1, output1.Value);
+      Assert.Equal(2, output2.Value);
+    }
+
+    [Fact]
+    public void OriginalCaseNamesTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
+
+      Assert.Equal("DL", output1.Value);
+      Assert.Equal("LL", output2.Value);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public void OriginalTaskIDTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
+      int gsaghobject = output.Value;
+
+      Assert.Equal(1, gsaghobject);
+    }
+
+    [Fact]
+    public void OriginalTaskNameTest() {
+      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
+        .Name.Replace("Test", string.Empty));
+      var output = (GH_String)param.VolatileData.get_Branch(0)[0];
+      string gsaghobject = output.Value;
+
+      Assert.Equal("Task 1", gsaghobject);
     }
 
     [Fact]
@@ -57,49 +129,6 @@ namespace IntegrationTests.Parameters {
     }
 
     [Fact]
-    public void OriginalTaskNameTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output = (GH_String)param.VolatileData.get_Branch(0)[0];
-      string gsaghobject = output.Value;
-
-      Assert.Equal("Task 1", gsaghobject);
-    }
-
-    [Fact]
-    public void OriginalCaseNamesTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
-
-      Assert.Equal("DL", output1.Value);
-      Assert.Equal("LL", output2.Value);
-    }
-
-    [Fact]
-    public void OriginalCaseDescriptionsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
-
-      Assert.Equal("L1", output1.Value);
-      Assert.Equal("L2", output2.Value);
-    }
-
-    [Fact]
-    public void OriginalCaseIDsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
-
-      Assert.Equal(1, output1.Value);
-      Assert.Equal(2, output2.Value);
-    }
-
-    [Fact]
     public void OriginalTaskTypeTest() {
       IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
         .Name.Replace("Test", string.Empty));
@@ -109,53 +138,24 @@ namespace IntegrationTests.Parameters {
       Assert.Equal("Static", gsaghobject);
     }
 
-    [Fact]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public void OriginalTaskIDTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
-      int gsaghobject = output.Value;
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+      fileName = fileName.Replace("Test", string.Empty);
 
-      Assert.Equal(1, gsaghobject);
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "4_Analysis",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
-
-    [Fact]
-    public void NewCaseNamesTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
-
-      Assert.Equal("acase1", output1.Value);
-      Assert.Equal("acase2", output2.Value);
-    }
-
-    [Fact]
-    public void NewCaseDescriptionsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output1 = (GH_String)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_String)param.VolatileData.get_Branch(0)[1];
-
-      Assert.Equal("1.5L2", output1.Value);
-      Assert.Equal("0.9L1", output2.Value);
-    }
-
-    [Fact]
-    public void NewCaseIDsTest() {
-      IGH_Param param = TestHelper(MethodBase.GetCurrentMethod()
-        .Name.Replace("Test", string.Empty));
-      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
-
-      Assert.Equal(0, output1.Value);
-      Assert.Equal(0, output2.Value);
-    }
-
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
     private IGH_Param TestHelper(string groupIdentifier) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);

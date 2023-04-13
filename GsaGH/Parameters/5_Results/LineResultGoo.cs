@@ -13,19 +13,23 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class LineResultGoo : GH_GeometricGoo<Line>,
     IGH_PreviewData {
+    public override BoundingBox Boundingbox => Value.BoundingBox;
+    public BoundingBox ClippingBox => Boundingbox;
+    public override string TypeDescription => "A GSA result line type.";
+    public override string TypeName => "Result Line";
     public readonly int ElementId;
     public readonly IQuantity Result1;
     public readonly IQuantity Result2;
-    private readonly Color _color1;
-    private readonly Color _color2;
     internal List<Color> _previewResultColours;
     internal List<int> _previewResultThk;
+    internal List<Line> _resultLineSegments;
+    private readonly Color _color1;
+    private readonly Color _color2;
     private readonly float _size1;
     private readonly float _size2;
-    internal List<Line> _resultLineSegments;
 
     public LineResultGoo(
-      Line line,
+                                  Line line,
       IQuantity result1,
       IQuantity result2,
       Color color1,
@@ -57,70 +61,27 @@ namespace GsaGH.Parameters {
       _resultLineSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
-    public override string TypeName => "Result Line";
+    public override bool CastFrom(object source) {
+      switch (source) {
+        case null:
+          return false;
 
-    public override string TypeDescription => "A GSA result line type.";
+        case Line line1:
+          Value = line1;
+          return true;
 
-    public override BoundingBox Boundingbox => Value.BoundingBox;
+        case GH_Line lineGoo:
+          Value = lineGoo.Value;
+          return true;
+      }
 
-    public BoundingBox ClippingBox => Boundingbox;
+      var line = new Line();
+      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both))
+        return false;
+      Value = line;
 
-    public void DrawViewportWires(GH_PreviewWireArgs args) {
-      for (int i = 0; i < _resultLineSegments.Count; i++)
-        args.Pipeline.DrawLine(_resultLineSegments[i],
-          _previewResultColours[i],
-          _previewResultThk[i]);
+      return true;
     }
-
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public override string ToString()
-      => $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
-
-    public override IGH_GeometricGoo DuplicateGeometry()
-      => new LineResultGoo(Value,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
-
-    public override BoundingBox GetBoundingBox(Transform xform) {
-      Line ln = Value;
-      ln.Transform(xform);
-      return ln.BoundingBox;
-    }
-
-    public override IGH_GeometricGoo Transform(Transform xform) {
-      Line ln = Value;
-      ln.Transform(xform);
-      return new LineResultGoo(ln,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
-    }
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      Point3d start = xmorph.MorphPoint(Value.From);
-      Point3d end = xmorph.MorphPoint(Value.To);
-      var ln = new Line(start, end);
-      return new LineResultGoo(ln,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
-    }
-
-    public override object ScriptVariable() => Value;
 
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
@@ -147,24 +108,61 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null:
-          return false;
-        case Line line1:
-          Value = line1;
-          return true;
-        case GH_Line lineGoo:
-          Value = lineGoo.Value;
-          return true;
-      }
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
-      var line = new Line();
-      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both))
-        return false;
-      Value = line;
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      for (int i = 0; i < _resultLineSegments.Count; i++)
+        args.Pipeline.DrawLine(_resultLineSegments[i],
+          _previewResultColours[i],
+          _previewResultThk[i]);
+    }
 
-      return true;
+    public override IGH_GeometricGoo DuplicateGeometry()
+      => new LineResultGoo(Value,
+        Result1,
+        Result2,
+        _color1,
+        _color2,
+        _size1,
+        _size2,
+        ElementId);
+
+    public override BoundingBox GetBoundingBox(Transform xform) {
+      Line ln = Value;
+      ln.Transform(xform);
+      return ln.BoundingBox;
+    }
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
+      Point3d start = xmorph.MorphPoint(Value.From);
+      Point3d end = xmorph.MorphPoint(Value.To);
+      var ln = new Line(start, end);
+      return new LineResultGoo(ln,
+        Result1,
+        Result2,
+        _color1,
+        _color2,
+        _size1,
+        _size2,
+        ElementId);
+    }
+
+    public override object ScriptVariable() => Value;
+
+    public override string ToString()
+      => $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
+
+    public override IGH_GeometricGoo Transform(Transform xform) {
+      Line ln = Value;
+      ln.Transform(xform);
+      return new LineResultGoo(ln,
+        Result1,
+        Result2,
+        _color1,
+        _color2,
+        _size1,
+        _size2,
+        ElementId);
     }
   }
 }

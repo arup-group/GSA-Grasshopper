@@ -13,13 +13,54 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class ShowId : GH_OasysComponent {
-    private List<Point3d> _pts;
-    private List<string> _txts;
-
     public override BoundingBox ClippingBox
       => _pts != null
         ? new BoundingBox(_pts)
         : base.ClippingBox;
+    public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.ShowID;
+    private List<Point3d> _pts;
+    private List<string> _txts;
+
+    public ShowId() : base("ShowID",
+                  "ID",
+      "Show the ID of a Node, Element, Member geometry or Result parameters",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+
+      if (_txts == null)
+        return;
+
+      for (int i = 0; i < _txts.Count; i++) {
+        Point2d positionOnTheScreen = args.Viewport.WorldToClient(_pts[i]);
+        args.Display.Draw2dText(_txts[i],
+          Attributes.Selected
+            ? args.WireColour_Selected
+            : args.WireColour,
+          positionOnTheScreen,
+          true);
+      }
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+      => pManager.AddGenericParameter("Node/Element/Member/Result",
+        "Geo",
+        "Node, Element, Member or Point/Line/Mesh result to get ID for.",
+        GH_ParamAccess.tree);
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddPointParameter("Position",
+        "P",
+        "The (centre/mid) location(s) of the object(s)",
+        GH_ParamAccess.tree);
+      pManager.HideParameter(0);
+      pManager.AddIntegerParameter("Index", "ID", "The objects ID(s)", GH_ParamAccess.tree);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       _pts = new List<Point3d>();
@@ -135,56 +176,5 @@ namespace GsaGH.Components {
       da.SetDataTree(0, ghPts);
       da.SetDataTree(1, ids);
     }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      if (_txts == null)
-        return;
-
-      for (int i = 0; i < _txts.Count; i++) {
-        Point2d positionOnTheScreen = args.Viewport.WorldToClient(_pts[i]);
-        args.Display.Draw2dText(_txts[i],
-          Attributes.Selected
-            ? args.WireColour_Selected
-            : args.WireColour,
-          positionOnTheScreen,
-          true);
-      }
-    }
-
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowID;
-
-    public ShowId() : base("ShowID",
-      "ID",
-      "Show the ID of a Node, Element, Member geometry or Result parameters",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Node/Element/Member/Result",
-        "Geo",
-        "Node, Element, Member or Point/Line/Mesh result to get ID for.",
-        GH_ParamAccess.tree);
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddPointParameter("Position",
-        "P",
-        "The (centre/mid) location(s) of the object(s)",
-        GH_ParamAccess.tree);
-      pManager.HideParameter(0);
-      pManager.AddIntegerParameter("Index", "ID", "The objects ID(s)", GH_ParamAccess.tree);
-    }
-
-    #endregion
   }
 }

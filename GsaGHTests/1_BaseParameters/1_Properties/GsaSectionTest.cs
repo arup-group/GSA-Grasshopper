@@ -10,6 +10,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaSectionTest {
+
     [Fact]
     public void DuplicateTest() {
       var original = new GsaSection {
@@ -19,6 +20,15 @@ namespace GsaGHTests.Parameters {
       GsaSection duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
+    }
+
+    [Fact]
+    public void TestCreateGsaSectionCat() {
+      string profile = "CAT HE HE200.B";
+      var section = new GsaSection(profile);
+
+      var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
+      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
     }
 
     [Fact]
@@ -56,12 +66,11 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void TestCreateGsaSectionCat() {
-      string profile = "CAT HE HE200.B";
-      var section = new GsaSection(profile);
+    public void TestDuplicateEmptySection() {
+      var section = new GsaSection();
 
-      var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
+      GsaSection dup = section.Duplicate();
+      Assert.NotNull(dup);
     }
 
     [Fact]
@@ -106,14 +115,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MaterialType.TIMBER.ToString().ToPascalCase(), orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal(99, orig.Pool);
-    }
-
-    [Fact]
-    public void TestDuplicateEmptySection() {
-      var section = new GsaSection();
-
-      GsaSection dup = section.Duplicate();
-      Assert.NotNull(dup);
     }
   }
 }

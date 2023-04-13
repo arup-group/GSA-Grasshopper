@@ -11,28 +11,12 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetProperties_TrGen_10_Test {
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
 
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
-
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-      fileName = fileName.Replace("_Test", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "1_Properties",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
     [Theory]
     [InlineData("PbIds",
@@ -88,6 +72,11 @@ namespace IntegrationTests.Parameters {
         "Beam - x - top floor",
         "Beam - y - top floor",
       })]
+    [InlineData("MatIds", new int[] { 1, 2 })]
+    [InlineData("MatEs", new double[] { 14000, 205000 })]
+    [InlineData("MatPoissons", new double[] { 0.2, 0.3 })]
+    [InlineData("MatRos", new double[] { 2400, 7850 })]
+    [InlineData("MatAlphas", new double[] { 0.00001, 0.000012 })]
     [InlineData("PaIds",
       new int[] {
         1,
@@ -168,31 +157,6 @@ namespace IntegrationTests.Parameters {
     }
 
     [Fact]
-    public void TestPBsAreEqual() {
-      IGH_Param sectionFromGetPropertyParam = Helper.FindParameter(Document, "PBs");
-      var sectionsFromGetProperty = new List<GsaSection>();
-      for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++)
-        sectionsFromGetProperty.Add(
-          ((GsaSectionGoo)sectionFromGetPropertyParam.VolatileData.get_Branch(0)[i]).Value);
-
-      IGH_Param sectionFromGetGeometryElemParam = Helper.FindParameter(Document, "PBsFromElem");
-      var sectionFromGetGeometryElem = new List<GsaSection>();
-      for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++)
-        sectionFromGetGeometryElem.Add(
-          ((GsaSectionGoo)sectionFromGetGeometryElemParam.VolatileData.get_Branch(0)[i]).Value);
-
-      Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryElem));
-
-      IGH_Param sectionFromGetGeometryMemParam = Helper.FindParameter(Document, "PBsFromMem");
-      var sectionFromGetGeometryMem = new List<GsaSection>();
-      for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++)
-        sectionFromGetGeometryMem.Add(
-          ((GsaSectionGoo)sectionFromGetGeometryMemParam.VolatileData.get_Branch(0)[i]).Value);
-
-      Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryMem));
-    }
-
-    [Fact]
     public void TestPAsAreEqual() {
       IGH_Param sectionFromGetPropertyParam = Helper.FindParameter(Document, "PAs");
       var sectionsFromGetProperty = new List<GsaProp2d>();
@@ -218,7 +182,47 @@ namespace IntegrationTests.Parameters {
     }
 
     [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    public void TestPBsAreEqual() {
+      IGH_Param sectionFromGetPropertyParam = Helper.FindParameter(Document, "PBs");
+      var sectionsFromGetProperty = new List<GsaSection>();
+      for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++)
+        sectionsFromGetProperty.Add(
+          ((GsaSectionGoo)sectionFromGetPropertyParam.VolatileData.get_Branch(0)[i]).Value);
+
+      IGH_Param sectionFromGetGeometryElemParam = Helper.FindParameter(Document, "PBsFromElem");
+      var sectionFromGetGeometryElem = new List<GsaSection>();
+      for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++)
+        sectionFromGetGeometryElem.Add(
+          ((GsaSectionGoo)sectionFromGetGeometryElemParam.VolatileData.get_Branch(0)[i]).Value);
+
+      Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryElem));
+
+      IGH_Param sectionFromGetGeometryMemParam = Helper.FindParameter(Document, "PBsFromMem");
+      var sectionFromGetGeometryMem = new List<GsaSection>();
+      for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++)
+        sectionFromGetGeometryMem.Add(
+          ((GsaSectionGoo)sectionFromGetGeometryMemParam.VolatileData.get_Branch(0)[i]).Value);
+
+      Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryMem));
+    }
+
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+      fileName = fileName.Replace("_Test", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "1_Properties",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
   }
 }

@@ -9,27 +9,12 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class CreateOffsetTest {
+    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
     private static GH_Document s_document = null;
 
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
-
-    private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
-      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Parameters",
-        "1_Properties",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
+    [Fact]
+    public void NoRuntimeErrorTest()
+      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
 
     [Theory]
     [InlineData("Of",
@@ -55,8 +40,22 @@ namespace IntegrationTests.Parameters {
       Assert.Equal(new Length(expectedZ, expectedUnit), offset.Z);
     }
 
-    [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    private static GH_Document OpenDocument() {
+      string fileName = MethodBase.GetCurrentMethod()
+          .DeclaringType
+        + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Parameters",
+        "1_Properties",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
   }
 }

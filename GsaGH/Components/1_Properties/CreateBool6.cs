@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -14,6 +15,90 @@ namespace GsaGH.Components {
   ///   Component to create a new Bool6
   /// </summary>
   public class CreateBool6 : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateBool6;
+    private bool _x;
+    private bool _xx;
+    private bool _y;
+    private bool _yy;
+    private bool _z;
+    private bool _zz;
+
+    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
+                                  GsaBool6Goo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaBool6Goo.Description,
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
+      => Hidden = true;
+
+    public override void CreateAttributes() {
+      var bool6 = new List<List<bool>>() { new List<bool>() { _x, _y, _z, _xx, _yy, _zz } };
+      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Set 6 DOF" }, bool6, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _x = reader.GetBoolean("x");
+      _y = reader.GetBoolean("y");
+      _z = reader.GetBoolean("z");
+      _xx = reader.GetBoolean("xx");
+      _yy = reader.GetBoolean("yy");
+      _zz = reader.GetBoolean("zz");
+
+      return base.Read(reader);
+    }
+
+    public void SetReleases(List<List<bool>> bool6) {
+      _x = bool6[0][0];
+      _y = bool6[0][1];
+      _z = bool6[0][2];
+      _xx = bool6[0][3];
+      _yy = bool6[0][4];
+      _zz = bool6[0][5];
+      base.UpdateUI();
+    }
+
+    public override void SetSelected(int i, int j) { }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetBoolean("x", _x);
+      writer.SetBoolean("y", _y);
+      writer.SetBoolean("z", _z);
+      writer.SetBoolean("xx", _xx);
+      writer.SetBoolean("yy", _yy);
+      writer.SetBoolean("zz", _zz);
+
+      return base.Write(writer);
+    }
+
+    protected override void InitialiseDropdowns() { }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
+
+      pManager[0]
+        .Optional = true;
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager[5]
+        .Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+      => pManager.AddParameter(new GsaBool6Parameter());
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var uiSet = new GsaBool6(_x,
         _y,
@@ -74,88 +159,6 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaBool6Goo(bool6));
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateBool6;
-
-    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-      GsaBool6Goo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBool6Goo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
-
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager[5]
-        .Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaBool6Parameter());
-
-    #endregion
-
-    #region Custom UI
-
-    private bool _x;
-    private bool _y;
-    private bool _z;
-    private bool _xx;
-    private bool _yy;
-    private bool _zz;
-    public override void SetSelected(int i, int j) { }
-    public override void InitialiseDropdowns() { }
-
-    public override void CreateAttributes()
-      => m_attributes = new Bool6ComponentAttributes(this,
-        SetBool,
-        "Set 6 DOF",
-        _x,
-        _y,
-        _z,
-        _xx,
-        _yy,
-        _zz);
-
-    public void SetBool(
-      bool resx,
-      bool resy,
-      bool resz,
-      bool resxx,
-      bool resyy,
-      bool reszz) {
-      _x = resx;
-      _y = resy;
-      _z = resz;
-      _xx = resxx;
-      _yy = resyy;
-      _zz = reszz;
-    }
-
     private void ReDrawComponent() {
       var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
       CreateAttributes();
@@ -163,33 +166,5 @@ namespace GsaGH.Components {
       Attributes.ExpireLayout();
       Attributes.PerformLayout();
     }
-
-    #endregion
-
-    #region (de)serialization
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetBoolean("x", _x);
-      writer.SetBoolean("y", _y);
-      writer.SetBoolean("z", _z);
-      writer.SetBoolean("xx", _xx);
-      writer.SetBoolean("yy", _yy);
-      writer.SetBoolean("zz", _zz);
-
-      return base.Write(writer);
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _x = reader.GetBoolean("x");
-      _y = reader.GetBoolean("y");
-      _z = reader.GetBoolean("z");
-      _xx = reader.GetBoolean("xx");
-      _yy = reader.GetBoolean("yy");
-      _zz = reader.GetBoolean("zz");
-
-      return base.Read(reader);
-    }
-
-    #endregion
   }
 }

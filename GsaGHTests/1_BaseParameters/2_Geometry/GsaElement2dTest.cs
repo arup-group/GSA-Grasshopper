@@ -10,6 +10,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement2dTests {
+
     [Fact]
     public void DuplicateTest() {
       var original = new GsaElement2d(new Mesh());

@@ -1,10 +1,11 @@
 ﻿namespace GsaGH.Helpers.GH {
   /// <summary>
   /// Class containing the ribbon tab display name
-  /// 
+  ///
   /// Call this class from all components in plugin for naming consistency
   /// </summary>
   public class CategoryName {
+
     public static string Name() {
       return "GSA";
     }
@@ -12,13 +13,14 @@
 
   /// <summary>
   /// Class containing ribbon category names
-  /// 
+  ///
   /// Call this class from all components to pick which category component should sit in
-  /// 
+  ///
   /// Sorting of categories in the ribbon is controlled with a number of spaces in front of the name
   /// to avoid naming each category with a number in front. Spaces will automatically be removed when displayed
   /// </summary>
   internal class SubCategoryName {
+
     public static string Cat0() {
       return new string(' ', 7) + "Model";
     }

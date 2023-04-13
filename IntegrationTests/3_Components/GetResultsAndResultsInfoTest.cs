@@ -9,26 +9,8 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class GetResultsAndResultsInfoTest {
-    private static GH_Document s_document = null;
     private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Test", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
-    }
+    private static GH_Document s_document = null;
 
     [Fact]
     public void Test() {
@@ -64,6 +46,24 @@ namespace IntegrationTests.Components {
       Assert.Equal(-188437.501112, myy3.Value, 6);
       Assert.Equal(-118828.126112, myy4.Value, 6);
       Assert.Equal(-0.001112, myy5.Value, 6);
+    }
+
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Test", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
   }
 }

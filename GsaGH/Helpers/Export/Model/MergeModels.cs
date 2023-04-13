@@ -11,6 +11,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
   public class MergeModels {
+
     public static GsaModel MergeModel(List<GsaModel> models, GH_Component owner, Length tolerance) {
       if (models == null) {
         return null;

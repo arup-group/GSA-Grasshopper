@@ -10,40 +10,40 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class NodeResultsTests {
-    private static GH_Document s_document = null;
     private static GH_Document Document => s_document ?? (s_document = OpenDocument());
+    private static GH_Document s_document = null;
 
-    private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
-      string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
-
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] {
-        solutiondir,
-        "ExampleFiles",
-        "Components",
-      });
-
-      return Helper.CreateDocument(Path.Combine(path, fileName));
+    [Fact]
+    public void NodeContourScaledDeformationTests() {
+      GH_Document doc = Document;
+      IGH_Param param1 = Helper.FindParameter(doc, "ScaledResult");
+      var output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
+      IGH_Param param2 = Helper.FindParameter(doc, "ScaledContour");
+      var output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
+      Assert.Equal(output1.Value, output2.Value, 6);
     }
 
     [Fact]
-    public void PermutationIDsTests() {
+    public void NodeContourSupportPtsCountTests() {
       GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, "Permutations");
-      var output1 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(1))[0];
-      Assert.Equal(1, output1.Value);
+      IGH_Param param = Helper.FindParameter(doc, "SupportPtsCount");
+      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
+      Assert.Equal(23, output1.Value);
+    }
 
-      Assert.Null(param.VolatileData.get_Branch(new GH_Path(2))[0]);
-
-      var output31 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(3))[0];
-      var output32 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(3))[1];
-      Assert.Equal(1, output31.Value);
-      Assert.Equal(2, output32.Value);
+    [Theory]
+    [InlineData("FContour", 871.0, 66.14, 1)]
+    public void NodeContourTests(
+      string name,
+      double expected1,
+      double expected2,
+      int precision = 6) {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      Assert.Equal(expected1, output1.Value, precision);
+      Assert.Equal(expected2, output2.Value, precision);
     }
 
     [Theory]
@@ -68,26 +68,19 @@ namespace IntegrationTests.Components {
       Assert.Equal(expected2, output2.Value, precision);
     }
 
-    [Theory]
-    [InlineData("Fx", 10.87, -12.72, 2)]
-    [InlineData("Fy", 9.892, -10.43, 2)]
-    [InlineData("Fz", 871.0, 65.74, 1)]
-    [InlineData("F", 871.0, 66.14, 1)]
-    [InlineData("Mxx", 38.73, -38.05, 2)]
-    [InlineData("Myy", 41.55, -46.94, 2)]
-    [InlineData("Mzz", 0.01092, -0.005168, 5)]
-    [InlineData("M", 53.98, 0.5144, 2)]
-    public void ReactionForcesTests(
-      string name,
-      double expected1,
-      double expected2,
-      int precision = 6) {
+    [Fact]
+    public void PermutationIDsTests() {
       GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, name);
-      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      Assert.Equal(expected1, output1.Value, precision);
-      Assert.Equal(expected2, output2.Value, precision);
+      IGH_Param param = Helper.FindParameter(doc, "Permutations");
+      var output1 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(1))[0];
+      Assert.Equal(1, output1.Value);
+
+      Assert.Null(param.VolatileData.get_Branch(new GH_Path(2))[0]);
+
+      var output31 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(3))[0];
+      var output32 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(3))[1];
+      Assert.Equal(1, output31.Value);
+      Assert.Equal(2, output32.Value);
     }
 
     [Fact]
@@ -126,27 +119,16 @@ namespace IntegrationTests.Components {
             .Value);
     }
 
-    [Fact]
-    public void NodeContourSupportPtsCountTests() {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, "SupportPtsCount");
-      var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(23, output1.Value);
-    }
-
-    [Fact]
-    public void NodeContourScaledDeformationTests() {
-      GH_Document doc = Document;
-      IGH_Param param1 = Helper.FindParameter(doc, "ScaledResult");
-      var output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
-      IGH_Param param2 = Helper.FindParameter(doc, "ScaledContour");
-      var output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
-      Assert.Equal(output1.Value, output2.Value, 6);
-    }
-
     [Theory]
-    [InlineData("FContour", 871.0, 66.14, 1)]
-    public void NodeContourTests(
+    [InlineData("Fx", 10.87, -12.72, 2)]
+    [InlineData("Fy", 9.892, -10.43, 2)]
+    [InlineData("Fz", 871.0, 65.74, 1)]
+    [InlineData("F", 871.0, 66.14, 1)]
+    [InlineData("Mxx", 38.73, -38.05, 2)]
+    [InlineData("Myy", 41.55, -46.94, 2)]
+    [InlineData("Mzz", 0.01092, -0.005168, 5)]
+    [InlineData("M", 53.98, 0.5144, 2)]
+    public void ReactionForcesTests(
       string name,
       double expected1,
       double expected2,
@@ -157,6 +139,24 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       Assert.Equal(expected1, output1.Value, precision);
       Assert.Equal(expected2, output2.Value, precision);
+    }
+
+    private static GH_Document OpenDocument() {
+      Type thisClass = MethodBase.GetCurrentMethod()
+        .DeclaringType;
+      string fileName = thisClass.Name + ".gh";
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
+        .Replace("Tests", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
+        .Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
   }
 }

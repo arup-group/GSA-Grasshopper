@@ -9,43 +9,52 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
+
     /// <summary>
-    /// Method to set a single axis in ref dictionary, looking up existing axes to reference. Returns axis ID set in dictionary or existing axis ID if similar already exist.
+    /// Method to convert a list of GridPlaneSurfaces and set Axes, GridPlanes and GridSurfaces in ref Dictionaries
     /// </summary>
-    /// <param name="gridplanesurface"></param>
+    /// <param name="gridPlaneSurfaces"></param>
     /// <param name="existingAxes"></param>
-    /// <param name="axisidcounter"></param>
-    /// <param name="modelUnit"></param>
-    /// <returns></returns>
-    internal static int SetAxis(ref GsaGridPlaneSurface gridplanesurface, ref Dictionary<int, Axis> existingAxes, ref int axisidcounter, LengthUnit modelUnit) {
-      int axisId = gridplanesurface.AxisId;
-
-      Axis axis = gridplanesurface.GetAxis(modelUnit);
-
-      if (axis.Name == "")
-        axis.Name = "Axis " + axisidcounter;
-
-      if (gridplanesurface.AxisId > 0) {
-        gridplanesurface.GridPlane.AxisProperty = axisId;
-        if (existingAxes.ContainsKey(axisId))
-          existingAxes[axisId] = axis;
-        else
-          existingAxes.Add(axisId, axis);
+    /// <param name="existingGridPlanes"></param>
+    /// <param name="existingGridSurfaces"></param>
+    /// <param name="gpGuid"></param>
+    /// <param name="gsGuid"></param>
+    /// <param name="unit"></param>
+    /// <param name="memberElementRelationship"></param>
+    /// <param name="model"></param>
+    /// <param name="apiSections"></param>
+    /// <param name="apiProp2ds"></param>
+    /// <param name="apiProp3ds"></param>
+    /// <param name="apiElements"></param>
+    /// <param name="apiMembers"></param>
+    internal static void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces,
+        ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
+        ref Dictionary<int, GridSurface> existingGridSurfaces,
+        ref Dictionary<Guid, int> gpGuid, ref Dictionary<Guid, int> gsGuid, LengthUnit unit, ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers) {
+      if (gridPlaneSurfaces == null) {
+        return;
       }
-      else {
-        axisId = Axes.GetExistingAxisId(existingAxes, axis);
-        if (axisId > 0)
-          gridplanesurface.GridPlane.AxisProperty = axisId; // set the id if axis exist
-        else {
-          axisId = axisidcounter;
-          gridplanesurface.GridPlane.AxisProperty = axisidcounter;
 
-          existingAxes.Add(gridplanesurface.GridPlane.AxisProperty, axis);
-          axisidcounter++;
+      int axisidcounter = existingAxes.Count > 0 ? existingAxes.Keys.Max() + 1 : 1;
+      int gridplaneidcounter = existingGridPlanes.Count > 0 ? existingGridPlanes.Keys.Max() + 1 : 1;
+      int gridsurfaceidcounter = existingGridSurfaces.Count > 0 ? existingGridSurfaces.Keys.Max() + 1 : 1;
+
+      GetGridPlaneSurfaceCounters(gridPlaneSurfaces, ref gridplaneidcounter, ref gridsurfaceidcounter);
+
+      foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces) {
+        if (gridPlaneSurface == null) {
+          continue;
         }
-      }
 
-      return axisId;
+        GsaGridPlaneSurface gps = gridPlaneSurface;
+
+        if (gps.GridPlane != null) {
+          gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter, unit);
+          gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
+        }
+
+        SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
+      }
     }
 
     /// <summary>
@@ -98,6 +107,45 @@ namespace GsaGH.Helpers.Export {
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Method to set a single axis in ref dictionary, looking up existing axes to reference. Returns axis ID set in dictionary or existing axis ID if similar already exist.
+    /// </summary>
+    /// <param name="gridplanesurface"></param>
+    /// <param name="existingAxes"></param>
+    /// <param name="axisidcounter"></param>
+    /// <param name="modelUnit"></param>
+    /// <returns></returns>
+    internal static int SetAxis(ref GsaGridPlaneSurface gridplanesurface, ref Dictionary<int, Axis> existingAxes, ref int axisidcounter, LengthUnit modelUnit) {
+      int axisId = gridplanesurface.AxisId;
+
+      Axis axis = gridplanesurface.GetAxis(modelUnit);
+
+      if (axis.Name == "")
+        axis.Name = "Axis " + axisidcounter;
+
+      if (gridplanesurface.AxisId > 0) {
+        gridplanesurface.GridPlane.AxisProperty = axisId;
+        if (existingAxes.ContainsKey(axisId))
+          existingAxes[axisId] = axis;
+        else
+          existingAxes.Add(axisId, axis);
+      }
+      else {
+        axisId = Axes.GetExistingAxisId(existingAxes, axis);
+        if (axisId > 0)
+          gridplanesurface.GridPlane.AxisProperty = axisId; // set the id if axis exist
+        else {
+          axisId = axisidcounter;
+          gridplanesurface.GridPlane.AxisProperty = axisidcounter;
+
+          existingAxes.Add(gridplanesurface.GridPlane.AxisProperty, axis);
+          axisidcounter++;
+        }
+      }
+
+      return axisId;
     }
 
     /// <summary>
@@ -286,53 +334,6 @@ namespace GsaGH.Helpers.Export {
       }
 
       return gsId;
-    }
-
-    /// <summary>
-    /// Method to convert a list of GridPlaneSurfaces and set Axes, GridPlanes and GridSurfaces in ref Dictionaries
-    /// </summary>
-    /// <param name="gridPlaneSurfaces"></param>
-    /// <param name="existingAxes"></param>
-    /// <param name="existingGridPlanes"></param>
-    /// <param name="existingGridSurfaces"></param>
-    /// <param name="gpGuid"></param>
-    /// <param name="gsGuid"></param>
-    /// <param name="unit"></param>
-    /// <param name="memberElementRelationship"></param>
-    /// <param name="model"></param>
-    /// <param name="apiSections"></param>
-    /// <param name="apiProp2ds"></param>
-    /// <param name="apiProp3ds"></param>
-    /// <param name="apiElements"></param>
-    /// <param name="apiMembers"></param>
-    internal static void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces,
-        ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
-        ref Dictionary<int, GridSurface> existingGridSurfaces,
-        ref Dictionary<Guid, int> gpGuid, ref Dictionary<Guid, int> gsGuid, LengthUnit unit, ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers) {
-      if (gridPlaneSurfaces == null) {
-        return;
-      }
-
-      int axisidcounter = existingAxes.Count > 0 ? existingAxes.Keys.Max() + 1 : 1;
-      int gridplaneidcounter = existingGridPlanes.Count > 0 ? existingGridPlanes.Keys.Max() + 1 : 1;
-      int gridsurfaceidcounter = existingGridSurfaces.Count > 0 ? existingGridSurfaces.Keys.Max() + 1 : 1;
-
-      GetGridPlaneSurfaceCounters(gridPlaneSurfaces, ref gridplaneidcounter, ref gridsurfaceidcounter);
-
-      foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces) {
-        if (gridPlaneSurface == null) {
-          continue;
-        }
-
-        GsaGridPlaneSurface gps = gridPlaneSurface;
-
-        if (gps.GridPlane != null) {
-          gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter, unit);
-          gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
-        }
-
-        SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
-      }
     }
   }
 }

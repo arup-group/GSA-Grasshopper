@@ -8,6 +8,7 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateMember1dTests {
+
     public static GH_OasysComponent ComponentMother() {
       var comp = new CreateMember1d();
       comp.CreateAttributes();

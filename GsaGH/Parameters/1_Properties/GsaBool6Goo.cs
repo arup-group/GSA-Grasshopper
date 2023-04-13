@@ -8,14 +8,12 @@ namespace GsaGH.Parameters {
   /// Goo wrapper class, makes sure <see cref="GsaBool6"/> can be used in Grasshopper.
   /// </summary>
   public class GsaBool6Goo : GH_OasysGoo<GsaBool6> {
+    public static string Description => "GSA Bool6 (A 6-character string to describe the restraint condition (F = Fixed, R = Released) for each degree of freedom)";
     public static string Name => "Bool6";
     public static string NickName => "B6";
-    public static string Description => "GSA Bool6 (A 6-character string to describe the restraint condition (F = Fixed, R = Released) for each degree of freedom)";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaBool6Goo(GsaBool6 item) : base(item) { }
-
-    public override IGH_Goo Duplicate() => new GsaBool6Goo(Value);
 
     public override bool CastFrom(object source) {
       if (source == null)
@@ -23,7 +21,6 @@ namespace GsaGH.Parameters {
 
       if (base.CastFrom(source))
         return true;
-
       else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both)) {
         Value.X = mybool;
         Value.Y = mybool;
@@ -33,7 +30,6 @@ namespace GsaGH.Parameters {
         Value.Zz = mybool;
         return true;
       }
-
       else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both)) {
         mystring = mystring.Trim().ToLower();
 
@@ -78,9 +74,11 @@ namespace GsaGH.Parameters {
             case 'r':
               Value.X = false;
               break;
+
             case 'f':
               Value.X = true;
               break;
+
             default:
               return false;
           }
@@ -89,9 +87,11 @@ namespace GsaGH.Parameters {
             case 'r':
               Value.Y = false;
               break;
+
             case 'f':
               Value.Y = true;
               break;
+
             default:
               return false;
           }
@@ -100,9 +100,11 @@ namespace GsaGH.Parameters {
             case 'r':
               Value.Z = false;
               break;
+
             case 'f':
               Value.Z = true;
               break;
+
             default:
               return false;
           }
@@ -111,9 +113,11 @@ namespace GsaGH.Parameters {
             case 'r':
               Value.Xx = false;
               break;
+
             case 'f':
               Value.Xx = true;
               break;
+
             default:
               return false;
           }
@@ -122,9 +126,11 @@ namespace GsaGH.Parameters {
             case 'r':
               Value.Yy = false;
               break;
+
             case 'f':
               Value.Yy = true;
               break;
+
             default:
               return false;
           }
@@ -133,9 +139,11 @@ namespace GsaGH.Parameters {
             case 'r':
               Value.Zz = false;
               break;
+
             case 'f':
               Value.Zz = true;
               break;
+
             default:
               return false;
           }
@@ -145,5 +153,7 @@ namespace GsaGH.Parameters {
       }
       return false;
     }
+
+    public override IGH_Goo Duplicate() => new GsaBool6Goo(Value);
   }
 }

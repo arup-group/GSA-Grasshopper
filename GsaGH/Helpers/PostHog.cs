@@ -3,9 +3,26 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
   internal class PostHog {
+
     internal static void Debug(Dictionary<string, object> properties) {
       const string eventName = "Debug";
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
+
+    internal static void Gwa(string gwa, bool existingModel) {
+      string[] commands = gwa.Split('\n');
+      foreach (string command in commands) {
+        if (command == "") { continue; }
+        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
+        if (key == "") { continue; }
+        const string eventName = "GwaCommand";
+        var properties = new Dictionary<string, object>()
+        {
+          { key, command },
+          { "existingModel", existingModel },
+        };
+        _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      }
     }
 
     internal static void Load(GsaLoad.LoadTypes loadType, ReferenceType refType, string subType = "-") {
@@ -55,22 +72,6 @@ namespace GsaGH.Helpers {
           { "resultSubType", subType },
         };
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
-    }
-
-    internal static void Gwa(string gwa, bool existingModel) {
-      string[] commands = gwa.Split('\n');
-      foreach (string command in commands) {
-        if (command == "") { continue; }
-        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
-        if (key == "") { continue; }
-        const string eventName = "GwaCommand";
-        var properties = new Dictionary<string, object>()
-        {
-          { key, command },
-          { "existingModel", existingModel },
-        };
-        _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
-      }
     }
   }
 }

@@ -10,13 +10,12 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaLoad" /> can be used in Grasshopper.
   /// </summary>
   public class GsaLoadGoo : GH_OasysGoo<GsaLoad> {
-    public GsaLoadGoo(GsaLoad item) : base(item) { }
+    public static string Description => "GSA Load";
     public static string Name => "Load";
     public static string NickName => "Ld";
-    public static string Description => "GSA Load";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate() => new GsaLoadGoo(Value);
+    public GsaLoadGoo(GsaLoad item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (base.CastTo<TQ>(ref target))
@@ -127,5 +126,7 @@ namespace GsaGH.Parameters {
       target = default;
       return false;
     }
+
+    public override IGH_Goo Duplicate() => new GsaLoadGoo(Value);
   }
 }

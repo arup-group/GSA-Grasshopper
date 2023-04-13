@@ -4,14 +4,16 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
   public sealed class GsaComObject {
-    private static readonly Lazy<Interop.Gsa_10_1.ComAuto> s_lazy = new Lazy<Interop.Gsa_10_1.ComAuto>(() => new Interop.Gsa_10_1.ComAuto());
     public static Interop.Gsa_10_1.ComAuto Instance { get { return s_lazy.Value; } }
+    private static readonly Lazy<Interop.Gsa_10_1.ComAuto> s_lazy = new Lazy<Interop.Gsa_10_1.ComAuto>(() => new Interop.Gsa_10_1.ComAuto());
+
     private GsaComObject() { }
   }
 
   internal static class GsaComHelper {
     private static Guid s_guid = Guid.NewGuid();
     private static string s_tempPath = Path.GetTempPath() + s_guid.ToString() + ".gwb";
+
     internal static Interop.Gsa_10_1.ComAuto GetGsaComModel(GsaModel model) {
       Interop.Gsa_10_1.ComAuto gsa = GsaComObject.Instance;
 

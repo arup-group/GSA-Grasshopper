@@ -9,6 +9,7 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaMember2dTest {
+
     [Fact]
     public void TestCreateGsaMem2dFromBrep() {
       var pts = new List<Point3d> {

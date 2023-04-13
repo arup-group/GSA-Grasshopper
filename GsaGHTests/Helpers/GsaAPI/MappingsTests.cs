@@ -1,11 +1,12 @@
 ﻿using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Helpers.GsaAPITests {
   [Collection("GrasshopperFixture collection")]
   public class MappingsTests {
+
     [Theory]
     [InlineData("Linear", 0)]
     [InlineData("Quadratic", 1)]

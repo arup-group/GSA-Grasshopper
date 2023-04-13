@@ -9,6 +9,7 @@ using Xunit;
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateOffsetTests {
+
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateOffset();
       comp.CreateAttributes();

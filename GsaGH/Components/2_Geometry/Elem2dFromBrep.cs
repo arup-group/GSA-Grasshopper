@@ -24,6 +24,132 @@ namespace GsaGH.Components {
   ///   Component to edit a Node
   /// </summary>
   public class Elem2dFromBrep : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("18c5913e-cbce-42e8-8563-18e28b079d34");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private Length _tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+
+    public Elem2dFromBrep() : base("Element2d from Brep",
+                      "Elem2dFromBrep",
+      "Mesh a non-planar Brep",
+      CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      Menu_AppendSeparator(menu);
+
+      var tolerance = new ToolStripTextBox();
+      _toleranceTxt = _tolerance.ToString();
+      tolerance.Text = _toleranceTxt;
+      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+
+      toleranceMenu.DropDownItems[1]
+        .MouseUp += (s, e) => {
+          UpdateMessage();
+          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+          ExpireSolution(true);
+        };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      if (reader.ChunkExists("ParameterData"))
+        return base.Read(reader);
+      BaseReader.Read(reader, this);
+      _isInitialised = true;
+      UpdateUIFromSelectedItems();
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      Attributes.Bounds = (RectangleF)attributes.Items[0]
+        .InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1]
+        .InternalData;
+      return true;
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance()
+      => Params.Input[4]
+        .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      UpdateMessage();
+    }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Unit",
+      });
+
+      _dropDownItems = new List<List<string>>();
+      _selectedItems = new List<string>();
+
+      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+
+      _isInitialised = true;
+    }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddBrepParameter("Brep", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Incl. Points or Nodes",
+        "(P)",
+        "Inclusion points or Nodes",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Incl. Curves or 1D Members",
+        "(C)",
+        "Inclusion curves or 1D Members",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddGenericParameter("Mesh Size", "Ms", "Target mesh size", GH_ParamAccess.item);
+
+      pManager[1]
+        .Optional = true;
+      pManager[2]
+        .Optional = true;
+      pManager[3]
+        .Optional = true;
+      pManager[4]
+        .Optional = true;
+      pManager.HideParameter(0);
+      pManager.HideParameter(1);
+      pManager.HideParameter(2);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaElement2dParameter(),
+        "2D Elements",
+        "E2D",
+        "GSA 2D Elements",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(),
+        "Incl. Nodes",
+        "No",
+        "Inclusion Nodes which may have been moved during the meshing process",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement1dParameter(),
+        "Incl. Element1Ds",
+        "E1D",
+        "Inclusion 1D Elements which may have been moved during the meshing process",
+        GH_ParamAccess.list);
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep))
@@ -88,32 +214,32 @@ namespace GsaGH.Components {
           Curve crv = null;
           switch (ghType.Value) {
             case GsaElement1dGoo _: {
-              var gsaelem1d = new GsaElement1d();
-              ghType.CastTo(ref gsaelem1d);
-              elem1ds.Add(gsaelem1d.Duplicate(true));
-              break;
-            }
-            case GsaMember1dGoo _: {
-              var gsamem1d = new GsaMember1d();
-              ghType.CastTo(ref gsamem1d);
-              mem1ds.Add(gsamem1d.Duplicate(true));
-              break;
-            }
-            default: {
-              if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both))
-                crvs.Add(crv.DuplicateCurve());
-              else {
-                string type = ghType.Value.GetType()
-                  .ToString();
-                type = type.Replace("GsaGH.Parameters.", "");
-                type = type.Replace("Goo", "");
-                this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
-                  + type
-                  + " to curve or 1D Member");
+                var gsaelem1d = new GsaElement1d();
+                ghType.CastTo(ref gsaelem1d);
+                elem1ds.Add(gsaelem1d.Duplicate(true));
+                break;
               }
+            case GsaMember1dGoo _: {
+                var gsamem1d = new GsaMember1d();
+                ghType.CastTo(ref gsamem1d);
+                mem1ds.Add(gsamem1d.Duplicate(true));
+                break;
+              }
+            default: {
+                if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both))
+                  crvs.Add(crv.DuplicateCurve());
+                else {
+                  string type = ghType.Value.GetType()
+                    .ToString();
+                  type = type.Replace("GsaGH.Parameters.", "");
+                  type = type.Replace("Goo", "");
+                  this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
+                    + type
+                    + " to curve or 1D Member");
+                }
 
-              break;
-            }
+                break;
+              }
           }
         }
 
@@ -165,132 +291,9 @@ namespace GsaGH.Components {
         "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("18c5913e-cbce-42e8-8563-18e28b079d34");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
-
-    public Elem2dFromBrep() : base("Element2d from Brep",
-      "Elem2dFromBrep",
-      "Mesh a non-planar Brep",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddBrepParameter("Brep", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Incl. Points or Nodes",
-        "(P)",
-        "Inclusion points or Nodes",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Incl. Curves or 1D Members",
-        "(C)",
-        "Inclusion curves or 1D Members",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddGenericParameter("Mesh Size", "Ms", "Target mesh size", GH_ParamAccess.item);
-
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement2dParameter(),
-        "2D Elements",
-        "E2D",
-        "GSA 2D Elements",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(),
-        "Incl. Nodes",
-        "No",
-        "Inclusion Nodes which may have been moved during the meshing process",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElement1dParameter(),
-        "Incl. Element1Ds",
-        "E1D",
-        "Inclusion 1D Elements which may have been moved during the meshing process",
-        GH_ParamAccess.list);
-    }
-
-    #endregion
-
-    #region Custom UI
-
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
-
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-      UpdateMessage();
-    }
-
-    public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new[] {
-        "Unit",
-      });
-
-      DropDownItems = new List<List<string>>();
-      SelectedItems = new List<string>();
-
-      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
-      IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      SelectedItems[i] = DropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
-      base.UpdateUI();
-    }
-
-    public override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+    protected override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
-    }
-
-    public override void VariableParameterMaintenance()
-      => Params.Input[4]
-        .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
-
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToString();
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      toleranceMenu.DropDownItems[1]
-        .MouseUp += (s, e) => {
-        UpdateMessage();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
     }
 
     private void MaintainText(ToolStripTextBox tolerance) {
@@ -319,21 +322,5 @@ namespace GsaGH.Components {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
     }
-
-    public override bool Read(GH_IReader reader) {
-      if (reader.ChunkExists("ParameterData"))
-        return base.Read(reader);
-      BaseReader.Read(reader, this);
-      IsInitialised = true;
-      UpdateUIFromSelectedItems();
-      GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
-      return true;
-    }
-
-    #endregion
   }
 }

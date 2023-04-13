@@ -1,5 +1,4 @@
-﻿using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
 
@@ -8,9 +7,9 @@ namespace GsaGH.Parameters {
   /// Goo wrapper class, makes sure <see cref="GsaBucklingLengthFactors"/> can be used in Grasshopper.
   /// </summary>
   public class GsaBucklingLengthFactorsGoo : GH_OasysGoo<GsaBucklingLengthFactors> {
+    public static string Description => "GSA Buckling Factors";
     public static string Name => "BucklingFactors";
     public static string NickName => "BFs";
-    public static string Description => "GSA Buckling Factors";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaBucklingLengthFactorsGoo(GsaBucklingLengthFactors item) : base(item) { }

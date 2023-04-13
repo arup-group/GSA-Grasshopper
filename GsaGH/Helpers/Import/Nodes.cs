@@ -12,71 +12,6 @@ namespace GsaGH.Helpers.Import {
   /// Class containing functions to import various object types from GSA
   /// </summary>
   internal class Nodes {
-    internal static GsaNode GetNode(Node node, LengthUnit modelUnit, int id, ReadOnlyDictionary<int, Axis> axDict = null) {
-      var local = new Plane();
-      // add local axis if node has Axis property
-      if (axDict == null) {
-        return new GsaNode(node, id, modelUnit, local);
-      }
-
-      if (node.AxisProperty > 0) {
-        axDict.TryGetValue(node.AxisProperty, out Axis axis);
-        local = AxisToPlane(axis, modelUnit);
-      }
-      else {
-        switch (node.AxisProperty) {
-          case 0:
-            // local axis = Global
-            // do nothing, XY-plan already set by default
-            break;
-          case -11:
-            // local axis = X-elevation
-            local = Plane.WorldYZ;
-            break;
-          case -12:
-            // local axis = X-elevation
-            local = Plane.WorldZX;
-            break;
-          case -13:
-            // local axis = vertical
-            // GSA naming is confusing, but this is a XY-plane
-            local = Plane.WorldXY;
-            break;
-          case -14:
-            // local axis = global cylindric
-            // no method in Rhino/GH to handle cylindric coordinate system
-            local = Plane.Unset;
-            break;
-        }
-      }
-
-      return new GsaNode(node, id, modelUnit, local);
-    }
-
-    /// <summary>
-    /// Method to import Nodes from a GSA model.
-    /// Will output a list of GsaNodeGoos.
-    /// Input node dictionary pre-filtered for selected nodes to import;
-    /// </summary>
-    /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
-    /// <param name="axDict"></param>
-    /// <param name="duplicateApiObjects"></param>
-    /// <param name="unit"></param>
-    /// <returns></returns>
-    internal static ConcurrentBag<GsaNodeGoo> GetNodes(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false) {
-      var outNodes = new ConcurrentBag<GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => {
-        outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects));
-      });
-      return outNodes;
-    }
-    internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null) {
-      var outNodes = new ConcurrentDictionary<int, GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => {
-        outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
-      });
-      return outNodes;
-    }
 
     /// <summary>
     /// Method to create a Rhino Plane from a GSA Axis
@@ -111,6 +46,77 @@ namespace GsaGH.Helpers.Import {
       return pln;
     }
 
+    internal static GsaNode GetNode(Node node, LengthUnit modelUnit, int id, ReadOnlyDictionary<int, Axis> axDict = null) {
+      var local = new Plane();
+      // add local axis if node has Axis property
+      if (axDict == null) {
+        return new GsaNode(node, id, modelUnit, local);
+      }
+
+      if (node.AxisProperty > 0) {
+        axDict.TryGetValue(node.AxisProperty, out Axis axis);
+        local = AxisToPlane(axis, modelUnit);
+      }
+      else {
+        switch (node.AxisProperty) {
+          case 0:
+            // local axis = Global
+            // do nothing, XY-plan already set by default
+            break;
+
+          case -11:
+            // local axis = X-elevation
+            local = Plane.WorldYZ;
+            break;
+
+          case -12:
+            // local axis = X-elevation
+            local = Plane.WorldZX;
+            break;
+
+          case -13:
+            // local axis = vertical
+            // GSA naming is confusing, but this is a XY-plane
+            local = Plane.WorldXY;
+            break;
+
+          case -14:
+            // local axis = global cylindric
+            // no method in Rhino/GH to handle cylindric coordinate system
+            local = Plane.Unset;
+            break;
+        }
+      }
+
+      return new GsaNode(node, id, modelUnit, local);
+    }
+
+    internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null) {
+      var outNodes = new ConcurrentDictionary<int, GsaNodeGoo>();
+      Parallel.ForEach(nDict, node => {
+        outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
+      });
+      return outNodes;
+    }
+
+    /// <summary>
+    /// Method to import Nodes from a GSA model.
+    /// Will output a list of GsaNodeGoos.
+    /// Input node dictionary pre-filtered for selected nodes to import;
+    /// </summary>
+    /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
+    /// <param name="axDict"></param>
+    /// <param name="duplicateApiObjects"></param>
+    /// <param name="unit"></param>
+    /// <returns></returns>
+    internal static ConcurrentBag<GsaNodeGoo> GetNodes(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false) {
+      var outNodes = new ConcurrentBag<GsaNodeGoo>();
+      Parallel.ForEach(nDict, node => {
+        outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects));
+      });
+      return outNodes;
+    }
+
     internal static Point3d Point3dFromNode(Node node, LengthUnit unit) {
       return (unit == LengthUnit.Meter) ?
           new Point3d(node.Position.X, node.Position.Y, node.Position.Z) : // skip unitsnet conversion, gsa api node always in meters
@@ -118,6 +124,7 @@ namespace GsaGH.Helpers.Import {
                       new Length(node.Position.Y, LengthUnit.Meter).As(unit),
                       new Length(node.Position.Z, LengthUnit.Meter).As(unit));
     }
+
     internal static Point3d Point3dFromXyzUnit(double x, double y, double z, LengthUnit modelUnit) {
       return (modelUnit == LengthUnit.Meter) ?
           new Point3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
@@ -125,6 +132,7 @@ namespace GsaGH.Helpers.Import {
                       new Length(y, LengthUnit.Meter).As(modelUnit),
                       new Length(z, LengthUnit.Meter).As(modelUnit));
     }
+
     internal static Vector3d Vector3dFromXyzUnit(double x, double y, double z, LengthUnit modelUnit) {
       return (modelUnit == LengthUnit.Meter) ?
           new Vector3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters

@@ -4,6 +4,7 @@ using GH_IO.Serialization;
 
 namespace GsaGH.Helpers.GH {
   public static class FindValueFromReader {
+
     public static bool TryGetEnum(
       this GH_IReader reader,
       string valueToFind,
@@ -20,8 +21,6 @@ namespace GsaGH.Helpers.GH {
 
       return true;
     }
-
-    #region private string helpers
 
     private static IEnumerable<string> GetNamesToCheck(string defaultValue)
       => new List<string> {
@@ -46,6 +45,5 @@ namespace GsaGH.Helpers.GH {
 
       return result;
     }
-    #endregion
   }
 }

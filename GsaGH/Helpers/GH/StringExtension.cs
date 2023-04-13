@@ -2,6 +2,7 @@
 
 namespace GsaGH.Helpers.GH {
   public static class StringExtension {
+
     /// <summary>
     /// <b>make string pascal cased</b>
     /// <br></br>

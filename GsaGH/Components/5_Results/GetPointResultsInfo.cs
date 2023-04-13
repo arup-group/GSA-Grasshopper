@@ -10,30 +10,17 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Components {
   public class GetPointResultsInfo : GH_OasysComponent {
-    protected override void SolveInstance(IGH_DataAccess da) {
-      PointResultGoo res = null;
-      da.GetData(0, ref res);
-      da.SetData(0, res.Value);
-      da.SetData(1, new GH_UnitNumber(res.Result));
-    }
-
-    #region Name and Ribbon Layout
-
     public override Guid ComponentGuid => new Guid("9bcce796-5524-40ab-a779-2947af9b18d2");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Result0dInfo;
 
     public GetPointResultsInfo() : base("PointResultsInfo",
-      "PtResInfo",
+          "PtResInfo",
       "Get Node Contour Result values",
       CategoryName.Name(),
       SubCategoryName.Cat5())
       => Hidden = true;
-
-    #endregion
-
-    #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
       => pManager.AddGenericParameter("Result Point",
@@ -49,6 +36,11 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    #endregion
+    protected override void SolveInstance(IGH_DataAccess da) {
+      PointResultGoo res = null;
+      da.GetData(0, ref res);
+      da.SetData(0, res.Value);
+      da.SetData(1, new GH_UnitNumber(res.Result));
+    }
   }
 }
