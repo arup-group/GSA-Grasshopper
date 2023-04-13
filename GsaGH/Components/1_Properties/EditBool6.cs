@@ -17,22 +17,16 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBool6;
 
-    public EditBool6() : base("Edit Bool6",
-          "Bool6Edit",
-      "Modify GSA Bool6 or just get information about existing",
-      CategoryName.Name(),
+    public EditBool6() : base("Edit Bool6", "Bool6Edit",
+      "Modify GSA Bool6 or just get information about existing", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaBool6Parameter(),
-        GsaBool6Goo.Name,
-        GsaBool6Goo.NickName,
-        GsaBool6Goo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaBool6Goo.Name,
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName,
+        GsaBool6Goo.Description + " to get or set information for. Leave blank to create a new "
+        + GsaBool6Goo.Name, GH_ParamAccess.item);
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
@@ -40,17 +34,13 @@ namespace GsaGH.Components {
       pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
       pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaBool6Parameter(),
-        GsaBool6Goo.Name,
-        GsaBool6Goo.NickName,
-        GsaBool6Goo.Description + " with applied changes.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName,
+        GsaBool6Goo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
@@ -104,8 +94,7 @@ namespace GsaGH.Components {
         da.SetData(4, myBool.Xx);
         da.SetData(5, myBool.Yy);
         da.SetData(6, myBool.Zz);
-      }
-      else {
+      } else {
         this.AddRuntimeError("Bool6 is Null");
       }
     }

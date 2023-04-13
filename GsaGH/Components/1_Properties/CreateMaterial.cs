@@ -31,10 +31,9 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateMaterial;
 
     public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
-          GsaMaterialGoo.Name.Replace(" ", string.Empty),
+      GsaMaterialGoo.Name.Replace(" ", string.Empty),
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+      CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -58,19 +57,13 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddIntegerParameter("Grade",
-                                                                                       "Grd",
-                                                                                       "Material Grade (default = 1)",
-                                                                                       GH_ParamAccess.item,
-                                                                                       1);
+      pManager.AddIntegerParameter("Grade", "Grd", "Material Grade (default = 1)",
+        GH_ParamAccess.item, 1);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaMaterialParameter(),
-                                                                                         "Material",
-                                                                                         "Mat",
-                                                                                         "GSA Standard Material (reference)",
-                                                                                         GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat",
+        "GSA Standard Material (reference)", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

@@ -17,30 +17,22 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.TaperProfile;
 
-    public TaperProfile() : base("Taper Profile",
-          "Taper",
+    public TaperProfile() : base("Taper Profile", "Taper",
       "Create a Profile that tapers along its length from start and end profiles",
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+      CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddTextParameter("Profile Start",
-        "Pf1",
-        "Profile at start of element",
+      pManager.AddTextParameter("Profile Start", "Pf1", "Profile at start of element",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Profile End",
-        "Pf2",
-        "Profile at end of element",
+      pManager.AddTextParameter("Profile End", "Pf2", "Profile at end of element",
         GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddTextParameter("Tapered Profile",
-                                                                                         "Pf",
-                                                                                         "Profile tapering along the length of its element",
-                                                                                         GH_ParamAccess.item);
+      pManager.AddTextParameter("Tapered Profile", "Pf",
+        "Profile tapering along the length of its element", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -63,8 +55,7 @@ namespace GsaGH.Components {
       if (startParts[0] == "STD" || startParts[0] == "GEO") {
         if (startParts[1] == endParts[1]) {
           if (startParts[0] == "GEO") {
-            if (!startParts[1]
-              .StartsWith("P")) {
+            if (!startParts[1].StartsWith("P")) {
               this.AddRuntimeError(
                 "It is only possible to taper between two Perimeter / bridge profiles");
               return;
@@ -87,12 +78,10 @@ namespace GsaGH.Components {
           }
 
           da.SetData(0, taper);
-        }
-        else {
+        } else {
           this.AddRuntimeError("Start and End Profile types must be similar");
         }
-      }
-      else {
+      } else {
         this.AddRuntimeError("Profile type must be 'STD'");
       }
     }

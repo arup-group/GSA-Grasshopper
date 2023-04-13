@@ -18,11 +18,8 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProp3d;
 
-    public CreateProp3d() : base("Create 3D Property",
-          "Prop3d",
-      "Create GSA 3D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+    public CreateProp3d() : base("Create 3D Property", "Prop3d", "Create GSA 3D Property",
+      CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -40,19 +37,16 @@ namespace GsaGH.Components {
       if (da.GetData(0, ref ghTyp)) {
         if (ghTyp.Value is GsaMaterialGoo materialGoo) {
           prop.Material = materialGoo.Value ?? new GsaMaterial();
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop.Material = new GsaMaterial(idd);
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PV input to a 3D Property of reference integer");
             return;
           }
         }
-      }
-      else {
+      } else {
         prop.Material = new GsaMaterial(2);
       }
 

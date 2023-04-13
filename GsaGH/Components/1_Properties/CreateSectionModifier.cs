@@ -38,11 +38,8 @@ namespace GsaGH.Components {
       = GsaSectionModifier.StressOptionType.NoCalculation;
     private bool _toMode = false;
 
-    public CreateSectionModifier() : base("Create Section Modifier",
-                                  "SectionModifier",
-      "Create GSA Section Modifier",
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+    public CreateSectionModifier() : base("Create Section Modifier", "SectionModifier",
+      "Create GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -56,25 +53,25 @@ namespace GsaGH.Components {
 
       switch (i) {
         case 0 when j == 0: {
-            if (_toMode) {
-              _dropDownItems.RemoveAt(1);
-              _selectedItems.RemoveAt(1);
-              _spacerDescriptions.RemoveAt(1);
-            }
-
-            _toMode = false;
-            break;
+          if (_toMode) {
+            _dropDownItems.RemoveAt(1);
+            _selectedItems.RemoveAt(1);
+            _spacerDescriptions.RemoveAt(1);
           }
+
+          _toMode = false;
+          break;
+        }
         case 0: {
-            if (!_toMode) {
-              _dropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
-              _selectedItems.Insert(1, _lengthUnit.ToString());
-              _spacerDescriptions.Insert(1, "Length unit");
-            }
-
-            _toMode = true;
-            break;
+          if (!_toMode) {
+            _dropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
+            _selectedItems.Insert(1, _lengthUnit.ToString());
+            _spacerDescriptions.Insert(1, "Length unit");
           }
+
+          _toMode = true;
+          break;
+        }
         case 1 when !_toMode:
           _densityUnit
             = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[i]);
@@ -128,77 +125,48 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[7]
-        .Name = "Additional Mass [" + LinearDensity.GetAbbreviation(_densityUnit) + "]";
+      Params.Input[7].Name
+        = "Additional Mass [" + LinearDensity.GetAbbreviation(_densityUnit) + "]";
       if (_toMode) {
         string unit = Length.GetAbbreviation(_lengthUnit);
         string volUnit
           = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit));
 
-        Params.Input[0]
-          .Name = "Area Modifier [" + unit + "\u00B2]";
-        Params.Input[0]
-          .Description = "[Optional] Modify the effective Area TO this value";
-        Params.Input[1]
-          .Name = "I11 Modifier [" + unit + "\u2074]";
-        Params.Input[1]
-          .Description = "[Optional] Modify the effective Iyy/Iuu TO this value";
-        Params.Input[2]
-          .Name = "I22 Modifier [" + unit + "\u2074]";
-        Params.Input[2]
-          .Description = "[Optional] Modify the effective Izz/Ivv TO this value";
-        Params.Input[3]
-          .Name = "J Modifier [" + unit + "\u2074]";
-        Params.Input[3]
-          .Description = "[Optional] Modify the effective J TO this value";
-        Params.Input[4]
-          .Name = "K11 Modifier [-]";
-        Params.Input[4]
-          .Description = "[Optional] Modify the effective Kyy/Kuu TO this value";
-        Params.Input[5]
-          .Name = "K22 Modifier [-]";
-        Params.Input[5]
-          .Description = "[Optional] Modify the effective Kzz/Kvv TO this value";
-        Params.Input[6]
-          .Name = "Volume Modifier [" + volUnit + "]";
-        Params.Input[6]
-          .Description = "[Optional] Modify the effective Volume/Length TO this value";
-      }
-      else {
-        Params.Input[0]
-          .Name = "Area Modifier";
-        Params.Input[0]
-            .Description
+        Params.Input[0].Name = "Area Modifier [" + unit + "\u00B2]";
+        Params.Input[0].Description = "[Optional] Modify the effective Area TO this value";
+        Params.Input[1].Name = "I11 Modifier [" + unit + "\u2074]";
+        Params.Input[1].Description = "[Optional] Modify the effective Iyy/Iuu TO this value";
+        Params.Input[2].Name = "I22 Modifier [" + unit + "\u2074]";
+        Params.Input[2].Description = "[Optional] Modify the effective Izz/Ivv TO this value";
+        Params.Input[3].Name = "J Modifier [" + unit + "\u2074]";
+        Params.Input[3].Description = "[Optional] Modify the effective J TO this value";
+        Params.Input[4].Name = "K11 Modifier [-]";
+        Params.Input[4].Description = "[Optional] Modify the effective Kyy/Kuu TO this value";
+        Params.Input[5].Name = "K22 Modifier [-]";
+        Params.Input[5].Description = "[Optional] Modify the effective Kzz/Kvv TO this value";
+        Params.Input[6].Name = "Volume Modifier [" + volUnit + "]";
+        Params.Input[6].Description = "[Optional] Modify the effective Volume/Length TO this value";
+      } else {
+        Params.Input[0].Name = "Area Modifier";
+        Params.Input[0].Description
           = "[Optional] Modify the effective Area BY this decimal fraction value (Default = 1.0 -> 100%)";
-        Params.Input[1]
-          .Name = "I11 Modifier";
-        Params.Input[1]
-            .Description
+        Params.Input[1].Name = "I11 Modifier";
+        Params.Input[1].Description
           = "[Optional] Modify the effective Iyy/Iuu BY this decimal fraction value (Default = 1.0 -> 100%)";
-        Params.Input[2]
-          .Name = "I22 Modifier";
-        Params.Input[2]
-            .Description
+        Params.Input[2].Name = "I22 Modifier";
+        Params.Input[2].Description
           = "[Optional] Modify the effective Izz/Ivv BY this decimal fraction value (Default = 1.0 -> 100%)";
-        Params.Input[3]
-          .Name = "J Modifier";
-        Params.Input[3]
-            .Description
+        Params.Input[3].Name = "J Modifier";
+        Params.Input[3].Description
           = "[Optional] Modify the effective J BY this decimal fraction value (Default = 1.0 -> 100%)";
-        Params.Input[4]
-          .Name = "K11 Modifier";
-        Params.Input[4]
-            .Description
+        Params.Input[4].Name = "K11 Modifier";
+        Params.Input[4].Description
           = "[Optional] Modify the effective Kyy/Kuu BY this decimal fraction value (Default = 1.0 -> 100%)";
-        Params.Input[5]
-          .Name = "K22 Modifier";
-        Params.Input[5]
-            .Description
+        Params.Input[5].Name = "K22 Modifier";
+        Params.Input[5].Description
           = "[Optional] Modify the effective Kzz/Kvv BY this decimal fraction value (Default = 1.0 -> 100%)";
-        Params.Input[6]
-          .Name = "Volume Modifier";
-        Params.Input[6]
-            .Description
+        Params.Input[6].Name = "Volume Modifier";
+        Params.Input[6].Description
           = "[Optional] Modify the effective Volume/Length BY this decimal fraction value (Default = 1.0 -> 100%)";
       }
     }
@@ -233,52 +201,39 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = LinearDensity.GetAbbreviation(_densityUnit);
 
-      pManager.AddGenericParameter("Area Modifier",
-        "A",
+      pManager.AddGenericParameter("Area Modifier", "A",
         "[Optional] Modify the effective Area BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("I11 Modifier",
-        "I11",
+      pManager.AddGenericParameter("I11 Modifier", "I11",
         "[Optional] Modify the effective Iyy/Iuu BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("I22 Modifier",
-        "I22",
+      pManager.AddGenericParameter("I22 Modifier", "I22",
         "[Optional] Modify the effective Izz/Ivv BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("J Modifier",
-        "J",
+      pManager.AddGenericParameter("J Modifier", "J",
         "[Optional] Modify the effective J BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("K11 Modifier",
-        "K11",
+      pManager.AddGenericParameter("K11 Modifier", "K11",
         "[Optional] Modify the effective Kyy/Kuu BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("K22 Modifier",
-        "K22",
+      pManager.AddGenericParameter("K22 Modifier", "K22",
         "[Optional] Modify the effective Kzz/Kvv BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Volume Modifier",
-        "V",
+      pManager.AddGenericParameter("Volume Modifier", "V",
         "[Optional] Modify the effective Volume/Length BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Additional Mass [" + unitAbbreviation + "]",
-        "+kg",
+      pManager.AddGenericParameter("Additional Mass [" + unitAbbreviation + "]", "+kg",
         "[Optional] Additional mass per unit length (Default = 0 -> no additional mass)",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Principal Bending Axis",
-        "Ax",
+      pManager.AddBooleanParameter("Principal Bending Axis", "Ax",
         "[Optional] Set to 'true' to use Principal (u,v) Axis for Bending. If false (and by default), Local (y,z) Axis will be used",
-        GH_ParamAccess.item,
-        false);
-      pManager.AddBooleanParameter("Reference Point Centroid",
-        "Ref",
+        GH_ParamAccess.item, false);
+      pManager.AddBooleanParameter("Reference Point Centroid", "Ref",
         "[Optional] Set to 'true' to use the Centroid as Analysis Reference Point. If false (and by default), the specified point will be used",
-        GH_ParamAccess.item,
-        false);
+        GH_ParamAccess.item, false);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
     }
 
@@ -293,49 +248,34 @@ namespace GsaGH.Components {
         AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
         VolumePerLengthUnit volUnit = UnitsHelper.GetVolumePerLengthUnit(_lengthUnit);
 
-        if (Params.Input[0]
-            .SourceCount
-          > 0) {
+        if (Params.Input[0].SourceCount > 0) {
           modifier.AreaModifier = Input.UnitNumber(this, da, 0, areaUnit, true);
         }
 
-        if (Params.Input[1]
-            .SourceCount
-          > 0) {
+        if (Params.Input[1].SourceCount > 0) {
           modifier.I11Modifier = Input.UnitNumber(this, da, 1, inertiaUnit, true);
         }
 
-        if (Params.Input[2]
-            .SourceCount
-          > 0) {
+        if (Params.Input[2].SourceCount > 0) {
           modifier.I22Modifier = Input.UnitNumber(this, da, 2, inertiaUnit, true);
         }
 
-        if (Params.Input[3]
-            .SourceCount
-          > 0) {
+        if (Params.Input[3].SourceCount > 0) {
           modifier.JModifier = Input.UnitNumber(this, da, 3, inertiaUnit, true);
         }
 
-        if (Params.Input[4]
-            .SourceCount
-          > 0) {
+        if (Params.Input[4].SourceCount > 0) {
           modifier.K11Modifier = Input.RatioInDecimalFractionToDecimalFraction(this, da, 4);
         }
 
-        if (Params.Input[5]
-            .SourceCount
-          > 0) {
+        if (Params.Input[5].SourceCount > 0) {
           modifier.K22Modifier = Input.RatioInDecimalFractionToDecimalFraction(this, da, 5);
         }
 
-        if (Params.Input[6]
-            .SourceCount
-          > 0) {
+        if (Params.Input[6].SourceCount > 0) {
           modifier.VolumeModifier = Input.UnitNumber(this, da, 6, volUnit, true);
         }
-      }
-      else {
+      } else {
         modifier.AreaModifier = Input.RatioInDecimalFractionToPercentage(this, da, 0);
         modifier.I11Modifier = Input.RatioInDecimalFractionToPercentage(this, da, 1);
         modifier.I22Modifier = Input.RatioInDecimalFractionToPercentage(this, da, 2);
@@ -378,8 +318,7 @@ namespace GsaGH.Components {
         if (_selectedItems[3] == _stressOptions[2]) {
           _stressOption = GsaSectionModifier.StressOptionType.UseModified;
         }
-      }
-      else {
+      } else {
         _densityUnit
           = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[1]);
         if (_selectedItems[2] == _stressOptions[0]) {

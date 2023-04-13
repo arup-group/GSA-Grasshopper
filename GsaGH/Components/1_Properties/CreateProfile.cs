@@ -38,37 +38,37 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProfile;
     private static readonly List<string> s_easterCat = new List<string>() {
-      "▌─────────────────────────▐█─────▐" + Environment.NewLine +
-      "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine +
-      "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine +
-      "▌───▐█░██▓────────────▓▓░░░▓▌────▐" + Environment.NewLine +
-      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐" + Environment.NewLine +
-      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐" + Environment.NewLine +
-      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐" + Environment.NewLine +
-      "▌─────▓█████░░░░░░░░░░░░▓██──────▐" + Environment.NewLine +
-      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐" + Environment.NewLine +
-      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐" + Environment.NewLine +
-      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐" + Environment.NewLine +
-      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐" + Environment.NewLine +
-      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐" + Environment.NewLine +
-      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐" + Environment.NewLine +
-      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐" + Environment.NewLine +
-      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐" + Environment.NewLine +
-      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐" + Environment.NewLine +
-      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐" + Environment.NewLine +
-      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐" + Environment.NewLine +
-      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐" + Environment.NewLine +
-      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐" + Environment.NewLine +
-      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐" + Environment.NewLine +
-      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐" + Environment.NewLine +
-      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐" + Environment.NewLine +
-      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐" + Environment.NewLine +
-      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐" + Environment.NewLine +
-      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine +
-      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine +
-      "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐" };
+      "▌─────────────────────────▐█─────▐" + Environment.NewLine
+      + "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine
+      + "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine
+      + "▌───▐█░██▓────────────▓▓░░░▓▌────▐" + Environment.NewLine
+      + "▌───▐█▌░▓██──────────█▓░░░░▓─────▐" + Environment.NewLine
+      + "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐" + Environment.NewLine
+      + "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐" + Environment.NewLine
+      + "▌─────▓█████░░░░░░░░░░░░▓██──────▐" + Environment.NewLine
+      + "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐" + Environment.NewLine
+      + "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐" + Environment.NewLine
+      + "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐" + Environment.NewLine
+      + "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐" + Environment.NewLine
+      + "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐" + Environment.NewLine
+      + "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐" + Environment.NewLine
+      + "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐" + Environment.NewLine
+      + "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐" + Environment.NewLine
+      + "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐" + Environment.NewLine
+      + "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐" + Environment.NewLine
+      + "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐" + Environment.NewLine
+      + "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐" + Environment.NewLine
+      + "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐" + Environment.NewLine
+      + "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐" + Environment.NewLine
+      + "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐" + Environment.NewLine
+      + "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐" + Environment.NewLine
+      + "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐" + Environment.NewLine
+      + "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐" + Environment.NewLine
+      + "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine
+      + "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine
+      + "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐", };
     private static readonly Dictionary<string, string> s_profileTypes
-                                                                          = new Dictionary<string, string> {
+      = new Dictionary<string, string> {
         {
           "Angle", "IAngleProfile"
         }, {
@@ -135,11 +135,8 @@ namespace GsaGH.Components {
     private List<string> _typeNames = new List<string>();
     private List<int> _typeNumbers = new List<int>();
 
-    public CreateProfile() : base("Create Profile",
-                                                                                      "Profile",
-      "Create Profile text-string for a GSA Section",
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+    public CreateProfile() : base("Create Profile", "Profile",
+      "Create Profile text-string for a GSA Section", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
       _cataloguedata
         = MicrosoftSQLiteReader.Instance.GetCataloguesDataFromSQLite(
@@ -147,9 +144,8 @@ namespace GsaGH.Components {
       _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(-1,
         Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
       _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> {
-          -1,
-        },
-        Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+        -1,
+      }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
     }
 
     public override bool Read(GH_IReader reader) {
@@ -163,8 +159,7 @@ namespace GsaGH.Components {
       _search = reader.GetString("search");
 
       bool flag = base.Read(reader);
-      Params.Output[0]
-        .Access = GH_ParamAccess.tree;
+      Params.Output[0].Access = GH_ParamAccess.tree;
       return flag;
     }
 
@@ -174,8 +169,7 @@ namespace GsaGH.Components {
         _selectedItems[0] = "Catalogue";
         updateCat = true;
         i = 0;
-      }
-      else {
+      } else {
         _selectedItems[i] = _dropDownItems[i][j];
       }
 
@@ -196,8 +190,7 @@ namespace GsaGH.Components {
           UpdateTypeData();
 
           _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(_typeNumbers,
-            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-            _inclSs);
+            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           _selectedItems.Add(_catalogueNames[0]);
           _selectedItems.Add(_typeNames[0]);
@@ -217,16 +210,14 @@ namespace GsaGH.Components {
           _selectedItems[1] = _catalogueNames[j];
 
           _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
-            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-            _inclSs);
+            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
           _typeNames = _typedata.Item1;
           _typeNumbers = _typedata.Item2;
 
           var types = _typeNumbers.ToList();
           types.RemoveAt(0);
           _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types,
-            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-            _inclSs);
+            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           _selectedItems[2] = _typeNames[0];
           _selectedItems[3] = _sectionList[0];
@@ -242,16 +233,14 @@ namespace GsaGH.Components {
           if (_typeIndex == -1) {
             types = _typeNumbers.ToList();
             types.RemoveAt(0);
-          }
-          else {
+          } else {
             types = new List<int> {
               _typeIndex,
             };
           }
 
           _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types,
-            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-            _inclSs);
+            Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           _selectedItems[3] = _sectionList[0];
         }
@@ -267,8 +256,7 @@ namespace GsaGH.Components {
         }
 
         base.UpdateUI();
-      }
-      else {
+      } else {
         _spacerDescriptions[1] = "Measure";
 
         if (_mode != FoldMode.Other) {
@@ -284,8 +272,7 @@ namespace GsaGH.Components {
         if (i == 0) {
           _type = s_profileTypes[_selectedItems[0]];
           Mode2Clicked();
-        }
-        else {
+        } else {
           _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
           base.UpdateUI();
@@ -296,992 +283,600 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       if (_mode == FoldMode.Catalogue) {
         int i = 0;
-        Params.Input[i]
-          .NickName = "S";
-        Params.Input[i]
-          .Name = "Search";
-        Params.Input[i]
-          .Description = "Text to search from";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
+        Params.Input[i].NickName = "S";
+        Params.Input[i].Name = "Search";
+        Params.Input[i].Description = "Text to search from";
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
 
         i++;
-        Params.Input[i]
-          .NickName = "iSS";
-        Params.Input[i]
-          .Name = "InclSuperseeded";
-        Params.Input[i]
-          .Description = "Input true to include superseeded catalogue sections";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
-      }
-      else {
+        Params.Input[i].NickName = "iSS";
+        Params.Input[i].Name = "InclSuperseeded";
+        Params.Input[i].Description = "Input true to include superseeded catalogue sections";
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
+      } else {
         string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
         int i = 0;
         switch (_type) {
           case "IAngleProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the angle profile (leg in the local z axis).";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
+              = "The depth of the angle profile (leg in the local z axis).";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "W";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the angle profile (leg in the local y axis).";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "W";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description
+              = "The width of the angle profile (leg in the local y axis).";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the angle profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the angle profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the angle profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the angle profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IChannelProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the channel profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the channel profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the flange of the channel profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the flange of the channel profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the channel profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the channel profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the channel profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the channel profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
+            Params.Input[i].Optional = false;
             break;
 
           case "ICircleHollowProfile":
-            Params.Input[i]
-              .NickName = "Ø";
-            Params.Input[i]
-              .Name = "Diameter [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The diameter of the hollow circle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Ø";
+            Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The diameter of the hollow circle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "t";
-            Params.Input[i]
-              .Name = "Thickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The wall thickness of the hollow circle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "t";
+            Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The wall thickness of the hollow circle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "ICircleProfile":
-            Params.Input[i]
-              .NickName = "Ø";
-            Params.Input[i]
-              .Name = "Diameter [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The diameter of the circle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Ø";
+            Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The diameter of the circle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "ICruciformSymmetricalProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth (local z axis leg) of the profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth (local z axis leg) of the profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the flange (local y axis leg) of the cruciform.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description
+              = "The width of the flange (local y axis leg) of the cruciform.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the cruciform.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the cruciform.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the cruciform.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the cruciform.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IEllipseHollowProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the hollow ellipse.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the hollow ellipse.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the hollow ellipse.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the hollow ellipse.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "t";
-            Params.Input[i]
-              .Name = "Thickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The wall thickness of the hollow ellipse.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "t";
+            Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The wall thickness of the hollow ellipse.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IEllipseProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the ellipse.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the ellipse.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the ellipse.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the ellipse.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IGeneralCProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the generic c section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the generic c section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange width of the generic c section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange width of the generic c section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "L";
-            Params.Input[i]
-              .Name = "Lip [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The lip of the generic c section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "L";
+            Params.Input[i].Name = "Lip [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The lip of the generic c section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "t";
-            Params.Input[i]
-              .Name = "Thickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The thickness of the generic c section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "t";
+            Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The thickness of the generic c section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IGeneralZProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the generic z section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the generic z section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bt";
-            Params.Input[i]
-              .Name = "TopWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The top flange width of the generic z section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Bt";
+            Params.Input[i].Name = "TopWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The top flange width of the generic z section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bb";
-            Params.Input[i]
-              .Name = "BottomWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The bottom flange width of the generic z section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Bb";
+            Params.Input[i].Name = "BottomWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
+              = "The bottom flange width of the generic z section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Lt";
-            Params.Input[i]
-              .Name = "Top Lip [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The top lip of the generic z section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Lt";
+            Params.Input[i].Name = "Top Lip [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The top lip of the generic z section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Lb";
-            Params.Input[i]
-              .Name = "Lip [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The top lip of the generic z section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Lb";
+            Params.Input[i].Name = "Lip [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The top lip of the generic z section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "t";
-            Params.Input[i]
-              .Name = "Thickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The thickness of the generic z section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "t";
+            Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The thickness of the generic z section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IIBeamAsymmetricalProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bt";
-            Params.Input[i]
-              .Name = "TopFlangeWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-                .Description
+            Params.Input[i].NickName = "Bt";
+            Params.Input[i].Name = "TopFlangeWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
               = "The width of the top flange of the beam. Top is relative to the beam local access.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bb";
-            Params.Input[i]
-              .Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-                .Description
+            Params.Input[i].NickName = "Bb";
+            Params.Input[i].Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
               = "The width of the bottom flange of the beam. Bottom is relative to the beam local access.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Web";
-            Params.Input[i]
-              .Name = "Web Thickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the beam.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Web";
+            Params.Input[i].Name = "Web Thickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the beam.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tt";
-            Params.Input[i]
-              .Name = "TopFlangeThk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The top flange thickness.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tt";
+            Params.Input[i].Name = "TopFlangeThk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The top flange thickness.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tb";
-            Params.Input[i]
-              .Name = "BottomFlangeThk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The bpttom flange thickness.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tb";
+            Params.Input[i].Name = "BottomFlangeThk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The bpttom flange thickness.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IIBeamCellularProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the flanges of the beam.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the flanges of the beam.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the angle profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the angle profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the angle profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the angle profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "O";
-            Params.Input[i]
-              .Name = "WebOpening [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The size of the web opening.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "O";
+            Params.Input[i].Name = "WebOpening [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The size of the web opening.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "P";
-            Params.Input[i]
-              .Name = "Pitch [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The pitch (spacing) between the web openings.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "P";
+            Params.Input[i].Name = "Pitch [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The pitch (spacing) between the web openings.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IIBeamSymmetricalProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the flanges of the beam.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the flanges of the beam.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the angle profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the angle profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the angle profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the angle profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IRectangleHollowProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the hollow rectangle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the hollow rectangle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the hollow rectangle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the hollow rectangle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The side thickness of the hollow rectangle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The side thickness of the hollow rectangle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The top/bottom thickness of the hollow rectangle.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The top/bottom thickness of the hollow rectangle.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IRectangleProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "Depth of the rectangle, in local z-axis direction.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "Depth of the rectangle, in local z-axis direction.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "Width of the rectangle, in local y-axis direction.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "Width of the rectangle, in local y-axis direction.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IRectoEllipseProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The overall depth of the recto-ellipse profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The overall depth of the recto-ellipse profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Df";
-            Params.Input[i]
-              .Name = "DepthFlat [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flat length of the profile's overall depth.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Df";
+            Params.Input[i].Name = "DepthFlat [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flat length of the profile's overall depth.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The overall width of the recto-ellipse profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The overall width of the recto-ellipse profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bf";
-            Params.Input[i]
-              .Name = "WidthFlat [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flat length of the profile's overall width.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Bf";
+            Params.Input[i].Name = "WidthFlat [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flat length of the profile's overall width.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "ISecantPileProfile":
-            Params.Input[i]
-              .NickName = "Ø";
-            Params.Input[i]
-              .Name = "Diameter [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The diameter of the piles.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Ø";
+            Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The diameter of the piles.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "c/c";
-            Params.Input[i]
-              .Name = "PileCentres [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The centre to centre distance between adjacent piles.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "c/c";
+            Params.Input[i].Name = "PileCentres [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The centre to centre distance between adjacent piles.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "No";
-            Params.Input[i]
-              .Name = "PileCount";
-            Params.Input[i]
-              .Description = "The number of piles in the profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "No";
+            Params.Input[i].Name = "PileCount";
+            Params.Input[i].Description = "The number of piles in the profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "W/S";
-            Params.Input[i]
-              .Name = "isWall";
-            Params.Input[i]
-                .Description
+            Params.Input[i].NickName = "W/S";
+            Params.Input[i].Name = "isWall";
+            Params.Input[i].Description
               = "Converts the profile into a wall secant pile profile if true -- Converts the profile into a section secant pile profile if false.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "ISheetPileProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the sheet pile section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the sheet pile section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The overall width of the sheet pile section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The overall width of the sheet pile section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bt";
-            Params.Input[i]
-              .Name = "TopFlangeWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The top flange width of the sheet pile section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Bt";
+            Params.Input[i].Name = "TopFlangeWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The top flange width of the sheet pile section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bb";
-            Params.Input[i]
-              .Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The bottom flange width of the sheet pile section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Bb";
+            Params.Input[i].Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
+              = "The bottom flange width of the sheet pile section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Ft";
-            Params.Input[i]
-              .Name = "FlangeThickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the sheet pile section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Ft";
+            Params.Input[i].Name = "FlangeThickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the sheet pile section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Wt";
-            Params.Input[i]
-              .Name = "WebThickness [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the sheet pile section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Wt";
+            Params.Input[i].Name = "WebThickness [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the sheet pile section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IStadiumProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-                .Description
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
               = "The profile's overall depth considering the side length of the rectangle and the radii of the semicircles on the two ends.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The profile's width (diameter of the semicircles).";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The profile's width (diameter of the semicircles).";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "ITrapezoidProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth in z-axis direction of trapezoidal profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth in z-axis direction of trapezoidal profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bt";
-            Params.Input[i]
-              .Name = "TopWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-                .Description
+            Params.Input[i].NickName = "Bt";
+            Params.Input[i].Name = "TopWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
               = "The top width of trapezoidal profile. Top is relative to the local z-axis.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Bb";
-            Params.Input[i]
-              .Name = "BottomWidth [" + unitAbbreviation + "]";
-            Params.Input[i]
-                .Description
+            Params.Input[i].NickName = "Bb";
+            Params.Input[i].Name = "BottomWidth [" + unitAbbreviation + "]";
+            Params.Input[i].Description
               = "The bottom width of trapezoidal profile. Bottom is relative to the local z-axis.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "ITSectionProfile":
-            Params.Input[i]
-              .NickName = "D";
-            Params.Input[i]
-              .Name = "Depth [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The depth of the T section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "D";
+            Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The depth of the T section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "B";
-            Params.Input[i]
-              .Name = "Width [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The width of the T section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The width of the T section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tw";
-            Params.Input[i]
-              .Name = "Web Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The web thickness of the T section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tw";
+            Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The web thickness of the T section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
             i++;
-            Params.Input[i]
-              .NickName = "Tf";
-            Params.Input[i]
-              .Name = "Flange Thk [" + unitAbbreviation + "]";
-            Params.Input[i]
-              .Description = "The flange thickness of the T section profile.";
-            Params.Input[i]
-              .Access = GH_ParamAccess.item;
-            Params.Input[i]
-              .Optional = false;
+            Params.Input[i].NickName = "Tf";
+            Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+            Params.Input[i].Description = "The flange thickness of the T section profile.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
             break;
 
           case "IPerimeterProfile": {
-              Params.Input[i]
-                .NickName = "B";
-              Params.Input[i]
-                .Name = "Boundary";
-              Params.Input[i]
-                .Description = "Planar Brep or closed planar curve.";
-              Params.Input[i]
-                .Access = GH_ParamAccess.item;
-              Params.Input[i]
-                .Optional = false;
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Boundary";
+            Params.Input[i].Description = "Planar Brep or closed planar curve.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
-              if (Params.Input.Count == 1) {
-                Params.RegisterInputParam(new Param_Plane());
-              }
-
-              i++;
-              Params.Input[i]
-                .NickName = "P";
-              Params.Input[i]
-                .Name = "Plane";
-              Params.Input[i]
-                  .Description
-                = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
-              Params.Input[i]
-                .Access = GH_ParamAccess.item;
-              Params.Input[i]
-                .Optional = true;
-              break;
+            if (Params.Input.Count == 1) {
+              Params.RegisterInputParam(new Param_Plane());
             }
+
+            i++;
+            Params.Input[i].NickName = "P";
+            Params.Input[i].Name = "Plane";
+            Params.Input[i].Description
+              = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = true;
+            break;
+          }
         }
       }
     }
@@ -1325,21 +920,14 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      pManager.AddGenericParameter("Width [" + unitAbbreviation + "]",
-        "B",
-        "Profile width",
+      pManager.AddGenericParameter("Width [" + unitAbbreviation + "]", "B", "Profile width",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Depth [" + unitAbbreviation + "]",
-        "H",
-        "Profile depth",
+      pManager.AddGenericParameter("Depth [" + unitAbbreviation + "]", "H", "Profile depth",
         GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddTextParameter("Profile",
-                                                                                         "Pf",
-                                                                                         "Profile for a GSA Section",
-                                                                                         GH_ParamAccess.tree);
+      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -1358,8 +946,7 @@ namespace GsaGH.Components {
             _inclSs = incl;
             UpdateTypeData();
             _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(_typeNumbers,
-              Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-              _inclSs);
+              Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
             _selectedItems[2] = _typeNames[0];
             _dropDownItems[2] = _typeNames;
@@ -1374,11 +961,8 @@ namespace GsaGH.Components {
         _search = null;
         string inSearch = "";
         if (da.GetData(0, ref inSearch)) {
-          _search = inSearch.Trim()
-            .ToLower()
-            .Replace(".", string.Empty)
-            .Replace("*", ".*")
-            .Replace(" ", ".*");
+          _search = inSearch.Trim().ToLower().Replace(".", string.Empty).Replace("*", ".*")
+           .Replace(" ", ".*");
           if (_search == "cat") {
             string eventName = "EasterCat";
             var properties = new Dictionary<string, object>();
@@ -1389,14 +973,12 @@ namespace GsaGH.Components {
 
           if (_search.Contains("cat")) {
             string[] s = _search.Split(new[] {
-                "cat",
-              },
-              StringSplitOptions.None);
+              "cat",
+            }, StringSplitOptions.None);
             _search = s[s.Length - 1];
           }
 
-          bool tryHard = Regex.Match(_search, "he[abcm]", RegexOptions.Singleline)
-            .Success;
+          bool tryHard = Regex.Match(_search, "he[abcm]", RegexOptions.Singleline).Success;
 
           var filteredlist = new List<string>();
           if (_selectedItems[3] != "All") {
@@ -1404,11 +986,10 @@ namespace GsaGH.Components {
               _profileString = new List<string>();
               this.AddRuntimeWarning("No profile found that matches selected profile and search!");
             }
-          }
-          else if (_search != "") {
+          } else if (_search != "") {
             foreach (string section in _sectionList) {
-              if (MatchAndAdd(section, _search, ref filteredlist, tryHard)) { }
-              else if (!_search.Any(char.IsDigit)) {
+              if (MatchAndAdd(section, _search, ref filteredlist, tryHard)) { } else if (
+                !_search.Any(char.IsDigit)) {
                 string test = section;
                 test = Regex.Replace(test, "[0-9]", string.Empty);
                 test = test.Replace(".", string.Empty);
@@ -1426,8 +1007,7 @@ namespace GsaGH.Components {
             foreach (string profile in filteredlist) {
               _profileString.Add("CAT " + profile);
             }
-          }
-          else {
+          } else {
             this.AddRuntimeWarning("No profile found that matches selection and search!");
             return;
           }
@@ -1440,11 +1020,8 @@ namespace GsaGH.Components {
         var tree = new DataTree<string>();
 
         int pathCount = 0;
-        if (Params.Output[0]
-            .VolatileDataCount
-          > 0) {
-          pathCount = Params.Output[0]
-            .VolatileData.PathCount;
+        if (Params.Output[0].VolatileDataCount > 0) {
+          pathCount = Params.Output[0].VolatileData.PathCount;
         }
 
         var path = new GH_Path(new[] {
@@ -1461,479 +1038,295 @@ namespace GsaGH.Components {
 
       if (_mode != FoldMode.Other) {
         return;
-      }
-      else {
+      } else {
         string unit = "(" + Length.GetAbbreviation(_lengthUnit, new CultureInfo("en")) + ") ";
         string profile = "STD ";
         switch (_type) {
           case "IAngleProfile":
-            profile += "A"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "A" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IChannelProfile":
-            profile += "CH"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "CH" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "ICircleHollowProfile":
-            profile += "CHS"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "CHS" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit);
             break;
 
           case "ICircleProfile":
-            profile += "C"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "C" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit);
             break;
 
           case "ICruciformSymmetricalProfile":
-            profile += "X"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "X" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IEllipseHollowProfile":
-            profile += "OVAL"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "OVAL" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IEllipseProfile":
-            profile += "E"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " 2";
+            profile += "E" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " 2";
             break;
 
           case "IGeneralCProfile":
-            profile += "GC"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "GC" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IGeneralZProfile":
-            profile += "GZ"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 4, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 5, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "GZ" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 4, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 5, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IIBeamAsymmetricalProfile":
-            profile += "GI"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 4, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 5, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "GI" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 4, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 5, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IIBeamCellularProfile":
-            profile += "CB"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 4, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 5, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "CB" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 4, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 5, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IIBeamSymmetricalProfile":
-            profile += "I"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "I" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IRectangleHollowProfile":
-            profile += "RHS"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "RHS" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IRectangleProfile":
-            profile += "R"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "R" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IRectoEllipseProfile":
-            profile += "RE"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit)
-              + " 2";
+            profile += "RE" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " 2";
             break;
 
           case "ISecantPileProfile": {
-              int pileCount = 0;
-              if (!da.GetData(2, ref pileCount)) {
-                this.AddRuntimeError("Unable to convert input PileCount to integer.");
-                return;
-              }
-
-              bool isWallNotSection = false;
-              if (!da.GetData(3, ref isWallNotSection)) {
-                this.AddRuntimeError("Unable to convert input isWall to boolean.");
-                return;
-              }
-
-              profile += (isWallNotSection
-                  ? "SP"
-                  : "SPW")
-                + unit
-                + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                  .As(_lengthUnit)
-                + " "
-                + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                  .As(_lengthUnit)
-                + " "
-                + pileCount;
-              break;
+            int pileCount = 0;
+            if (!da.GetData(2, ref pileCount)) {
+              this.AddRuntimeError("Unable to convert input PileCount to integer.");
+              return;
             }
+
+            bool isWallNotSection = false;
+            if (!da.GetData(3, ref isWallNotSection)) {
+              this.AddRuntimeError("Unable to convert input isWall to boolean.");
+              return;
+            }
+
+            profile += (isWallNotSection ? "SP" : "SPW") + unit
+              + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " " + pileCount;
+            break;
+          }
           case "ISheetPileProfile":
-            profile += "SHT"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 4, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 5, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "SHT" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 4, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 5, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IStadiumProfile":
-            profile += "RC"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "RC" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit);
             break;
 
           case "ITrapezoidProfile":
-            profile += "TR"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "TR" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit);
             break;
 
           case "ITSectionProfile":
-            profile += "T"
-              + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 2, _lengthUnit)
-                .As(_lengthUnit)
-              + " "
-              + Input.LengthOrRatio(this, da, 3, _lengthUnit)
-                .As(_lengthUnit);
+            profile += "T" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
+              + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 2, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
           case "IPerimeterProfile": {
-              var perimeter = new ProfileHelper() {
-                ProfileType = ProfileHelper.ProfileTypes.Geometric,
-              };
-              var ghBrep = new GH_Brep();
+            var perimeter = new ProfileHelper() {
+              ProfileType = ProfileHelper.ProfileTypes.Geometric,
+            };
+            var ghBrep = new GH_Brep();
 
-              if (da.GetData(0, ref ghBrep)) {
-                var brep = new Brep();
-                if (GH_Convert.ToBrep(ghBrep, ref brep, GH_Conversion.Both)) {
-                  Curve[] edgeSegments = brep.DuplicateEdgeCurves();
-                  Curve[] edges = Curve.JoinCurves(edgeSegments);
+            if (da.GetData(0, ref ghBrep)) {
+              var brep = new Brep();
+              if (GH_Convert.ToBrep(ghBrep, ref brep, GH_Conversion.Both)) {
+                Curve[] edgeSegments = brep.DuplicateEdgeCurves();
+                Curve[] edges = Curve.JoinCurves(edgeSegments);
 
-                  var ctrlPts = new List<Point3d>();
-                  if (edges[0]
-                    .TryGetPolyline(out Polyline tempCrv)) {
-                    ctrlPts = tempCrv.ToList();
-                  }
-                  else {
-                    this.AddRuntimeError("Cannot convert edge to Polyline");
-                    return;
-                  }
+                var ctrlPts = new List<Point3d>();
+                if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
+                  ctrlPts = tempCrv.ToList();
+                } else {
+                  this.AddRuntimeError("Cannot convert edge to Polyline");
+                  return;
+                }
 
-                  bool localPlaneNotSet = true;
-                  Plane plane = Plane.Unset;
-                  if (da.GetData(1, ref plane)) {
-                    localPlaneNotSet = false;
-                  }
+                bool localPlaneNotSet = true;
+                Plane plane = Plane.Unset;
+                if (da.GetData(1, ref plane)) {
+                  localPlaneNotSet = false;
+                }
 
-                  var origin = new Point3d();
-                  if (localPlaneNotSet) {
-                    foreach (Point3d p in ctrlPts) {
-                      origin.X += p.X;
-                      origin.Y += p.Y;
-                      origin.Z += p.Z;
-                    }
-
-                    origin.X /= ctrlPts.Count;
-                    origin.Y /= ctrlPts.Count;
-                    origin.Z /= ctrlPts.Count;
-
-                    Plane.FitPlaneToPoints(ctrlPts, out plane);
-
-                    var xDirection = new Vector3d(Math.Abs(plane.XAxis.X),
-                      Math.Abs(plane.XAxis.Y),
-                      Math.Abs(plane.XAxis.Z));
-                    xDirection.Unitize();
-                    var yDirection = new Vector3d(Math.Abs(plane.YAxis.X),
-                      Math.Abs(plane.YAxis.Y),
-                      Math.Abs(plane.YAxis.Z));
-                    xDirection.Unitize();
-
-                    Vector3d normal = plane.Normal;
-                    normal.Unitize();
-                    plane = normal.X == 1
-                      ? Plane.WorldYZ
-                      : normal.Y == 1 ? Plane.WorldZX : normal.Z == 1 ? Plane.WorldXY : new Plane(Point3d.Origin, xDirection, yDirection);
-
-                    plane.Origin = origin;
-                  }
-                  else {
-                    origin = plane.Origin;
+                var origin = new Point3d();
+                if (localPlaneNotSet) {
+                  foreach (Point3d p in ctrlPts) {
+                    origin.X += p.X;
+                    origin.Y += p.Y;
+                    origin.Z += p.Z;
                   }
 
-                  var translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
-                  var rotation = Transform.ChangeBasis(Vector3d.XAxis,
-                    Vector3d.YAxis,
-                    Vector3d.ZAxis,
-                    plane.XAxis,
-                    plane.YAxis,
-                    plane.ZAxis);
-                  if (localPlaneNotSet) {
-                    rotation = Transform.ChangeBasis(Vector3d.XAxis,
-                      Vector3d.YAxis,
-                      Vector3d.ZAxis,
-                      plane.YAxis,
-                      plane.XAxis,
-                      plane.ZAxis);
-                  }
+                  origin.X /= ctrlPts.Count;
+                  origin.Y /= ctrlPts.Count;
+                  origin.Z /= ctrlPts.Count;
 
-                  perimeter.GeoType = ProfileHelper.GeoTypes.Perim;
+                  Plane.FitPlaneToPoints(ctrlPts, out plane);
 
-                  var pts = new List<Point2d>();
-                  foreach (Point3d pt3d in ctrlPts) {
-                    pt3d.Transform(translation);
-                    pt3d.Transform(rotation);
-                    var pt2d = new Point2d(pt3d);
-                    pts.Add(pt2d);
-                  }
+                  var xDirection = new Vector3d(Math.Abs(plane.XAxis.X), Math.Abs(plane.XAxis.Y),
+                    Math.Abs(plane.XAxis.Z));
+                  xDirection.Unitize();
+                  var yDirection = new Vector3d(Math.Abs(plane.YAxis.X), Math.Abs(plane.YAxis.Y),
+                    Math.Abs(plane.YAxis.Z));
+                  xDirection.Unitize();
 
-                  perimeter.PerimeterPoints = pts;
+                  Vector3d normal = plane.Normal;
+                  normal.Unitize();
+                  plane = normal.X == 1 ?
+                    Plane.WorldYZ :
+                    normal.Y == 1 ?
+                      Plane.WorldZX :
+                      normal.Z == 1 ?
+                        Plane.WorldXY :
+                        new Plane(Point3d.Origin, xDirection, yDirection);
 
-                  if (edges.Length > 1) {
-                    var voidPoints = new List<List<Point2d>>();
-                    for (int i = 1; i < edges.Length; i++) {
-                      ctrlPts.Clear();
-                      if (!edges[i]
-                        .IsPlanar()) {
-                        for (int j = 0; j < edges.Length; j++) {
-                          edges[j] = Curve.ProjectToPlane(edges[j], plane);
-                        }
-                      }
+                  plane.Origin = origin;
+                } else {
+                  origin = plane.Origin;
+                }
 
-                      if (edges[i]
-                        .TryGetPolyline(out tempCrv)) {
-                        ctrlPts = tempCrv.ToList();
-                        pts = new List<Point2d>();
-                        foreach (Point3d pt3d in ctrlPts) {
-                          pt3d.Transform(translation);
-                          pt3d.Transform(rotation);
-                          var pt2d = new Point2d(pt3d);
-                          pts.Add(pt2d);
-                        }
+                var translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
+                var rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis,
+                  plane.XAxis, plane.YAxis, plane.ZAxis);
+                if (localPlaneNotSet) {
+                  rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis,
+                    plane.YAxis, plane.XAxis, plane.ZAxis);
+                }
 
-                        voidPoints.Add(pts);
-                      }
-                      else {
-                        this.AddRuntimeError("Cannot convert internal edge to Polyline");
-                        return;
+                perimeter.GeoType = ProfileHelper.GeoTypes.Perim;
+
+                var pts = new List<Point2d>();
+                foreach (Point3d pt3d in ctrlPts) {
+                  pt3d.Transform(translation);
+                  pt3d.Transform(rotation);
+                  var pt2d = new Point2d(pt3d);
+                  pts.Add(pt2d);
+                }
+
+                perimeter.PerimeterPoints = pts;
+
+                if (edges.Length > 1) {
+                  var voidPoints = new List<List<Point2d>>();
+                  for (int i = 1; i < edges.Length; i++) {
+                    ctrlPts.Clear();
+                    if (!edges[i].IsPlanar()) {
+                      for (int j = 0; j < edges.Length; j++) {
+                        edges[j] = Curve.ProjectToPlane(edges[j], plane);
                       }
                     }
 
-                    perimeter.VoidPoints = voidPoints;
+                    if (edges[i].TryGetPolyline(out tempCrv)) {
+                      ctrlPts = tempCrv.ToList();
+                      pts = new List<Point2d>();
+                      foreach (Point3d pt3d in ctrlPts) {
+                        pt3d.Transform(translation);
+                        pt3d.Transform(rotation);
+                        var pt2d = new Point2d(pt3d);
+                        pts.Add(pt2d);
+                      }
+
+                      voidPoints.Add(pts);
+                    } else {
+                      this.AddRuntimeError("Cannot convert internal edge to Polyline");
+                      return;
+                    }
                   }
+
+                  perimeter.VoidPoints = voidPoints;
                 }
               }
-
-              switch (_lengthUnit) {
-                case LengthUnit.Millimeter:
-                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UMm;
-                  break;
-
-                case LengthUnit.Centimeter:
-                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UCm;
-                  break;
-
-                case LengthUnit.Meter:
-                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.Um;
-                  break;
-
-                case LengthUnit.Foot:
-                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UFt;
-                  break;
-
-                case LengthUnit.Inch:
-                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UIn;
-                  break;
-              }
-
-              da.SetData(0, ConvertSection.ProfileConversion(perimeter));
-              return;
             }
+
+            switch (_lengthUnit) {
+              case LengthUnit.Millimeter:
+                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UMm;
+                break;
+
+              case LengthUnit.Centimeter:
+                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UCm;
+                break;
+
+              case LengthUnit.Meter:
+                perimeter.SectUnit = ProfileHelper.SectUnitOptions.Um;
+                break;
+
+              case LengthUnit.Foot:
+                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UFt;
+                break;
+
+              case LengthUnit.Inch:
+                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UIn;
+                break;
+            }
+
+            da.SetData(0, ConvertSection.ProfileConversion(perimeter));
+            return;
+          }
           default:
             this.AddRuntimeError("Unable to create profile");
             return;
@@ -1957,8 +1350,7 @@ namespace GsaGH.Components {
         _catalogueNames = _cataloguedata.Item1;
         _catalogueNumbers = _cataloguedata.Item2;
         _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
-          Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-          _inclSs);
+          Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
         _typeNames = _typedata.Item1;
         _typeNumbers = _typedata.Item2;
 
@@ -1967,8 +1359,7 @@ namespace GsaGH.Components {
         _profileString = new List<string>() {
           "CAT " + _selectedItems[3],
         };
-      }
-      else {
+      } else {
         _spacerDescriptions = new List<string>(new[] {
           "Profile type",
           "Measure",
@@ -1984,52 +1375,35 @@ namespace GsaGH.Components {
     }
 
     private static Tuple<List<string>, List<int>> GetTypesDataFromSqLite(
-      int catalogueIndex,
-      string filePath,
-      bool inclSuperseeded) {
-      return MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(catalogueIndex,
-                                    filePath,
-                                    inclSuperseeded);
+      int catalogueIndex, string filePath, bool inclSuperseeded) {
+      return MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(catalogueIndex, filePath,
+        inclSuperseeded);
     }
 
     private static bool MatchAndAdd(
-          string item,
-      string pattern,
-      ref List<string> list,
-      bool tryHard = false) {
-      string input = item.ToLower()
-        .Replace(".", string.Empty);
-      if (Regex.Match(input, pattern, RegexOptions.Singleline)
-        .Success) {
+      string item, string pattern, ref List<string> list, bool tryHard = false) {
+      string input = item.ToLower().Replace(".", string.Empty);
+      if (Regex.Match(input, pattern, RegexOptions.Singleline).Success) {
         list.Add(item);
         return true;
       }
 
-      if (!tryHard
-        || !Regex.Match(pattern, "he[abcm]", RegexOptions.Singleline)
-          .Success) {
+      if (!tryHard || !Regex.Match(pattern, "he[abcm]", RegexOptions.Singleline).Success) {
         return false;
       }
 
       string[] substring = pattern.Split(new[] {
-          "he",
-        },
-        StringSplitOptions.None);
+        "he",
+      }, StringSplitOptions.None);
       int count = 1;
-      if (substring[substring.Length - 1]
-          .Length
-        > 1
+      if (substring[substring.Length - 1].Length > 1
         && !char.IsNumber(substring[substring.Length - 1][1])) {
         count = 2;
       }
 
-      pattern = "he"
-        + substring[substring.Length - 1]
-          .Remove(0, count)
-        + substring[substring.Length - 1]
-          .Substring(0, count);
-      if (!Regex.Match(input, pattern, RegexOptions.Singleline)
-        .Success) {
+      pattern = "he" + substring[substring.Length - 1].Remove(0, count)
+        + substring[substring.Length - 1].Substring(0, count);
+      if (!Regex.Match(input, pattern, RegexOptions.Singleline).Success) {
         return false;
       }
 
@@ -2139,9 +1513,7 @@ namespace GsaGH.Components {
     }
 
     private void SetNumberOfGenericInputs(
-          int inputs,
-      bool isSecantPile = false,
-      bool isPerimeter = false) {
+      int inputs, bool isSecantPile = false, bool isPerimeter = false) {
       _numberOfInputs = inputs;
       if (_lastInputWasSecant || isSecantPile || isPerimeter) {
         if (Params.Input.Count > 0) {
@@ -2170,8 +1542,7 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_Boolean());
         _lastInputWasSecant = true;
-      }
-      else {
+      } else {
         _lastInputWasSecant = false;
       }
 
@@ -2186,8 +1557,7 @@ namespace GsaGH.Components {
         foreach (string profile in _sectionList.Where(profile => profile != "All")) {
           _profileString.Add("CAT " + profile);
         }
-      }
-      else {
+      } else {
         _profileString = new List<string>() {
           "CAT " + _selectedItems[3],
         };
@@ -2196,8 +1566,7 @@ namespace GsaGH.Components {
 
     private void UpdateTypeData() {
       _typedata = GetTypesDataFromSqLite(_catalogueIndex,
-        Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"),
-        _inclSs);
+        Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
       _typeNames = _typedata.Item1;
       _typeNumbers = _typedata.Item2;
     }
