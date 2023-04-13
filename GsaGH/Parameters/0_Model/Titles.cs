@@ -12,68 +12,68 @@ namespace GsaGH {
     public static string SubTitle { get; set; }
     public static string Title { get; set; }
 
-    private static bool s_calculationByuser;
-    private static bool s_initialsByuser;
-    private static bool s_jobnumberByuser;
-    private static bool s_notesByuser;
-    private static bool s_subtitleByuser;
-    private static bool s_titleByuser;
+    private static bool calculationByuser;
+    private static bool initialsByuser;
+    private static bool jobnumberByuser;
+    private static bool notesByuser;
+    private static bool subtitleByuser;
+    private static bool titleByuser;
 
     public static void GetTitlesFromGsa(Model model) {
       GsaAPI.Titles titles = model.Titles();
-      if (!s_calculationByuser) {
+      if (!calculationByuser) {
         Calculation = titles.Calculation;
       }
 
-      if (!s_initialsByuser) {
+      if (!initialsByuser) {
         Initials = titles.Initials;
       }
 
-      if (!s_jobnumberByuser) {
+      if (!jobnumberByuser) {
         JobNumber = titles.JobNumber;
       }
 
-      if (!s_notesByuser) {
+      if (!notesByuser) {
         Notes = titles.Notes;
       }
 
-      if (!s_subtitleByuser) {
+      if (!subtitleByuser) {
         SubTitle = titles.SubTitle;
       }
 
-      if (!s_titleByuser) {
+      if (!titleByuser) {
         Title = titles.Title;
       }
     }
 
     public static void SetCalculation(string calculation) {
       Calculation = calculation;
-      s_calculationByuser = true;
+      calculationByuser = true;
     }
 
     public static void SetInitials(string initials) {
       Initials = initials;
-      s_initialsByuser = true;
+      initialsByuser = true;
     }
 
     public static void SetJobNumber(string jobnumber) {
       JobNumber = jobnumber;
-      s_jobnumberByuser = true;
+      jobnumberByuser = true;
     }
 
     public static void SetNotes(string notes) {
       Notes = notes;
-      s_notesByuser = true;
+      notesByuser = true;
     }
 
     public static void SetSubTitle(string subtitle) {
       SubTitle = subtitle;
-      s_subtitleByuser = true;
+      subtitleByuser = true;
     }
 
     public static void SetTitle(string title) {
       Title = title;
-      s_titleByuser = true;
+      titleByuser = true;
     }
   }
 }

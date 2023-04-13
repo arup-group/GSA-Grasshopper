@@ -335,7 +335,7 @@ namespace GsaGH.Parameters {
       }
 
       string idd = Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
       return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
 

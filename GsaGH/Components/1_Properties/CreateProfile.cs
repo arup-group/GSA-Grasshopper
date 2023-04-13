@@ -37,7 +37,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProfile;
-    private static readonly List<string> s_easterCat = new List<string>() {
+    private static readonly List<string> easterCat = new List<string>() {
       "▌─────────────────────────▐█─────▐" + Environment.NewLine
       + "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine
       + "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine
@@ -67,7 +67,7 @@ namespace GsaGH.Components {
       + "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine
       + "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine
       + "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐", };
-    private static readonly Dictionary<string, string> s_profileTypes
+    private static readonly Dictionary<string, string> profileTypes
       = new Dictionary<string, string> {
         {
           "Angle", "IAngleProfile"
@@ -176,7 +176,7 @@ namespace GsaGH.Components {
       if (_selectedItems[0] == "Catalogue") {
         _spacerDescriptions[1] = "Catalogue";
 
-        if (_mode != FoldMode.Catalogue | updateCat) {
+        if ((_mode != FoldMode.Catalogue) | updateCat) {
           while (_selectedItems.Count > 1) {
             _selectedItems.RemoveAt(1);
           }
@@ -270,7 +270,7 @@ namespace GsaGH.Components {
         }
 
         if (i == 0) {
-          _type = s_profileTypes[_selectedItems[0]];
+          _type = profileTypes[_selectedItems[0]];
           Mode2Clicked();
         } else {
           _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
@@ -909,7 +909,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(s_profileTypes.Keys.ToList());
+      _dropDownItems.Add(profileTypes.Keys.ToList());
       _selectedItems.Add("Rectangle");
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
@@ -967,7 +967,7 @@ namespace GsaGH.Components {
             string eventName = "EasterCat";
             var properties = new Dictionary<string, object>();
             _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
-            da.SetDataList(0, s_easterCat);
+            da.SetDataList(0, easterCat);
             return;
           }
 
@@ -1367,7 +1367,7 @@ namespace GsaGH.Components {
           "Profile",
         });
 
-        _type = s_profileTypes[_selectedItems[0]];
+        _type = profileTypes[_selectedItems[0]];
         Mode2Clicked();
       }
 

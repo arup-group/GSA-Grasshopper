@@ -5,15 +5,15 @@ using Interop.Gsa_10_1;
 
 namespace GsaGH.Helpers {
   public sealed class GsaComObject {
-    public static ComAuto Instance => s_lazy.Value;
-    private static readonly Lazy<ComAuto> s_lazy = new Lazy<ComAuto>(() => new ComAuto());
+    public static ComAuto Instance => lazy.Value;
+    private static readonly Lazy<ComAuto> lazy = new Lazy<ComAuto>(() => new ComAuto());
 
     private GsaComObject() { }
   }
 
   internal static class GsaComHelper {
-    private static Guid s_guid = Guid.NewGuid();
-    private static string s_tempPath = Path.GetTempPath() + s_guid.ToString() + ".gwb";
+    private static Guid guid = Guid.NewGuid();
+    private static string tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
 
     internal static ComAuto GetGsaComModel(GsaModel model) {
       ComAuto gsa = GsaComObject.Instance;
@@ -23,16 +23,16 @@ namespace GsaGH.Helpers {
         return gsa;
       }
 
-      if (model.Guid == s_guid) {
+      if (model.Guid == guid) {
         return gsa;
       }
 
-      s_guid = model.Guid;
-      s_tempPath = Path.GetTempPath() + s_guid.ToString() + ".gwb";
+      guid = model.Guid;
+      tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
 
-      model.Model.SaveAs(s_tempPath);
+      model.Model.SaveAs(tempPath);
 
-      gsa.Open(s_tempPath);
+      gsa.Open(tempPath);
       gsa.SetLocale(Locale.LOC_EN_GB);
       return gsa;
     }
@@ -40,9 +40,9 @@ namespace GsaGH.Helpers {
     internal static GsaModel GetGsaGhModel() {
       ComAuto gsa = GsaComObject.Instance;
 
-      gsa.SaveAs(s_tempPath);
+      gsa.SaveAs(tempPath);
       var gsaGh = new GsaModel();
-      gsaGh.Model.Open(s_tempPath);
+      gsaGh.Model.Open(tempPath);
       return gsaGh;
     }
   }

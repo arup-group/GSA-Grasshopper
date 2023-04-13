@@ -250,7 +250,7 @@ namespace GsaGH.Components {
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
       da.SetData(4, elem.Group);
-      da.SetData(5, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+      da.SetData(5, Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));

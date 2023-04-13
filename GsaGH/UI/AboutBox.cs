@@ -43,7 +43,7 @@ namespace GsaGH.Graphics {
       linkWebsite.Text = @"www.oasys-software.com";
       labelContact.Text = "Contact and support:";
       linkEmail.Text = @"oasys@arup.com";
-      disclaimer.Text = GsaGhInfo.s_disclaimer;
+      disclaimer.Text = GsaGhInfo.disclaimer;
     }
 
     private void AboutBox_Load(object sender, EventArgs e) { }

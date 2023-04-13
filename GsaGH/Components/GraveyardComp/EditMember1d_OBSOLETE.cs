@@ -247,8 +247,8 @@ namespace GsaGH.Components {
         }
 
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.s_elementTypeMapping.ContainsKey(typestring)) {
-            mem.Type = Mappings.s_memberTypeMapping[typestring];
+          if (Mappings.elementTypeMapping.ContainsKey(typestring)) {
+            mem.Type = Mappings.memberTypeMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Element1D Type");
           }
@@ -260,8 +260,8 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
           mem.Type1D = (ElementType)typeInt;
         } else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.s_elementTypeMapping.ContainsKey(typestring)) {
-            mem.Type1D = Mappings.s_elementTypeMapping[typestring];
+          if (Mappings.elementTypeMapping.ContainsKey(typestring)) {
+            mem.Type1D = Mappings.elementTypeMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Element1D Type");
           }
@@ -354,8 +354,8 @@ namespace GsaGH.Components {
       da.SetData(2, mem.PolyCurve);
       da.SetData(3, new GsaSectionGoo(mem.Section));
       da.SetData(4, mem.Group);
-      da.SetData(5, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(6, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
+      da.SetData(5, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(6, Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
 
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
 

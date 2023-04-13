@@ -9,8 +9,8 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class Elem2dResultsTests {
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
+    private static GH_Document Document => document ?? (document = OpenDocument());
+    private static GH_Document document = null;
 
     [Theory]
     [InlineData("MyContours", new double[] {

@@ -8,14 +8,14 @@ using GsaGH.Properties;
 
 namespace GsaGH.Graphics.Menu {
   public class MenuLoad {
-    private static ToolStripMenuItem s_oasysMenu;
+    private static ToolStripMenuItem oasysMenu;
 
     internal static void OnStartup(GH_Canvas canvas) {
-      s_oasysMenu = new ToolStripMenuItem("Oasys") {
+      oasysMenu = new ToolStripMenuItem("Oasys") {
         Name = "Oasys",
       };
 
-      PopulateSub(s_oasysMenu);
+      PopulateSub(oasysMenu);
 
       GH_DocumentEditor editor = null;
 
@@ -25,12 +25,12 @@ namespace GsaGH.Graphics.Menu {
       }
 
       if (!editor.MainMenuStrip.Items.ContainsKey("Oasys")) {
-        editor.MainMenuStrip.Items.Add(s_oasysMenu);
+        editor.MainMenuStrip.Items.Add(oasysMenu);
       } else {
-        s_oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items["Oasys"];
-        lock (s_oasysMenu) {
-          s_oasysMenu.DropDown.Items.Add(new ToolStripSeparator());
-          PopulateSub(s_oasysMenu);
+        oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items["Oasys"];
+        lock (oasysMenu) {
+          oasysMenu.DropDown.Items.Add(new ToolStripSeparator());
+          PopulateSub(oasysMenu);
         }
       }
 

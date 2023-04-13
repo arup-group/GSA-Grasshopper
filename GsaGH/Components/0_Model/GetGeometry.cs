@@ -64,7 +64,7 @@ namespace GsaGH.Components {
     public Dictionary<int, List<string>> ExistingOutputsSerialized
       = new Dictionary<int, List<string>>();
     protected override Bitmap Icon => Resources.GetGeometry;
-    private static readonly OasysUnitsIQuantityJsonConverter s_converter
+    private static readonly OasysUnitsIQuantityJsonConverter converter
       = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;
     private Mesh _cachedDisplayMeshWithoutParent;
@@ -228,7 +228,7 @@ namespace GsaGH.Components {
 
       string text;
       if (data.GetType() == typeof(GH_UnitNumber)) {
-        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, s_converter);
+        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, converter);
       } else {
         object value = data.ScriptVariable();
         try {

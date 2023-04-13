@@ -7,7 +7,7 @@ using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Helpers.GsaApi {
   internal class Mappings {
-    internal static readonly Dictionary<string, AlignmentType> s_alignmentTypeMapping
+    internal static readonly Dictionary<string, AlignmentType> alignmentTypeMapping
       = new Dictionary<string, AlignmentType>() {
         {
           "Centroid", AlignmentType.Centroid
@@ -42,7 +42,7 @@ namespace GsaGH.Helpers.GsaApi {
         },
       };
 
-    internal static readonly Dictionary<string, AnalysisOrder> s_analysisOrderMapping
+    internal static readonly Dictionary<string, AnalysisOrder> analysisOrderMapping
       = new Dictionary<string, AnalysisOrder>() {
         {
           "Linear", AnalysisOrder.LINEAR
@@ -52,7 +52,7 @@ namespace GsaGH.Helpers.GsaApi {
           "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM
         },
       };
-    internal static readonly Dictionary<string, ElementType> s_elementTypeMapping
+    internal static readonly Dictionary<string, ElementType> elementTypeMapping
       = new Dictionary<string, ElementType>() {
         {
           "New", ElementType.NEW
@@ -110,7 +110,7 @@ namespace GsaGH.Helpers.GsaApi {
           "2D Load", ElementType.TWO_D_LOAD
         },
       };
-    internal static readonly Dictionary<string, MatType> s_materialTypeMapping
+    internal static readonly Dictionary<string, MatType> materialTypeMapping
       = new Dictionary<string, MatType>() {
         {
           "Undefined", MatType.Undef
@@ -159,7 +159,7 @@ namespace GsaGH.Helpers.GsaApi {
         },
       };
 
-    internal static readonly Dictionary<string, MemberType> s_memberTypeMapping
+    internal static readonly Dictionary<string, MemberType> memberTypeMapping
       = new Dictionary<string, MemberType>() {
         {
           "Undefined", MemberType.UNDEF
@@ -193,7 +193,7 @@ namespace GsaGH.Helpers.GsaApi {
           "Generic 3D", MemberType.GENERIC_3D
         },
       };
-    internal static readonly Dictionary<string, Property2D_Type> s_prop2dTypeMapping
+    internal static readonly Dictionary<string, Property2D_Type> prop2dTypeMapping
       = new Dictionary<string, Property2D_Type>() {
         {
           "Undefined", Property2D_Type.UNDEF
@@ -256,55 +256,55 @@ namespace GsaGH.Helpers.GsaApi {
       int index;
       switch (t) {
         case Type _ when t == typeof(AlignmentType):
-          types = s_alignmentTypeMapping.Keys.ToList();
+          types = alignmentTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1) {
-            return s_alignmentTypeMapping[types[index]];
+            return alignmentTypeMapping[types[index]];
           }
 
           break;
 
         case Type _ when t == typeof(AnalysisOrder):
-          types = s_analysisOrderMapping.Keys.ToList();
+          types = analysisOrderMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1) {
-            return s_analysisOrderMapping[types[index]];
+            return analysisOrderMapping[types[index]];
           }
 
           break;
 
         case Type _ when t == typeof(ElementType):
-          types = s_elementTypeMapping.Keys.ToList();
+          types = elementTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1) {
-            return s_elementTypeMapping[types[index]];
+            return elementTypeMapping[types[index]];
           }
 
           break;
 
         case Type _ when t == typeof(MatType):
-          types = s_materialTypeMapping.Keys.ToList();
+          types = materialTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1) {
-            return s_materialTypeMapping[types[index]];
+            return materialTypeMapping[types[index]];
           }
 
           break;
 
         case Type _ when t == typeof(MemberType):
-          types = s_memberTypeMapping.Keys.ToList();
+          types = memberTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1) {
-            return s_memberTypeMapping[types[index]];
+            return memberTypeMapping[types[index]];
           }
 
           break;
 
         case Type _ when t == typeof(Property2D_Type):
-          types = s_prop2dTypeMapping.Keys.ToList();
+          types = prop2dTypeMapping.Keys.ToList();
           index = GetIndex(key, types);
           if (index != -1) {
-            return s_prop2dTypeMapping[types[index]];
+            return prop2dTypeMapping[types[index]];
           }
 
           break;

@@ -130,7 +130,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string type = Mappings.s_materialTypeMapping
+      string type = Mappings.materialTypeMapping
        .FirstOrDefault(x => x.Value == Material.MaterialType).Key;
       string pa = (Id > 0) ? "PV" + Id + " " : "";
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");

@@ -181,8 +181,7 @@ namespace GsaGH.Parameters {
 
     internal GsaMember1d(
       Member member, int id, List<Point3d> topology, List<string> topoType,
-      ReadOnlyDictionary<int, Node> nDict, ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
+      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
       ReadOnlyDictionary<int, AnalysisMaterial> matDict,
       IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
       ApiMember = member;
@@ -254,7 +253,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string idd = Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
       string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
       return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
@@ -330,7 +329,7 @@ namespace GsaGH.Parameters {
 
     // list of polyline curve type (arch or line) for member1d/2d
     private void UpdatePreview() {
-      if (!(_rel1 != null & _rel2 != null)) {
+      if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }
 

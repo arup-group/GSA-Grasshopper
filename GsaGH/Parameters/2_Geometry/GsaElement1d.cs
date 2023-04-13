@@ -216,7 +216,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string idd = Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
       string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
       return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
@@ -264,7 +264,7 @@ namespace GsaGH.Parameters {
     }
 
     internal void UpdatePreview() {
-      if (!(_rel1 != null & _rel2 != null)) {
+      if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }
 

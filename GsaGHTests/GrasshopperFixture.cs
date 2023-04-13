@@ -34,7 +34,7 @@ namespace GsaGHTests {
     private object Doc { get; set; }
     private object DocIo { get; set; }
     private const string LinkFileName = "GsaGhTests.ghlink";
-    private static readonly string s_linkFilePath = Path.Combine(
+    private static readonly string linkFilePath = Path.Combine(
       Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
       "Libraries");
     private object _core = null;
@@ -61,8 +61,8 @@ namespace GsaGHTests {
     }
 
     public void AddPluginToGh() {
-      Directory.CreateDirectory(s_linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, LinkFileName));
+      Directory.CreateDirectory(linkFilePath);
+      StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, LinkFileName));
       writer.Write(Environment.CurrentDirectory);
       writer.Close();
     }
@@ -70,7 +70,7 @@ namespace GsaGHTests {
     public void Dispose() {
       Dispose(true);
       GC.SuppressFinalize(this);
-      File.Delete(Path.Combine(s_linkFilePath, LinkFileName));
+      File.Delete(Path.Combine(linkFilePath, LinkFileName));
     }
 
     public void LoadRefs() {

@@ -261,8 +261,8 @@ namespace GsaGH.Components {
         }
 
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.s_memberTypeMapping.ContainsKey(typestring)) {
-            mem.Type = Mappings.s_memberTypeMapping[typestring];
+          if (Mappings.memberTypeMapping.ContainsKey(typestring)) {
+            mem.Type = Mappings.memberTypeMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Member Type");
           }
@@ -276,8 +276,8 @@ namespace GsaGH.Components {
         }
 
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.s_analysisOrderMapping.ContainsKey(typestring)) {
-            mem.Type2D = Mappings.s_analysisOrderMapping[typestring];
+          if (Mappings.analysisOrderMapping.ContainsKey(typestring)) {
+            mem.Type2D = Mappings.analysisOrderMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Analysis Element Type");
           }
@@ -332,8 +332,8 @@ namespace GsaGH.Components {
       da.SetData(5, new GsaProp2dGoo(mem.Property));
       da.SetData(6, mem.Group);
 
-      da.SetData(7, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(8, Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
+      da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(8, Mappings.analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
 
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
 

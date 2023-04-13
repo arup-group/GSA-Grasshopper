@@ -35,8 +35,8 @@ namespace IntegrationTests {
 
     private object Doc { get; set; }
     private object DocIo { get; set; }
-    private static readonly string s_linkFileName = "IntegrationTests.ghlink";
-    private static readonly string s_linkFilePath = Path.Combine(
+    private static readonly string linkFileName = "IntegrationTests.ghlink";
+    private static readonly string linkFilePath = Path.Combine(
       Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
       "Libraries");
     private object _core = null;
@@ -77,8 +77,8 @@ namespace IntegrationTests {
     }
 
     public void AddPluginToGh() {
-      Directory.CreateDirectory(s_linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, s_linkFileName));
+      Directory.CreateDirectory(linkFilePath);
+      StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, linkFileName));
       writer.Write(Environment.CurrentDirectory);
       writer.Close();
     }
@@ -87,7 +87,7 @@ namespace IntegrationTests {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
       Dispose(true);
       GC.SuppressFinalize(this);
-      File.Delete(Path.Combine(s_linkFilePath, s_linkFileName));
+      File.Delete(Path.Combine(linkFilePath, linkFileName));
     }
 
     public void LoadRefs() {

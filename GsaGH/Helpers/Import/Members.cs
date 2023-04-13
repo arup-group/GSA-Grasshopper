@@ -90,16 +90,16 @@ namespace GsaGH.Helpers.Import {
             return;
           }
 
-          if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM
-            | mem.Type == MemberType.CANTILEVER | mem.Type == MemberType.COLUMN
-            | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE) {
+          if ((mem.Type == MemberType.GENERIC_1D) | (mem.Type == MemberType.BEAM)
+            | (mem.Type == MemberType.CANTILEVER) | (mem.Type == MemberType.COLUMN)
+            | (mem.Type == MemberType.COMPOS) | (mem.Type == MemberType.PILE)) {
             if (topopts.Count < 2) {
               string error = " Invalid topology Mem1D ID: " + key + ".";
               owner?.AddRuntimeWarning(error);
               return;
             }
 
-            var mem1d = new GsaMember1d(mem, key, topopts.ToList(), topoType.ToList(), nDict, sDict,
+            var mem1d = new GsaMember1d(mem, key, topopts.ToList(), topoType.ToList(), sDict,
               modDict, matDict, localAxesDict, modelUnit);
             mem1ds.Add(new GsaMember1dGoo(mem1d, duplicateApiObjects));
           } else {

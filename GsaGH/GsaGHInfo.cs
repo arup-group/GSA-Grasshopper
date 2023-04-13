@@ -18,24 +18,24 @@ using Utility = OasysGH.Utility;
 namespace GsaGH {
   public static class SolverRequiredDll {
     internal static string LoadedFromPath { get; private set; }
-    private static bool s_canAnalyse;
-    private static bool s_loaded;
+    private static bool canAnalyse;
+    private static bool loaded;
 
     public static bool IsCorrectVersionLoaded() {
-      if (!s_loaded || !s_canAnalyse) {
+      if (!loaded || !canAnalyse) {
         ProcessModuleCollection dlls = Process.GetCurrentProcess().Modules;
         foreach (ProcessModule module in dlls) {
           if (module.ModuleName != "libiomp5md.dll") {
             continue;
           }
 
-          s_loaded = true;
+          loaded = true;
           string gsaVersion = FileVersionInfo
            .GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
           if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsaVersion) {
-            s_canAnalyse = true;
+            canAnalyse = true;
           } else {
-            s_canAnalyse = false;
+            canAnalyse = false;
             LoadedFromPath = module.FileName;
           }
 
@@ -43,15 +43,14 @@ namespace GsaGH {
         }
       }
 
-      return !s_loaded || s_canAnalyse;
+      return !loaded || canAnalyse;
     }
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
-    public static string PluginPath
-      => s_pluginPath ?? (s_pluginPath = TryFindPluginPath("GSA.gha"));
+    public static string PluginPath => pluginPath ?? (pluginPath = TryFindPluginPath("GSA.gha"));
     public static string InstallPath = InstallationFolder.GetPath;
-    private static string s_pluginPath;
+    private static string pluginPath;
 
     public override GH_LoadingInstruction PriorityLoad() {
       if (TryFindPluginPath("GSA.gha") == "") {
@@ -176,16 +175,15 @@ namespace GsaGH {
     public override string Description
       =>
         //Return a short string describing the purpose of this GHA library.
-        "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine
-        + (s_isBeta ? s_disclaimer : "") + Environment.NewLine
-        + "A licensed version of GSA 10.1.65 or later installed in "
+        "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine + (isBeta ? disclaimer : "")
+        + Environment.NewLine + "A licensed version of GSA 10.1.65 or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin." + Environment.NewLine
         + "Contact oasys@arup.com to request a free trial version." + Environment.NewLine
         + TermsConditions + Environment.NewLine + Copyright;
     public override Bitmap Icon => Resources.GSALogo;
-    public override Guid Id => s_guid;
+    public override Guid Id => guid;
     public override string Name => ProductName;
-    public override string Version => s_isBeta ? Vers + "-beta" : Vers;
+    public override string Version => isBeta ? Vers + "-beta" : Vers;
     internal const string Company = "Oasys";
     internal const string Contact = "https://www.oasys-software.com/";
     internal const string Copyright = "Copyright © Oasys 1985 - 2023";
@@ -194,18 +192,18 @@ namespace GsaGH {
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
     internal const string Vers = "0.9.48";
-    internal static string s_disclaimer = PluginName
+    internal static string disclaimer = PluginName
       + " is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using "
       + PluginName + " should not be relied upon without thorough and independent checking. ";
-    internal static Guid s_guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
-    internal static bool s_isBeta = true;
+    internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
+    internal static bool isBeta = true;
   }
 
   internal sealed class PluginInfo {
-    public static OasysPluginInfo Instance => s_lazy.Value;
-    private static readonly Lazy<OasysPluginInfo> s_lazy = new Lazy<OasysPluginInfo>(()
+    public static OasysPluginInfo Instance => lazy.Value;
+    private static readonly Lazy<OasysPluginInfo> lazy = new Lazy<OasysPluginInfo>(()
       => new OasysPluginInfo(GsaGhInfo.ProductName, GsaGhInfo.PluginName, GsaGhInfo.Vers,
-        GsaGhInfo.s_isBeta, "phc_alOp3OccDM3D18xJTWDoW44Y1cJvbEScm5LJSX8qnhs"));
+        GsaGhInfo.isBeta, "phc_alOp3OccDM3D18xJTWDoW44Y1cJvbEScm5LJSX8qnhs"));
 
     private PluginInfo() { }
   }

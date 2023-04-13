@@ -160,7 +160,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string type = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
+      string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
       if (_analProp != 0) {
         return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
       }
@@ -215,7 +215,7 @@ namespace GsaGH.Parameters {
       MaterialType = GetType(materialType);
       GradeProperty = gradeProp;
       AnalysisProperty = analysisProp;
-      if (!(AnalysisProperty != 0 & analysisMaterial != null)) {
+      if (!((AnalysisProperty != 0) & (analysisMaterial != null))) {
         return;
       }
 

@@ -219,7 +219,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      var types = Types.Select(t => Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == t)
+      var types = Types.Select(t => Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == t)
        .Key).ToList();
       string type = string.Join("/", types.Distinct());
       string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;

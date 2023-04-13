@@ -11,8 +11,8 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetProperties_TrGen_10_Test {
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
+    private static GH_Document document = null;
 
     [Fact]
     public void NoRuntimeErrorTest() {

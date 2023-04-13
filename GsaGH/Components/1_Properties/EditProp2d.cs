@@ -279,7 +279,7 @@ namespace GsaGH.Components {
         da.SetData(7, nm);
         da.SetData(8, colour);
 
-        da.SetData(9, Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
+        da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
       } else {
         this.AddRuntimeError("Prop2d is Null");
       }

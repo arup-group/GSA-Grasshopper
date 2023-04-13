@@ -16,8 +16,8 @@ namespace GsaGH.Helpers.GsaApi {
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class MicrosoftSQLiteReader : MarshalByRefObject {
-    public static MicrosoftSQLiteReader Instance => s_lazy.Value;
-    private static readonly Lazy<MicrosoftSQLiteReader> s_lazy
+    public static MicrosoftSQLiteReader Instance => lazy.Value;
+    private static readonly Lazy<MicrosoftSQLiteReader> lazy
       = new Lazy<MicrosoftSQLiteReader>(Initialize);
 
     public MicrosoftSQLiteReader() { }

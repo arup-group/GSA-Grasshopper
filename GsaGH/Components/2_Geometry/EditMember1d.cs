@@ -387,8 +387,8 @@ namespace GsaGH.Components {
       da.SetData(2, mem.PolyCurve);
       da.SetData(3, new GsaSectionGoo(mem.Section));
       da.SetData(4, mem.Group);
-      da.SetData(5, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(6, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
+      da.SetData(5, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(6, Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
       da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
       da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));

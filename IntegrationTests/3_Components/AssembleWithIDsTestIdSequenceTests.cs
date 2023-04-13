@@ -9,14 +9,14 @@ namespace IntegrationTests.Components {
   public class AssembleWithIDsTestIdSequenceTests {
     public static GH_Document Document {
       get {
-        if (s_document == null) {
-          s_document = OpenDocument();
+        if (document == null) {
+          document = OpenDocument();
         }
 
-        return s_document;
+        return document;
       }
     }
-    private static GH_Document s_document = null;
+    private static GH_Document document = null;
 
     [Fact]
     public void NoRuntimeErrorTest() {
