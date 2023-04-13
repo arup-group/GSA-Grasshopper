@@ -12,8 +12,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaElement2d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement2dGoo : GH_OasysGeometricGoo<GsaElement2d>,
-    IGH_PreviewData {
+  public class GsaElement2dGoo : GH_OasysGeometricGoo<GsaElement2d>, IGH_PreviewData {
     public static string Description => "GSA 2D Element(s)";
     public static string Name => "Element2D";
     public static string NickName => "E2D";
@@ -22,9 +21,7 @@ namespace GsaGH.Parameters {
     public GsaElement2dGoo(GsaElement2d item) : base(item) { }
 
     internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null) {
-      Value = duplicate
-                                                                                     ? item.Duplicate()
-                                                                                     : item;
+      Value = duplicate ? item.Duplicate() : item;
     }
 
     public override bool CastFrom(object source) {
@@ -66,16 +63,12 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.Mesh;
+        target = Value == null ? default : (TQ)(object)Value.Mesh;
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)new GH_Mesh(Value.Mesh);
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Mesh);
 
         return true;
       }
@@ -86,23 +79,23 @@ namespace GsaGH.Parameters {
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       args.Pipeline.DrawMeshShaded(Value.Mesh,
-      args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
-        ? Colours.Element2dFace
-        : Colours.Element2dFaceSelected);
+        args.Material.Diffuse
+        == Color.FromArgb(255, 150, 0,
+          0) // this is a workaround to change colour between selected and not
+          ? Colours.Element2dFace : Colours.Element2dFaceSelected);
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null
-        || CentralSettings.PreviewMeshEdges == false
-        || Value.Mesh == null) {
+      if (Value == null || CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
         return;
       }
 
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-{
+      if (args.Color
+        == Color.FromArgb(255, 150, 0,
+          0)) // this is a workaround to change colour between selected and not
+      {
         args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdge, 1);
-      }
-      else {
+      } else {
         args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdgeSelected, 2);
       }
     }

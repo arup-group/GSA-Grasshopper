@@ -14,8 +14,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaNode" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaNodeGoo : GH_OasysGeometricGoo<GsaNode>,
-    IGH_PreviewData {
+  public class GsaNodeGoo : GH_OasysGeometricGoo<GsaNode>, IGH_PreviewData {
     public static string Description => "GSA Node";
     public static string Name => "Node";
     public static string NickName => "No";
@@ -24,9 +23,7 @@ namespace GsaGH.Parameters {
     public GsaNodeGoo(GsaNode item) : base(item) { }
 
     internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null) {
-      Value = duplicate
-                                                                           ? item.Duplicate()
-                                                                           : item;
+      Value = duplicate ? item.Duplicate() : item;
     }
 
     public override bool CastFrom(object source) {
@@ -65,35 +62,27 @@ namespace GsaGH.Parameters {
 
       //Cast to Point3d
       if (typeof(TQ).IsAssignableFrom(typeof(Point3d))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)new Point3d(Value.Point);
+        target = Value == null ? default : (TQ)(object)new Point3d(Value.Point);
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)new GH_Point(Value.Point);
+        target = Value == null ? default : (TQ)(object)new GH_Point(Value.Point);
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Point))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)new Point(Value.Point);
+        target = Value == null ? default : (TQ)(object)new Point(Value.Point);
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
-            ? (TQ)(object)ghint
-            : default;
+          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
+            (TQ)(object)ghint : default;
         }
 
         return true;
@@ -103,21 +92,20 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-    }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null
-        || !Value.Point.IsValid) {
+      if (Value == null || !Value.Point.IsValid) {
         return;
       }
 
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+      if (args.Color
+        == Color.FromArgb(255, 150, 0,
+          0)) // this is a workaround to change colour between selected and not
       {
         if (Value.Colour != Color.FromArgb(0, 0, 0)) {
           args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundSimple, 3, Value.Colour);
-        }
-        else {
+        } else {
           Color col = Colours.Node;
           args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundSimple, 3, col);
         }
@@ -129,15 +117,10 @@ namespace GsaGH.Parameters {
         if (Value._previewText != null) {
           args.Pipeline.Draw3dText(Value._previewText, Colours.Support);
         }
-      }
-      else {
-        args.Pipeline.DrawPoint(Value.Point,
-          PointStyle.RoundControlPoint,
-          3,
-          Colours.NodeSelected);
+      } else {
+        args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundControlPoint, 3, Colours.NodeSelected);
         if (Value._previewSupportSymbol != null) {
-          args.Pipeline.DrawBrepShaded(Value._previewSupportSymbol,
-            Colours.SupportSymbolSelected);
+          args.Pipeline.DrawBrepShaded(Value._previewSupportSymbol, Colours.SupportSymbolSelected);
         }
 
         if (Value._previewText != null) {

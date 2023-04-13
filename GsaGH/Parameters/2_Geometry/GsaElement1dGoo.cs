@@ -19,9 +19,7 @@ namespace GsaGH.Parameters {
     public GsaElement1dGoo(GsaElement1d item) : base(item) { }
 
     internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null) {
-      Value = duplicate
-                                                                                     ? item.Duplicate()
-                                                                                     : item;
+      Value = duplicate ? item.Duplicate() : item;
     }
 
     public override bool CastFrom(object source) {
@@ -50,17 +48,14 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.Line;
+        target = Value == null ? default : (TQ)(object)Value.Line;
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghLine = new GH_Line();
           GH_Convert.ToGHLine(Value.Line, GH_Conversion.Both, ref ghLine);
           target = (TQ)(object)ghLine;
@@ -70,28 +65,22 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.Line;
+        target = Value == null ? default : (TQ)(object)Value.Line;
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)new GH_Curve(Value.Line);
+        target = Value == null ? default : (TQ)(object)new GH_Curve(Value.Line);
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
-            ? (TQ)(object)ghint
-            : default;
+          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
+            (TQ)(object)ghint : default;
         }
 
         return true;
@@ -101,8 +90,7 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-    }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null) {
@@ -110,30 +98,26 @@ namespace GsaGH.Parameters {
       }
 
       if (Value.Line != null) {
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+        if (args.Color
+          == Color.FromArgb(255, 150, 0,
+            0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy) {
-            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart,
-              Value.Line.PointAtEnd,
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd,
               Colours.Dummy1D);
-          }
-          else {
+          } else {
             if (Value.Colour != Color.FromArgb(0, 0, 0)) {
               args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
-            }
-            else {
+            } else {
               Color col = Colours.ElementType(Value.Type);
               args.Pipeline.DrawCurve(Value.Line, col, 2);
             }
           }
-        }
-        else {
+        } else {
           if (Value.IsDummy) {
-            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart,
-              Value.Line.PointAtEnd,
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd,
               Colours.Element1dSelected);
-          }
-          else {
+          } else {
             args.Pipeline.DrawCurve(Value.Line, Colours.Element1dSelected, 2);
           }
         }

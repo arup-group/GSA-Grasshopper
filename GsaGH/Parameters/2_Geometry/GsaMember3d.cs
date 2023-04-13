@@ -112,8 +112,7 @@ namespace GsaGH.Parameters {
       };
       if (cloneApiMember) {
         dup.CloneApiObject();
-      }
-      else {
+      } else {
         dup.ApiMember = ApiMember;
       }
 
@@ -135,14 +134,9 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
-      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type)
-        .Key;
-      return string.Join(" ", idd.Trim(), type.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
     public GsaMember3d Transform(Transform xform) {
@@ -194,7 +188,7 @@ namespace GsaGH.Parameters {
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
-{
+      {
         mem.Colour = ApiMember.Colour;
       }
 
@@ -202,10 +196,8 @@ namespace GsaGH.Parameters {
     }
 
     private void UpdatePreview() {
-      Display.PreviewMem3d(ref _mesh,
-                                         ref _previewHiddenLines,
-                                         ref _previewEdgeLines,
-                                         ref _previewPts);
+      Display.PreviewMem3d(ref _mesh, ref _previewHiddenLines, ref _previewEdgeLines,
+        ref _previewPts);
     }
   }
 }

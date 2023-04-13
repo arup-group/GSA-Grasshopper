@@ -11,8 +11,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaMember3d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>,
-    IGH_PreviewData {
+  public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>, IGH_PreviewData {
     public static string Description => "GSA 3D Member";
     public static string Name => "Member3D";
     public static string NickName => "M3D";
@@ -21,9 +20,7 @@ namespace GsaGH.Parameters {
     public GsaMember3dGoo(GsaMember3d item) : base(item) { }
 
     internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null) {
-      Value = duplicate
-                                                                                   ? item.Duplicate()
-                                                                                   : item;
+      Value = duplicate ? item.Duplicate() : item;
     }
 
     public override bool CastFrom(object source) {
@@ -48,8 +45,7 @@ namespace GsaGH.Parameters {
 
       if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both)) {
         return false;
-      }
-      else {
+      } else {
         var member = new GsaMember3d(mesh);
         Value = member;
         return true;
@@ -64,17 +60,14 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.SolidMesh;
+        target = Value == null ? default : (TQ)(object)Value.SolidMesh;
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)new GH_Mesh(Value.SolidMesh);
           if (Value.SolidMesh == null) {
             return false;
@@ -87,12 +80,10 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
-            ? (TQ)(object)ghint
-            : default;
+          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
+            (TQ)(object)ghint : default;
         }
 
         return true;
@@ -109,11 +100,11 @@ namespace GsaGH.Parameters {
 
       if (!Value.IsDummy) {
         args.Pipeline.DrawMeshShaded(Value.SolidMesh,
-          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
-            ? Colours.Element2dFace
-            : Colours.Element2dFaceSelected); //UI.Colour.Member2dFace
-      }
-      else {
+          args.Material.Diffuse
+          == Color.FromArgb(255, 150, 0,
+            0) // this is a workaround to change colour between selected and not
+            ? Colours.Element2dFace : Colours.Element2dFaceSelected); //UI.Colour.Member2dFace
+      } else {
         args.Pipeline.DrawMeshShaded(Value.SolidMesh, Colours.Dummy2D);
       }
     }
@@ -126,24 +117,24 @@ namespace GsaGH.Parameters {
       if (Value.IsDummy) {
         foreach (Line line in Value._previewEdgeLines) {
           args.Pipeline.DrawDottedLine(line,
-            args.Color == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
-              ? Colours.Dummy1D
-              : Colours.Member2dEdgeSelected);
+            args.Color
+            == Color.FromArgb(255, 150, 0,
+              0) // this is a workaround to change colour between selected and not
+              ? Colours.Dummy1D : Colours.Member2dEdgeSelected);
         }
-      }
-      else {
+      } else {
         foreach (Line line in Value._previewEdgeLines) {
-          if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+          if (args.Color
+            == Color.FromArgb(255, 150, 0,
+              0)) // this is a workaround to change colour between selected and not
           {
             if (Value.Colour != Color.FromArgb(0, 0, 0)) {
               args.Pipeline.DrawLine(line, (Color)Value.Colour, 2);
-            }
-            else {
+            } else {
               Color col = Colours.Member2dEdge;
               args.Pipeline.DrawLine(line, col, 2);
             }
-          }
-          else {
+          } else {
             args.Pipeline.DrawLine(line, Colours.Element2dEdgeSelected, 2);
           }
         }
@@ -154,16 +145,14 @@ namespace GsaGH.Parameters {
       }
 
       foreach (Point3d point3d in Value._previewPts) {
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-{
-          args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 2, Value.IsDummy
-              ? Colours.Dummy1D
-              : Colours.Member1dNode);
-        }
-        else {
-          args.Pipeline.DrawPoint(point3d,
-            PointStyle.RoundControlPoint,
-            3,
+        if (args.Color
+          == Color.FromArgb(255, 150, 0,
+            0)) // this is a workaround to change colour between selected and not
+        {
+          args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 2,
+            Value.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
+        } else {
+          args.Pipeline.DrawPoint(point3d, PointStyle.RoundControlPoint, 3,
             Colours.Member1dNodeSelected);
         }
       }

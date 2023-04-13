@@ -81,9 +81,7 @@ namespace GsaGH.Parameters {
     }
     public GsaOffset Offset {
       get
-        => new GsaOffset(ApiMember.Offset.X1,
-          ApiMember.Offset.X2,
-          ApiMember.Offset.Y,
+        => new GsaOffset(ApiMember.Offset.X1, ApiMember.Offset.X2, ApiMember.Offset.Y,
           ApiMember.Offset.Z);
       set {
         CloneApiObject();
@@ -119,9 +117,7 @@ namespace GsaGH.Parameters {
       }
     }
     public GsaBool6 ReleaseEnd {
-      get
-        => new GsaBool6(ApiMember.GetEndRelease(1)
-          .Releases);
+      get => new GsaBool6(ApiMember.GetEndRelease(1).Releases);
       set {
         _rel2 = value ?? new GsaBool6();
         CloneApiObject();
@@ -130,9 +126,7 @@ namespace GsaGH.Parameters {
       }
     }
     public GsaBool6 ReleaseStart {
-      get
-        => new GsaBool6(ApiMember.GetEndRelease(0)
-          .Releases);
+      get => new GsaBool6(ApiMember.GetEndRelease(0).Releases);
       set {
         _rel1 = value ?? new GsaBool6();
         CloneApiObject();
@@ -186,26 +180,19 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaMember1d(
-      Member member,
-      int id,
-      List<Point3d> topology,
-      List<string> topoType,
-      ReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict,
+      Member member, int id, List<Point3d> topology, List<string> topoType,
+      ReadOnlyDictionary<int, Node> nDict, ReadOnlyDictionary<int, Section> sDict,
       ReadOnlyDictionary<int, SectionModifier> modDict,
       ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict,
-      LengthUnit modelUnit) {
+      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
       ApiMember = member;
       MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = id;
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
       Topology = topology;
       TopologyType = topoType;
-      _rel1 = new GsaBool6(ApiMember.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiMember.GetEndRelease(1)
-        .Releases);
+      _rel1 = new GsaBool6(ApiMember.GetEndRelease(0).Releases);
+      _rel2 = new GsaBool6(ApiMember.GetEndRelease(1).Releases);
       LocalAxes = new GsaLocalAxes(localAxesDict[id]);
       Section = new GsaSection(sDict, ApiMember.Property, modDict, matDict);
       UpdatePreview();
@@ -266,18 +253,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
-      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == Type)
-          .Key
-        + " ";
-      string pb = Section.Id > 0
-        ? "PB" + Section.Id
-        : Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
+      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
 
     public GsaMember1d Transform(Transform xform) {
@@ -334,7 +313,7 @@ namespace GsaGH.Parameters {
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
-{
+      {
         mem.Colour = ApiMember.Colour;
       }
 
@@ -355,26 +334,13 @@ namespace GsaGH.Parameters {
         return;
       }
 
-      if (_rel1.X
-        || _rel1.Y
-        || _rel1.Z
-        || _rel1.Xx
-        || _rel1.Yy
-        || _rel1.Zz
-        || _rel2.X
-        || _rel2.Y
-        || _rel2.Z
-        || _rel2.Xx
-        || _rel2.Yy
-        || _rel2.Zz) {
+      if (_rel1.X || _rel1.Y || _rel1.Z || _rel1.Xx || _rel1.Yy || _rel1.Zz || _rel2.X || _rel2.Y
+        || _rel2.Z || _rel2.Xx || _rel2.Yy || _rel2.Zz) {
         Tuple<List<Line>, List<Line>> previewCurves = Display.Preview1D(_crv,
-          ApiMember.OrientationAngle * Math.PI / 180.0,
-          _rel1,
-          _rel2);
+          ApiMember.OrientationAngle * Math.PI / 180.0, _rel1, _rel2);
         _previewGreenLines = previewCurves.Item1;
         _previewRedLines = previewCurves.Item2;
-      }
-      else {
+      } else {
         _previewGreenLines = null;
       }
     }

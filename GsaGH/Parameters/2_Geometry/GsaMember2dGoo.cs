@@ -15,8 +15,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GsaMember2d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2d>,
-    IGH_PreviewData {
+  public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2d>, IGH_PreviewData {
     public static string Description => "GSA 2D Member";
     public static string Name => "Member2D";
     public static string NickName => "M2D";
@@ -25,9 +24,7 @@ namespace GsaGH.Parameters {
     public GsaMember2dGoo(GsaMember2d item) : base(item) { }
 
     internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null) {
-      Value = duplicate
-                                                                                   ? item.Duplicate()
-                                                                                   : item;
+      Value = duplicate ? item.Duplicate() : item;
     }
 
     public override bool CastFrom(object source) {
@@ -62,17 +59,14 @@ namespace GsaGH.Parameters {
 
       //Cast to Curve
       if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
+        target = Value == null ? default : (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
           if (Value.PolyCurve == null) {
             return false;
@@ -85,8 +79,7 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(PolyCurve))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
           if (Value.PolyCurve == null) {
             return false;
@@ -99,8 +92,7 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(Polyline))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
           if (Value.PolyCurve == null) {
             return false;
@@ -113,13 +105,9 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)Value.PolyCurve.ToPolyline(
-            DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry),
-            2,
-            0,
-            0);
+            DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), 2, 0, 0);
           if (Value.PolyCurve == null) {
             return false;
           }
@@ -131,8 +119,7 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(Brep))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)Value.Brep.DuplicateBrep();
           if (Value.Brep == null) {
             return false;
@@ -145,8 +132,7 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)new GH_Brep(Value.Brep.DuplicateBrep());
           if (Value.Brep == null) {
             return false;
@@ -157,28 +143,22 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(List<Point3d>))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.Topology.ToList();
+        target = Value == null ? default : (TQ)(object)Value.Topology.ToList();
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(List<GH_Point>))) {
-        target = Value == null
-          ? default
-          : (TQ)(object)Value.Topology.ToList();
+        target = Value == null ? default : (TQ)(object)Value.Topology.ToList();
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
-            ? (TQ)(object)ghint
-            : default;
+          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
+            (TQ)(object)ghint : default;
         }
 
         return true;
@@ -194,17 +174,19 @@ namespace GsaGH.Parameters {
       }
 
       if (Value.Type == MemberType.VOID_CUTTER_2D) {
-        if (args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-{
+        if (args.Material.Diffuse
+          == Color.FromArgb(255, 150, 0,
+            0)) // this is a workaround to change colour between selected and not
+        {
           args.Pipeline.DrawBrepShaded(Value.Brep,
             Colours.Member2dVoidCutterFace); //UI.Colour.Member2dFace
         }
-      }
-      else {
+      } else {
         args.Pipeline.DrawBrepShaded(Value.Brep,
-          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
-            ? Colours.Member2dFace
-            : Colours.Member2dFaceSelected); //UI.Colour.Member2dFace
+          args.Material.Diffuse
+          == Color.FromArgb(255, 150, 0,
+            0) // this is a workaround to change colour between selected and not
+            ? Colours.Member2dFace : Colours.Member2dFaceSelected); //UI.Colour.Member2dFace
       }
     }
 
@@ -214,41 +196,39 @@ namespace GsaGH.Parameters {
       }
 
       if (Value.Brep != null) {
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+        if (args.Color
+          == Color.FromArgb(255, 150, 0,
+            0)) // this is a workaround to change colour between selected and not
         {
           if (Value.Type == MemberType.VOID_CUTTER_2D) {
             args.Pipeline.DrawBrepWires(Value.Brep, Colours.VoidCutter, -1);
-          }
-          else if (!Value.IsDummy) {
+          } else if (!Value.IsDummy) {
             args.Pipeline.DrawBrepWires(Value.Brep, Colours.Member2dEdge, -1);
           }
-        }
-        else {
+        } else {
           args.Pipeline.DrawBrepWires(Value.Brep, Colours.Member2dEdgeSelected, -1);
         }
       }
 
       if (Value.PolyCurve != null & Value.Brep == null) {
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+        if (args.Color
+          == Color.FromArgb(255, 150, 0,
+            0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Dummy1D, false);
-          }
-          else {
+          } else {
             if (Value.Colour != Color.FromArgb(0, 0, 0)) {
               args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
-            }
-            else {
+            } else {
               Color col = Colours.Member2dEdge;
               args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
             }
           }
-        }
-        else {
+        } else {
           if (Value.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Member1dSelected, false);
-          }
-          else {
+          } else {
             args.Pipeline.DrawCurve(Value.PolyCurve, Colours.Member1dSelected, 2);
           }
         }
@@ -257,11 +237,9 @@ namespace GsaGH.Parameters {
       if (Value.InclusionLines != null) {
         for (int i = 0; i < Value.InclusionLines.Count; i++) {
           if (Value.IsDummy) {
-            args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i],
-              Colours.Member1dSelected,
+            args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i], Colours.Member1dSelected,
               false);
-          }
-          else {
+          } else {
             args.Pipeline.DrawCurve(Value.InclusionLines[i], Colours.Member2dInclLn, 2);
           }
         }
@@ -270,38 +248,25 @@ namespace GsaGH.Parameters {
       if (Value.Topology != null) {
         List<Point3d> pts = Value.Topology;
         for (int i = 0; i < pts.Count; i++) {
-          if (args.Color == Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+          if (args.Color
+            == Color.FromArgb(255, 150, 0,
+              0)) // this is a workaround to change colour between selected and not
           {
             if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
-{
-              args.Pipeline.DrawPoint(pts[i],
-                PointStyle.RoundSimple,
-                3,
-                Value.IsDummy
-                  ? Colours.Dummy1D
-                  : Colours.Member1dNode);
+            {
+              args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 3,
+                Value.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
+            } else {
+              args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 2,
+                Value.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
             }
-            else {
-              args.Pipeline.DrawPoint(pts[i],
-                PointStyle.RoundSimple,
-                2,
-                Value.IsDummy
-                  ? Colours.Dummy1D
-                  : Colours.Member1dNode);
-            }
-          }
-          else {
+          } else {
             if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
-{
-              args.Pipeline.DrawPoint(pts[i],
-                PointStyle.RoundControlPoint,
-                3,
+            {
+              args.Pipeline.DrawPoint(pts[i], PointStyle.RoundControlPoint, 3,
                 Colours.Member1dNodeSelected);
-            }
-            else {
-              args.Pipeline.DrawPoint(pts[i],
-                PointStyle.RoundControlPoint,
-                2,
+            } else {
+              args.Pipeline.DrawPoint(pts[i], PointStyle.RoundControlPoint, 2,
                 Colours.Member1dNodeSelected);
             }
           }
@@ -314,12 +279,8 @@ namespace GsaGH.Parameters {
 
       {
         foreach (Point3d point3d in Value.InclusionPoints) {
-          args.Pipeline.DrawPoint(point3d,
-            PointStyle.RoundSimple,
-            3,
-            Value.IsDummy
-              ? Colours.Dummy1D
-              : Colours.Member2dInclPt);
+          args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 3,
+            Value.IsDummy ? Colours.Dummy1D : Colours.Member2dInclPt);
         }
       }
     }
