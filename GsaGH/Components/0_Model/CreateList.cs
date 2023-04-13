@@ -19,12 +19,10 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateList;
     private EntityType _type = EntityType.Node;
 
-    public CreateList() : base("Create List",
-      "CreateList",
+    public CreateList() : base("Create List", "CreateList",
       "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)."
       + Environment.NewLine
-      + "You can add a GSA List to a model through the 'GSA' input.",
-      CategoryName.Name(),
+      + "You can add a GSA List to a model through the 'GSA' input.", CategoryName.Name(),
       SubCategoryName.Cat0()) { }
 
     public override void SetSelected(int i, int j) {
@@ -53,28 +51,21 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      _ = pManager.AddIntegerParameter("Index",
-        "ID",
+      pManager.AddIntegerParameter("Index", "ID",
         "(Optional) List Number - set this to 0 to append it to the end of the list of lists, or set the ID to overwrite an existing list.",
-        GH_ParamAccess.item,
-        0);
-      _ = pManager.AddTextParameter("Name", "Na", "(Optional) List Name", GH_ParamAccess.item);
-      _ = pManager.AddGenericParameter("Definition",
-        "Def",
-        "Definition as text or list of object (Nodes, Elements, Members)",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item, 0);
+      pManager.AddTextParameter("Name", "Na", "(Optional) List Name", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Definition", "Def",
+        "Definition as text or list of object (Nodes, Elements, Members)", GH_ParamAccess.list);
       pManager[0].Optional = true;
       pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      _ = pManager.AddParameter(new GsaListParameter(),
-        "GSA List",
-        "L",
+      pManager.AddParameter(new GsaListParameter(), "GSA List", "L",
         "GSA Entity List parameter."
         + Environment.NewLine
-        + "You can add a GSA List to a model through the 'GSA' input.",
-        GH_ParamAccess.item);
+        + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess DA) {
@@ -123,7 +114,7 @@ namespace GsaGH.Components {
         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, message);
       }
 
-      _ = DA.SetData(0, list);
+      DA.SetData(0, list);
     }
 
     protected override void UpdateUIFromSelectedItems() {

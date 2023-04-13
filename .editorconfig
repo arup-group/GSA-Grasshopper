@@ -125,8 +125,8 @@ csharp_style_prefer_range_operator = true:error
 csharp_style_prefer_tuple_swap = true:error
 csharp_style_prefer_utf8_string_literals = true:error
 csharp_style_throw_expression = true:error
-csharp_style_unused_value_assignment_preference = discard_variable:suggestion
-csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
+csharp_style_unused_value_assignment_preference = discard_variable:none
+csharp_style_unused_value_expression_statement_preference = discard_variable:none
 
 # 'using' directive preferences
 csharp_using_directive_placement = outside_namespace:error
@@ -257,7 +257,7 @@ resharper_braces_for_while = required
 resharper_csharp_keep_blank_lines_in_code = 1
 resharper_csharp_keep_blank_lines_in_declarations = 1
 resharper_csharp_max_line_length = 100
-resharper_csharp_wrap_arguments_style = chop_if_long
+resharper_csharp_wrap_arguments_style = wrap_if_long
 resharper_csharp_wrap_before_binary_opsign = true
 resharper_csharp_wrap_multiple_declaration_style = chop_always
 resharper_empty_block_style = together_same_line
@@ -284,6 +284,7 @@ resharper_max_array_initializer_elements_on_line = 1
 resharper_max_enum_members_on_line = 1
 resharper_max_formal_parameters_on_line = 5
 resharper_max_initializer_elements_on_line = 1
+resharper_wrap_arguments_style = wrap_if_long
 resharper_max_invocation_arguments_on_line = 5
 resharper_nested_ternary_style = expanded
 resharper_outdent_dots = true
