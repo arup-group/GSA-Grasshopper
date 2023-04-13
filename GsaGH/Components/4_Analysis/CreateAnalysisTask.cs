@@ -21,11 +21,9 @@ namespace GsaGH.Components {
     private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
 
     public CreateAnalysisTask() : base(
-              "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
+      "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaAnalysisTaskGoo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat4()) {
+      "Create a " + GsaAnalysisTaskGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 
@@ -54,14 +52,11 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Analysis Cases",
-        "ΣAs",
+      pManager.AddGenericParameter("Analysis Cases", "ΣAs",
         "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
         GH_ParamAccess.list);
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -80,23 +75,19 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Analysis Case input (index: "
-              + i
+            Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i
               + ") is null and has been ignored");
             continue;
           }
 
           if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
             cases.Add(goo.Value.Duplicate());
-          }
-          else {
-            string type = ghTyp.Value.GetType()
-              .ToString();
+          } else {
+            string type = ghTyp.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
             Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
-              + type
-              + " to GsaAnalysisCase");
+              + type + " to GsaAnalysisCase");
             return;
           }
         }

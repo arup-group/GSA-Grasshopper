@@ -18,11 +18,9 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AnalysisCaseInfo;
 
-    public AnalysisCaseInfo() : base("Analysis Case Info",
-          "CaseInfo",
+    public AnalysisCaseInfo() : base("Analysis Case Info", "CaseInfo",
       "Get information about the properties of a GSA Analysis Case (Load Case or Combination)",
-      CategoryName.Name(),
-      SubCategoryName.Cat4()) {
+      CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 
@@ -32,14 +30,10 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Analysis Case Name", GH_ParamAccess.item);
-      pManager.AddTextParameter("Description",
-        "De",
-        "The description of the analysis case",
+      pManager.AddTextParameter("Description", "De", "The description of the analysis case",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("CaseID",
-        "ID",
-        "The Case number if the Analysis Case ever belonged to a model",
-        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("CaseID", "ID",
+        "The Case number if the Analysis Case ever belonged to a model", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -53,15 +47,12 @@ namespace GsaGH.Components {
         da.SetData(0, gsaCase.Name);
         da.SetData(1, gsaCase.Description);
         da.SetData(2, gsaCase.Id);
-      }
-      else {
-        string type = ghTyp.Value.GetType()
-          .ToString();
+      } else {
+        string type = ghTyp.Value.GetType().ToString();
         type = type.Replace("GsaGH.Parameters.", "");
         type = type.Replace("Goo", "");
         Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
-          + type
-          + " to GsaAnalysisCase");
+          + type + " to GsaAnalysisCase");
       }
     }
   }
