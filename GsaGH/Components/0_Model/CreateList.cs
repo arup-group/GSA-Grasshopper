@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using System;
+using System.Collections.Generic;
 
 namespace GsaGH.Components {
   /// <summary>
