@@ -7,7 +7,8 @@ namespace GsaGH.Helpers.Export {
   internal class GsaGuidDictionary<T> {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
-    internal ReadOnlyDictionary<Guid, int> GuidDictionary => new ReadOnlyDictionary<Guid, int>(_guidDictionary);
+    internal ReadOnlyDictionary<Guid, int> GuidDictionary
+      => new ReadOnlyDictionary<Guid, int>(_guidDictionary);
     private readonly IDictionary<int, T> _dictionary;
     private readonly IDictionary<Guid, int> _guidDictionary;
     private int _firstEmptyKey = 1;
@@ -40,14 +41,18 @@ namespace GsaGH.Helpers.Export {
   internal class GsaGuidIntListDictionary<T> {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
-    internal ReadOnlyDictionary<Guid, Collection<int>> GuidDictionary => new ReadOnlyDictionary<Guid, Collection<int>>(_guidDictionary);
+    internal ReadOnlyDictionary<Guid, Collection<int>> GuidDictionary
+      => new ReadOnlyDictionary<Guid, Collection<int>>(_guidDictionary);
     private readonly IDictionary<int, T> _dictionary;
     private readonly IDictionary<Guid, Collection<int>> _guidDictionary;
     private int _firstEmptyKey = 1;
 
     internal GsaGuidIntListDictionary(ReadOnlyDictionary<int, T> dictionary) {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-      _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => new Collection<int>() { kvp.Key });
+      _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp
+        => new Collection<int>() {
+          kvp.Key,
+        });
     }
 
     internal int AddValue(Guid guid, T value) {
@@ -58,10 +63,11 @@ namespace GsaGH.Helpers.Export {
       if (_guidDictionary.ContainsKey(guid)) {
         _dictionary[_firstEmptyKey] = value;
         _guidDictionary[guid].Add(_firstEmptyKey);
-      }
-      else {
+      } else {
         _dictionary[_firstEmptyKey] = value;
-        _guidDictionary[guid] = new Collection<int>() { _firstEmptyKey };
+        _guidDictionary[guid] = new Collection<int>() {
+          _firstEmptyKey,
+        };
       }
 
       return _firstEmptyKey;
@@ -73,9 +79,10 @@ namespace GsaGH.Helpers.Export {
         if (!_guidDictionary[guid].Contains(key)) {
           _guidDictionary[guid].Add(key);
         }
-      }
-      else {
-        _guidDictionary[guid] = new Collection<int>() { key };
+      } else {
+        _guidDictionary[guid] = new Collection<int>() {
+          key,
+        };
       }
     }
   }

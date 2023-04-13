@@ -1,4 +1,3 @@
 ﻿namespace GsaGH.Helpers.Export {
-  internal class Lists {
-  }
+  internal class Lists { }
 }

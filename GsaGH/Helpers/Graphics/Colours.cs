@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using Grasshopper.GUI.Gradient;
+using GsaAPI;
 using Rhino.Display;
 
 namespace GsaGH.Helpers.Graphics {
   /// <summary>
-  /// Colour class holding the main colours used in colour scheme.
-  /// Make calls to this class to be able to easy update colours.
-  ///
+  ///   Colour class holding the main colours used in colour scheme.
+  ///   Make calls to this class to be able to easy update colours.
   /// </summary>
   public class Colours {
     public static Brush ActiveBrush => new SolidBrush(ActiveColour);
@@ -18,7 +19,7 @@ namespace GsaGH.Helpers.Graphics {
     public static Color ButtonBorderColour => GsaLightGrey;
     public static Brush ButtonColour => new SolidBrush(GsaDarkBlue);
     public static Color ClickedBorderColour => Color.White;
-    public static Brush ClickedButtonColour => new SolidBrush(Graphics.Colours.WhiteOverlay(GsaDarkBlue, 0.32));
+    public static Brush ClickedButtonColour => new SolidBrush(WhiteOverlay(GsaDarkBlue, 0.32));
     public static Color Dummy1D => Color.FromArgb(255, 143, 143, 143);
     public static DisplayMaterial Dummy2D {
       get {
@@ -77,8 +78,9 @@ namespace GsaGH.Helpers.Graphics {
 
     public static Color GsaLightGrey => Color.FromArgb(255, 244, 244, 244);
     public static Color HoverBorderColour => Color.White;
-    public static Brush HoverButtonColour => new SolidBrush(Graphics.Colours.WhiteOverlay(GsaDarkBlue, 0.16));
-    public static Brush HoverInactiveButtonColour => new SolidBrush(Color.FromArgb(255, 216, 216, 216));
+    public static Brush HoverButtonColour => new SolidBrush(WhiteOverlay(GsaDarkBlue, 0.16));
+    public static Brush HoverInactiveButtonColour
+      => new SolidBrush(Color.FromArgb(255, 216, 216, 216));
     public static Brush InactiveBorderColor => new SolidBrush(Color.FromArgb(255, 216, 216, 216));
     public static Brush InactiveButtonColour => new SolidBrush(GsaLightGrey);
     public static Color Member1d => GsaGreen;
@@ -146,40 +148,29 @@ namespace GsaGH.Helpers.Graphics {
     }
     public static Color VoidCutter => Color.FromArgb(255, 200, 0, 0);
 
-    public static Color ElementType(global::GsaAPI.ElementType elementType) {
+    public static Color ElementType(ElementType elementType) {
       switch ((int)elementType) {
-        case 1:
-          return Color.FromArgb(255, 72, 99, 254);
+        case 1: return Color.FromArgb(255, 72, 99, 254);
 
-        case 2:
-          return Color.FromArgb(255, 95, 190, 180);
+        case 2: return Color.FromArgb(255, 95, 190, 180);
 
-        case 23:
-          return Color.FromArgb(255, 39, 52, 147);
+        case 23: return Color.FromArgb(255, 39, 52, 147);
 
-        case 3:
-          return Color.FromArgb(255, 73, 101, 101);
+        case 3: return Color.FromArgb(255, 73, 101, 101);
 
-        case 21:
-          return Color.FromArgb(255, 200, 81, 45);
+        case 21: return Color.FromArgb(255, 200, 81, 45);
 
-        case 20:
-          return Color.FromArgb(255, 192, 67, 255);
+        case 20: return Color.FromArgb(255, 192, 67, 255);
 
-        case 9:
-          return Color.FromArgb(255, 178, 178, 178);
+        case 9: return Color.FromArgb(255, 178, 178, 178);
 
-        case 10:
-          return Color.FromArgb(255, 32, 32, 32);
+        case 10: return Color.FromArgb(255, 32, 32, 32);
 
-        case 24:
-          return Color.FromArgb(255, 51, 82, 82);
+        case 24: return Color.FromArgb(255, 51, 82, 82);
 
-        case 19:
-          return Color.FromArgb(255, 155, 18, 214);
+        case 19: return Color.FromArgb(255, 155, 18, 214);
 
-        default:
-          return Color.FromArgb(255, 95, 190, 180);
+        default: return Color.FromArgb(255, 95, 190, 180);
       }
     }
 
@@ -193,14 +184,13 @@ namespace GsaGH.Helpers.Graphics {
     }
 
     public static Color Overlay(Color original, Color overlay, double ratio) {
-      return Color.FromArgb(255,
-          (int)((ratio * overlay.R) + ((1 - ratio) * original.R)),
-          (int)((ratio * overlay.G) + ((1 - ratio) * original.G)),
-          (int)((ratio * overlay.B) + ((1 - ratio) * original.B)));
+      return Color.FromArgb(255, (int)((ratio * overlay.R) + ((1 - ratio) * original.R)),
+        (int)((ratio * overlay.G) + ((1 - ratio) * original.G)),
+        (int)((ratio * overlay.B) + ((1 - ratio) * original.B)));
     }
 
-    public static Grasshopper.GUI.Gradient.GH_Gradient Stress_Gradient(List<Color> colours = null) {
-      var gHGradient = new Grasshopper.GUI.Gradient.GH_Gradient();
+    public static GH_Gradient Stress_Gradient(List<Color> colours = null) {
+      var gHGradient = new GH_Gradient();
 
       if (colours == null || colours.Count < 2) {
         gHGradient.AddGrip(-1, Color.FromArgb(0, 0, 206));
@@ -210,8 +200,7 @@ namespace GsaGH.Helpers.Graphics {
         gHGradient.AddGrip(0.333, Color.FromArgb(255, 220, 71));
         gHGradient.AddGrip(0.666, Color.FromArgb(255, 127, 71));
         gHGradient.AddGrip(1, Color.FromArgb(205, 0, 71));
-      }
-      else {
+      } else {
         for (int i = 0; i < colours.Count; i++) {
           double t = 1.0 - (2.0 / (colours.Count - 1.0) * i);
           gHGradient.AddGrip(t, colours[i]);
@@ -223,10 +212,9 @@ namespace GsaGH.Helpers.Graphics {
 
     public static Color WhiteOverlay(Color original, double ratio) {
       Color white = Color.White;
-      return Color.FromArgb(255,
-          (int)((ratio * white.R) + ((1 - ratio) * original.R)),
-          (int)((ratio * white.G) + ((1 - ratio) * original.G)),
-          (int)((ratio * white.B) + ((1 - ratio) * original.B)));
+      return Color.FromArgb(255, (int)((ratio * white.R) + ((1 - ratio) * original.R)),
+        (int)((ratio * white.G) + ((1 - ratio) * original.G)),
+        (int)((ratio * white.B) + ((1 - ratio) * original.B)));
     }
   }
 }

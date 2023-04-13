@@ -9,7 +9,8 @@ using Rhino.Geometry;
 namespace GsaGH.Helpers.Export {
   internal class Nodes {
 
-    internal static int AddNode(ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) {
+    internal static int AddNode(
+      ref GsaIntDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit) {
       return existNodes.AddValue(NodeFromPoint(testPoint, unit));
     }
 
@@ -18,22 +19,27 @@ namespace GsaGH.Helpers.Export {
     }
 
     /// <summary>
-    /// Method to convert a GsaNode to GsaAPI.Node
+    ///   Method to convert a GsaNode to GsaAPI.Node
     /// </summary>
     /// <param name="node">GsaNode to convert</param>
     /// <param name="existingNodes">Dictionary of existing GsaAPI nodes to add nodes to [in meters]</param>
     /// <param name="existingAxes">Dictionary of existing GsaAPI axes to add local axis to [in meters]</param>
     /// <param name="nodeidcounter">node id counter for </param>
     /// <param name="unit">UnitsNet LengthUnit of GsaNode node input</param>
-    internal static void ConvertNode(GsaNode node, ref GsaIntDictionary<Node> existingNodes, ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
+    internal static void ConvertNode(
+      GsaNode node, ref GsaIntDictionary<Node> existingNodes,
+      ref Dictionary<int, Axis> existingAxes, LengthUnit unit) {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
       if (!node.IsGlobalAxis()) {
         var ax = new Axis();
         Plane pln = node.LocalAxis;
-        ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX : new Length(pln.OriginX, unit).Meters;
-        ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY : new Length(pln.OriginY, unit).Meters;
-        ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ : new Length(pln.OriginZ, unit).Meters;
+        ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX :
+          new Length(pln.OriginX, unit).Meters;
+        ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY :
+          new Length(pln.OriginY, unit).Meters;
+        ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ :
+          new Length(pln.OriginZ, unit).Meters;
 
         ax.XVector.X = pln.XAxis.X;
         ax.XVector.Y = pln.XAxis.Y;
@@ -45,17 +51,18 @@ namespace GsaGH.Helpers.Export {
         apiNode.AxisProperty = Axes.AddAxis(ref existingAxes, ax);
       }
 
-      if (node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
-{
+      if (
+        node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      {
         existingNodes.SetValue(node.Id, apiNode);
-      }
-      else {
+      } else {
         AddNode(ref existingNodes, apiNode);
       }
     }
 
-    internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
-                    ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
+    internal static void ConvertNodes(
+      List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
+      ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
       if (nodes == null || nodes.Count <= 0) {
         return;
       }
@@ -68,16 +75,23 @@ namespace GsaGH.Helpers.Export {
 
     internal static Node NodeFromPoint(Point3d point, LengthUnit unit) {
       if (unit == LengthUnit.Meter) {
-        var pos = new Vector3() { X = point.X, Y = point.Y, Z = point.Z };
-        return new Node() { Position = pos };
-      }
-      else {
+        var pos = new Vector3() {
+          X = point.X,
+          Y = point.Y,
+          Z = point.Z,
+        };
+        return new Node() {
+          Position = pos,
+        };
+      } else {
         var pos = new Vector3() {
           X = new Length(point.X, unit).Meters,
           Y = new Length(point.Y, unit).Meters,
-          Z = new Length(point.Z, unit).Meters
+          Z = new Length(point.Z, unit).Meters,
         };
-        return new Node() { Position = pos };
+        return new Node() {
+          Position = pos,
+        };
       }
     }
   }

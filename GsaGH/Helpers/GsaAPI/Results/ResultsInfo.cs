@@ -10,9 +10,11 @@ using GsaGH.Parameters;
 namespace GsaGH.Helpers.GsaApi {
   internal partial class ResultHelper {
 
-    public static Tuple<List<string>, List<int>, DataTree<int?>> GetAvalailableResults(GsaModel model) {
+    public static Tuple<List<string>, List<int>, DataTree<int?>> GetAvalailableResults(
+      GsaModel model) {
       ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();
-      ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults = model.Model.CombinationCaseResults();
+      ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults
+        = model.Model.CombinationCaseResults();
       int tempNodeId = model.Model.Nodes().Keys.First();
 
       var type = new List<string>();
@@ -22,10 +24,12 @@ namespace GsaGH.Helpers.GsaApi {
         type.Add("Analysis");
         caseIds.Add(caseId);
       }
+
       foreach (int caseId in combinationCaseResults.Keys.OrderByDescending(x => -x)) {
         type.Add("Combination");
         caseIds.Add(caseId);
-        IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult = combinationCaseResults[caseId].NodeResults(tempNodeId.ToString());
+        IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
+          = combinationCaseResults[caseId].NodeResults(tempNodeId.ToString());
         int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
         var permutationsInCase = Enumerable.Range(1, nP).ToList();
         var path = new GH_Path(caseId);
@@ -37,6 +41,7 @@ namespace GsaGH.Helpers.GsaApi {
           perm.Add(p, path);
         }
       }
+
       return new Tuple<List<string>, List<int>, DataTree<int?>>(type, caseIds, perm);
     }
   }

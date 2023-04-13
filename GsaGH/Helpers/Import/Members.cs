@@ -14,14 +14,20 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
-  /// Class containing functions to import various object types from GSA
+  ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Members {
 
-    internal static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
-        GetMembers(ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,
-        ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, Prop3D> p3Dict,
-        ReadOnlyDictionary<int, AnalysisMaterial> matDict, ReadOnlyDictionary<int, SectionModifier> modDict, Dictionary<int, ReadOnlyCollection<double>> localAxesDict, ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit, bool duplicateApiObjects, GH_Component owner = null) {
+    internal static
+      Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+        ConcurrentBag<GsaMember3dGoo>> GetMembers(
+        ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,
+        ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict,
+        ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+        ReadOnlyDictionary<int, SectionModifier> modDict,
+        Dictionary<int, ReadOnlyCollection<double>> localAxesDict,
+        ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit, bool duplicateApiObjects,
+        GH_Component owner = null) {
       var mem1ds = new ConcurrentBag<GsaMember1dGoo>();
       var mem2ds = new ConcurrentBag<GsaMember2dGoo>();
       var mem3ds = new ConcurrentBag<GsaMember3dGoo>();
@@ -43,14 +49,15 @@ namespace GsaGH.Helpers.Import {
               if (nDict.TryGetValue(t, out Node node)) {
                 Vector3 p = node.Position;
                 tempMesh.Vertices.Add(Nodes.Point3dFromNode(node, modelUnit));
-              }
-              else {
+              } else {
                 return;
               }
             }
+
             tempMesh.Faces.AddFace(0, 1, 2);
             mList.Add(tempMesh);
           }
+
           var m = new Mesh();
           // create one large mesh from single mesh face using
           // append list of meshes (faster than appending each mesh one by one)
@@ -59,39 +66,43 @@ namespace GsaGH.Helpers.Import {
           int propId = mem.Property;
           var prop = new GsaProp3d(p3Dict, mem.Property, matDict);
 
-          var mem3d = new GsaMember3d(mem, key, m, prop, new Length(mem.MeshSize, LengthUnit.Meter).As(modelUnit));
+          var mem3d = new GsaMember3d(mem, key, m, prop,
+            new Length(mem.MeshSize, LengthUnit.Meter).As(modelUnit));
           mem3ds.Add(new GsaMember3dGoo(mem3d, duplicateApiObjects));
-        }
-        else // ## Member1D or Member2D ##
+        } else // ## Member1D or Member2D ##
         {
-          (Tuple<List<int>, List<string>> item1, Tuple<List<List<int>>, List<List<string>>> voidTuple, Tuple<List<List<int>>, List<List<string>>> lineTuple, List<int> inclpts) = Topology.Topology_detangler(toporg);
+          (Tuple<List<int>, List<string>> item1,
+              Tuple<List<List<int>>, List<List<string>>> voidTuple,
+              Tuple<List<List<int>>, List<List<string>>> lineTuple, List<int> inclpts)
+            = Topology.Topology_detangler(toporg);
           (List<int> topoInt, List<string> topoType) = item1;
           var topopts = new List<Point3d>();
           bool invalidNode = false;
           foreach (int t in topoInt) {
             if (nDict.TryGetValue(t, out Node node)) {
               topopts.Add(Nodes.Point3dFromNode(node, modelUnit));
-            }
-            else {
+            } else {
               invalidNode = true; // if node cannot be found continue with next key
             }
           }
+
           if (invalidNode) {
             return;
           }
 
-          if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
-              mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE) {
+          if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM
+            | mem.Type == MemberType.CANTILEVER | mem.Type == MemberType.COLUMN
+            | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE) {
             if (topopts.Count < 2) {
               string error = " Invalid topology Mem1D ID: " + key + ".";
               owner?.AddRuntimeWarning(error);
               return;
             }
 
-            var mem1d = new GsaMember1d(mem, key, topopts.ToList(), topoType.ToList(), nDict, sDict, modDict, matDict, localAxesDict, modelUnit);
+            var mem1d = new GsaMember1d(mem, key, topopts.ToList(), topoType.ToList(), nDict, sDict,
+              modDict, matDict, localAxesDict, modelUnit);
             mem1ds.Add(new GsaMember1dGoo(mem1d, duplicateApiObjects));
-          }
-          else {
+          } else {
             if (topopts.Count < 2) {
               string error = " Invalid topology Mem2D ID: " + key + ".";
               owner?.AddRuntimeWarning(error);
@@ -99,9 +110,12 @@ namespace GsaGH.Helpers.Import {
             }
 
             List<List<int>> voidTopoInt = voidTuple.Item1;
-            List<List<string>> voidTopoType = voidTuple.Item2; //list of polyline curve type (arch or line) for void /member2d
+            List<List<string>> voidTopoType
+              = voidTuple.Item2; //list of polyline curve type (arch or line) for void /member2d
             List<List<int>> incLinesTopoInt = lineTuple.Item1;
-            List<List<string>> inclLinesTopoType = lineTuple.Item2; //list of polyline curve type (arch or line) for inclusion /member2d
+            List<List<string>> inclLinesTopoType
+              = lineTuple
+               .Item2; //list of polyline curve type (arch or line) for inclusion /member2d
 
             //list of lists of void points /member2d
             var voidTopo = new List<List<Point3d>>();
@@ -131,17 +145,20 @@ namespace GsaGH.Helpers.Import {
               if (!nDict.TryGetValue(point, out Node node)) {
                 continue;
               }
+
               inclPts.Add(Nodes.Point3dFromNode(node, modelUnit));
             }
 
-            var mem2d = new GsaMember2d(mem, key, topopts, topoType, voidTopo, voidTopoType, incLinesTopo, inclLinesTopoType, inclPts, pDict, matDict, axDict, modelUnit);
+            var mem2d = new GsaMember2d(mem, key, topopts, topoType, voidTopo, voidTopoType,
+              incLinesTopo, inclLinesTopoType, inclPts, pDict, matDict, axDict, modelUnit);
             mem2ds.Add(new GsaMember2dGoo(mem2d, duplicateApiObjects));
           }
         }
       });
 
-      return new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(
-          mem1ds, mem2ds, mem3ds);
+      return new
+        Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+          ConcurrentBag<GsaMember3dGoo>>(mem1ds, mem2ds, mem3ds);
     }
   }
 }

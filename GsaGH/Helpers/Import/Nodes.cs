@@ -9,12 +9,12 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
-  /// Class containing functions to import various object types from GSA
+  ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Nodes {
 
     /// <summary>
-    /// Method to create a Rhino Plane from a GSA Axis
+    ///   Method to create a Rhino Plane from a GSA Axis
     /// </summary>
     /// <param name="axis">GSA Axis to create plane from</param>
     /// <returns></returns>
@@ -28,6 +28,7 @@ namespace GsaGH.Helpers.Import {
       if (xAxis.IsZero) {
         return Plane.Unset;
       }
+
       var xUnit = new Vector3d(xAxis);
       xUnit.Unitize();
 
@@ -35,10 +36,13 @@ namespace GsaGH.Helpers.Import {
       if (yAxis.IsZero) {
         return Plane.Unset;
       }
+
       var yUnit = new Vector3d(yAxis);
       yUnit.Unitize();
 
-      if (xUnit.Equals(yUnit)) { return Plane.Unset; }
+      if (xUnit.Equals(yUnit)) {
+        return Plane.Unset;
+      }
 
       // Create new plane with Rhino method
       var pln = new Plane(origin, xAxis, yAxis);
@@ -46,7 +50,8 @@ namespace GsaGH.Helpers.Import {
       return pln;
     }
 
-    internal static GsaNode GetNode(Node node, LengthUnit modelUnit, int id, ReadOnlyDictionary<int, Axis> axDict = null) {
+    internal static GsaNode GetNode(
+      Node node, LengthUnit modelUnit, int id, ReadOnlyDictionary<int, Axis> axDict = null) {
       var local = new Plane();
       // add local axis if node has Axis property
       if (axDict == null) {
@@ -56,8 +61,7 @@ namespace GsaGH.Helpers.Import {
       if (node.AxisProperty > 0) {
         axDict.TryGetValue(node.AxisProperty, out Axis axis);
         local = AxisToPlane(axis, modelUnit);
-      }
-      else {
+      } else {
         switch (node.AxisProperty) {
           case 0:
             // local axis = Global
@@ -91,50 +95,60 @@ namespace GsaGH.Helpers.Import {
       return new GsaNode(node, id, modelUnit, local);
     }
 
-    internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null) {
+    internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(
+      ReadOnlyDictionary<int, Node> nDict, LengthUnit unit,
+      ReadOnlyDictionary<int, Axis> axDict = null) {
       var outNodes = new ConcurrentDictionary<int, GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict))));
+      Parallel.ForEach(nDict,
+        node => outNodes.TryAdd(node.Key,
+          new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict))));
       return outNodes;
     }
 
     /// <summary>
-    /// Method to import Nodes from a GSA model.
-    /// Will output a list of GsaNodeGoos.
-    /// Input node dictionary pre-filtered for selected nodes to import;
+    ///   Method to import Nodes from a GSA model.
+    ///   Will output a list of GsaNodeGoos.
+    ///   Input node dictionary pre-filtered for selected nodes to import;
     /// </summary>
     /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
     /// <param name="axDict"></param>
     /// <param name="duplicateApiObjects"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
-    internal static ConcurrentBag<GsaNodeGoo> GetNodes(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false) {
+    internal static ConcurrentBag<GsaNodeGoo> GetNodes(
+      ReadOnlyDictionary<int, Node> nDict, LengthUnit unit,
+      ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false) {
       var outNodes = new ConcurrentBag<GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects)));
+      Parallel.ForEach(nDict,
+        node => outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict),
+          duplicateApiObjects)));
       return outNodes;
     }
 
     internal static Point3d Point3dFromNode(Node node, LengthUnit unit) {
       return (unit == LengthUnit.Meter) ?
-          new Point3d(node.Position.X, node.Position.Y, node.Position.Z) : // skip unitsnet conversion, gsa api node always in meters
-          new Point3d(new Length(node.Position.X, LengthUnit.Meter).As(unit),
-                      new Length(node.Position.Y, LengthUnit.Meter).As(unit),
-                      new Length(node.Position.Z, LengthUnit.Meter).As(unit));
+        new Point3d(node.Position.X, node.Position.Y,
+          node.Position.Z) : // skip unitsnet conversion, gsa api node always in meters
+        new Point3d(new Length(node.Position.X, LengthUnit.Meter).As(unit),
+          new Length(node.Position.Y, LengthUnit.Meter).As(unit),
+          new Length(node.Position.Z, LengthUnit.Meter).As(unit));
     }
 
     internal static Point3d Point3dFromXyzUnit(double x, double y, double z, LengthUnit modelUnit) {
       return (modelUnit == LengthUnit.Meter) ?
-          new Point3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
-          new Point3d(new Length(x, LengthUnit.Meter).As(modelUnit),
-                      new Length(y, LengthUnit.Meter).As(modelUnit),
-                      new Length(z, LengthUnit.Meter).As(modelUnit));
+        new Point3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
+        new Point3d(new Length(x, LengthUnit.Meter).As(modelUnit),
+          new Length(y, LengthUnit.Meter).As(modelUnit),
+          new Length(z, LengthUnit.Meter).As(modelUnit));
     }
 
-    internal static Vector3d Vector3dFromXyzUnit(double x, double y, double z, LengthUnit modelUnit) {
+    internal static Vector3d Vector3dFromXyzUnit(
+      double x, double y, double z, LengthUnit modelUnit) {
       return (modelUnit == LengthUnit.Meter) ?
-          new Vector3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
-          new Vector3d(new Length(x, LengthUnit.Meter).As(modelUnit),
-                      new Length(y, LengthUnit.Meter).As(modelUnit),
-                      new Length(z, LengthUnit.Meter).As(modelUnit));
+        new Vector3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
+        new Vector3d(new Length(x, LengthUnit.Meter).As(modelUnit),
+          new Length(y, LengthUnit.Meter).As(modelUnit),
+          new Length(z, LengthUnit.Meter).As(modelUnit));
     }
   }
 }

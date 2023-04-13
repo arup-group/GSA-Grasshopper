@@ -7,15 +7,17 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
-  /// Class containing functions to import various object types from GSA
+  ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Analyses {
 
-    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel) {
+    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>
+      GetAnalysisTasksAndCombinations(GsaModel gsaModel) {
       return GetAnalysisTasksAndCombinations(gsaModel.Model);
     }
 
-    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(Model model) {
+    internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>
+      GetAnalysisTasksAndCombinations(Model model) {
       ReadOnlyDictionary<int, AnalysisTask> tasks = model.AnalysisTasks();
 
       var tasksList = new List<GsaAnalysisTaskGoo>();
@@ -27,6 +29,7 @@ namespace GsaGH.Helpers.Import {
         tasksList.Add(new GsaAnalysisTaskGoo(task));
         caseIDs.AddRange(task.Cases.Select(acase => acase.Id));
       }
+
       ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
       caseIDs.AddRange(gravities.Select(x => x.Case));
 
@@ -36,8 +39,7 @@ namespace GsaGH.Helpers.Import {
         {
           nodeLoads = model.NodeLoads(typ);
           caseIDs.AddRange(nodeLoads.Select(x => x.Case));
-        }
-        catch (Exception) {
+        } catch (Exception) {
           // ignored
         }
       }
@@ -70,7 +72,8 @@ namespace GsaGH.Helpers.Import {
           caseDescription = "L" + caseId;
         }
 
-        caseList.Add(new GsaAnalysisCaseGoo(new GsaAnalysisCase(caseId, caseName, caseDescription)));
+        caseList.Add(
+          new GsaAnalysisCaseGoo(new GsaAnalysisCase(caseId, caseName, caseDescription)));
       }
 
       return new Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>(tasksList, caseList);

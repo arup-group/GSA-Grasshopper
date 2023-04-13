@@ -6,10 +6,7 @@ namespace GsaGH.Helpers.GH {
   public static class FindValueFromReader {
 
     public static bool TryGetEnum(
-      this GH_IReader reader,
-      string valueToFind,
-      Type enumToFind,
-      out int foundedValue) {
+      this GH_IReader reader, string valueToFind, Type enumToFind, out int foundedValue) {
       foundedValue = 0;
 
       IEnumerable<string> elementsToCheck = GetNamesToCheck(valueToFind);
@@ -31,7 +28,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     /// <summary>
-    /// Try get string for a specified names
+    ///   Try get string for a specified names
     /// </summary>
     /// <returns>founded value or string.Empty</returns>
     private static string TryGetStringFrom(GH_IReader reader, IEnumerable<string> elementsToCheck) {
@@ -39,8 +36,7 @@ namespace GsaGH.Helpers.GH {
       foreach (string value in elementsToCheck) {
         try {
           result = reader.GetString(value);
-        }
-        catch {
+        } catch {
           //ignored
         }
       }

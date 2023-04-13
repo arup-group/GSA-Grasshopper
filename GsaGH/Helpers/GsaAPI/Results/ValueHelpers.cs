@@ -18,9 +18,8 @@ namespace GsaGH.Helpers.GsaApi {
         return Math.Round(result, 0, MidpointRounding.AwayFromZero);
       }
 
-      return Math.Abs(digits - (int)leftSideNumbers) > 15
-        ? 0.0
-        : Math.Round(result, digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
+      return Math.Abs(digits - (int)leftSideNumbers) > 15 ? 0.0 : Math.Round(result,
+        digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
     }
 
     internal static List<double> SmartRounder(double max, double min) {
@@ -31,6 +30,7 @@ namespace GsaGH.Helpers.GsaApi {
         roundedvals.Add(0);
         return roundedvals;
       }
+
       int signMax = Math.Sign(max);
       int signMin = Math.Sign(min);
       const int significantNumbers = 2;
@@ -55,8 +55,7 @@ namespace GsaGH.Helpers.GsaApi {
         max /= factor;
         min /= factor;
         numberOfDigitsOut = digits + significantNumbers;
-      }
-      else {
+      } else {
         string valString = val.ToString();
         int digits = valString.Split('.')[0].Count();
         int power = 10;

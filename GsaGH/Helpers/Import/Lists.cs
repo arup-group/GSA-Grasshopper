@@ -3,7 +3,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
-  /// Class containing functions to import various object types from GSA
+  ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Lists {
 
