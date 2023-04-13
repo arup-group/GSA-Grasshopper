@@ -17,16 +17,14 @@ namespace IntegrationTests.Components {
     }
 
     [Theory]
-    [InlineData("Profiles",
-      new string[] {
-        "CAT HE HE240.A 19920101",
-        "CAT HE HE260.B 19920101",
-      })]
-    [InlineData("SteelE",
-      new double[] {
-        200000,
-        200000,
-      })]
+    [InlineData("Profiles", new string[] {
+      "CAT HE HE240.A 19920101",
+      "CAT HE HE260.B 19920101",
+    })]
+    [InlineData("SteelE", new double[] {
+      200000,
+      200000,
+    })]
     [InlineData("Thickness", (double)25)]
     [InlineData("ConcreteE", (double)18000)]
     public void Test(string groupIdentifier, object expected) {
@@ -35,14 +33,12 @@ namespace IntegrationTests.Components {
     }
 
     private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

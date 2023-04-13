@@ -39,48 +39,42 @@ namespace IntegrationTests.Components {
     [InlineData("GridPlnSrfFromMem1dTest", 0)]
     [InlineData("GridPlnSrfFromMem2dTest", 0)]
     [InlineData("NodeLoadFromPtTest", 0)]
-    [InlineData("NodeLoadOldID",
-      new int[] {
-        4,
-        4,
-        4,
-        4,
-      })]
-    [InlineData("NodeLoadOldName",
-      new string[] {
-        "Wind X",
-        "Wind X",
-        "Wind X",
-        "Wind X",
-      })]
-    [InlineData("NodeLoadOldDefinition",
-      new string[] {
-        "1",
-        "1",
-        "15 to 31 not 27",
-        "15 to 31 not 27",
-      })]
-    [InlineData("LoadNodeOldDirection",
-      new string[] {
-        "X",
-        "Y",
-        "X",
-        "Y",
-      })]
+    [InlineData("NodeLoadOldID", new int[] {
+      4,
+      4,
+      4,
+      4,
+    })]
+    [InlineData("NodeLoadOldName", new string[] {
+      "Wind X",
+      "Wind X",
+      "Wind X",
+      "Wind X",
+    })]
+    [InlineData("NodeLoadOldDefinition", new string[] {
+      "1",
+      "1",
+      "15 to 31 not 27",
+      "15 to 31 not 27",
+    })]
+    [InlineData("LoadNodeOldDirection", new string[] {
+      "X",
+      "Y",
+      "X",
+      "Y",
+    })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
     }
 
     private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

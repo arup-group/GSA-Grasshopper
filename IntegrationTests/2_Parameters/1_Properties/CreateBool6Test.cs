@@ -31,8 +31,7 @@ namespace IntegrationTests.Parameters {
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
 
       Assert.Equal(1, param.VolatileData.DataCount);
-      IEnumerator<IGH_Goo> data = param.VolatileData.AllData(true)
-        .GetEnumerator();
+      IEnumerator<IGH_Goo> data = param.VolatileData.AllData(true).GetEnumerator();
       data.Reset();
       data.MoveNext();
       var b = (GH_Boolean)data.Current;
@@ -41,13 +40,11 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
+      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

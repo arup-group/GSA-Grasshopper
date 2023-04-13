@@ -16,8 +16,7 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       GH_Component comp = Helper.FindComponent(doc, "Test2");
 
-      object output = comp.Params.Output[0]
-        .VolatileData.get_Branch(0)[0];
+      object output = comp.Params.Output[0].VolatileData.get_Branch(0)[0];
       Assert.Null(output);
 
       Assert.Equal(GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
@@ -38,14 +37,12 @@ namespace IntegrationTests.Components {
     }
 
     private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Test", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

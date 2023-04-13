@@ -51,14 +51,12 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
+      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty)
-        .Replace("Test", string.Empty);
+       .Replace("Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

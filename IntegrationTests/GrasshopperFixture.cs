@@ -7,6 +7,7 @@ using Interop.Gsa_10_1;
 using OasysGH.Units;
 using Rhino;
 using Rhino.Runtime.InProcess;
+using RhinoInside;
 using Xunit;
 
 namespace IntegrationTests {
@@ -29,12 +30,15 @@ namespace IntegrationTests {
         return _ghPlugin as GH_RhinoScriptInterface;
       }
     }
-    public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+    public static string InstallPath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
     private object Doc { get; set; }
     private object DocIo { get; set; }
     private static readonly string s_linkFileName = "IntegrationTests.ghlink";
-    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
+    private static readonly string s_linkFilePath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+      "Libraries");
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
@@ -44,7 +48,7 @@ namespace IntegrationTests {
       // are loaded before the resolver is set up. Avoid creating other static functions
       // and members which may reference Rhino assemblies, as that may cause those
       // assemblies to be loaded before this is called.
-      RhinoInside.Resolver.Initialize();
+      Resolver.Initialize();
     }
 
     public GrasshopperFixture() {
@@ -81,7 +85,7 @@ namespace IntegrationTests {
 
     public void Dispose() {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-      Dispose(disposing: true);
+      Dispose(true);
       GC.SuppressFinalize(this);
       File.Delete(Path.Combine(s_linkFilePath, s_linkFileName));
     }
@@ -120,6 +124,7 @@ namespace IntegrationTests {
       if (null == _core) {
         InitializeCore();
       }
+
       // we do this in a seperate function to absolutely ensure that the core is initialized before we load the GH plugin,
       // which will happen automatically when we enter the function containing GH references
       InitializeGrasshopperPlugin2();

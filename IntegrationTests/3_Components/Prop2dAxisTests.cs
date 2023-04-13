@@ -34,10 +34,7 @@ namespace IntegrationTests.Components {
     [InlineData("elemZY", 0.0, 35, 1)]
     [InlineData("elemZZ", 1.0, 35, 1)]
     public void TestList(
-      string groupIdentifier,
-      double expected,
-      int listLength,
-      int tolerance = 6) {
+      string groupIdentifier, double expected, int listLength, int tolerance = 6) {
       var expecteds = new List<double>();
       for (int i = 0; i < listLength; i++) {
         expecteds.Add(expected);
@@ -48,14 +45,12 @@ namespace IntegrationTests.Components {
     }
 
     private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",
