@@ -64,8 +64,7 @@ namespace GsaGH.Parameters {
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
-      }
-      else {
+      } else {
         dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
         dup._referenceType = _referenceType;
       }
@@ -127,8 +126,7 @@ namespace GsaGH.Parameters {
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
-      }
-      else {
+      } else {
         dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
         dup._referenceType = _referenceType;
       }
@@ -174,8 +172,7 @@ namespace GsaGH.Parameters {
       if (_referenceType == ReferenceType.List) {
         dup._referenceType = ReferenceType.List;
         dup._refList = _refList.Duplicate();
-      }
-      else {
+      } else {
         dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
         dup._referenceType = _referenceType;
       }
@@ -412,12 +409,7 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      return string.Join(" ",
-          LoadType.ToString()
-            .Trim(),
-          name.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      return string.Join(" ", LoadType.ToString().Trim(), name.Trim()).Trim().Replace("  ", " ");
     }
   }
 
@@ -459,6 +451,7 @@ namespace GsaGH.Parameters {
       if (_refList != null) {
         dup._refList = _refList.Duplicate();
       }
+
       return dup;
     }
   }
@@ -473,6 +466,6 @@ namespace GsaGH.Parameters {
     Prop3d,
     Element,
     Member,
-    List
+    List,
   }
 }
