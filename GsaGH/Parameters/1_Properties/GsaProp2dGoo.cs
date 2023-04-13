@@ -7,7 +7,7 @@ using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaProp2d"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaProp2d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaProp2dGoo : GH_OasysGoo<GsaProp2d> {
     public static string Description => "GSA Area Property";
@@ -29,6 +29,7 @@ namespace GsaGH.Parameters {
       if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both)) {
         Value = new GsaProp2d(new Length(thk, DefaultUnits.LengthUnitSection));
       }
+
       return false;
     }
 
@@ -40,16 +41,15 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghint = new GH_Integer();
           if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)) {
             target = (TQ)(object)ghint;
-          }
-          else {
+          } else {
             target = default;
           }
         }
+
         return true;
       }
 

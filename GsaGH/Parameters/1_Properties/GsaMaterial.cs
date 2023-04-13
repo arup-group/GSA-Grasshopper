@@ -5,7 +5,7 @@ using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial"/>
+  ///   Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial" />
   /// </summary>
   public class GsaMaterial {
     public enum MatType {
@@ -70,18 +70,17 @@ namespace GsaGH.Parameters {
     private int _grade = 1;
     private Guid _guid = Guid.NewGuid();
 
-    public GsaMaterial() {
-    }
+    public GsaMaterial() { }
 
     /// <summary>
-    /// 0 : Generic<br></br>
-    /// 1 : Steel<br></br>
-    /// 2 : Concrete<br></br>
-    /// 3 : Aluminium<br></br>
-    /// 4 : Glass<br></br>
-    /// 5 : FRP<br></br>
-    /// 7 : Timber<br></br>
-    /// 8 : Fabric<br></br>
+    ///   0 : Generic<br></br>
+    ///   1 : Steel<br></br>
+    ///   2 : Concrete<br></br>
+    ///   3 : Aluminium<br></br>
+    ///   4 : Glass<br></br>
+    ///   5 : FRP<br></br>
+    ///   7 : Timber<br></br>
+    ///   8 : Fabric<br></br>
     /// </summary>
     /// <param name="typeId"></param>
     public GsaMaterial(int typeId) {
@@ -96,13 +95,15 @@ namespace GsaGH.Parameters {
       if (section.Material != null) {
         if (analysisMaterial == null && section.Material.AnalysisMaterial != null) {
           analysisMaterial = section.Material.AnalysisMaterial;
-        }
-        else if (section.ApiSection.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null) {
+        } else if (section.ApiSection.MaterialAnalysisProperty > 0 && section.Material != null
+          && analysisMaterial == null) {
           analysisMaterial = section.Material.AnalysisMaterial;
         }
       }
 
-      CreateFromApiObject(section.ApiSection.MaterialType, section.ApiSection.MaterialAnalysisProperty, section.ApiSection.MaterialGradeProperty, analysisMaterial);
+      CreateFromApiObject(section.ApiSection.MaterialType,
+        section.ApiSection.MaterialAnalysisProperty, section.ApiSection.MaterialGradeProperty,
+        analysisMaterial);
     }
 
     internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null) {
@@ -113,13 +114,13 @@ namespace GsaGH.Parameters {
       if (prop.Material != null) {
         if (analysisMaterial == null && prop.Material.AnalysisMaterial != null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
-        }
-        else if (prop.ApiProp2d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
+        } else if (prop.ApiProp2d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
         }
       }
 
-      CreateFromApiObject(prop.ApiProp2d.MaterialType, prop.ApiProp2d.MaterialAnalysisProperty, prop.ApiProp2d.MaterialGradeProperty, analysisMaterial);
+      CreateFromApiObject(prop.ApiProp2d.MaterialType, prop.ApiProp2d.MaterialAnalysisProperty,
+        prop.ApiProp2d.MaterialGradeProperty, analysisMaterial);
     }
 
     internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null) {
@@ -130,12 +131,13 @@ namespace GsaGH.Parameters {
       if (prop.Material != null) {
         if (analysisMaterial == null && prop.Material.AnalysisMaterial != null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
-        }
-        else if (prop.ApiProp3d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
+        } else if (prop.ApiProp3d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
           analysisMaterial = prop.Material.AnalysisMaterial;
         }
       }
-      CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty, prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
+
+      CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty,
+        prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
 
     public GsaMaterial Duplicate() {
@@ -149,9 +151,10 @@ namespace GsaGH.Parameters {
           CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
           Density = AnalysisMaterial.Density,
           ElasticModulus = AnalysisMaterial.ElasticModulus,
-          PoissonsRatio = AnalysisMaterial.PoissonsRatio
+          PoissonsRatio = AnalysisMaterial.PoissonsRatio,
         };
       }
+
       dup._guid = new Guid(_guid.ToString());
       return dup;
     }
@@ -206,7 +209,9 @@ namespace GsaGH.Parameters {
       return mType;
     }
 
-    private void CreateFromApiObject(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial) {
+    private void CreateFromApiObject(
+      MaterialType materialType, int analysisProp, int gradeProp,
+      AnalysisMaterial analysisMaterial) {
       MaterialType = GetType(materialType);
       GradeProperty = gradeProp;
       AnalysisProperty = analysisProp;
@@ -219,7 +224,7 @@ namespace GsaGH.Parameters {
         CoefficientOfThermalExpansion = analysisMaterial.CoefficientOfThermalExpansion,
         Density = analysisMaterial.Density,
         ElasticModulus = analysisMaterial.ElasticModulus,
-        PoissonsRatio = analysisMaterial.PoissonsRatio
+        PoissonsRatio = analysisMaterial.PoissonsRatio,
       };
     }
   }

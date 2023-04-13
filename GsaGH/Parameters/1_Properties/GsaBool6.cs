@@ -2,7 +2,7 @@
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Bool6 class, this class defines the basic properties and methods for any <see cref="GsaAPI.Bool6"/>
+  ///   Bool6 class, this class defines the basic properties and methods for any <see cref="GsaAPI.Bool6" />
   /// </summary>
   public class GsaBool6 {
     public bool X {
@@ -53,47 +53,19 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string state = "Other";
-      if (
-        X == false &&
-        Y == false &&
-        Z == false &&
-        Xx == false &&
-        Yy == false &&
-        Zz == false
-        ) {
+      if (X == false && Y == false && Z == false && Xx == false && Yy == false && Zz == false) {
         state = "Free";
       }
 
-      if (
-        X == true &&
-        Y == true &&
-        Z == true &&
-        Xx == false &&
-        Yy == false &&
-        Zz == false
-        ) {
+      if (X == true && Y == true && Z == true && Xx == false && Yy == false && Zz == false) {
         state = "Pin";
       }
 
-      if (
-        X == false &&
-        Y == false &&
-        Z == false &&
-        Xx == false &&
-        Yy == true &&
-        Zz == true
-        ) {
+      if (X == false && Y == false && Z == false && Xx == false && Yy == true && Zz == true) {
         state = "Hinge";
       }
 
-      if (
-        X == true &&
-        Y == true &&
-        Z == true &&
-        Xx == true &&
-        Yy == true &&
-        Zz == true
-        ) {
+      if (X == true && Y == true && Z == true && Xx == true && Yy == true && Zz == true) {
         state = "Fixed";
       }
 
@@ -111,8 +83,7 @@ namespace GsaGH.Parameters {
         string szz = Zz ? "\u2713" : "\u2610";
         szz = " ZZ" + szz;
         return sx + sy + sz + sxx + syy + szz;
-      }
-      else {
+      } else {
         return state.Trim();
       }
     }

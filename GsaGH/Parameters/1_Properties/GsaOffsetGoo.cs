@@ -7,7 +7,7 @@ using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaOffset"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaOffset" /> can be used in Grasshopper.
   /// </summary>
   public class GsaOffsetGoo : GH_OasysGoo<GsaOffset> {
     public static string Description => "GSA Offset";

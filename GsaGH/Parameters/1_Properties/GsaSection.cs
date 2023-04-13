@@ -3,13 +3,14 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
+  ///   Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section" />
   /// </summary>
   public class GsaSection {
     public Area Area {
@@ -37,25 +38,29 @@ namespace GsaGH.Parameters {
     public AreaMomentOfInertia Iyy {
       get {
         var inertia = new AreaMomentOfInertia(_section.Iyy, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
+          DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Iyz {
       get {
         var inertia = new AreaMomentOfInertia(_section.Iyz, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
+          DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Izz {
       get {
         var inertia = new AreaMomentOfInertia(_section.Izz, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
+          DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia J {
       get {
         var inertia = new AreaMomentOfInertia(_section.J, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
+          DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public double Ky => _section.Ky;
@@ -66,12 +71,11 @@ namespace GsaGH.Parameters {
         _material = value;
         if (_section == null) {
           _section = new Section();
-        }
-        else {
+        } else {
           CloneApiObject();
         }
 
-        _section.MaterialType = Helpers.Export.Materials.ConvertType(_material);
+        _section.MaterialType = Materials.ConvertType(_material);
         _section.MaterialAnalysisProperty = _material.AnalysisProperty;
         _section.MaterialGradeProperty = _material.GradeProperty;
         IsReferencedById = false;
@@ -131,7 +135,8 @@ namespace GsaGH.Parameters {
         return areaOut / len;
       }
     }
-    public VolumePerLength VolumePerLength => new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
+    public VolumePerLength VolumePerLength
+      => new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
     internal Section ApiSection {
       get => _section;
       set {
@@ -148,8 +153,7 @@ namespace GsaGH.Parameters {
     private GsaSectionModifier _modifier = new GsaSectionModifier();
     private Section _section = new Section();
 
-    public GsaSection() {
-    }
+    public GsaSection() { }
 
     public GsaSection(int id) {
       _id = id;
@@ -165,7 +169,10 @@ namespace GsaGH.Parameters {
       _id = id;
     }
 
-    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
+    internal GsaSection(
+      ReadOnlyDictionary<int, Section> sDict, int id,
+      ReadOnlyDictionary<int, SectionModifier> modDict,
+      ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
       if (!sDict.ContainsKey(id)) {
         return;
       }
@@ -176,7 +183,8 @@ namespace GsaGH.Parameters {
         _modifier = new GsaSectionModifier(modDict[id]);
       }
 
-      if (_section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_section.MaterialAnalysisProperty)) {
+      if (_section.MaterialAnalysisProperty != 0
+        && matDict.ContainsKey(_section.MaterialAnalysisProperty)) {
         _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
       }
 
@@ -190,7 +198,7 @@ namespace GsaGH.Parameters {
         _material = _material.Duplicate(),
         _modifier = _modifier.Duplicate(cloneApiElement),
         _guid = new Guid(_guid.ToString()),
-        IsReferencedById = IsReferencedById
+        IsReferencedById = IsReferencedById,
       };
       if (cloneApiElement) {
         dup.CloneApiObject();
@@ -202,13 +210,17 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string pb = Id > 0 ? "PB" + Id + " " : "";
       string prof = _section.Profile.Replace("%", " ") + " ";
-      string mat = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+      string mat = Mappings.s_materialTypeMapping
+       .FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
       string mod = _modifier.IsModified ? " modified" : "";
-      return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim()
+       .Replace("  ", " ");
     }
 
     internal static bool ValidProfile(string profile) {
-      var test = new Section { Profile = profile };
+      var test = new Section {
+        Profile = profile,
+      };
       return test.Area != 0;
     }
 
@@ -228,8 +240,10 @@ namespace GsaGH.Parameters {
         Pool = _section.Pool,
         Profile = prfl,
       };
-      if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-{
+      if ((Color)_section.Colour
+        != Color.FromArgb(0, 0,
+          0)) // workaround to handle that System.Drawing.Color is non-nullable type
+      {
         sec.Colour = _section.Colour;
       }
 

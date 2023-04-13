@@ -3,7 +3,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Offset class, this class defines the basic properties and methods for any Gsa Offset
+  ///   Offset class, this class defines the basic properties and methods for any Gsa Offset
   /// </summary>
   public class GsaOffset {
     public enum AlignmentType {
@@ -23,8 +23,7 @@ namespace GsaGH.Parameters {
     public Length Y { get; set; } = Length.Zero;
     public Length Z { get; set; } = Length.Zero;
 
-    public GsaOffset() {
-    }
+    public GsaOffset() { }
 
     public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter) {
       X1 = new Length(x1, unit);
@@ -41,11 +40,9 @@ namespace GsaGH.Parameters {
       LengthUnit unit = Z.Unit;
       string unitAbbreviation = Length.GetAbbreviation(unit);
 
-      return "X1:" + X1.As(unit).ToString("g") +
-        " X2:" + X2.As(unit).ToString("g") +
-        " Y:" + Y.As(unit).ToString("g") +
-        " Z:" + Z.As(unit).ToString("g") +
-        " [" + unitAbbreviation + "]";
+      return "X1:" + X1.As(unit).ToString("g") + " X2:" + X2.As(unit).ToString("g") + " Y:"
+        + Y.As(unit).ToString("g") + " Z:" + Z.As(unit).ToString("g") + " [" + unitAbbreviation
+        + "]";
     }
   }
 }

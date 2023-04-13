@@ -5,10 +5,11 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaBool6"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaBool6" /> can be used in Grasshopper.
   /// </summary>
   public class GsaBool6Goo : GH_OasysGoo<GsaBool6> {
-    public static string Description => "GSA Bool6 (A 6-character string to describe the restraint condition (F = Fixed, R = Released) for each degree of freedom)";
+    public static string Description
+      => "GSA Bool6 (A 6-character string to describe the restraint condition (F = Fixed, R = Released) for each degree of freedom)";
     public static string Name => "Bool6";
     public static string NickName => "B6";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -22,8 +23,7 @@ namespace GsaGH.Parameters {
 
       if (base.CastFrom(source)) {
         return true;
-      }
-      else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both)) {
+      } else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both)) {
         Value.X = mybool;
         Value.Y = mybool;
         Value.Z = mybool;
@@ -31,8 +31,7 @@ namespace GsaGH.Parameters {
         Value.Yy = mybool;
         Value.Zz = mybool;
         return true;
-      }
-      else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both)) {
+      } else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both)) {
         mystring = mystring.Trim().ToLower();
 
         if (mystring == "free") {
@@ -43,8 +42,7 @@ namespace GsaGH.Parameters {
           Value.Yy = false;
           Value.Zz = false;
           return true;
-        }
-        else if (mystring == "pin" | mystring == "pinned") {
+        } else if (mystring == "pin" | mystring == "pinned") {
           Value.X = true;
           Value.Y = true;
           Value.Z = true;
@@ -52,8 +50,7 @@ namespace GsaGH.Parameters {
           Value.Yy = false;
           Value.Zz = false;
           return true;
-        }
-        else if (mystring == "fix" | mystring == "fixed") {
+        } else if (mystring == "fix" | mystring == "fixed") {
           Value.X = true;
           Value.Y = true;
           Value.Z = true;
@@ -61,8 +58,8 @@ namespace GsaGH.Parameters {
           Value.Yy = true;
           Value.Zz = true;
           return true;
-        }
-        else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier") {
+        } else if (mystring == "release" | mystring == "released" | mystring == "hinge"
+          | mystring == "hinged" | mystring == "charnier") {
           Value.X = false;
           Value.Y = false;
           Value.Z = false;
@@ -70,8 +67,7 @@ namespace GsaGH.Parameters {
           Value.Yy = true;
           Value.Zz = true;
           return true;
-        }
-        else if (mystring.Length == 6) {
+        } else if (mystring.Length == 6) {
           switch (mystring[0]) {
             case 'r':
               Value.X = false;
@@ -81,8 +77,7 @@ namespace GsaGH.Parameters {
               Value.X = true;
               break;
 
-            default:
-              return false;
+            default: return false;
           }
 
           switch (mystring[1]) {
@@ -94,8 +89,7 @@ namespace GsaGH.Parameters {
               Value.Y = true;
               break;
 
-            default:
-              return false;
+            default: return false;
           }
 
           switch (mystring[2]) {
@@ -107,8 +101,7 @@ namespace GsaGH.Parameters {
               Value.Z = true;
               break;
 
-            default:
-              return false;
+            default: return false;
           }
 
           switch (mystring[3]) {
@@ -120,8 +113,7 @@ namespace GsaGH.Parameters {
               Value.Xx = true;
               break;
 
-            default:
-              return false;
+            default: return false;
           }
 
           switch (mystring[4]) {
@@ -133,8 +125,7 @@ namespace GsaGH.Parameters {
               Value.Yy = true;
               break;
 
-            default:
-              return false;
+            default: return false;
           }
 
           switch (mystring[5]) {
@@ -146,13 +137,15 @@ namespace GsaGH.Parameters {
               Value.Zz = true;
               break;
 
-            default:
-              return false;
+            default: return false;
           }
+
           return true;
         }
+
         return false;
       }
+
       return false;
     }
 

@@ -5,7 +5,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaSection"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaSection" /> can be used in Grasshopper.
   /// </summary>
   public class GsaSectionGoo : GH_OasysGoo<GsaSection> {
     public static string Description => "GSA Beam Property";
@@ -47,16 +47,15 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           var ghint = new GH_Integer();
           if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)) {
             target = (TQ)(object)ghint;
-          }
-          else {
+          } else {
             target = default;
           }
         }
+
         return true;
       }
 

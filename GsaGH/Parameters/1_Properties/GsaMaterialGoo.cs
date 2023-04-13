@@ -5,7 +5,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaMaterial"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaMaterial" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMaterialGoo : GH_OasysGoo<GsaMaterial> {
     public static string Description => "GSA Material";
@@ -58,8 +58,7 @@ namespace GsaGH.Parameters {
             Value.MaterialType = GsaMaterial.MatType.Generic;
             return true;
 
-          default:
-            return false;
+          default: return false;
         }
       }
 
@@ -78,10 +77,10 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(GsaProp3d))) {
         if (Value == null) {
           target = default;
-        }
-        else {
+        } else {
           target = (TQ)(object)new GsaProp3d(Value);
         }
+
         return true;
       }
 
@@ -91,10 +90,10 @@ namespace GsaGH.Parameters {
 
       if (Value == null) {
         target = default;
-      }
-      else {
+      } else {
         target = (TQ)(object)new GsaProp3dGoo(new GsaProp3d(Value));
       }
+
       return true;
     }
 
