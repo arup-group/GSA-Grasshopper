@@ -18,41 +18,37 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProp3d;
 
-    public CreateProp3d() : base("Create 3D Property",
-          "Prop3d",
-      "Create GSA 3D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+    public CreateProp3d() : base("Create 3D Property", "Prop3d", "Create GSA 3D Property",
+      CategoryName.Name(), SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaMaterialParameter());
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaMaterialParameter());
+    }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaProp3dParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaProp3dParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProp3d();
-
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
-        var material = new GsaMaterial();
-        if (ghTyp.Value is GsaMaterialGoo) {
-          ghTyp.CastTo(ref material);
-          prop.Material = material ?? new GsaMaterial();
-        }
-        else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+        if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+          prop.Material = materialGoo.Value ?? new GsaMaterial();
+        } else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop.Material = new GsaMaterial(idd);
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PV input to a 3D Property of reference integer");
             return;
           }
         }
-      }
-      else
+      } else {
         prop.Material = new GsaMaterial(2);
+      }
 
       prop.AxisProperty = 0;
 

@@ -17,8 +17,7 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()),
-        0);
+        ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()), 0);
 
       return comp;
     }
@@ -107,8 +106,7 @@ namespace GsaGHTests.Components.Geometry {
     public void CreateComponentTest2() {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 1, 1);
-      ComponentTestHelper.SetInput(comp,
-        new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)),
+      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)),
         2);
       ComponentTestHelper.SetInput(comp, "STD CH 10 20 30 40", 3);
       ComponentTestHelper.SetInput(comp, 7, 4);
@@ -116,21 +114,9 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, "Damper", 6);
       ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 7);
       ComponentTestHelper.SetInput(comp,
-        new GsaBool6Goo(new GsaBool6(true,
-          true,
-          true,
-          true,
-          true,
-          true)),
-        8);
+        new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 8);
       ComponentTestHelper.SetInput(comp,
-        new GsaBool6Goo(new GsaBool6(true,
-          true,
-          true,
-          true,
-          true,
-          true)),
-        9);
+        new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 9);
       ComponentTestHelper.SetInput(comp, true, 10);
       ComponentTestHelper.SetInput(comp, true, 11);
       ComponentTestHelper.SetInput(comp, Math.PI, 12);
@@ -138,8 +124,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 0.7, 14);
       ComponentTestHelper.SetInput(comp, false, 15);
       ComponentTestHelper.SetInput(comp,
-        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)),
-        16);
+        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)), 16);
       ComponentTestHelper.SetInput(comp, "name", 17);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
       ComponentTestHelper.SetInput(comp, true, 19);

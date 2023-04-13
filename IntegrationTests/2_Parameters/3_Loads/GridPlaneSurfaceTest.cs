@@ -7,8 +7,8 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GridPlaneSurfaceTest {
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
+    private static GH_Document document = null;
 
     [Theory]
     [InlineData("DefaultGpElevation", "0cm")]
@@ -51,14 +51,12 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
+      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty)
-        .Replace("Test", string.Empty);
+       .Replace("Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",
@@ -73,27 +71,37 @@ namespace IntegrationTests.Parameters {
       GH_ProcessStep state = io.Document.SolutionState;
       Assert.Equal(GH_ProcessStep.PostProcess, state);
 
-      foreach (IGH_DocumentObject obj in (io.Document.Objects)) {
+      foreach (IGH_DocumentObject obj in io.Document.Objects) {
         if (obj is IGH_Param p) {
           p.CollectData();
           p.ComputeData();
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error)) {
             Console.WriteLine("Parameter " + p.NickName + ", Error: " + message);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+          }
+
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning)) {
             Console.WriteLine("Parameter " + p.NickName + ", Warning: " + message);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+          }
+
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark)) {
             Console.WriteLine("Parameter " + p.NickName + ", Remark: " + message);
+          }
         }
       }
 
-      foreach (IGH_DocumentObject obj in (io.Document.Objects)) {
+      foreach (IGH_DocumentObject obj in io.Document.Objects) {
         if (obj is IGH_Component comp) {
-          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error)) {
             Console.WriteLine("Component " + comp.NickName + ", Error: " + message);
-          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+          }
+
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning)) {
             Console.WriteLine("Component \" + comp.NickName + \", Warning: " + message);
-          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+          }
+
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)) {
             Console.WriteLine("Component \" + comp.NickName + \", Remark: " + message);
+          }
         }
       }
 

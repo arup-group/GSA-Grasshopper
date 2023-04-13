@@ -11,8 +11,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="Line" /> can be used in Grasshopper.
   /// </summary>
-  public class LineResultGoo : GH_GeometricGoo<Line>,
-    IGH_PreviewData {
+  public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.BoundingBox;
     public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA result line type.";
@@ -29,14 +28,8 @@ namespace GsaGH.Parameters {
     private readonly float _size2;
 
     public LineResultGoo(
-                                  Line line,
-      IQuantity result1,
-      IQuantity result2,
-      Color color1,
-      Color color2,
-      float size1,
-      float size2,
-      int id) : base(line) {
+      Line line, IQuantity result1, IQuantity result2, Color color1, Color color2, float size1,
+      float size2, int id) : base(line) {
       ElementId = id;
       Result1 = result1;
       Result2 = result2;
@@ -53,18 +46,17 @@ namespace GsaGH.Parameters {
       _previewResultThk = new List<int>();
 
       _previewResultColours.Add(gHGradient.ColourAt(0));
-      _previewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 0 + _size1)));
+      _previewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 0) + _size1));
       _resultLineSegments.Add(new Line(Value.PointAt(0), Value.PointAt(0.5)));
 
       _previewResultColours.Add(gHGradient.ColourAt(1));
-      _previewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 1 + _size1)));
+      _previewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 1) + _size1));
       _resultLineSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
     public override bool CastFrom(object source) {
       switch (source) {
-        case null:
-          return false;
+        case null: return false;
 
         case Line line1:
           Value = line1;
@@ -76,8 +68,10 @@ namespace GsaGH.Parameters {
       }
 
       var line = new Line();
-      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both))
+      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both)) {
         return false;
+      }
+
       Value = line;
 
       return true;
@@ -111,21 +105,16 @@ namespace GsaGH.Parameters {
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      for (int i = 0; i < _resultLineSegments.Count; i++)
-        args.Pipeline.DrawLine(_resultLineSegments[i],
-          _previewResultColours[i],
+      for (int i = 0; i < _resultLineSegments.Count; i++) {
+        args.Pipeline.DrawLine(_resultLineSegments[i], _previewResultColours[i],
           _previewResultThk[i]);
+      }
     }
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-      => new LineResultGoo(Value,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
+    public override IGH_GeometricGoo DuplicateGeometry() {
+      return new LineResultGoo(Value, Result1, Result2, _color1, _color2, _size1, _size2,
         ElementId);
+    }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
       Line ln = Value;
@@ -137,32 +126,21 @@ namespace GsaGH.Parameters {
       Point3d start = xmorph.MorphPoint(Value.From);
       Point3d end = xmorph.MorphPoint(Value.To);
       var ln = new Line(start, end);
-      return new LineResultGoo(ln,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
+      return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2, ElementId);
     }
 
-    public override object ScriptVariable() => Value;
+    public override object ScriptVariable() {
+      return Value;
+    }
 
-    public override string ToString()
-      => $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
+    public override string ToString() {
+      return $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
+    }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
       Line ln = Value;
       ln.Transform(xform);
-      return new LineResultGoo(ln,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
+      return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2, ElementId);
     }
   }
 }

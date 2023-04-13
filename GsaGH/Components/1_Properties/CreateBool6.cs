@@ -27,15 +27,35 @@ namespace GsaGH.Components {
     private bool _zz;
 
     public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-                                  GsaBool6Goo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBool6Goo.Description,
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+      GsaBool6Goo.NickName.Replace(" ", string.Empty), "Create a " + GsaBool6Goo.Description,
+      CategoryName.Name(), SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void CreateAttributes() {
-      var bool6 = new List<List<bool>>() { new List<bool>() { _x, _y, _z, _xx, _yy, _zz } };
-      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Set 6 DOF" }, bool6, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
+      var bool6 = new List<List<bool>>() {
+        new List<bool>() {
+          _x,
+          _y,
+          _z,
+          _xx,
+          _yy,
+          _zz,
+        },
+      };
+      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases,
+        new List<string>() {
+          "Set 6 DOF",
+        }, bool6, new List<List<string>>() {
+          new List<string>() {
+            "x",
+            "y",
+            "z",
+            "xx",
+            "yy",
+            "zz",
+          },
+        });
     }
 
     public override bool Read(GH_IReader reader) {
@@ -82,45 +102,46 @@ namespace GsaGH.Components {
       pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
       pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
 
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager[5]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
+      pManager[5].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaBool6Parameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaBool6Parameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var uiSet = new GsaBool6(_x,
-        _y,
-        _z,
-        _xx,
-        _yy,
-        _zz);
+      var uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
       GsaBool6 bool6 = uiSet.Duplicate();
 
       bool input = false;
-      if (da.GetData(0, ref input))
+      if (da.GetData(0, ref input)) {
         bool6.X = input;
-      if (da.GetData(1, ref input))
+      }
+
+      if (da.GetData(1, ref input)) {
         bool6.Y = input;
-      if (da.GetData(2, ref input))
+      }
+
+      if (da.GetData(2, ref input)) {
         bool6.Z = input;
-      if (da.GetData(3, ref input))
+      }
+
+      if (da.GetData(3, ref input)) {
         bool6.Xx = input;
-      if (da.GetData(4, ref input))
+      }
+
+      if (da.GetData(4, ref input)) {
         bool6.Yy = input;
-      if (da.GetData(5, ref input))
+      }
+
+      if (da.GetData(5, ref input)) {
         bool6.Zz = input;
+      }
 
       bool update = false;
       if (bool6.X != uiSet.X) {
@@ -153,8 +174,9 @@ namespace GsaGH.Components {
         update = true;
       }
 
-      if (update)
+      if (update) {
         ReDrawComponent();
+      }
 
       da.SetData(0, new GsaBool6Goo(bool6));
     }

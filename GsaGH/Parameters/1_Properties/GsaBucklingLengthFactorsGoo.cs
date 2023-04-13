@@ -4,7 +4,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaBucklingLengthFactors"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaBucklingLengthFactors" /> can be used in Grasshopper.
   /// </summary>
   public class GsaBucklingLengthFactorsGoo : GH_OasysGoo<GsaBucklingLengthFactors> {
     public static string Description => "GSA Buckling Factors";
@@ -14,6 +14,8 @@ namespace GsaGH.Parameters {
 
     public GsaBucklingLengthFactorsGoo(GsaBucklingLengthFactors item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaBucklingLengthFactorsGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaBucklingLengthFactorsGoo(Value);
+    }
   }
 }

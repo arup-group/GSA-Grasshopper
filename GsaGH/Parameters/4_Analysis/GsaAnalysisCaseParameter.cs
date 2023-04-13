@@ -13,23 +13,18 @@ namespace GsaGH.Parameters {
     public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override string InstanceDescription
-      => m_data.DataCount == 0
-        ? "Empty " + GsaAnalysisCaseGoo.Name + " parameter"
-        : base.InstanceDescription;
-    public override string TypeName
-      => SourceCount == 0
-        ? GsaAnalysisCaseGoo.Name
-        : base.TypeName;
+      => m_data.DataCount == 0 ? "Empty " + GsaAnalysisCaseGoo.Name + " parameter" :
+        base.InstanceDescription;
+    public override string TypeName => SourceCount == 0 ? GsaAnalysisCaseGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.AnalysisCaseParam;
 
     public GsaAnalysisCaseParameter() : base(new GH_InstanceDescription(GsaAnalysisCaseGoo.Name,
-                          GsaAnalysisCaseGoo.NickName,
-      GsaAnalysisCaseGoo.Description + " parameter",
-      CategoryName.Name(),
-      SubCategoryName.Cat9())) { }
+      GsaAnalysisCaseGoo.NickName, GsaAnalysisCaseGoo.Description + " parameter",
+      CategoryName.Name(), SubCategoryName.Cat9())) { }
 
-    protected override GsaAnalysisCaseGoo PreferredCast(object data) => data.GetType() == typeof(GsaAnalysisCase)
-      ? new GsaAnalysisCaseGoo((GsaAnalysisCase)data)
-      : base.PreferredCast(data);
+    protected override GsaAnalysisCaseGoo PreferredCast(object data) {
+      return data.GetType() == typeof(GsaAnalysisCase) ?
+        new GsaAnalysisCaseGoo((GsaAnalysisCase)data) : base.PreferredCast(data);
+    }
   }
 }

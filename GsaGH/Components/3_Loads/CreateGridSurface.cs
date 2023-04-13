@@ -37,11 +37,8 @@ namespace GsaGH.Components {
     private bool _duringLoad = false;
     private FoldMode _mode = FoldMode.OneDimensionalOneWay;
 
-    public CreateGridSurface() : base("Create Grid Surface",
-                              "GridSurface",
-      "Create GSA Grid Surface",
-      CategoryName.Name(),
-      SubCategoryName.Cat3()) { }
+    public CreateGridSurface() : base("Create Grid Surface", "GridSurface",
+      "Create GSA Grid Surface", CategoryName.Name(), SubCategoryName.Cat3()) { }
 
     public override bool Read(GH_IReader reader) {
       if (reader.ItemExists("Mode")) {
@@ -70,7 +67,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      if (i == 0)
+      if (i == 0) {
         switch (_selectedItems[i]) {
           case "1D, One-way span":
             Mode1Clicked();
@@ -84,6 +81,7 @@ namespace GsaGH.Components {
             Mode3Clicked();
             break;
         }
+      }
 
       base.UpdateUI();
     }
@@ -91,63 +89,41 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
-          Params.Input[5]
-            .NickName = "Dir";
-          Params.Input[5]
-            .Name = "Span Direction";
-          Params.Input[5]
-            .Description = "Span Direction between -180 and 180 degrees";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
+          Params.Input[5].NickName = "Dir";
+          Params.Input[5].Name = "Span Direction";
+          Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
+          Params.Input[5].Access = GH_ParamAccess.item;
+          Params.Input[5].Optional = true;
           break;
 
         case FoldMode.OneDimensionalTwoWay:
-          Params.Input[5]
-            .NickName = "Exp";
-          Params.Input[5]
-            .Name = "Load Expansion";
-          Params.Input[5]
-              .Description = "Load Expansion: "
-            + Environment.NewLine
-            + "Accepted inputs are:"
-            + Environment.NewLine
-            + "0 : Corner (plane)"
-            + Environment.NewLine
-            + "1 : Smooth (plane)"
-            + Environment.NewLine
-            + "2 : Plane"
-            + Environment.NewLine
-            + "3 : Legacy";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
+          Params.Input[5].NickName = "Exp";
+          Params.Input[5].Name = "Load Expansion";
+          Params.Input[5].Description = "Load Expansion: " + Environment.NewLine
+            + "Accepted inputs are:" + Environment.NewLine + "0 : Corner (plane)"
+            + Environment.NewLine + "1 : Smooth (plane)" + Environment.NewLine + "2 : Plane"
+            + Environment.NewLine + "3 : Legacy";
+          Params.Input[5].Access = GH_ParamAccess.item;
+          Params.Input[5].Optional = true;
 
-          Params.Input[6]
-            .NickName = "Sim";
-          Params.Input[6]
-            .Name = "Simplify";
-          Params.Input[6]
-            .Description = "Simplify Tributary Area (default: True)";
-          Params.Input[6]
-            .Access = GH_ParamAccess.item;
-          Params.Input[6]
-            .Optional = true;
+          Params.Input[6].NickName = "Sim";
+          Params.Input[6].Name = "Simplify";
+          Params.Input[6].Description = "Simplify Tributary Area (default: True)";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = true;
           break;
       }
     }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      if (_mode != FoldMode.OneDimensionalOneWay)
+      if (_mode != FoldMode.OneDimensionalOneWay) {
         return;
+      }
 
-      if (Params.Input[5] is Param_Number angleParameter)
-        _angleUnit = angleParameter.UseDegrees
-          ? AngleUnit.Degree
-          : AngleUnit.Radian;
+      if (Params.Input[5] is Param_Number angleParameter) {
+        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
+      }
     }
 
     protected override void InitialiseDropdowns() {
@@ -165,57 +141,37 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Grid Plane",
-        "GP",
-        "Grid Plane. If no input, Global XY-plane will be used",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Grid Surface ID",
-        "ID",
+      pManager.AddGenericParameter("Grid Plane", "GP",
+        "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Grid Surface ID", "ID",
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
-        GH_ParamAccess.item,
-        0);
-      pManager.AddGenericParameter("Element list",
-        "El",
+        GH_ParamAccess.item, 0);
+      pManager.AddGenericParameter("Element list", "El",
         "Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
-        + Environment.NewLine
-        + "Element list should take the form:"
-        + Environment.NewLine
+        + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Tolerance in model units",
-        "To",
-        "Tolerance for Load Expansion (default 10mm)",
-        GH_ParamAccess.item);
-      pManager.AddAngleParameter("Span Direction",
-        "Di",
-        "Span Direction between -180 and 180 degrees",
-        GH_ParamAccess.item,
-        0);
-      pManager[5]
-        .Optional = true;
+      pManager.AddGenericParameter("Tolerance in model units", "To",
+        "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
+      pManager.AddAngleParameter("Span Direction", "Di",
+        "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
+      pManager[5].Optional = true;
       _angleInputParam = Params.Input[5];
 
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Surface",
-        "GPS",
-        "GSA Grid Surface",
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       Plane plane = Plane.Unset;
@@ -224,15 +180,12 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaGridPlaneSurfaceGoo) {
-          var temppln = new GsaGridPlaneSurface();
-          ghTyp.CastTo(ref temppln);
-          gps = temppln.Duplicate();
-        }
-        else {
-          if (ghTyp.CastTo(ref plane))
+        if (ghTyp.Value is GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo) {
+          gps = gridPlaneSurfaceGoo.Value.Duplicate();
+        } else {
+          if (ghTyp.CastTo(ref plane)) {
             gps = new GsaGridPlaneSurface(plane);
-          else {
+          } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               gps = new GsaGridPlaneSurface {
                 GridSurface = {
@@ -241,23 +194,22 @@ namespace GsaGH.Components {
                 GridPlane = null,
               };
               idSet = true;
-            }
-            else {
+            } else {
               this.AddRuntimeError("Cannot convert your input to GridPlaneSurface or Plane");
               return;
             }
           }
         }
-      }
-      else {
+      } else {
         plane = Plane.WorldXY;
         gps = new GsaGridPlaneSurface(plane);
       }
 
       bool changeGs = false;
       var gs = new GridSurface();
-      if (idSet)
+      if (idSet) {
         gs.GridPlane = gps.GridSurface.GridPlane;
+      }
 
       var ghInteger = new GH_Integer();
       if (da.GetData(1, ref ghInteger)) {
@@ -275,92 +227,99 @@ namespace GsaGH.Components {
 
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-              if (value.Value.EntityType == Parameters.EntityType.Element || value.Value.EntityType == Parameters.EntityType.Member) {
-                gps._refList = value.Value;
-                gps._referenceType = ReferenceType.List;
-              }
-              else {
-                this.AddRuntimeWarning("List must be of type Element or Member to apply to beam loading");
-              }
-              if (value.Value.EntityType == Parameters.EntityType.Member) {
-                this.AddRuntimeRemark(
+            if (value.Value.EntityType == EntityType.Element
+              || value.Value.EntityType == EntityType.Member) {
+              gps._refList = value.Value;
+              gps._referenceType = ReferenceType.List;
+            } else {
+              this.AddRuntimeWarning(
+                "List must be of type Element or Member to apply to beam loading");
+            }
+
+            if (value.Value.EntityType == EntityType.Member) {
+              this.AddRuntimeRemark(
                 "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
-              break;
             }
+
+            break;
+          }
           case GsaElement2dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Element;
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Element;
+            break;
+          }
           case GsaMember1dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Member;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Member;
+            this.AddRuntimeRemark(
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            break;
+          }
           case GsaMember2dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Member;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Member;
+            this.AddRuntimeRemark(
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            break;
+          }
           case GsaMember3dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Member;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Member;
+            this.AddRuntimeRemark(
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            break;
+          }
           case GsaSectionGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Section;
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Section;
+            break;
+          }
           case GsaProp2dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Prop2d;
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Prop2d;
+            break;
+          }
           case GsaProp3dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Prop3d;
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Prop3d;
+            break;
+          }
           default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
-                gps.GridSurface.Elements = elemList;
-              break;
+            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
+              gps.GridSurface.Elements = elemList;
             }
+
+            break;
+          }
         }
-      }
-      else
+      } else {
         gps.GridSurface.Elements = "All";
+      }
 
       var ghString = new GH_String();
-      if (da.GetData(3, ref ghString))
+      if (da.GetData(3, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
           gs.Name = name;
           changeGs = true;
         }
+      }
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(4, ref ghTyp)) {
         string tolIn = ghTyp.Value.ToString();
 
-        if (tolIn != "")
+        if (tolIn != "") {
           try {
             Length.Parse(tolIn);
             gps.Tolerance = tolIn;
-          }
-          catch (Exception e) {
-            if (double.TryParse(tolIn, out double _))
+          } catch (Exception e) {
+            if (double.TryParse(tolIn, out double _)) {
               gps.Tolerance = tolIn;
-            else
+            } else {
               this.AddRuntimeWarning(e.Message);
+            }
           }
+        }
       }
 
       switch (_mode) {
@@ -372,11 +331,14 @@ namespace GsaGH.Components {
           if (da.GetData(5, ref dir)) {
             var direction = new Angle(dir, _angleUnit);
 
-            if (direction.Degrees > 180 || direction.Degrees < -180)
+            if (direction.Degrees > 180 || direction.Degrees < -180) {
               this.AddRuntimeWarning("Angle value must be between -180 and 180 degrees");
+            }
+
             gs.Direction = direction.Degrees;
-            if (dir != 0.0)
+            if (dir != 0.0) {
               changeGs = true;
+            }
           }
 
           break;
@@ -387,8 +349,10 @@ namespace GsaGH.Components {
 
           int exp = 0;
           var ghexp = new GH_Integer();
-          if (da.GetData(5, ref ghexp))
+          if (da.GetData(5, ref ghexp)) {
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
+          }
+
           gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
           switch (exp) {
             case 1:
@@ -406,11 +370,12 @@ namespace GsaGH.Components {
 
           bool simple = true;
           var ghsim = new GH_Boolean();
-          if (da.GetData(6, ref ghsim))
+          if (da.GetData(6, ref ghsim)) {
             GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
-          gs.SpanType = simple
-            ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS
-            : GridSurface.Span_Type.TWO_WAY;
+          }
+
+          gs.SpanType = simple ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS :
+            GridSurface.Span_Type.TWO_WAY;
           break;
 
         case FoldMode.TwoDimensional:
@@ -419,8 +384,9 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (changeGs)
+      if (changeGs) {
         gps.GridSurface = gs;
+      }
 
       da.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
     }
@@ -449,45 +415,55 @@ namespace GsaGH.Components {
     }
 
     private void Mode1Clicked() {
-      if (!_duringLoad && _mode == FoldMode.OneDimensionalOneWay)
+      if (!_duringLoad && _mode == FoldMode.OneDimensionalOneWay) {
         return;
+      }
 
       RecordUndoEvent("1D, one-way Parameters");
       _mode = FoldMode.OneDimensionalOneWay;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
 
       Params.RegisterInputParam(_angleInputParam);
     }
 
     private void Mode2Clicked() {
-      if (!_duringLoad && _mode == FoldMode.OneDimensionalTwoWay)
+      if (!_duringLoad && _mode == FoldMode.OneDimensionalTwoWay) {
         return;
-      if (_mode == FoldMode.OneDimensionalOneWay)
+      }
+
+      if (_mode == FoldMode.OneDimensionalOneWay) {
         _angleInputParam = Params.Input[5];
+      }
 
       RecordUndoEvent("1D, two-way Parameters");
       _mode = FoldMode.OneDimensionalTwoWay;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
 
       Params.RegisterInputParam(new Param_Integer());
       Params.RegisterInputParam(new Param_Boolean());
     }
 
     private void Mode3Clicked() {
-      if (!_duringLoad && _mode == FoldMode.TwoDimensional)
+      if (!_duringLoad && _mode == FoldMode.TwoDimensional) {
         return;
-      if (_mode == FoldMode.OneDimensionalOneWay)
+      }
+
+      if (_mode == FoldMode.OneDimensionalOneWay) {
         _angleInputParam = Params.Input[5];
+      }
 
       RecordUndoEvent("2D Parameters");
       _mode = FoldMode.TwoDimensional;
 
-      while (Params.Input.Count > 5)
+      while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
+      }
     }
   }
 }

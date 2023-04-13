@@ -34,7 +34,8 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestCreateSection() {
       string profile = "STD CHS 200 10";
-      double myarea = Math.PI / 4 * Math.Pow(200, 2) - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2);
+      double myarea = (Math.PI / 4 * Math.Pow(200, 2))
+        - (Math.PI / 4 * Math.Pow(200 - (2 * 10), 2));
       var areaExpected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       var sect = new GsaSection(profile);
@@ -48,7 +49,8 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(0, sect.Material.AnalysisProperty);
       Assert.Equal(2, sect.Material.GradeProperty);
-      Assert.Equal(MaterialType.CONCRETE.ToString().ToPascalCase(), sect.Material.MaterialType.ToString());
+      Assert.Equal(MaterialType.CONCRETE.ToString().ToPascalCase(),
+        sect.Material.MaterialType.ToString());
       Assert.Equal("mariam", sect.Name);
       Assert.Equal(4, sect.Pool);
     }
@@ -106,13 +108,15 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(0, dup.Material.AnalysisProperty);
       Assert.Equal(2, dup.Material.GradeProperty);
-      Assert.Equal(MaterialType.STEEL.ToString().ToPascalCase(), dup.Material.MaterialType.ToString());
+      Assert.Equal(MaterialType.STEEL.ToString().ToPascalCase(),
+        dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
       Assert.Equal(12, dup.Pool);
 
       Assert.Equal(4, orig.Material.AnalysisProperty);
       Assert.Equal(0, orig.Material.GradeProperty);
-      Assert.Equal(MaterialType.TIMBER.ToString().ToPascalCase(), orig.Material.MaterialType.ToString());
+      Assert.Equal(MaterialType.TIMBER.ToString().ToPascalCase(),
+        orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal(99, orig.Pool);
     }

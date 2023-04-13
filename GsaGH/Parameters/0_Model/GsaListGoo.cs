@@ -4,7 +4,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaList"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaList" /> can be used in Grasshopper.
   /// </summary>
   public class GsaListGoo : GH_OasysGoo<GsaList> {
     public static string Description => "GSA Entity List";
@@ -14,6 +14,8 @@ namespace GsaGH.Parameters {
 
     public GsaListGoo(GsaList item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaListGoo(this.Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaListGoo(Value);
+    }
   }
 }

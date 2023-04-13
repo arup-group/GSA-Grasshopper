@@ -5,7 +5,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaProp3d"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaProp3d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaProp3dGoo : GH_OasysGoo<GsaProp3d> {
     public static string Description => "GSA Volume Property";
@@ -16,11 +16,13 @@ namespace GsaGH.Parameters {
     public GsaProp3dGoo(GsaProp3d item) : base(item) { }
 
     public override bool CastFrom(object source) {
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
-      if (base.CastFrom(source))
+      if (base.CastFrom(source)) {
         return true;
+      }
 
       if (source.GetType().IsAssignableFrom(typeof(GsaMaterial))) {
         Value = new GsaProp3d((GsaMaterial)source);
@@ -36,19 +38,22 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target))
+      if (base.CastTo(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
-        else {
+        } else {
           var ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)) {
             target = (TQ)(object)ghint;
-          else
+          } else {
             target = default;
+          }
         }
+
         return true;
       }
 
@@ -56,6 +61,8 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override IGH_Goo Duplicate() => new GsaProp3dGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaProp3dGoo(Value);
+    }
   }
 }

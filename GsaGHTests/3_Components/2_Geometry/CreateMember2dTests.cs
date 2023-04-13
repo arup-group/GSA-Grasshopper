@@ -18,15 +18,10 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
-        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0),
-          new Point3d(10, 0, 0),
-          new Point3d(10, 10, 0),
-          new Point3d(0, 10, 0),
-          1),
-        0);
+        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0),
+          new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1), 0);
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(false)),
-        3);
+        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(false)), 3);
       ComponentTestHelper.SetInput(comp, 0.5, 4);
 
       return comp;

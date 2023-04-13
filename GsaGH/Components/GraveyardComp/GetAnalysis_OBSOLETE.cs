@@ -20,42 +20,32 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAnalysisTask;
 
-    public GetAnalysis_OBSOLETE() : base("Get Model Analysis",
-          "GetAnalysis",
-      "Get Analysis Cases and Tasks from GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+    public GetAnalysis_OBSOLETE() : base("Get Model Analysis", "GetAnalysis",
+      "Get Analysis Cases and Tasks from GSA model", CategoryName.Name(), SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("GSA Model",
-        "GSA",
-        "GSA model containing some Analysis Cases and Tasks",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("GSA Model", "GSA",
+        "GSA model containing some Analysis Cases and Tasks", GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Analysis Tasks",
-        "Tasks",
-        "List of analysis tasks in model",
+      pManager.AddGenericParameter("Analysis Tasks", "Tasks", "List of analysis tasks in model",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Case Names",
-        "Name",
-        "Analysis case name",
+      pManager.AddGenericParameter("Analysis Case Names", "Name", "Analysis case name",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Load Case/Combination ID",
-        "LC",
-        "Load cases and combinations list",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Case Description",
-        "Desc",
-        "Analysis case description",
+      pManager.AddGenericParameter("Load Case/Combination ID", "LC",
+        "Load cases and combinations list", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Analysis Case Description", "Desc", "Analysis case description",
         GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
+      if (!da.GetData(0, ref gsaModel)) {
         return;
+      }
 
       Model model = gsaModel.Model;
       var taskList = new List<string>();
@@ -63,15 +53,12 @@ namespace GsaGH.Components {
       var caseNameList = new List<string>();
       var analysisIdList = new List<int>();
 
-      foreach (int key in model.AnalysisTasks()
-        .Keys) {
-        model.AnalysisTasks()
-          .TryGetValue(key, out AnalysisTask analTask);
+      foreach (int key in model.AnalysisTasks().Keys) {
+        model.AnalysisTasks().TryGetValue(key, out AnalysisTask analTask);
         taskList.Add(analTask?.Name);
       }
 
-      foreach (int key in model.Results()
-        .Keys) {
+      foreach (int key in model.Results().Keys) {
         descriptionList.Add(model.AnalysisCaseDescription(key));
         caseNameList.Add(model.AnalysisCaseName(key));
         analysisIdList.Add(key);

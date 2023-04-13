@@ -40,19 +40,17 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
 
-    public CreateCustomMaterial() : base("Custom Material",
-                          "Material",
-      "Create a Custom GSA Analysis Material",
-      CategoryName.Name(),
-      SubCategoryName.Cat1())
-      => Hidden = true;
+    public CreateCustomMaterial() : base("Custom Material", "Material",
+      "Create a Custom GSA Analysis Material", CategoryName.Name(), SubCategoryName.Cat1()) {
+      Hidden = true;
+    }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      if (i == 0)
+      if (i == 0) {
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0].ToPascalCase());
-      else
+      } else {
         switch (i) {
           case 1:
             _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), _selectedItems[1]);
@@ -67,6 +65,7 @@ namespace GsaGH.Components {
               = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[3]);
             break;
         }
+      }
 
       base.UpdateUI();
     }
@@ -77,15 +76,12 @@ namespace GsaGH.Components {
       string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
 
       int i = 1;
-      Params.Input[i]
-        .Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
+      Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
       i++;
       i++;
-      Params.Input[i]
-        .Name = "Density [" + densityUnitAbbreviation + "]";
+      Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
       i++;
-      Params.Input[i]
-        .Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
+      Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -119,38 +115,24 @@ namespace GsaGH.Components {
       string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
       string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
 
-      pManager.AddIntegerParameter("Analysis Property Number",
-        "ID",
-        "Analysis Property Number (do not use 0 -> 'from Grade')",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]",
-        "E",
-        "Elastic Modulus of the elastic isotropic material",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Poisson's Ratio",
-        "ν",
-        "Poisson's Ratio of the elastic isotropic material",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Density [" + densityUnitAbbreviation + "]",
-        "ρ",
-        "Density of the elastic isotropic material",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]",
-        "α",
-        "Thermal Expansion Coefficient of the elastic isotropic material",
-        GH_ParamAccess.item);
-      pManager[0]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
+      pManager.AddIntegerParameter("Analysis Property Number", "ID",
+        "Analysis Property Number (do not use 0 -> 'from Grade')", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E",
+        "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Poisson's Ratio", "ν",
+        "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Density [" + densityUnitAbbreviation + "]", "ρ",
+        "Density of the elastic isotropic material", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]", "α",
+        "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
+      pManager[0].Optional = true;
+      pManager[4].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMaterialParameter(),
-        "Material",
-        "Mat",
-        "GSA Custom Material",
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Custom Material",
         GH_ParamAccess.item);
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var material = new GsaMaterial();
@@ -161,13 +143,12 @@ namespace GsaGH.Components {
         material.AnalysisProperty = anal;
         if (anal == 0) {
           this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
-            + Environment.NewLine
-            + "Leave blank or use -1 for automatic assigning.");
+            + Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }
-      }
-      else
+      } else {
         material.AnalysisProperty = -1;
+      }
 
       double poisson = 0.3;
       da.GetData(2, ref poisson);
@@ -185,14 +166,11 @@ namespace GsaGH.Components {
       }
 
       material.AnalysisMaterial = new AnalysisMaterial() {
-        ElasticModulus = Input.UnitNumber(this, da, 1, _stressUnit)
-          .As(PressureUnit.Pascal),
+        ElasticModulus = Input.UnitNumber(this, da, 1, _stressUnit).As(PressureUnit.Pascal),
         PoissonsRatio = poisson,
-        Density = Input.UnitNumber(this, da, 3, _densityUnit)
-          .As(DensityUnit.KilogramPerCubicMeter),
+        Density = Input.UnitNumber(this, da, 3, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 4, thermalExpansionUnit, true)
-          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
-      };
+         .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius), };
 
       material.GradeProperty = 0;
 

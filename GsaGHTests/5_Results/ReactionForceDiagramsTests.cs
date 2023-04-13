@@ -66,12 +66,9 @@ namespace GsaGHTests {
       var expectedStringParam = new Param_String() {
         Name = "Node filter list",
         NickName = "No",
-        Description = "Filter results by list."
-          + Environment.NewLine
-          + "Node list should take the form:"
-          + Environment.NewLine
-          + " 1 11 to 72 step 2 not (XY3 31 to 45)"
-          + Environment.NewLine
+        Description = "Filter results by list." + Environment.NewLine
+          + "Node list should take the form:" + Environment.NewLine
+          + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
           + "Refer to GSA help file for definition of lists and full vocabulary.",
         Access = GH_ParamAccess.item,
         Optional = true,
@@ -94,26 +91,11 @@ namespace GsaGHTests {
       List<IGH_Param> actualInputs = obj.Params.Input;
 
       for (int i = 0; i < actualInputs.Count; i++) {
-        Assert.Equal(actualInputs[i]
-            .Name,
-          expectedInputs[i]
-            .Name);
-        Assert.Equal(actualInputs[i]
-            .NickName,
-          expectedInputs[i]
-            .NickName);
-        Assert.Equal(actualInputs[i]
-            .Description,
-          expectedInputs[i]
-            .Description);
-        Assert.Equal(actualInputs[i]
-            .Access,
-          expectedInputs[i]
-            .Access);
-        Assert.Equal(actualInputs[i]
-            .Optional,
-          expectedInputs[i]
-            .Optional);
+        Assert.Equal(actualInputs[i].Name, expectedInputs[i].Name);
+        Assert.Equal(actualInputs[i].NickName, expectedInputs[i].NickName);
+        Assert.Equal(actualInputs[i].Description, expectedInputs[i].Description);
+        Assert.Equal(actualInputs[i].Access, expectedInputs[i].Access);
+        Assert.Equal(actualInputs[i].Optional, expectedInputs[i].Optional);
       }
 
       Assert.Equal(actualInputs.Count, expectedInputs.Count);
@@ -150,22 +132,10 @@ namespace GsaGHTests {
       List<IGH_Param> actualOutputs = obj.Params.Output;
 
       for (int i = 0; i < actualOutputs.Count; i++) {
-        Assert.Equal(actualOutputs[i]
-            .Name,
-          expectedOutputs[i]
-            .Name);
-        Assert.Equal(actualOutputs[i]
-            .NickName,
-          expectedOutputs[i]
-            .NickName);
-        Assert.Equal(actualOutputs[i]
-            .Description,
-          expectedOutputs[i]
-            .Description);
-        Assert.Equal(actualOutputs[i]
-            .Access,
-          expectedOutputs[i]
-            .Access);
+        Assert.Equal(actualOutputs[i].Name, expectedOutputs[i].Name);
+        Assert.Equal(actualOutputs[i].NickName, expectedOutputs[i].NickName);
+        Assert.Equal(actualOutputs[i].Description, expectedOutputs[i].Description);
+        Assert.Equal(actualOutputs[i].Access, expectedOutputs[i].Access);
       }
 
       Assert.Equal(actualOutputs.Count, expectedOutputs.Count);
@@ -234,10 +204,9 @@ namespace GsaGHTests {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.Equal(obj._spacerDescriptions,
-        new List<string>() {
-          "Component",
-        });
+      Assert.Equal(obj._spacerDescriptions, new List<string>() {
+        "Component",
+      });
     }
 
     [Fact]

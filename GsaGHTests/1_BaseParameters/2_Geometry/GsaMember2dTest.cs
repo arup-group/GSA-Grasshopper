@@ -39,46 +39,16 @@ namespace GsaGHTests.Parameters {
         Type = MemberType.SLAB,
       };
 
-      Assert.Equal(mem.Brep.Vertices[0]
-          .Location.X,
-        mem.Topology[0]
-          .X);
-      Assert.Equal(mem.Brep.Vertices[0]
-          .Location.Y,
-        mem.Topology[0]
-          .Y);
-      Assert.Equal(mem.Brep.Vertices[1]
-          .Location.X,
-        mem.Topology[1]
-          .X);
-      Assert.Equal(mem.Brep.Vertices[1]
-          .Location.Y,
-        mem.Topology[1]
-          .Y);
-      Assert.Equal(mem.Brep.Vertices[2]
-          .Location.X,
-        mem.Topology[2]
-          .X);
-      Assert.Equal(mem.Brep.Vertices[2]
-          .Location.Y,
-        mem.Topology[2]
-          .Y);
-      Assert.Equal(mem.Brep.Vertices[3]
-          .Location.X,
-        mem.Topology[3]
-          .X);
-      Assert.Equal(mem.Brep.Vertices[3]
-          .Location.Y,
-        mem.Topology[3]
-          .Y);
-      Assert.Equal(mem.Brep.Vertices[0]
-          .Location.X,
-        mem.Topology[4]
-          .X);
-      Assert.Equal(mem.Brep.Vertices[0]
-          .Location.Y,
-        mem.Topology[4]
-          .Y);
+      Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[0].X);
+      Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[0].Y);
+      Assert.Equal(mem.Brep.Vertices[1].Location.X, mem.Topology[1].X);
+      Assert.Equal(mem.Brep.Vertices[1].Location.Y, mem.Topology[1].Y);
+      Assert.Equal(mem.Brep.Vertices[2].Location.X, mem.Topology[2].X);
+      Assert.Equal(mem.Brep.Vertices[2].Location.Y, mem.Topology[2].Y);
+      Assert.Equal(mem.Brep.Vertices[3].Location.X, mem.Topology[3].X);
+      Assert.Equal(mem.Brep.Vertices[3].Location.Y, mem.Topology[3].Y);
+      Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[4].X);
+      Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[4].Y);
 
       Assert.Equal(Color.FromArgb(255, 255, 255, 255), mem.Colour);
       Assert.Equal(4, mem.Id);
@@ -126,64 +96,22 @@ namespace GsaGHTests.Parameters {
 
       GsaMember2d dup = original.Duplicate();
 
-      Assert.Equal(original.Brep.Vertices[0]
-          .Location.X,
-        dup.Topology[0]
-          .X);
-      Assert.Equal(original.Brep.Vertices[0]
-          .Location.Y,
-        dup.Topology[0]
-          .Y);
-      Assert.Equal(original.Brep.Vertices[1]
-          .Location.X,
-        dup.Topology[1]
-          .X);
-      Assert.Equal(original.Brep.Vertices[1]
-          .Location.Y,
-        dup.Topology[1]
-          .Y);
-      Assert.Equal(original.Brep.Vertices[2]
-          .Location.X,
-        dup.Topology[2]
-          .X);
-      Assert.Equal(original.Brep.Vertices[2]
-          .Location.Y,
-        dup.Topology[2]
-          .Y);
-      Assert.Equal(original.Brep.Vertices[3]
-          .Location.X,
-        dup.Topology[3]
-          .X);
-      Assert.Equal(original.Brep.Vertices[3]
-          .Location.Y,
-        dup.Topology[3]
-          .Y);
-      Assert.Equal(original.Brep.Vertices[0]
-          .Location.X,
-        dup.Topology[4]
-          .X);
-      Assert.Equal(original.Brep.Vertices[0]
-          .Location.Y,
-        dup.Topology[4]
-          .Y);
-      Assert.Equal(1,
-        dup.IncLinesTopology[0][0]
-          .X);
-      Assert.Equal(2,
-        dup.IncLinesTopology[0][0]
-          .Y);
-      Assert.Equal(3,
-        dup.IncLinesTopology[0][1]
-          .X);
-      Assert.Equal(2,
-        dup.IncLinesTopology[0][1]
-          .Y);
-      Assert.Equal(1,
-        dup.InclusionPoints[0]
-          .X);
-      Assert.Equal(1,
-        dup.InclusionPoints[0]
-          .Y);
+      Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
+      Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y);
+      Assert.Equal(original.Brep.Vertices[1].Location.X, dup.Topology[1].X);
+      Assert.Equal(original.Brep.Vertices[1].Location.Y, dup.Topology[1].Y);
+      Assert.Equal(original.Brep.Vertices[2].Location.X, dup.Topology[2].X);
+      Assert.Equal(original.Brep.Vertices[2].Location.Y, dup.Topology[2].Y);
+      Assert.Equal(original.Brep.Vertices[3].Location.X, dup.Topology[3].X);
+      Assert.Equal(original.Brep.Vertices[3].Location.Y, dup.Topology[3].Y);
+      Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[4].X);
+      Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[4].Y);
+      Assert.Equal(1, dup.IncLinesTopology[0][0].X);
+      Assert.Equal(2, dup.IncLinesTopology[0][0].Y);
+      Assert.Equal(3, dup.IncLinesTopology[0][1].X);
+      Assert.Equal(2, dup.IncLinesTopology[0][1].Y);
+      Assert.Equal(1, dup.InclusionPoints[0].X);
+      Assert.Equal(1, dup.InclusionPoints[0].Y);
 
       Assert.Equal(Color.FromArgb(255, 0, 0, 255), dup.Colour);
       Assert.Equal(13, dup.Id);
@@ -216,46 +144,16 @@ namespace GsaGHTests.Parameters {
       original.Type2D = AnalysisOrder.QUADRATIC;
       original.Type = MemberType.WALL;
 
-      Assert.NotEqual(original.Brep.Vertices[0]
-          .Location.X,
-        dup.Topology[0]
-          .X);
-      Assert.NotEqual(original.Brep.Vertices[0]
-          .Location.Y,
-        dup.Topology[0]
-          .Y);
-      Assert.NotEqual(original.Brep.Vertices[1]
-          .Location.X,
-        dup.Topology[1]
-          .X);
-      Assert.NotEqual(original.Brep.Vertices[1]
-          .Location.Y,
-        dup.Topology[1]
-          .Y);
-      Assert.NotEqual(original.Brep.Vertices[2]
-          .Location.X,
-        dup.Topology[2]
-          .X);
-      Assert.NotEqual(original.Brep.Vertices[2]
-          .Location.Y,
-        dup.Topology[2]
-          .Y);
-      Assert.NotEqual(original.Brep.Vertices[3]
-          .Location.X,
-        dup.Topology[3]
-          .X);
-      Assert.NotEqual(original.Brep.Vertices[3]
-          .Location.Y,
-        dup.Topology[3]
-          .Y);
-      Assert.NotEqual(original.Brep.Vertices[0]
-          .Location.X,
-        dup.Topology[4]
-          .X);
-      Assert.NotEqual(original.Brep.Vertices[0]
-          .Location.Y,
-        dup.Topology[4]
-          .Y);
+      Assert.NotEqual(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
+      Assert.NotEqual(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y);
+      Assert.NotEqual(original.Brep.Vertices[1].Location.X, dup.Topology[1].X);
+      Assert.NotEqual(original.Brep.Vertices[1].Location.Y, dup.Topology[1].Y);
+      Assert.NotEqual(original.Brep.Vertices[2].Location.X, dup.Topology[2].X);
+      Assert.NotEqual(original.Brep.Vertices[2].Location.Y, dup.Topology[2].Y);
+      Assert.NotEqual(original.Brep.Vertices[3].Location.X, dup.Topology[3].X);
+      Assert.NotEqual(original.Brep.Vertices[3].Location.Y, dup.Topology[3].Y);
+      Assert.NotEqual(original.Brep.Vertices[0].Location.X, dup.Topology[4].X);
+      Assert.NotEqual(original.Brep.Vertices[0].Location.Y, dup.Topology[4].Y);
 
       Assert.Equal(Color.FromArgb(255, 0, 0, 255), dup.Colour);
       Assert.Equal(13, dup.Id);

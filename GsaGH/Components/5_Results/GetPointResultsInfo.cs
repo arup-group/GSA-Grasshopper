@@ -15,24 +15,19 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Result0dInfo;
 
-    public GetPointResultsInfo() : base("PointResultsInfo",
-          "PtResInfo",
-      "Get Node Contour Result values",
-      CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+    public GetPointResultsInfo() : base("PointResultsInfo", "PtResInfo",
+      "Get Node Contour Result values", CategoryName.Name(), SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Result Point",
-        "P",
-        "Contoured Points with result values",
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values",
         GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddPointParameter("Point", "P", "Location of the Node", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Result Value",
-        "R",
-        "Result value as UnitNumber",
+      pManager.AddGenericParameter("Result Value", "R", "Result value as UnitNumber",
         GH_ParamAccess.item);
     }
 

@@ -62,9 +62,7 @@ namespace GsaGH.Parameters {
     }
     public GsaOffset Offset {
       get
-        => new GsaOffset(ApiElement.Offset.X1,
-          ApiElement.Offset.X2,
-          ApiElement.Offset.Y,
+        => new GsaOffset(ApiElement.Offset.X1, ApiElement.Offset.X2, ApiElement.Offset.Y,
           ApiElement.Offset.Z);
       set {
         CloneApiObject();
@@ -90,9 +88,7 @@ namespace GsaGH.Parameters {
     }
     public int ParentMember => ApiElement.ParentMember.Member;
     public GsaBool6 ReleaseEnd {
-      get
-        => new GsaBool6(ApiElement.GetEndRelease(1)
-          .Releases);
+      get => new GsaBool6(ApiElement.GetEndRelease(1).Releases);
       set {
         _rel2 = value ?? new GsaBool6();
 
@@ -102,9 +98,7 @@ namespace GsaGH.Parameters {
       }
     }
     public GsaBool6 ReleaseStart {
-      get
-        => new GsaBool6(ApiElement.GetEndRelease(0)
-          .Releases);
+      get => new GsaBool6(ApiElement.GetEndRelease(0).Releases);
       set {
         _rel1 = value ?? new GsaBool6();
 
@@ -146,17 +140,11 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaElement1d(
-      Element elem,
-      LineCurve line,
-      int id,
-      GsaSection section,
-      GsaNode orientationNode) {
+      Element elem, LineCurve line, int id, GsaSection section, GsaNode orientationNode) {
       ApiElement = elem;
       _line = line;
-      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
-        .Releases);
+      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);
+      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1).Releases);
       Id = id;
       Section = section;
       _orientationNode = orientationNode;
@@ -164,23 +152,18 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaElement1d(
-      IReadOnlyDictionary<int, Element> eDict,
-      int id,
-      IReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
+      IReadOnlyDictionary<int, Element> eDict, int id, IReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
       ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IDictionary<int, ReadOnlyCollection<double>> localAxesDict,
-      LengthUnit modelUnit) {
+      IDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
       Id = id;
       ApiElement = eDict[id];
-      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1)
-        .Releases);
-      if (ApiElement.OrientationNode > 0)
+      _rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);
+      _rel2 = new GsaBool6(ApiElement.GetEndRelease(1).Releases);
+      if (ApiElement.OrientationNode > 0) {
         _orientationNode
           = new GsaNode(Nodes.Point3dFromNode(nDict[ApiElement.OrientationNode], modelUnit));
+      }
 
       _line = new LineCurve(new Line(
         Nodes.Point3dFromNode(nDict[ApiElement.Topology[0]], modelUnit),
@@ -197,19 +180,23 @@ namespace GsaGH.Parameters {
         LocalAxes = LocalAxes,
         _guid = new Guid(_guid.ToString()),
       };
-      if (cloneApiElement)
+      if (cloneApiElement) {
         dup.CloneApiObject();
+      }
 
       dup._line = (LineCurve)_line.DuplicateShallow();
-      if (_rel1 != null)
+      if (_rel1 != null) {
         dup._rel1 = _rel1.Duplicate();
+      }
 
-      if (_rel2 != null)
+      if (_rel2 != null) {
         dup._rel2 = _rel2.Duplicate();
+      }
 
       dup.Section = Section.Duplicate();
-      if (_orientationNode != null)
+      if (_orientationNode != null) {
         dup._orientationNode = _orientationNode.Duplicate();
+      }
 
       UpdatePreview();
       return dup;
@@ -228,18 +215,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
-      string type = Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == Type)
-          .Key
-        + " ";
-      string pb = Section.Id > 0
-        ? "PB" + Section.Id
-        : Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
+      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
 
     public GsaElement1d Transform(Transform xform) {
@@ -274,38 +253,30 @@ namespace GsaGH.Parameters {
       };
       elem.SetEndRelease(0, ApiElement.GetEndRelease(0));
       elem.SetEndRelease(1, ApiElement.GetEndRelease(1));
-      if ((Color)ApiElement.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+      if ((Color)ApiElement.Colour
+        != Color.FromArgb(0, 0,
+          0)) // workaround to handle that System.Drawing.Color is non-nullable type
+      {
         elem.Colour = ApiElement.Colour;
+      }
 
       return elem;
     }
 
     internal void UpdatePreview() {
-      if (!(_rel1 != null & _rel2 != null))
+      if (!((_rel1 != null) & (_rel2 != null))) {
         return;
+      }
 
-      if (_rel1.X
-        || _rel1.Y
-        || _rel1.Z
-        || _rel1.Xx
-        || _rel1.Yy
-        || _rel1.Zz
-        || _rel2.X
-        || _rel2.Y
-        || _rel2.Z
-        || _rel2.Xx
-        || _rel2.Yy
-        || _rel2.Zz) {
+      if (_rel1.X || _rel1.Y || _rel1.Z || _rel1.Xx || _rel1.Yy || _rel1.Zz || _rel2.X || _rel2.Y
+        || _rel2.Z || _rel2.Xx || _rel2.Yy || _rel2.Zz) {
         var crv = new PolyCurve();
         crv.Append(_line);
         Tuple<List<Line>, List<Line>> previewCurves = Display.Preview1D(crv,
-          ApiElement.OrientationAngle * Math.PI / 180.0,
-          _rel1,
-          _rel2);
+          ApiElement.OrientationAngle * Math.PI / 180.0, _rel1, _rel2);
         _previewGreenLines = previewCurves.Item1;
         _previewRedLines = previewCurves.Item2;
-      }
-      else {
+      } else {
         _previewGreenLines = null;
       }
     }

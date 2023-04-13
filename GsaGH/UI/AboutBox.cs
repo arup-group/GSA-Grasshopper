@@ -15,15 +15,14 @@ namespace GsaGH.Graphics {
     public string AssemblyTitle {
       get {
         object[] attributes = Assembly.GetExecutingAssembly()
-          .GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-        if (attributes.Length <= 0)
-          return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly()
-            .CodeBase);
+         .GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+        if (attributes.Length <= 0) {
+          return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+        }
+
         var titleAttribute = (AssemblyTitleAttribute)attributes[0];
-        return titleAttribute.Title != ""
-          ? titleAttribute.Title
-          : Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly()
-          .CodeBase);
+        return titleAttribute.Title != "" ? titleAttribute.Title :
+          Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
       }
     }
 
@@ -44,30 +43,34 @@ namespace GsaGH.Graphics {
       linkWebsite.Text = @"www.oasys-software.com";
       labelContact.Text = "Contact and support:";
       linkEmail.Text = @"oasys@arup.com";
-      disclaimer.Text = GsaGhInfo.s_disclaimer;
+      disclaimer.Text = GsaGhInfo.disclaimer;
     }
 
     private void AboutBox_Load(object sender, EventArgs e) { }
 
-    private void button1_Click(object sender, EventArgs e)
-      => Process.Start(@"rhino://package/search?name=gsa");
+    private void Button1_Click(object sender, EventArgs e) {
+      Process.Start(@"rhino://package/search?name=gsa");
+    }
 
-    private void labelApiVersion_Click(object sender, EventArgs e) { }
+    private void LabelApiVersion_Click(object sender, EventArgs e) { }
 
-    private void labelProductName_Click(object sender, EventArgs e) { }
+    private void LabelProductName_Click(object sender, EventArgs e) { }
 
-    private void labelVersion_Click(object sender, EventArgs e) { }
+    private void LabelVersion_Click(object sender, EventArgs e) { }
 
-    private void linkEmail_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+    private void LinkEmail_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
       GH_AssemblyInfo gsaPlugin
         = Instances.ComponentServer.FindAssembly(new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f"));
       string pluginvers = gsaPlugin.Version;
       Process.Start(@"mailto:oasys@arup.com?subject=Oasys GsaGH version " + pluginvers);
     }
 
-    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-          => Process.Start(@"https://www.oasys-software.com/");
+    private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+      Process.Start(@"https://www.oasys-software.com/");
+    }
 
-    private void okButton_Click(object sender, EventArgs e) => Close();
+    private void OkButton_Click(object sender, EventArgs e) {
+      Close();
+    }
   }
 }

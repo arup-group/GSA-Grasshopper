@@ -10,6 +10,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.UI;
 using OasysGH.Units;
 using Rhino.Geometry;
 
@@ -36,15 +37,50 @@ namespace GsaGH.Components {
     private bool _zz1;
     private bool _zz2;
 
-    public CreateMember1d_OBSOLETE() : base("Create 1D Member",
-                                                          "Mem1D",
-      "Create GSA 1D Member",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateMember1d_OBSOLETE() : base("Create 1D Member", "Mem1D", "Create GSA 1D Member",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void CreateAttributes() {
-      var restraints = new List<List<bool>>() { new List<bool>() { _x1, _y1, _z1, _xx1, _yy1, _zz1 }, new List<bool>() { _x2, _y2, _z2, _xx2, _yy2, _zz2 } };
-      m_attributes = new OasysGH.UI.CheckBoxComponentComponentAttributes(this, SetReleases, new List<string>() { "Start Release", "End Release" }, restraints, new List<List<string>>() { new List<string>() { "x", "y", "z", "xx", "yy", "zz" }, new List<string>() { "x", "y", "z", "xx", "yy", "zz" } });
+      var restraints = new List<List<bool>>() {
+        new List<bool>() {
+          _x1,
+          _y1,
+          _z1,
+          _xx1,
+          _yy1,
+          _zz1,
+        },
+        new List<bool>() {
+          _x2,
+          _y2,
+          _z2,
+          _xx2,
+          _yy2,
+          _zz2,
+        },
+      };
+      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases,
+        new List<string>() {
+          "Start Release",
+          "End Release",
+        }, restraints, new List<List<string>>() {
+          new List<string>() {
+            "x",
+            "y",
+            "z",
+            "xx",
+            "yy",
+            "zz",
+          },
+          new List<string>() {
+            "x",
+            "y",
+            "z",
+            "xx",
+            "yy",
+            "zz",
+          },
+        });
     }
 
     public override bool Read(GH_IReader reader) {
@@ -61,19 +97,17 @@ namespace GsaGH.Components {
       _yy2 = reader.GetBoolean("yy2");
       _zz2 = reader.GetBoolean("zz2");
 
-      if (reader.ChunkExists("ParameterData"))
+      if (reader.ChunkExists("ParameterData")) {
         base.Read(reader);
-      else {
+      } else {
         BaseReader.Read(reader, this);
         _isInitialised = true;
         UpdateUIFromSelectedItems();
       }
 
       GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
+      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
       return true;
     }
 
@@ -115,39 +149,41 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddCurveParameter("Curve",
-        "C",
+      pManager.AddCurveParameter("Curve", "C",
         "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter());
-      pManager[1]
-        .Optional = true;
+      pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaMember1dParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaMember1dParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghcrv = new GH_Curve();
-      if (!da.GetData(0, ref ghcrv))
+      if (!da.GetData(0, ref ghcrv)) {
         return;
+      }
 
-      if (ghcrv == null)
+      if (ghcrv == null) {
         this.AddRuntimeWarning("Curve input is null");
+      }
+
       Curve crv = null;
-      if (!GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
+      if (!GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both)) {
         return;
+      }
 
       var mem = new GsaMember1d(crv);
-      if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
+      if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)) {
         this.AddRuntimeRemark(
           "Service message from you favourite Oasys dev team: Based on your Default Unit Settings (changed in the Oasys Menu), one or more input curves have relatively short length less than the set tolerance ("
-          + DefaultUnits.Tolerance.ToString()
-            .Replace(" ", string.Empty)
+          + DefaultUnits.Tolerance.ToString().Replace(" ", string.Empty)
           + ". This may convert into a zero-length line when assembling the GSA Model, thus creating invalid topology that cannot be analysed. You can ignore this message if you are creating your model in another unit (set on 'Analyse' or 'CreateModel' components) than "
-          + DefaultUnits.LengthUnitGeometry.ToString()
-          + ".");
+          + DefaultUnits.LengthUnitGeometry.ToString() + ".");
+      }
 
       var rel1 = new GsaBool6 {
         X = _x1,
@@ -171,16 +207,13 @@ namespace GsaGH.Components {
       mem.ReleaseEnd = rel2;
 
       var ghTyp = new GH_ObjectWrapper();
-      var section = new GsaSection();
       if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo) {
-          ghTyp.CastTo(ref section);
-          mem.Section = section;
-        }
-        else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both))
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          mem.Section = sectionGoo.Value;
+        } else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             mem.Section = new GsaSection(idd);
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
             return;

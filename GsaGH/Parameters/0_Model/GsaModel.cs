@@ -3,20 +3,23 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Model class, this class defines the basic properties and methods for any Gsa Model
+  ///   Model class, this class defines the basic properties and methods for any Gsa Model
   /// </summary>
   [Serializable]
   public class GsaModel {
     public BoundingBox BoundingBox {
       get {
-        if (!_boundingBox.IsValid)
+        if (!_boundingBox.IsValid) {
           _boundingBox = GetBoundingBox();
+        }
+
         return _boundingBox;
       }
     }
@@ -24,18 +27,13 @@ namespace GsaGH.Parameters {
     public Guid Guid { get; set; } = Guid.NewGuid();
     public Model Model { get; set; } = new Model();
     public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
-    internal GsaAPI.Titles Titles {
-      get {
-        return Model.Titles();
-      }
-    }
+    internal GsaAPI.Titles Titles => Model.Titles();
     private BoundingBox _boundingBox = BoundingBox.Empty;
 
-    public GsaModel() {
-    }
+    public GsaModel() { }
 
     /// <summary>
-    /// Clones this model so we can make changes safely
+    ///   Clones this model so we can make changes safely
     /// </summary>
     /// <returns>Returns a clone of this model with a new GUID</returns>
     public GsaModel Clone() {
@@ -50,13 +48,18 @@ namespace GsaGH.Parameters {
     }
 
     public GsaModel Duplicate(bool copy = false) {
-      if (copy)
+      if (copy) {
         return Clone();
+      }
 
       // create shallow copy
-      var dup = new GsaModel { Model = Model };
-      if (FileNameAndPath != null)
+      var dup = new GsaModel {
+        Model = Model,
+      };
+      if (FileNameAndPath != null) {
         dup.FileNameAndPath = FileNameAndPath;
+      }
+
       dup.Guid = new Guid(Guid.ToString());
       dup.ModelUnit = ModelUnit;
       dup._boundingBox = _boundingBox;
@@ -66,27 +69,31 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string s = "New GsaGH Model";
       if (Model != null && Titles != null) {
-        if (!string.IsNullOrEmpty(FileNameAndPath))
+        if (!string.IsNullOrEmpty(FileNameAndPath)) {
           s = Path.GetFileName(FileNameAndPath).Replace(".gwb", string.Empty);
+        }
 
         if (Titles?.Title != null && Titles.Title != "") {
-          if (s == "" || s == "Invalid")
+          if (s == "" || s == "Invalid") {
             s = Titles.Title;
-          else
+          } else {
             s += " {" + Titles.Title + "}";
+          }
         }
       }
-      if (ModelUnit != LengthUnit.Undefined)
+
+      if (ModelUnit != LengthUnit.Undefined) {
         s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
+      }
+
       return s;
     }
 
     private BoundingBox GetBoundingBox() {
       var outNodes = new ConcurrentDictionary<int, Node>(Model.Nodes());
       var pts = new ConcurrentBag<Point3d>();
-      Parallel.ForEach(outNodes, node => {
-        pts.Add(Helpers.Import.Nodes.Point3dFromNode(node.Value, LengthUnit.Meter));
-      });
+      Parallel.ForEach(outNodes,
+        node => pts.Add(Nodes.Point3dFromNode(node.Value, LengthUnit.Meter)));
 
       if (ModelUnit == LengthUnit.Undefined || ModelUnit == LengthUnit.Meter) {
         return new BoundingBox(pts);

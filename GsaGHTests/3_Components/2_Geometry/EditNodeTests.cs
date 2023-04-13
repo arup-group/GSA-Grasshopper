@@ -17,8 +17,7 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateSupportTests.ComponentMother()),
-        0);
+        ComponentTestHelper.GetOutput(CreateSupportTests.ComponentMother()), 0);
 
       return comp;
     }
@@ -78,8 +77,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new Point3d(1, 2, 3), 2);
       ComponentTestHelper.SetInput(comp, Plane.WorldYZ, 3);
       ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()),
-        4);
+        ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()), 4);
       ComponentTestHelper.SetInput(comp, 3, 5);
       ComponentTestHelper.SetInput(comp, 6, 6);
       ComponentTestHelper.SetInput(comp, 9, 7);
@@ -108,20 +106,9 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output2.Value.Z);
 
       Assert.True(output0.Value.IsSupport);
-      Duplicates.AreEqual(new GsaBool6(true,
-          true,
-          true,
-          true,
-          true,
-          true),
+      Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true),
         output0.Value.Restraint);
-      Duplicates.AreEqual(new GsaBool6(true,
-          true,
-          true,
-          true,
-          true,
-          true),
-        output4.Value);
+      Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true), output4.Value);
 
       Assert.Equal(42, output0.Value.Id);
       Assert.Equal(42, output1.Value);

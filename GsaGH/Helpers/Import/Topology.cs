@@ -4,46 +4,44 @@ using System.Linq;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
-  /// Class containing functions to import various object types from GSA
+  ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Topology {
 
     /// <summary>
-    /// Method to split/untangle a topology list from GSA into separate lists for
-    /// Topology, Voids, Inclusion lines and Inclusion points with corrosponding list for topology type.
-    ///
-    /// Output tuple with three sub-tubles for:
-    /// - Topology: (Topology integers and topology types)
-    /// - Voids: (List of integers and list of topology types)
-    /// - Lines: (List of integers and list of topology types)
-    /// - Points: (Topology integers)
-    ///
-    /// Example: gsa_topology =
-    /// "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84"
-    /// will results in:
-    ///
-    /// Tuple1, Item1: Topology: (7, 8, 9, 10, 11, 7, 94, 84)
-    /// Tuple1, Item2: TopoType: ( ,  ,  ,  a,   ,  ,   ,   )
-    ///
-    /// Tuple2, Item1: List(Voids): (12, 13, 14, 15)
-    /// Tuple2, Item2: List(VType): (  ,   ,  a,   )
-    ///
-    /// Tuple3, Item1: List(Lines): (16, 18, 17) (23, 24)
-    /// Tuple3, Item2: List(LType): (  ,  a,   ) (  ,   )
-    ///
-    /// Points: (20, 19, 21, 22)
-    ///
+    ///   Method to split/untangle a topology list from GSA into separate lists for
+    ///   Topology, Voids, Inclusion lines and Inclusion points with corrosponding list for topology type.
+    ///   Output tuple with three sub-tubles for:
+    ///   - Topology: (Topology integers and topology types)
+    ///   - Voids: (List of integers and list of topology types)
+    ///   - Lines: (List of integers and list of topology types)
+    ///   - Points: (Topology integers)
+    ///   Example: gsa_topology =
+    ///   "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84"
+    ///   will results in:
+    ///   Tuple1, Item1: Topology: (7, 8, 9, 10, 11, 7, 94, 84)
+    ///   Tuple1, Item2: TopoType: ( ,  ,  ,  a,   ,  ,   ,   )
+    ///   Tuple2, Item1: List(Voids): (12, 13, 14, 15)
+    ///   Tuple2, Item2: List(VType): (  ,   ,  a,   )
+    ///   Tuple3, Item1: List(Lines): (16, 18, 17) (23, 24)
+    ///   Tuple3, Item2: List(LType): (  ,  a,   ) (  ,   )
+    ///   Points: (20, 19, 21, 22)
     /// </summary>
     /// <param name="gsaTopology"></param>
     /// <returns></returns>
-    internal static Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
-        Tuple<List<List<int>>, List<List<string>>>, List<int>> Topology_detangler(string gsaTopology) {
+    internal static
+      Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
+        Tuple<List<List<int>>, List<List<string>>>, List<int>> Topology_detangler(
+        string gsaTopology) {
       var voids = new List<string>();
       var lines = new List<string>();
       var points = new List<string>();
       //string gsa_topology = "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84";
       gsaTopology = gsaTopology.ToUpper();
-      char[] spearator = { '(', ')' };
+      char[] spearator = {
+        '(',
+        ')',
+      };
 
       string[] strlist = gsaTopology.Split(spearator);
       var topos = new List<string>(strlist);
@@ -105,15 +103,18 @@ namespace GsaGH.Helpers.Import {
           if (tempvoids[j] == "A") {
             tmpType.Add("A");
             tempvoids.RemoveAt(j);
-          }
-          else
+          } else {
             tmpType.Add(" ");
+          }
+
           int tpt = int.Parse(tempvoids[j]);
           tmpvds.Add(tpt);
         }
+
         voidTopo.Add(tmpvds);
         voidTopoType.Add(tmpType);
       }
+
       var incLinesTopo = new List<List<int>>();
       var inclLinesTopoType = new List<List<string>>();
       foreach (string line in lines) {
@@ -124,12 +125,14 @@ namespace GsaGH.Helpers.Import {
           if (templines[j] == "A") {
             tmpType.Add("A");
             templines.RemoveAt(j);
-          }
-          else
+          } else {
             tmpType.Add(" ");
+          }
+
           int tpt = int.Parse(templines[j]);
           tmplns.Add(tpt);
         }
+
         incLinesTopo.Add(tmplns);
         inclLinesTopoType.Add(tmpType);
       }
@@ -167,6 +170,7 @@ namespace GsaGH.Helpers.Import {
         topolos.RemoveAt(i);
         i -= 1;
       }
+
       var inclpoint = (from t in pts where t != "" select int.Parse(t)).ToList();
 
       // write out topology type (A) to list
@@ -180,21 +184,25 @@ namespace GsaGH.Helpers.Import {
           i += 1;
           continue;
         }
+
         topoType.Add(" ");
         int tpt = int.Parse(topolos[i]);
         topoint.Add(tpt);
       }
+
       var topoTuple = new Tuple<List<int>, List<string>>(topoint, topoType);
       var voidTuple = new Tuple<List<List<int>>, List<List<string>>>(voidTopo, voidTopoType);
-      var lineTuple = new Tuple<List<List<int>>, List<List<string>>>(incLinesTopo, inclLinesTopoType);
+      var lineTuple
+        = new Tuple<List<List<int>>, List<List<string>>>(incLinesTopo, inclLinesTopoType);
 
       return new Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
-      Tuple<List<List<int>>, List<List<string>>>, List<int>>(topoTuple, voidTuple, lineTuple, inclpoint);
+        Tuple<List<List<int>>, List<List<string>>>, List<int>>(topoTuple, voidTuple, lineTuple,
+        inclpoint);
     }
 
     /// <summary>
-    /// Method to convert a topology string from a 3D Member
-    /// into a list of 3 verticies
+    ///   Method to convert a topology string from a 3D Member
+    ///   into a list of 3 verticies
     /// </summary>
     /// <param name="gsaTopology">Topology list as string</param>
     /// <returns></returns>
@@ -214,14 +222,22 @@ namespace GsaGH.Helpers.Import {
 
         while (tempverticies.Count > 2) {
           // add the first triangle
-          var templist1 = new List<int> { tempverticies[0], tempverticies[1], tempverticies[2] };
+          var templist1 = new List<int> {
+            tempverticies[0],
+            tempverticies[1],
+            tempverticies[2],
+          };
 
           // add the list to the main list
           topolist.Add(templist1);
 
           if (tempverticies.Count > 3) {
             // add the second triangle the other way round
-            var templist2 = new List<int> { tempverticies[1], tempverticies[3], tempverticies[2] };
+            var templist2 = new List<int> {
+              tempverticies[1],
+              tempverticies[3],
+              tempverticies[2],
+            };
 
             // add the list to the main list
             topolist.Add(templist2);
@@ -229,11 +245,13 @@ namespace GsaGH.Helpers.Import {
             // remove the first two verticies from list
             tempverticies.RemoveAt(0);
           }
+
           // put the second remove outside the if to also remove if we only
           // have 3 verticies to bring count below 3 and exit while loop
           tempverticies.RemoveAt(0);
         }
       }
+
       return topolist;
     }
   }

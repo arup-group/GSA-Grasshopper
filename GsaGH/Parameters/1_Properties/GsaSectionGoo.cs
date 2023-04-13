@@ -5,7 +5,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaSection"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaSection" /> can be used in Grasshopper.
   /// </summary>
   public class GsaSectionGoo : GH_OasysGoo<GsaSection> {
     public static string Description => "GSA Beam Property";
@@ -16,11 +16,13 @@ namespace GsaGH.Parameters {
     public GsaSectionGoo(GsaSection item) : base(item) { }
 
     public override bool CastFrom(object source) {
-      if (source == null)
+      if (source == null) {
         return false;
+      }
 
-      if (base.CastFrom(source))
+      if (base.CastFrom(source)) {
         return true;
+      }
 
       if (GH_Convert.ToString(source, out string name, GH_Conversion.Both)) {
         if (GsaSection.ValidProfile(name)) {
@@ -38,19 +40,22 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target))
+      if (base.CastTo(ref target)) {
         return true;
+      }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null)
+        if (Value == null) {
           target = default;
-        else {
+        } else {
           var ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)) {
             target = (TQ)(object)ghint;
-          else
+          } else {
             target = default;
+          }
         }
+
         return true;
       }
 
@@ -58,6 +63,8 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override IGH_Goo Duplicate() => new GsaSectionGoo(Value);
+    public override IGH_Goo Duplicate() {
+      return new GsaSectionGoo(Value);
+    }
   }
 }

@@ -6,8 +6,7 @@ using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class PointResultGoo : GH_GeometricGoo<Point3d>,
-    IGH_PreviewData {
+  public class PointResultGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData {
     public override BoundingBox Boundingbox {
       get {
         var box = new BoundingBox(Value, Value);
@@ -24,7 +23,7 @@ namespace GsaGH.Parameters {
     private readonly float _size;
 
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size, int id)
-              : base(point) {
+      : base(point) {
       Result = result;
       _size = size;
       _color = color;
@@ -33,8 +32,7 @@ namespace GsaGH.Parameters {
 
     public override bool CastFrom(object source) {
       switch (source) {
-        case null:
-          return false;
+        case null: return false;
 
         case Point3d point3d:
           Value = point3d;
@@ -46,8 +44,9 @@ namespace GsaGH.Parameters {
       }
 
       Point3d point = Point3d.Unset;
-      if (!GH_Convert.ToPoint3d(source, ref point, GH_Conversion.Both))
+      if (!GH_Convert.ToPoint3d(source, ref point, GH_Conversion.Both)) {
         return false;
+      }
 
       Value = point;
 
@@ -86,11 +85,13 @@ namespace GsaGH.Parameters {
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
-    public void DrawViewportWires(GH_PreviewWireArgs args)
-      => args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, _size, _color);
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, _size, _color);
+    }
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-      => new PointResultGoo(Value, Result, _color, _size, NodeId);
+    public override IGH_GeometricGoo DuplicateGeometry() {
+      return new PointResultGoo(Value, Result, _color, _size, NodeId);
+    }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
       Point3d point = Value;
@@ -105,10 +106,13 @@ namespace GsaGH.Parameters {
       return new PointResultGoo(point, Result, _color, _size, NodeId);
     }
 
-    public override object ScriptVariable() => Value;
+    public override object ScriptVariable() {
+      return Value;
+    }
 
-    public override string ToString()
-      => $"PointResult: P {NodeId}:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{Result:0.0}";
+    public override string ToString() {
+      return $"PointResult: P {NodeId}:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{Result:0.0}";
+    }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
       Point3d point = Value;

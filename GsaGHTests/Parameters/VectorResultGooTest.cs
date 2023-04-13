@@ -81,15 +81,11 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenDuplicateGeometry_ThenMethod_ShouldReturnDuplicatedObject() {
-      var obj = new VectorResultGoo(Point3d.Origin,
-        Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton),
-        99);
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
+        new Force(4, ForceUnit.Kilonewton), 99);
 
-      var expectedObj = new VectorResultGoo(Point3d.Origin,
-        Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton),
-        99);
+      var expectedObj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
+        new Force(4, ForceUnit.Kilonewton), 99);
 
       IGH_GeometricGoo actualObj = obj.DuplicateGeometry();
 
@@ -116,10 +112,8 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetBoundingBox_ThenMethod_ShouldReturnValidValue() {
-      var obj = new VectorResultGoo(new Point3d(3, 3, 3),
-        new Vector3d(3, 3, 3),
-        new Force(4, ForceUnit.Kilonewton),
-        0);
+      var obj = new VectorResultGoo(new Point3d(3, 3, 3), new Vector3d(3, 3, 3),
+        new Force(4, ForceUnit.Kilonewton), 0);
 
       BoundingBox actualBoundingBox = obj.Boundingbox;
       var expectedBoundingBox = new BoundingBox(new List<Point3d>() {
@@ -160,10 +154,8 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetTypeDescription_ThenShouldReturnValidString() {
-      var obj = new VectorResultGoo(Point3d.Origin,
-        Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton),
-        0);
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
+        new Force(4, ForceUnit.Kilonewton), 0);
 
       string expectedString = "A GSA result vector3d type.";
 
@@ -172,10 +164,8 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetTypeName_ThenShouldReturnValidString() {
-      var obj = new VectorResultGoo(Point3d.Origin,
-        Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton),
-        0);
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
+        new Force(4, ForceUnit.Kilonewton), 0);
 
       string expectedString = "Result Vector3d";
 
@@ -185,8 +175,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void WhenInitialised_ThenClassContainDrawArrowHeadMethod() {
       var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force(), 0);
-      MethodInfo[] actualMethods = obj.GetType()
-        .GetMethods();
+      MethodInfo[] actualMethods = obj.GetType().GetMethods();
 
       Assert.Contains(actualMethods, info => info.Name.Equals("DrawArrowHead"));
 
@@ -194,20 +183,15 @@ namespace GsaGHTests.Parameters {
         = actualMethods.FirstOrDefault(method => method.Name.Equals("DrawArrowHead"));
 
       Assert.True(showTextMethodInfo?.IsPublic);
-      Assert.True(showTextMethodInfo?.GetParameters()
-          .Length
-        == 1);
-      Assert.True(showTextMethodInfo?.GetParameters()[0]
-          .ParameterType
-        == typeof(bool));
+      Assert.True(showTextMethodInfo?.GetParameters().Length == 1);
+      Assert.True(showTextMethodInfo?.GetParameters()[0].ParameterType == typeof(bool));
       Assert.IsType<VectorResultGoo>(obj.DrawArrowHead(false));
     }
 
     [Fact]
     public void WhenInitialised_ThenClassContainSetColorMethod() {
       var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force(), 0);
-      MethodInfo[] actualMethods = obj.GetType()
-        .GetMethods();
+      MethodInfo[] actualMethods = obj.GetType().GetMethods();
 
       Assert.Contains(actualMethods, info => info.Name.Equals("SetColor"));
 
@@ -215,20 +199,15 @@ namespace GsaGHTests.Parameters {
         = actualMethods.FirstOrDefault(method => method.Name.Equals("SetColor"));
 
       Assert.True(setColorMethodInfo?.IsPublic);
-      Assert.True(setColorMethodInfo?.GetParameters()
-          .Length
-        == 1);
-      Assert.True(setColorMethodInfo?.GetParameters()[0]
-          .ParameterType
-        == typeof(Color));
+      Assert.True(setColorMethodInfo?.GetParameters().Length == 1);
+      Assert.True(setColorMethodInfo?.GetParameters()[0].ParameterType == typeof(Color));
       Assert.IsType<VectorResultGoo>(obj.SetColor(Color.Red));
     }
 
     [Fact]
     public void WhenInitialised_ThenClassContainShowTextMethod() {
       var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force(), 0);
-      MethodInfo[] actualMethods = obj.GetType()
-        .GetMethods();
+      MethodInfo[] actualMethods = obj.GetType().GetMethods();
 
       Assert.Contains(actualMethods, info => info.Name.Equals("ShowText"));
 
@@ -236,12 +215,8 @@ namespace GsaGHTests.Parameters {
         = actualMethods.FirstOrDefault(method => method.Name.Equals("ShowText"));
 
       Assert.True(showTextMethodInfo?.IsPublic);
-      Assert.True(showTextMethodInfo?.GetParameters()
-          .Length
-        == 1);
-      Assert.True(showTextMethodInfo?.GetParameters()[0]
-          .ParameterType
-        == typeof(bool));
+      Assert.True(showTextMethodInfo?.GetParameters().Length == 1);
+      Assert.True(showTextMethodInfo?.GetParameters()[0].ParameterType == typeof(bool));
       Assert.True(showTextMethodInfo?.ReturnParameter?.ParameterType.Name == "Void");
     }
 
@@ -275,10 +250,8 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenToString_ThenMethod_ShouldReturnValidString() {
-      var obj = new VectorResultGoo(Point3d.Origin,
-        Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton),
-        0);
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
+        new Force(4, ForceUnit.Kilonewton), 0);
 
       string expectedString
         = $"VectorResult: Starting point: {Point3d.Origin}, Direction:{Vector3d.Zero}, Force:{new Force(4, ForceUnit.Kilonewton):0.0}";

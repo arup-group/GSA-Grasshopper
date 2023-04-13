@@ -74,7 +74,9 @@ namespace GsaGH.Parameters {
     private int _id = 0;
     private Mesh _mesh = new Mesh();
 
-    public GsaMember3d() => ApiMember.Type = MemberType.GENERIC_3D;
+    public GsaMember3d() {
+      ApiMember.Type = MemberType.GENERIC_3D;
+    }
 
     public GsaMember3d(Mesh mesh) {
       ApiMember = new Member {
@@ -108,18 +110,21 @@ namespace GsaGH.Parameters {
         _guid = new Guid(_guid.ToString()),
         Prop3d = Prop3d.Duplicate(),
       };
-      if (cloneApiMember)
+      if (cloneApiMember) {
         dup.CloneApiObject();
-      else
+      } else {
         dup.ApiMember = ApiMember;
+      }
+
       dup.Id = Id;
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaMember3d Morph(SpaceMorph xmorph) {
-      if (SolidMesh == null)
+      if (SolidMesh == null) {
         return null;
+      }
 
       GsaMember3d dup = Duplicate(true);
       dup.Id = 0;
@@ -129,19 +134,15 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
-      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type)
-        .Key;
-      return string.Join(" ", idd.Trim(), type.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
     public GsaMember3d Transform(Transform xform) {
-      if (SolidMesh == null)
+      if (SolidMesh == null) {
         return null;
+      }
 
       GsaMember3d dup = Duplicate(true);
       dup.Id = 0;
@@ -181,20 +182,22 @@ namespace GsaGH.Parameters {
         Property = ApiMember.Property,
         Type = ApiMember.Type,
       };
-      if (ApiMember.Topology != string.Empty)
+      if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
+      }
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+      {
         mem.Colour = ApiMember.Colour;
+      }
 
       return mem;
     }
 
-    private void UpdatePreview()
-      => Display.PreviewMem3d(ref _mesh,
-        ref _previewHiddenLines,
-        ref _previewEdgeLines,
+    private void UpdatePreview() {
+      Display.PreviewMem3d(ref _mesh, ref _previewHiddenLines, ref _previewEdgeLines,
         ref _previewPts);
+    }
   }
 }

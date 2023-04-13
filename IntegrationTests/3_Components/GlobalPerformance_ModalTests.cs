@@ -10,8 +10,8 @@ namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GlobalPerformance_ModalTests {
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
+    private static GH_Document Document => document ?? (document = OpenDocument());
+    private static GH_Document document = null;
 
     [Fact]
     public void EffectiveMassesZTest() {
@@ -40,9 +40,9 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "ModalMasses");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
+      //var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      //var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      //var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       Assert.Equal(45.62, output1.Value, 2);
       // GSA-6480
       //Assert.Equal(19.75, output2.Value, 2);
@@ -55,9 +55,9 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "ModalStiffnesses");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
-      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
+      //var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      //var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      //var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       Assert.Equal(27740 / 10, output1.Value / 10, 0);
       // GSA-6480
       //Assert.Equal(61630 / 10, output2.Value / 10, 0);
@@ -80,14 +80,12 @@ namespace IntegrationTests.Components {
     }
 
     private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

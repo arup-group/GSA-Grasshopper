@@ -8,12 +8,13 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetGeometry_TrGen_10_Test {
-    public static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
+    private static GH_Document document = null;
 
     [Fact]
-    public void NoRuntimeErrorTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    }
 
     [Theory]
     [InlineData("NodeCount", 3027)]
@@ -21,22 +22,20 @@ namespace IntegrationTests.Parameters {
     [InlineData("MassProp", 0)]
     [InlineData("SpringProp", 0)]
     [InlineData("Elem1dCount", 98)]
-    [InlineData("Elem1dIDs",
-      new bool[] {
-        false,
-        true,
-      })]
+    [InlineData("Elem1dIDs", new bool[] {
+      false,
+      true,
+    })]
     [InlineData("Elem1dType", "Beam")]
     [InlineData("Elem1dGrp", 4)]
     [InlineData("RotationAngle", 30.0)]
     [InlineData("Elem1dTopo", 45)]
     [InlineData("Elem2dCount", 3)]
-    [InlineData("Elem2dsCount",
-      new int[] {
-        574,
-        288,
-        87,
-      })]
+    [InlineData("Elem2dsCount", new int[] {
+      574,
+      288,
+      87,
+    })]
     [InlineData("Elem2dType", "QUAD8")]
     [InlineData("Elem2dTopo", 87)]
     [InlineData("Mem1dCount", 94)]
@@ -54,14 +53,12 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod()
-          .DeclaringType
-        + ".gh";
+      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("_Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

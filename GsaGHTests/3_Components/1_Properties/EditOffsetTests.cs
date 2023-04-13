@@ -21,11 +21,7 @@ namespace GsaGHTests.Properties {
     [InlineData(6.7, 4.5, -4, -3.7, LengthUnit.Centimeter)]
     [InlineData(500, 400, -350, -300.7, LengthUnit.Millimeter)]
     public void EditValuesFromNewComponent(
-      double x1,
-      double x2,
-      double y,
-      double z,
-      LengthUnit unit) {
+      double x1, double x2, double y, double z, LengthUnit unit) {
       var offset = new GsaOffset();
       GH_OasysComponent comp = ComponentMother();
 
@@ -73,11 +69,7 @@ namespace GsaGHTests.Properties {
     [InlineData(6.7, 4.5, -4, -3.7, LengthUnit.Centimeter)]
     [InlineData(500, 400, -350, -300.7, LengthUnit.Millimeter)]
     public void GetValuesFromExistingComponent(
-      double x1,
-      double x2,
-      double y,
-      double z,
-      LengthUnit unit) {
+      double x1, double x2, double y, double z, LengthUnit unit) {
       var offset = new GsaOffset(x1, x2, y, z, unit);
 
       GH_OasysComponent comp = ComponentMother();

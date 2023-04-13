@@ -19,37 +19,29 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAnalysisTask;
 
-    public GetAnalysis() : base("Get Model Analysis Tasks",
-          "GetAnalysisTasks",
-      "Get Analysis Tasks and their Cases from GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat0())
-      => Hidden = true;
+    public GetAnalysis() : base("Get Model Analysis Tasks", "GetAnalysisTasks",
+      "Get Analysis Tasks and their Cases from GSA model", CategoryName.Name(),
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model containing some Analysis Cases and Tasks",
-        GH_ParamAccess.item);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
+        "GSA model containing some Analysis Cases and Tasks", GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaAnalysisTaskParameter(),
-        "Analysis Tasks",
-        "ΣT",
-        "List of Analysis Tasks in model",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaAnalysisCaseParameter(),
-        "Analysis Cases",
-        "ΣA",
-        "List of Analysis Cases in model",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnalysisTaskParameter(), "Analysis Tasks", "ΣT",
+        "List of Analysis Tasks in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnalysisCaseParameter(), "Analysis Cases", "ΣA",
+        "List of Analysis Cases in model", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel))
+      if (!da.GetData(0, ref gsaModel)) {
         return;
+      }
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = Analyses.GetAnalysisTasksAndCombinations(gsaModel);

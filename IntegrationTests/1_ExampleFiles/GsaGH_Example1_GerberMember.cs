@@ -12,14 +12,12 @@ namespace IntegrationTests.ExampleFiles {
   public class Example1_GerberMember_Test {
 
     public static GH_Document Document() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = "GsaGH_" + thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("_Test", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("_Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(solutiondir, "ExampleFiles");
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
@@ -33,7 +31,8 @@ namespace IntegrationTests.ExampleFiles {
     }
 
     [Fact]
-    public void NoRuntimeErrorsTest()
-      => Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    public void NoRuntimeErrorsTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    }
   }
 }

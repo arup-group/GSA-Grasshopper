@@ -21,51 +21,54 @@ namespace GsaGH.Components {
 
     protected override Bitmap Icon => Resources.CreateElem2d;
 
-    public CreateElement2d() : base("Create 2D Element",
-          "Elem2D",
-      "Create GSA 2D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateElement2d() : base("Create 2D Element", "Elem2D", "Create GSA 2D Element",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager[1]
-        .Optional = true;
+      pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-      => pManager.AddParameter(new GsaElement2dParameter());
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaElement2dParameter());
+    }
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghmesh = new GH_Mesh();
-      if (!da.GetData(0, ref ghmesh))
+      if (!da.GetData(0, ref ghmesh)) {
         return;
+      }
 
-      if (ghmesh == null)
+      if (ghmesh == null) {
         this.AddRuntimeWarning("Mesh input is null");
+      }
+
       var mesh = new Mesh();
-      if (!GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both))
+      if (!GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both)) {
         return;
+      }
 
       var elem = new GsaElement2d(mesh);
 
       var ghTyp = new GH_ObjectWrapper();
-      var prop2d = new GsaProp2d();
       if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo)
-          ghTyp.CastTo(ref prop2d);
-        else if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+        GsaProp2d prop2d;
+        if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
+          prop2d = prop2dGoo.Value;
+        } else if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
           prop2d = new GsaProp2d(id);
-        else {
+        } else {
           this.AddRuntimeError("Unable to convert PA input to a 2D Property or reference integer");
           return;
         }
 
         var prop2Ds = new List<GsaProp2d>();
-        for (int i = 0; i < elem.ApiElements.Count; i++)
+        for (int i = 0; i < elem.ApiElements.Count; i++) {
           prop2Ds.Add(prop2d);
+        }
+
         elem.Properties = prop2Ds;
       }
 

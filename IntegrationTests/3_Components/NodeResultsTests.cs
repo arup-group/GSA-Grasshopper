@@ -10,8 +10,8 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class NodeResultsTests {
-    private static GH_Document Document => s_document ?? (s_document = OpenDocument());
-    private static GH_Document s_document = null;
+    private static GH_Document Document => document ?? (document = OpenDocument());
+    private static GH_Document document = null;
 
     [Fact]
     public void NodeContourScaledDeformationTests() {
@@ -34,10 +34,7 @@ namespace IntegrationTests.Components {
     [Theory]
     [InlineData("FContour", 871.0, 66.14, 1)]
     public void NodeContourTests(
-      string name,
-      double expected1,
-      double expected2,
-      int precision = 6) {
+      string name, double expected1, double expected2, int precision = 6) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
@@ -56,10 +53,7 @@ namespace IntegrationTests.Components {
     [InlineData("Rzz", -13.97E-6, -20.96E-6, 8)]
     [InlineData("R", 56.98E-6, 85.47E-6, 8)]
     public void NodeDisplacementTests(
-      string name,
-      double expected1,
-      double expected2,
-      int precision = 6) {
+      string name, double expected1, double expected2, int precision = 6) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output1 = (GH_Number)param.VolatileData.get_Branch(new GH_Path(3, 1))[0];
@@ -113,10 +107,9 @@ namespace IntegrationTests.Components {
         3026,
         3027,
       };
-      for (int i = 0; i < expected.Count; i++)
-        Assert.Equal(expected[i],
-          output1[i]
-            .Value);
+      for (int i = 0; i < expected.Count; i++) {
+        Assert.Equal(expected[i], output1[i].Value);
+      }
     }
 
     [Theory]
@@ -129,10 +122,7 @@ namespace IntegrationTests.Components {
     [InlineData("Mzz", 0.01092, -0.005168, 5)]
     [InlineData("M", 53.98, 0.5144, 2)]
     public void ReactionForcesTests(
-      string name,
-      double expected1,
-      double expected2,
-      int precision = 6) {
+      string name, double expected1, double expected2, int precision = 6) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
@@ -142,14 +132,12 @@ namespace IntegrationTests.Components {
     }
 
     private static GH_Document OpenDocument() {
-      Type thisClass = MethodBase.GetCurrentMethod()
-        .DeclaringType;
+      Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
-      fileName = fileName.Replace(thisClass.Namespace, string.Empty)
-        .Replace("Tests", string.Empty);
+      fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory())
-        .Parent.Parent.Parent.Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",

@@ -34,12 +34,8 @@ namespace GsaGH.Parameters {
       }
     }
     public bool IsSupport
-      => _node.Restraint.X
-        || _node.Restraint.Y
-        || _node.Restraint.Z
-        || _node.Restraint.XX
-        || _node.Restraint.YY
-        || _node.Restraint.ZZ;
+      => _node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX
+        || _node.Restraint.YY || _node.Restraint.ZZ;
     public Plane LocalAxis {
       get => _plane;
       set {
@@ -63,9 +59,8 @@ namespace GsaGH.Parameters {
     }
     public Point3d Point {
       get
-        => _node == null
-          ? Point3d.Unset
-          : new Point3d(_node.Position.X, _node.Position.Y, _node.Position.Z);
+        => _node == null ? Point3d.Unset :
+          new Point3d(_node.Position.X, _node.Position.Y, _node.Position.Z);
       set {
         CloneApiObject();
         Id = 0;
@@ -77,12 +72,8 @@ namespace GsaGH.Parameters {
     }
     public GsaBool6 Restraint {
       get
-        => new GsaBool6(_node.Restraint.X,
-          _node.Restraint.Y,
-          _node.Restraint.Z,
-          _node.Restraint.XX,
-          _node.Restraint.YY,
-          _node.Restraint.ZZ);
+        => new GsaBool6(_node.Restraint.X, _node.Restraint.Y, _node.Restraint.Z, _node.Restraint.XX,
+          _node.Restraint.YY, _node.Restraint.ZZ);
       set {
         CloneApiObject();
         _node.Restraint = new NodalRestraint {
@@ -146,16 +137,19 @@ namespace GsaGH.Parameters {
         Id = Id,
         _node = _node,
       };
-      if (cloneApiNode)
+      if (cloneApiNode) {
         dup.CloneApiObject();
+      }
+
       dup._plane = _plane;
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaNode Morph(SpaceMorph xmorph) {
-      if (Point == null)
+      if (Point == null) {
         return null;
+      }
 
       GsaNode node = Duplicate();
       node.Id = 0;
@@ -169,58 +163,28 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (ApiNode == null)
+      if (ApiNode == null) {
         return "Null";
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
+      }
 
-      string sptTxt = ApiNode.Restraint.X == false
-        && ApiNode.Restraint.Y == false
-        && ApiNode.Restraint.Z == false
-        && ApiNode.Restraint.XX == false
-        && ApiNode.Restraint.YY == false
-        && ApiNode.Restraint.ZZ == false
-          ? ""
-          : ApiNode.Restraint.X
-          & ApiNode.Restraint.Y
-          & ApiNode.Restraint.Z
-          & !ApiNode.Restraint.XX
-          & !ApiNode.Restraint.YY
-          & !ApiNode.Restraint.ZZ
-            ? " Pin"
-            : ApiNode.Restraint.X
-            & ApiNode.Restraint.Y
-            & ApiNode.Restraint.Z
-            & ApiNode.Restraint.XX
-            & ApiNode.Restraint.YY
-            & ApiNode.Restraint.ZZ
-              ? " Fix"
-              : " "
-              + "X:"
-              + (ApiNode.Restraint.X
-                ? "\u2713"
-                : "\u2610")
-              + " Y:"
-              + (ApiNode.Restraint.Y
-                ? "\u2713"
-                : "\u2610")
-              + " Z:"
-              + (ApiNode.Restraint.Z
-                ? "\u2713"
-                : "\u2610")
-              + " XX:"
-              + (ApiNode.Restraint.XX
-                ? "\u2713"
-                : "\u2610")
-              + " YY:"
-              + (ApiNode.Restraint.YY
-                ? "\u2713"
-                : "\u2610")
-              + " ZZ:"
-              + (ApiNode.Restraint.ZZ
-                ? "\u2713"
-                : "\u2610");
+      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+
+      string sptTxt = ApiNode.Restraint.X == false && ApiNode.Restraint.Y == false
+        && ApiNode.Restraint.Z == false && ApiNode.Restraint.XX == false
+        && ApiNode.Restraint.YY == false && ApiNode.Restraint.ZZ == false ?
+          "" :
+          ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z & !ApiNode.Restraint.XX
+          & !ApiNode.Restraint.YY & !ApiNode.Restraint.ZZ ?
+            " Pin" :
+            ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z & ApiNode.Restraint.XX
+            & ApiNode.Restraint.YY & ApiNode.Restraint.ZZ ?
+              " Fix" :
+              " " + "X:" + (ApiNode.Restraint.X ? "\u2713" : "\u2610") + " Y:"
+              + (ApiNode.Restraint.Y ? "\u2713" : "\u2610") + " Z:"
+              + (ApiNode.Restraint.Z ? "\u2713" : "\u2610") + " XX:"
+              + (ApiNode.Restraint.XX ? "\u2713" : "\u2610") + " YY:"
+              + (ApiNode.Restraint.YY ? "\u2713" : "\u2610") + " ZZ:"
+              + (ApiNode.Restraint.ZZ ? "\u2713" : "\u2610");
 
       string localTxt = "";
 
@@ -230,17 +194,14 @@ namespace GsaGH.Parameters {
       }
 
       return string.Join(" ",
-          idd.Trim(),
-          sptTxt.Trim(),
-          localTxt.Trim(),
-          ("Pos:" + new GH_Point(Point).ToString()).Trim())
-        .Trim()
-        .Replace("  ", " ");
+        idd.Trim(), sptTxt.Trim(), localTxt.Trim(),
+        ("Pos:" + new GH_Point(Point).ToString()).Trim()).Trim().Replace("  ", " ");
     }
 
     public GsaNode Transform(Transform xform) {
-      if (Point == null)
+      if (Point == null) {
         return null;
+      }
 
       GsaNode node = Duplicate(true);
       node.Id = 0;
@@ -253,7 +214,10 @@ namespace GsaGH.Parameters {
 
     public void UpdateUnit(LengthUnit unit) {
       if (unit == LengthUnit.Meter) // convert from meter to input unit if not meter
+      {
         return;
+      }
+
       ApiNode.Position.X = new Length(ApiNode.Position.X, LengthUnit.Meter).As(unit);
       ApiNode.Position.Y = new Length(ApiNode.Position.Y, LengthUnit.Meter).As(unit);
       ApiNode.Position.Z = new Length(ApiNode.Position.Z, LengthUnit.Meter).As(unit);
@@ -281,8 +245,11 @@ namespace GsaGH.Parameters {
         },
       };
 
-      if ((Color)_node.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+      if ((Color)_node.Colour
+        != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+      {
         node.Colour = _node.Colour;
+      }
 
       _node = node;
     }
@@ -303,21 +270,19 @@ namespace GsaGH.Parameters {
         },
         SpringProperty = _node.SpringProperty,
         Position = new Vector3 {
-          X = (unit == LengthUnit.Meter)
-            ? _node.Position.X
-            : new Length(_node.Position.X, unit).Meters,
-          Y = (unit == LengthUnit.Meter)
-            ? _node.Position.Y
-            : new Length(_node.Position.Y, unit).Meters,
-          Z = (unit == LengthUnit.Meter)
-            ? _node.Position.Z
-            : new Length(_node.Position.Z, unit).Meters,
-        },
+          X = (unit == LengthUnit.Meter) ? _node.Position.X :
+            new Length(_node.Position.X, unit).Meters,
+          Y = (unit == LengthUnit.Meter) ? _node.Position.Y :
+            new Length(_node.Position.Y, unit).Meters,
+          Z = (unit == LengthUnit.Meter) ? _node.Position.Z :
+            new Length(_node.Position.Z, unit).Meters, },
       };
 
       if ((Color)_node.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+      {
         node.Colour = _node.Colour;
+      }
 
       return node;
     }
@@ -329,14 +294,17 @@ namespace GsaGH.Parameters {
       if (ApiNode.AxisProperty != 0) {
         return false;
       }
+
       // test first if the Plane object is valid
       if (LocalAxis == null && !LocalAxis.IsValid) {
         return true;
       }
+
       // test for default plane values just to be sure
       if (LocalAxis == Plane.WorldXY || LocalAxis == new Plane() || LocalAxis == Plane.Unset) {
         return true;
       }
+
       // GsaAPI might import local plane as an invalid plane:
       var invalidPlane = new Plane() {
         Origin = new Point3d(0, 0, 0),
@@ -347,29 +315,24 @@ namespace GsaGH.Parameters {
       if (LocalAxis == invalidPlane) {
         return true;
       }
+
       return false;
     }
 
     internal void UpdatePreview() {
-      if (_node.Restraint.X
-        || _node.Restraint.Y
-        || _node.Restraint.Z
-        || _node.Restraint.XX
-        || _node.Restraint.YY
-        || _node.Restraint.ZZ)
-        Display.PreviewRestraint(Restraint,
-          _plane,
-          Point,
-          ref _previewSupportSymbol,
+      if (_node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX
+        || _node.Restraint.YY || _node.Restraint.ZZ) {
+        Display.PreviewRestraint(Restraint, _plane, Point, ref _previewSupportSymbol,
           ref _previewText);
-      else {
+      } else {
         _previewSupportSymbol = null;
         _previewText = null;
       }
 
-      if (_plane == null
-        || !(_plane != Plane.WorldXY & _plane != new Plane()))
+      if (_plane == null || !(_plane != Plane.WorldXY & _plane != new Plane())) {
         return;
+      }
+
       Plane local = _plane.Clone();
       local.Origin = Point;
 

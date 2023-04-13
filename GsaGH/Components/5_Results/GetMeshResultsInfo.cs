@@ -18,26 +18,22 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Result2dInfo;
 
-    public GetMeshResultsInfo() : base("MeshResultInfo",
-          "MeshResInfo",
-      "Get Element 2D or Element 3D Contour Result values",
-      CategoryName.Name(),
-      SubCategoryName.Cat5())
-      => Hidden = true;
+    public GetMeshResultsInfo() : base("MeshResultInfo", "MeshResInfo",
+      "Get Element 2D or Element 3D Contour Result values", CategoryName.Name(),
+      SubCategoryName.Cat5()) {
+      Hidden = true;
+    }
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-      => pManager.AddGenericParameter("Result Mesh",
-        "M",
-        "Mesh with coloured result values",
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddGenericParameter("Result Mesh", "M", "Mesh with coloured result values",
         GH_ParamAccess.item);
+    }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddMeshParameter("Mesh", "M", "Mesh", GH_ParamAccess.item);
       pManager.AddPointParameter("Vertices", "V", "Mesh vertices", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Result Values",
-        "R",
-        "Result value at each Mesh Vertex as UnitNumber",
-        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Result Values", "R",
+        "Result value at each Mesh Vertex as UnitNumber", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -49,13 +45,10 @@ namespace GsaGH.Components {
       var values = new List<GH_UnitNumber>();
       for (int i = 0; i < res.ResultValues.Count; i++) {
         vertices.AddRange(res.Vertices[i]);
-        values.AddRange(res.ResultValues[i]
-          .Select(r => new GH_UnitNumber(r)));
-        if (res.Vertices[i]
-            .Count
-          >= res.ResultValues[i]
-            .Count)
+        values.AddRange(res.ResultValues[i].Select(r => new GH_UnitNumber(r)));
+        if (res.Vertices[i].Count >= res.ResultValues[i].Count) {
           continue;
+        }
 
         double x = 0;
         double y = 0;
@@ -66,15 +59,8 @@ namespace GsaGH.Components {
           z += p.Z;
         }
 
-        var pt = new Point3d(x
-          / res.Vertices[i]
-            .Count,
-          y
-          / res.Vertices[i]
-            .Count,
-          z
-          / res.Vertices[i]
-            .Count);
+        var pt = new Point3d(x / res.Vertices[i].Count, y / res.Vertices[i].Count,
+          z / res.Vertices[i].Count);
         vertices.Add(pt);
       }
 

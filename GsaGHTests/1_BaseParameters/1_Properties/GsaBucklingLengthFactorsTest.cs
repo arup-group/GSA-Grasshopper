@@ -23,27 +23,10 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null,
-        null,
-        null,
-        null,
-        null,
-        new List<GsaMember1d>() {
-          m1d,
-        },
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        LengthUnit.Meter,
-        Length.Zero,
-        false,
-        null),
+        Model = AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() {
+            m1d,
+          }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero,
+          false, null),
       };
 
       Member assembledMem1d = assembled.Model.Members()[1];
@@ -82,8 +65,8 @@ namespace GsaGHTests.Parameters {
     }
 
     [Theory]
-    [InlineData(1, 2, 3, LengthUnit.Meter)]
-    public void ConstructorTest3(double factor1, double factor2, double factor3, LengthUnit unit) {
+    [InlineData(1, 2, 3)]
+    public void ConstructorTest3(double factor1, double factor2, double factor3) {
       var member = new GsaMember1d {
         PolyCurve = new PolyCurve(),
         ApiMember = {
@@ -93,7 +76,7 @@ namespace GsaGHTests.Parameters {
         },
       };
 
-      var factors = new GsaBucklingLengthFactors(member, unit);
+      var factors = new GsaBucklingLengthFactors(member);
 
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);

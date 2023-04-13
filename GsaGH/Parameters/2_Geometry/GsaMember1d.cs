@@ -81,9 +81,7 @@ namespace GsaGH.Parameters {
     }
     public GsaOffset Offset {
       get
-        => new GsaOffset(ApiMember.Offset.X1,
-          ApiMember.Offset.X2,
-          ApiMember.Offset.Y,
+        => new GsaOffset(ApiMember.Offset.X1, ApiMember.Offset.X2, ApiMember.Offset.Y,
           ApiMember.Offset.Z);
       set {
         CloneApiObject();
@@ -113,15 +111,13 @@ namespace GsaGH.Parameters {
         Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv
           = RhinoConversions.ConvertMem1dCrv(value);
         _crv = convertCrv.Item1;
-        _topo = convertCrv.Item2;
-        _topoType = convertCrv.Item3;
+        Topology = convertCrv.Item2;
+        TopologyType = convertCrv.Item3;
         UpdatePreview();
       }
     }
     public GsaBool6 ReleaseEnd {
-      get
-        => new GsaBool6(ApiMember.GetEndRelease(1)
-          .Releases);
+      get => new GsaBool6(ApiMember.GetEndRelease(1).Releases);
       set {
         _rel2 = value ?? new GsaBool6();
         CloneApiObject();
@@ -130,9 +126,7 @@ namespace GsaGH.Parameters {
       }
     }
     public GsaBool6 ReleaseStart {
-      get
-        => new GsaBool6(ApiMember.GetEndRelease(0)
-          .Releases);
+      get => new GsaBool6(ApiMember.GetEndRelease(0).Releases);
       set {
         _rel1 = value ?? new GsaBool6();
         CloneApiObject();
@@ -141,8 +135,8 @@ namespace GsaGH.Parameters {
       }
     }
     public GsaSection Section { get; set; } = new GsaSection();
-    public List<Point3d> Topology => _topo;
-    public List<string> TopologyType => _topoType;
+    public List<Point3d> Topology { get; private set; }
+    public List<string> TopologyType { get; private set; }
     public MemberType Type {
       get => ApiMember.Type;
       set {
@@ -168,9 +162,6 @@ namespace GsaGH.Parameters {
     private GsaNode _orientationNode;
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
-    private List<Point3d> _topo;
-    // list of topology points for visualisation /member1d/member2d
-    private List<string> _topoType;
 
     public GsaMember1d() { }
 
@@ -182,33 +173,25 @@ namespace GsaGH.Parameters {
       Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv
         = RhinoConversions.ConvertMem1dCrv(crv);
       _crv = convertCrv.Item1;
-      _topo = convertCrv.Item2;
-      _topoType = convertCrv.Item3;
+      Topology = convertCrv.Item2;
+      TopologyType = convertCrv.Item3;
 
       UpdatePreview();
     }
 
     internal GsaMember1d(
-      Member member,
-      int id,
-      List<Point3d> topology,
-      List<string> topoType,
-      ReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
+      Member member, int id, List<Point3d> topology, List<string> topoType,
+      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
       ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict,
-      LengthUnit modelUnit) {
+      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
       ApiMember = member;
       MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = id;
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
-      _topo = topology;
-      _topoType = topoType;
-      _rel1 = new GsaBool6(ApiMember.GetEndRelease(0)
-        .Releases);
-      _rel2 = new GsaBool6(ApiMember.GetEndRelease(1)
-        .Releases);
+      Topology = topology;
+      TopologyType = topoType;
+      _rel1 = new GsaBool6(ApiMember.GetEndRelease(0).Releases);
+      _rel2 = new GsaBool6(ApiMember.GetEndRelease(1).Releases);
       LocalAxes = new GsaLocalAxes(localAxesDict[id]);
       Section = new GsaSection(sDict, ApiMember.Property, modDict, matDict);
       UpdatePreview();
@@ -222,18 +205,26 @@ namespace GsaGH.Parameters {
         ApiMember = ApiMember,
         LocalAxes = LocalAxes,
       };
-      if (cloneApiMember)
+      if (cloneApiMember) {
         dup.CloneApiObject();
+      }
+
       dup._crv = (PolyCurve)_crv.DuplicateShallow();
-      if (_rel1 != null)
+      if (_rel1 != null) {
         dup._rel1 = _rel1.Duplicate();
-      if (_rel2 != null)
+      }
+
+      if (_rel2 != null) {
         dup._rel2 = _rel2.Duplicate();
+      }
+
       dup.Section = Section.Duplicate();
-      dup._topo = _topo;
-      dup._topoType = _topoType;
-      if (_orientationNode != null)
+      dup.Topology = Topology;
+      dup.TopologyType = TopologyType;
+      if (_orientationNode != null) {
         dup._orientationNode = _orientationNode.Duplicate(cloneApiMember);
+      }
+
       dup.UpdatePreview();
       return dup;
     }
@@ -243,10 +234,12 @@ namespace GsaGH.Parameters {
       dup.Id = 0;
       dup.LocalAxes = null;
 
-      var pts = _topo.ToList();
-      for (int i = 0; i < pts.Count; i++)
+      var pts = Topology.ToList();
+      for (int i = 0; i < pts.Count; i++) {
         pts[i] = xmorph.MorphPoint(pts[i]);
-      dup._topo = pts;
+      }
+
+      dup.Topology = pts;
 
       if (_crv != null) {
         PolyCurve crv = _crv.DuplicatePolyCurve();
@@ -259,18 +252,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
-      string type = Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == Type)
-          .Key
-        + " ";
-      string pb = Section.Id > 0
-        ? "PB" + Section.Id
-        : Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
+      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
 
     public GsaMember1d Transform(Transform xform) {
@@ -278,10 +263,10 @@ namespace GsaGH.Parameters {
       dup.Id = 0;
       dup.LocalAxes = null;
 
-      var pts = _topo.ToList();
+      var pts = Topology.ToList();
       var xpts = new Point3dList(pts);
       xpts.Transform(xform);
-      dup._topo = xpts.ToList();
+      dup.Topology = xpts.ToList();
 
       if (_crv != null) {
         PolyCurve crv = _crv.DuplicatePolyCurve();
@@ -316,8 +301,9 @@ namespace GsaGH.Parameters {
         Type1D = ApiMember.Type1D,
         AutomaticOffset = ApiMember.AutomaticOffset,
       };
-      if (ApiMember.Topology != string.Empty)
+      if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
+      }
 
       mem.MeshSize = MeshSize;
 
@@ -326,42 +312,36 @@ namespace GsaGH.Parameters {
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+      {
         mem.Colour = ApiMember.Colour;
+      }
 
       return mem;
     }
 
     internal void UpdateCurveFromTopology() {
-      if (_crv == null)
+      if (_crv == null) {
         return;
-      _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(_topo, _topoType);
+      }
+
+      _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(Topology, TopologyType);
     }
 
     // list of polyline curve type (arch or line) for member1d/2d
     private void UpdatePreview() {
-      if (!(_rel1 != null & _rel2 != null))
+      if (!((_rel1 != null) & (_rel2 != null))) {
         return;
-      if (_rel1.X
-        || _rel1.Y
-        || _rel1.Z
-        || _rel1.Xx
-        || _rel1.Yy
-        || _rel1.Zz
-        || _rel2.X
-        || _rel2.Y
-        || _rel2.Z
-        || _rel2.Xx
-        || _rel2.Yy
-        || _rel2.Zz) {
+      }
+
+      if (_rel1.X || _rel1.Y || _rel1.Z || _rel1.Xx || _rel1.Yy || _rel1.Zz || _rel2.X || _rel2.Y
+        || _rel2.Z || _rel2.Xx || _rel2.Yy || _rel2.Zz) {
         Tuple<List<Line>, List<Line>> previewCurves = Display.Preview1D(_crv,
-          ApiMember.OrientationAngle * Math.PI / 180.0,
-          _rel1,
-          _rel2);
+          ApiMember.OrientationAngle * Math.PI / 180.0, _rel1, _rel2);
         _previewGreenLines = previewCurves.Item1;
         _previewRedLines = previewCurves.Item2;
-      }
-      else
+      } else {
         _previewGreenLines = null;
+      }
     }
   }
 }

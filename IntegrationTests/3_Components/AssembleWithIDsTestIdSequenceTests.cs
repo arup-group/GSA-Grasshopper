@@ -9,12 +9,14 @@ namespace IntegrationTests.Components {
   public class AssembleWithIDsTestIdSequenceTests {
     public static GH_Document Document {
       get {
-        if (s_document == null)
-          s_document = OpenDocument();
-        return s_document;
+        if (document == null) {
+          document = OpenDocument();
+        }
+
+        return document;
       }
     }
-    private static GH_Document s_document = null;
+    private static GH_Document document = null;
 
     [Fact]
     public void NoRuntimeErrorTest() {
@@ -26,11 +28,25 @@ namespace IntegrationTests.Components {
     [InlineData("NPoints", 401)]
     [InlineData("FixedId", 5)]
     [InlineData("NodeSame", true)]
-    [InlineData("Elem1dIds", new int[] { 1, 2, 3, 14 })]
+    [InlineData("Elem1dIds", new int[] {
+      1,
+      2,
+      3,
+      14,
+    })]
     [InlineData("Elem1dSame", true)]
-    [InlineData("Mem1dIds", new int[] { 1, 2, 3, 14 })]
+    [InlineData("Mem1dIds", new int[] {
+      1,
+      2,
+      3,
+      14,
+    })]
     [InlineData("Mem1dSame", true)]
-    [InlineData("Mem2dIds", new int[] { 1, 2, 3 })]
+    [InlineData("Mem2dIds", new int[] {
+      1,
+      2,
+      3,
+    })]
     [InlineData("Mem2dSame", true)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
@@ -42,8 +58,13 @@ namespace IntegrationTests.Components {
       string fileName = thisClass.Name + ".gh";
       fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Components" });
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+       .Parent.FullName;
+      string path = Path.Combine(new string[] {
+        solutiondir,
+        "ExampleFiles",
+        "Components",
+      });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }

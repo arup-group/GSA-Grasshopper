@@ -100,7 +100,7 @@ namespace GsaGH.Graphics
       this.labelProductName.TabIndex = 19;
       this.labelProductName.Text = "GSA Grasshopper Plugin";
       this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.labelProductName.Click += new System.EventHandler(this.labelProductName_Click);
+      this.labelProductName.Click += new System.EventHandler(this.LabelProductName_Click);
       // 
       // labelVersion
       // 
@@ -113,7 +113,7 @@ namespace GsaGH.Graphics
       this.labelVersion.TabIndex = 0;
       this.labelVersion.Text = "Plugin Version";
       this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.labelVersion.Click += new System.EventHandler(this.labelVersion_Click);
+      this.labelVersion.Click += new System.EventHandler(this.LabelVersion_Click);
       // 
       // labelApiVersion
       // 
@@ -127,7 +127,7 @@ namespace GsaGH.Graphics
       this.labelApiVersion.TabIndex = 21;
       this.labelApiVersion.Text = "API Version";
       this.labelApiVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.labelApiVersion.Click += new System.EventHandler(this.labelApiVersion_Click);
+      this.labelApiVersion.Click += new System.EventHandler(this.LabelApiVersion_Click);
       // 
       // labelCompanyName
       // 
@@ -162,7 +162,7 @@ namespace GsaGH.Graphics
       this.linkEmail.TabStop = true;
       this.linkEmail.Text = "oasys@arup.com";
       this.linkEmail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.linkEmail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkEmail_LinkClicked);
+      this.linkEmail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkEmail_LinkClicked);
       // 
       // Check
       // 
@@ -174,7 +174,7 @@ namespace GsaGH.Graphics
       this.Check.TabIndex = 27;
       this.Check.Text = "&Check for Updates";
       this.Check.UseVisualStyleBackColor = true;
-      this.Check.Click += new System.EventHandler(this.button1_Click);
+      this.Check.Click += new System.EventHandler(this.Button1_Click);
       // 
       // linkWebsite
       // 
@@ -188,7 +188,7 @@ namespace GsaGH.Graphics
       this.linkWebsite.TabIndex = 25;
       this.linkWebsite.TabStop = true;
       this.linkWebsite.Text = "www.oasys-software.com";
-      this.linkWebsite.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkWebsite.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
       // 
       // okButton
       // 
@@ -199,7 +199,7 @@ namespace GsaGH.Graphics
       this.okButton.Size = new System.Drawing.Size(75, 21);
       this.okButton.TabIndex = 24;
       this.okButton.Text = "&OK";
-      this.okButton.Click += new System.EventHandler(this.okButton_Click);
+      this.okButton.Click += new System.EventHandler(this.OkButton_Click);
       // 
       // disclaimer
       // 

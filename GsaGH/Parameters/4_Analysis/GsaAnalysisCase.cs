@@ -17,20 +17,22 @@
       Description = description;
     }
 
-    public GsaAnalysisCase Duplicate() => new GsaAnalysisCase(Id, Name, Description);
+    public GsaAnalysisCase Duplicate() {
+      return new GsaAnalysisCase(Id, Name, Description);
+    }
 
     public override string ToString() {
-      string id = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
+      string id = Id == 0 ? "" : "ID:" + Id + " ";
       string s = "";
-      if (Name != null)
+      if (Name != null) {
         s += " '" + Name + "'";
-      if (Description != null)
+      }
+
+      if (Description != null) {
         s += " " + Description;
-      return string.Join(" ", id.Trim(), s.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      }
+
+      return string.Join(" ", id.Trim(), s.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

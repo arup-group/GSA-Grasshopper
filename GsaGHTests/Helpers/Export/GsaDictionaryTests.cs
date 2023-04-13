@@ -75,7 +75,7 @@ namespace GsaGHTests.Helpers.Export {
       var guid = Guid.NewGuid();
       var expectedIDs = new List<int> {
         dictionary.AddValue(guid, "first"),
-        dictionary.AddValue(guid, "second")
+        dictionary.AddValue(guid, "second"),
       };
 
       Assert.Equal(1, expectedIDs[0]);
@@ -100,7 +100,7 @@ namespace GsaGHTests.Helpers.Export {
       var guid = Guid.NewGuid();
       var expectedIDs = new List<int> {
         dictionary.AddValue(guid, "myFirst"),
-        dictionary.AddValue(guid, "mySecond")
+        dictionary.AddValue(guid, "mySecond"),
       };
 
       Assert.Equal(2, expectedIDs[0]);
@@ -153,9 +153,7 @@ namespace GsaGHTests.Helpers.Export {
 
       Assert.Equal(3, dictionary.Count);
       Assert.Equal("myFirst", dictionary.Dictionary[5]);
-      Assert.Equal(2,
-        dictionary.GuidDictionary[guid]
-          .Count);
+      Assert.Equal(2, dictionary.GuidDictionary[guid].Count);
 
       Assert.Equal("mySecond", dictionary.Dictionary[2]);
     }

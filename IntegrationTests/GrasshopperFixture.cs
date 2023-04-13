@@ -7,32 +7,38 @@ using Interop.Gsa_10_1;
 using OasysGH.Units;
 using Rhino;
 using Rhino.Runtime.InProcess;
+using RhinoInside;
 using Xunit;
 
 namespace IntegrationTests {
-
-
   public class GrasshopperFixture : IDisposable {
     public RhinoCore Core {
       get {
-        if (null == _core)
+        if (null == _core) {
           InitializeCore();
+        }
+
         return _core as RhinoCore;
       }
     }
     public GH_RhinoScriptInterface GhPlugin {
       get {
-        if (null == _ghPlugin)
+        if (null == _ghPlugin) {
           InitializeGrasshopperPlugin();
+        }
+
         return _ghPlugin as GH_RhinoScriptInterface;
       }
     }
-    public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+    public static string InstallPath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
-    private object _doc { get; set; }
-    private object _docIo { get; set; }
-    private static readonly string s_linkFileName = "IntegrationTests.ghlink";
-    private static readonly string s_linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
+    private object Doc { get; set; }
+    private object DocIo { get; set; }
+    private static readonly string linkFileName = "IntegrationTests.ghlink";
+    private static readonly string linkFilePath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+      "Libraries");
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
@@ -42,7 +48,7 @@ namespace IntegrationTests {
       // are loaded before the resolver is set up. Avoid creating other static functions
       // and members which may reference Rhino assemblies, as that may cause those
       // assemblies to be loaded before this is called.
-      RhinoInside.Resolver.Initialize();
+      Resolver.Initialize();
     }
 
     public GrasshopperFixture() {
@@ -71,17 +77,17 @@ namespace IntegrationTests {
     }
 
     public void AddPluginToGh() {
-      Directory.CreateDirectory(s_linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(s_linkFilePath, s_linkFileName));
+      Directory.CreateDirectory(linkFilePath);
+      StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, linkFileName));
       writer.Write(Environment.CurrentDirectory);
       writer.Close();
     }
 
     public void Dispose() {
       // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-      Dispose(disposing: true);
+      Dispose(true);
       GC.SuppressFinalize(this);
-      File.Delete(Path.Combine(s_linkFilePath, s_linkFileName));
+      File.Delete(Path.Combine(linkFilePath, linkFileName));
     }
 
     public void LoadRefs() {
@@ -93,11 +99,13 @@ namespace IntegrationTests {
     }
 
     protected virtual void Dispose(bool disposing) {
-      if (_isDisposed)
+      if (_isDisposed) {
         return;
+      }
+
       if (disposing) {
-        _doc = null;
-        _docIo = null;
+        Doc = null;
+        DocIo = null;
         GhPlugin.CloseAllDocuments();
         _ghPlugin = null;
         Core.Dispose();
@@ -108,11 +116,15 @@ namespace IntegrationTests {
       _isDisposed = true;
     }
 
-    private void InitializeCore() => _core = new RhinoCore();
+    private void InitializeCore() {
+      _core = new RhinoCore();
+    }
 
     private void InitializeGrasshopperPlugin() {
-      if (null == _core)
+      if (null == _core) {
         InitializeCore();
+      }
+
       // we do this in a seperate function to absolutely ensure that the core is initialized before we load the GH plugin,
       // which will happen automatically when we enter the function containing GH references
       InitializeGrasshopperPlugin2();

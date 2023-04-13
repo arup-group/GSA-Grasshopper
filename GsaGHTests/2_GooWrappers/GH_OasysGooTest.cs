@@ -73,8 +73,10 @@ namespace GsaGHTests.GooWrappers {
           hasNickName = true;
         }
 
-        if (gooProperty.Name != "Description")
+        if (gooProperty.Name != "Description") {
           continue;
+        }
+
         string description = (string)gooProperty.GetValue(objectGoo, null);
         Assert.StartsWith("GSA ", description);
         Assert.True(description.Length > 7);

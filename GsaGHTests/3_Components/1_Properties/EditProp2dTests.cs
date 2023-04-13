@@ -98,8 +98,7 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_Integer(49), i++);
       expectedMat = new GsaMaterial(8);
       ComponentTestHelper.SetInput(comp, new GsaMaterialGoo(expectedMat), i++);
-      ComponentTestHelper.SetInput(comp,
-        new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
+      ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
         i++);
       ComponentTestHelper.SetInput(comp, new GH_Integer(7), i++);
       ComponentTestHelper.SetInput(comp, new GH_String("Load Panel"), 9);
@@ -110,6 +109,14 @@ namespace GsaGHTests.Properties {
 
       i = 0;
       prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, i++);
+      Assert.Equal(49, prop2dGoo.Value.Id);
+      Duplicates.AreEqual(expectedMat, prop2dGoo.Value.Material);
+      Assert.Equal(40, prop2dGoo.Value.Thickness.As(LengthUnit.Centimeter), 6);
+      Assert.Equal(7, prop2dGoo.Value.AxisProperty);
+      Assert.Equal(SupportType.Cantilever, prop2dGoo.Value.SupportType);
+      Assert.Equal(3, prop2dGoo.Value.ReferenceEdge);
+      Assert.Equal("MyPropediprop", prop2dGoo.Value.Name);
+      Assert.Equal("LOAD", prop2dGoo.Value.Type.ToString());
       id = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
       mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
       thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
