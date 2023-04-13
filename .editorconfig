@@ -2,7 +2,7 @@
 root = true
 
 # C# files
-[*.cs]
+[*]
 
 #### Core EditorConfig Options ####
 
@@ -139,13 +139,13 @@ csharp_style_allow_embedded_statements_on_same_line_experimental = true:error
 #### C# Formatting Rules ####
 
 # New line preferences
-csharp_new_line_before_catch = true:error
-csharp_new_line_before_else = true:error
-csharp_new_line_before_finally = true:error
-csharp_new_line_before_members_in_anonymous_types = true:error
-csharp_new_line_before_members_in_object_initializers = true:error
 csharp_new_line_before_open_brace = none:error
-csharp_new_line_between_query_expression_clauses = true:error
+csharp_new_line_before_catch = false:error
+csharp_new_line_before_else = false:error
+csharp_new_line_before_finally = false:error
+csharp_new_line_before_members_in_anonymous_types = false:error
+csharp_new_line_before_members_in_object_initializers = false:error
+csharp_new_line_between_query_expression_clauses = false:error
 
 # Indentation preferences
 csharp_indent_block_contents = true:error
@@ -226,17 +226,26 @@ dotnet_naming_style.begins_with_i.word_separator =
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 # ReSharper properties
-resharper_align_linq_query = true
-resharper_align_multiline_argument = true
+
+
+resharper_align_linq_query = false
+resharper_align_multiline_argument = false
 resharper_align_multiline_binary_expressions_chain = false
-resharper_align_multiline_calls_chain = true
-resharper_align_multiline_extends_list = true
-resharper_align_multiline_for_stmt = true
-resharper_align_multiline_parameter = true
+resharper_align_multiline_calls_chain = false
+resharper_align_multiline_extends_list = false
+resharper_align_multiline_for_stmt = false
+resharper_align_multiline_parameter = false
 resharper_align_multiline_statement_conditions = false
-resharper_align_multiple_declaration = true
-resharper_align_multline_type_parameter_constrains = true
-resharper_align_tuple_components = true
+resharper_align_multiple_declaration = false
+resharper_align_multline_type_parameter_constrains = false
+resharper_csharp_align_multiline_argument = false
+resharper_csharp_align_multiline_parameter = false
+resharper_csharp_align_multiple_declaration = false
+resharper_align_tuple_components = false
+resharper_blank_lines_after_file_scoped_namespace_directive = 0
+resharper_blank_lines_around_auto_property = 0
+resharper_blank_lines_around_property = 0
+resharper_blank_lines_around_single_line_type = 0
 resharper_allow_comment_after_lbrace = true
 resharper_apply_auto_detected_rules = false
 resharper_apply_on_completion = true
@@ -250,9 +259,7 @@ resharper_csharp_keep_blank_lines_in_declarations = 1
 resharper_csharp_max_line_length = 100
 resharper_csharp_wrap_arguments_style = chop_if_long
 resharper_csharp_wrap_before_binary_opsign = true
-resharper_csharp_wrap_extends_list_style = chop_always
 resharper_csharp_wrap_multiple_declaration_style = chop_always
-resharper_csharp_wrap_parameters_style = chop_if_long
 resharper_empty_block_style = together_same_line
 resharper_enforce_line_ending_style = true
 resharper_indent_braces_inside_statement_conditions = false
@@ -268,6 +275,11 @@ resharper_keep_existing_expr_member_arrangement = false
 resharper_keep_existing_initializer_arrangement = false
 resharper_keep_existing_invocation_parens_arrangement = false
 resharper_keep_existing_linebreaks = false
+resharper_keep_existing_embedded_block_arrangement = false
+resharper_keep_existing_list_patterns_arrangement = false
+resharper_keep_existing_property_patterns_arrangement = false
+resharper_keep_existing_switch_expression_arrangement = false
+resharper_max_attribute_length_for_same_line = 100
 resharper_max_array_initializer_elements_on_line = 1
 resharper_max_enum_members_on_line = 1
 resharper_max_formal_parameters_on_line = 5
@@ -293,7 +305,10 @@ resharper_wrap_before_eq = true
 resharper_wrap_chained_binary_expressions = chop_if_long
 resharper_wrap_chained_binary_patterns = chop_if_long
 resharper_wrap_for_stmt_header_style = wrap_if_long
-resharper_wrap_list_pattern = chop_if_long
+resharper_wrap_extends_list_style = wrap_if_long
+resharper_wrap_list_pattern = wrap_if_long
+resharper_wrap_multiple_type_parameter_constraints_style = wrap_if_long
+resharper_wrap_parameters_style = wrap_if_long
 resharper_wrap_ternary_expr_style = chop_always
 
 # ReSharper inspection severities
@@ -321,3 +336,9 @@ resharper_redundant_base_qualifier_highlighting = warning
 resharper_suggest_var_or_type_built_in_types_highlighting = hint
 resharper_suggest_var_or_type_elsewhere_highlighting = hint
 resharper_suggest_var_or_type_simple_types_highlighting = hint
+resharper_csharp_blank_lines_around_field = 0
+resharper_csharp_int_align_fix_in_adjacent = false
+resharper_csharp_use_indent_from_vs = true
+resharper_place_field_attribute_on_same_line = if_owner_is_single_line
+resharper_place_linq_into_on_new_line = false
+resharper_remove_blank_lines_near_braces_in_declarations = false
