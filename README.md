@@ -43,7 +43,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ### Code convention
-We are following the [Arup Programming Style Guides](https://arup-group.github.io/programming-styleguide/csharp-style.html) which is a fork of the [Google Style Guides](https://google.github.io/styleguide/)
+We are following the [Arup Programming Style Guides](https://arup-group.github.io/programming-styleguide/csharp-style.html) which is a fork of the [Google Style Guides](https://google.github.io/styleguide/). The [.editorconfig](.editorconfig) file in this repo contains these formatting rules, and includes rules for code-cleanup using resharper.
 
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?&style=flat-square&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAADLSURBVHgB7ZPRDcIwDESvnYAROgIbkA1ghG7CKDACTNBs0m5QNgiO5I/IuLGLhJCgT7JUWXe5OHKBvyIxazytckhIC8gghQDHLYf0PoN1eFe7jZzE45NPdC6+T/Bj+yh5J8adc09oXiawfG0lOYt62FR9ZcBRMQfY+Hw8mmQWGu2Jqr6mNEOhIaRG6y35yieKiu4Gm+jy8S5feeRcF+cWmT43WoBFiw+zBXw/oNGavGY91YFqz+1OyB5UE9edKtK/NcEDBYxpPSN+kidmAJvClBsULQAAAABJRU5ErkJggg==)](/LICENSE)
