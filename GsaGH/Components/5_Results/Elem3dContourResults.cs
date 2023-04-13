@@ -94,28 +94,16 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
 
-    public Elem3dContourResults() : base("3D Contour Results",
-                                                                                          "ContourElem3d",
-      "Displays GSA 3D Element Results as Contour",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
+    public Elem3dContourResults() : base("3D Contour Results", "ContourElem3d",
+      "Displays GSA 3D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat5()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {
         InitialiseDropdowns();
       }
 
-      m_attributes = new DropDownSliderComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        _slider,
-        SetVal,
-        SetMaxMin,
-        _defScale,
-        _maxValue,
-        _minValue,
-        _noDigits,
+      m_attributes = new DropDownSliderComponentAttributes(this, SetSelected, _dropDownItems,
+        _selectedItems, _slider, SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits,
         _spacerDescriptions);
     }
 
@@ -127,20 +115,14 @@ namespace GsaGH.Components {
 
       args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
       for (int i = 0; i < _legendValues.Count; i++) {
-        args.Display.Draw2dText(_legendValues[i],
-          Color.Black,
-          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]),
-          false);
+        args.Display.Draw2dText(_legendValues[i], Color.Black,
+          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]), false);
       }
 
-      args.Display.Draw2dText(_resType,
-        Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 7),
-        false);
-      args.Display.Draw2dText(_case,
-        Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 145),
-        false);
+      args.Display.Draw2dText(_resType, Color.Black,
+        new Point2d(args.Viewport.Bounds.Right - 110, 7), false);
+      args.Display.Draw2dText(_case, Color.Black,
+        new Point2d(args.Viewport.Bounds.Right - 110, 145), false);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -169,61 +151,58 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
         case 0: {
-            switch (j) {
-              case 0: {
-                  if (_dropDownItems[1] != _displacement) {
-                    _dropDownItems[1] = _displacement;
-                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+          switch (j) {
+            case 0: {
+              if (_dropDownItems[1] != _displacement) {
+                _dropDownItems[1] = _displacement;
+                _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
 
-                    _disp = (DisplayValue)3; // Resolved XYZ
-                    DeformationModeClicked();
-                  }
+                _disp = (DisplayValue)3; // Resolved XYZ
+                DeformationModeClicked();
+              }
 
-                  break;
-                }
-              case 1: {
-                  if (_dropDownItems[1] != _stress) {
-                    _dropDownItems[1] = _stress;
-                    _selectedItems[1] = _dropDownItems[1][2];
-
-                    _disp = (DisplayValue)2;
-                    StressModeClicked();
-                  }
-
-                  break;
-                }
+              break;
             }
+            case 1: {
+              if (_dropDownItems[1] != _stress) {
+                _dropDownItems[1] = _stress;
+                _selectedItems[1] = _dropDownItems[1][2];
 
-            break;
+                _disp = (DisplayValue)2;
+                StressModeClicked();
+              }
+
+              break;
+            }
           }
+
+          break;
+        }
         case 1: {
-            bool redraw = false;
-            _selectedItems[1] = _dropDownItems[1][j];
-            if (_mode == FoldMode.Displacement) {
-              if ((int)_disp > 3 & j < 4) {
-                redraw = true;
-                _slider = true;
-              }
-
-              if ((int)_disp < 4 & j > 3) {
-                redraw = true;
-                _slider = false;
-              }
-
-              _disp = (DisplayValue)j;
-            }
-            else {
-              _disp = j < 3
-                ? (DisplayValue)j
-                : (DisplayValue)(j + 1);
+          bool redraw = false;
+          _selectedItems[1] = _dropDownItems[1][j];
+          if (_mode == FoldMode.Displacement) {
+            if ((int)_disp > 3 & j < 4) {
+              redraw = true;
+              _slider = true;
             }
 
-            if (redraw) {
-              ReDrawComponent();
+            if ((int)_disp < 4 & j > 3) {
+              redraw = true;
+              _slider = false;
             }
 
-            break;
+            _disp = (DisplayValue)j;
+          } else {
+            _disp = j < 3 ? (DisplayValue)j : (DisplayValue)(j + 1);
           }
+
+          if (redraw) {
+            ReDrawComponent();
+          }
+
+          break;
+        }
       }
 
       base.UpdateUI();
@@ -236,32 +215,25 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       if (Params.Input.Count != 4) {
         Params.RegisterInputParam(new Param_Interval());
-        Params.Input[3]
-          .Name = "Min/Max Domain";
-        Params.Input[3]
-          .NickName = "I";
-        Params.Input[3]
-          .Description = "Opitonal Domain for custom Min to Max contour colours";
-        Params.Input[3]
-          .Optional = true;
-        Params.Input[3]
-          .Access = GH_ParamAccess.item;
+        Params.Input[3].Name = "Min/Max Domain";
+        Params.Input[3].NickName = "I";
+        Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        Params.Input[3].Optional = true;
+        Params.Input[3].Access = GH_ParamAccess.item;
       }
 
       switch (_mode) {
         case FoldMode.Displacement when (int)_disp < 4:
-          Params.Output[2]
-            .Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
+          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
           break;
 
         case FoldMode.Displacement:
-          Params.Output[2]
-            .Name = "Values [rad]";
+          Params.Output[2].Name = "Values [rad]";
           break;
 
         case FoldMode.Stress:
-          Params.Output[2]
-            .Name = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
+          Params.Output[2].Name
+            = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
           break;
       }
     }
@@ -285,17 +257,19 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
+
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient",
-        gradient.Icon_24x24,
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24,
         (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") { Enabled = true };
+      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
+        Enabled = true,
+      };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
           Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
@@ -304,7 +278,9 @@ namespace GsaGH.Components {
         lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var stressUnitsMenu = new ToolStripMenuItem("Stress") { Enabled = true };
+      var stressUnitsMenu = new ToolStripMenuItem("Stress") {
+        Enabled = true,
+      };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
           Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
@@ -332,8 +308,7 @@ namespace GsaGH.Components {
           lengthUnitsMenu,
           stressUnitsMenu,
         });
-      }
-      else {
+      } else {
         unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
           lengthUnitsMenu,
           stressUnitsMenu,
@@ -379,53 +354,33 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Element filter list",
-        "El",
-        "Filter import by list."
-        + Environment.NewLine
-        + "Element list should take the form:"
+      pManager.AddTextParameter("Element filter list", "El",
+        "Filter import by list." + Environment.NewLine + "Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
-      pManager.AddColourParameter("Colour",
-        "Co",
-        "Optional list of colours to override default colours"
-        + Environment.NewLine
-        + "A new gradient will be created from the input list of colours",
-        GH_ParamAccess.list);
-      pManager.AddIntervalParameter("Min/Max Domain",
-        "I",
-        "Opitonal Domain for custom Min to Max contour colours",
-        GH_ParamAccess.item);
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
+        GH_ParamAccess.item, "All");
+      pManager.AddColourParameter("Colour", "Co",
+        "Optional list of colours to override default colours" + Environment.NewLine
+        + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+      pManager.AddIntervalParameter("Min/Max Domain", "I",
+        "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       IQuantity length = new Length(0, _lengthResultUnit);
-      string lengthunitAbbreviation = string.Concat(length.ToString()
-        .Where(char.IsLetter));
+      string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Ngon Mesh",
-        "M",
-        "Ngon Mesh with coloured result values",
+      pManager.AddGenericParameter("Ngon Mesh", "M", "Ngon Mesh with coloured result values",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]",
-        "LT",
-        "Legend Values",
+      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values",
         GH_ParamAccess.list);
     }
 
@@ -444,30 +399,28 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-            result = goo.Value;
-            switch (result.Type) {
-              case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
-                this.AddRuntimeWarning("Combination Case "
-                  + result.CaseId
-                  + " contains "
-                  + result.SelectedPermutationIds.Count
-                  + " permutations - only one permutation can be displayed at a time."
-                  + Environment.NewLine
-                  + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-                break;
+          result = goo.Value;
+          switch (result.Type) {
+            case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
+                + result.SelectedPermutationIds.Count
+                + " permutations - only one permutation can be displayed at a time."
+                + Environment.NewLine
+                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
 
-              case GsaResult.CaseType.Combination:
-                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-                break;
+            case GsaResult.CaseType.Combination:
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
 
-              case GsaResult.CaseType.AnalysisCase:
-                _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-                break;
-            }
-
-            break;
+            case GsaResult.CaseType.AnalysisCase:
+              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+              break;
           }
+
+          break;
+        }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -531,34 +484,18 @@ namespace GsaGH.Components {
       double dmaxX = res.DmaxX.As(xyzunit);
       double dmaxY = res.DmaxY.As(xyzunit);
       double dmaxZ = res.DmaxZ.As(xyzunit);
-      double dmaxXyz = (_mode == FoldMode.Displacement)
-        ? res.DmaxXyz.As(xyzunit)
-        : 0;
+      double dmaxXyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
       double dminX = res.DminX.As(xyzunit);
       double dminY = res.DminY.As(xyzunit);
       double dminZ = res.DminZ.As(xyzunit);
-      double dminXyz = (_mode == FoldMode.Displacement)
-        ? res.DminXyz.As(xyzunit)
-        : 0;
-      double dmaxXx = (_mode == FoldMode.Displacement)
-        ? 0
-        : res.DmaxXx.As(xxyyzzunit);
-      double dmaxYy = (_mode == FoldMode.Displacement)
-        ? 0
-        : res.DmaxYy.As(xxyyzzunit);
-      double dmaxZz = (_mode == FoldMode.Displacement)
-        ? 0
-        : res.DmaxZz.As(xxyyzzunit);
+      double dminXyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
+      double dmaxXx = (_mode == FoldMode.Displacement) ? 0 : res.DmaxXx.As(xxyyzzunit);
+      double dmaxYy = (_mode == FoldMode.Displacement) ? 0 : res.DmaxYy.As(xxyyzzunit);
+      double dmaxZz = (_mode == FoldMode.Displacement) ? 0 : res.DmaxZz.As(xxyyzzunit);
       double dmaxXxyyzz = 0;
-      double dminXx = (_mode == FoldMode.Displacement)
-        ? 0
-        : res.DminXx.As(xxyyzzunit);
-      double dminYy = (_mode == FoldMode.Displacement)
-        ? 0
-        : res.DminYy.As(xxyyzzunit);
-      double dminZz = (_mode == FoldMode.Displacement)
-        ? 0
-        : res.DminZz.As(xxyyzzunit);
+      double dminXx = (_mode == FoldMode.Displacement) ? 0 : res.DminXx.As(xxyyzzunit);
+      double dminYy = (_mode == FoldMode.Displacement) ? 0 : res.DminYy.As(xxyyzzunit);
+      double dminZz = (_mode == FoldMode.Displacement) ? 0 : res.DminZz.As(xxyyzzunit);
       double dminXxyyzz = 0;
 
       #region Result mesh values
@@ -657,19 +594,14 @@ namespace GsaGH.Components {
 
       #region create mesh
 
-      var resultMeshes = new MeshResultGoo(new Mesh(),
-        new List<List<IQuantity>>(),
-        new List<List<Point3d>>(),
-        new List<int>());
+      var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
+        new List<List<Point3d>>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
-      meshes.AsParallel()
-        .AsOrdered();
+      meshes.AsParallel().AsOrdered();
       var values = new ConcurrentDictionary<int, List<IQuantity>>();
-      values.AsParallel()
-        .AsOrdered();
+      values.AsParallel().AsOrdered();
       var verticies = new ConcurrentDictionary<int, List<Point3d>>();
-      verticies.AsParallel()
-        .AsOrdered();
+      verticies.AsParallel().AsOrdered();
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
       _undefinedModelLengthUnit = false;
@@ -680,166 +612,122 @@ namespace GsaGH.Components {
           "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in "
           + lengthUnit.ToString()
           + ". This can be changed by right-clicking the component -> 'Select Units'");
-      }
-      else {
+      } else {
         _lengthUnit = lengthUnit;
       }
 
-      Parallel.ForEach(elems.Keys,
-        key => {
-          Element element = elems[key];
-          if (element.Topology.Count < 5) {
-            return;
-          }
+      Parallel.ForEach(elems.Keys, key => {
+        Element element = elems[key];
+        if (element.Topology.Count < 5) {
+          return;
+        }
 
-          Mesh tempmesh = Elements.ConvertElement3D(element, nodes, lengthUnit);
-          if (tempmesh == null) {
-            return;
-          }
+        Mesh tempmesh = Elements.ConvertElement3D(element, nodes, lengthUnit);
+        if (tempmesh == null) {
+          return;
+        }
 
-          List<Vector3d> transformation = null;
-          var vals = new List<IQuantity>();
-          switch (_disp) {
-            case DisplayValue.X:
-              vals = xyzResults[key]
-                .Select(item => item.Value.X.ToUnit(xyzunit))
-                .ToList();
-              if (_mode == FoldMode.Displacement) {
-                transformation = xyzResults[key]
-                  .Select(item => new Vector3d(item.Value.X.As(lengthUnit) * _defScale, 0, 0))
-                  .ToList();
-              }
+        List<Vector3d> transformation = null;
+        var vals = new List<IQuantity>();
+        switch (_disp) {
+          case DisplayValue.X:
+            vals = xyzResults[key].Select(item => item.Value.X.ToUnit(xyzunit)).ToList();
+            if (_mode == FoldMode.Displacement) {
+              transformation = xyzResults[key].Select(item
+                => new Vector3d(item.Value.X.As(lengthUnit) * _defScale, 0, 0)).ToList();
+            }
 
-              break;
+            break;
 
-            case DisplayValue.Y:
-              vals = xyzResults[key]
-                .Select(item => item.Value.Y.ToUnit(xyzunit))
-                .ToList();
-              if (_mode == FoldMode.Displacement) {
-                transformation = xyzResults[key]
-                  .Select(item => new Vector3d(0, item.Value.Y.As(lengthUnit) * _defScale, 0))
-                  .ToList();
-              }
+          case DisplayValue.Y:
+            vals = xyzResults[key].Select(item => item.Value.Y.ToUnit(xyzunit)).ToList();
+            if (_mode == FoldMode.Displacement) {
+              transformation = xyzResults[key].Select(item
+                => new Vector3d(0, item.Value.Y.As(lengthUnit) * _defScale, 0)).ToList();
+            }
 
-              break;
+            break;
 
-            case DisplayValue.Z:
-              vals = xyzResults[key]
-                .Select(item => item.Value.Z.ToUnit(xyzunit))
-                .ToList();
-              if (_mode == FoldMode.Displacement) {
-                transformation = xyzResults[key]
-                  .Select(item => new Vector3d(0, 0, item.Value.Z.As(lengthUnit) * _defScale))
-                  .ToList();
-              }
+          case DisplayValue.Z:
+            vals = xyzResults[key].Select(item => item.Value.Z.ToUnit(xyzunit)).ToList();
+            if (_mode == FoldMode.Displacement) {
+              transformation = xyzResults[key].Select(item
+                => new Vector3d(0, 0, item.Value.Z.As(lengthUnit) * _defScale)).ToList();
+            }
 
-              break;
+            break;
 
-            case DisplayValue.ResXyz:
-              vals = xyzResults[key]
-                .Select(item => item.Value.Xyz.ToUnit(xyzunit))
-                .ToList();
-              if (_mode == FoldMode.Displacement) {
-                transformation = xyzResults[key]
-                  .Select(item => new Vector3d(item.Value.X.As(lengthUnit) * _defScale,
+          case DisplayValue.ResXyz:
+            vals = xyzResults[key].Select(item => item.Value.Xyz.ToUnit(xyzunit)).ToList();
+            if (_mode == FoldMode.Displacement) {
+              transformation = xyzResults[key].Select(item
+                  => new Vector3d(item.Value.X.As(lengthUnit) * _defScale,
                     item.Value.Y.As(lengthUnit) * _defScale,
                     item.Value.Z.As(lengthUnit) * _defScale))
-                  .ToList();
-              }
-
-              break;
-
-            case DisplayValue.Xx:
-              vals = xxyyzzResults[key]
-                .Select(item => item.Value.X.ToUnit(xxyyzzunit))
-                .ToList();
-              break;
-
-            case DisplayValue.Yy:
-              vals = xxyyzzResults[key]
-                .Select(item => item.Value.Y.ToUnit(xxyyzzunit))
-                .ToList();
-              break;
-
-            case DisplayValue.Zz:
-              vals = xxyyzzResults[key]
-                .Select(item => item.Value.Z.ToUnit(xxyyzzunit))
-                .ToList();
-              break;
-
-            case DisplayValue.ResXxyyzz:
-              vals = xxyyzzResults[key]
-                .Select(item => item.Value.Xyz.ToUnit(xxyyzzunit))
-                .ToList();
-              break;
-          }
-
-          for (int i = 0;
-            i < vals.Count - 1;
-            i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
-          {
-            double tnorm = (2
-              * (vals[i]
-                  .Value
-                - dmin)
-              / (dmax - dmin))
-              - 1;
-            Color col = double.IsNaN(tnorm)
-              ? Color.Transparent
-              : ghGradient.ColourAt(tnorm);
-            tempmesh.VertexColors.Add(col);
-            if (transformation == null) {
-              continue;
+               .ToList();
             }
 
-            Point3f def = tempmesh.Vertices[i];
-            def.Transform(Transform.Translation(transformation[i]));
-            tempmesh.Vertices[i] = def;
+            break;
+
+          case DisplayValue.Xx:
+            vals = xxyyzzResults[key].Select(item => item.Value.X.ToUnit(xxyyzzunit)).ToList();
+            break;
+
+          case DisplayValue.Yy:
+            vals = xxyyzzResults[key].Select(item => item.Value.Y.ToUnit(xxyyzzunit)).ToList();
+            break;
+
+          case DisplayValue.Zz:
+            vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
+            break;
+
+          case DisplayValue.ResXxyyzz:
+            vals = xxyyzzResults[key].Select(item => item.Value.Xyz.ToUnit(xxyyzzunit)).ToList();
+            break;
+        }
+
+        for (int i = 0; i < vals.Count - 1;
+          i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
+        {
+          double tnorm = (2 * (vals[i].Value - dmin) / (dmax - dmin)) - 1;
+          Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
+          tempmesh.VertexColors.Add(col);
+          if (transformation == null) {
+            continue;
           }
 
-          if (
-            vals.Count
-            == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
-          {
-            double tnorm = (2
-              * (vals[0]
-                  .Value
-                - dmin)
-              / (dmax - dmin))
-              - 1;
-            Color col = double.IsNaN(tnorm)
-              ? Color.Transparent
-              : ghGradient.ColourAt(tnorm);
-            for (int i = 0; i < tempmesh.Vertices.Count; i++) {
-              tempmesh.VertexColors.SetColor(i, col);
-            }
+          Point3f def = tempmesh.Vertices[i];
+          def.Transform(Transform.Translation(transformation[i]));
+          tempmesh.Vertices[i] = def;
+        }
 
-            verticies[key] = new List<Point3d>() {
-              new Point3d(tempmesh.Vertices.Select(pt => pt.X)
-                  .Average(),
-                tempmesh.Vertices.Select(pt => pt.Y)
-                  .Average(),
-                tempmesh.Vertices.Select(pt => pt.Z)
-                  .Average()),
-            };
-          }
-          else {
-            verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt)
-              .ToList();
+        if (
+          vals.Count
+          == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
+        {
+          double tnorm = (2 * (vals[0].Value - dmin) / (dmax - dmin)) - 1;
+          Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
+          for (int i = 0; i < tempmesh.Vertices.Count; i++) {
+            tempmesh.VertexColors.SetColor(i, col);
           }
 
-          meshes[key] = tempmesh;
-          values[key] = vals;
+          verticies[key] = new List<Point3d>() {
+            new Point3d(tempmesh.Vertices.Select(pt => pt.X).Average(),
+              tempmesh.Vertices.Select(pt => pt.Y).Average(),
+              tempmesh.Vertices.Select(pt => pt.Z).Average()), };
+        } else {
+          verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
+        }
 
-          #endregion
-        });
+        meshes[key] = tempmesh;
+        values[key] = vals;
+
+        #endregion
+      });
 
       #endregion
 
-      resultMeshes.Add(meshes.Values.ToList(),
-        values.Values.ToList(),
-        verticies.Values.ToList(),
+      resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
         meshes.Keys.ToList());
 
       #region Legend
@@ -857,8 +745,7 @@ namespace GsaGH.Components {
           double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
           scl = Math.Max(scl, 1);
           t = scl * Math.Round(t / scl, 3);
-        }
-        else {
+        } else {
           t = Math.Round(t, significantDigits);
         }
 
@@ -876,31 +763,31 @@ namespace GsaGH.Components {
 
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-              var displacement = new Length(t, _lengthResultUnit);
-              _legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-              Message = Length.GetAbbreviation(_lengthResultUnit);
-              break;
-            }
+            var displacement = new Length(t, _lengthResultUnit);
+            _legendValues.Add(displacement.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(displacement));
+            Message = Length.GetAbbreviation(_lengthResultUnit);
+            break;
+          }
           case FoldMode.Displacement: {
-              var rotation = new Angle(t, AngleUnit.Radian);
-              _legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-              Message = Angle.GetAbbreviation(AngleUnit.Radian);
-              break;
-            }
+            var rotation = new Angle(t, AngleUnit.Radian);
+            _legendValues.Add(rotation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(rotation));
+            Message = Angle.GetAbbreviation(AngleUnit.Radian);
+            break;
+          }
           case FoldMode.Stress: {
-              var stress = new Pressure(t, _stressUnitResult);
-              _legendValues.Add(stress.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(stress));
-              Message = Pressure.GetAbbreviation(_stressUnitResult);
-              break;
-            }
+            var stress = new Pressure(t, _stressUnitResult);
+            _legendValues.Add(stress.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(stress));
+            Message = Pressure.GetAbbreviation(_stressUnitResult);
+            break;
+          }
         }
 
         if (Math.Abs(t) > 1) {
           _legendValues[i] = _legendValues[i]
-            .Replace(",", string.Empty); // remove thousand separator
+           .Replace(",", string.Empty); // remove thousand separator
         }
 
         _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
@@ -924,34 +811,25 @@ namespace GsaGH.Components {
 
       gradient.Gradient = Colours.Stress_Gradient();
       gradient.Gradient.NormalizeGrips();
-      gradient.Params.Input[0]
-        .AddVolatileData(new GH_Path(0), 0, -1);
-      gradient.Params.Input[1]
-        .AddVolatileData(new GH_Path(0), 0, 1);
-      gradient.Params.Input[2]
-        .AddVolatileDataList(new GH_Path(0),
-          new List<double>() {
-            -1,
-            -0.666,
-            -0.333,
-            0,
-            0.333,
-            0.666,
-            1,
-          });
+      gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
+      gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);
+      gradient.Params.Input[2].AddVolatileDataList(new GH_Path(0), new List<double>() {
+        -1,
+        -0.666,
+        -0.333,
+        0,
+        0.333,
+        0.666,
+        1,
+      });
 
       gradient.Attributes.Pivot = new PointF(
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
-        Params.Input[2]
-          .Attributes.Bounds.Y
-        - (gradient.Attributes.Bounds.Height / 4)
-        - 6);
+        Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
       Instances.ActiveCanvas.Document.AddObject(gradient, false);
-      Params.Input[2]
-        .RemoveAllSources();
-      Params.Input[2]
-        .AddSource(gradient.Params.Output[0]);
+      Params.Input[2].RemoveAllSources();
+      Params.Input[2].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
     }

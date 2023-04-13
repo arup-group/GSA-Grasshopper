@@ -32,11 +32,8 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public BeamForces() : base("Beam Forces and Moments",
-                  "BeamForces",
-      "Element1D Force and Moment result values",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) {
+    public BeamForces() : base("Beam Forces and Moments", "BeamForces",
+      "Element1D Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
@@ -59,22 +56,14 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
       int i = 0;
-      Params.Output[i++]
-        .Name = "Force X [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i]
-        .Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
+      Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
+      Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
+      Params.Output[i++].Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
+      Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
+      Params.Output[i].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -96,27 +85,17 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list",
-        "El",
-        "Filter results by list."
-        + Environment.NewLine
-        + "Element list should take the form:"
+      pManager.AddTextParameter("Element filter list", "El",
+        "Filter results by list." + Environment.NewLine + "Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
-      pManager.AddIntegerParameter("Intermediate Points",
-        "nP",
-        "Number of intermediate equidistant points (default 3)",
-        GH_ParamAccess.item,
-        3);
+        GH_ParamAccess.item, "All");
+      pManager.AddIntegerParameter("Intermediate Points", "nP",
+        "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -126,44 +105,32 @@ namespace GsaGH.Components {
       string forcerule = Environment.NewLine + "+ve axial forces are tensile";
       string momentrule = Environment.NewLine + "Moments follow the right hand grip rule";
       string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } "
-        + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each "
-        + Environment.NewLine
+        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
+        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
         + "branch contains a list of results per element position.";
 
-      pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]",
-        "Fx",
+      pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
         "Element Axial Forces in Local Element X-direction." + forcerule + note,
         GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]",
-        "Fy",
+      pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
         "Element Shear Forces in Local Element Y-direction." + forcerule + note,
         GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]",
-        "Fz",
+      pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
         "Element Shear Forces in Local Element Z-direction." + forcerule + note,
         GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]",
-        "|Fyz|",
-        "Total |YZ| Element Shear Forces." + note,
-        GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]",
-        "Mxx",
+      pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|",
+        "Total |YZ| Element Shear Forces." + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
         "Element Torsional Moments around Local Element X-axis." + momentrule + note,
         GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]",
-        "Myy",
+      pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
         "Element Bending Moments around Local Element Y-axis." + momentrule + note,
         GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]",
-        "Mzz",
+      pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
         "Element Bending Moments around Local Element Z-axis." + momentrule + note,
         GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]",
-        "|Myz|",
-        "Total |YYZZ| Element Bending Moments." + note,
-        GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|",
+        "Total |YYZZ| Element Bending Moments." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -216,102 +183,75 @@ namespace GsaGH.Components {
         List<GsaResultsValues> vals
           = result.Element1DForceValues(elementlist, positionsCount, _forceUnit, _momentUnit);
 
-        List<int> permutations = result.SelectedPermutationIds
-          ?? new List<int>() {
-            1,
-          };
+        List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
+          1,
+        };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count)
-            .ToList();
+          permutations = Enumerable.Range(1, vals.Count).ToList();
         }
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1]
-              .XyzResults.Count
-            == 0
-            & vals[perm - 1]
-              .XxyyzzResults.Count
-            == 0) {
-            string acase = result.ToString()
-              .Replace('}', ' ')
-              .Replace('{', ' ');
+          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
+            string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
             continue;
           }
 
-          Parallel.For(0,
-            2,
-            thread => // split computation in two for xyz and xxyyzz
-            {
-              switch (thread) {
-                case 0: {
-                    foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                      vals
-                          [perm - 1]
-                        .XyzResults) {
-                      int elementId = kvp.Key;
-                      ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                      if (res.Count == 0) {
-                        continue;
-                      }
-
-                      var path = new GH_Path(result.CaseId,
-                        result.SelectedPermutationIds == null
-                          ? 0
-                          : perm,
-                        elementId);
-
-                      outTransX.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))),
-                        path); // use ToUnit to capture changes in dropdown
-                      outTransY.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))),
-                        path);
-                      outTransZ.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))),
-                        path);
-                      outTransXyz.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_forceUnit))),
-                        path);
-                    }
-
-                    break;
+          Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
+          {
+            switch (thread) {
+              case 0: {
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                  vals[perm - 1].XyzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) {
+                    continue;
                   }
-                case 1: {
-                    foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                      vals
-                          [perm - 1]
-                        .XxyyzzResults) {
-                      int elementId = kvp.Key;
-                      ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                      if (res.Count == 0) {
-                        continue;
-                      }
 
-                      var path = new GH_Path(result.CaseId,
-                        result.SelectedPermutationIds == null
-                          ? 0
-                          : perm,
-                        elementId);
+                  var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
 
-                      outRotX.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))),
-                        path); // always use [rad] units
-                      outRotY.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))),
-                        path);
-                      outRotZ.AddRange(
-                        res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))),
-                        path);
-                      outRotXyz.AddRange(res.Select(x
-                          => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))),
-                        path);
-                    }
+                  outTransX.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))),
+                    path); // use ToUnit to capture changes in dropdown
+                  outTransY.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))), path);
+                  outTransZ.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))), path);
+                  outTransXyz.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_forceUnit))), path);
+                }
 
-                    break;
-                  }
+                break;
               }
-            });
+              case 1: {
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                  vals[perm - 1].XxyyzzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) {
+                    continue;
+                  }
+
+                  var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                  outRotX.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))),
+                    path); // always use [rad] units
+                  outRotY.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))), path);
+                  outRotZ.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
+                  outRotXyz.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
+                }
+
+                break;
+              }
+            }
+          });
         }
       }
 

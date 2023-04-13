@@ -22,30 +22,22 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.ResultsInfo;
     private Guid _modelGuid;
 
-    public ResultsInfo() : base("Get Result Cases",
-              "GetCases",
-      "Get Analysis or Combination Case IDs from a GSA model with Results",
-      CategoryName.Name(),
+    public ResultsInfo() : base("Get Result Cases", "GetCases",
+      "Get Analysis or Combination Case IDs from a GSA model with Results", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(),
-                                                                                       "GSA Model",
-                                                                                       "GSA",
-                                                                                       "GSA model containing some results",
-                                                                                       GH_ParamAccess.item);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
+        "GSA model containing some results", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddTextParameter("Result Type", "T", "Result type", GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Case",
-        "ID",
-        "Case ID(s) - to be read in conjunction with Type output ",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Permutation",
-        "P",
+      pManager.AddIntegerParameter("Case", "ID",
+        "Case ID(s) - to be read in conjunction with Type output ", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Permutation", "P",
         "Permutations (only applicable for combination cases). Data as a Tree where each path {i} corrosponds to the Combination Case ID.",
         GH_ParamAccess.tree);
     }
@@ -63,16 +55,13 @@ namespace GsaGH.Components {
             model = modelGoo.Value;
             ClearData();
           }
-        }
-        else {
-          model = modelGoo.Value; ;
+        } else {
+          model = modelGoo.Value;
+          ;
           _modelGuid = model.Guid;
         }
-      }
-      else {
-        this.AddRuntimeError("Error converting input "
-          + Params.Input[0]
-            .NickName
+      } else {
+        this.AddRuntimeError("Error converting input " + Params.Input[0].NickName
           + " to GSA Model");
         return;
       }

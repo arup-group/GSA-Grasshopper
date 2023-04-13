@@ -40,10 +40,8 @@ namespace GsaGH.Components {
       true,
     };
 
-    public BeamStrainEnergy() : base("Beam Strain Energy Density",
-                          "StrainEnergy",
-      "Element1D Strain Energy Density result values",
-      CategoryName.Name(),
+    public BeamStrainEnergy() : base("Beam Strain Energy Density", "StrainEnergy",
+      "Element1D Strain Energy Density result values", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -53,14 +51,8 @@ namespace GsaGH.Components {
         InitialiseDropdowns();
       }
 
-      m_attributes = new DropDownCheckBoxesComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        SetAnalysis,
-        _initialCheckState,
-        _checkboxText,
-        _spacerDescriptions);
+      m_attributes = new DropDownCheckBoxesComponentAttributes(this, SetSelected, _dropDownItems,
+        _selectedItems, SetAnalysis, _initialCheckState, _checkboxText, _spacerDescriptions);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -84,21 +76,16 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Energy.GetAbbreviation(_energyUnit) + "/m\u00B3";
-      Params.Output[0]
-        .Name = "Strain energy density [" + unitAbbreviation + "]";
+      Params.Output[0].Name = "Strain energy density [" + unitAbbreviation + "]";
 
       if (_average) {
         return;
       }
 
-      Params.Input[2]
-        .Name = "Intermediate Points";
-      Params.Input[2]
-        .NickName = "nP";
-      Params.Input[2]
-        .Description = "Number of intermediate equidistant points (default 3)";
-      Params.Input[2]
-        .Optional = true;
+      Params.Input[2].Name = "Intermediate Points";
+      Params.Input[2].NickName = "nP";
+      Params.Input[2].Description = "Number of intermediate equidistant points (default 3)";
+      Params.Input[2].Optional = true;
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -122,38 +109,27 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list",
-        "El",
-        "Filter results by list."
-        + Environment.NewLine
-        + "Element list should take the form:"
+      pManager.AddTextParameter("Element filter list", "El",
+        "Filter results by list." + Environment.NewLine + "Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
+        GH_ParamAccess.item, "All");
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Energy.GetAbbreviation(_energyUnit) + "/m\u00B3";
       string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } "
-        + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each "
-        + Environment.NewLine
+        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
+        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
         + "branch contains a list of results per element position.";
 
-      pManager.AddGenericParameter("Strain energy density [" + unitAbbreviation + "]",
-        "E",
+      pManager.AddGenericParameter("Strain energy density [" + unitAbbreviation + "]", "E",
         "Strain energy density. The strain energy density for a beam is a measure of how hard the beam is working. The average strain energy density is the average density along the element or member."
-        + note,
-        GH_ParamAccess.tree);
+        + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -174,8 +150,7 @@ namespace GsaGH.Components {
         var ghDivisions = new GH_Integer();
         if (da.GetData(2, ref ghDivisions)) {
           GH_Convert.ToInt32(ghDivisions, out positionsCount, GH_Conversion.Both);
-        }
-        else {
+        } else {
           positionsCount = 3;
         }
 
@@ -204,43 +179,33 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultsValues> vals = _average
-          ? result.Element1DAverageStrainEnergyDensityValues(elementlist, _energyUnit)
-          : result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, _energyUnit);
+        List<GsaResultsValues> vals = _average ?
+          result.Element1DAverageStrainEnergyDensityValues(elementlist, _energyUnit) :
+          result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, _energyUnit);
 
-        List<int> permutations = result.SelectedPermutationIds
-          ?? new List<int>() {
-            1,
-          };
+        List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
+          1,
+        };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count)
-            .ToList();
+          permutations = Enumerable.Range(1, vals.Count).ToList();
         }
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1]
-              .XyzResults.Count
-            == 0) {
-            string acase = result.ToString()
-              .Replace('}', ' ')
-              .Replace('{', ' ');
+          if (vals[perm - 1].XyzResults.Count == 0) {
+            string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
             continue;
           }
 
           foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[
-              perm - 1]
-            .XyzResults) {
+            perm - 1].XyzResults) {
             int elementId = kvp.Key;
             ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
             if (res.Count == 0) {
               continue;
             }
 
-            var path = new GH_Path(result.CaseId,
-              result.SelectedPermutationIds == null
-                ? 0
-                : perm,
+            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm,
               elementId);
 
             outTransX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_energyUnit))),
@@ -266,8 +231,7 @@ namespace GsaGH.Components {
         while (Params.Input.Count > 2) {
           Params.UnregisterInputParameter(Params.Input[2], true);
         }
-      }
-      else {
+      } else {
         if (Params.Input.Count < 3) {
           Params.RegisterInputParam(new Param_Integer());
         }

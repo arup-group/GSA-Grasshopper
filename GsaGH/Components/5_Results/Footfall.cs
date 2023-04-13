@@ -20,42 +20,27 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Footfall;
 
-    public FootfallResults() : base("Footfall Result",
-          "Footfall",
-      "Get the maximum response factor for a footfall analysis case",
-      CategoryName.Name(),
+    public FootfallResults() : base("Footfall Result", "Footfall",
+      "Get the maximum response factor for a footfall analysis case", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(),
-        "Result",
-        "Res",
-        "GSA Result",
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list",
-        "No",
-        "Filter results by list."
-        + Environment.NewLine
-        + "Node list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)"
-        + Environment.NewLine
+      pManager.AddTextParameter("Node filter list", "No",
+        "Filter results by list." + Environment.NewLine + "Node list should take the form:"
+        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
+        GH_ParamAccess.item, "All");
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddNumberParameter("Resonant Response Factor",
-        "RRF",
-        "Maximum resonant response factor",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Transient Response Factor",
-        "TRF",
-        "Maximum transient response factor",
-        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Resonant Response Factor", "RRF",
+        "Maximum resonant response factor", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Transient Response Factor", "TRF",
+        "Maximum transient response factor", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -71,14 +56,14 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-            result = goo.Value;
-            if (result.Type == GsaResult.CaseType.Combination) {
-              this.AddRuntimeError("Footfall Result only available for Analysis Cases");
-              return;
-            }
-
-            break;
+          result = goo.Value;
+          if (result.Type == GsaResult.CaseType.Combination) {
+            this.AddRuntimeError("Footfall Result only available for Analysis Cases");
+            return;
           }
+
+          break;
+        }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
