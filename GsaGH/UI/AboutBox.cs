@@ -15,17 +15,14 @@ namespace GsaGH.Graphics {
     public string AssemblyTitle {
       get {
         object[] attributes = Assembly.GetExecutingAssembly()
-          .GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+         .GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
         if (attributes.Length <= 0) {
-          return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly()
-            .CodeBase);
+          return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
         }
 
         var titleAttribute = (AssemblyTitleAttribute)attributes[0];
-        return titleAttribute.Title != ""
-          ? titleAttribute.Title
-          : Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly()
-          .CodeBase);
+        return titleAttribute.Title != "" ? titleAttribute.Title :
+          Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
       }
     }
 
