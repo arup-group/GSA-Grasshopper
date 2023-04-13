@@ -3,13 +3,14 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Model class, this class defines the basic properties and methods for any Gsa Model
+  ///   Model class, this class defines the basic properties and methods for any Gsa Model
   /// </summary>
   [Serializable]
   public class GsaModel {
@@ -29,11 +30,10 @@ namespace GsaGH.Parameters {
     internal GsaAPI.Titles Titles => Model.Titles();
     private BoundingBox _boundingBox = BoundingBox.Empty;
 
-    public GsaModel() {
-    }
+    public GsaModel() { }
 
     /// <summary>
-    /// Clones this model so we can make changes safely
+    ///   Clones this model so we can make changes safely
     /// </summary>
     /// <returns>Returns a clone of this model with a new GUID</returns>
     public GsaModel Clone() {
@@ -53,7 +53,9 @@ namespace GsaGH.Parameters {
       }
 
       // create shallow copy
-      var dup = new GsaModel { Model = Model };
+      var dup = new GsaModel {
+        Model = Model,
+      };
       if (FileNameAndPath != null) {
         dup.FileNameAndPath = FileNameAndPath;
       }
@@ -74,12 +76,12 @@ namespace GsaGH.Parameters {
         if (Titles?.Title != null && Titles.Title != "") {
           if (s == "" || s == "Invalid") {
             s = Titles.Title;
-          }
-          else {
+          } else {
             s += " {" + Titles.Title + "}";
           }
         }
       }
+
       if (ModelUnit != LengthUnit.Undefined) {
         s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
       }
@@ -90,7 +92,8 @@ namespace GsaGH.Parameters {
     private BoundingBox GetBoundingBox() {
       var outNodes = new ConcurrentDictionary<int, Node>(Model.Nodes());
       var pts = new ConcurrentBag<Point3d>();
-      Parallel.ForEach(outNodes, node => pts.Add(Helpers.Import.Nodes.Point3dFromNode(node.Value, LengthUnit.Meter)));
+      Parallel.ForEach(outNodes,
+        node => pts.Add(Nodes.Point3dFromNode(node.Value, LengthUnit.Meter)));
 
       if (ModelUnit == LengthUnit.Undefined || ModelUnit == LengthUnit.Meter) {
         return new BoundingBox(pts);

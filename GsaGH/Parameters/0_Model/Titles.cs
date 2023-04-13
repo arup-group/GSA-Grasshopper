@@ -2,7 +2,7 @@
 
 namespace GsaGH {
   /// <summary>
-  /// Class to hold Titles used in Grasshopper GSA file.
+  ///   Class to hold Titles used in Grasshopper GSA file.
   /// </summary>
   public static class Titles {
     public static string Calculation { get; set; }
@@ -22,57 +22,57 @@ namespace GsaGH {
     public static void GetTitlesFromGsa(Model model) {
       GsaAPI.Titles titles = model.Titles();
       if (!s_calculationByuser) {
-        Titles.Calculation = titles.Calculation;
+        Calculation = titles.Calculation;
       }
 
       if (!s_initialsByuser) {
-        Titles.Initials = titles.Initials;
+        Initials = titles.Initials;
       }
 
       if (!s_jobnumberByuser) {
-        Titles.JobNumber = titles.JobNumber;
+        JobNumber = titles.JobNumber;
       }
 
       if (!s_notesByuser) {
-        Titles.Notes = titles.Notes;
+        Notes = titles.Notes;
       }
 
       if (!s_subtitleByuser) {
-        Titles.SubTitle = titles.SubTitle;
+        SubTitle = titles.SubTitle;
       }
 
       if (!s_titleByuser) {
-        Titles.Title = titles.Title;
+        Title = titles.Title;
       }
     }
 
     public static void SetCalculation(string calculation) {
-      Titles.Calculation = calculation;
+      Calculation = calculation;
       s_calculationByuser = true;
     }
 
     public static void SetInitials(string initials) {
-      Titles.Initials = initials;
+      Initials = initials;
       s_initialsByuser = true;
     }
 
     public static void SetJobNumber(string jobnumber) {
-      Titles.JobNumber = jobnumber;
+      JobNumber = jobnumber;
       s_jobnumberByuser = true;
     }
 
     public static void SetNotes(string notes) {
-      Titles.Notes = notes;
+      Notes = notes;
       s_notesByuser = true;
     }
 
     public static void SetSubTitle(string subtitle) {
-      Titles.SubTitle = subtitle;
+      SubTitle = subtitle;
       s_subtitleByuser = true;
     }
 
     public static void SetTitle(string title) {
-      Titles.Title = title;
+      Title = title;
       s_titleByuser = true;
     }
   }

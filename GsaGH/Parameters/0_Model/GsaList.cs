@@ -3,10 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
-//using GsaAPI;
 using GsaGH.Helpers.Import;
 using OasysUnits.Units;
+//using GsaAPI;
 
 namespace GsaGH.Parameters {
   public enum EntityType {
@@ -14,11 +13,11 @@ namespace GsaGH.Parameters {
     Node,
     Element,
     Member,
-    Case
+    Case,
   }
 
   /// <summary>
-  /// EntityList class, this class defines the basic properties and methods for any Gsa List
+  ///   EntityList class, this class defines the basic properties and methods for any Gsa List
   /// </summary>
   public class GsaList {
     public string Definition {
@@ -52,10 +51,12 @@ namespace GsaGH.Parameters {
     }
     private List<int> _cases;
     private string _definition;
-    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
+    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
+      ConcurrentBag<GsaElement3dGoo>> _elements;
     private EntityType _entityType = EntityType.Undefined;
     private int _id;
-    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
+    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+      ConcurrentBag<GsaMember3dGoo>> _members;
     private GsaModel _model;
     private string _name;
     private ConcurrentBag<GsaNodeGoo> _nodes;
@@ -69,7 +70,7 @@ namespace GsaGH.Parameters {
         Definition = Definition,
         EntityType = EntityType,
         _model = _model,
-        Guid = new Guid(Guid.ToString())
+        Guid = new Guid(Guid.ToString()),
       };
 
       switch (dup.EntityType) {
@@ -82,16 +83,18 @@ namespace GsaGH.Parameters {
 
         case EntityType.Element:
           if (_elements != null) {
-            dup._elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
-              (_elements.Item1, _elements.Item2, _elements.Item3);
+            dup._elements
+              = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
+                ConcurrentBag<GsaElement3dGoo>>(_elements.Item1, _elements.Item2, _elements.Item3);
           }
 
           break;
 
         case EntityType.Member:
           if (_members != null) {
-            dup._members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
-              (_members.Item1, _members.Item2, _members.Item3);
+            dup._members
+              = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+                ConcurrentBag<GsaMember3dGoo>>(_members.Item1, _members.Item2, _members.Item3);
           }
 
           break;
@@ -103,6 +106,7 @@ namespace GsaGH.Parameters {
 
           break;
       }
+
       return dup;
     }
 
@@ -113,28 +117,31 @@ namespace GsaGH.Parameters {
         case EntityType.Node:
           if (_nodes != null && _nodes.Count != 0) {
             s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
-          }
-          else {
+          } else {
             s += EntityType.ToString() + "s (" + Definition + ")";
           }
 
           break;
 
         case EntityType.Element:
-          if (_elements != null && (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) != 0) {
-            s += "containing " + (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) + " " + EntityType.ToString() + "s";
-          }
-          else {
+          if (_elements != null
+            && (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) != 0) {
+            s += "containing "
+              + (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) + " "
+              + EntityType.ToString() + "s";
+          } else {
             s += EntityType.ToString() + "s (" + Definition + ")";
           }
 
           break;
 
         case EntityType.Member:
-          if (_members != null && (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) != 0) {
-            s += "containing " + (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) + " " + EntityType.ToString() + "s";
-          }
-          else {
+          if (_members != null
+            && (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) != 0) {
+            s += "containing "
+              + (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) + " "
+              + EntityType.ToString() + "s";
+          } else {
             s += EntityType.ToString() + "s (" + Definition + ")";
           }
 
@@ -145,6 +152,7 @@ namespace GsaGH.Parameters {
           s += EntityType.ToString() + " (" + Definition + ")";
           break;
       }
+
       return s;
     }
 
@@ -208,16 +216,21 @@ namespace GsaGH.Parameters {
             return new List<object>();
           }
 
-          list = new List<object>() { _cases };
+          list = new List<object>() {
+            _cases,
+          };
           break;
 
         case EntityType.Undefined:
           if (Definition != null && Definition != "") {
-            list = new List<object>(new List<string>() { Definition });
+            list = new List<object>(new List<string>() {
+              Definition,
+            });
           }
 
           break;
       }
+
       return list;
     }
 
@@ -229,6 +242,7 @@ namespace GsaGH.Parameters {
           objects.RemoveAt(i);
         }
       }
+
       if (def.Count > 0) {
         def.Reverse();
         string definition = string.Join(" ", def);
@@ -252,15 +266,16 @@ namespace GsaGH.Parameters {
           foreach (object elem in objects) {
             if (elem is GsaElement1d elem1d) {
               elem1ds.Add(new GsaElement1dGoo(elem1d));
-            }
-            else if (elem is GsaElement2d elem2d) {
+            } else if (elem is GsaElement2d elem2d) {
               elem2ds.Add(new GsaElement2dGoo(elem2d));
-            }
-            else if (elem is GsaElement3d elem3d) {
+            } else if (elem is GsaElement3d elem3d) {
               elem3ds.Add(new GsaElement3dGoo(elem3d));
             }
           }
-          _elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
+
+          _elements
+            = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
+              ConcurrentBag<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
           break;
 
         case EntityType.Member:
@@ -270,15 +285,16 @@ namespace GsaGH.Parameters {
           foreach (object mem in objects) {
             if (mem is GsaMember1d mem1d) {
               mem1ds.Add(new GsaMember1dGoo(mem1d));
-            }
-            else if (mem is GsaMember2d mem2d) {
+            } else if (mem is GsaMember2d mem2d) {
               mem2ds.Add(new GsaMember2dGoo(mem2d));
-            }
-            else if (mem is GsaMember3d mem3d) {
+            } else if (mem is GsaMember3d mem3d) {
               mem3ds.Add(new GsaMember3dGoo(mem3d));
             }
           }
-          _members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(mem1ds, mem2ds, mem3ds);
+
+          _members
+            = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+              ConcurrentBag<GsaMember3dGoo>>(mem1ds, mem2ds, mem3ds);
           break;
 
         case EntityType.Case:
@@ -315,11 +331,10 @@ namespace GsaGH.Parameters {
             elementLocalAxesDict.Add(id, _model.Model.ElementDirectionCosine(id));
           }
 
-          _elements = Elements.GetElements(
-          _model.Model.Elements(Definition), _model.Model.Nodes(),
-          _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
-          _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(),
-          elementLocalAxesDict, _model.Model.Axes(), unit, false);
+          _elements = Elements.GetElements(_model.Model.Elements(Definition), _model.Model.Nodes(),
+            _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
+            _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(), elementLocalAxesDict,
+            _model.Model.Axes(), unit, false);
           break;
 
         case EntityType.Member:
@@ -328,11 +343,10 @@ namespace GsaGH.Parameters {
             memberLocalAxesDict.Add(id, _model.Model.MemberDirectionCosine(id));
           }
 
-          _members = Members.GetMembers(
-          _model.Model.Members(Definition), _model.Model.Nodes(),
-          _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
-          _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(),
-          memberLocalAxesDict, _model.Model.Axes(), unit, false);
+          _members = Members.GetMembers(_model.Model.Members(Definition), _model.Model.Nodes(),
+            _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
+            _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(), memberLocalAxesDict,
+            _model.Model.Axes(), unit, false);
           break;
 
         case EntityType.Case:

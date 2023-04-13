@@ -4,7 +4,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaModel"/> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaModel" /> can be used in Grasshopper.
   /// </summary>
   public class GsaModelGoo : GH_OasysGoo<GsaModel> {
     public static string Description => "GSA Model";
