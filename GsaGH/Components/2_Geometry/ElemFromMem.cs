@@ -37,19 +37,14 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = "";
 
-    public ElemFromMem() : base("Elements from Members",
-                          "ElemFromMem",
-      "Create Elements from Members",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public ElemFromMem() : base("Elements from Members", "ElemFromMem",
+      "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit)
-        .ToString()
-        .Replace(" ", string.Empty);
+      _toleranceTxt = _tolerance.ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
       tolerance.Text = _toleranceTxt;
       tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
@@ -59,12 +54,11 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
-      toleranceMenu.DropDownItems[1]
-        .MouseUp += (s, e) => {
-          UpdateMessage();
-          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-          ExpireSolution(true);
-        };
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
+        UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
       menu.Items.Add(toleranceMenu);
 
       Menu_AppendSeparator(menu);
@@ -81,17 +75,12 @@ namespace GsaGH.Components {
       }
 
       foreach (GsaElement2dGoo element in _element2ds) {
-        if (element?.Value.Mesh == null
-          || element.Value.ApiElements[0]
-            .ParentMember.Member
-          > 0) {
+        if (element?.Value.Mesh == null || element.Value.ApiElements[0].ParentMember.Member > 0) {
           continue;
         }
 
         args.Display.DrawMeshShaded(element.Value.Mesh,
-          Attributes.Selected
-            ? Colours.Element2dFaceSelected
-            : Colours.Element2dFace);
+          Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace);
       }
     }
 
@@ -107,33 +96,25 @@ namespace GsaGH.Components {
           continue;
         }
 
-        if (element.Value.ApiElements[0]
-            .ParentMember.Member
+        if (element.Value.ApiElements[0].ParentMember.Member
           > 0) // only draw mesh shading if no parent member exist.
         {
           for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i)
-                .Length
-              > 1) {
+            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1) {
               args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Color.FromArgb(255, 229, 229, 229),
-                1);
+                Color.FromArgb(255, 229, 229, 229), 1);
             }
           }
-        }
-        else {
+        } else {
           if (Attributes.Selected) {
             for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
               args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdgeSelected,
-                2);
+                Colours.Element2dEdgeSelected, 2);
             }
-          }
-          else {
+          } else {
             for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
               args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdge,
-                1);
+                Colours.Element2dEdge, 1);
             }
           }
         }
@@ -146,8 +127,7 @@ namespace GsaGH.Components {
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
         _tolerance = new Length(tol, _lengthUnit);
-      }
-      else {
+      } else {
         _tolerance = DefaultUnits.Tolerance;
       }
 
@@ -166,14 +146,10 @@ namespace GsaGH.Components {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
-      Params.Input[i++]
-        .Name = "Nodes [" + unitAbbreviation + "]";
-      Params.Input[i++]
-        .Name = "1D Members [" + unitAbbreviation + "]";
-      Params.Input[i++]
-        .Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Input[i]
-        .Name = "3D Members [" + unitAbbreviation + "]";
+      Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
+      Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
+      Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
+      Params.Input[i].Name = "3D Members [" + unitAbbreviation + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -203,31 +179,19 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]",
-        "No",
-        "Nodes to be included in meshing",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]",
-        "M1D",
-        "1D Members to create 1D Elements from",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]",
-        "M2D",
-        "2D Members to create 2D Elements from",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]",
-        "M3D",
-        "3D Members to create 3D Elements from",
-        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No",
+        "Nodes to be included in meshing", GH_ParamAccess.list);
+      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D",
+        "1D Members to create 1D Elements from", GH_ParamAccess.list);
+      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D",
+        "2D Members to create 2D Elements from", GH_ParamAccess.list);
+      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D",
+        "3D Members to create 3D Elements from", GH_ParamAccess.list);
 
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
 
       pManager.HideParameter(0);
       pManager.HideParameter(1);
@@ -241,9 +205,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
       pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
       pManager.AddGenericParameter("3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.item);
-      pManager.AddGenericParameter("GSA Model",
-        "GSA",
-        "GSA Model with Elements and Members",
+      pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model with Elements and Members",
         GH_ParamAccess.item);
     }
 
@@ -258,8 +220,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Node input (index: "
-              + i
+            Params.Owner.AddRuntimeWarning("Node input (index: " + i
               + ") is null and has been ignored");
             continue;
           }
@@ -268,8 +229,7 @@ namespace GsaGH.Components {
             var gsanode = new GsaNode();
             ghTyp.CastTo(ref gsanode);
             inNodes.Add(gsanode);
-          }
-          else {
+          } else {
             this.AddRuntimeError("Error in Node input");
             return;
           }
@@ -281,8 +241,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member1D input (index: "
-              + i
+            Params.Owner.AddRuntimeWarning("Member1D input (index: " + i
               + ") is null and has been ignored");
             continue;
           }
@@ -291,8 +250,7 @@ namespace GsaGH.Components {
             var gsamem1 = new GsaMember1d();
             ghTyp.CastTo(ref gsamem1);
             inMem1ds.Add(gsamem1);
-          }
-          else {
+          } else {
             this.AddRuntimeError("Error in Mem1D input");
             return;
           }
@@ -305,8 +263,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member2D input (index: "
-              + i
+            Params.Owner.AddRuntimeWarning("Member2D input (index: " + i
               + ") is null and has been ignored");
             continue;
           }
@@ -315,8 +272,7 @@ namespace GsaGH.Components {
             var gsamem2 = new GsaMember2d();
             ghTyp.CastTo(ref gsamem2);
             inMem2ds.Add(gsamem2);
-          }
-          else {
+          } else {
             this.AddRuntimeError("Error in Mem2D input");
             return;
           }
@@ -329,8 +285,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member3D input (index: "
-              + i
+            Params.Owner.AddRuntimeWarning("Member3D input (index: " + i
               + ") is null and has been ignored");
             continue;
           }
@@ -339,8 +294,7 @@ namespace GsaGH.Components {
             var gsamem3 = new GsaMember3d();
             ghTyp.CastTo(ref gsamem3);
             inMem3ds.Add(gsamem3);
-          }
-          else {
+          } else {
             this.AddRuntimeError("Error in Mem3D input");
             return;
           }
@@ -355,25 +309,8 @@ namespace GsaGH.Components {
 
       #endregion
 
-      Model gsa = AssembleModel.Assemble(null,
-        inNodes,
-        null,
-        null,
-        null,
-        inMem1ds,
-        inMem2ds,
-        inMem3ds,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        _lengthUnit,
-        _tolerance,
-        true,
-        this);
+      Model gsa = AssembleModel.Assemble(null, inNodes, null, null, null, inMem1ds, inMem2ds,
+        inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
 
       UpdateMessage();
 
@@ -385,16 +322,8 @@ namespace GsaGH.Components {
 
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
         ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict,
-        gsa.Nodes(),
-        gsa.Sections(),
-        gsa.Prop2Ds(),
-        gsa.Prop3Ds(),
-        gsa.AnalysisMaterials(),
-        gsa.SectionModifiers(),
-        elementLocalAxesDict,
-        gsa.Axes(),
-        _lengthUnit,
-        false);
+        gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(),
+        gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
       var outModel = new GsaModel {
         Model = gsa,
@@ -412,26 +341,22 @@ namespace GsaGH.Components {
 
     private void MaintainText(ToolStripTextBox tolerance) {
       _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)
-        ? Color.FromArgb(255, 180, 255, 150)
-        : Color.FromArgb(255, 255, 100, 100);
+      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
+        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
     }
 
     private void UpdateMessage() {
       if (_toleranceTxt != "") {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }
       }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: "
-        + _tolerance.ToString()
-          .Replace(" ", string.Empty);
+      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
       if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");

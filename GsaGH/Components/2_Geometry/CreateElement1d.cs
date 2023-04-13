@@ -20,17 +20,13 @@ namespace GsaGH.Components {
 
     protected override Bitmap Icon => Resources.CreateElem1d;
 
-    public CreateElement1d() : base("Create 1D Element",
-          "Elem1D",
-      "Create GSA 1D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateElement1d() : base("Create 1D Element", "Elem1D", "Create GSA 1D Element",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddLineParameter("Line", "L", "Line to create GSA Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter());
-      pManager[1]
-        .Optional = true;
+      pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
 
@@ -58,12 +54,10 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         if (ghTyp.Value is GsaSectionGoo sectionGoo) {
           elem.Section = sectionGoo.Value;
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             elem.Section = new GsaSection(id);
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
             return;

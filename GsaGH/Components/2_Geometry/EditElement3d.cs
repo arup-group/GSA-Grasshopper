@@ -21,85 +21,58 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditElem3d;
 
-    public EditElement3d() : base("Edit 3D Element",
-          "Elem3dEdit",
-      "Modify GSA 3D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public EditElement3d() : base("Edit 3D Element", "Elem3dEdit", "Modify GSA 3D Element",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaElement3dParameter(),
-        GsaElement3dGoo.Name,
-        GsaElement3dGoo.NickName,
-        GsaElement3dGoo.Description + " to get or set information for.",
+      pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name,
+        GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " to get or set information for.",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter(),
-        "3D Property",
-        "PV",
+      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
         "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model",
         GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Element3d Group",
-        "Gr",
-        "Set Element Group",
+      pManager.AddIntegerParameter("Element3d Group", "Gr", "Set Element Group",
         GH_ParamAccess.list);
       pManager.AddTextParameter("Element3d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
-      pManager.AddColourParameter("Element3d Colour",
-        "Co",
-        "Set Element Colour",
+      pManager.AddColourParameter("Element3d Colour", "Co", "Set Element Colour",
         GH_ParamAccess.list);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Set Element to Dummy",
+      pManager.AddBooleanParameter("Dummy Element", "Dm", "Set Element to Dummy",
         GH_ParamAccess.list);
 
       for (int i = 1; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
 
       pManager.HideParameter(0);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement3dParameter(),
-        GsaElement3dGoo.Name,
-        GsaElement3dGoo.NickName,
-        GsaElement3dGoo.Description + " with applied changes.",
+      pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name,
+        GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
-      pManager.AddMeshParameter("Analysis Mesh",
-        "M",
-        "Get Analysis Mesh. "
-        + Environment.NewLine
+      pManager.AddMeshParameter("Analysis Mesh", "M",
+        "Get Analysis Mesh. " + Environment.NewLine
         + "This will export a list of solid meshes representing each 3D element."
         + Environment.NewLine
         + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
         GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp2dParameter(),
-        "3D Property",
-        "PV",
+      pManager.AddParameter(new GsaProp2dParameter(), "3D Property", "PV",
         "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model",
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
-      pManager.AddTextParameter("Element Type",
-        "eT",
-        "Get Element 3D Type."
-        + Environment.NewLine
+      pManager.AddTextParameter("Element Type", "eT",
+        "Get Element 3D Type." + Environment.NewLine
         + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8",
         GH_ParamAccess.list);
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Get if Element is Dummy",
+      pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy",
         GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Parent Members",
-        "pM",
-        "Get Parent Member IDs in Model that Element was created from",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Topology",
-        "Tp",
+      pManager.AddIntegerParameter("Parent Members", "pM",
+        "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Topology", "Tp",
         "Get the Element's original topology list referencing node IDs in Model that Element was created from",
         GH_ParamAccess.list);
     }
@@ -122,8 +95,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghId.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("ID input List Length is longer than number of elements."
-              + Environment.NewLine
-              + "Excess ID's have been ignored");
+              + Environment.NewLine + "Excess ID's have been ignored");
             continue;
           }
 
@@ -133,12 +105,8 @@ namespace GsaGH.Components {
 
           if (inIds.Contains(id)) {
             if (id > 0) {
-              this.AddRuntimeWarning("ID input("
-                + i
-                + ") = "
-                + id
-                + " already exist in your input list."
-                + Environment.NewLine
+              this.AddRuntimeWarning("ID input(" + i + ") = " + id
+                + " already exist in your input list." + Environment.NewLine
                 + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
               continue;
             }
@@ -156,8 +124,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input List Length is longer than number of elements."
-              + Environment.NewLine
-              + "Excess PA's have been ignored");
+              + Environment.NewLine + "Excess PA's have been ignored");
           }
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
@@ -165,12 +132,10 @@ namespace GsaGH.Components {
           if (ghTyp.Value is GsaProp3dGoo) {
             ghTyp.CastTo(ref prop3d);
             prop3Ds.Add(prop3d);
-          }
-          else {
+          } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop3Ds.Add(new GsaProp3d(id));
-            }
-            else {
+            } else {
               this.AddRuntimeError(
                 "Unable to convert PA input to a 2D Property of reference integer");
               return;
@@ -187,8 +152,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghgrp.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Group input List Length is longer than number of elements."
-              + Environment.NewLine
-              + "Excess Group numbers have been ignored");
+              + Environment.NewLine + "Excess Group numbers have been ignored");
             continue;
           }
 
@@ -206,8 +170,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghStrings.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Name input List Length is longer than number of elements."
-              + Environment.NewLine
-              + "Excess Names have been ignored");
+              + Environment.NewLine + "Excess Names have been ignored");
             continue;
           }
 
@@ -225,8 +188,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghColours.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Colour input List Length is longer than number of elements."
-              + Environment.NewLine
-              + "Excess Colours have been ignored");
+              + Environment.NewLine + "Excess Colours have been ignored");
             continue;
           }
 
@@ -244,8 +206,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghdum.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("Dummy input List Length is longer than number of elements."
-              + Environment.NewLine
-              + "Excess Dummy booleans have been ignored");
+              + Environment.NewLine + "Excess Dummy booleans have been ignored");
             continue;
           }
 
@@ -260,15 +221,12 @@ namespace GsaGH.Components {
       var outMeshes = new List<Mesh>();
       Mesh x = elem.NgonMesh;
 
-      var ngons = x.GetNgonAndFacesEnumerable()
-        .ToList();
+      var ngons = x.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
         var m = new Mesh();
         m.Vertices.AddVertices(x.Vertices.ToList());
-        var faceindex = ngon.FaceIndexList()
-          .Select(u => (int)u)
-          .ToList();
+        var faceindex = ngon.FaceIndexList().Select(u => (int)u).ToList();
         foreach (int index in faceindex) {
           m.Faces.AddFace(x.Faces[index]);
         }

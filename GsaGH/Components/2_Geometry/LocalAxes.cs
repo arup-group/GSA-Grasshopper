@@ -26,11 +26,8 @@ namespace GsaGH.Components {
     internal Line _previewZaxis;
     protected override Bitmap Icon => Resources.LocalAxes;
 
-    public LocalAxes() : base("Local Axis",
-                      "Axis",
-      "Get Element1D or Member1D local axes",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public LocalAxes() : base("Local Axis", "Axis", "Get Element1D or Member1D local axes",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
@@ -49,24 +46,16 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Element/Member 1D",
-                                                                                       "G1D",
-                                                                                       "Element1D or Member1D to get local axes for.",
-                                                                                       GH_ParamAccess.item);
+      pManager.AddGenericParameter("Element/Member 1D", "G1D",
+        "Element1D or Member1D to get local axes for.", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddVectorParameter("Local X",
-        "X",
-        "Element1D or Member1D's local X-axis",
+      pManager.AddVectorParameter("Local X", "X", "Element1D or Member1D's local X-axis",
         GH_ParamAccess.list);
-      pManager.AddVectorParameter("Local Y",
-        "Y",
-        "Element1D or Member1D's local X-axis",
+      pManager.AddVectorParameter("Local Y", "Y", "Element1D or Member1D's local X-axis",
         GH_ParamAccess.list);
-      pManager.AddVectorParameter("Local Z",
-        "Z",
-        "Element1D or Member1D's local X-axis",
+      pManager.AddVectorParameter("Local Z", "Z", "Element1D or Member1D's local X-axis",
         GH_ParamAccess.list);
     }
 
@@ -83,85 +72,61 @@ namespace GsaGH.Components {
       GsaLocalAxes axes;
       switch (ghTyp.Value) {
         case GsaMember1dGoo memberGoo: {
-            if (memberGoo == null || memberGoo.Value == null) {
-              this.AddRuntimeError("Input is null");
-              return;
-            }
-            member = memberGoo.Value;
-            axes = member.LocalAxes;
-            if (axes == null) {
-              var model = new GsaModel();
-              model.Model = AssembleModel.Assemble(model,
-                new List<GsaNode>(),
-                new List<GsaElement1d>(),
-                new List<GsaElement2d>(),
-                new List<GsaElement3d>(),
-                new List<GsaMember1d>() {
+          if (memberGoo == null || memberGoo.Value == null) {
+            this.AddRuntimeError("Input is null");
+            return;
+          }
+
+          member = memberGoo.Value;
+          axes = member.LocalAxes;
+          if (axes == null) {
+            var model = new GsaModel();
+            model.Model = AssembleModel.Assemble(model, new List<GsaNode>(),
+              new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(),
+              new List<GsaMember1d>() {
                 member,
-                },
-                new List<GsaMember2d>(),
-                new List<GsaMember3d>(),
-                new List<GsaSection>(),
-                new List<GsaProp2d>(),
-                new List<GsaProp3d>(),
-                new List<GsaLoad>(),
-                new List<GsaGridPlaneSurface>(),
-                new List<GsaAnalysisTask>(),
-                new List<GsaCombinationCase>(),
-                LengthUnit.Meter,
-                Length.Zero,
-                false,
-                null);
+              }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(),
+              new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(),
+              new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(),
+              new List<GsaCombinationCase>(), LengthUnit.Meter, Length.Zero, false, null);
 
-              axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
-              this.AddRuntimeWarning(
-                "Members´s local axes might deviate from the local axes in the assembled GSA model.");
-            }
-
-            midPt = member.PolyCurve.PointAtNormalizedLength(0.5);
-            size = member.PolyCurve.GetLength() * 0.05;
-            break;
+            axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
+            this.AddRuntimeWarning(
+              "Members´s local axes might deviate from the local axes in the assembled GSA model.");
           }
+
+          midPt = member.PolyCurve.PointAtNormalizedLength(0.5);
+          size = member.PolyCurve.GetLength() * 0.05;
+          break;
+        }
         case GsaElement1dGoo elementGoo: {
-            if (elementGoo == null || elementGoo.Value == null) {
-              this.AddRuntimeError("Input is null");
-              return;
-            }
-            element = elementGoo.Value;
-            axes = element.LocalAxes;
-            if (axes == null) {
-              var model = new GsaModel();
-              model.Model = AssembleModel.Assemble(model,
-                new List<GsaNode>(),
-                new List<GsaElement1d>() {
-                element,
-                },
-                new List<GsaElement2d>(),
-                new List<GsaElement3d>(),
-                new List<GsaMember1d>(),
-                new List<GsaMember2d>(),
-                new List<GsaMember3d>(),
-                new List<GsaSection>(),
-                new List<GsaProp2d>(),
-                new List<GsaProp3d>(),
-                new List<GsaLoad>(),
-                new List<GsaGridPlaneSurface>(),
-                new List<GsaAnalysisTask>(),
-                new List<GsaCombinationCase>(),
-                LengthUnit.Meter,
-                Length.Zero,
-                false,
-                null);
-
-              axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
-              this.AddRuntimeWarning(
-                "Element´s local axes might deviate from the local axes in the assembled GSA model.");
-            }
-
-            midPt = element.Line.PointAtNormalizedLength(0.5);
-            size = element.Line.GetLength() * 0.05;
-            break;
+          if (elementGoo == null || elementGoo.Value == null) {
+            this.AddRuntimeError("Input is null");
+            return;
           }
+
+          element = elementGoo.Value;
+          axes = element.LocalAxes;
+          if (axes == null) {
+            var model = new GsaModel();
+            model.Model = AssembleModel.Assemble(model, new List<GsaNode>(),
+              new List<GsaElement1d>() {
+                element,
+              }, new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>(),
+              new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(),
+              new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(),
+              new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(),
+              new List<GsaCombinationCase>(), LengthUnit.Meter, Length.Zero, false, null);
+
+            axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
+            this.AddRuntimeWarning(
+              "Element´s local axes might deviate from the local axes in the assembled GSA model.");
+          }
+
+          midPt = element.Line.PointAtNormalizedLength(0.5);
+          size = element.Line.GetLength() * 0.05;
+          break;
+        }
         default:
           this.AddRuntimeError("Unable to convert input to Element1D or Member1D");
           return;

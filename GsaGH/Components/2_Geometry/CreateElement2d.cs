@@ -21,17 +21,13 @@ namespace GsaGH.Components {
 
     protected override Bitmap Icon => Resources.CreateElem2d;
 
-    public CreateElement2d() : base("Create 2D Element",
-          "Elem2D",
-      "Create GSA 2D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateElement2d() : base("Create 2D Element", "Elem2D", "Create GSA 2D Element",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager[1]
-        .Optional = true;
+      pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
 
@@ -61,11 +57,9 @@ namespace GsaGH.Components {
         GsaProp2d prop2d;
         if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
           prop2d = prop2dGoo.Value;
-        }
-        else if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
           prop2d = new GsaProp2d(id);
-        }
-        else {
+        } else {
           this.AddRuntimeError("Unable to convert PA input to a 2D Property or reference integer");
           return;
         }

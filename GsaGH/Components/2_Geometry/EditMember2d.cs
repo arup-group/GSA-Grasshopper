@@ -28,11 +28,8 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.EditMem2d;
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
-    public EditMember2d() : base("Edit 2D Member",
-              "Mem2dEdit",
-      "Modify GSA 2D Member",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public EditMember2d() : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
       return false;
@@ -55,105 +52,58 @@ namespace GsaGH.Components {
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (Params.Input[12] is Param_Number angleParameter) {
-        _angleUnit = angleParameter.UseDegrees
-          ? AngleUnit.Degree
-          : AngleUnit.Radian;
+        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaMember2dParameter(),
-        GsaMember2dGoo.Name,
+      pManager.AddParameter(new GsaMember2dParameter(), GsaMember2dGoo.Name,
         GsaMember2dGoo.NickName,
-        GsaMember2dGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaMember2dGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member2d Number",
-        "ID",
+        GsaMember2dGoo.Description + " to get or set information for. Leave blank to create a new "
+        + GsaMember2dGoo.Name, GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Member2d Number", "ID",
         "Set Member Number. If ID is set it will replace any existing 2d Member in the model",
         GH_ParamAccess.item);
-      pManager.AddBrepParameter("Brep",
-        "B",
+      pManager.AddBrepParameter("Brep", "B",
         "Reposition Member Brep (non-planar geometry will be automatically converted to an average plane from exterior boundary control points)",
         GH_ParamAccess.item);
-      pManager.AddPointParameter("Incl. Points",
-        "(P)",
-        "Add inclusion points (will automatically be projected onto Brep)",
-        GH_ParamAccess.list);
-      pManager.AddCurveParameter("Incl. Curves",
-        "(C)",
+      pManager.AddPointParameter("Incl. Points", "(P)",
+        "Add inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
+      pManager.AddCurveParameter("Incl. Curves", "(C)",
         "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter(),
-        "2D Property",
-        "PA",
-        "Set new 2D Property.",
+      pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA", "Set new 2D Property.",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member2d Group",
-        "Gr",
-        "Set Member 2d Group",
+      pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Type",
-        "mT",
-        "Set 2D Member Type"
-        + Environment.NewLine
-        + "Default is 1: Generic 2D - Accepted inputs are:"
-        + Environment.NewLine
-        + "4: Slab"
-        + Environment.NewLine
-        + "5: Wall"
-        + Environment.NewLine
-        + "7: Ribbed Slab"
-        + Environment.NewLine
-        + "12: Void-cutter",
+      pManager.AddTextParameter("Member Type", "mT",
+        "Set 2D Member Type" + Environment.NewLine
+        + "Default is 1: Generic 2D - Accepted inputs are:" + Environment.NewLine + "4: Slab"
+        + Environment.NewLine + "5: Wall" + Environment.NewLine + "7: Ribbed Slab"
+        + Environment.NewLine + "12: Void-cutter", GH_ParamAccess.item);
+      pManager.AddTextParameter("2D Element Type", "eT",
+        "Set Member 2D Analysis Element Type" + Environment.NewLine + "Accepted inputs are:"
+        + Environment.NewLine + "0: Linear - Tri3/Quad4 Elements (default)" + Environment.NewLine
+        + "1: Quadratic - Tri6/Quad8 Elements" + Environment.NewLine + "2: Rigid Diaphragm",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("2D Element Type",
-        "eT",
-        "Set Member 2D Analysis Element Type"
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "0: Linear - Tri3/Quad4 Elements (default)"
-        + Environment.NewLine
-        + "1: Quadratic - Tri6/Quad8 Elements"
-        + Environment.NewLine
-        + "2: Rigid Diaphragm",
+      pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Set Member Offset",
+      pManager.AddBooleanParameter("Internal Offset", "IO",
+        "Set Automatic Internal Offset of Member", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Set target mesh size",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Internal Offset",
-        "IO",
-        "Set Automatic Internal Offset of Member",
+      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size in model units",
-        "Ms",
-        "Set target mesh size",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others",
-        "M/o",
-        "Mesh with others?",
-        GH_ParamAccess.item);
-      pManager.AddAngleParameter("Orientation Angle",
-        "⭮A",
-        "Set Member Orientation Angle",
+      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
-      pManager.AddColourParameter("Member2d Colour",
-        "Co",
-        "Set Member 2d Colour",
+      pManager.AddColourParameter("Member2d Colour", "Co", "Set Member 2d Colour",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Member",
-        "Dm",
-        "Set Member to Dummy",
+      pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy",
         GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
 
       pManager.HideParameter(0);
@@ -163,66 +113,41 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaMember2dParameter(),
-        GsaMember2dGoo.Name,
-        GsaMember2dGoo.NickName,
-        GsaMember2dGoo.Description + " with applied changes.",
+      pManager.AddParameter(new GsaMember2dParameter(), GsaMember2dGoo.Name,
+        GsaMember2dGoo.NickName, GsaMember2dGoo.Description + " with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
       pManager.AddBrepParameter("Brep", "B", "Member Brep", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddPointParameter("Incl. Points",
-        "(P)",
-        "Get Inclusion points",
+      pManager.AddPointParameter("Incl. Points", "(P)", "Get Inclusion points",
         GH_ParamAccess.list);
       pManager.HideParameter(3);
-      pManager.AddCurveParameter("Incl. Curves",
-        "(C)",
-        "Get Inclusion curves",
+      pManager.AddCurveParameter("Incl. Curves", "(C)", "Get Inclusion curves",
         GH_ParamAccess.list);
       pManager.HideParameter(4);
-      pManager.AddParameter(new GsaProp2dParameter(),
-        "2D Property",
-        "PA",
-        "Get 2D Section Property",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA",
+        "Get 2D Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
-      pManager.AddTextParameter("2D Element Type",
-        "eT",
-        "Get Member 2D Analysis Element Type"
-        + Environment.NewLine
+      pManager.AddTextParameter("2D Element Type", "eT",
+        "Get Member 2D Analysis Element Type" + Environment.NewLine
         + "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Get Member Offset",
+      pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Internal Offset",
-        "IO",
-        "Get Automatic Internal Offset of Member",
+      pManager.AddBooleanParameter("Internal Offset", "IO",
+        "Get Automatic Internal Offset of Member", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Get Member Mesh Size",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size in model units",
-        "Ms",
-        "Get Member Mesh Size",
+      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others",
-        "M/o",
-        "Get if to mesh with others",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Orientation Angle",
-        "⭮A",
-        "Get Member Orientation Angle in radians",
-        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A",
+        "Get Member Orientation Angle in radians", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Member",
-        "Dm",
-        "Get if Member is Dummy",
+      pManager.AddBooleanParameter("Dummy Member", "Dm", "Get if Member is Dummy",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Topology",
-        "Tp",
+      pManager.AddTextParameter("Topology", "Tp",
         "Get the Member's original topology list referencing node IDs in Model that Model was created from",
         GH_ParamAccess.item);
     }
@@ -258,9 +183,7 @@ namespace GsaGH.Components {
       var ghpts = new List<GH_Point>();
       List<Point3d> pts = mem.InclusionPoints;
 
-      if (da.GetData(2, ref ghbrep)
-        || da.GetDataList(3, ghpts)
-        || da.GetDataList(4, ghcrvs)) {
+      if (da.GetData(2, ref ghbrep) || da.GetDataList(3, ghpts) || da.GetDataList(4, ghcrvs)) {
         if (da.GetData(2, ref ghbrep)) {
           GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
         }
@@ -295,12 +218,10 @@ namespace GsaGH.Components {
         var prop2d = new GsaProp2d();
         if (ghTyp.Value is GsaProp2dGoo) {
           ghTyp.CastTo(ref prop2d);
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             prop2d = new GsaProp2d(id);
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
             return;
@@ -321,12 +242,10 @@ namespace GsaGH.Components {
       if (da.GetData(7, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
           mem.Type = (MemberType)typeInt;
-        }
-        else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both)) {
           try {
             mem.Type = Mappings.GetMemberType(typestring);
-          }
-          catch (ArgumentException) {
+          } catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Member Type");
           }
         }
@@ -336,12 +255,10 @@ namespace GsaGH.Components {
       if (da.GetData(8, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
           mem.Type2D = (AnalysisOrder)typeInt;
-        }
-        else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both)) {
           try {
             mem.Type2D = Mappings.GetAnalysisOrder(typestring);
-          }
-          catch (ArgumentException) {
+          } catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Analysis Element Type");
           }
         }
@@ -406,12 +323,8 @@ namespace GsaGH.Components {
       da.SetDataList(4, mem.InclusionLines);
       da.SetData(5, new GsaProp2dGoo(mem.Property));
       da.SetData(6, mem.Group);
-      da.SetData(7,
-        Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type)
-          .Key);
-      da.SetData(8,
-        Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D)
-          .Key);
+      da.SetData(7, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(8, Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
       da.SetData(10, mem.AutomaticInternalOffset);
       da.SetData(11, mem.MeshSize);

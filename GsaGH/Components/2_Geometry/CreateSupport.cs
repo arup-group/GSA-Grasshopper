@@ -27,22 +27,12 @@ namespace GsaGH.Components {
     private bool _z;
     private bool _zz;
 
-    public CreateSupport() : base("Create Support",
-                                  "Support",
-      "Create GSA Node Support",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateSupport() : base("Create Support", "Support", "Create GSA Node Support",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void CreateAttributes() {
-      m_attributes = new SupportComponentAttributes(this,
-                                                    SetRestraints,
-                                                    "Restraints",
-                                                    _x,
-                                                    _y,
-                                                    _z,
-                                                    _xx,
-                                                    _yy,
-                                                    _zz);
+      m_attributes = new SupportComponentAttributes(this, SetRestraints, "Restraints", _x, _y, _z,
+        _xx, _yy, _zz);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -55,13 +45,7 @@ namespace GsaGH.Components {
       return base.Read(reader);
     }
 
-    public void SetRestraints(
-      bool resx,
-      bool resy,
-      bool resz,
-      bool resxx,
-      bool resyy,
-      bool reszz) {
+    public void SetRestraints(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz) {
       _x = resx;
       _y = resy;
       _z = resz;
@@ -87,26 +71,16 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddPointParameter("Point",
-        "Pt",
-        "Point (x, y, z) location of support",
+      pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support",
         GH_ParamAccess.item);
-      pManager.AddPlaneParameter("Plane",
-        "Pl",
-        "(Optional) Plane for local axis",
-        GH_ParamAccess.item,
-        Plane.WorldXY);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Restraints",
-        "B6",
-        "(Optional) Restraint in Bool6 form",
-        GH_ParamAccess.item);
+      pManager.AddPlaneParameter("Plane", "Pl", "(Optional) Plane for local axis",
+        GH_ParamAccess.item, Plane.WorldXY);
+      pManager.AddParameter(new GsaBool6Parameter(), "Restraints", "B6",
+        "(Optional) Restraint in Bool6 form", GH_ParamAccess.item);
 
-      pManager[1]
-        .Optional = true;
+      pManager[1].Optional = true;
       pManager.HideParameter(1);
-      pManager[2]
-        .Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
