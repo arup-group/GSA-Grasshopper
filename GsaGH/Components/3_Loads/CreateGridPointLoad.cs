@@ -24,11 +24,8 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.PointLoad;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
 
-    public CreateGridPointLoad() : base("Create Grid Point Load",
-              "PointLoad",
-      "Create GSA Grid Point Load",
-      CategoryName.Name(),
-      SubCategoryName.Cat3()) {
+    public CreateGridPointLoad() : base("Create Grid Point Load", "PointLoad",
+      "Create GSA Grid Point Load", CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
 
@@ -40,8 +37,7 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Force.GetAbbreviation(_forceUnit);
-      Params.Input[6]
-        .Name = "Value [" + unitAbbreviation + "]";
+      Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -61,67 +57,36 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Force.GetAbbreviation(_forceUnit);
 
-      pManager.AddIntegerParameter("Load case",
-        "LC",
-        "Load case number (default 1)",
-        GH_ParamAccess.item,
-        1);
-      pManager.AddPointParameter("Point",
-        "Pt",
+      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
+        GH_ParamAccess.item, 1);
+      pManager.AddPointParameter("Point", "Pt",
         "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane Surface (xy-plane) will be created at the z-elevation of this point.",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Grid Plane Surface",
-        "GPS",
+      pManager.AddGenericParameter("Grid Plane Surface", "GPS",
         "Grid Plane Surface or Plane (optional). If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Direction",
-        "Di",
-        "Load direction (default z)."
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "x"
-        + Environment.NewLine
-        + "y"
-        + Environment.NewLine
-        + "z",
-        GH_ParamAccess.item,
-        "z");
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Load axis (default Global). "
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "0 : Global"
-        + Environment.NewLine
-        + "-1 : Local",
-        GH_ParamAccess.item,
-        0);
+      pManager.AddTextParameter("Direction", "Di",
+        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
+        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z",
+        GH_ParamAccess.item, "z");
+      pManager.AddIntegerParameter("Axis", "Ax",
+        "Load axis (default Global). " + Environment.NewLine + "Accepted inputs are:"
+        + Environment.NewLine + "0 : Global" + Environment.NewLine + "-1 : Local",
+        GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Value [" + unitAbbreviation + "]",
-        "V",
-        "Load Value",
+      pManager.AddGenericParameter("Value [" + unitAbbreviation + "]", "V", "Load Value",
         GH_ParamAccess.item);
 
-      pManager[0]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
-      pManager[5]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
+      pManager[5].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaLoadParameter(),
-                                                                                         "Grid Point Load",
-                                                                                         "Ld",
-                                                                                         "GSA Grid Point Load",
-                                                                                         GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Grid Point Load", "Ld", "GSA Grid Point Load",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -149,10 +114,10 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo value: {
-              gridPlaneSurface = value.Value.Duplicate();
-              gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
-              break;
-            }
+            gridPlaneSurface = value.Value.Duplicate();
+            gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+            break;
+          }
           case Plane _:
             ghTyp.CastTo(ref plane);
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
@@ -160,23 +125,21 @@ namespace GsaGH.Components {
             break;
 
           default: {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                gsaGridPointLoad.GridPointLoad.GridSurface = id;
-                gsaGridPointLoad.GridPlaneSurface = null;
-              }
-              else {
-                this.AddRuntimeError(
-                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                  + Environment.NewLine
-                  + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
-                return;
-              }
-
-              break;
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              gsaGridPointLoad.GridPointLoad.GridSurface = id;
+              gsaGridPointLoad.GridPlaneSurface = null;
+            } else {
+              this.AddRuntimeError(
+                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                + Environment.NewLine
+                + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+              return;
             }
+
+            break;
+          }
         }
-      }
-      else {
+      } else {
         plane = Plane.WorldXY;
         plane.Origin = point3d;
         gridPlaneSurface = new GsaGridPlaneSurface(plane);

@@ -40,11 +40,8 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.NodeForce;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public CreateNodeLoad() : base("Create Node Load",
-                              "NodeLoad",
-      "Create GSA Node Load",
-      CategoryName.Name(),
-      SubCategoryName.Cat3()) {
+    public CreateNodeLoad() : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
+      CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
 
@@ -77,8 +74,7 @@ namespace GsaGH.Components {
             _selectedItems[1] = Length.GetAbbreviation(_lengthUnit);
             break;
         }
-      }
-      else {
+      } else {
         switch (_mode) {
           case FoldMode.NodeForce:
             _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
@@ -101,19 +97,16 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case FoldMode.NodeForce:
-          Params.Input[4]
-            .Name = "Value [" + Force.GetAbbreviation(_forceUnit) + "]";
+          Params.Input[4].Name = "Value [" + Force.GetAbbreviation(_forceUnit) + "]";
           break;
 
         case FoldMode.NodeMoment:
-          Params.Input[4]
-            .Name = "Value [" + Moment.GetAbbreviation(_momentUnit) + "]";
+          Params.Input[4].Name = "Value [" + Moment.GetAbbreviation(_momentUnit) + "]";
           break;
 
         case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          Params.Input[4]
-            .Name = "Value [" + Length.GetAbbreviation(_lengthUnit) + "]";
+          Params.Input[4].Name = "Value [" + Length.GetAbbreviation(_lengthUnit) + "]";
           break;
       }
     }
@@ -128,8 +121,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(_type);
-      _selectedItems.Add(_mode.ToString()
-        .Replace('_', ' '));
+      _selectedItems.Add(_mode.ToString().Replace('_', ' '));
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
@@ -154,56 +146,29 @@ namespace GsaGH.Components {
           break;
       }
 
-      pManager.AddIntegerParameter("Load case",
-        "LC",
-        "Load case number (default 1)",
-        GH_ParamAccess.item,
-        1);
-      pManager.AddGenericParameter("Node list",
-        "Pt",
+      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
+        GH_ParamAccess.item, 1);
+      pManager.AddGenericParameter("Node list", "Pt",
         "Node or Point to apply load to; either input Node, Point, or a text string."
-        + Environment.NewLine
-        + "Text string with Node list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)"
-        + Environment.NewLine
+        + Environment.NewLine + "Text string with Node list should take the form:"
+        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddTextParameter("Direction",
-        "Di",
-        "Load direction (default z)."
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "x"
-        + Environment.NewLine
-        + "y"
-        + Environment.NewLine
-        + "z"
-        + Environment.NewLine
-        + "xx"
-        + Environment.NewLine
-        + "yy"
-        + Environment.NewLine
-        + "zz",
-        GH_ParamAccess.item,
-        "z");
+      pManager.AddTextParameter("Direction", "Di",
+        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
+        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z"
+        + Environment.NewLine + "xx" + Environment.NewLine + "yy" + Environment.NewLine + "zz",
+        GH_ParamAccess.item, "z");
       pManager.AddGenericParameter("Value [" + funit + "]", "V", "Load Value", GH_ParamAccess.item);
-      pManager[0]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaLoadParameter(),
-                                                                                         "Node Load",
-                                                                                         "Ld",
-                                                                                         "GSA Node Load",
-                                                                                         GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Node Load", "Ld", "GSA Node Load",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -237,21 +202,17 @@ namespace GsaGH.Components {
         var refPt = new Point3d();
         if (ghTyp.Value is GsaNodeGoo goo) {
           nodeLoad._refPoint = goo.Value.Point;
-        }
-        else if (ghTyp.Value is GsaListGoo value) {
-          if (value.Value.EntityType == Parameters.EntityType.Node) {
+        } else if (ghTyp.Value is GsaListGoo value) {
+          if (value.Value.EntityType == EntityType.Node) {
             nodeLoad._refList = value.Value;
-          }
-          else {
+          } else {
             this.AddRuntimeWarning("List must be of type Node to apply to Node loading");
           }
-        }
-        else if (GH_Convert.ToPoint3d(ghTyp.Value, ref refPt, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToPoint3d(ghTyp.Value, ref refPt, GH_Conversion.Both)) {
           nodeLoad._refPoint = refPt;
           this.AddRuntimeRemark(
             "Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
-        }
-        else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both)) {
           nodeLoad.NodeLoad.Nodes = nodeList;
         }
       }
@@ -271,8 +232,7 @@ namespace GsaGH.Components {
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
       }
 
-      dir = dir.ToUpper()
-        .Trim();
+      dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
           direc = Direction.X;
@@ -322,8 +282,7 @@ namespace GsaGH.Components {
 
             break;
         }
-      }
-      else {
+      } else {
         switch (dir) {
           case "X":
           case "Y":
@@ -349,9 +308,8 @@ namespace GsaGH.Components {
 
     protected override void UpdateUIFromSelectedItems() {
       string md = _selectedItems[0].Replace(" ", "_").ToPascalCase();
-      _mode = md.ToLower() == "node"
-        ? FoldMode.NodeForce
-        : (FoldMode)Enum.Parse(typeof(FoldMode), md);
+      _mode = md.ToLower() == "node" ? FoldMode.NodeForce :
+        (FoldMode)Enum.Parse(typeof(FoldMode), md);
 
       switch (_mode) {
         case FoldMode.NodeForce:

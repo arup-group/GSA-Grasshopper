@@ -23,11 +23,8 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public LoadProp() : base("Load Properties",
-                  "LoadProp",
-      "Get properties of a GSA Load",
-      CategoryName.Name(),
-      SubCategoryName.Cat3()) {
+    public LoadProp() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
+      CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
 
@@ -55,23 +52,17 @@ namespace GsaGH.Components {
             UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit));
         string forcePerAreaUnit
           = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit));
-        string unitAbbreviation = string.Join(", ",
-          new {
-            forceUnitAbbreviation,
-            forcePerLengthUnit,
-            forcePerAreaUnit,
-          });
+        string unitAbbreviation = string.Join(", ", new {
+          forceUnitAbbreviation,
+          forcePerLengthUnit,
+          forcePerAreaUnit,
+        });
 
-        Params.Output[6]
-          .Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[7]
-          .Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[8]
-          .Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[9]
-          .Name = "Load Value [" + unitAbbreviation + "]";
-      }
-      catch (Exception e) {
+        Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[7].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[8].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
+      } catch (Exception e) {
         this.AddRuntimeError(e.Message);
       }
     }
@@ -86,10 +77,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      _dropDownItems[0]
-        .RemoveAt(_dropDownItems[0]
-            .Count
-          - 1);
+      _dropDownItems[0].RemoveAt(_dropDownItems[0].Count - 1);
       _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
@@ -99,11 +87,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaLoadParameter(),
-                                                                                       "Load",
-                                                                                       "Ld",
-                                                                                       "Load to get some info out of.",
-                                                                                       GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Load", "Ld", "Load to get some info out of.",
+        GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -113,39 +98,26 @@ namespace GsaGH.Components {
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Elements/Nodes/Definition",
-        "Def",
+      pManager.AddGenericParameter("Elements/Nodes/Definition", "Def",
         "Element/Node list that load is applied to or Grid point / polygon definition",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis",
-        "Ax",
-        "Axis Property (0 : Global // -1 : Local",
+      pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di", "Load direction", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]",
-        "V1",
-        "Value at Start, Point 1 or Factor X",
-        GH_ParamAccess.item);
+        "Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V1",
+        "Value at Start, Point 1 or Factor X", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Load Value or Factor Y [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]",
-        "V2",
-        "Value at End, Point 2 or Factor Y",
-        GH_ParamAccess.item);
+        "Load Value or Factor Y [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V2",
+        "Value at End, Point 2 or Factor Y", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Load Value or Factor Z [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]",
-        "V3",
-        "Value at Point 3 or Factor Z",
-        GH_ParamAccess.item);
+        "Load Value or Factor Z [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V3",
+        "Value at Point 3 or Factor Z", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]",
-        "V4",
-        "Value at Point 4",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Grid Plane Surface",
-        "GPS",
-        "Grid Plane Surface",
+        "Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4",
+        "Value at Point 4", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface",
         GH_ParamAccess.item);
     }
 
@@ -230,10 +202,7 @@ namespace GsaGH.Components {
             da.SetData(0, gsaLoad.PointLoad.GridPointLoad.Case);
             da.SetData(1, gsaLoad.PointLoad.GridPointLoad.Name);
             da.SetData(2,
-              "("
-              + gsaLoad.PointLoad.GridPointLoad.X
-              + ","
-              + gsaLoad.PointLoad.GridPointLoad.Y
+              "(" + gsaLoad.PointLoad.GridPointLoad.X + "," + gsaLoad.PointLoad.GridPointLoad.Y
               + ")");
             da.SetData(3, gsaLoad.PointLoad.GridPointLoad.AxisProperty);
             da.SetData(4, gsaLoad.PointLoad.GridPointLoad.Direction);
@@ -275,8 +244,7 @@ namespace GsaGH.Components {
             da.SetData(10, new GsaGridPlaneSurfaceGoo(gsaLoad.AreaLoad.GridPlaneSurface));
             return;
         }
-      }
-      else {
+      } else {
         this.AddRuntimeError("Error converting input to GSA Load");
       }
     }
