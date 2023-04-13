@@ -42,8 +42,7 @@ namespace GsaGH.Components {
       if (ghTyp.Value is GsaModelGoo) {
         ghTyp.CastTo(ref gsaModel);
         Message = "";
-      }
-      else {
+      } else {
         this.AddRuntimeError("Error converting input to GSA Model");
         return;
       }
@@ -66,16 +65,13 @@ namespace GsaGH.Components {
 
       Directory.CreateDirectory(Path.GetDirectoryName(fileNameAndPath) ?? string.Empty);
 
-      string mes = model.Model.SaveAs(fileNameAndPath)
-        .ToString();
+      string mes = model.Model.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        PostHog.ModelIO(GsaGH.PluginInfo.Instance,
-          "saveGWB",
+        PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB",
           (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
-      }
-      else {
+      } else {
         this.AddRuntimeError(mes);
       }
     }
@@ -87,10 +83,8 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SaveModel;
 
-    public SaveModel() : base("Save GSA Model",
-      "Save",
-      "Saves your GSA model from this parametric nightmare",
-      CategoryName.Name(),
+    public SaveModel() : base("Save GSA Model", "Save",
+      "Saves your GSA model from this parametric nightmare", CategoryName.Name(),
       SubCategoryName.Cat0()) {
       Hidden = true;
     }
@@ -100,16 +94,10 @@ namespace GsaGH.Components {
     #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(),
-        "GSA Model",
-        "GSA",
-        "GSA model to save",
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model to save",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Save?",
-        "Save",
-        "Input 'True' to save or use button",
-        GH_ParamAccess.item,
-        true);
+      pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button",
+        GH_ParamAccess.item, true);
       pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
     }
 
@@ -128,15 +116,8 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes() {
-      m_attributes = new ThreeButtonAtrributes(this,
-                                                    "Save",
-                                                    "Save As",
-                                                    "Open in GSA",
-                                                    SaveButtonClick,
-                                                    SaveAsButtonClick,
-                                                    OpenGsaExe,
-                                                    true,
-                                                    "Save GSA file");
+      m_attributes = new ThreeButtonAtrributes(this, "Save", "Save As", "Open in GSA",
+        SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
     }
 
     internal void SaveButtonClick() {
@@ -152,12 +133,8 @@ namespace GsaGH.Components {
         return;
       }
 
-      while (Params.Input[2]
-          .Sources.Count
-        > 0) {
-        Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2]
-            .Sources[0],
-          false);
+      while (Params.Input[2].Sources.Count > 0) {
+        Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
       }
 
       var panel = new GH_Panel();
@@ -170,8 +147,7 @@ namespace GsaGH.Components {
       panel.UserText = fdi.FileName;
       Instances.ActiveCanvas.Document.AddObject(panel, false);
 
-      Params.Input[2]
-        .AddSource(panel);
+      Params.Input[2].AddSource(panel);
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
@@ -185,8 +161,7 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
       var saveInput = (Param_Boolean)Params.Input[1];
-      if (saveInput.PersistentData.First()
-        .Value) {
+      if (saveInput.PersistentData.First().Value) {
         return flag;
       }
 
@@ -196,5 +171,6 @@ namespace GsaGH.Components {
     }
 
     #endregion
+
   }
 }

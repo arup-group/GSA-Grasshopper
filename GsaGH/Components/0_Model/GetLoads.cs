@@ -26,10 +26,8 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.GetLoads;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public GetLoads() : base("Get Model Loads",
-              "GetLoads",
-      "Get Loads and Grid Planes/Surfaces from GSA model",
-      CategoryName.Name(),
+    public GetLoads() : base("Get Model Loads", "GetLoads",
+      "Get Loads and Grid Planes/Surfaces from GSA model", CategoryName.Name(),
       SubCategoryName.Cat0()) {
       Hidden = true;
     }
@@ -43,14 +41,10 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       int i = 4;
-      Params.Output[i++]
-        .Name = "Grid Point Loads [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Grid Line Loads [" + unitAbbreviation + "]";
-      Params.Output[i++]
-        .Name = "Grid Area Loads [" + unitAbbreviation + "]";
-      Params.Output[i]
-        .Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "Grid Point Loads [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "Grid Line Loads [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "Grid Area Loads [" + unitAbbreviation + "]";
+      Params.Output[i].Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -68,56 +62,30 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(),
-                                                                                       "GSA Model",
-                                                                                       "GSA",
-                                                                                       "GSA model containing some loads",
-                                                                                       GH_ParamAccess.item);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
+        "GSA model containing some loads", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Gravity Loads",
-        "Gr",
-        "Gravity Loads from GSA Model",
+      pManager.AddParameter(new GsaLoadParameter(), "Gravity Loads", "Gr",
+        "Gravity Loads from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaLoadParameter(), "Node Loads", "No", "Node Loads from GSA Model",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Node Loads",
-        "No",
-        "Node Loads from GSA Model",
+      pManager.AddParameter(new GsaLoadParameter(), "Beam Loads", "Be", "Beam Loads from GSA Model",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Beam Loads",
-        "Be",
-        "Beam Loads from GSA Model",
+      pManager.AddParameter(new GsaLoadParameter(), "Face Loads", "Fa", "Face Loads from GSA Model",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Face Loads",
-        "Fa",
-        "Face Loads from GSA Model",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Grid Point Loads [" + unitAbbreviation + "]",
-        "Pt",
-        "Grid Point Loads from GSA Model",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Grid Line Loads [" + unitAbbreviation + "]",
-        "Ln",
-        "Grid Line Loads from GSA Model",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(),
-        "Grid Area Loads [" + unitAbbreviation + "]",
-        "Ar",
-        "Grid Area Loads from GSA Model",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaLoadParameter(), "Grid Point Loads [" + unitAbbreviation + "]",
+        "Pt", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaLoadParameter(), "Grid Line Loads [" + unitAbbreviation + "]",
+        "Ln", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaLoadParameter(), "Grid Area Loads [" + unitAbbreviation + "]",
+        "Ar", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaGridPlaneParameter(),
-        "Grid Plane Surfaces [" + unitAbbreviation + "]",
-        "GPS",
-        "Grid Plane Surfaces from GSA Model",
-        GH_ParamAccess.list);
+        "Grid Plane Surfaces [" + unitAbbreviation + "]", "GPS",
+        "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
       pManager.HideParameter(7);
     }
 
@@ -145,12 +113,8 @@ namespace GsaGH.Components {
         = Loads.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, _lengthUnit);
 
       var gps = srfDict.Keys.Select(key
-          => new GsaGridPlaneSurfaceGoo(Loads.GetGridPlaneSurface(srfDict,
-            plnDict,
-            axDict,
-            key,
-            _lengthUnit)))
-        .ToList();
+        => new GsaGridPlaneSurfaceGoo(Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key,
+          _lengthUnit))).ToList();
 
       da.SetDataList(0, gravity);
       da.SetDataList(1, node);

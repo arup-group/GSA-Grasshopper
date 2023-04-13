@@ -21,9 +21,8 @@ namespace GsaGH.Components {
 
     public CreateList() : base("Create List", "CreateList",
       "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)."
-      + Environment.NewLine
-      + "You can add a GSA List to a model through the 'GSA' input.", CategoryName.Name(),
-      SubCategoryName.Cat0()) { }
+      + Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.",
+      CategoryName.Name(), SubCategoryName.Cat0()) { }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -63,8 +62,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaListParameter(), "GSA List", "L",
-        "GSA Entity List parameter."
-        + Environment.NewLine
+        "GSA Entity List parameter." + Environment.NewLine
         + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
 

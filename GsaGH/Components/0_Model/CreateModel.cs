@@ -38,11 +38,8 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = "";
 
-    public CreateModel() : base("Create Model",
-                                  "Model",
-      "Assemble a GSA Model",
-      CategoryName.Name(),
-      SubCategoryName.Cat0()) {
+    public CreateModel() : base("Create Model", "Model", "Assemble a GSA Model",
+      CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
     }
 
@@ -50,9 +47,7 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit)
-        .ToString()
-        .Replace(" ", string.Empty);
+      _toleranceTxt = _tolerance.ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
       tolerance.Text = _toleranceTxt;
       tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
@@ -64,12 +59,11 @@ namespace GsaGH.Components {
 
       //only for init submenu
       var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1]
-        .MouseUp += (s, e) => {
-          UpdateMessage();
-          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-          ExpireSolution(true);
-        };
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
+        UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
       menu.Items.Add(toleranceMenu);
 
       Menu_AppendSeparator(menu);
@@ -83,14 +77,8 @@ namespace GsaGH.Components {
         InitialiseDropdowns();
       }
 
-      m_attributes = new DropDownCheckBoxesComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        SetAnalysis,
-        _initialCheckState,
-        _checkboxTexts,
-        _spacerDescriptions);
+      m_attributes = new DropDownCheckBoxesComponentAttributes(this, SetSelected, _dropDownItems,
+        _selectedItems, SetAnalysis, _initialCheckState, _checkboxTexts, _spacerDescriptions);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -100,24 +88,20 @@ namespace GsaGH.Components {
       };
       if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData")) {
         base.Read(reader);
-      }
-      else {
+      } else {
         BaseReader.Read(reader, this, true);
         _isInitialised = true;
         UpdateUIFromSelectedItems();
       }
 
       GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
+      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
 
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
         _tolerance = new Length(tol, _lengthUnit);
-      }
-      else {
+      } else {
         _tolerance = DefaultUnits.Tolerance;
       }
 
@@ -137,8 +121,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2]
-                                                                .Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -168,40 +151,26 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(),
-        "Model(s)",
-        "GSA",
-        "Existing GSA Model(s) to append to"
-        + Environment.NewLine
-        + "If you input more than one model they will be merged"
-        + Environment.NewLine
-        + "with first model in list taking priority for IDs",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Properties",
-        "Pro",
+      pManager.AddParameter(new GsaModelParameter(), "Model(s)", "GSA",
+        "Existing GSA Model(s) to append to" + Environment.NewLine
+        + "If you input more than one model they will be merged" + Environment.NewLine
+        + "with first model in list taking priority for IDs", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Properties", "Pro",
         "GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model"
-        + Environment.NewLine
-        + "Properties already added to Elements or Members"
-        + Environment.NewLine
-        + "will automatically be added with Geometry input",
+        + Environment.NewLine + "Properties already added to Elements or Members"
+        + Environment.NewLine + "will automatically be added with Geometry input",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]",
         "Geo",
         "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Load",
-        "Ld",
-        "Loads to add to the model"
-        + Environment.NewLine
-        + "You can also use this input to add Edited GridPlaneSurfaces",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Tasks & Combinations",
-        "ΣT",
-        "GSA Analysis Tasks and Combination Cases to add to the model",
-        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Load", "Ld",
+        "Loads to add to the model" + Environment.NewLine
+        + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT",
+        "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
       for (int i = 0; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
     }
 
@@ -227,16 +196,8 @@ namespace GsaGH.Components {
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null
-        & nodes is null
-        & elem1ds is null
-        & elem2ds is null
-        & mem1ds is null
-        & mem2ds is null
-        & mem3ds is null
-        & sections is null
-        & prop2Ds is null
-        & loads is null
+      if (models is null & nodes is null & elem1ds is null & elem2ds is null & mem1ds is null
+        & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null & loads is null
         & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
@@ -247,32 +208,14 @@ namespace GsaGH.Components {
       var model = new GsaModel();
       if (models != null) {
         if (models.Count > 0) {
-          model = models.Count > 1
-            ? MergeModels.MergeModel(models, this, _tolerance)
-            : models[0]
-              .Clone();
+          model = models.Count > 1 ? MergeModels.MergeModel(models, this, _tolerance) :
+            models[0].Clone();
         }
       }
 
-      model.Model = AssembleModel.Assemble(model,
-        nodes,
-        elem1ds,
-        elem2ds,
-        elem3ds,
-        mem1ds,
-        mem2ds,
-        mem3ds,
-        sections,
-        prop2Ds,
-        prop3Ds,
-        loads,
-        gridPlaneSurfaces,
-        analysisTasks,
-        combinationCases,
-        _lengthUnit,
-        _tolerance,
-        _reMesh,
-        this);
+      model.Model = AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds,
+        mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks,
+        combinationCases, _lengthUnit, _tolerance, _reMesh, this);
 
       UpdateMessage();
 
@@ -286,26 +229,22 @@ namespace GsaGH.Components {
 
     private void MaintainText(ToolStripItem tolerance) {
       _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)
-        ? Color.FromArgb(255, 180, 255, 150)
-        : Color.FromArgb(255, 255, 100, 100);
+      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
+        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
     }
 
     private void UpdateMessage() {
       if (_toleranceTxt != "") {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }
       }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: "
-        + _tolerance.ToString()
-          .Replace(" ", string.Empty);
+      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
       if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
