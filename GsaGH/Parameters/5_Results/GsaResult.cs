@@ -189,7 +189,8 @@ namespace GsaGH.Parameters {
     ///   <elementList, permutations>
     ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
+    internal
+      Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
       ComboElement1DResults { get; set; }
       = new Dictionary<Tuple<string, int>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
@@ -200,7 +201,8 @@ namespace GsaGH.Parameters {
     ///   <elementList, permutations>
     ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
+    internal
+      Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
       ComboElement1DResultsInclStrainEnergyDensity { get; set; }
       = new Dictionary<Tuple<string, int>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
@@ -335,16 +337,12 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaResult(
-      GsaModel model,
-      CombinationCaseResult result,
-      int caseId,
-      IEnumerable<int> permutations) {
+      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       Model = model;
       CombinationCaseResult = result;
       Type = CaseType.Combination;
       CaseId = caseId;
-      SelectedPermutationIds = permutations.OrderBy(x => x)
-        .ToList();
+      SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
     }
 
     internal GsaResult(GsaModel model, CombinationCaseResult result, int caseId, int permutation) {
@@ -369,17 +367,17 @@ namespace GsaGH.Parameters {
           break;
 
         case CaseType.Combination: {
-            txt = "C" + CaseId;
-            if (SelectedPermutationIds.Count > 0) {
-              txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count : txt + " p" + SelectedPermutationIds[0];
-            }
-
-            break;
+          txt = "C" + CaseId;
+          if (SelectedPermutationIds.Count > 0) {
+            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
+              txt + " p" + SelectedPermutationIds[0];
           }
+
+          break;
+        }
       }
 
-      return txt.Trim()
-        .Replace("  ", " ");
+      return txt.Trim().Replace("  ", " ");
     }
 
     /// <summary>
@@ -391,8 +389,7 @@ namespace GsaGH.Parameters {
     /// <param name="energyUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DAverageStrainEnergyDensityValues(
-      string elementlist,
-      EnergyUnit energyUnit) {
+      string elementlist, EnergyUnit energyUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -401,8 +398,7 @@ namespace GsaGH.Parameters {
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
-            ACaseElement1DResults.Add(key,
-              AnalysisCaseResult.Element1DResults(elementlist, 1));
+            ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, 1));
           }
 
           ACaseElement1DStrainEnergyDensityValues.Add(key,
@@ -415,8 +411,7 @@ namespace GsaGH.Parameters {
       }
 
       if (ComboElement1DStrainEnergyDensityValues.ContainsKey(key)) {
-        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key]
-          .Values);
+        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
 
       if (!ComboElement1DResults.ContainsKey(key)) {
@@ -425,13 +420,10 @@ namespace GsaGH.Parameters {
       }
 
       ComboElement1DStrainEnergyDensityValues.Add(key,
-        ResultHelper.GetElement1DResultValues(ComboElement1DResults[key],
-          energyUnit,
-          SelectedPermutationIds,
-          true));
+        ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit,
+          SelectedPermutationIds, true));
 
-      return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
     }
 
     /// <summary>
@@ -444,9 +436,7 @@ namespace GsaGH.Parameters {
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DDisplacementValues(
-      string elementlist,
-      int positionsCount,
-      LengthUnit lengthUnit) {
+      string elementlist, int positionsCount, LengthUnit lengthUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -475,13 +465,11 @@ namespace GsaGH.Parameters {
         }
 
         ComboElement1DDisplacementValues.Add(key,
-          ResultHelper.GetElement1DResultValues(ComboElement1DResults[key],
-            lengthUnit,
+          ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit,
             SelectedPermutationIds));
       }
 
-      return new List<GsaResultsValues>(ComboElement1DDisplacementValues[key]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement1DDisplacementValues[key].Values);
     }
 
     /// <summary>
@@ -493,8 +481,7 @@ namespace GsaGH.Parameters {
     /// <param name="type"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DFootfallValues(
-      string elementlist,
-      FootfallResultType type) {
+      string elementlist, FootfallResultType type) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -507,8 +494,7 @@ namespace GsaGH.Parameters {
       if (!ACaseElement1DFootfallValues.ContainsKey(key)) {
         GsaResultsValues nodeFootfallResultValues = NodeFootfallValues("All", type);
         ACaseElement1DFootfallValues.Add(key,
-          ResultHelper.GetElement1DFootfallResultValues(elementlist,
-            Model,
+          ResultHelper.GetElement1DFootfallResultValues(elementlist, Model,
             nodeFootfallResultValues));
       }
 
@@ -528,10 +514,7 @@ namespace GsaGH.Parameters {
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DForceValues(
-      string elementlist,
-      int positionsCount,
-      ForceUnit forceUnit,
-      MomentUnit momentUnit) {
+      string elementlist, int positionsCount, ForceUnit forceUnit, MomentUnit momentUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -545,8 +528,7 @@ namespace GsaGH.Parameters {
           }
 
           ACaseElement1DForceValues.Add(key,
-            ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key],
-              forceUnit,
+            ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], forceUnit,
               momentUnit));
         }
 
@@ -562,14 +544,11 @@ namespace GsaGH.Parameters {
         }
 
         ComboElement1DForceValues.Add(key,
-          ResultHelper.GetElement1DResultValues(ComboElement1DResults[key],
-            forceUnit,
-            momentUnit,
+          ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], forceUnit, momentUnit,
             SelectedPermutationIds));
       }
 
-      return new List<GsaResultsValues>(ComboElement1DForceValues[key]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
     }
 
     /// <summary>
@@ -582,9 +561,7 @@ namespace GsaGH.Parameters {
     /// <param name="energyUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(
-      string elementlist,
-      int positionsCount,
-      EnergyUnit energyUnit) {
+      string elementlist, int positionsCount, EnergyUnit energyUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -607,23 +584,19 @@ namespace GsaGH.Parameters {
       }
 
       if (ComboElement1DStrainEnergyDensityValues.ContainsKey(key)) {
-        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key]
-          .Values);
+        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
 
-      if (!ComboElement1DResultsInclStrainEnergyDensity
-        .ContainsKey(key)) {
+      if (!ComboElement1DResultsInclStrainEnergyDensity.ContainsKey(key)) {
         ComboElement1DResultsInclStrainEnergyDensity.Add(key,
           CombinationCaseResult.Element1DResults(elementlist, positionsCount, true));
       }
 
       ComboElement1DStrainEnergyDensityValues.Add(key,
         ResultHelper.GetElement1DResultValues(ComboElement1DResultsInclStrainEnergyDensity[key],
-          energyUnit,
-          SelectedPermutationIds));
+          energyUnit, SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
     }
 
     /// <summary>
@@ -635,24 +608,21 @@ namespace GsaGH.Parameters {
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DDisplacementValues(
-      string elementlist,
-      LengthUnit lengthUnit) {
+      string elementlist, LengthUnit lengthUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
 
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement2DDisplacementValues.ContainsKey(elementlist)) {
-          if (!ACaseElement2DResults.ContainsKey(
-              new Tuple<string, double>(elementlist, 0))) {
+          if (!ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
             ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
               AnalysisCaseResult.Element2DResults(elementlist, 0));
           }
 
           ACaseElement2DDisplacementValues.Add(elementlist,
             ResultHelper.GetElement2DResultValues(
-              ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)],
-              lengthUnit));
+              ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit));
         }
 
         return new List<GsaResultsValues> {
@@ -664,20 +634,17 @@ namespace GsaGH.Parameters {
         return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist].Values);
       }
 
-      if (!ComboElement2DResults.ContainsKey(
-        new Tuple<string, double>(elementlist, 0))) {
+      if (!ComboElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
         ComboElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
           CombinationCaseResult.Element2DResults(elementlist, 0));
       }
 
       ComboElement2DDisplacementValues.Add(elementlist,
         ResultHelper.GetElement2DResultValues(
-          ComboElement2DResults[new Tuple<string, double>(elementlist, 0)],
-          lengthUnit,
+          ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit,
           SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist].Values);
     }
 
     /// <summary>
@@ -689,8 +656,7 @@ namespace GsaGH.Parameters {
     /// <param name="type"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DFootfallValues(
-      string elementlist,
-      FootfallResultType type) {
+      string elementlist, FootfallResultType type) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -700,16 +666,14 @@ namespace GsaGH.Parameters {
         if (!ACaseElement2DFootfallValues.ContainsKey(key)) {
           GsaResultsValues nodeFootfallResultValues = NodeFootfallValues("All", type);
           ACaseElement2DFootfallValues.Add(key,
-            ResultHelper.GetElement2DFootfallResultValues(elementlist,
-              Model,
+            ResultHelper.GetElement2DFootfallResultValues(elementlist, Model,
               nodeFootfallResultValues));
         }
 
         return new List<GsaResultsValues>() {
           ACaseElement2DFootfallValues[key],
         };
-      }
-      else {
+      } else {
         throw new Exception("Cannot get Footfall results for a Combination Case.");
       }
     }
@@ -724,25 +688,21 @@ namespace GsaGH.Parameters {
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DForceValues(
-      string elementlist,
-      ForcePerLengthUnit forceUnit,
-      ForceUnit momentUnit) {
+      string elementlist, ForcePerLengthUnit forceUnit, ForceUnit momentUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
 
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement2DForceValues.ContainsKey(elementlist)) {
-          if (!ACaseElement2DResults.ContainsKey(
-              new Tuple<string, double>(elementlist, 0))) {
+          if (!ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
             ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
               AnalysisCaseResult.Element2DResults(elementlist, 0));
           }
 
           ACaseElement2DForceValues.Add(elementlist,
             ResultHelper.GetElement2DResultValues(
-              ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)],
-              forceUnit,
+              ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit,
               momentUnit));
         }
 
@@ -755,21 +715,17 @@ namespace GsaGH.Parameters {
         return new List<GsaResultsValues>(ComboElement2DForceValues[elementlist].Values);
       }
 
-      if (!ComboElement2DResults.ContainsKey(
-        new Tuple<string, double>(elementlist, 0))) {
+      if (!ComboElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
         ComboElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
           CombinationCaseResult.Element2DResults(elementlist, 0));
       }
 
       ComboElement2DForceValues.Add(elementlist,
         ResultHelper.GetElement2DResultValues(
-          ComboElement2DResults[new Tuple<string, double>(elementlist, 0)],
-          forceUnit,
-          momentUnit,
+          ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit,
           SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement2DForceValues[elementlist]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement2DForceValues[elementlist].Values);
     }
 
     /// <summary>
@@ -782,24 +738,21 @@ namespace GsaGH.Parameters {
     /// <param name="forceUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DShearValues(
-      string elementlist,
-      ForcePerLengthUnit forceUnit) {
+      string elementlist, ForcePerLengthUnit forceUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
 
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement2DShearValues.ContainsKey(elementlist)) {
-          if (!ACaseElement2DResults.ContainsKey(
-              new Tuple<string, double>(elementlist, 0))) {
+          if (!ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
             ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
               AnalysisCaseResult.Element2DResults(elementlist, 0));
           }
 
           ACaseElement2DShearValues.Add(elementlist,
             ResultHelper.GetElement2DResultValues(
-              ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)],
-              forceUnit));
+              ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit));
         }
 
         return new List<GsaResultsValues> {
@@ -811,20 +764,17 @@ namespace GsaGH.Parameters {
         return new List<GsaResultsValues>(ComboElement2DShearValues[elementlist].Values);
       }
 
-      if (!ComboElement2DResults.ContainsKey(
-          new Tuple<string, double>(elementlist, 0))) {
+      if (!ComboElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
         ComboElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
           CombinationCaseResult.Element2DResults(elementlist, 0));
       }
 
       ComboElement2DShearValues.Add(elementlist,
         ResultHelper.GetElement2DResultValues(
-          ComboElement2DResults[new Tuple<string, double>(elementlist, 0)],
-          forceUnit,
+          ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit,
           SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement2DShearValues[elementlist]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement2DShearValues[elementlist].Values);
     }
 
     /// <summary>
@@ -837,9 +787,7 @@ namespace GsaGH.Parameters {
     /// <param name="stressUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DStressValues(
-      string elementlist,
-      double layer,
-      PressureUnit stressUnit) {
+      string elementlist, double layer, PressureUnit stressUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -848,8 +796,7 @@ namespace GsaGH.Parameters {
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement2DStressValues.ContainsKey(key)) {
           if (!ACaseElement2DResults.ContainsKey(key)) {
-            ACaseElement2DResults.Add(key,
-              AnalysisCaseResult.Element2DResults(elementlist, layer));
+            ACaseElement2DResults.Add(key, AnalysisCaseResult.Element2DResults(elementlist, layer));
           }
 
           ACaseElement2DStressValues.Add(key,
@@ -866,17 +813,14 @@ namespace GsaGH.Parameters {
       }
 
       if (!ComboElement2DResults.ContainsKey(key)) {
-        ComboElement2DResults.Add(key,
-          CombinationCaseResult.Element2DResults(elementlist, layer));
+        ComboElement2DResults.Add(key, CombinationCaseResult.Element2DResults(elementlist, layer));
       }
 
       ComboElement2DStressValues.Add(key,
-        ResultHelper.GetElement2DResultValues(ComboElement2DResults[key],
-          stressUnit,
+        ResultHelper.GetElement2DResultValues(ComboElement2DResults[key], stressUnit,
           SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement2DStressValues[key]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement2DStressValues[key].Values);
     }
 
     /// <summary>
@@ -888,8 +832,7 @@ namespace GsaGH.Parameters {
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element3DDisplacementValues(
-      string elementlist,
-      LengthUnit lengthUnit) {
+      string elementlist, LengthUnit lengthUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -915,17 +858,14 @@ namespace GsaGH.Parameters {
       }
 
       if (!ComboElement3DResults.ContainsKey(elementlist)) {
-        ComboElement3DResults.Add(elementlist,
-          CombinationCaseResult.Element3DResults(elementlist));
+        ComboElement3DResults.Add(elementlist, CombinationCaseResult.Element3DResults(elementlist));
       }
 
       ComboElement3DDisplacementValues.Add(elementlist,
-        ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist],
-          lengthUnit,
+        ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], lengthUnit,
           SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement3DDisplacementValues[elementlist]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement3DDisplacementValues[elementlist].Values);
     }
 
     /// <summary>
@@ -937,8 +877,7 @@ namespace GsaGH.Parameters {
     /// <param name="stressUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element3DStressValues(
-      string elementlist,
-      PressureUnit stressUnit) {
+      string elementlist, PressureUnit stressUnit) {
       if (elementlist.ToLower() == "all" || elementlist == "") {
         elementlist = "All";
       }
@@ -964,17 +903,14 @@ namespace GsaGH.Parameters {
       }
 
       if (!ComboElement3DResults.ContainsKey(elementlist)) {
-        ComboElement3DResults.Add(elementlist,
-          CombinationCaseResult.Element3DResults(elementlist));
+        ComboElement3DResults.Add(elementlist, CombinationCaseResult.Element3DResults(elementlist));
       }
 
       ComboElement3DStressValues.Add(elementlist,
-        ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist],
-          stressUnit,
+        ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], stressUnit,
           SelectedPermutationIds));
 
-      return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist]
-        .Values);
+      return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist].Values);
     }
 
     /// <summary>
@@ -986,8 +922,7 @@ namespace GsaGH.Parameters {
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> NodeDisplacementValues(
-      string nodelist,
-      LengthUnit lengthUnit) {
+      string nodelist, LengthUnit lengthUnit) {
       if (nodelist.ToLower() == "all" || nodelist == "") {
         nodelist = "All";
       }
@@ -1003,10 +938,8 @@ namespace GsaGH.Parameters {
         }
 
         return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
-            ACaseNodeDisplacementValues[nodelist],
-          },
-          Model.Model.Nodes(nodelist)
-            .Keys.ToList());
+          ACaseNodeDisplacementValues[nodelist],
+        }, Model.Model.Nodes(nodelist).Keys.ToList());
       }
 
       if (!ComboNodeDisplacementValues.ContainsKey(nodelist)) {
@@ -1015,16 +948,13 @@ namespace GsaGH.Parameters {
         }
 
         ComboNodeDisplacementValues.Add(nodelist,
-          ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist],
-            lengthUnit,
+          ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit,
             SelectedPermutationIds));
       }
 
-      return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues>(
-          ComboNodeDisplacementValues[nodelist]
-            .Values),
-        Model.Model.Nodes(nodelist)
-          .Keys.ToList());
+      return new Tuple<List<GsaResultsValues>, List<int>>(
+        new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values),
+        Model.Model.Nodes(nodelist).Keys.ToList());
     }
 
     /// <summary>
@@ -1063,9 +993,7 @@ namespace GsaGH.Parameters {
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> NodeReactionForceValues(
-      string nodelist,
-      ForceUnit forceUnit,
-      MomentUnit momentUnit) {
+      string nodelist, ForceUnit forceUnit, MomentUnit momentUnit) {
       if (nodelist.ToLower() == "all" || nodelist == "") {
         nodelist = "All";
       }
@@ -1074,13 +1002,12 @@ namespace GsaGH.Parameters {
       if (nodelist.ToLower() == "all" || nodelist == "") {
         supportnodeIDs = new ConcurrentBag<int>();
         ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
-        Parallel.ForEach(nodes,
-          node => {
-            NodalRestraint rest = node.Value.Restraint;
-            if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ) {
-              supportnodeIDs.Add(node.Key);
-            }
-          });
+        Parallel.ForEach(nodes, node => {
+          NodalRestraint rest = node.Value.Restraint;
+          if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ) {
+            supportnodeIDs.Add(node.Key);
+          }
+        });
         nodelist = "All";
       }
 
@@ -1091,18 +1018,13 @@ namespace GsaGH.Parameters {
           }
 
           ACaseNodeReactionForceValues.Add(nodelist,
-            ResultHelper.GetNodeReactionForceResultValues(ACaseNodeResults[nodelist],
-              forceUnit,
-              momentUnit,
-              supportnodeIDs));
+            ResultHelper.GetNodeReactionForceResultValues(ACaseNodeResults[nodelist], forceUnit,
+              momentUnit, supportnodeIDs));
         }
 
         return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
-            ACaseNodeReactionForceValues[nodelist],
-          },
-          ACaseNodeReactionForceValues[nodelist]
-            .XyzResults.Keys.OrderBy(x => x)
-            .ToList());
+          ACaseNodeReactionForceValues[nodelist],
+        }, ACaseNodeReactionForceValues[nodelist].XyzResults.Keys.OrderBy(x => x).ToList());
       }
 
       if (!ComboNodeReactionForceValues.ContainsKey(nodelist)) {
@@ -1111,20 +1033,14 @@ namespace GsaGH.Parameters {
         }
 
         ComboNodeReactionForceValues.Add(nodelist,
-          ResultHelper.GetNodeReactionForceResultValues(ComboNodeResults[nodelist],
-            forceUnit,
-            momentUnit,
-            SelectedPermutationIds,
-            supportnodeIDs));
+          ResultHelper.GetNodeReactionForceResultValues(ComboNodeResults[nodelist], forceUnit,
+            momentUnit, SelectedPermutationIds, supportnodeIDs));
       }
 
-      return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues>(
-          ComboNodeReactionForceValues[nodelist]
-            .Values),
-        ComboNodeReactionForceValues[nodelist]
-          .Values.First()
-          .XyzResults.Keys.OrderBy(x => x)
-          .ToList());
+      return new Tuple<List<GsaResultsValues>, List<int>>(
+        new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values),
+        ComboNodeReactionForceValues[nodelist].Values.First().XyzResults.Keys.OrderBy(x => x)
+         .ToList());
     }
 
     /// <summary>
@@ -1137,9 +1053,7 @@ namespace GsaGH.Parameters {
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> SpringReactionForceValues(
-      string nodelist,
-      ForceUnit forceUnit,
-      MomentUnit momentUnit) {
+      string nodelist, ForceUnit forceUnit, MomentUnit momentUnit) {
       if (nodelist.ToLower() == "all" || nodelist == "") {
         nodelist = "All";
       }
@@ -1148,13 +1062,12 @@ namespace GsaGH.Parameters {
       if (nodelist.ToLower() == "all" || nodelist == "") {
         supportnodeIDs = new ConcurrentBag<int>();
         ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
-        Parallel.ForEach(nodes,
-          node => {
-            NodalRestraint rest = node.Value.Restraint;
-            if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ) {
-              supportnodeIDs.Add(node.Key);
-            }
-          });
+        Parallel.ForEach(nodes, node => {
+          NodalRestraint rest = node.Value.Restraint;
+          if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ) {
+            supportnodeIDs.Add(node.Key);
+          }
+        });
         nodelist = "All";
       }
 
@@ -1165,18 +1078,13 @@ namespace GsaGH.Parameters {
           }
 
           ACaseNodeReactionForceValues.Add(nodelist,
-            ResultHelper.GetNodeSpringForceResultValues(ACaseNodeResults[nodelist],
-              forceUnit,
-              momentUnit,
-              supportnodeIDs));
+            ResultHelper.GetNodeSpringForceResultValues(ACaseNodeResults[nodelist], forceUnit,
+              momentUnit, supportnodeIDs));
         }
 
         return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
-            ACaseNodeReactionForceValues[nodelist],
-          },
-          ACaseNodeReactionForceValues[nodelist]
-            .XyzResults.Keys.OrderBy(x => x)
-            .ToList());
+          ACaseNodeReactionForceValues[nodelist],
+        }, ACaseNodeReactionForceValues[nodelist].XyzResults.Keys.OrderBy(x => x).ToList());
       }
 
       if (!ComboNodeReactionForceValues.ContainsKey(nodelist)) {
@@ -1185,20 +1093,14 @@ namespace GsaGH.Parameters {
         }
 
         ComboNodeReactionForceValues.Add(nodelist,
-          ResultHelper.GetNodeSpringForceResultValues(ComboNodeResults[nodelist],
-            forceUnit,
-            momentUnit,
-            SelectedPermutationIds,
-            supportnodeIDs));
+          ResultHelper.GetNodeSpringForceResultValues(ComboNodeResults[nodelist], forceUnit,
+            momentUnit, SelectedPermutationIds, supportnodeIDs));
       }
 
-      return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues>(
-          ComboNodeReactionForceValues[nodelist]
-            .Values),
-        ComboNodeReactionForceValues[nodelist]
-          .Values.First()
-          .XyzResults.Keys.OrderBy(x => x)
-          .ToList());
+      return new Tuple<List<GsaResultsValues>, List<int>>(
+        new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values),
+        ComboNodeReactionForceValues[nodelist].Values.First().XyzResults.Keys.OrderBy(x => x)
+         .ToList());
     }
   }
 
@@ -1253,59 +1155,39 @@ namespace GsaGH.Parameters {
 
     internal void UpdateMinMax() {
       if (XyzResults.Count > 0) {
-        DmaxX = XyzResults.AsParallel()
-          .Select(list => list.Value.Values.Select(res => res.X)
-            .Max())
-          .Max();
-        DmaxY = XyzResults.AsParallel()
-          .Select(list => list.Value.Values.Select(res => res.Y)
-            .Max())
-          .Max();
+        DmaxX = XyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max())
+         .Max();
+        DmaxY = XyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max())
+         .Max();
         try {
           DmaxZ = XyzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Z)
-              .Max())
-            .Max();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
+        } catch (Exception) {
           // shear does not set this value
         }
 
         try {
           DmaxXyz = XyzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Xyz)
-              .Max())
-            .Max();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Xyz).Max()).Max();
+        } catch (Exception) {
           // resultant may not always be computed
         }
 
-        DminX = XyzResults.AsParallel()
-          .Select(list => list.Value.Values.Select(res => res.X)
-            .Min())
-          .Min();
-        DminY = XyzResults.AsParallel()
-          .Select(list => list.Value.Values.Select(res => res.Y)
-            .Min())
-          .Min();
+        DminX = XyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min())
+         .Min();
+        DminY = XyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min())
+         .Min();
         try {
           DminZ = XyzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Z)
-              .Min())
-            .Min();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
+        } catch (Exception) {
           // shear does not set this value
         }
 
         try {
           DminXyz = XyzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Xyz)
-              .Min())
-            .Min();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Xyz).Min()).Min();
+        } catch (Exception) {
           // resultant may not always be computed
         }
       }
@@ -1317,57 +1199,37 @@ namespace GsaGH.Parameters {
       {
         try {
           DmaxXx = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.X)
-              .Max())
-            .Max();
+           .Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
           DmaxYy = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Y)
-              .Max())
-            .Max();
+           .Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
           DmaxZz = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Z)
-              .Max())
-            .Max();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
+        } catch (Exception) {
           // some cases doesnt compute xxyyzz results at all
         }
 
         try {
           DmaxXxyyzz = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Xyz)
-              .Max())
-            .Max();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Xyz).Max()).Max();
+        } catch (Exception) {
           // resultant may not always be computed
         }
 
         try {
           DminXx = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.X)
-              .Min())
-            .Min();
+           .Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
           DminYy = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Y)
-              .Min())
-            .Min();
+           .Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
           DminZz = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Z)
-              .Min())
-            .Min();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
+        } catch (Exception) {
           // some cases doesnt compute xxyyzz results at all
         }
 
         try {
           DminXxyyzz = XxyyzzResults.AsParallel()
-            .Select(list => list.Value.Values.Select(res => res.Xyz)
-              .Min())
-            .Min();
-        }
-        catch (Exception) {
+           .Select(list => list.Value.Values.Select(res => res.Xyz).Min()).Min();
+        } catch (Exception) {
           // resultant may not always be computed
         }
       }

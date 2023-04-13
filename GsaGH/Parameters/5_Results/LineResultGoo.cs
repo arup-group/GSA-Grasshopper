@@ -11,8 +11,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="Line" /> can be used in Grasshopper.
   /// </summary>
-  public class LineResultGoo : GH_GeometricGoo<Line>,
-    IGH_PreviewData {
+  public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.BoundingBox;
     public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA result line type.";
@@ -29,14 +28,8 @@ namespace GsaGH.Parameters {
     private readonly float _size2;
 
     public LineResultGoo(
-                                  Line line,
-      IQuantity result1,
-      IQuantity result2,
-      Color color1,
-      Color color2,
-      float size1,
-      float size2,
-      int id) : base(line) {
+      Line line, IQuantity result1, IQuantity result2, Color color1, Color color2, float size1,
+      float size2, int id) : base(line) {
       ElementId = id;
       Result1 = result1;
       Result2 = result2;
@@ -63,8 +56,7 @@ namespace GsaGH.Parameters {
 
     public override bool CastFrom(object source) {
       switch (source) {
-        case null:
-          return false;
+        case null: return false;
 
         case Line line1:
           Value = line1;
@@ -114,21 +106,14 @@ namespace GsaGH.Parameters {
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       for (int i = 0; i < _resultLineSegments.Count; i++) {
-        args.Pipeline.DrawLine(_resultLineSegments[i],
-          _previewResultColours[i],
+        args.Pipeline.DrawLine(_resultLineSegments[i], _previewResultColours[i],
           _previewResultThk[i]);
       }
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new LineResultGoo(Value,
-                                                                 Result1,
-                                                                 Result2,
-                                                                 _color1,
-                                                                 _color2,
-                                                                 _size1,
-                                                                 _size2,
-                                                                 ElementId);
+      return new LineResultGoo(Value, Result1, Result2, _color1, _color2, _size1, _size2,
+        ElementId);
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
@@ -141,14 +126,7 @@ namespace GsaGH.Parameters {
       Point3d start = xmorph.MorphPoint(Value.From);
       Point3d end = xmorph.MorphPoint(Value.To);
       var ln = new Line(start, end);
-      return new LineResultGoo(ln,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
+      return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2, ElementId);
     }
 
     public override object ScriptVariable() {
@@ -162,14 +140,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       Line ln = Value;
       ln.Transform(xform);
-      return new LineResultGoo(ln,
-        Result1,
-        Result2,
-        _color1,
-        _color2,
-        _size1,
-        _size2,
-        ElementId);
+      return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2, ElementId);
     }
   }
 }

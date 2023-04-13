@@ -9,8 +9,7 @@ using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class MeshResultGoo : GH_GeometricGoo<Mesh>,
-    IGH_PreviewData {
+  public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
     public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA result mesh type.";
@@ -27,13 +26,11 @@ namespace GsaGH.Parameters {
         m.Vertices.AddVertices(x.Vertices.ToList());
         m.VertexColors.SetColors(Value.VertexColors.ToArray());
 
-        var ngons = x.GetNgonAndFacesEnumerable()
-          .ToList();
+        var ngons = x.GetNgonAndFacesEnumerable().ToList();
 
-        foreach (int faceId in ngons.Select(ngon => ngon.FaceIndexList()
-            .Select(u => (int)u)
-            .ToList())
-          .SelectMany(faceIndex => faceIndex)) {
+        foreach (int faceId in ngons
+         .Select(ngon => ngon.FaceIndexList().Select(u => (int)u).ToList())
+         .SelectMany(faceIndex => faceIndex)) {
           m.Faces.AddFace(x.Faces[faceId]);
         }
 
@@ -48,9 +45,7 @@ namespace GsaGH.Parameters {
     private List<Mesh> _tempMeshes = new List<Mesh>();
 
     public MeshResultGoo(
-              Mesh mesh,
-      List<List<IQuantity>> results,
-      List<List<Point3d>> vertices,
+      Mesh mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices,
       List<int> ids) : base(mesh) {
       ResultValues = results;
       Vertices = vertices;
@@ -66,9 +61,7 @@ namespace GsaGH.Parameters {
     }
 
     public void Add(
-      List<Mesh> tempMesh,
-      List<List<IQuantity>> results,
-      List<List<Point3d>> vertices,
+      List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices,
       List<int> ids) {
       _tempMeshes.AddRange(tempMesh);
       ResultValues.AddRange(results);
@@ -79,8 +72,7 @@ namespace GsaGH.Parameters {
 
     public override bool CastFrom(object source) {
       switch (source) {
-        case null:
-          return false;
+        case null: return false;
 
         case Mesh mesh:
           Value = mesh;
@@ -107,7 +99,8 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        target = Value.IsValid ? (TQ)(object)new GH_Mesh(Value) : (TQ)(object)new GH_Mesh(ValidMesh);
+        target = Value.IsValid ? (TQ)(object)new GH_Mesh(Value) :
+          (TQ)(object)new GH_Mesh(ValidMesh);
         return true;
       }
 
@@ -129,9 +122,10 @@ namespace GsaGH.Parameters {
       }
 
       Color color
-        = args.Color == Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
-          ? Colours.Element2dEdge
-          : Colours.Element2dEdgeSelected;
+        = args.Color
+        == Color.FromArgb(255, 150, 0,
+          0) // this is a workaround to change colour between selected and not
+          ? Colours.Element2dEdge : Colours.Element2dEdgeSelected;
 
       if (Value.Ngons.Count > 0) {
         for (int i = 0; i < Value.TopologyEdges.Count; i++) {
@@ -169,9 +163,7 @@ namespace GsaGH.Parameters {
       Mesh m = Value.DuplicateMesh();
       xmorph.Morph(m);
       var vertices = Vertices.Select(vertex => vertex.Select(point => new Point3d(point))
-          .Select(xmorph.MorphPoint)
-          .ToList())
-        .ToList();
+       .Select(xmorph.MorphPoint).ToList()).ToList();
 
       return new MeshResultGoo(m, ResultValues, Vertices, ElementIds);
     }
@@ -181,7 +173,8 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return $"MeshResult: V:{Value.Vertices.Count:0}, F:{Value.Faces.Count:0}, R:{ResultValues.Count:0}";
+      return
+        $"MeshResult: V:{Value.Vertices.Count:0}, F:{Value.Faces.Count:0}, R:{ResultValues.Count:0}";
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {

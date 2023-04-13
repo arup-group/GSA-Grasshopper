@@ -6,8 +6,7 @@ using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class PointResultGoo : GH_GeometricGoo<Point3d>,
-    IGH_PreviewData {
+  public class PointResultGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData {
     public override BoundingBox Boundingbox {
       get {
         var box = new BoundingBox(Value, Value);
@@ -24,7 +23,7 @@ namespace GsaGH.Parameters {
     private readonly float _size;
 
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size, int id)
-              : base(point) {
+      : base(point) {
       Result = result;
       _size = size;
       _color = color;
@@ -33,8 +32,7 @@ namespace GsaGH.Parameters {
 
     public override bool CastFrom(object source) {
       switch (source) {
-        case null:
-          return false;
+        case null: return false;
 
         case Point3d point3d:
           Value = point3d;

@@ -10,8 +10,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GH_Vector" /> can be used in Grasshopper.
   /// </summary>
-  public class VectorResultGoo : GH_GeometricGoo<GH_Vector>,
-    IGH_PreviewData {
+  public class VectorResultGoo : GH_GeometricGoo<GH_Vector>, IGH_PreviewData {
     public override BoundingBox Boundingbox
       => new BoundingBox(new List<Point3d>() {
         _reactionForceLine.From,
@@ -34,16 +33,9 @@ namespace GsaGH.Parameters {
     ///   Default color: Gsa_Purple
     /// </summary>
     public VectorResultGoo(
-      Point3d startingPoint,
-      Vector3d direction,
-      IQuantity forceValue,
-      int id) {
-      StartingPoint = startingPoint == Point3d.Unset
-        ? Point3d.Origin
-        : startingPoint;
-      Direction = direction == Vector3d.Unset
-        ? Vector3d.Zero
-        : direction;
+      Point3d startingPoint, Vector3d direction, IQuantity forceValue, int id) {
+      StartingPoint = startingPoint == Point3d.Unset ? Point3d.Origin : startingPoint;
+      Direction = direction == Vector3d.Unset ? Vector3d.Zero : direction;
       ForceValue = forceValue;
       NodeId = id;
       _reactionForceLine = CreateReactionForceLine(Direction);
@@ -52,8 +44,7 @@ namespace GsaGH.Parameters {
 
     public override bool CastFrom(object source) {
       switch (source) {
-        case null:
-          return false;
+        case null: return false;
 
         case Vector3d vector:
           Value = new GH_Vector(vector);
@@ -147,7 +138,8 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return $"VectorResult: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue:0.0}";
+      return
+        $"VectorResult: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue:0.0}";
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
@@ -177,8 +169,8 @@ namespace GsaGH.Parameters {
 
     private GH_Vector GetGhVector() {
       return new GH_Vector(new Vector3d(_reactionForceLine.ToX - _reactionForceLine.FromX,
-                                            _reactionForceLine.ToY - _reactionForceLine.FromY,
-                                            _reactionForceLine.ToZ - _reactionForceLine.FromZ));
+        _reactionForceLine.ToY - _reactionForceLine.FromY,
+        _reactionForceLine.ToZ - _reactionForceLine.FromZ));
     }
 
     private Point3d TransformPoint(Point3d point, double pixelsPerUnit, int offset) {
