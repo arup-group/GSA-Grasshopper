@@ -29,16 +29,12 @@ namespace GsaGH.Parameters {
         var re = new Regex(@"([a-zA-Z]+)(\d+)");
         Match result = re.Match(input);
 
-        string name = result.Groups[1]
-          .Value;
-        int.TryParse(result.Groups[2]
-            .Value,
-          out int id);
+        string name = result.Groups[1].Value;
+        int.TryParse(result.Groups[2].Value, out int id);
 
         Value = new GsaAnalysisCase(id, name);
         return true;
-      }
-      else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both)) {
+      } else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both)) {
         Value = new GsaAnalysisCase(id, id.ToString());
         return true;
       }
@@ -57,12 +53,10 @@ namespace GsaGH.Parameters {
 
       if (Value == null) {
         target = default;
-      }
-      else {
+      } else {
         var ghint = new GH_Integer();
-        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)
-          ? (TQ)(object)ghint
-          : default;
+        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
+          (TQ)(object)ghint : default;
       }
 
       return true;

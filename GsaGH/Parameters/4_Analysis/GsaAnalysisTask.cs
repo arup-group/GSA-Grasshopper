@@ -68,29 +68,20 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return (Id > 0
-                                                ? "ID:" + Id
-                                                : ""
-                                                + " '"
-                                                + Name
-                                                + "' "
-                                                + Type.ToString()
-                                                  .Replace("_", " ")).Trim()
-                                              .Replace("  ", " ");
+      return (Id > 0 ? "ID:" + Id : "" + " '" + Name + "' " + Type.ToString().Replace("_", " "))
+       .Trim().Replace("  ", " ");
     }
 
     internal void CreateDeafultCases(GsaModel gsaModel) {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
-      Cases = tuple.Item2.Select(x => x.Value)
-        .ToList();
+      Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
 
     internal void CreateDefaultCases(Model model) {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = Analyses.GetAnalysisTasksAndCombinations(model);
-      Cases = tuple.Item2.Select(x => x.Value)
-        .ToList();
+      Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
   }
 }

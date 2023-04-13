@@ -22,9 +22,7 @@
     }
 
     public override string ToString() {
-      string id = Id == 0
-        ? ""
-        : "ID:" + Id + " ";
+      string id = Id == 0 ? "" : "ID:" + Id + " ";
       string s = "";
       if (Name != null) {
         s += " '" + Name + "'";
@@ -34,9 +32,7 @@
         s += " " + Description;
       }
 
-      return string.Join(" ", id.Trim(), s.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      return string.Join(" ", id.Trim(), s.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

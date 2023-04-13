@@ -31,13 +31,8 @@
         s += " " + Description.ToString();
       }
 
-      return string.Join(" ",
-          (Id > 0
-            ? "ID:" + Id
-            : "").Trim(),
-          s.Trim())
-        .Trim()
-        .Replace("  ", " ");
+      return string.Join(" ", (Id > 0 ? "ID:" + Id : "").Trim(), s.Trim()).Trim()
+       .Replace("  ", " ");
     }
   }
 }

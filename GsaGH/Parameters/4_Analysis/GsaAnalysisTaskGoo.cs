@@ -35,8 +35,7 @@ namespace GsaGH.Parameters {
       try {
         Value.Type
           = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), name);
-      }
-      catch (Exception) {
+      } catch (Exception) {
         return false;
       }
 
@@ -54,10 +53,10 @@ namespace GsaGH.Parameters {
 
       if (Value == null) {
         target = default;
-      }
-      else {
+      } else {
         var ghint = new GH_Integer();
-        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ? (TQ)(object)ghint : default;
+        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
+          (TQ)(object)ghint : default;
       }
 
       return true;
