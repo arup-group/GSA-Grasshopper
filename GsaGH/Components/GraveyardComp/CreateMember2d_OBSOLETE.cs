@@ -29,27 +29,21 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateMem2d;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public CreateMember2d_OBSOLETE() : base("Create 2D Member",
-              "Mem2D",
-      "Create GSA Member 2D",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateMember2d_OBSOLETE() : base("Create 2D Member", "Mem2D", "Create GSA Member 2D",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override bool Read(GH_IReader reader) {
       if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData")) {
         base.Read(reader);
-      }
-      else {
+      } else {
         BaseReader.Read(reader, this);
         _isInitialised = true;
         UpdateUIFromSelectedItems();
       }
 
       GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
+      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
       return true;
     }
 
@@ -60,8 +54,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4]
-                                                                .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -81,36 +74,26 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddBrepParameter("Brep",
-        "B",
+      pManager.AddBrepParameter("Brep", "B",
         "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))",
         GH_ParamAccess.item);
-      pManager.AddPointParameter("Incl. Points",
-        "(P)",
-        "Inclusion points (will automatically be projected onto Brep)",
-        GH_ParamAccess.list);
-      pManager.AddCurveParameter("Incl. Curves",
-        "(C)",
+      pManager.AddPointParameter("Incl. Points", "(P)",
+        "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
+      pManager.AddCurveParameter("Incl. Curves", "(C)",
         "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]",
-        "Ms",
-        "Target mesh size",
+      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Target mesh size",
         GH_ParamAccess.item);
 
       pManager.HideParameter(0);
       pManager.HideParameter(1);
       pManager.HideParameter(2);
 
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -160,12 +143,10 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
           mem.Property = prop2dGoo.Value;
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             mem.Property = new GsaProp2d(idd);
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
             return;
@@ -173,9 +154,7 @@ namespace GsaGH.Components {
         }
       }
 
-      if (Params.Input[4]
-          .SourceCount
-        > 0) {
+      if (Params.Input[4].SourceCount > 0) {
         mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
       }
 

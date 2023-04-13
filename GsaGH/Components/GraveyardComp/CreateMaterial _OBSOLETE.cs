@@ -16,8 +16,7 @@ namespace GsaGH.Components {
   ///   Component to create a new Material
   /// </summary>
   // ReSharper disable once InconsistentNaming
-  public class CreateMaterial_OBSOLETE : GH_OasysComponent,
-    IGH_VariableParameterComponent {
+  public class CreateMaterial_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
     private enum FoldMode {
       Generic,
       Steel,
@@ -47,10 +46,8 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Timber;
     private string _selecteditem;
 
-    public CreateMaterial_OBSOLETE() : base("Create Material",
-                          "Material",
-      "Create GSA Material by reference to existing type and grade",
-      CategoryName.Name(),
+    public CreateMaterial_OBSOLETE() : base("Create Material", "Material",
+      "Create GSA Material by reference to existing type and grade", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -68,17 +65,13 @@ namespace GsaGH.Components {
         _selecteditem = _mode.ToString();
       }
 
-      m_attributes = new DropDownComponentAttributes(this,
-        SetSelected,
-        new List<List<string>>() {
-          _dropDownItems,
-        },
-        new List<string>() {
-          _selecteditem,
-        },
-        new List<string>() {
-          "Material Type",
-        });
+      m_attributes = new DropDownComponentAttributes(this, SetSelected, new List<List<string>>() {
+        _dropDownItems,
+      }, new List<string>() {
+        _selecteditem,
+      }, new List<string>() {
+        "Material Type",
+      });
     }
 
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
@@ -142,16 +135,10 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddIntegerParameter("Analysis Property Number",
-        "ID",
-        "Analysis Property Number (default = 0 -> 'from Grade')",
-        GH_ParamAccess.item,
-        0);
-      pManager.AddIntegerParameter("Grade",
-        "Gr",
-        "Material Grade (default = 1)",
-        GH_ParamAccess.item,
-        1);
+      pManager.AddIntegerParameter("Analysis Property Number", "ID",
+        "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
+      pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)",
+        GH_ParamAccess.item, 1);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {

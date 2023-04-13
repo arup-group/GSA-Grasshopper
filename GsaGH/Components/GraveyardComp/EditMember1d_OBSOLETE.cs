@@ -34,11 +34,8 @@ namespace GsaGH.Components {
     private AngleUnit _angleUnit = AngleUnit.Radian;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public EditMember1d_OBSOLETE() : base("Edit 1D Member",
-                  "Mem1dEdit",
-      "Modify GSA 1D Member",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public EditMember1d_OBSOLETE() : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -79,129 +76,63 @@ namespace GsaGH.Components {
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (Params.Input[10] is Param_Number angleParameter) {
-        _angleUnit = angleParameter.UseDegrees
-          ? AngleUnit.Degree
-          : AngleUnit.Radian;
+        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
 
       Message = Length.GetAbbreviation(_lengthUnit);
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaMember1dParameter(),
-        GsaMember1dGoo.Name,
+      pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
         GsaMember1dGoo.NickName,
-        GsaMember1dGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaMember1dGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member1d Number",
-        "ID",
+        GsaMember1dGoo.Description + " to get or set information for. Leave blank to create a new "
+        + GsaMember1dGoo.Name, GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Member1d Number", "ID",
         "Set Member Number. If ID is set it will replace any existing 1D Member in the model.",
         GH_ParamAccess.item);
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter(),
-        "Section",
-        "PB",
-        "Set new Section Property.",
+      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property.",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member1d Group",
-        "Gr",
-        "Set Member 1D Group",
+      pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Type",
-        "mT",
-        "Set 1D Member Type"
-        + Environment.NewLine
-        + "Default is 0: Generic 1D - Accepted inputs are:"
-        + Environment.NewLine
-        + "2: Beam"
-        + Environment.NewLine
-        + "3: Column"
-        + Environment.NewLine
-        + "6: Cantilever"
-        + Environment.NewLine
-        + "8: Compos"
-        + Environment.NewLine
-        + "9: Pile"
-        + Environment.NewLine
-        + "11: Void cutter",
+      pManager.AddTextParameter("Member Type", "mT",
+        "Set 1D Member Type" + Environment.NewLine
+        + "Default is 0: Generic 1D - Accepted inputs are:" + Environment.NewLine + "2: Beam"
+        + Environment.NewLine + "3: Column" + Environment.NewLine + "6: Cantilever"
+        + Environment.NewLine + "8: Compos" + Environment.NewLine + "9: Pile" + Environment.NewLine
+        + "11: Void cutter", GH_ParamAccess.item);
+      pManager.AddTextParameter("1D Element Type", "eT",
+        "Set Element 1D Type" + Environment.NewLine + "Accepted inputs are:" + Environment.NewLine
+        + "1: Bar" + Environment.NewLine + "2: Beam" + Environment.NewLine + "3: Spring"
+        + Environment.NewLine + "9: Link" + Environment.NewLine + "10: Cable" + Environment.NewLine
+        + "19: Spacer" + Environment.NewLine + "20: Strut" + Environment.NewLine + "21: Tie"
+        + Environment.NewLine + "23: Rod" + Environment.NewLine + "24: Damper",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("1D Element Type",
-        "eT",
-        "Set Element 1D Type"
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "1: Bar"
-        + Environment.NewLine
-        + "2: Beam"
-        + Environment.NewLine
-        + "3: Spring"
-        + Environment.NewLine
-        + "9: Link"
-        + Environment.NewLine
-        + "10: Cable"
-        + Environment.NewLine
-        + "19: Spacer"
-        + Environment.NewLine
-        + "20: Strut"
-        + Environment.NewLine
-        + "21: Tie"
-        + Environment.NewLine
-        + "23: Rod"
-        + Environment.NewLine
-        + "24: Damper",
+      pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Set Member Offset",
+      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+        "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+        "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
+      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Start release",
-        "⭰",
-        "Set Release (Bool6) at Start of Member",
+      pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "End release",
-        "⭲",
-        "Set Release (Bool6) at End of Member",
-        GH_ParamAccess.item);
-      pManager.AddAngleParameter("Orientation Angle",
-        "⭮A",
-        "Set Member Orientation Angle",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Orientation Node",
-        "⭮N",
-        "Set Member Orientation Node",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]",
-        "Ms",
-        "Set Member Mesh Size",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others",
-        "M/o",
-        "Mesh with others?",
+      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
+        "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Set " + GsaBucklingLengthFactorsGoo.Name,
-        GsaBucklingLengthFactorsGoo.NickName,
-        GsaBucklingLengthFactorsGoo.Description,
-        GH_ParamAccess.item);
+        "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
+        GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
-      pManager.AddColourParameter("Member1d Colour",
-        "Co",
-        "Set Member 1D Colour",
+      pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Member",
-        "Dm",
-        "Set Member to Dummy",
+      pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy",
         GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
 
       pManager.HideParameter(0);
@@ -209,73 +140,42 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaMember1dParameter(),
-        GsaMember1dGoo.Name,
-        GsaMember1dGoo.NickName,
-        GsaMember1dGoo.Description + " with applied changes.",
+      pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
+        GsaMember1dGoo.NickName, GsaMember1dGoo.Description + " with applied changes.",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member1d Number",
-        "ID",
-        "Get Member Number",
+      pManager.AddIntegerParameter("Member1d Number", "ID", "Get Member Number",
         GH_ParamAccess.item);
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaSectionParameter(),
-        "Section",
-        "PB",
-        "Get Section Property",
+      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Get Section Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Type", "mT", "Get 1D Member Type", GH_ParamAccess.item);
-      pManager.AddTextParameter("1D Element Type",
-        "eT",
-        "Get Element 1D Type",
+      pManager.AddTextParameter("1D Element Type", "eT", "Get Element 1D Type",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Get Member Offset",
+      pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Start release",
-        "⭰",
-        "Get Release (Bool6) at Start of Member",
+      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+        "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+        "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A",
+        "Get Member Orientation Angle in radians", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "End release",
-        "⭲",
-        "Get Release (Bool6) at End of Member",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Orientation Angle",
-        "⭮A",
-        "Get Member Orientation Angle in radians",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Orientation Node",
-        "⭮N",
-        "Get Member Orientation Node",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]",
-        "Ms",
-        "Get Member Mesh Size",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others",
-        "M/o",
-        "Get if to mesh with others",
+      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
+        "Get Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Get " + GsaBucklingLengthFactorsGoo.Name,
-        GsaBucklingLengthFactorsGoo.NickName,
-        GsaBucklingLengthFactorsGoo.Description,
-        GH_ParamAccess.item);
+        "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
+        GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Member",
-        "Dm",
-        "Get it Member is Dummy",
+      pManager.AddBooleanParameter("Dummy Member", "Dm", "Get it Member is Dummy",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Topology",
-        "Tp",
+      pManager.AddTextParameter("Topology", "Tp",
         "Get the Member's original topology list referencing node IDs in Model that Model was created from",
         GH_ParamAccess.item);
     }
@@ -308,8 +208,7 @@ namespace GsaGH.Components {
         if (GH_Convert.ToCurve(ghCurve, ref crv, GH_Conversion.Both)) {
           if (crv is PolyCurve curve) {
             mem.PolyCurve = curve;
-          }
-          else {
+          } else {
             var tempMem = new GsaMember1d(crv);
             mem.PolyCurve = tempMem.PolyCurve;
           }
@@ -321,12 +220,10 @@ namespace GsaGH.Components {
         var section = new GsaSection();
         if (ghTyp.Value is GsaSectionGoo) {
           ghTyp.CastTo(ref section);
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             section = new GsaSection(idd);
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
             return;
@@ -352,8 +249,7 @@ namespace GsaGH.Components {
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           if (Mappings.s_elementTypeMapping.ContainsKey(typestring)) {
             mem.Type = Mappings.s_memberTypeMapping[typestring];
-          }
-          else {
+          } else {
             this.AddRuntimeError("Unable to change Element1D Type");
           }
         }
@@ -363,12 +259,10 @@ namespace GsaGH.Components {
       if (da.GetData(6, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
           mem.Type1D = (ElementType)typeInt;
-        }
-        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           if (Mappings.s_elementTypeMapping.ContainsKey(typestring)) {
             mem.Type1D = Mappings.s_elementTypeMapping[typestring];
-          }
-          else {
+          } else {
             this.AddRuntimeError("Unable to change Element1D Type");
           }
         }
@@ -402,15 +296,12 @@ namespace GsaGH.Components {
         if (ghTyp.Value is GsaNodeGoo) {
           ghTyp.CastTo(ref node);
           mem.OrientationNode = node;
-        }
-        else {
+        } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }
       }
 
-      if (Params.Input[12]
-          .Sources.Count
-        > 0) {
+      if (Params.Input[12].Sources.Count > 0) {
         mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
       }
 
@@ -432,8 +323,7 @@ namespace GsaGH.Components {
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
           mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
-        }
-        else {
+        } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }
       }
@@ -464,12 +354,8 @@ namespace GsaGH.Components {
       da.SetData(2, mem.PolyCurve);
       da.SetData(3, new GsaSectionGoo(mem.Section));
       da.SetData(4, mem.Group);
-      da.SetData(5,
-        Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type)
-          .Key);
-      da.SetData(6,
-        Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D)
-          .Key);
+      da.SetData(5, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(6, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
 
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
 
@@ -483,8 +369,7 @@ namespace GsaGH.Components {
         new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
       da.SetData(13, mem.MeshWithOthers);
 
-      da.SetData(14,
-        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem)));
+      da.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem)));
 
       da.SetData(15, mem.Name);
 

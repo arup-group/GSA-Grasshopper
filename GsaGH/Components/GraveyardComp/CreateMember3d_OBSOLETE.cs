@@ -27,11 +27,8 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateMem3d;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public CreateMember3d_OBSOLETE() : base("Create 3D Member",
-              "Mem3D",
-      "Create GSA Member 3D",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public CreateMember3d_OBSOLETE() : base("Create 3D Member", "Mem3D", "Create GSA Member 3D",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
@@ -40,8 +37,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2]
-                                                                .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[2].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -61,20 +57,14 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGeometryParameter("Solid",
-        "S",
-        "Solid Geometry - Closed Brep or Mesh",
+      pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]",
-        "Ms",
-        "Targe mesh size",
+      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size",
         GH_ParamAccess.item);
 
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -97,16 +87,13 @@ namespace GsaGH.Components {
       if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
         if (brep.IsValid) {
           member = new GsaMember3d(brep);
-        }
-        else {
+        } else {
           this.AddRuntimeError("S input is not a valid Brep geometry");
           return;
         }
-      }
-      else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
+      } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
         member = new GsaMember3d(mesh);
-      }
-      else {
+      } else {
         this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
         return;
       }
@@ -119,27 +106,24 @@ namespace GsaGH.Components {
             break;
 
           case GsaMaterialGoo value: {
-              member.Prop3d = new GsaProp3d(value.Value);
-              break;
-            }
+            member.Prop3d = new GsaProp3d(value.Value);
+            break;
+          }
           default: {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                member.Prop3d = new GsaProp3d(id);
-              }
-              else {
-                this.AddRuntimeError(
-                  "Unable to convert PA input to a 2D Property of reference integer");
-                return;
-              }
-
-              break;
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              member.Prop3d = new GsaProp3d(id);
+            } else {
+              this.AddRuntimeError(
+                "Unable to convert PA input to a 2D Property of reference integer");
+              return;
             }
+
+            break;
+          }
         }
       }
 
-      if (Params.Input[2]
-          .SourceCount
-        > 0) {
+      if (Params.Input[2].SourceCount > 0) {
         member.MeshSize = ((Length)Input.UnitNumber(this, da, 2, _lengthUnit, true)).Meters;
       }
 

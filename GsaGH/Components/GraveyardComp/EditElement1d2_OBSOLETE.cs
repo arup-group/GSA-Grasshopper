@@ -29,11 +29,8 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.EditElem1d;
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
-    public EditElement1d2_OBSOLETE() : base("Edit 1D Element",
-              "Elem1dEdit",
-      "Modify GSA 1D Element",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public EditElement1d2_OBSOLETE() : base("Edit 1D Element", "Elem1dEdit",
+      "Modify GSA 1D Element", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
@@ -41,94 +38,49 @@ namespace GsaGH.Components {
         return;
       }
 
-      _angleUnit = angleParameter.UseDegrees
-        ? AngleUnit.Degree
-        : AngleUnit.Radian;
+      _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaElement1dParameter(),
-        GsaElement1dGoo.Name,
+      pManager.AddParameter(new GsaElement1dParameter(), GsaElement1dGoo.Name,
         GsaElement1dGoo.NickName,
-        GsaElement1dGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaElement1dGoo.Name,
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Number",
-        "ID",
+        GsaElement1dGoo.Description + " to get or set information for. Leave blank to create a new "
+        + GsaElement1dGoo.Name, GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Number", "ID",
         "Set Element Number. If ID is set it will replace any existing 1D Element in the model",
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter(),
-        "Section",
-        "PB",
-        "Set new Section Property",
+      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type",
-        "eT",
-        "Set Element Type"
-        + Environment.NewLine
-        + "Accepted inputs are:"
-        + Environment.NewLine
-        + "1: Bar"
-        + Environment.NewLine
-        + "2: Beam"
-        + Environment.NewLine
-        + "3: Spring"
-        + Environment.NewLine
-        + "9: Link"
-        + Environment.NewLine
-        + "10: Cable"
-        + Environment.NewLine
-        + "19: Spacer"
-        + Environment.NewLine
-        + "20: Strut"
-        + Environment.NewLine
-        + "21: Tie"
-        + Environment.NewLine
-        + "23: Rod"
-        + Environment.NewLine
-        + "24: Damper",
+      pManager.AddTextParameter("Type", "eT",
+        "Set Element Type" + Environment.NewLine + "Accepted inputs are:" + Environment.NewLine
+        + "1: Bar" + Environment.NewLine + "2: Beam" + Environment.NewLine + "3: Spring"
+        + Environment.NewLine + "9: Link" + Environment.NewLine + "10: Cable" + Environment.NewLine
+        + "19: Spacer" + Environment.NewLine + "20: Strut" + Environment.NewLine + "21: Tie"
+        + Environment.NewLine + "23: Rod" + Environment.NewLine + "24: Damper",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Set Element Offset",
+      pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Start release",
-        "⭰",
-        "Set Release (Bool6) at Start of Element",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "End release",
-        "⭲",
-        "Set Release (Bool6) at End of Element",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+        "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+        "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
 
-      pManager.AddAngleParameter("Orientation Angle",
-        "⭮A",
-        "Set Element Orientation Angle",
+      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(),
-        "Orientation Node",
-        "⭮N",
-        "Set Element Orientation Node",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(), "Orientation Node", "⭮N",
+        "Set Element Orientation Node", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
       pManager.AddColourParameter("Colour", "Co", "Set Element Colour", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Set Element to Dummy",
+      pManager.AddBooleanParameter("Dummy Element", "Dm", "Set Element to Dummy",
         GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
-        pManager[i]
-          .Optional = true;
+        pManager[i].Optional = true;
       }
 
       pManager.HideParameter(0);
@@ -136,63 +88,39 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement1dParameter(),
-        GsaElement1dGoo.Name,
-        GsaElement1dGoo.NickName,
-        GsaElement1dGoo.Description + " with applied changes.",
+      pManager.AddParameter(new GsaElement1dParameter(), GsaElement1dGoo.Name,
+        GsaElement1dGoo.NickName, GsaElement1dGoo.Description + " with applied changes.",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Number",
-        "ID",
+      pManager.AddIntegerParameter("Number", "ID",
         "Get Element Number. If ID is set it will replace any existing 1D Element in the model",
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaSectionParameter(),
-        "Section",
-        "PB",
-        "Get Section Property",
+      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Get Section Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "eT", "Get Element Type", GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaOffsetParameter(),
-        "Offset",
-        "Of",
-        "Get Element Offset",
+      pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "Start release",
-        "⭰",
-        "Get Release (Bool6) at Start of Element",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(),
-        "End release",
-        "⭲",
-        "Get Release (Bool6) at End of Element",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+        "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+        "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
 
-      pManager.AddNumberParameter("Orientation Angle",
-        "⭮A",
-        "Get Element Orientation Angle",
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Orientation Node",
-        "⭮N",
-        "Get Element Orientation Node",
+      pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Element Orientation Node",
         GH_ParamAccess.item);
 
       pManager.AddTextParameter("Name", "Na", "Get Element Name", GH_ParamAccess.item);
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Dummy Element",
-        "Dm",
-        "Get if Element is Dummy",
+      pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Parent Members",
-        "pM",
-        "Get Parent Member IDs in Model that Element was created from",
-        GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Topology",
-        "Tp",
+      pManager.AddIntegerParameter("Parent Members", "pM",
+        "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Topology", "Tp",
         "Get the Element's original topology list referencing node IDs in Model that Element was created from",
         GH_ParamAccess.tree);
     }
@@ -233,12 +161,10 @@ namespace GsaGH.Components {
         var section = new GsaSection();
         if (ghTyp.Value is GsaSectionGoo) {
           ghTyp.CastTo(ref section);
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             section = new GsaSection(idd);
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PB input to a Section Property of reference integer");
             return;
@@ -259,12 +185,10 @@ namespace GsaGH.Components {
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
           elem.Type = (ElementType)typeInt;
-        }
-        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           try {
             elem.Type = Mappings.GetElementType(typestring);
-          }
-          catch (ArgumentException) {
+          } catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Element Type");
           }
         }
@@ -298,8 +222,7 @@ namespace GsaGH.Components {
         if (ghTyp.Value is GsaNodeGoo) {
           ghTyp.CastTo(ref node);
           elem.OrientationNode = node;
-        }
-        else {
+        } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }
       }
@@ -330,9 +253,7 @@ namespace GsaGH.Components {
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
       da.SetData(4, elem.Group);
-      da.SetData(5,
-        Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type)
-          .Key);
+      da.SetData(5, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
@@ -344,8 +265,7 @@ namespace GsaGH.Components {
 
       try {
         da.SetData(14, elem.ParentMember);
-      }
-      catch (Exception) {
+      } catch (Exception) {
         // ignored
       }
 

@@ -21,79 +21,46 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ResultGlobal;
 
-    public GlobalResult_OBSOLETE() : base("Global Results",
-          "GlobalResult",
-      "Get Global Results from GSA model",
-      CategoryName.Name(),
-      SubCategoryName.Cat5()) {
+    public GlobalResult_OBSOLETE() : base("Global Results", "GlobalResult",
+      "Get Global Results from GSA model", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("GSA Model",
-        "GSA",
-        "GSA model containing some results",
+      pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some results",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Load Case",
-        "LC",
-        "Load Case (default 1)",
-        GH_ParamAccess.item,
+      pManager.AddIntegerParameter("Load Case", "LC", "Load Case (default 1)", GH_ParamAccess.item,
         1);
-      pManager[1]
-        .Optional = true;
+      pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddVectorParameter("Total Force Loads [kN]",
-        "ΣF",
-        "Sum of all Force Loads in GSA Model",
+      pManager.AddVectorParameter("Total Force Loads [kN]", "ΣF",
+        "Sum of all Force Loads in GSA Model", GH_ParamAccess.item);
+      pManager.AddVectorParameter("Total Moment Loads [kNm]", "ΣM",
+        "Sum of all Moment Loads in GSA Model", GH_ParamAccess.item);
+      pManager.AddVectorParameter("Total Force Reactions [kN]", "ΣRf",
+        "Sum of all Rection Forces in GSA Model", GH_ParamAccess.item);
+      pManager.AddVectorParameter("Total Moment Reactions [kNm]", "ΣRm",
+        "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
+      pManager.AddVectorParameter("Effective Mass [kg]", "Σkg", "Effective Mass in GSA Model",
         GH_ParamAccess.item);
-      pManager.AddVectorParameter("Total Moment Loads [kNm]",
-        "ΣM",
-        "Sum of all Moment Loads in GSA Model",
+      pManager.AddVectorParameter("Effective Inertia [m4]", "ΣI", "Effective Inertia in GSA Model",
         GH_ParamAccess.item);
-      pManager.AddVectorParameter("Total Force Reactions [kN]",
-        "ΣRf",
-        "Sum of all Rection Forces in GSA Model",
+      pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task",
         GH_ParamAccess.item);
-      pManager.AddVectorParameter("Total Moment Reactions [kNm]",
-        "ΣRm",
-        "Sum of all Reaction Moments in GSA Model",
+      pManager.AddVectorParameter("Modal", "Md",
+        "Modal results in vector form:" + Environment.NewLine + "x: Modal Mass"
+        + Environment.NewLine + "y: Modal Stiffness" + Environment.NewLine
+        + "z: Modal Geometric Stiffness", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Frequency [Hz]", "f", "Frequency of selected LoadCase / mode",
         GH_ParamAccess.item);
-      pManager.AddVectorParameter("Effective Mass [kg]",
-        "Σkg",
-        "Effective Mass in GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddVectorParameter("Effective Inertia [m4]",
-        "ΣI",
-        "Effective Inertia in GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mode",
-        "Mo",
-        "Mode number if LC is a dynamic task",
-        GH_ParamAccess.item);
-      pManager.AddVectorParameter("Modal",
-        "Md",
-        "Modal results in vector form:"
-        + Environment.NewLine
-        + "x: Modal Mass"
-        + Environment.NewLine
-        + "y: Modal Stiffness"
-        + Environment.NewLine
-        + "z: Modal Geometric Stiffness",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Frequency [Hz]",
-        "f",
-        "Frequency of selected LoadCase / mode",
-        GH_ParamAccess.item);
-      pManager.AddNumberParameter("Load Factor",
-        "LF",
-        "Load Factor for selected LoadCase / mode",
+      pManager.AddNumberParameter("Load Factor", "LF", "Load Factor for selected LoadCase / mode",
         GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaModel model; 
+      GsaModel model;
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
@@ -101,8 +68,7 @@ namespace GsaGH.Components {
 
       if (ghTyp.Value is GsaModelGoo modelGoo) {
         model = modelGoo.Value;
-      }
-      else {
+      } else {
         this.AddRuntimeError("Error converting input to GSA Model");
         return;
       }
@@ -111,8 +77,7 @@ namespace GsaGH.Components {
       da.GetData(1, ref ghACase);
       GH_Convert.ToInt32(ghACase, out int analCase, GH_Conversion.Both);
 
-      model.Model.Results()
-        .TryGetValue(analCase, out AnalysisCaseResult analysisCaseResult);
+      model.Model.Results().TryGetValue(analCase, out AnalysisCaseResult analysisCaseResult);
       if (analysisCaseResult == null) {
         this.AddRuntimeError("No results exist for Analysis Case " + analCase + " in file");
         return;
@@ -139,16 +104,14 @@ namespace GsaGH.Components {
         analysisCaseResult.Global.TotalReaction.ZZ / unitfactorMoment);
 
       var effMass = new Vector3d(analysisCaseResult.Global.EffectiveMass.X,
-        analysisCaseResult.Global.EffectiveMass.Y,
-        analysisCaseResult.Global.EffectiveMass.Z);
+        analysisCaseResult.Global.EffectiveMass.Y, analysisCaseResult.Global.EffectiveMass.Z);
 
       Vector3d effStiff;
       if (analysisCaseResult.Global.EffectiveInertia != null) {
         effStiff = new Vector3d(analysisCaseResult.Global.EffectiveInertia.X,
           analysisCaseResult.Global.EffectiveInertia.Y,
           analysisCaseResult.Global.EffectiveInertia.Z);
-      }
-      else {
+      } else {
         effStiff = new Vector3d();
       }
 

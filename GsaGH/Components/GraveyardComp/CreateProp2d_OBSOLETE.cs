@@ -24,8 +24,7 @@ namespace GsaGH.Components {
   ///   Component to create a new Prop2d
   /// </summary>
   // ReSharper disable once InconsistentNaming
-  public class CreateProp2d_OBSOLETE : GH_OasysComponent,
-    IGH_VariableParameterComponent {
+  public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
     private enum FoldMode {
       PlaneStress,
       Fabric,
@@ -58,11 +57,8 @@ namespace GsaGH.Components {
     });
     private string _unitAbbreviation;
 
-    public CreateProp2d_OBSOLETE() : base("Create 2D Property",
-                                          "Prop2d",
-      "Create GSA 2D Property",
-      CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+    public CreateProp2d_OBSOLETE() : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
+      CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -86,17 +82,13 @@ namespace GsaGH.Components {
         _selectedItems.Add(_lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, _lengthUnit);
-        _unitAbbreviation = string.Concat(quantity.ToString()
-          .Where(char.IsLetter));
+        _unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
         _first = false;
       }
 
-      m_attributes = new DropDownComponentAttributes(this,
-        SetSelected,
-        _dropDownItems,
-        _selectedItems,
-        _spacerDescriptions);
+      m_attributes = new DropDownComponentAttributes(this, SetSelected, _dropDownItems,
+        _selectedItems, _spacerDescriptions);
     }
 
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
@@ -110,16 +102,12 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       try // if users has an old version of this component then dropdown menu wont read
       {
-        ReadDropDownComponents(ref reader,
-          ref _dropDownItems,
-          ref _selectedItems,
+        ReadDropDownComponents(ref reader, ref _dropDownItems, ref _selectedItems,
           ref _spacerDescriptions);
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode),
-          _selectedItems[0]
-            .Replace(" ", string.Empty));
+          _selectedItems[0].Replace(" ", string.Empty));
         _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[1]);
-      }
-      catch (Exception) {
+      } catch (Exception) {
         _dropDownItems = new List<List<string>>();
         _selectedItems = new List<string>();
         _dropDownItems.Add(_dropdownTopList);
@@ -132,8 +120,7 @@ namespace GsaGH.Components {
         _lengthUnit = LengthUnit.Meter;
 
         IQuantity quantity = new Length(0, _lengthUnit);
-        _unitAbbreviation = string.Concat(quantity.ToString()
-          .Where(char.IsLetter));
+        _unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
       }
 
       UpdateUiFrom_selectedItems();
@@ -194,10 +181,11 @@ namespace GsaGH.Components {
             Mode6Clicked();
             break;
         }
-      }
-      else {
+      } else {
         _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[i]);
-      } (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      }
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
       Params.OnParametersChanged();
       OnDisplayExpired(true);
@@ -206,52 +194,28 @@ namespace GsaGH.Components {
     void IGH_VariableParameterComponent.VariableParameterMaintenance() {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
         IQuantity length = new Length(0, _lengthUnit);
-        _unitAbbreviation = string.Concat(length.ToString()
-          .Where(char.IsLetter));
+        _unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
         int i = 0;
-        Params.Input[i]
-          .NickName = "Mat";
-        Params.Input[i]
-          .Name = "Material";
-        Params.Input[i]
-            .Description
+        Params.Input[i].NickName = "Mat";
+        Params.Input[i].Name = "Material";
+        Params.Input[i].Description
           = "GsaMaterial or Number referring to a Material already in Existing GSA Model."
-          + Environment.NewLine
-          + "Accepted inputs are: "
-          + Environment.NewLine
-          + "0 : Generic"
-          + Environment.NewLine
-          + "1 : Steel"
-          + Environment.NewLine
-          + "2 : Concrete (default)"
-          + Environment.NewLine
-          + "3 : Aluminium"
-          + Environment.NewLine
-          + "4 : Glass"
-          + Environment.NewLine
-          + "5 : FRP"
-          + Environment.NewLine
-          + "7 : Timber"
-          + Environment.NewLine
-          + "8 : Fabric";
+          + Environment.NewLine + "Accepted inputs are: " + Environment.NewLine + "0 : Generic"
+          + Environment.NewLine + "1 : Steel" + Environment.NewLine + "2 : Concrete (default)"
+          + Environment.NewLine + "3 : Aluminium" + Environment.NewLine + "4 : Glass"
+          + Environment.NewLine + "5 : FRP" + Environment.NewLine + "7 : Timber"
+          + Environment.NewLine + "8 : Fabric";
 
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
 
         i++;
-        Params.Input[i]
-          .NickName = "Thk";
-        Params.Input[i]
-          .Name = "Thickness [" + _unitAbbreviation + "]";
-        Params.Input[i]
-          .Description = "Section thickness";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
+        Params.Input[i].NickName = "Thk";
+        Params.Input[i].Name = "Thickness [" + _unitAbbreviation + "]";
+        Params.Input[i].Description = "Section thickness";
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
       }
 
       if (_mode != FoldMode.Fabric) {
@@ -260,16 +224,12 @@ namespace GsaGH.Components {
 
       {
         const int i = 0;
-        Params.Input[i]
-          .NickName = "Mat";
-        Params.Input[i]
-          .Name = "Material";
-        Params.Input[i]
-          .Description = "GsaMaterial or Reference ID for Material Property in Existing GSA Model";
-        Params.Input[i]
-          .Access = GH_ParamAccess.item;
-        Params.Input[i]
-          .Optional = true;
+        Params.Input[i].NickName = "Mat";
+        Params.Input[i].Name = "Material";
+        Params.Input[i].Description
+          = "GsaMaterial or Reference ID for Material Property in Existing GSA Model";
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
       }
     }
 
@@ -279,9 +239,7 @@ namespace GsaGH.Components {
     }
 
     internal static void ReadDropDownComponents(
-      ref GH_IReader reader,
-      ref List<List<string>> dropDownItems,
-      ref List<string> selectedItems,
+      ref GH_IReader reader, ref List<List<string>> dropDownItems, ref List<string> selectedItems,
       ref List<string> spacerDescriptions) {
       if (reader.ItemExists("dropdown")) {
         int dropdownCount = reader.GetInt32("dropdownCount");
@@ -295,8 +253,7 @@ namespace GsaGH.Components {
 
           dropDownItems.Add(tempcontent);
         }
-      }
-      else {
+      } else {
         throw new Exception("Component doesnt have 'dropdown' content stored");
       }
 
@@ -322,22 +279,14 @@ namespace GsaGH.Components {
     }
 
     internal static GH_IWriter WriteDropDownComponents(
-      ref GH_IWriter writer,
-      List<List<string>> dropDownItems,
-      List<string> selectedItems,
+      ref GH_IWriter writer, List<List<string>> dropDownItems, List<string> selectedItems,
       List<string> spacerDescriptions) {
       bool dropdown = false;
       if (dropDownItems != null) {
         writer.SetInt32("dropdownCount", dropDownItems.Count);
         for (int i = 0; i < dropDownItems.Count; i++) {
-          writer.SetInt32("dropdowncontentsCount" + i,
-            dropDownItems[i]
-              .Count);
-          for (int j = 0;
-            j
-            < dropDownItems[i]
-              .Count;
-            j++) {
+          writer.SetInt32("dropdowncontentsCount" + i, dropDownItems[i].Count);
+          for (int j = 0; j < dropDownItems[i].Count; j++) {
             writer.SetString("dropdowncontents" + i + j, dropDownItems[i][j]);
           }
         }
@@ -428,25 +377,21 @@ namespace GsaGH.Components {
           if (da.GetData(0, ref ghTyp)) {
             if (ghTyp.Value is GsaMaterialGoo materialGoo) {
               prop.Material = materialGoo.Value;
-            }
-            else {
+            } else {
               if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
                 prop.Material = new GsaMaterial(idd);
-              }
-              else {
+              } else {
                 this.AddRuntimeError(
                   "Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }
-          }
-          else {
+          } else {
             prop.Material = new GsaMaterial(2);
           }
 
           prop.Thickness = (Length)Input.UnitNumber(this, da, 1, _lengthUnit);
-        }
-        else {
+        } else {
           prop.Material = new GsaMaterial(8);
         }
       }
@@ -571,7 +516,9 @@ namespace GsaGH.Components {
 
       while (Params.Input.Count > 0) {
         Params.UnregisterInputParameter(Params.Input[0], true);
-      } (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      }
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       Params.OnParametersChanged();
       ExpireSolution(true);
     }

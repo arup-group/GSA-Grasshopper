@@ -32,11 +32,8 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = "";
 
-    public Elem2dFromBrep2_OBSOLETE() : base("Element2d from Brep",
-                      "Elem2dFromBrep",
-      "Mesh a non-planar Brep",
-      CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+    public Elem2dFromBrep2_OBSOLETE() : base("Element2d from Brep", "Elem2dFromBrep",
+      "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
@@ -52,12 +49,11 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
-      toleranceMenu.DropDownItems[1]
-        .MouseUp += (s, e) => {
-          UpdateMessage();
-          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-          ExpireSolution(true);
-        };
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
+        UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
       menu.Items.Add(toleranceMenu);
 
       Menu_AppendSeparator(menu);
@@ -72,10 +68,8 @@ namespace GsaGH.Components {
       _isInitialised = true;
       UpdateUIFromSelectedItems();
       GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0]
-        .InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1]
-        .InternalData;
+      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
       return true;
     }
 
@@ -86,8 +80,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4]
-                                                                .Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     protected override void BeforeSolveInstance() {
@@ -111,36 +104,25 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBrepParameter("Brep", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Incl. Points or Nodes",
-        "(P)",
-        "Inclusion points or Nodes",
+      pManager.AddGenericParameter("Incl. Points or Nodes", "(P)", "Inclusion points or Nodes",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Incl. Curves or 1D Members",
-        "(C)",
-        "Inclusion curves or 1D Members",
-        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Incl. Curves or 1D Members", "(C)",
+        "Inclusion curves or 1D Members", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
       pManager.AddGenericParameter("Mesh Size", "Ms", "Target mesh size", GH_ParamAccess.item);
 
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
       pManager.HideParameter(0);
       pManager.HideParameter(1);
       pManager.HideParameter(2);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaElement2dParameter(),
-                                                                                         "2D Elements",
-                                                                                         "E2D",
-                                                                                         "GSA 2D Elements",
-                                                                                         GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements",
+        GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -166,18 +148,14 @@ namespace GsaGH.Components {
           var pt = new Point3d();
           if (objectWrapper.Value is GsaNodeGoo nodeGoo) {
             nodes.Add(nodeGoo.Value.Duplicate(true));
-          }
-          else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref pt, GH_Conversion.Both)) {
+          } else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
-          }
-          else {
-            string type = objectWrapper.Value.GetType()
-              .ToString();
+          } else {
+            string type = objectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
             this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
-              + type
-              + " to point or node");
+              + type + " to point or node");
           }
         }
       }
@@ -190,49 +168,36 @@ namespace GsaGH.Components {
           Curve crv = null;
           if (objectWrapper.Value is GsaMember1dGoo member1dGoo) {
             member1ds.Add(member1dGoo.Value.Duplicate(true));
-          }
-          else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both)) {
+          } else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both)) {
             curves.Add(crv.DuplicateCurve());
-          }
-          else {
-            string type = objectWrapper.Value.GetType()
-              .ToString();
+          } else {
+            string type = objectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
             this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
-              + type
-              + " to curve or 1D Member");
+              + type + " to curve or 1D Member");
           }
         }
       }
 
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
-      var elem2d = new GsaElement2d(brep,
-        curves,
-        pts,
-        meshSize.As(_lengthUnit),
-        member1ds,
-        nodes,
-        _lengthUnit,
-        _tolerance);
+      var elem2d = new GsaElement2d(brep, curves, pts, meshSize.As(_lengthUnit), member1ds, nodes,
+        _lengthUnit, _tolerance);
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProp2dGoo) {
           ghTyp.CastTo(ref prop2d);
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
             return;
           }
         }
-      }
-      else {
+      } else {
         prop2d.Id = 0;
       }
 
@@ -256,9 +221,8 @@ namespace GsaGH.Components {
 
     private void MaintainText(ToolStripItem tolerance) {
       _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)
-        ? Color.FromArgb(255, 180, 255, 150)
-        : Color.FromArgb(255, 255, 100, 100);
+      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
+        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
     }
 
     private void UpdateMessage() {
@@ -266,8 +230,7 @@ namespace GsaGH.Components {
         try {
           var newTolerance = Length.Parse(_toleranceTxt);
           _tolerance = newTolerance;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }

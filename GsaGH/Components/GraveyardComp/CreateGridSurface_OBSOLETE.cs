@@ -42,11 +42,8 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.OneDimensionalOneWay;
 
-    public CreateGridSurface_OBSOLETE() : base("Create Grid Surface",
-                              "GridSurface",
-      "Create GSA Grid Surface",
-      CategoryName.Name(),
-      SubCategoryName.Cat3()) { }
+    public CreateGridSurface_OBSOLETE() : base("Create Grid Surface", "GridSurface",
+      "Create GSA Grid Surface", CategoryName.Name(), SubCategoryName.Cat3()) { }
 
     public override bool Read(GH_IReader reader) {
       if (!reader.ItemExists("Mode")) {
@@ -93,8 +90,7 @@ namespace GsaGH.Components {
             Mode3Clicked();
             break;
         }
-      }
-      else {
+      } else {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       }
 
@@ -104,50 +100,28 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
-          Params.Input[5]
-            .NickName = "Dir";
-          Params.Input[5]
-            .Name = "Span Direction";
-          Params.Input[5]
-            .Description = "Span Direction between -180 and 180 degrees";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
+          Params.Input[5].NickName = "Dir";
+          Params.Input[5].Name = "Span Direction";
+          Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
+          Params.Input[5].Access = GH_ParamAccess.item;
+          Params.Input[5].Optional = true;
           break;
 
         case FoldMode.OneDimensionalTwoWay:
-          Params.Input[5]
-            .NickName = "Exp";
-          Params.Input[5]
-            .Name = "Load Expansion";
-          Params.Input[5]
-              .Description = "Load Expansion: "
-            + Environment.NewLine
-            + "Accepted inputs are:"
-            + Environment.NewLine
-            + "0 : Corner (plane)"
-            + Environment.NewLine
-            + "1 : Smooth (plane)"
-            + Environment.NewLine
-            + "2 : Plane"
-            + Environment.NewLine
-            + "3 : Legacy";
-          Params.Input[5]
-            .Access = GH_ParamAccess.item;
-          Params.Input[5]
-            .Optional = true;
+          Params.Input[5].NickName = "Exp";
+          Params.Input[5].Name = "Load Expansion";
+          Params.Input[5].Description = "Load Expansion: " + Environment.NewLine
+            + "Accepted inputs are:" + Environment.NewLine + "0 : Corner (plane)"
+            + Environment.NewLine + "1 : Smooth (plane)" + Environment.NewLine + "2 : Plane"
+            + Environment.NewLine + "3 : Legacy";
+          Params.Input[5].Access = GH_ParamAccess.item;
+          Params.Input[5].Optional = true;
 
-          Params.Input[6]
-            .NickName = "Sim";
-          Params.Input[6]
-            .Name = "Simplify";
-          Params.Input[6]
-            .Description = "Simplify Tributary Area (default: True)";
-          Params.Input[6]
-            .Access = GH_ParamAccess.item;
-          Params.Input[6]
-            .Optional = true;
+          Params.Input[6].NickName = "Sim";
+          Params.Input[6].Name = "Simplify";
+          Params.Input[6].Description = "Simplify Tributary Area (default: True)";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = true;
           break;
       }
     }
@@ -159,9 +133,7 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[5] is Param_Number angleParameter) {
-        _angleUnit = angleParameter.UseDegrees
-          ? AngleUnit.Degree
-          : AngleUnit.Radian;
+        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
     }
 
@@ -185,61 +157,38 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
-      string unitAbbreviation = string.Concat(length.ToString()
-        .Where(char.IsLetter));
+      string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Grid Plane",
-        "GP",
-        "Grid Plane. If no input, Global XY-plane will be used",
-        GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Grid Surface ID",
-        "ID",
+      pManager.AddGenericParameter("Grid Plane", "GP",
+        "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Grid Surface ID", "ID",
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
-        GH_ParamAccess.item,
-        0);
-      pManager.AddTextParameter("Element list",
-        "El",
+        GH_ParamAccess.item, 0);
+      pManager.AddTextParameter("Element list", "El",
         "List of Elements for which load should be expanded to (by default 'all')."
-        + Environment.NewLine
-        + "Element list should take the form:"
-        + Environment.NewLine
+        + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item,
-        "All");
+        GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]",
-        "To",
-        "Tolerance for Load Expansion (default 10mm)",
-        GH_ParamAccess.item);
-      pManager.AddAngleParameter("Span Direction",
-        "Di",
-        "Span Direction between -180 and 180 degrees",
-        GH_ParamAccess.item,
-        0);
-      pManager[5]
-        .Optional = true;
+      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]", "To",
+        "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
+      pManager.AddAngleParameter("Span Direction", "Di",
+        "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
+      pManager[5].Optional = true;
       _angleInputParam = Params.Input[5];
 
-      pManager[0]
-        .Optional = true;
-      pManager[1]
-        .Optional = true;
-      pManager[2]
-        .Optional = true;
-      pManager[3]
-        .Optional = true;
-      pManager[4]
-        .Optional = true;
+      pManager[0].Optional = true;
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneParameter(),
-                                                                                         "Grid Surface",
-                                                                                         "GPS",
-                                                                                         "GSA Grid Surface",
-                                                                                         GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -251,12 +200,10 @@ namespace GsaGH.Components {
       if (da.GetData(0, ref ghTyp)) {
         if (ghTyp.Value is GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo) {
           gsaGridPlaneSurface = gridPlaneSurfaceGoo.Value.Duplicate();
-        }
-        else {
+        } else {
           if (ghTyp.CastTo(ref plane)) {
             gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
-          }
-          else {
+          } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               gsaGridPlaneSurface = new GsaGridPlaneSurface {
                 GridSurface = {
@@ -265,15 +212,13 @@ namespace GsaGH.Components {
                 GridPlane = null,
               };
               idSet = true;
-            }
-            else {
+            } else {
               this.AddRuntimeError("Cannot convert your input to GridPlaneSurface or Plane");
               return;
             }
           }
         }
-      }
-      else {
+      } else {
         plane = Plane.WorldXY;
         gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
       }
@@ -292,14 +237,11 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
-        string type = ghTyp.Value.ToString()
-          .ToUpper();
+        string type = ghTyp.Value.ToString().ToUpper();
         if (type.StartsWith("GSA ")) {
           Params.Owner.AddRuntimeError(
-            "You cannot input a Node/Element/Member in ElementList input!"
-            + Environment.NewLine
-            + "Element list should take the form:"
-            + Environment.NewLine
+            "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine
+            + "Element list should take the form:" + Environment.NewLine
             + "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'"
             + Environment.NewLine
             + "Refer to GSA help file for definition of lists and full vocabulary.");
@@ -323,9 +265,7 @@ namespace GsaGH.Components {
         }
       }
 
-      if (Params.Input[4]
-          .SourceCount
-        != 0) {
+      if (Params.Input[4].SourceCount != 0) {
         gs.Tolerance = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Millimeters;
         changeGs = true;
       }
@@ -383,9 +323,8 @@ namespace GsaGH.Components {
             GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
           }
 
-          gs.SpanType = simple
-            ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS
-            : GridSurface.Span_Type.TWO_WAY;
+          gs.SpanType = simple ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS :
+            GridSurface.Span_Type.TWO_WAY;
           break;
 
         case FoldMode.TwoDimensional:
@@ -440,8 +379,7 @@ namespace GsaGH.Components {
 
     private void Mode2Clicked() {
       switch (_mode) {
-        case FoldMode.OneDimensionalTwoWay:
-          return;
+        case FoldMode.OneDimensionalTwoWay: return;
 
         case FoldMode.OneDimensionalOneWay:
           _angleInputParam = Params.Input[5];
@@ -461,8 +399,7 @@ namespace GsaGH.Components {
 
     private void Mode3Clicked() {
       switch (_mode) {
-        case FoldMode.TwoDimensional:
-          return;
+        case FoldMode.TwoDimensional: return;
 
         case FoldMode.OneDimensionalOneWay:
           _angleInputParam = Params.Input[5];
