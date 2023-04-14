@@ -80,10 +80,10 @@ namespace GsaGH.Components {
         list.Name = name;
       }
 
-      List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, _type);
+      List<object> listGooObjects = Inputs.GetGooObjectsForLists(this, DA, 2, _type);
 
       try {
-        list.SetListObjects(listObjects);
+        list.SetListGooObjects(listGooObjects);
       } catch (ArgumentException) {
         string message = "";
         switch (_type) {

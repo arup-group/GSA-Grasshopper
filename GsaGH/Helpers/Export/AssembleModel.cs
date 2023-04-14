@@ -114,11 +114,11 @@ namespace GsaGH.Helpers.Export {
         ref apiNodes, modelUnit);
 
       // Set API Nodes, Elements and Members in model
-      ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.Dictionary;
+      ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.ReadOnlyDictionary;
       gsa.SetNodes(apiNodeDict);
-      ReadOnlyDictionary<int, Element> apiElemDict = apiElements.Dictionary;
+      ReadOnlyDictionary<int, Element> apiElemDict = apiElements.ReadOnlyDictionary;
       gsa.SetElements(apiElemDict);
-      ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.Dictionary;
+      ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.ReadOnlyDictionary;
       gsa.SetMembers(apiMemDict);
 
       // Add API Node loads to model
@@ -205,6 +205,10 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
+      // Convert GsaGH Lists to API Objects
+      var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
+      Lists.ConvertList(lists, ref apiLists, ref apiMaterials, ref apiSections, ref apiProp2ds, ref apiProp3ds, ref apiNodes, ref apiElements, ref apiMembers, modelUnit);
+
       // Convert GsaGH Loads to API objects
       var gravityLoads = new List<GravityLoad>();
       var beamLoads = new List<BeamLoad>();
@@ -232,7 +236,6 @@ namespace GsaGH.Helpers.Export {
         ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa, apiSections,
         apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
-
       // Add API Loads in model
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
       gsa.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(beamLoads));
@@ -246,16 +249,19 @@ namespace GsaGH.Helpers.Export {
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
 
       // Set API Sections and Materials in model
-      gsa.SetSections(apiSections.Dictionary);
-      gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);
-      gsa.SetProp2Ds(apiProp2ds.Dictionary);
-      gsa.SetProp3Ds(apiProp3ds.Dictionary);
-      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.Dictionary;
+      gsa.SetSections(apiSections.ReadOnlyDictionary);
+      gsa.SetSectionModifiers(apiSectionModifiers.ReadOnlyDictionary);
+      gsa.SetProp2Ds(apiProp2ds.ReadOnlyDictionary);
+      gsa.SetProp3Ds(apiProp3ds.ReadOnlyDictionary);
+      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.ReadOnlyDictionary;
       if (materials.Count > 0) {
         foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
         }
       }
+
+      // Set API list in model
+      gsa.SetLists(apiLists.ReadOnlyDictionary);
 
       // Set Analysis Tasks in model
       if (analysisTasks != null) {

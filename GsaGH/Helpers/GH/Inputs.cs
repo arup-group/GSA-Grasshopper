@@ -6,8 +6,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GH {
   internal class Inputs {
-
-    internal static List<object> GetObjectsForLists(
+    internal static List<object> GetGooObjectsForLists(
       GH_Component owner, IGH_DataAccess DA, int inputid, EntityType type) {
       // Get Geometry input
       var gh_types = new List<GH_ObjectWrapper>();
@@ -27,7 +26,9 @@ namespace GsaGH.Helpers.GH {
 
           switch (type) {
             case EntityType.Node:
-              if (!(gh_typ.Value is GsaNodeGoo)) {
+              if (gh_typ.Value is GsaNodeGoo nodeGoo) {
+                list.Add(nodeGoo);
+              } else {
                 owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
                   + "  input (index: " + i + ") input parameter of type "
                   + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
@@ -35,56 +36,84 @@ namespace GsaGH.Helpers.GH {
                 continue;
               }
 
-              var gsanode = new GsaNode();
-              gh_typ.CastTo(ref gsanode);
-              list.Add(gsanode.Duplicate());
               break;
 
             case EntityType.Element:
-              if (gh_typ.Value is GsaElement1dGoo) {
-                var gsaelem1 = new GsaElement1d();
-                gh_typ.CastTo(ref gsaelem1);
-                list.Add(gsaelem1.Duplicate());
-              } else if (gh_typ.Value is GsaElement2dGoo) {
-                var gsaelem2 = new GsaElement2d();
-                gh_typ.CastTo(ref gsaelem2);
-                list.Add(gsaelem2.Duplicate());
-              } else if (gh_typ.Value is GsaElement3dGoo) {
-                var gsaelem3 = new GsaElement3d();
-                gh_typ.CastTo(ref gsaelem3);
-                list.Add(gsaelem3.Duplicate());
-              } else {
-                owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                  + " input (index: " + i + ") input parameter of type "
-                  + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
-                  + " to Element and has been ignored");
-                continue;
-              }
+              switch (gh_typ.Value) {
+                case GsaMaterialGoo materialGoo:
+                  list.Add(materialGoo);
+                  break;
 
+                case GsaSectionGoo sectionGoo:
+                  list.Add(sectionGoo);
+                  break;
+
+                case GsaProp2dGoo prop2dGoo:
+                  list.Add(prop2dGoo);
+                  break;
+
+                case GsaProp3dGoo prop3dGoo:
+                  list.Add(prop3dGoo);
+                  break;
+                
+                case GsaElement1dGoo element1dGoo:
+                  list.Add(element1dGoo);
+                  break;
+
+                case GsaElement2dGoo element2dGoo:
+                  list.Add(element2dGoo);
+                  break;
+
+                case GsaElement3dGoo element3dGoo:
+                  list.Add(element3dGoo);
+                  break;
+
+                default:
+                  owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
+                      + " input (index: " + i + ") input parameter of type "
+                      + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
+                      + Environment.NewLine + " to Element or Property and has been ignored");
+                  continue;
+              }
               break;
 
             case EntityType.Member:
+              switch (gh_typ.Value) {
+                case GsaMaterialGoo materialGoo:
+                  list.Add(materialGoo);
+                  break;
 
-              if (gh_typ.Value is GsaMember1dGoo) {
-                var gsamem1 = new GsaMember1d();
-                gh_typ.CastTo(ref gsamem1);
-                list.Add(gsamem1.Duplicate());
-              } else if (gh_typ.Value is GsaMember2dGoo) {
-                var gsamem2 = new GsaMember2d();
-                gh_typ.CastTo(ref gsamem2);
-                list.Add(gsamem2.Duplicate());
-              } else if (gh_typ.Value is GsaMember3dGoo) {
-                var gsamem3 = new GsaMember3d();
-                gh_typ.CastTo(ref gsamem3);
-                list.Add(gsamem3.Duplicate());
-              } else {
-                owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                  + " input (index: " + i + ") input parameter of type "
-                  + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
-                  + " to Member and has been ignored");
-                continue;
+                case GsaSectionGoo sectionGoo:
+                  list.Add(sectionGoo);
+                  break;
+
+                case GsaProp2dGoo prop2dGoo:
+                  list.Add(prop2dGoo);
+                  break;
+
+                case GsaProp3dGoo prop3dGoo:
+                  list.Add(prop3dGoo);
+                  break;
+
+                case GsaMember1dGoo member1dGoo:
+                  list.Add(member1dGoo);
+                  break;
+
+                case GsaMember2dGoo member2dGoo:
+                  list.Add(member2dGoo);
+                  break;
+
+                case GsaMember3dGoo member3dGoo:
+                  list.Add(member3dGoo);
+                  break;
+
+                default:
+                  owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
+                      + " input (index: " + i + ") input parameter of type "
+                      + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
+                      + Environment.NewLine + " to Member or Property and has been ignored");
+                  continue;
               }
-
               break;
 
             case EntityType.Case:

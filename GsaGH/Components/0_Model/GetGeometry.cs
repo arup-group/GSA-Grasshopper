@@ -739,25 +739,16 @@ namespace GsaGH.Components {
               break;
 
             case 1:
-              Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-                ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(eDict, allnDict,
-                sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict, axDict, _lengthUnit,
+              (results.Elem1ds, results.Elem2ds, results.Elem3ds) = Elements.GetElements(
+                eDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict,
+                axDict, _lengthUnit,
                 false);
-
-              results.Elem1ds = elementTuple.Item1;
-              results.Elem2ds = elementTuple.Item2;
-              results.Elem3ds = elementTuple.Item3;
               break;
 
             case 2:
-              Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-                ConcurrentBag<GsaMember3dGoo>> memberTuple = Members.GetMembers(mDict, allnDict,
+              (results.Mem1ds, results.Mem2ds, results.Mem3ds) = Members.GetMembers(mDict, allnDict,
                 sDict, pDict, p3Dict, matDict, modDict, memberLocalAxesDict, axDict, _lengthUnit,
                 false, this);
-
-              results.Mem1ds = memberTuple.Item1;
-              results.Mem2ds = memberTuple.Item2;
-              results.Mem3ds = memberTuple.Item3;
               break;
           }
         });

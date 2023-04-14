@@ -320,8 +320,8 @@ namespace GsaGH.Components {
       var elementLocalAxesDict
         = elementDict.Keys.ToDictionary(id => id, id => gsa.ElementDirectionCosine(id));
 
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict,
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) = Elements.GetElements(elementDict,
         gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(),
         gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
@@ -331,12 +331,12 @@ namespace GsaGH.Components {
       };
 
       da.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
-      da.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
-      da.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
-      da.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(1, e1d.OrderBy(item => item.Value.Id));
+      da.SetDataList(2, e2d.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(3, e3d.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
-      _element2ds = elementTuple.Item2;
+      _element2ds = e2d;
     }
 
     private void MaintainText(ToolStripTextBox tolerance) {
