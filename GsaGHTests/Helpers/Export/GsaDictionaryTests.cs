@@ -18,10 +18,10 @@ namespace GsaGHTests.Helpers.Export {
 
       Assert.Equal(1, expectedId);
       Assert.Equal(1, dictionary.Count);
-      Assert.Equal("first", dictionary.Dictionary[1]);
+      Assert.Equal("first", dictionary.ReadOnlyDictionary[1]);
 
       Assert.Equal(expectedId, dictionary.AddValue(guid, "second"));
-      Assert.Equal("first", dictionary.Dictionary[expectedId]);
+      Assert.Equal("first", dictionary.ReadOnlyDictionary[expectedId]);
     }
 
     [Fact]
@@ -41,10 +41,10 @@ namespace GsaGHTests.Helpers.Export {
 
       Assert.Equal(2, expectedId);
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[2]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[2]);
 
       Assert.Equal(expectedId, dictionary.AddValue(guid, "second"));
-      Assert.Equal("myFirst", dictionary.Dictionary[expectedId]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[expectedId]);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ namespace GsaGHTests.Helpers.Export {
       dictionary.SetValue(3, guid, "myFirst");
 
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[3]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[3]);
     }
 
     [Fact]
@@ -81,8 +81,8 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(1, expectedIDs[0]);
       Assert.Equal(2, expectedIDs[1]);
       Assert.Equal(2, dictionary.Count);
-      Assert.Equal("first", dictionary.Dictionary[1]);
-      Assert.Equal("second", dictionary.Dictionary[2]);
+      Assert.Equal("first", dictionary.ReadOnlyDictionary[1]);
+      Assert.Equal("second", dictionary.ReadOnlyDictionary[2]);
     }
 
     [Fact]
@@ -106,8 +106,8 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(2, expectedIDs[0]);
       Assert.Equal(3, expectedIDs[1]);
       Assert.Equal(4, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[2]);
-      Assert.Equal("mySecond", dictionary.Dictionary[3]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[2]);
+      Assert.Equal("mySecond", dictionary.ReadOnlyDictionary[3]);
     }
 
     [Fact]
@@ -126,12 +126,12 @@ namespace GsaGHTests.Helpers.Export {
       dictionary.SetValue(3, guid, "myFirst", true);
 
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[3]);
-      Assert.Equal(3, dictionary.Dictionary.Count);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[3]);
+      Assert.Equal(3, dictionary.ReadOnlyDictionary.Count);
       Assert.Single(dictionary.GuidDictionary[guid]);
 
       dictionary.SetValue(3, guid, "mySecond", true);
-      Assert.Equal("mySecond", dictionary.Dictionary[3]);
+      Assert.Equal("mySecond", dictionary.ReadOnlyDictionary[3]);
       Assert.Single(dictionary.GuidDictionary[guid]);
     }
 
@@ -152,10 +152,10 @@ namespace GsaGHTests.Helpers.Export {
       dictionary.AddValue(guid, "mySecond");
 
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[5]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[5]);
       Assert.Equal(2, dictionary.GuidDictionary[guid].Count);
 
-      Assert.Equal("mySecond", dictionary.Dictionary[2]);
+      Assert.Equal("mySecond", dictionary.ReadOnlyDictionary[2]);
     }
 
     [Fact]
@@ -198,10 +198,10 @@ namespace GsaGHTests.Helpers.Export {
       dictionary.SetValue(5, guid, "myFirst");
 
       Assert.Equal(2, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[5]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[5]);
 
       dictionary.SetValue(5, guid, "mySecond");
-      Assert.Equal("mySecond", dictionary.Dictionary[5]);
+      Assert.Equal("mySecond", dictionary.ReadOnlyDictionary[5]);
     }
 
     [Fact]
@@ -238,7 +238,7 @@ namespace GsaGHTests.Helpers.Export {
 
       Assert.Equal(1, expectedId);
       Assert.Equal(1, dictionary.Count);
-      Assert.Equal("first", dictionary.Dictionary[1]);
+      Assert.Equal("first", dictionary.ReadOnlyDictionary[1]);
     }
 
     [Fact]
@@ -257,7 +257,7 @@ namespace GsaGHTests.Helpers.Export {
 
       Assert.Equal(2, expectedId);
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[2]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[2]);
     }
 
     [Fact]
@@ -275,7 +275,7 @@ namespace GsaGHTests.Helpers.Export {
       dictionary.SetValue(5, "myFirst");
 
       Assert.Equal(2, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[5]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[5]);
     }
 
     [Fact]
@@ -293,7 +293,7 @@ namespace GsaGHTests.Helpers.Export {
       dictionary.SetValue(3, "myFirst");
 
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[3]);
+      Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[3]);
     }
   }
 }
