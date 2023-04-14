@@ -7,10 +7,10 @@ namespace GsaGH.Helpers.Import {
   /// </summary>
   internal class Lists {
 
-    internal static List<GsaList> GetLists() {
+    internal static List<GsaList> GetLists(GsaModel model) {
       var lists = new List<GsaList>();
-      //foreach (KeyValuePair<int, EntityList> apiList in gsaModel.Model.Lists())
-      //  lists.Add(new GsaList(apiList.Key, apiList.Value, gsaModel));
+      foreach (KeyValuePair<int, EntityList> apiList in gsaModel.Model.Lists())
+        lists.Add(new GsaList(apiList.Key, apiList.Value, gsaModel));
       return lists;
     }
   }

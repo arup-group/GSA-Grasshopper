@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Helpers.Import;
 using OasysUnits.Units;
-//using GsaAPI;
 
 namespace GsaGH.Parameters {
   public enum EntityType {
@@ -62,6 +62,21 @@ namespace GsaGH.Parameters {
     private ConcurrentBag<GsaNodeGoo> _nodes;
 
     public GsaList() { }
+
+    internal GsaList(int id, EntityList list, GsaModel model) {
+      EntityType = GetEntityFromAPI(list.Type);
+      Id = id;
+      Name = list.Name;
+      Definition = list.Definition;
+      _model = model;
+    }
+    internal EntityList GetApiList() {
+      return new EntityList {
+        Name = Name,
+        Definition = Definition,
+        Type = GetAPIEntityType(EntityType)
+      };
+    }
 
     public GsaList Duplicate() {
       var dup = new GsaList {
@@ -247,11 +262,11 @@ namespace GsaGH.Parameters {
         def.Reverse();
         string definition = string.Join(" ", def);
         // pass the definition through the API here to catch any errors
-        //var apiList = new EntityList() {
-        //  Type = GetAPIEntityType(EntityType),
-        //  Definition = definition
-        //};
-        //Definition = apiList.Definition;
+        var apiList = new EntityList() {
+          Type = GetAPIEntityType(EntityType),
+          Definition = definition
+        };
+        Definition = apiList.Definition;
       }
 
       switch (EntityType) {
@@ -303,18 +318,6 @@ namespace GsaGH.Parameters {
       }
     }
 
-    //internal GsaList(int id, EntityList list, GsaModel model) {
-    //  EntityType = GetEntityFromAPI(list.Type);
-    //  Id = id;
-    //  Name = list.Name;
-    //  Definition = list.Definition;
-    //  _model = model;
-    //}
-    //internal GsaAPI.EntityList GetApiList() => new GsaAPI.EntityList {
-    //  Name = Name,
-    //  Definition = Definition,
-    //  Type = GetAPIEntityType(EntityType)
-    //};
     private void PopulateListObjectsFromModel(LengthUnit unit) {
       if (_model == null) {
         return;
@@ -350,8 +353,8 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          //var tempApiList = new GsaAPI.EntityList() { Type = GsaAPI.EntityType.Case, Name = Name, Definition = Definition };
-          //_cases = _model.Model.ExpandList(tempApiList).ToList();
+          var tempApiList = new GsaAPI.EntityList() { Type = GsaAPI.EntityType.Case, Name = Name, Definition = Definition };
+          _cases = _model.Model.ExpandList(tempApiList).ToList();
           break;
 
         case EntityType.Undefined:
@@ -360,32 +363,42 @@ namespace GsaGH.Parameters {
       }
     }
 
-    //internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type) {
-    //  switch (type) {
-    //    case GsaAPI.EntityType.Node:
-    //      return EntityType.Node;
-    //    case GsaAPI.EntityType.Element:
-    //      return EntityType.Element;
-    //    case GsaAPI.EntityType.Member:
-    //      return EntityType.Member;
-    //    case GsaAPI.EntityType.Case:
-    //      return EntityType.Case;
-    //  }
-    //  return EntityType.Undefined;
-    //}
+    internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type) {
+      switch (type) {
+        case GsaAPI.EntityType.Node:
+          return EntityType.Node;
 
-    //internal static GsaAPI.EntityType GetAPIEntityType(EntityType type) {
-    //  switch (type) {
-    //    case EntityType.Node:
-    //      return GsaAPI.EntityType.Node;
-    //    case EntityType.Element:
-    //      return GsaAPI.EntityType.Element;
-    //    case EntityType.Member:
-    //      return GsaAPI.EntityType.Member;
-    //    case EntityType.Case:
-    //      return GsaAPI.EntityType.Case;
-    //  }
-    //  return GsaAPI.EntityType.Undefined;
-    //}
+        case GsaAPI.EntityType.Element:
+          return EntityType.Element;
+
+        case GsaAPI.EntityType.Member:
+          return EntityType.Member;
+
+        case GsaAPI.EntityType.Case:
+          return EntityType.Case;
+
+        default:
+          return EntityType.Undefined;
+      }
+    }
+
+    internal static GsaAPI.EntityType GetAPIEntityType(EntityType type) {
+      switch (type) {
+        case EntityType.Node:
+          return GsaAPI.EntityType.Node;
+
+        case EntityType.Element:
+          return GsaAPI.EntityType.Element;
+
+        case EntityType.Member:
+          return GsaAPI.EntityType.Member;
+
+        case EntityType.Case:
+          return GsaAPI.EntityType.Case;
+
+        default:
+          return GsaAPI.EntityType.Undefined;
+      }
+    }
   }
 }
