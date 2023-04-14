@@ -49,17 +49,18 @@ namespace GsaGH.Parameters {
         _name = value;
       }
     }
-    private List<int> _cases;
-    private string _definition;
-    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-      ConcurrentBag<GsaElement3dGoo>> _elements;
+
     private EntityType _entityType = EntityType.Undefined;
-    private int _id;
-    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-      ConcurrentBag<GsaMember3dGoo>> _members;
     private GsaModel _model;
-    private string _name;
-    private ConcurrentBag<GsaNodeGoo> _nodes;
+    internal int _id;
+    internal string _name;
+    internal string _definition;
+    internal List<int> _cases;
+    internal ConcurrentBag<GsaNodeGoo> _nodes;
+    internal Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
+      ConcurrentBag<GsaElement3dGoo>> _elements;
+    internal Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
+      ConcurrentBag<GsaMember3dGoo>> _members;
 
     public GsaList() { }
 
