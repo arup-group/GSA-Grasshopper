@@ -10,7 +10,7 @@ using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to edit a Node
+  ///   Component to create a new EntityList
   /// </summary>
   public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");

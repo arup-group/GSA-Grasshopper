@@ -12,7 +12,7 @@ using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to retrieve non-geometric objects from a GSA model
+  ///   Component to retrieve EntityLists from a GSA model
   /// </summary>
   public class GetLists : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("43495cf4-f2eb-4b14-9b1a-5f91972546ca");
