@@ -2,7 +2,6 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -149,7 +148,7 @@ namespace GsaGH.Components {
         GH_Convert.ToVector3d(ghFactor, ref vect, GH_Conversion.Both);
       }
 
-      var factor = new Vector3() {
+      var factor = new GsaAPI.Vector3() {
         X = vect.X,
         Y = vect.Y,
         Z = vect.Z,

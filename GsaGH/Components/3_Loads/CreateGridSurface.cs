@@ -5,7 +5,6 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -206,7 +205,7 @@ namespace GsaGH.Components {
       }
 
       bool changeGs = false;
-      var gs = new GridSurface();
+      var gs = new GsaAPI.GridSurface();
       if (idSet) {
         gs.GridPlane = gps.GridSurface.GridPlane;
       }
@@ -324,8 +323,8 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
-          gs.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
-          gs.SpanType = GridSurface.Span_Type.ONE_WAY;
+          gs.ElementType = GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
+          gs.SpanType = GsaAPI.GridSurface.Span_Type.ONE_WAY;
 
           double dir = 0.0;
           if (da.GetData(5, ref dir)) {
@@ -345,7 +344,7 @@ namespace GsaGH.Components {
 
         case FoldMode.OneDimensionalTwoWay:
           changeGs = true;
-          gs.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+          gs.ElementType = GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
 
           int exp = 0;
           var ghexp = new GH_Integer();
@@ -353,18 +352,18 @@ namespace GsaGH.Components {
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
           }
 
-          gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
+          gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_CORNER;
           switch (exp) {
             case 1:
-              gs.ExpansionType = GridSurfaceExpansionType.PLANE_SMOOTH;
+              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_SMOOTH;
               break;
 
             case 2:
-              gs.ExpansionType = GridSurfaceExpansionType.PLANE_ASPECT;
+              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_ASPECT;
               break;
 
             case 3:
-              gs.ExpansionType = GridSurfaceExpansionType.LEGACY;
+              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.LEGACY;
               break;
           }
 
@@ -374,13 +373,13 @@ namespace GsaGH.Components {
             GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
           }
 
-          gs.SpanType = simple ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS :
-            GridSurface.Span_Type.TWO_WAY;
+          gs.SpanType = simple ? GsaAPI.GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS :
+            GsaAPI.GridSurface.Span_Type.TWO_WAY;
           break;
 
         case FoldMode.TwoDimensional:
           changeGs = true;
-          gs.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
+          gs.ElementType = GsaAPI.GridSurface.Element_Type.TWO_DIMENSIONAL;
           break;
       }
 

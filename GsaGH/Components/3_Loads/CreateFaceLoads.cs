@@ -4,7 +4,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -317,7 +316,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -327,11 +326,11 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
       }
 
@@ -340,7 +339,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            faceLoad.FaceLoad.Type = FaceLoadType.CONSTANT;
+            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.CONSTANT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -358,7 +357,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Variable:
           if (_mode == FoldMode.Variable) {
-            faceLoad.FaceLoad.Type = FaceLoadType.GENERAL;
+            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.GENERAL;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -385,7 +384,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            faceLoad.FaceLoad.Type = FaceLoadType.POINT;
+            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.POINT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();

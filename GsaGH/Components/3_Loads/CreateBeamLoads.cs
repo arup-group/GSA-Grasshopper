@@ -4,7 +4,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -320,7 +319,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -330,23 +329,23 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
 
         case "XX":
-          direc = Direction.XX;
+          direc = GsaAPI.Direction.XX;
           break;
 
         case "YY":
-          direc = Direction.YY;
+          direc = GsaAPI.Direction.YY;
           break;
 
         case "ZZ":
-          direc = Direction.ZZ;
+          direc = GsaAPI.Direction.ZZ;
           break;
       }
 
@@ -365,7 +364,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            beamLoad.BeamLoad.Type = BeamLoadType.POINT;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.POINT;
             double pos = 0;
             if (da.GetData(7, ref pos)) {
               pos *= -1;
@@ -379,7 +378,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            beamLoad.BeamLoad.Type = BeamLoadType.UNIFORM;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.UNIFORM;
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
           }
 
@@ -387,7 +386,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Linear:
           if (_mode == FoldMode.Linear) {
-            beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.LINEAR;
             var load2 = (ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit);
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
@@ -397,7 +396,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Patch:
           if (_mode == FoldMode.Patch) {
-            beamLoad.BeamLoad.Type = BeamLoadType.PATCH;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.PATCH;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;
@@ -419,7 +418,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Trilinear:
           if (_mode == FoldMode.Trilinear) {
-            beamLoad.BeamLoad.Type = BeamLoadType.TRILINEAR;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.TRILINEAR;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;
