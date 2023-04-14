@@ -137,8 +137,11 @@ namespace GsaGH.Helpers.Export {
             Import.Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key, LengthUnit.Meter)))
        .ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();
-      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds,
-        mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter,
+
+      List<GsaList> lists = Import.Lists.GetLists(appendModel);
+
+      mainModel.Model = AssembleModel.Assemble(mainModel, lists, nodes, elem1ds, elem2ds, elem3ds,
+        mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter,
         tolerance, false, owner);
       return mainModel;
     }

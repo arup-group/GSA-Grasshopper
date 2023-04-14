@@ -184,7 +184,7 @@ namespace GsaGH.Helpers.GH {
         Type = MemberType.GENERIC_2D,
       };
 
-      Model model = AssembleModel.Assemble(null, nodes, elem1ds, null, null, mem1ds,
+      Model model = AssembleModel.Assemble(null, null, nodes, elem1ds, null, null, mem1ds,
         new List<GsaMember2d> {
           mem,
         }, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
