@@ -162,15 +162,16 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No",
-        "Filter results by list." + Environment.NewLine + "Node list should take the form:"
-        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
+      pManager.AddGenericParameter("Node filter list", "No",
+        "Filter results by list (by default 'all')" + Environment.NewLine
+        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
+        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
+        GH_ParamAccess.item);
+      pManager[1].Optional = true;
       pManager.AddNumberParameter("Scalar", "x:X",
         "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
         GH_ParamAccess.item);
-      pManager[1].Optional = true;
       pManager[2].Optional = true;
     }
 
@@ -221,15 +222,22 @@ namespace GsaGH.Components {
         _selectedDisplayValue.ToString());
     }
 
-    private static string GetNodeFilters(IGH_DataAccess dataAccess) {
-      string nodeList = string.Empty;
-      var ghNoList = new GH_String();
-      if (dataAccess.GetData(1, ref ghNoList)) {
-        nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both) ?
-          tempNodeList : string.Empty;
+    private string GetNodeFilters(IGH_DataAccess dataAccess) {
+      string nodeList = "All";
+      var ghType = new GH_ObjectWrapper();
+      if (dataAccess.GetData(1, ref ghType)) {
+        if (ghType.Value is GsaListGoo listGoo) {
+          if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
+            this.AddRuntimeWarning(
+            "List must be of type Node to apply to node filter");
+          }
+          nodeList = "\"" + listGoo.Value.Name + "\"";
+        } else {
+          GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
+        }
       }
 
-      if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList)) {
+      if (nodeList.ToLower() == "all" || nodeList == "") {
         nodeList = "All";
       }
 
