@@ -113,6 +113,10 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertNodeLoad(loads, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle,
         ref apiNodes, modelUnit);
 
+      // Convert GsaGH Node lists to API Objects
+      var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
+      Lists.ConvertNodeList(lists, ref apiLists, ref apiNodes, modelUnit);
+
       // Set API Nodes, Elements and Members in model
       ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.ReadOnlyDictionary;
       gsa.SetNodes(apiNodeDict);
@@ -205,11 +209,14 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      // Convert GsaGH Lists to API Objects
-      var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
-      Lists.ConvertList(lists, ref apiLists, ref apiMaterials, ref apiSections, ref apiProp2ds, ref apiProp3ds, ref apiNodes, ref apiElements, ref apiMembers, modelUnit);
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship 
+        = ElementListFromReference.GetMemberElementRelationship(gsa);
 
-      // Convert GsaGH Loads to API objects
+      // Convert rest of GsaGH Lists to API Objects (nodes done prior to collapse coinciding nodes)
+      Lists.ConvertList(lists, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds, 
+        apiElements, apiMembers, memberElementRelationship, owner);
+
+      // Convert rest of GsaGH Loads to API objects (nodes done prior to collapse coinciding nodes)
       var gravityLoads = new List<GravityLoad>();
       var beamLoads = new List<BeamLoad>();
       var faceLoads = new List<FaceLoad>();
@@ -226,15 +233,14 @@ namespace GsaGH.Helpers.Export {
       var gpGuid = new Dictionary<Guid, int>();
       var gsGuid = new Dictionary<Guid, int>();
 
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship = null;
       Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes,
-        ref apiGridSurfaces, ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa,
-        apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
+        ref apiGridSurfaces, ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, 
+        gsa, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
       Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads,
         ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-        ref gpGuid, ref gsGuid, modelUnit, ref memberElementRelationship, gsa, apiSections,
-        apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+        ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, gsa, apiMaterials, 
+        apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
       // Add API Loads in model
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
@@ -248,6 +254,9 @@ namespace GsaGH.Helpers.Export {
       gsa.SetGridPlanes(new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes));
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
 
+      // Set API list in model
+      gsa.SetLists(apiLists.ReadOnlyDictionary);
+
       // Set API Sections and Materials in model
       gsa.SetSections(apiSections.ReadOnlyDictionary);
       gsa.SetSectionModifiers(apiSectionModifiers.ReadOnlyDictionary);
@@ -259,9 +268,6 @@ namespace GsaGH.Helpers.Export {
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
         }
       }
-
-      // Set API list in model
-      gsa.SetLists(apiLists.ReadOnlyDictionary);
 
       // Set Analysis Tasks in model
       if (analysisTasks != null) {

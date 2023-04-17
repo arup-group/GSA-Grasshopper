@@ -137,9 +137,18 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = "All";
-      var ghType = new GH_String();
+      var ghType = new GH_ObjectWrapper();
+      string elemList = "all";
       if (da.GetData(1, ref ghType)) {
-        GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
+        if (ghType.Value is GsaListGoo listGoo) {
+          if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
+            this.AddRuntimeWarning(
+            "List must be of type Element to apply to element filter");
+          }
+          elemList = "\"" + listGoo.Value.Name + "\"";
+        } else {
+          GH_Convert.ToString(ghType.Value, out elemList, GH_Conversion.Both);
+        }
       }
 
       if (elementlist.ToLower() == "all" || elementlist == "") {

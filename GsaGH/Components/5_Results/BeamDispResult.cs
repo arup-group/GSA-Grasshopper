@@ -19,6 +19,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using static System.Net.WebRequestMethods;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -69,13 +70,13 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list", "El",
-        "Filter results by list." + Environment.NewLine + "Element list should take the form:"
+      pManager.AddGenericParameter("Element filter list", "El",
+        "Filter results by list (by default 'all')" + Environment.NewLine + "Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
     }
@@ -110,9 +111,18 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = "All";
-      var ghType = new GH_String();
+      var ghType = new GH_ObjectWrapper();
+      string elemList = "all";
       if (da.GetData(1, ref ghType)) {
-        GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
+        if (ghType.Value is GsaListGoo listGoo) {
+          if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
+            this.AddRuntimeWarning(
+            "List must be of type Element to apply to element filter");
+          }
+          elemList = "\"" + listGoo.Value.Name + "\"";
+        } else {
+          GH_Convert.ToString(ghType.Value, out elemList, GH_Conversion.Both);
+        }
       }
 
       if (elementlist.ToLower() == "all" || elementlist == "") {

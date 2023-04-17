@@ -77,7 +77,7 @@ namespace GsaGH.Parameters {
     internal EntityList GetApiList() {
       return new EntityList {
         Name = Name,
-        Definition = Definition,
+        Definition = Definition.Trim(),
         Type = GetAPIEntityType(EntityType)
       };
     }
@@ -101,15 +101,32 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Element:
+          if (_properties != (null, null, null, null)) {
+            dup._properties = (new List<GsaMaterialGoo>(_properties.materials.ToList()),
+              new List<GsaSectionGoo>(_properties.sections.ToList()),
+              new List<GsaProp2dGoo>(_properties.prop2ds.ToList()),
+              new List<GsaProp3dGoo>(_properties.prop3ds.ToList()));
+          }
           if (_elements != (null, null, null)) {
             dup._elements = (new ConcurrentBag<GsaElement1dGoo>(_elements.e1d.ToList()),
               new ConcurrentBag<GsaElement2dGoo>(_elements.e2d.ToList()),
               new ConcurrentBag<GsaElement3dGoo>(_elements.e3d.ToList()));
           }
+          if (_members != (null, null, null)) {
+            dup._members = (new ConcurrentBag<GsaMember1dGoo>(_members.m1d.ToList()),
+              new ConcurrentBag<GsaMember2dGoo>(_members.m2d.ToList()),
+              new ConcurrentBag<GsaMember3dGoo>(_members.m3d.ToList()));
+          }
 
           break;
 
         case EntityType.Member:
+          if (_properties != (null, null, null, null)) {
+            dup._properties = (new List<GsaMaterialGoo>(_properties.materials.ToList()),
+              new List<GsaSectionGoo>(_properties.sections.ToList()),
+              new List<GsaProp2dGoo>(_properties.prop2ds.ToList()),
+              new List<GsaProp3dGoo>(_properties.prop3ds.ToList()));
+          }
           if (_members != (null, null, null)) {
             dup._members = (new ConcurrentBag<GsaMember1dGoo>(_members.m1d.ToList()),
               new ConcurrentBag<GsaMember2dGoo>(_members.m2d.ToList()),
@@ -131,13 +148,17 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string s = Id > 0 ? ("ID:" + Id + " ") : string.Empty;
-      s += Name + " ";
+      if (Name != null) {
+        s += Name + " ";
+      } else {
+        s += EntityType.ToString() + " List ";
+      }
       switch (EntityType) {
         case EntityType.Node:
           if (_nodes != null && _nodes.Count != 0) {
             s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s (" + Definition + ")";
+            s += EntityType.ToString() + "s (" + Definition.Trim() + ")";
           }
 
           break;
@@ -149,7 +170,7 @@ namespace GsaGH.Parameters {
               + (_elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count) + " "
               + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s (" + Definition + ")";
+            s += EntityType.ToString() + "s (" + Definition.Trim() + ")";
           }
 
           break;
@@ -161,14 +182,14 @@ namespace GsaGH.Parameters {
               + (_members.m1d.Count + _members.m2d.Count + _members.m3d.Count) + " "
               + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s (" + Definition + ")";
+            s += EntityType.ToString() + "s (" + Definition.Trim() + ")";
           }
 
           break;
 
         case EntityType.Case:
         case EntityType.Undefined:
-          s += EntityType.ToString() + " (" + Definition + ")";
+          s += EntityType.ToString() + " (" + Definition.Trim() + ")";
           break;
       }
 
@@ -286,6 +307,9 @@ namespace GsaGH.Parameters {
           _elements.e1d = new ConcurrentBag<GsaElement1dGoo>();
           _elements.e2d = new ConcurrentBag<GsaElement2dGoo>();
           _elements.e3d = new ConcurrentBag<GsaElement3dGoo>();
+          _members.m1d = new ConcurrentBag<GsaMember1dGoo>();
+          _members.m2d = new ConcurrentBag<GsaMember2dGoo>();
+          _members.m3d = new ConcurrentBag<GsaMember3dGoo>();
           foreach (object elem in gooObjects) {
             switch (elem) {
               case GsaMaterialGoo materialGoo:
@@ -314,6 +338,18 @@ namespace GsaGH.Parameters {
 
               case GsaElement3dGoo elem3dGoo:
                 _elements.e3d.Add(elem3dGoo);
+                break;
+
+              case GsaMember1dGoo member1dGoo:
+                _members.m1d.Add(member1dGoo);
+                break;
+
+              case GsaMember2dGoo member2dGoo:
+                _members.m2d.Add(member2dGoo);
+                break;
+
+              case GsaMember3dGoo member3dGoo:
+                _members.m3d.Add(member3dGoo);
                 break;
             }
           }

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -31,11 +32,12 @@ namespace GsaGH.Helpers.Export {
       List<GsaGridPlaneSurface> gridPlaneSurfaces, ref Dictionary<int, Axis> existingAxes,
       ref Dictionary<int, GridPlane> existingGridPlanes,
       ref Dictionary<int, GridSurface> existingGridSurfaces, ref Dictionary<Guid, int> gpGuid,
-      ref Dictionary<Guid, int> gsGuid, LengthUnit unit,
-      ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
-      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
-      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
-      GsaGuidDictionary<Member> apiMembers) {
+      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit,
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
+      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
+      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
+      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GH_Component owner) {
       if (gridPlaneSurfaces == null) {
         return;
       }
@@ -62,8 +64,8 @@ namespace GsaGH.Helpers.Export {
         }
 
         SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid,
-          existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections,
-          apiProp2ds, apiProp3ds, apiElements, apiMembers);
+          ref apiLists, existingGridPlanes, existingAxes, unit, memberElementRelationship, model, apiMaterials,
+          apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
       }
     }
 
@@ -312,12 +314,12 @@ namespace GsaGH.Helpers.Export {
     internal static int SetGridSurface(
       ref GsaGridPlaneSurface gridplanesurface,
       ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter,
-      ref Dictionary<Guid, int> gsGuid, Dictionary<int, GridPlane> existingGridPlanes,
-      Dictionary<int, Axis> existingAxes, LengthUnit modelUnit,
-      ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
-      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
-      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
-      GsaGuidDictionary<Member> apiMembers) {
+      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists, 
+      Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes,
+      LengthUnit modelUnit, ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship,
+      Model model, GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
+      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
+      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers, GH_Component owner) {
       if (existingGridSurfaces.Count > 0) {
         gridsurfaceidcounter = Math.Max(existingGridSurfaces.Keys.Max() + 1, gridsurfaceidcounter);
       }
@@ -340,13 +342,22 @@ namespace GsaGH.Helpers.Export {
       gridplanesurface.GridSurface.Tolerance = tolerance.Meters;
 
       if (model != null && gridplanesurface._referenceType != ReferenceType.None) {
-        if (memberElementRelationship == null) {
-          memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+        if (gridplanesurface._referenceType == ReferenceType.List) {
+          if (gridplanesurface._refList == null 
+            || gridplanesurface._refList.EntityType != Parameters.EntityType.Element
+            || gridplanesurface._refList.EntityType != Parameters.EntityType.Member) {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+              "Invalid List type for GridSurface " + gridplanesurface.ToString()
+              +Environment.NewLine + "Element list has not been set");
+          }
+          gridplanesurface.GridSurface.Elements +=
+            Lists.GetElementList(gridplanesurface._refList, ref apiLists, apiMaterials, apiSections,
+            apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
+        } else {
+          gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(
+            gridplanesurface, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements,
+            apiMembers, memberElementRelationship);
         }
-
-        gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(
-          gridplanesurface, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers,
-          memberElementRelationship);
       }
 
       if (gridplanesurface.GridSurfaceId > 0) {

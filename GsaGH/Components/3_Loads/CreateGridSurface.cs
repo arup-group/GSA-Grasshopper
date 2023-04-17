@@ -146,7 +146,7 @@ namespace GsaGH.Components {
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
         GH_ParamAccess.item, 0);
       pManager.AddGenericParameter("Element list", "El",
-        "Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
+        "Lists, Custom Materials, Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
         + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
@@ -249,25 +249,35 @@ namespace GsaGH.Components {
           }
           case GsaMember1dGoo value: {
             gps._refObjectGuid = value.Value.Guid;
-            gps._referenceType = ReferenceType.Member;
+            gps._referenceType = ReferenceType.MemberChildElements;
             this.AddRuntimeRemark(
               "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             break;
           }
           case GsaMember2dGoo value: {
             gps._refObjectGuid = value.Value.Guid;
-            gps._referenceType = ReferenceType.Member;
+            gps._referenceType = ReferenceType.MemberChildElements;
             this.AddRuntimeRemark(
               "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             break;
           }
           case GsaMember3dGoo value: {
             gps._refObjectGuid = value.Value.Guid;
-            gps._referenceType = ReferenceType.Member;
+            gps._referenceType = ReferenceType.MemberChildElements;
             this.AddRuntimeRemark(
               "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             break;
           }
+          case GsaMaterialGoo value: {
+              if (value.Value.GradeProperty != 0) {
+                this.AddRuntimeWarning(
+                "Reference Material must be a Custom Material");
+                return;
+              }
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.Material;
+              break;
+            }
           case GsaSectionGoo value: {
             gps._refObjectGuid = value.Value.Guid;
             gps._referenceType = ReferenceType.Section;

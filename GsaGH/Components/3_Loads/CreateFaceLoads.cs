@@ -202,7 +202,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "G2D",
-        "Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
+        "List, Custom Material, 2D Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
@@ -272,7 +272,7 @@ namespace GsaGH.Components {
           }
           case GsaMember2dGoo value: {
             faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.Member;
+            faceLoad._referenceType = ReferenceType.MemberChildElements;
             if (_mode != FoldMode.Uniform) {
               this.AddRuntimeWarning(
                 "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
@@ -283,6 +283,16 @@ namespace GsaGH.Components {
 
             break;
           }
+          case GsaMaterialGoo value: {
+              if (value.Value.GradeProperty != 0) {
+                this.AddRuntimeWarning(
+                "Reference Material must be a Custom Material");
+                return;
+              }
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Material;
+              break;
+            }
           case GsaProp2dGoo value: {
             faceLoad._refObjectGuid = value.Value.Guid;
             faceLoad._referenceType = ReferenceType.Prop2d;

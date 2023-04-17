@@ -193,12 +193,12 @@ namespace GsaGH.Helpers.GH {
       var elementLocalAxesDict
         = elementDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict, nodeDict,
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) = Elements.GetElements(elementDict, nodeDict,
         model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(),
         model.SectionModifiers(), elementLocalAxesDict, model.Axes(), unit, false);
 
-      var elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();
+      var elem2dgoo = e2d.OrderBy(item => item.Value.Ids).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;
 
       Surface flat = flattened[0].Surfaces[0];

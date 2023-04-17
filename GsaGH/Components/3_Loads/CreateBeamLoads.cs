@@ -200,7 +200,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "G1D",
-        "Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string."
+        "List, Custom Material, Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
@@ -275,7 +275,7 @@ namespace GsaGH.Components {
           }
           case GsaMember1dGoo value: {
             beamLoad._refObjectGuid = value.Value.Guid;
-            beamLoad._referenceType = ReferenceType.Member;
+            beamLoad._referenceType = ReferenceType.MemberChildElements;
             if (_mode != FoldMode.Uniform) {
               this.AddRuntimeWarning(
                 "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
@@ -286,6 +286,16 @@ namespace GsaGH.Components {
 
             break;
           }
+          case GsaMaterialGoo value: {
+              if (value.Value.GradeProperty != 0) {
+                this.AddRuntimeWarning(
+                "Reference Material must be a Custom Material");
+                return;
+              }
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Material;
+              break;
+            }
           case GsaSectionGoo value: {
             beamLoad._refObjectGuid = value.Value.Guid;
             beamLoad._referenceType = ReferenceType.Section;

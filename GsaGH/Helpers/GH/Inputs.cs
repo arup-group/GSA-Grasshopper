@@ -68,11 +68,24 @@ namespace GsaGH.Helpers.GH {
                   list.Add(element3dGoo);
                   break;
 
+                case GsaMember1dGoo member1dGoo:
+                  list.Add(member1dGoo);
+                  break;
+
+                case GsaMember2dGoo member2dGoo:
+                  list.Add(member2dGoo);
+                  break;
+
+                case GsaMember3dGoo member3dGoo:
+                  list.Add(member3dGoo);
+                  break;
+
                 default:
                   owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
                       + " input (index: " + i + ") input parameter of type "
                       + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
-                      + Environment.NewLine + " to Element or Property and has been ignored");
+                      + Environment.NewLine 
+                      + " to Element, Member child, Material, or Property and has been ignored");
                   continue;
               }
               break;
