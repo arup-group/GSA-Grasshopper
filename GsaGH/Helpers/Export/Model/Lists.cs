@@ -19,7 +19,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (list.EntityType == Parameters.EntityType.Member) {
-        list = list.Duplicate();
+        AddList(list, ref apiLists);
+        list._name = "Child Elements of " + list.Name;
         list.EntityType = Parameters.EntityType.Element;
       }
 
