@@ -115,17 +115,20 @@ namespace GsaGH.Components {
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
+          if (listGoo.Value.EntityType != EntityType.Element
+            && listGoo.Value.EntityType != EntityType.Member) {
             this.AddRuntimeWarning(
             "List must be of type Element to apply to element filter");
           }
-          elementlist = "\"" + listGoo.Value.Name + "\"";
+          elementlist = listGoo.Value.EntityType == EntityType.Member
+            ? "\"" + "Child Elements of " + listGoo.Value.Name + "\""
+            : "\"" + listGoo.Value.Name + "\"";
         } else {
           GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
         }
       }
 
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (string.IsNullOrEmpty(elementlist) || elementlist.ToLower() == "all") {
         elementlist = "All";
       }
 
@@ -183,51 +186,51 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                    vals[perm - 1].XyzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) {
+                      continue;
+                    }
+
+                    var path = new GH_Path(result.CaseId,
+                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                    outTransX.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
+                      path); // use ToUnit to capture changes in dropdown
+                    outTransY.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
+                    outTransZ.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
+                    outTransXyz.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
                   }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outTransX.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
-                    path); // use ToUnit to capture changes in dropdown
-                  outTransY.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
-                  outTransZ.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-                  outTransXyz.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
+                  break;
                 }
-
-                break;
-              }
               case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                    vals[perm - 1].XxyyzzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) {
+                      continue;
+                    }
+
+                    var path = new GH_Path(result.CaseId,
+                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                    outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
+                      path); // always use [rad] units
+                    outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
+                    outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
+                    outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
                   }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
-                    path); // always use [rad] units
-                  outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
-                  outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
-                  outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
+                  break;
                 }
-
-                break;
-              }
             }
           });
         }

@@ -174,17 +174,20 @@ namespace GsaGH.Components {
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
+          if (listGoo.Value.EntityType != EntityType.Element
+            && listGoo.Value.EntityType != EntityType.Member) {
             this.AddRuntimeWarning(
             "List must be of type Element to apply to element filter");
           }
-          elementlist = "\"" + listGoo.Value.Name + "\"";
+          elementlist = listGoo.Value.EntityType == EntityType.Member
+            ? "\"" + "Child Elements of " + listGoo.Value.Name + "\""
+            : "\"" + listGoo.Value.Name + "\"";
         } else {
           GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
         }
       }
 
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (string.IsNullOrEmpty(elementlist) || elementlist.ToLower() == "all") {
         elementlist = "All";
       }
 

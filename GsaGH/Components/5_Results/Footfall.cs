@@ -85,7 +85,7 @@ namespace GsaGH.Components {
         }
       }
 
-      if (nodeList.ToLower() == "all" || nodeList == "") {
+      if (string.IsNullOrEmpty(nodeList) || nodeList.ToLower() == "all") {
         nodeList = "All";
       }
 
