@@ -12,13 +12,13 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Material and ouput the information
   /// </summary>
-  public class EditMaterial : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("33d14120-7355-414b-96d9-b85d64290d49");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+  public class EditMaterial_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("865f73c7-a057-481a-834b-c7e12873dd39");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMaterial;
 
-    public EditMaterial() : base("Edit Material", "MaterialEdit", "Modify GSA Material",
+    public EditMaterial_OBSOLETE() : base("Edit Material", "MaterialEdit", "Modify GSA Material",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -29,7 +29,7 @@ namespace GsaGH.Components {
         GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new "
         + GsaMaterialGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An",
-        "Set Material Analysis Property Number (0 -> 'from Grade')", GH_ParamAccess.item);
+        "Set Material Analysis Property Number (0 -> 'from Grade'", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT",
         "Set Material Type" + Environment.NewLine + "Input either text string or integer:"
         + Environment.NewLine + "Generic : 0" + Environment.NewLine + "Steel : 1"

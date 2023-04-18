@@ -19,7 +19,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new Material
   /// </summary>
-  public class CreateCustomMaterial : GH_OasysDropDownComponent {
+  public class CreateCustomMaterial_OBSOLETE : GH_OasysDropDownComponent {
     private enum FoldMode {
       Generic,
       Steel,
@@ -31,8 +31,8 @@ namespace GsaGH.Components {
       Fabric,
     }
 
-    public override Guid ComponentGuid => new Guid("f2906b65-208f-4a46-8e1f-06d6270cc90c");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CustomMaterial;
     private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
@@ -40,10 +40,8 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
 
-    public CreateCustomMaterial() : base("Custom Material", "Material",
-                                         "Create a Custom GSA Analysis Material",
-                                         CategoryName.Name(),
-                                         SubCategoryName.Cat1()) {
+    public CreateCustomMaterial_OBSOLETE() : base("Custom Material", "Material",
+      "Create a Custom GSA Analysis Material", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -70,6 +68,20 @@ namespace GsaGH.Components {
       }
 
       base.UpdateUI();
+    }
+
+    public override void VariableParameterMaintenance() {
+      string stressUnitAbbreviation = Pressure.GetAbbreviation(_stressUnit);
+      string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
+      string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
+
+      int i = 1;
+      Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
+      i++;
+      i++;
+      Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
+      i++;
+      Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -105,8 +117,6 @@ namespace GsaGH.Components {
 
       pManager.AddIntegerParameter("Analysis Property Number", "ID",
         "Analysis Property Number (do not use 0 -> 'from Grade')", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Name", "Na", "Material Name of Custom Material",
-        GH_ParamAccess.item);
       pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E",
         "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
       pManager.AddNumberParameter("Poisson's Ratio", "ν",
@@ -116,8 +126,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]", "α",
         "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
       pManager[0].Optional = true;
-      pManager[1].Optional = true;
-      pManager[5].Optional = true;
+      pManager[4].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -142,7 +151,7 @@ namespace GsaGH.Components {
       }
 
       double poisson = 0.3;
-      da.GetData(3, ref poisson);
+      da.GetData(2, ref poisson);
 
       CoefficientOfThermalExpansionUnit thermalExpansionUnit
         = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
@@ -157,10 +166,10 @@ namespace GsaGH.Components {
       }
 
       material.AnalysisMaterial = new AnalysisMaterial() {
-        ElasticModulus = Input.UnitNumber(this, da, 2, _stressUnit).As(PressureUnit.Pascal),
+        ElasticModulus = Input.UnitNumber(this, da, 1, _stressUnit).As(PressureUnit.Pascal),
         PoissonsRatio = poisson,
-        Density = Input.UnitNumber(this, da, 4, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
-        CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 5, thermalExpansionUnit, true)
+        Density = Input.UnitNumber(this, da, 3, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
+        CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 4, thermalExpansionUnit, true)
          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
       };
 
@@ -198,11 +207,6 @@ namespace GsaGH.Components {
         case FoldMode.Fabric:
           material.MaterialType = GsaMaterial.MatType.Fabric;
           break;
-      }
-
-      string name = "";
-      if (da.GetData(1, ref name)) {
-        material.Name = name;
       }
 
       da.SetData(0, new GsaMaterialGoo(material));

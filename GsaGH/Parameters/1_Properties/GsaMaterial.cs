@@ -41,8 +41,8 @@ namespace GsaGH.Parameters {
           return;
         }
 
-        _guid = Guid.NewGuid();
         _grade = 0;
+        _guid = Guid.NewGuid();
       }
     }
     public int GradeProperty {
@@ -58,6 +58,13 @@ namespace GsaGH.Parameters {
     }
     public Guid Guid => _guid;
     public MatType MaterialType { get; set; } = MatType.Undef;
+    public string Name {
+      get => _analysisMaterial.Name;
+      set {
+        _analysisMaterial.Name = value;
+        _guid = Guid.NewGuid();
+      }
+    }
     internal AnalysisMaterial AnalysisMaterial {
       get => _analysisMaterial;
       set {
@@ -152,6 +159,7 @@ namespace GsaGH.Parameters {
           Density = AnalysisMaterial.Density,
           ElasticModulus = AnalysisMaterial.ElasticModulus,
           PoissonsRatio = AnalysisMaterial.PoissonsRatio,
+          Name = Name
         };
       }
 
@@ -160,13 +168,20 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
+      string name = "";
+      if (string.IsNullOrEmpty(Name)) {
+        string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
+        name = "Custom " + type.Trim() + " Material";
+      } else {
+        name = Name;
+      }
+
       if (_analProp != 0) {
-        return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
+        return "ID:" + _analProp + " " + name;
       }
 
       string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
-      return (id + type).Trim();
+      return (id + name).Trim();
     }
 
     private static MatType GetType(MaterialType materialType) {
