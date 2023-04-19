@@ -6,6 +6,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
