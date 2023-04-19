@@ -72,6 +72,20 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
+    public override void VariableParameterMaintenance() {
+      string stressUnitAbbreviation = Pressure.GetAbbreviation(_stressUnit);
+      string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
+      string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
+
+      int i = 1;
+      Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
+      i++;
+      i++;
+      Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
+      i++;
+      Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
+    }
+
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Material Type",

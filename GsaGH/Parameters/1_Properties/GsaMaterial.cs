@@ -59,7 +59,12 @@ namespace GsaGH.Parameters {
     public Guid Guid => _guid;
     public MatType MaterialType { get; set; } = MatType.Undef;
     public string Name {
-      get => _analysisMaterial.Name;
+      get {
+        if (_analysisMaterial != null) {
+          return _analysisMaterial.Name;
+        }
+        return null;
+      }
       set {
         _analysisMaterial.Name = value;
         _guid = Guid.NewGuid();
@@ -170,8 +175,11 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string name = "";
       if (string.IsNullOrEmpty(Name)) {
+        if (_analProp != 0) {
+          name += "Custom ";
+        }
         string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
-        name = "Custom " + type.Trim() + " Material";
+        name += type.Trim() + " Material";
       } else {
         name = Name;
       }
