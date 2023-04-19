@@ -216,7 +216,7 @@ namespace GsaGH.Components {
 
       string name = "";
       if (da.GetData(1, ref name)) {
-        material.Name = name;
+        material.AnalysisMaterial.Name = name;
       }
 
       da.SetData(0, new GsaMaterialGoo(material));

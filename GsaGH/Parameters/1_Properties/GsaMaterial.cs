@@ -58,18 +58,6 @@ namespace GsaGH.Parameters {
     }
     public Guid Guid => _guid;
     public MatType MaterialType { get; set; } = MatType.Undef;
-    public string Name {
-      get {
-        if (_analysisMaterial != null) {
-          return _analysisMaterial.Name;
-        }
-        return null;
-      }
-      set {
-        _analysisMaterial.Name = value;
-        _guid = Guid.NewGuid();
-      }
-    }
     internal AnalysisMaterial AnalysisMaterial {
       get => _analysisMaterial;
       set {
@@ -158,13 +146,13 @@ namespace GsaGH.Parameters {
         _grade = _grade,
         _analProp = _analProp,
       };
-      if (_analProp != 0 && _analysisMaterial != null) {
+      if (_analysisMaterial != null) {
         dup.AnalysisMaterial = new AnalysisMaterial() {
           CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
           Density = AnalysisMaterial.Density,
           ElasticModulus = AnalysisMaterial.ElasticModulus,
           PoissonsRatio = AnalysisMaterial.PoissonsRatio,
-          Name = Name
+          Name = AnalysisMaterial.Name
         };
       }
 
@@ -174,14 +162,14 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string name = "";
-      if (string.IsNullOrEmpty(Name)) {
+      if (AnalysisMaterial == null || string.IsNullOrEmpty(AnalysisMaterial.Name)) {
         if (_analProp != 0) {
           name += "Custom ";
         }
         string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
         name += type.Trim() + " Material";
       } else {
-        name = Name;
+        name = AnalysisMaterial.Name;
       }
 
       if (_analProp != 0) {
@@ -248,6 +236,7 @@ namespace GsaGH.Parameters {
         Density = analysisMaterial.Density,
         ElasticModulus = analysisMaterial.ElasticModulus,
         PoissonsRatio = analysisMaterial.PoissonsRatio,
+        Name = analysisMaterial.Name
       };
     }
   }

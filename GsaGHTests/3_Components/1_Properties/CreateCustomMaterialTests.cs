@@ -21,6 +21,7 @@ namespace GsaGHTests.Components.Properties {
       comp.SetSelected(3, 1); // set temperature unit to "K"
 
       ComponentTestHelper.SetInput(comp, 1, 0);
+      ComponentTestHelper.SetInput(comp, "name", 1);
       ComponentTestHelper.SetInput(comp, 1, 2);
       ComponentTestHelper.SetInput(comp, 2, 3);
       ComponentTestHelper.SetInput(comp, 3, 4);
@@ -36,6 +37,7 @@ namespace GsaGHTests.Components.Properties {
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(1, output.Value.AnalysisProperty);
       Assert.Equal(0, output.Value.GradeProperty);
+      Assert.Equal("name", output.Value.AnalysisMaterial.Name);
       Assert.Equal(MatType.Timber, output.Value.MaterialType);
       Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal),
         output.Value.AnalysisMaterial.ElasticModulus);
