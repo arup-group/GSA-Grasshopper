@@ -1,15 +1,15 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  branches:
+    include:
+    - release/*
 
 variables:
   - group: s3PushInstallers
   - group: pipeline-tokens
   - name: configuration
     value: Release
-  - name: latest_released_gsa_version
-    value: GSA/latest/Arup_GSA_x64_10.1.65.64
 
 pool: 'rhino-compute'
 
@@ -18,7 +18,7 @@ steps:
   displayName: 'Delete orphan .ghlink files'
 
 - powershell: |
-    aws s3 cp s3://oasys-installer-store/GSA/latest . --exclude "*" --include *Arup*.msi --recursive
+    aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
   displayName: 'Download GSA'
   failOnStderr: true
@@ -100,90 +100,6 @@ steps:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
-
-- task: PowerShell@2
-  displayName: Check for existing tags
-  inputs:
-    targetType: 'inline'
-    script: |
-        $versionInfo = $(Get-Item .\GsaGH\bin\x64\Release\net48\GsaGH.dll).VersionInfo
-        echo $versionInfo
-        $fullVersion = [array]${versionInfo}.FileVersion.split('.')
-        $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
-        $majorVersion = [string]$fullVersion[0]
-        $minorVersion = [string]$fullVersion[1]
-        $spVersion = [string]$fullVersion[2]
-        $buildNumber = [string]$fullVersion[3]
-
-        $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
-        $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
-
-        $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion + "-beta"
-        $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
-        $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
-        $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
-        
-        Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
-        git rev-parse $dotSeparatedTag
-        if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}
-        if($lastExitCode -eq 0){
-          $tagExists = 'true'
-          echo $tagExists
-        }
-    errorActionPreference: 'continue'
-    workingDirectory: '$(System.DefaultWorkingDirectory)'
-    ignoreLASTEXITCODE: true
-
-- powershell: |
-    cd GsaGH\bin\x64\Release
-    curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
-    .\yak version
-    cd net48
-    ..\yak spec
-    Add-Content manifest.yml 'icon: GsaIcon.png'
-    Add-Content manifest.yml 'keywords:'
-    Add-Content manifest.yml '- Oasys'
-    Add-Content manifest.yml '- GSA'
-    Add-Content manifest.yml '- GsaGH'
-    Add-Content manifest.yml '- FE'
-    Add-Content manifest.yml '- FEA'
-    Add-Content manifest.yml '- Structural'
-    Add-Content manifest.yml '- Structural Analysis'
-    ..\yak build --platform win
-    $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
-    $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
-    Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
-    ..\yak build --platform win
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-  displayName: Package yak
-
-- powershell: |
-    cd GsaGH
-    & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Debug
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-  displayName: Package NuGet
-
-- task: GitHubRelease@1
-  inputs:
-    gitHubConnection: 'github.com_MJCramp'
-    repositoryName: 'arup-group/GSA-Grasshopper'
-    action: 'edit'
-    target: '$(Build.SourceVersion)'
-    tag: '$(dotSeparatedTag)'
-    title: 'GsaGH version $(dotSeparatedTag)'
-    releaseNotesSource: 'inline'
-    releaseNotesInline: |
-      Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
-    assets: |
-      $(System.DefaultWorkingDirectory)/**/*.yak
-      $(System.DefaultWorkingDirectory)/**/*.nupkg
-      $(System.DefaultWorkingDirectory)/**/*.snupkg
-    assetUploadMode: 'replace'
-    isDraft: true
-    isPreRelease: true
-    addChangeLog: false
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-  displayName: 'Publishing assets to Github'
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
