@@ -20,7 +20,7 @@ steps:
 - powershell: |
     aws s3 cp s3://oasys-installer-store/GSA/latest . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
-  displayName: 'Download GSA'
+  displayName: 'Download GSA latest'
   failOnStderr: true
 
 - powershell: |
