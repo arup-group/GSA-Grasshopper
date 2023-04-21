@@ -113,6 +113,10 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertNodeLoad(loads, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle,
         ref apiNodes, modelUnit);
 
+      // Convert GsaGH Node lists to API Objects
+      var apiNodeLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
+      Lists.ConvertNodeList(lists, ref apiNodeLists, ref apiNodes, modelUnit);
+
       // Set API Nodes, Elements and Members in model
       ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.ReadOnlyDictionary;
       gsa.SetNodes(apiNodeDict);
@@ -120,10 +124,6 @@ namespace GsaGH.Helpers.Export {
       gsa.SetElements(apiElemDict);
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.ReadOnlyDictionary;
       gsa.SetMembers(apiMemDict);
-
-      // Convert GsaGH Node lists to API Objects
-      var apiNodeLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
-      Lists.ConvertNodeList(lists, ref apiNodeLists, ref apiNodes, modelUnit);
 
       // Add API Node loads to model
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
