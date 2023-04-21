@@ -19,7 +19,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (list.EntityType == Parameters.EntityType.Member) {
-        AddList(list, ref apiLists);
+        AddList(list.Duplicate(), ref apiLists);
         list._name = "Child Elements of " + list.Name;
         list.EntityType = Parameters.EntityType.Element;
       }
@@ -93,15 +93,15 @@ namespace GsaGH.Helpers.Export {
       if (list._nodes == null || list._nodes.Count == 0) {
         AddList(list, ref apiLists);
       }
-
+      GsaList copyList = list.Duplicate();
       foreach (GsaNodeGoo node in list._nodes.Where(x => x != null && x.Value != null)) {
-        list._definition +=
+        copyList._definition +=
           " " + Nodes.AddNode(ref apiNodes, node.Value.GetApiNodeToUnit(unit)).ToString();
       }
 
-      list._definition.Trim();
+      copyList._definition.Trim();
 
-      AddList(list, ref apiLists);
+      AddList(copyList, ref apiLists);
     }
 
     private static void AddPropertiesList(ref GsaList list,

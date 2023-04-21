@@ -77,7 +77,7 @@ namespace GsaGH.Parameters {
     internal EntityList GetApiList() {
       return new EntityList {
         Name = Name,
-        Definition = Definition.Trim(),
+        Definition = Definition,
         Type = GetAPIEntityType(EntityType)
       };
     }

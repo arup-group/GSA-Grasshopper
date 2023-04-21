@@ -113,10 +113,6 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertNodeLoad(loads, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle,
         ref apiNodes, modelUnit);
 
-      // Convert GsaGH Node lists to API Objects
-      var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
-      Lists.ConvertNodeList(lists, ref apiLists, ref apiNodes, modelUnit);
-
       // Set API Nodes, Elements and Members in model
       ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.ReadOnlyDictionary;
       gsa.SetNodes(apiNodeDict);
@@ -125,17 +121,23 @@ namespace GsaGH.Helpers.Export {
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.ReadOnlyDictionary;
       gsa.SetMembers(apiMemDict);
 
+      // Convert GsaGH Node lists to API Objects
+      var apiNodeLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
+      Lists.ConvertNodeList(lists, ref apiNodeLists, ref apiNodes, modelUnit);
+
       // Add API Node loads to model
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoadsNode));
       gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoadsSettle));
+
+      // Set API list in model
+      gsa.SetLists(apiNodeLists.ReadOnlyDictionary);
 
       // Meshing / Create Elements from Members
       int initialNodeCount = apiNodeDict.Keys.Count;
       if (createElementsFromMembers && apiMembers.Count > 0) {
         gsa.CreateElementsFromMembers();
       }
-
       // Sense-checking model after Elements from Members
       if (toleranceCoincidentNodes.Value > 0) {
         gsa.CollapseCoincidentNodes(toleranceCoincidentNodes.Meters);
@@ -213,6 +215,8 @@ namespace GsaGH.Helpers.Export {
         = ElementListFromReference.GetMemberElementRelationship(gsa);
 
       // Convert rest of GsaGH Lists to API Objects (nodes done prior to collapse coinciding nodes)
+      // Convert GsaGH Node lists to API Objects
+      var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
       Lists.ConvertList(lists, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds, 
         apiElements, apiMembers, memberElementRelationship, owner);
 
