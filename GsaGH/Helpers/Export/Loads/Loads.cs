@@ -275,7 +275,8 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertNodeLoad(
       List<GsaLoad> loads, ref List<NodeLoad> nodeLoadsNode, ref List<NodeLoad> nodeLoadsDispl,
-      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
+      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes,
+      ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit) {
       if (loads == null) {
         return;
       }
@@ -283,16 +284,21 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaLoad load in loads.Where(load => load != null)
        .Where(load => load.LoadType == GsaLoad.LoadTypes.Node)) {
         ConvertNodeLoad(load, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle,
-          ref apiNodes, unit);
+          ref apiNodes, ref apiLists, unit);
       }
     }
 
     internal static void ConvertNodeLoad(
       GsaLoad load, ref List<NodeLoad> nodeLoadsNode, ref List<NodeLoad> nodeLoadsDispl,
-      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
+      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes,
+      ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit) {
       if (load.NodeLoad._refPoint != Point3d.Unset) {
         load.NodeLoad.NodeLoad.Nodes
           = Nodes.AddNode(ref apiNodes, load.NodeLoad._refPoint, unit).ToString();
+      }
+      if (load.NodeLoad._refList != null) {
+        load.NodeLoad.NodeLoad.Nodes = Lists.GetNodeList(
+          load.NodeLoad._refList, ref apiLists, ref apiNodes, unit);
       }
 
       switch (load.NodeLoad.Type) {
