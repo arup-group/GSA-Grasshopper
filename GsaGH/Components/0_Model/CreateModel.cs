@@ -44,6 +44,10 @@ namespace GsaGH.Components {
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
