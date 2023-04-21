@@ -4,8 +4,10 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.GH {
-  internal class Inputs {
+namespace GsaGH.Helpers.GH
+{
+  internal class Inputs
+  {
     internal static List<object> GetGooObjectsForLists(
       GH_Component owner, IGH_DataAccess DA, int inputid, EntityType type) {
       // Get Geometry input
@@ -28,6 +30,9 @@ namespace GsaGH.Helpers.GH {
             case EntityType.Node:
               if (gh_typ.Value is GsaNodeGoo nodeGoo) {
                 list.Add(nodeGoo);
+              } else if (gh_typ.Value is GH_Point ghPoint) {
+                var node = new GsaNode(ghPoint.Value);
+                list.Add(new GsaNodeGoo(node));
               } else {
                 owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
                   + "  input (index: " + i + ") input parameter of type "
@@ -55,7 +60,7 @@ namespace GsaGH.Helpers.GH {
                 case GsaProp3dGoo prop3dGoo:
                   list.Add(prop3dGoo);
                   break;
-                
+
                 case GsaElement1dGoo element1dGoo:
                   list.Add(element1dGoo);
                   break;
@@ -84,7 +89,7 @@ namespace GsaGH.Helpers.GH {
                   owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
                       + " input (index: " + i + ") input parameter of type "
                       + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
-                      + Environment.NewLine 
+                      + Environment.NewLine
                       + " to Element, Member child, Material, or Property and has been ignored");
                   continue;
               }
