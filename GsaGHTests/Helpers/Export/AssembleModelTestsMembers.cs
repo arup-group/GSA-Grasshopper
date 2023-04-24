@@ -8,6 +8,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.Helpers.Export {
   public partial class AssembleModelTests {

@@ -12,6 +12,7 @@ using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>

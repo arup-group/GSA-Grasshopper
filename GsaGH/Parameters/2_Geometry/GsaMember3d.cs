@@ -7,6 +7,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using Rhino.Geometry;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
