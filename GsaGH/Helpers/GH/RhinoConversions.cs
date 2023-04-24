@@ -17,6 +17,7 @@ using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Collections;
 using Elements = GsaGH.Helpers.Import.Elements;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Helpers.GH {
   /// <summary>
