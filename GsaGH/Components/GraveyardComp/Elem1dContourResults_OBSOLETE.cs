@@ -29,6 +29,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>
