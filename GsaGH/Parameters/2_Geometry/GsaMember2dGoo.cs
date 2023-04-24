@@ -10,6 +10,7 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
