@@ -653,9 +653,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Elem1dDiagram_TEMPORARY {
+        internal static System.Drawing.Bitmap Elem1dDiagram {
             get {
-                object obj = ResourceManager.GetObject("Elem1dDiagram_TEMPORARY", resourceCulture);
+                object obj = ResourceManager.GetObject("Elem1dDiagram", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
