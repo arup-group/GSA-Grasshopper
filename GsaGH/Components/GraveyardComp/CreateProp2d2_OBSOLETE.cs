@@ -22,35 +22,50 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new Prop2d
   /// </summary>
-  public class CreateProp2d : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("9c7d8fef-12f9-4165-b151-fd59521b447c");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+  public class CreateProp2d2_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProp2d;
     private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel
       = new Dictionary<Prop2dType, string> {
-        { Prop2dType.PlaneStress, "Plane Stress" },
-        { Prop2dType.Fabric, "Fabric" },
-        { Prop2dType.FlatPlate, "Flat Plate" },
-        { Prop2dType.Shell, "Shell" },
-        { Prop2dType.CurvedShell, "Curved Shell" },
-        { Prop2dType.LoadPanel, "Load Panel" },
+        {
+          Prop2dType.PlaneStress, "Plane Stress"
+        }, {
+          Prop2dType.Fabric, "Fabric"
+        }, {
+          Prop2dType.FlatPlate, "Flat Plate"
+        }, {
+          Prop2dType.Shell, "Shell"
+        }, {
+          Prop2dType.CurvedShell, "Curved Shell"
+        }, {
+          Prop2dType.LoadPanel, "Load Panel"
+        },
       };
     private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown
       = new Dictionary<SupportType, string> {
-        { SupportType.Auto, "Automatic" },
-        { SupportType.AllEdges, "All edges" },
-        { SupportType.ThreeEdges, "Three edges" },
-        { SupportType.TwoEdges, "Two edges" },
-        { SupportType.TwoAdjacentEdges, "Two adjacent edges" },
-        { SupportType.OneEdge, "One edge" },
-        { SupportType.Cantilever, "Cantilever" },
+        {
+          SupportType.Auto, "Automatic"
+        }, {
+          SupportType.AllEdges, "All edges"
+        }, {
+          SupportType.ThreeEdges, "Three edges"
+        }, {
+          SupportType.TwoEdges, "Two edges"
+        }, {
+          SupportType.TwoAdjacentEdges, "Two adjacent edges"
+        }, {
+          SupportType.OneEdge, "One edge"
+        }, {
+          SupportType.Cantilever, "Cantilever"
+        },
       };
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private Prop2dType _mode = Prop2dType.Shell;
     private int _supportTypeIndex;
 
-    public CreateProp2d() : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
+    public CreateProp2d2_OBSOLETE() : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

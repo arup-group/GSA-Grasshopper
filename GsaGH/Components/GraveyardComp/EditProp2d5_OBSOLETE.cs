@@ -24,16 +24,16 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Prop2d and ouput the information
   /// </summary>
-  public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("5e7627a2-9c3c-4ace-9a08-f9c9a7106755");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+  public class EditProp2d5_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("8cb4eacb-5f7d-49cf-a89a-87f8456fc308");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProp2d;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private int _referenceEdge;
     private int _supportTypeIndex;
 
-    public EditProp2d() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
+    public EditProp2d5_OBSOLETE() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
