@@ -130,7 +130,7 @@ namespace GsaGH.Components {
         "Thk", "Section thickness", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Top = 0, Middle = 1 (default), Bottom = 2", GH_ParamAccess.item);
+        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
         GH_ParamAccess.item);
       pManager[2].Optional = true;
@@ -181,6 +181,26 @@ namespace GsaGH.Components {
             }
           } else {
             prop.Material = new GsaMaterial(2);
+          }
+
+          if (_mode == Prop2dType.FlatPlate || _mode == Prop2dType.Shell || _mode == Prop2dType.CurvedShell) {
+            var ghReferenceSurface = new GH_ObjectWrapper();
+            if (da.GetData("Reference Surface", ref ghReferenceSurface)) {
+              try {
+                if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
+                  prop.ReferenceSurface = (ReferenceSurface)reference;
+                } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
+                  prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
+                }
+              } catch {
+                this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value + " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
+                return;
+              }
+            } else {
+              prop.ReferenceSurface = ReferenceSurface.Middle;
+            }
+
+            prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
           }
         } else {
           prop.Material = new GsaMaterial(8);

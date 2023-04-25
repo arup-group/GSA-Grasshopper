@@ -138,7 +138,7 @@ namespace GsaGH.Components {
         + Environment.NewLine + "Wall : 9" + Environment.NewLine + "Load : 10",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Top = 0, Middle = 1 (default), Bottom = 2", GH_ParamAccess.item);
+        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
         GH_ParamAccess.item);
 
@@ -167,7 +167,7 @@ namespace GsaGH.Components {
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Top = 0, Middle = 1 (default), Bottom = 2", GH_ParamAccess.item);
+        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
         GH_ParamAccess.item);
     }
@@ -271,14 +271,26 @@ namespace GsaGH.Components {
           }
         }
 
-        //var foo = new GH_ObjectWrapper();
-        //if (da.GetData(9, ref foo)) {
-        //  if (GH_Convert.ToInt32(foo, out int reference, GH_Conversion.Both)) {
-        //    prop.ReferenceSurface = (ReferenceSurface)reference;
-        //  } else if (GH_Convert.ToString(foo, out string reference, GH_Conversion.Both)) {
-        //    prop.Type = GsaProp2d.PropTypeFromString(reference);
-        //  }
-        //}
+        var ghReferenceSurface = new GH_ObjectWrapper();
+        if (da.GetData("Reference Surface", ref ghReferenceSurface)) {
+          try {
+            if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
+              prop.ReferenceSurface = (ReferenceSurface)reference;
+            } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
+              prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
+            }
+          } catch {
+            this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value + " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
+            return;
+          }
+        }
+
+        var ghOffset = new GH_Number();
+        if (da.GetData(11, ref ghOffset)) {
+          if (GH_Convert.ToDouble(ghOffset, out double offset, GH_Conversion.Both)) {
+            prop.AdditionalOffsetZ = new Length(offset, _lengthUnit);
+          }
+        }
 
         int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
         string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
@@ -300,8 +312,10 @@ namespace GsaGH.Components {
         da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
         da.SetData(7, nm);
         da.SetData(8, colour);
-
         da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
+        da.SetData(10, prop.ReferenceSurface);
+        da.SetData(11, prop.AdditionalOffsetZ);
+
       } else {
         this.AddRuntimeError("Prop2d is Null");
       }
