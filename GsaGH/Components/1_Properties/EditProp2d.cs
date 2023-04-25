@@ -137,6 +137,11 @@ namespace GsaGH.Components {
         + Environment.NewLine + "Curved Shell : 7" + Environment.NewLine + "Torsion : 8"
         + Environment.NewLine + "Wall : 9" + Environment.NewLine + "Load : 10",
         GH_ParamAccess.item);
+      pManager.AddGenericParameter("Reference Surface", "RS",
+        "Reference Surface Top = 0, Middle = 1 (default), Bottom = 2", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
+        GH_ParamAccess.item);
+
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
       }
@@ -161,6 +166,10 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Reference Surface", "RS",
+        "Reference Surface Top = 0, Middle = 1 (default), Bottom = 2", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -261,6 +270,15 @@ namespace GsaGH.Components {
             prop.Colour = col;
           }
         }
+
+        //var foo = new GH_ObjectWrapper();
+        //if (da.GetData(9, ref foo)) {
+        //  if (GH_Convert.ToInt32(foo, out int reference, GH_Conversion.Both)) {
+        //    prop.ReferenceSurface = (ReferenceSurface)reference;
+        //  } else if (GH_Convert.ToString(foo, out string reference, GH_Conversion.Both)) {
+        //    prop.Type = GsaProp2d.PropTypeFromString(reference);
+        //  }
+        //}
 
         int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
         string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
