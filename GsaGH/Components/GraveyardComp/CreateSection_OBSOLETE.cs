@@ -7,24 +7,19 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units;
-using OasysUnits;
-using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new Section
   /// </summary>
-  public class CreateSection : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("d779f9b7-5380-4474-aadd-d1e88f9d45b8");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+  public class CreateSection_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     protected override Bitmap Icon => Resources.CreateSection;
 
-    // how does the context menu for units work?!
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-
-    public CreateSection() : base("Create Section", "Section", "Create GSA Section",
+    public CreateSection_OBSOLETE() : base("Create Section", "Section", "Create GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -33,15 +28,7 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Profile", "Pf",
         "Cross-Section Profile defined using the GSA Profile string syntax", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Basic Offset", "BO",
-        "Basic Offset Centroid = 0 (default), Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Add. Offset Y [{Length.GetAbbreviation(_lengthUnit)}]", "AOY", "Additional Offset Y", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Add. Offset Z [{Length.GetAbbreviation(_lengthUnit)}]", "AOZ", "Additional Offset Z", GH_ParamAccess.item);
-
       pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
-      pManager[4].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {

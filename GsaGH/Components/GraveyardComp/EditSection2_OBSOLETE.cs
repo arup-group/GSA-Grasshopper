@@ -12,13 +12,13 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Section and ouput the information
   /// </summary>
-  public class EditSection : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("cb1f5d76-3b12-4c2a-8d41-c9d4699faaf9");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+  public class EditSection2_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("28dcadbd-4735-4110-8c30-931b37ec5f5a");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditSection;
 
-    public EditSection() : base("Edit Section", "SectionEdit", "Modify GSA Section",
+    public EditSection2_OBSOLETE() : base("Edit Section", "SectionEdit", "Modify GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
