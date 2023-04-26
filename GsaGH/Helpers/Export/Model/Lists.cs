@@ -64,14 +64,15 @@ namespace GsaGH.Helpers.Export {
 
       if (list.EntityType == Parameters.EntityType.Member) {
         AddList(list.Duplicate(), ref apiLists);
-        list._name = "Child Elements of " + list.Name;
         list.EntityType = Parameters.EntityType.Element;
+        string name = apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name;
+        list._name = "Child Elements of " + name;
       }
 
       GsaList copyList = AddPropertiesList(list, apiMaterials, apiSections, apiProp2ds, apiProp3ds, owner);
       AddElementList(copyList, ref apiLists, apiElements, apiMembers, memberElementRelationship, owner);
 
-      return "\"" + copyList.Name + "\"";
+      return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[copyList.Guid]].Name + "\"";
     }
 
     internal static void ConvertList(
