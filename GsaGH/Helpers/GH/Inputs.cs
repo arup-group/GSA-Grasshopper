@@ -4,10 +4,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.GH
-{
-  internal class Inputs
-  {
+namespace GsaGH.Helpers.GH {
+  internal class Inputs {
     internal static List<object> GetGooObjectsForLists(
       GH_Component owner, IGH_DataAccess DA, int inputid, EntityType type) {
       // Get Geometry input
@@ -151,6 +149,68 @@ namespace GsaGH.Helpers.GH
       }
 
       return list;
+    }
+
+    internal static string GetElementListNameForesults(
+      GH_Component owner, IGH_DataAccess da, int inputid) {
+      
+      string elementlist = "All";
+      var ghType = new GH_ObjectWrapper();
+      if (da.GetData(inputid, ref ghType)) {
+        if (ghType.Value is GsaListGoo listGoo) {
+          if (listGoo.Value.EntityType != EntityType.Element
+            && listGoo.Value.EntityType != EntityType.Member) {
+            owner.AddRuntimeWarning(
+            "List must be of type Element to apply to element filter");
+            return string.Empty;
+          }
+          if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
+            owner.AddRuntimeWarning(
+            "List must have a name - please give your list a name!");
+            return string.Empty;
+          }
+          elementlist = listGoo.Value.EntityType == EntityType.Member
+            ? "\"" + "Child Elements of " + listGoo.Value.Name + "\""
+            : "\"" + listGoo.Value.Name + "\"";
+        } else {
+          GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
+        }
+      }
+
+      if (string.IsNullOrEmpty(elementlist) || elementlist.ToLower() == "all") {
+        elementlist = "All";
+      }
+
+      return elementlist;
+    }
+
+    internal static string GetNodeListNameForesults(
+      GH_Component owner, IGH_DataAccess da, int inputid) {
+
+      string nodeList = "All";
+      var ghType = new GH_ObjectWrapper();
+      if (da.GetData(inputid, ref ghType)) {
+        if (ghType.Value is GsaListGoo listGoo) {
+          if (listGoo.Value.EntityType != EntityType.Node) {
+            owner.AddRuntimeWarning(
+            "List must be of type Node to apply to node filter");
+          }
+          if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
+            owner.AddRuntimeWarning(
+            "List must have a name - please give your list a name!");
+            return string.Empty;
+          }
+          nodeList = "\"" + listGoo.Value.Name + "\"";
+        } else {
+          GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
+        }
+      }
+
+      if (string.IsNullOrEmpty(nodeList) || nodeList.ToLower() == "all") {
+        nodeList = "All";
+      }
+
+      return nodeList;
     }
   }
 }

@@ -191,7 +191,8 @@ namespace GsaGH.Components {
       }
 
       gsaResult = (ghObject.Value as GsaResultGoo).Value;
-      string filteredNodes = GetNodeFilters(dataAccess);
+      string filteredNodes = Inputs.GetNodeListNameForesults(this, dataAccess, 1);
+      if (string.IsNullOrEmpty(filteredNodes)) { return; }
 
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
         = gsaResult.NodeReactionForceValues(filteredNodes, _forceUnit, _momentUnit);

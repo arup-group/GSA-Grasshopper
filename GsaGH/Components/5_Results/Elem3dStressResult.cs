@@ -107,26 +107,8 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
 
-      string elementlist = "All";
-      var ghType = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghType)) {
-        if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != EntityType.Element
-            && listGoo.Value.EntityType != EntityType.Member) {
-            this.AddRuntimeWarning(
-            "List must be of type Element to apply to element filter");
-          }
-          elementlist = listGoo.Value.EntityType == EntityType.Member
-            ? "\"" + "Child Elements of " + listGoo.Value.Name + "\""
-            : "\"" + listGoo.Value.Name + "\"";
-        } else {
-          GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
-        }
-      }
-
-      if (string.IsNullOrEmpty(elementlist) || elementlist.ToLower() == "all") {
-        elementlist = "All";
-      }
+      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(elementlist)) { return; }
 
       var outXx = new DataTree<GH_UnitNumber>();
       var outYy = new DataTree<GH_UnitNumber>();
