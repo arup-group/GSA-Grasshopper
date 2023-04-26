@@ -158,7 +158,9 @@ namespace GsaGH.Parameters {
           if (_nodes != null && _nodes.Count != 0) {
             s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s" + Definition != null ? " (" + Definition.Trim() + ")" : string.Empty;
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
@@ -170,7 +172,9 @@ namespace GsaGH.Parameters {
               + (_elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count) + " "
               + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s" + Definition != null ? " (" + Definition.Trim() + ")" : string.Empty;
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
@@ -182,7 +186,9 @@ namespace GsaGH.Parameters {
               + (_members.m1d.Count + _members.m2d.Count + _members.m3d.Count) + " "
               + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s" + Definition != null ? " (" + Definition.Trim() + ")" : string.Empty;
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
@@ -191,13 +197,17 @@ namespace GsaGH.Parameters {
           if (_cases != null && _cases.Count != 0) {
             s += "containing " + _cases.Count + " " + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s" + Definition != null ? " (" + Definition.Trim() + ")" : string.Empty;
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
 
         case EntityType.Undefined:
-          s += EntityType.ToString() + "s" + Definition != null ? " (" + Definition.Trim() + ")" : string.Empty;
+          s += EntityType.ToString() + "s" + (Definition != null 
+            ? " (" + Definition.Trim() + ")" 
+            : string.Empty);
           break;
       }
 
