@@ -75,9 +75,6 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)'
 
-- publish: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
-  artifact: GsaGHCoverage
-
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'cobertura'
@@ -101,6 +98,9 @@ steps:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
+
+- publish: $coverage_file_gsagh
+  artifact: GsaGHCoverage
 
 - task: PowerShell@2
   displayName: Check for existing tags
