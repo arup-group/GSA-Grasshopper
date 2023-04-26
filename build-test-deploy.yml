@@ -75,6 +75,9 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)'
 
+- publish: $(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml
+  artifact: GsaGHCoverage
+
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'cobertura'
