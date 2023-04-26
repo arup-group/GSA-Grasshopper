@@ -99,7 +99,10 @@ steps:
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
 
-- publish: $coverage_file_gsagh
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+  artifact: GsaGHCoverage
+
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
   artifact: GsaGHCoverage
 
 - task: PowerShell@2
