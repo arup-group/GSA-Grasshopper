@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
@@ -63,10 +62,10 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (list.EntityType == Parameters.EntityType.Member) {
-        AddList(list.Duplicate(), ref apiLists);
-        list.EntityType = Parameters.EntityType.Element;
+        AddMemberList(list.Duplicate(), ref apiLists, apiMembers, owner);
         string name = apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name;
-        list._name = "Child Elements of " + name;
+        list._name = "Children of '" + name + "'";
+        list.EntityType = Parameters.EntityType.Element;
       }
 
       GsaList copyList = AddPropertiesList(list, apiMaterials, apiSections, apiProp2ds, apiProp3ds, owner);
