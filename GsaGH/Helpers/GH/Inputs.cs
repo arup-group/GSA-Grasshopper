@@ -170,7 +170,7 @@ namespace GsaGH.Helpers.GH {
             return string.Empty;
           }
           elementlist = listGoo.Value.EntityType == EntityType.Member
-            ? "\"" + "Child Elements of " + listGoo.Value.Name + "\""
+            ? "\"" + "Children of '" + listGoo.Value.Name + "'\""
             : "\"" + listGoo.Value.Name + "\"";
         } else {
           GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
