@@ -94,10 +94,19 @@ steps:
     cd $(System.DefaultWorkingDirectory)\
     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+    .\codecov -t $env:CODECOV_TOKEN_OASYSGH --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+    .\codecov -t $env:CODECOV_TOKEN_OASYSGH --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
+    CODECOV_TOKEN_OASYSGH: $(CODECOV_TOKEN_OASYSGH)
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
+
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+  artifact: GsaGHTestsCoverage
+
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+  artifact: IntegrationTestsCoverage
 
 - task: PowerShell@2
   displayName: Check for existing tags
