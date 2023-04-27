@@ -124,9 +124,9 @@ namespace GsaGH.Helpers.Export {
       GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
       GH_Component owner) {
       GsaList copyList = list.Duplicate();
-      if (copyList._properties == (null, null, null, null) || copyList._properties.materials.Count == 0
-        || copyList._properties.sections.Count == 0 || copyList._properties.prop2ds.Count == 0
-        || copyList._properties.prop3ds.Count == 0) {
+      if (copyList._properties == (null, null, null, null) || (copyList._properties.materials.Count == 0
+        && copyList._properties.sections.Count == 0 && copyList._properties.prop2ds.Count == 0
+        && copyList._properties.prop3ds.Count == 0)) {
         return copyList;
       }
 
@@ -280,7 +280,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      copyList._definition = string.Join(" ", ids);
+      copyList._definition += string.Join(" ", ids);
 
       AddList(copyList, ref apiLists);
     }
@@ -333,7 +333,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition = string.Join(" ", ids);
+      copyList._definition += string.Join(" ", ids);
 
       AddList(copyList, ref apiLists);
     }
