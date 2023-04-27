@@ -75,7 +75,10 @@ namespace GsaGH.Helpers.GH {
 
       var stopwatch = Stopwatch.StartNew();
       while (brep == null || brep.Length == 0 || !brep[0].IsValid) {
-        if (stopwatch.ElapsedMilliseconds > 5000) { break; }
+        if (stopwatch.ElapsedMilliseconds > 5000) { 
+          break; 
+        }
+        
         tolerance *= 2;
         brep = Brep.CreatePlanarBreps(curves, tolerance);
         if (brep != null && brep.Length > 0 && brep[0].IsValid) {
