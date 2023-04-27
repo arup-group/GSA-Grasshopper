@@ -81,9 +81,10 @@ namespace GsaGH {
         var gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
         gsaVersion = gsaVers.FileMajorPart + "." + gsaVers.FileMinorPart + "."
           + gsaVers.FileBuildPart;
-        if (gsaVers.FileBuildPart < 65) {
+        int minGsaVersion = 66;
+        if (gsaVers.FileBuildPart < minGsaVersion) {
           var exception = new Exception("Version " + GsaGhInfo.Vers
-            + " of GSA-Grasshopper requires GSA 10.1.65 installed. Please upgrade GSA.");
+            + " of GSA-Grasshopper requires GSA 10.1." + minGsaVersion + " installed. Please upgrade GSA.");
           var ghLoadingException
             = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
