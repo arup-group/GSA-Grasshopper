@@ -460,7 +460,9 @@ namespace GsaGH.Components {
       }
 
       string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(nodeList)) { return; }
+      if (string.IsNullOrEmpty(nodeList)) { 
+        return; 
+      }
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();

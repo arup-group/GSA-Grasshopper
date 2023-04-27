@@ -624,7 +624,9 @@ namespace GsaGH.Components {
       }
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { return; }
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
+      }
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();

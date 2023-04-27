@@ -71,22 +71,9 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = "All";
-      var ghType = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghType)) {
-        if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-            this.AddRuntimeWarning(
-            "List must be of type Node to apply to node filter");
-          }
-          nodeList = "\"" + listGoo.Value.Name + "\"";
-        } else {
-          GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
-        }
-      }
-
-      if (string.IsNullOrEmpty(nodeList) || nodeList.ToLower() == "all") {
-        nodeList = "All";
+      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(nodeList)) { 
+        return; 
       }
 
       GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);

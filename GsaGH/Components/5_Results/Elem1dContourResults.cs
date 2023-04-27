@@ -546,7 +546,9 @@ namespace GsaGH.Components {
       }
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { return; }
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
+      }
 
 
       var ghDiv = new GH_Integer();

@@ -115,7 +115,9 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { return; }
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
+      }
 
       double layer = 0;
       var ghType1 = new GH_String();

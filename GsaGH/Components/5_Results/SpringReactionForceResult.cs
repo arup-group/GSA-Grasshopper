@@ -129,7 +129,9 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(nodeList)) { return; }
+      if (string.IsNullOrEmpty(nodeList)) {
+        return;
+      }
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();

@@ -112,7 +112,9 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { return; }
+      if (string.IsNullOrEmpty(elementlist)) { 
+        return; 
+      }
 
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);

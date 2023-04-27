@@ -171,7 +171,9 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { return; }
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
+      }
 
       var outX = new DataTree<GH_UnitNumber>();
       var outY = new DataTree<GH_UnitNumber>();

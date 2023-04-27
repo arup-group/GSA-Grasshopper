@@ -137,7 +137,9 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { return; }
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
+      }
 
       int positionsCount = 3;
       if (!_average) {
