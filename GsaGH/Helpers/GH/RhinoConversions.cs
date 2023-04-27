@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Export;
@@ -61,12 +62,30 @@ namespace GsaGH.Helpers.GH {
 
       tolerance *= 2;
       brep = Brep.CreatePlanarBreps(curves, tolerance);
-      if (brep != null) {
+      if (brep != null && brep.Length > 0 && brep[0].IsValid) {
         return brep[0];
       }
 
-      var brep2 = Brep.CreateEdgeSurface(curves);
-      return brep2;
+      if (curves.Count < 5) {
+        var brep2 = Brep.CreateEdgeSurface(curves);
+        if (brep2 != null && brep2.IsValid) {
+          return brep2;
+        }
+      }
+
+      var stopwatch = Stopwatch.StartNew();
+      while (brep == null || brep.Length == 0 || !brep[0].IsValid) {
+        if (stopwatch.ElapsedMilliseconds > 5000) { 
+          break; 
+        }
+        
+        tolerance *= 2;
+        brep = Brep.CreatePlanarBreps(curves, tolerance);
+        if (brep != null && brep.Length > 0 && brep[0].IsValid) {
+          return brep[0];
+        }
+      }
+      return null;
     }
 
     public static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(
