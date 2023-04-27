@@ -197,7 +197,7 @@ namespace GsaGHTests.Helpers.Export {
       var guid = Guid.NewGuid();
       dictionary.SetValue(5, guid, "myFirst");
 
-      Assert.Equal(2, dictionary.Count);
+      Assert.Equal(3, dictionary.Count);
       Assert.Equal("myFirst", dictionary.ReadOnlyDictionary[5]);
 
       dictionary.SetValue(5, guid, "mySecond");

@@ -33,6 +33,14 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void SetValue(int key, Guid guid, T value) {
+      if (_dictionary.TryGetValue(key, out T oldValue)) {
+        // if value already exist then give it new key and overwrite existing entry
+        Guid oldGuid = _guidDictionary.FirstOrDefault(x => x.Value == key).Key;
+        _firstEmptyKey++;
+        _dictionary[_firstEmptyKey] = oldValue;
+        _guidDictionary[oldGuid] = _firstEmptyKey;
+      }
+
       _dictionary[key] = value;
       _guidDictionary[guid] = key;
     }
