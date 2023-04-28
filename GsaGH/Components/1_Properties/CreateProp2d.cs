@@ -197,7 +197,7 @@ namespace GsaGH.Components {
             && referenceEdge <= 4) {
             prop.ReferenceEdge = referenceEdge;
           } else {
-            this.AddRuntimeError("Reference edge invalid or can't take it from the model");
+            this.AddRuntimeWarning("Input RE failed to collect data");
           }
         }
       }
