@@ -191,7 +191,7 @@ namespace GsaGH.Components {
         }
       } else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
-        if (prop.SupportType != SupportType.Auto) {
+        if (prop.SupportType != SupportType.Auto && prop.SupportType != SupportType.AllEdges) {
           int referenceEdge = 0;
           if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0
             && referenceEdge <= 4) {
