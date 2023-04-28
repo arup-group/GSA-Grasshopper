@@ -68,7 +68,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return (Id > 0 ? "ID:" + Id : "" + " '" + Name + "' " + Type.ToString().Replace("_", " "))
+      return (Id > 0 ? "ID:" + Id : string.Empty + " '" + Name + "' " + Type.ToString().Replace("_", " "))
        .Trim().Replace("  ", " ");
     }
 

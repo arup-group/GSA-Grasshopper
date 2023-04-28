@@ -22,7 +22,7 @@
     }
 
     public override string ToString() {
-      string s = "";
+      string s = string.Empty;
       if (Name != null) {
         s += " '" + Name.ToString() + "'";
       }
@@ -31,7 +31,7 @@
         s += " " + Description.ToString();
       }
 
-      return string.Join(" ", (Id > 0 ? "ID:" + Id : "").Trim(), s.Trim()).Trim()
+      return string.Join(" ", (Id > 0 ? "ID:" + Id : string.Empty).Trim(), s.Trim()).Trim()
        .Replace("  ", " ");
     }
   }

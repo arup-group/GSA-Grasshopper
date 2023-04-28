@@ -85,7 +85,7 @@ namespace GsaGH.Components {
       try {
         list.SetListGooObjects(listGooObjects);
       } catch (ArgumentException) {
-        string message = "";
+        string message = string.Empty;
         switch (_type) {
           case EntityType.Node:
             message

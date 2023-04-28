@@ -162,7 +162,7 @@ namespace GsaGH.Helpers.Export {
 
       Axis axis = gridplanesurface.GetAxis(modelUnit);
 
-      if (axis.Name == "") {
+      if (axis.Name == string.Empty) {
         axis.Name = "Axis " + axisidcounter;
       }
 
@@ -208,7 +208,7 @@ namespace GsaGH.Helpers.Export {
         gridplaneidcounter = Math.Max(existingGridPlanes.Keys.Max() + 1, gridplaneidcounter);
       }
 
-      if (gridplanesurface.GridPlane.Name == "") {
+      if (gridplanesurface.GridPlane.Name == string.Empty) {
         gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
       }
 
@@ -326,7 +326,7 @@ namespace GsaGH.Helpers.Export {
 
       int gsId = gridplanesurface.GridSurfaceId;
 
-      if (gridplanesurface.GridSurface.Name == "") {
+      if (gridplanesurface.GridSurface.Name == string.Empty) {
         gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
       }
 

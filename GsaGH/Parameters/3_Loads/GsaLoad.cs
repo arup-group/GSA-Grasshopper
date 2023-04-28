@@ -378,7 +378,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string name = "";
+      string name = string.Empty;
       switch (LoadType) {
         case LoadTypes.Gravity:
           name = GravityLoad.GravityLoad.Name;

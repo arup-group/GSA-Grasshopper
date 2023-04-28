@@ -165,7 +165,7 @@ namespace GsaGH.Parameters {
         return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
       }
 
-      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
+      string id = GradeProperty == 0 ? string.Empty : "Grd:" + GradeProperty + " ";
       return (id + type).Trim();
     }
 

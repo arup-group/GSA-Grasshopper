@@ -360,7 +360,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string txt = "";
+      string txt = string.Empty;
       switch (Type) {
         case CaseType.AnalysisCase:
           txt = "A" + CaseId;
@@ -390,7 +390,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DAverageStrainEnergyDensityValues(
       string elementlist, EnergyUnit energyUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -437,7 +437,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DDisplacementValues(
       string elementlist, int positionsCount, LengthUnit lengthUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -482,7 +482,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DFootfallValues(
       string elementlist, FootfallResultType type) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -515,7 +515,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DForceValues(
       string elementlist, int positionsCount, ForceUnit forceUnit, MomentUnit momentUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -562,7 +562,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(
       string elementlist, int positionsCount, EnergyUnit energyUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -609,7 +609,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DDisplacementValues(
       string elementlist, LengthUnit lengthUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -657,7 +657,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DFootfallValues(
       string elementlist, FootfallResultType type) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -689,7 +689,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DForceValues(
       string elementlist, ForcePerLengthUnit forceUnit, ForceUnit momentUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -739,7 +739,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DShearValues(
       string elementlist, ForcePerLengthUnit forceUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -788,7 +788,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DStressValues(
       string elementlist, double layer, PressureUnit stressUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -833,7 +833,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element3DDisplacementValues(
       string elementlist, LengthUnit lengthUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -878,7 +878,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal List<GsaResultsValues> Element3DStressValues(
       string elementlist, PressureUnit stressUnit) {
-      if (elementlist.ToLower() == "all" || elementlist == "") {
+      if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
@@ -923,7 +923,7 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> NodeDisplacementValues(
       string nodelist, LengthUnit lengthUnit) {
-      if (nodelist.ToLower() == "all" || nodelist == "") {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
       }
 
@@ -966,7 +966,7 @@ namespace GsaGH.Parameters {
     /// <param name="type"></param>
     /// <returns></returns>
     internal GsaResultsValues NodeFootfallValues(string nodelist, FootfallResultType type) {
-      if (nodelist.ToLower() == "all" || nodelist == "") {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
       }
 
@@ -994,12 +994,12 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> NodeReactionForceValues(
       string nodelist, ForceUnit forceUnit, MomentUnit momentUnit) {
-      if (nodelist.ToLower() == "all" || nodelist == "") {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
       }
 
       ConcurrentBag<int> supportnodeIDs = null;
-      if (nodelist.ToLower() == "all" || nodelist == "") {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         supportnodeIDs = new ConcurrentBag<int>();
         ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
         Parallel.ForEach(nodes, node => {
@@ -1054,12 +1054,12 @@ namespace GsaGH.Parameters {
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> SpringReactionForceValues(
       string nodelist, ForceUnit forceUnit, MomentUnit momentUnit) {
-      if (nodelist.ToLower() == "all" || nodelist == "") {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
       }
 
       ConcurrentBag<int> supportnodeIDs = null;
-      if (nodelist.ToLower() == "all" || nodelist == "") {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         supportnodeIDs = new ConcurrentBag<int>();
         ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
         Parallel.ForEach(nodes, node => {

@@ -270,7 +270,7 @@ namespace GsaGH.Components {
         da.SetData(1, prop.Id);
         da.SetData(2, new GsaMaterialGoo(prop.Material));
         da.SetData(3,
-          prop.ApiProp2d.Description == "" ? new GH_UnitNumber(Length.Zero) :
+          prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
             new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
         if (prop.AxisProperty == -2) {
           da.SetData(4, new GH_Plane(prop.LocalAxis));

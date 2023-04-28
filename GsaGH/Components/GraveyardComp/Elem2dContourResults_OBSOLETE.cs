@@ -92,7 +92,7 @@ namespace GsaGH.Components {
       "Force",
       "Stress",
     });
-    private string _case = "";
+    private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private int _flayer;
