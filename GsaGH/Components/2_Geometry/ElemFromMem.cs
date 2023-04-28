@@ -35,7 +35,7 @@ namespace GsaGH.Components {
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
+    private string _toleranceTxt = string.Empty;
 
     public ElemFromMem() : base("Elements from Members", "ElemFromMem",
       "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -350,7 +350,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "") {
+      if (_toleranceTxt != string.Empty) {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         } catch (Exception e) {

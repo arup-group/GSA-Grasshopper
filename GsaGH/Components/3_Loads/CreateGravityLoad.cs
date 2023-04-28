@@ -59,7 +59,7 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
-        gravityLoad.GravityLoad.Elements = "";
+        gravityLoad.GravityLoad.Elements = string.Empty;
         if (ghTyp.Value is GsaElement1dGoo goo) {
           gravityLoad._refObjectGuid = goo.Value.Guid;
           gravityLoad._referenceType = ReferenceType.Element;

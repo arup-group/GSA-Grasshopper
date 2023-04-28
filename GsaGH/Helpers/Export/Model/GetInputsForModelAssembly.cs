@@ -33,8 +33,8 @@ namespace GsaGH.Helpers.Export {
 
             default: {
               string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", "");
-              type = type.Replace("Goo", "");
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
                 + " to Analysis Task or Combination Case");
               return null;
@@ -113,8 +113,8 @@ namespace GsaGH.Helpers.Export {
             }
             default: {
               string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", "");
-              type = type.Replace("Goo", "");
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
                 + Environment.NewLine
                 + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
@@ -192,8 +192,8 @@ namespace GsaGH.Helpers.Export {
             }
             default: {
               string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", "");
-              type = type.Replace("Goo", "");
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
                 + " to Load or GridPlaneSurface");
               return null;
@@ -248,8 +248,8 @@ namespace GsaGH.Helpers.Export {
             }
             default: {
               string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", "");
-              type = type.Replace("Goo", "");
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
                 + Environment.NewLine
                 + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
@@ -306,8 +306,8 @@ namespace GsaGH.Helpers.Export {
 
             default:
               string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", "");
-              type = type.Replace("Goo", "");
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert GSA input parameter of type " + type
                 + " to GsaModel or GsaList");
               return (null, null);
@@ -355,8 +355,8 @@ namespace GsaGH.Helpers.Export {
             }
             default: {
               string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", "");
-              type = type.Replace("Goo", "");
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
                 + " to GsaSection or GsaProp2d");
               return null;

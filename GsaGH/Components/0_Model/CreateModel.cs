@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private bool _reMesh = true;
     private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
+    private string _toleranceTxt = string.Empty;
 
     public CreateModel() : base("Create Model", "Model", "Assemble a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
@@ -234,7 +234,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "") {
+      if (_toleranceTxt != string.Empty) {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         } catch (Exception e) {

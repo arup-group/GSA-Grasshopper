@@ -82,7 +82,7 @@ namespace GsaGH.Helpers.Export {
               memberElementRelationship);
             }
             
-            if (objectElemList.Trim() != "") {
+            if (objectElemList.Trim() != string.Empty) {
               load.GravityLoad.GravityLoad.Elements = objectElemList;
             } else {
               string warning = "One or more GravityLoads with reference to a "
@@ -121,7 +121,7 @@ namespace GsaGH.Helpers.Export {
               apiMaterials, apiSections, apiElements, apiMembers, memberElementRelationship);
             }
 
-            if (objectElemList.Trim() != "") {
+            if (objectElemList.Trim() != string.Empty) {
               load.BeamLoad.BeamLoad.Elements = objectElemList;
             } else {
               string warning = "One or more BeamLoads with reference to a "
@@ -160,7 +160,7 @@ namespace GsaGH.Helpers.Export {
               apiMaterials, apiProp2ds, apiElements, apiMembers, memberElementRelationship);
             }
             
-            if (objectElemList.Trim() != "") {
+            if (objectElemList.Trim() != string.Empty) {
               load.FaceLoad.FaceLoad.Elements = objectElemList;
             } else {
               string warning = "One or more FaceLoads with reference to a "

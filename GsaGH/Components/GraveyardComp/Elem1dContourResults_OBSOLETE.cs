@@ -87,7 +87,7 @@ namespace GsaGH.Components {
       "Force",
       "Strain Energy",
     });
-    private string _case = "";
+    private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private EnergyUnit _energyResultUnit = DefaultUnits.EnergyUnit;

@@ -57,17 +57,17 @@ namespace GsaGH.Helpers.Export {
 
     private static string GetElementRef<T>(Guid guid, GsaGuidIntListDictionary<T> dictionary) {
       return dictionary.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
-        string.Join(" ", ids) : "";
+        string.Join(" ", ids) : string.Empty;
     }
 
     private static string GetMemberChildElementsRef<T>(
       Guid guid, GsaGuidDictionary<T> dictionary,
       ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
       return !dictionary.GuidDictionary.TryGetValue(guid, out int id) ?
-        "" :
+        string.Empty :
         memberElementRelationship.TryGetValue(id, out ConcurrentBag<int> ids) ?
           string.Join(" ", ids) :
-          "";
+          string.Empty;
     }
 
     private static string GetRef<T>(Guid guid, GsaGuidDictionary<T> dictionary) {
@@ -91,7 +91,7 @@ namespace GsaGH.Helpers.Export {
 
         return t + id;
       } else {
-        return "";
+        return string.Empty;
       }
     }
 
@@ -125,7 +125,7 @@ namespace GsaGH.Helpers.Export {
 
         case ReferenceType.None:
         default:
-          return "";
+          return string.Empty;
       }
     }
   }

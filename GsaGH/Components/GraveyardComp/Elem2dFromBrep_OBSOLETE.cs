@@ -112,8 +112,8 @@ namespace GsaGH.Components {
             point3ds.Add(point3d);
           } else {
             string type = objectWrapper.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", "");
-            type = type.Replace("Goo", "");
+            type = type.Replace("GsaGH.Parameters.", string.Empty);
+            type = type.Replace("Goo", string.Empty);
             this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
               + type + " to point or node");
           }
@@ -132,8 +132,8 @@ namespace GsaGH.Components {
             crvs.Add(crv);
           } else {
             string type = objectWrapper.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", "");
-            type = type.Replace("Goo", "");
+            type = type.Replace("GsaGH.Parameters.", string.Empty);
+            type = type.Replace("Goo", string.Empty);
             this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
               + type + " to curve or 1D Member");
           }

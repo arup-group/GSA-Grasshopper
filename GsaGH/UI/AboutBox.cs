@@ -21,7 +21,7 @@ namespace GsaGH.Graphics {
         }
 
         var titleAttribute = (AssemblyTitleAttribute)attributes[0];
-        return titleAttribute.Title != "" ? titleAttribute.Title :
+        return titleAttribute.Title != string.Empty ? titleAttribute.Title :
           Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
       }
     }

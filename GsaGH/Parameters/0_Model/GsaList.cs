@@ -280,7 +280,7 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Undefined:
-          if (Definition != null && Definition != "") {
+          if (Definition != null && Definition != string.Empty) {
             list = new List<object>(new List<string>() {
               Definition,
             });

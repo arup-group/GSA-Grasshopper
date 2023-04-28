@@ -219,7 +219,7 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
-        gps.GridSurface.Elements = "";
+        gps.GridSurface.Elements = string.Empty;
         if (ghTyp.Value is GsaElement1dGoo element1dGoo) {
           gps._refObjectGuid = element1dGoo.Value.Guid;
           gps._referenceType = ReferenceType.Element;
@@ -318,7 +318,7 @@ namespace GsaGH.Components {
       if (da.GetData(4, ref ghTyp)) {
         string tolIn = ghTyp.Value.ToString();
 
-        if (tolIn != "") {
+        if (tolIn != string.Empty) {
           try {
             Length.Parse(tolIn);
             gps.Tolerance = tolIn;

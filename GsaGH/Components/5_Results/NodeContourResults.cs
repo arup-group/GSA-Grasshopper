@@ -88,7 +88,7 @@ namespace GsaGH.Components {
       "Reaction",
       "Footfall",
     });
-    private string _case = "";
+    private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -358,7 +358,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Footfall:
-          Message = "";
+          Message = string.Empty;
           break;
       }
     }
@@ -417,8 +417,8 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
-      _case = "";
-      _resType = "";
+      _case = string.Empty;
+      _resType = string.Empty;
 
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
@@ -807,7 +807,7 @@ namespace GsaGH.Components {
             var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
             _legendValues.Add(responseFactor.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(responseFactor));
-            Message = "";
+            Message = string.Empty;
             break;
           }
         }

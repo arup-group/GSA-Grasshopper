@@ -12,12 +12,12 @@ namespace GsaGH.Helpers {
     internal static void Gwa(string gwa, bool existingModel) {
       string[] commands = gwa.Split('\n');
       foreach (string command in commands) {
-        if (command == "") {
+        if (command == string.Empty) {
           continue;
         }
 
         string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
-        if (key == "") {
+        if (key == string.Empty) {
           continue;
         }
 

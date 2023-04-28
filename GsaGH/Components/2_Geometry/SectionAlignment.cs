@@ -91,7 +91,7 @@ namespace GsaGH.Components {
 
       bool oneD = true;
 
-      string profile = "";
+      string profile = string.Empty;
 
       switch (ghTyp.Value) {
         case GsaMember1dGoo _: {
@@ -103,7 +103,7 @@ namespace GsaGH.Components {
 
           mem1d = mem1d.Duplicate();
           profile = mem1d.Section.Profile;
-          if (profile == "") {
+          if (profile == string.Empty) {
             this.AddRuntimeError("Member has no section attached");
             return;
           }
@@ -119,7 +119,7 @@ namespace GsaGH.Components {
 
           elem1d = elem1d.Duplicate();
           profile = elem1d.Section.Profile;
-          if (profile == "") {
+          if (profile == string.Empty) {
             this.AddRuntimeError("Element has no section attached");
             return;
           }

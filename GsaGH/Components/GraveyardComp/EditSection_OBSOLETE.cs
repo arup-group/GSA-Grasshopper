@@ -77,7 +77,7 @@ namespace GsaGH.Components {
         }
       }
 
-      string profile = "";
+      string profile = string.Empty;
       if (da.GetData(2, ref profile)) {
         gsaSection.Profile = profile;
       }

@@ -76,7 +76,7 @@ namespace GsaGH.Components {
       "Displacement",
       "Stress",
     });
-    private string _case = "";
+    private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private Bitmap _legend = new Bitmap(15, 120);
