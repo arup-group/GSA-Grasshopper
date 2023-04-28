@@ -125,6 +125,18 @@ namespace GsaGH.Helpers.Export {
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.ReadOnlyDictionary;
       gsa.SetMembers(apiMemDict);
 
+      // Set API Sections and Materials in model
+      gsa.SetSections(apiSections.ReadOnlyDictionary);
+      gsa.SetSectionModifiers(apiSectionModifiers.ReadOnlyDictionary);
+      gsa.SetProp2Ds(apiProp2ds.ReadOnlyDictionary);
+      gsa.SetProp3Ds(apiProp3ds.ReadOnlyDictionary);
+      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.ReadOnlyDictionary;
+      if (materials.Count > 0) {
+        foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
+          gsa.SetAnalysisMaterial(mat.Key, mat.Value);
+        }
+      }
+
       // Add API Node loads to model
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoadsNode));
@@ -260,18 +272,6 @@ namespace GsaGH.Helpers.Export {
 
       // Set API list in model
       gsa.SetLists(apiLists.ReadOnlyDictionary);
-
-      // Set API Sections and Materials in model
-      gsa.SetSections(apiSections.ReadOnlyDictionary);
-      gsa.SetSectionModifiers(apiSectionModifiers.ReadOnlyDictionary);
-      gsa.SetProp2Ds(apiProp2ds.ReadOnlyDictionary);
-      gsa.SetProp3Ds(apiProp3ds.ReadOnlyDictionary);
-      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.ReadOnlyDictionary;
-      if (materials.Count > 0) {
-        foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
-          gsa.SetAnalysisMaterial(mat.Key, mat.Value);
-        }
-      }
 
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
