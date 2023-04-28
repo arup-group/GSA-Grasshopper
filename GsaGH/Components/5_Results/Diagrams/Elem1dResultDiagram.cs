@@ -39,14 +39,6 @@ namespace GsaGH.Components {
         Color = color;
         //Quantity = quantity;
       }
-
-      public DiagramLine(Line line, double multipier, Color color) {
-        line.From *= multipier;
-        line.To *= multipier;
-        Line = line;
-        Color = color;
-        //Quantity = quantity;
-      }
     }
 
     public override Guid ComponentGuid => new Guid("7ae7ac36-f811-4c20-911f-ddb119f45644");
@@ -55,7 +47,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Elem1dDiagram;
 
     private string _case = "";
-    private double _defScale = 250;
     private DiagramType _displayedDiagramType = DiagramType.AxialForceFx;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -92,9 +83,8 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       //warning - sensitive for description string! do not change description if not needed!
       _displayedDiagramType = Mappings.diagramTypeMapping
-       .Where(item => item.Description == reader.GetString("DiagramType"))
+       .Where(item => item.Description == reader.GetString("diagramType"))
        .Select(item => item.GsaGhEnum).FirstOrDefault();
-      _defScale = reader.GetDouble("scale");
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -109,14 +99,14 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _displayedDiagramType = (DiagramType)j;
       _selectedItems[i] = _dropDownItems[i][j];
+
       base.UpdateUI();
     }
 
     public override bool Write(GH_IWriter writer) {
-      writer.SetString("DiagramType",
+      writer.SetString("diagramType",
         Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
          .Select(item => item.Description).FirstOrDefault());
-      writer.SetDouble("scale", _defScale);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
@@ -160,7 +150,7 @@ namespace GsaGH.Components {
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
         var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-          Checked = unit == Pressure.GetAbbreviation(_stressUnit),
+          Checked = unit == Moment.GetAbbreviation(_momentUnit),
           Enabled = true,
         };
         momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
@@ -212,6 +202,7 @@ namespace GsaGH.Components {
       menu.Items.Add(unitsMenu);
 
       Menu_AppendSeparator(menu);
+      UpdateUI();
     }
 
     protected override void InitialiseDropdowns() {
@@ -232,11 +223,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Element filter list", "El",
-        "Filter import by list." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item, "All");
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
         GH_ParamAccess.item);
@@ -251,9 +238,22 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Curves", "e", "envelope", GH_ParamAccess.tree);
     }
 
+    protected override void BeforeSolveInstance() {
+      if (IsForce()) {
+        Message = Force.GetAbbreviation(_forceUnit);
+      } else if (IsMoment()) {
+        Message = Moment.GetAbbreviation(_momentUnit);
+      } else if (IsStress()) {
+        Message = Pressure.GetAbbreviation(_stressUnit);
+      } else {
+        Message = "Error";
+        this.AddRuntimeError("Cannot get unit for selected diagramType!");
+      }
+    }
+
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
-      _case = "";
+      _case = string.Empty;
 
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp) || !IsGhObjectValid(ghTyp)) {
@@ -264,20 +264,18 @@ namespace GsaGH.Components {
         result = goo.Value;
         switch (result.Type) {
           case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
-            this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-              + result.SelectedPermutationIds.Count
-              + " permutations - only one permutation can be displayed at a time."
-              + Environment.NewLine
-              + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-            _case = "C" + result.CaseId;
+            string warningText
+              = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
+            this.AddRuntimeWarning(warningText.ToString());
+            _case = $"C{result.CaseId}";
             break;
 
           case GsaResult.CaseType.Combination:
-            _case = "C" + result.CaseId;
+            _case = $"C{result.CaseId}";
             break;
 
           case GsaResult.CaseType.AnalysisCase:
-            _case = "A" + result.CaseId;
+            _case = $"A{result.CaseId}";
             break;
         }
       }
@@ -297,8 +295,7 @@ namespace GsaGH.Components {
         lengthUnit = _lengthUnit;
         _undefinedModelLengthUnit = true;
         this.AddRuntimeRemark(
-          "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in "
-          + lengthUnit + ". This can be changed by right-clicking the component -> 'Select Units'");
+          $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
       double computedScale = ComputeScale(lengthUnit, scale);
@@ -307,7 +304,7 @@ namespace GsaGH.Components {
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
          .Select(item => item.GsaApiEnum).FirstOrDefault(),
         Cases = _case,
-        ScaleFactor = computedScale,
+        ScaleFactor = isNormalised ? 1 : computedScale,
         IsNormalised = isNormalised,
       };
 
@@ -358,13 +355,51 @@ namespace GsaGH.Components {
 
     private double ComputeScale(LengthUnit modelLengthUnit, double scaleInput) {
       double diagramScaleFactor = 1.0d;
+      if (IsForce()) {
+        diagramScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
+      } else if (IsStress()) {
+        diagramScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
+      } else if (IsMoment()) {
+        diagramScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
+      } else {
+        this.AddRuntimeError("Not supported diagramType!");
+      }
+
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, modelLengthUnit);
+      return scaleInput * diagramScaleFactor * lengthScaleFactor;
+    }
+
+    private bool IsForce() {
+      bool isForce = false;
       switch (_displayedDiagramType) {
         case DiagramType.AxialForceFx:
         case DiagramType.ShearForceFy:
         case DiagramType.ShearForceFz:
-          diagramScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
+        case DiagramType.ResolvedShearFyz:
+          isForce = true;
           break;
+      }
 
+      return isForce;
+    }
+
+    private bool IsMoment() {
+      bool isMoment = false;
+      switch (_displayedDiagramType) {
+        case DiagramType.MomentMyy:
+        case DiagramType.MomentMzz:
+        case DiagramType.ResolvedMomentMyz:
+        case DiagramType.TorsionMxx:
+          isMoment = true;
+          break;
+      }
+
+      return isMoment;
+    }
+
+    private bool IsStress() {
+      bool isStress = false;
+      switch (_displayedDiagramType) {
         case DiagramType.AxialStressA:
         case DiagramType.BendingStressByNegativeZ:
         case DiagramType.BendingStressByPositiveZ:
@@ -374,20 +409,11 @@ namespace GsaGH.Components {
         case DiagramType.CombinedStressC2:
         case DiagramType.ShearStressSz:
         case DiagramType.ShearStressSy:
-          diagramScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
-
-          break;
-        case DiagramType.MomentMyy:
-        case DiagramType.MomentMzz:
-        case DiagramType.ResolvedMomentMyz:
-        case DiagramType.TorsionMxx:
-          diagramScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
-
+          isStress = true;
           break;
       }
 
-      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, modelLengthUnit);
-      return scaleInput * diagramScaleFactor * lengthScaleFactor;
+      return isStress;
     }
 
     private void UpdateForce(string unit) {
@@ -419,5 +445,6 @@ namespace GsaGH.Components {
       ExpirePreview(true);
       base.UpdateUI();
     }
+
   }
 }
