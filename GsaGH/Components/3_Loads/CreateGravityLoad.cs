@@ -9,6 +9,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateGravityLoad : GH_OasysComponent {
@@ -67,70 +68,70 @@ namespace GsaGH.Components {
 
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-            if (value.Value.EntityType == EntityType.Element
-              || value.Value.EntityType == EntityType.Member) {
-              gravityLoad._refList = value.Value;
-              gravityLoad._referenceType = ReferenceType.List;
-            } else {
-              this.AddRuntimeWarning(
-                "List must be of type Element or Member to apply to beam loading");
-            }
+              if (value.Value.EntityType == EntityType.Element
+                || value.Value.EntityType == EntityType.Member) {
+                gravityLoad._refList = value.Value;
+                gravityLoad._referenceType = ReferenceType.List;
+              } else {
+                this.AddRuntimeWarning(
+                  "List must be of type Element or Member to apply to beam loading");
+              }
 
-            if (value.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              if (value.Value.EntityType == EntityType.Member) {
+                this.AddRuntimeRemark(
+                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
-            break;
-          }
+              break;
+            }
           case GsaElement2dGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Element;
-            break;
-          }
-          case GsaMember1dGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Member;
-            this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
-          case GsaMember2dGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Member;
-            this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
-          case GsaMember3dGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Member;
-            this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
-          case GsaSectionGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Section;
-            break;
-          }
-          case GsaProp2dGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Prop2d;
-            break;
-          }
-          case GsaProp3dGoo value: {
-            gravityLoad._refObjectGuid = value.Value.Guid;
-            gravityLoad._referenceType = ReferenceType.Prop3d;
-            break;
-          }
-          default: {
-            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-              gravityLoad.GravityLoad.Elements = elemList;
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Element;
+              break;
             }
+          case GsaMember1dGoo value: {
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Member;
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaMember2dGoo value: {
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Member;
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaMember3dGoo value: {
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Member;
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaSectionGoo value: {
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Section;
+              break;
+            }
+          case GsaProp2dGoo value: {
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Prop2d;
+              break;
+            }
+          case GsaProp3dGoo value: {
+              gravityLoad._refObjectGuid = value.Value.Guid;
+              gravityLoad._referenceType = ReferenceType.Prop3d;
+              break;
+            }
+          default: {
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
+                gravityLoad.GravityLoad.Elements = elemList;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       } else {
         gravityLoad.GravityLoad.Elements = "All";
