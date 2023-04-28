@@ -70,6 +70,12 @@ steps:
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.2.0\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
   displayName: dotnet tests
   failOnStderr: true
+  
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+  artifact: GsaGHTestsCoverage
+
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+  artifact: IntegrationTestsCoverage
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
