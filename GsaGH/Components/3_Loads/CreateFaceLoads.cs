@@ -14,6 +14,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateFaceLoads : GH_OasysDropDownComponent {
@@ -249,27 +250,27 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-            if (value.Value.EntityType == EntityType.Element
-              || value.Value.EntityType == EntityType.Member) {
-              faceLoad._refList = value.Value;
-              faceLoad._referenceType = ReferenceType.List;
-            } else {
-              this.AddRuntimeWarning(
-                "List must be of type Element or Member to apply to face loading");
-            }
+              if (value.Value.EntityType == EntityType.Element
+                || value.Value.EntityType == EntityType.Member) {
+                faceLoad._refList = value.Value;
+                faceLoad._referenceType = ReferenceType.List;
+              } else {
+                this.AddRuntimeWarning(
+                  "List must be of type Element or Member to apply to face loading");
+              }
 
             if (value.Value.EntityType == EntityType.Member) {
               this.AddRuntimeRemark(
                 "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
-            break;
-          }
+              break;
+            }
           case GsaElement2dGoo value: {
-            faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.Element;
-            break;
-          }
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Element;
+              break;
+            }
           case GsaMember2dGoo value: {
             faceLoad._refObjectGuid = value.Value.Guid;
             faceLoad._referenceType = ReferenceType.MemberChildElements;
@@ -294,17 +295,17 @@ namespace GsaGH.Components {
               break;
             }
           case GsaProp2dGoo value: {
-            faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.Prop2d;
-            break;
-          }
-          default: {
-            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-              faceLoad.FaceLoad.Elements = elemList;
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Prop2d;
+              break;
             }
+          default: {
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
+                faceLoad.FaceLoad.Elements = elemList;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 

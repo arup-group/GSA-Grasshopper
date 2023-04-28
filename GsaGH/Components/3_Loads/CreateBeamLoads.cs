@@ -14,6 +14,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateBeamLoads : GH_OasysDropDownComponent {
@@ -251,28 +252,28 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-            if (value.Value.EntityType == EntityType.Element
-              || value.Value.EntityType == EntityType.Member) {
-              beamLoad._refList = value.Value;
-              beamLoad._referenceType = ReferenceType.List;
-            } else {
-              this.AddRuntimeWarning(
-                "List must be of type Element or Member to apply to beam loading");
-            }
+              if (value.Value.EntityType == EntityType.Element
+                || value.Value.EntityType == EntityType.Member) {
+                beamLoad._refList = value.Value;
+                beamLoad._referenceType = ReferenceType.List;
+              } else {
+                this.AddRuntimeWarning(
+                  "List must be of type Element or Member to apply to beam loading");
+              }
 
             if (value.Value.EntityType == EntityType.Member) {
               this.AddRuntimeRemark(
                 "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
-            break;
-          }
+              break;
+            }
 
           case GsaElement1dGoo value: {
-            beamLoad._refObjectGuid = value.Value.Guid;
-            beamLoad._referenceType = ReferenceType.Element;
-            break;
-          }
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Element;
+              break;
+            }
           case GsaMember1dGoo value: {
             beamLoad._refObjectGuid = value.Value.Guid;
             beamLoad._referenceType = ReferenceType.MemberChildElements;
@@ -297,17 +298,17 @@ namespace GsaGH.Components {
               break;
             }
           case GsaSectionGoo value: {
-            beamLoad._refObjectGuid = value.Value.Guid;
-            beamLoad._referenceType = ReferenceType.Section;
-            break;
-          }
-          default: {
-            if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
-              beamLoad.BeamLoad.Elements = beamList;
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Section;
+              break;
             }
+          default: {
+              if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
+                beamLoad.BeamLoad.Elements = beamList;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 
