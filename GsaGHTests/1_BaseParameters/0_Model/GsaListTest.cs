@@ -31,38 +31,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("1 to 5 not 3", (string)list.GetListObjects(LengthUnit.Undefined)[0]);
     }
 
-    //[Fact]
-    //public void TestCaseList() {
-    //  // Arrange
-    //  var m = new GsaAPI.Model();
-    //  m.AddAnalysisTask();
-    //  m.AddAnalysisCaseToTask(1, "Case numero uno", "L1");
-    //  m.AddAnalysisCaseToTask(1, "Case numero due", "A2");
-
-    //  var apilist = new EntityList {
-    //    Name = "case List",
-    //    Definition = "All",
-    //    Type = GsaAPI.EntityType.Case
-    //  };
-
-    //  // Act
-    //  m.AddList(apilist);
-    //  ReadOnlyCollection<int> cases1 = m.ExpandList(apilist);
-
-    //  var model = new GsaModel() { Model = m, ModelUnit = LengthUnit.Meter };
-    //  GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
-      
-    //  // Assert
-    //  Assert.Equal(1, list.Id);
-    //  Assert.Equal("case List", list.Name);
-    //  Assert.Equal("all", list.Definition);
-    //  Assert.Equal(GsaGH.Parameters.EntityType.Case, list.EntityType);
-    //  List<object> cases = list.GetListObjects(LengthUnit.Meter);
-    //  Assert.Equal(2, cases.Count);
-    //  Assert.Equal(1, (int)cases[0]);
-    //  Assert.Equal(2, (int)cases[1]);
-    //}
-
     [Fact]
     public void TestNodeList() {
       // Arrange
