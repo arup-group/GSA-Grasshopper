@@ -29,15 +29,22 @@ namespace GsaGH.Components {
   ///   Component to get Element1D results
   /// </summary>
   public class Elem1dResultDiagram : GH_OasysDropDownComponent {
+    /// <summary>
+    ///   helper class for drawing our diagram lines with colors and quantities
+    /// </summary>
     private class DiagramLine {
       public Line Line { get; private set; }
       public Color Color { get; private set; }
-      //public IQuantity Quantity { get; private set; } // will be used when we can get the values from graphicDrawResult
+      public IQuantity Quantity { get; private set; }
 
       public DiagramLine(Point3d startPoint, Point3d endPoint, Color color) {
         Line = new Line(startPoint, endPoint);
         Color = color;
-        //Quantity = quantity;
+      }
+
+      public DiagramLine SetQuantity(IQuantity quantity) {
+        Quantity = quantity;
+        return this;
       }
     }
 
@@ -123,78 +130,29 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
-          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
-          Enabled = true,
-        };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var forceUnitsMenu = new ToolStripMenuItem("Force") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
-          Checked = unit == Force.GetAbbreviation(_forceUnit),
-          Enabled = true,
-        };
-        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var momentUnitsMenu = new ToolStripMenuItem("Moment") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-          Checked = unit == Moment.GetAbbreviation(_momentUnit),
-          Enabled = true,
-        };
-        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      var stressUnitsMenu = new ToolStripMenuItem("Stress") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
-          Checked = unit == Pressure.GetAbbreviation(_stressUnit),
-          Enabled = true,
-        };
-        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem lengthUnitsMenu = GetToolStripMenuItem("Displacement",
+        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
+      ToolStripMenuItem forceUnitsMenu = GetToolStripMenuItem("Force", EngineeringUnits.Force,
+        Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem momentUnitsMenu = GetToolStripMenuItem("Moment", EngineeringUnits.Moment,
+        Moment.GetAbbreviation(_momentUnit), UpdateMoment);
+      ToolStripMenuItem stressUnitsMenu = GetToolStripMenuItem("Stress", EngineeringUnits.Stress,
+        Pressure.GetAbbreviation(_stressUnit), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
-      if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-        }
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
+        forceUnitsMenu,
+        momentUnitsMenu,
+        stressUnitsMenu,
+      });
 
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          modelUnitsMenu,
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          stressUnitsMenu,
-          momentUnitsMenu,
-        });
-      } else {
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-          stressUnitsMenu,
-        });
+      if (_undefinedModelLengthUnit) {
+        ToolStripMenuItem modelUnitsMenu = GetToolStripMenuItem("Model geometry",
+          EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit), UpdateModel);
+
+        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -202,7 +160,6 @@ namespace GsaGH.Components {
       menu.Items.Add(unitsMenu);
 
       Menu_AppendSeparator(menu);
-      UpdateUI();
     }
 
     protected override void InitialiseDropdowns() {
@@ -317,6 +274,7 @@ namespace GsaGH.Components {
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
+
         _cachedLines.Add(new DiagramLine(startPoint, endPoint, (Color)item.Color));
       }
 
@@ -416,6 +374,22 @@ namespace GsaGH.Components {
       return isStress;
     }
 
+    private static ToolStripMenuItem GetToolStripMenuItem(
+      string name, EngineeringUnits units, string unitString, Action<string> action) {
+      var menu = new ToolStripMenuItem(name) {
+        Enabled = true,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(units)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => action(unit)) {
+          Checked = unit == unitString,
+          Enabled = true,
+        };
+        menu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      return menu;
+    }
+
     private void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
@@ -445,6 +419,5 @@ namespace GsaGH.Components {
       ExpirePreview(true);
       base.UpdateUI();
     }
-
   }
 }
