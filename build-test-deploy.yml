@@ -8,8 +8,6 @@ variables:
   - group: pipeline-tokens
   - name: configuration
     value: Release
-  - name: latest_released_gsa_version
-    value: GSA/latest/Arup_GSA_x64_10.1.65.64
 
 pool: 'rhino-compute'
 
@@ -18,6 +16,7 @@ steps:
   displayName: 'Delete orphan .ghlink files'
 
 - powershell: |
+    Get-ChildItem *.msi -Recurse | Remove-Item
     aws s3 cp s3://oasys-installer-store/GSA/latest . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
   displayName: 'Download GSA latest'
