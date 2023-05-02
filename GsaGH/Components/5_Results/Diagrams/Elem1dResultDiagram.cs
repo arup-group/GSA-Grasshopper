@@ -237,7 +237,7 @@ namespace GsaGH.Components {
         }
       }
 
-      string elementlist = GetElementFilters(da);
+      string elementlist = GetNodeFilters(da);
 
       var ghScale = new GH_Number();
       double scale = 1;
@@ -255,7 +255,7 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
-      double computedScale = ComputeScale(result.Model, scale);
+      double computedScale = ComputeScale(lengthUnit, scale);
       var graphic = new GraphicSpecification() {
         Elements = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
@@ -296,7 +296,7 @@ namespace GsaGH.Components {
       return valid;
     }
 
-    private static string GetElementFilters(IGH_DataAccess dataAccess) {
+    private static string GetNodeFilters(IGH_DataAccess dataAccess) {
       string nodeList = string.Empty;
       var ghNoList = new GH_String();
       if (dataAccess.GetData(1, ref ghNoList)) {
@@ -311,7 +311,7 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-    private double ComputeScale(GsaModel model, double scaleInput) {
+    private double ComputeScale(LengthUnit modelLengthUnit, double scaleInput) {
       double diagramScaleFactor = 1.0d;
       if (IsForce()) {
         diagramScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
@@ -323,7 +323,7 @@ namespace GsaGH.Components {
         this.AddRuntimeError("Not supported diagramType!");
       }
 
-      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, model.ModelUnit);
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, modelLengthUnit);
       return scaleInput * diagramScaleFactor * lengthScaleFactor;
     }
 
