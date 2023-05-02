@@ -137,11 +137,11 @@ namespace GsaGH.Helpers.Export {
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.Dictionary;
       gsa.SetMembers(apiMemDict);
 
-      gsa.SetSections(apiSections.ReadOnlyDictionary);
-      gsa.SetSectionModifiers(apiSectionModifiers.ReadOnlyDictionary);
-      gsa.SetProp2Ds(apiProp2ds.ReadOnlyDictionary);
-      gsa.SetProp3Ds(apiProp3ds.ReadOnlyDictionary);
-      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.ReadOnlyDictionary;
+      gsa.SetSections(apiSections.Dictionary);
+      gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);
+      gsa.SetProp2Ds(apiProp2ds.Dictionary);
+      gsa.SetProp3Ds(apiProp3ds.Dictionary);
+      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.Dictionary;
       if (materials.Count > 0) {
         foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
