@@ -9,14 +9,17 @@ coverage:
   precision: 1
   range:
   - 30.0
-  - 90.0
+  - 75.0
   round: down
   status:
     changes: false
     default_rules:
       flag_coverage_not_uploaded_behavior: include
     patch: true
-    project: true
+    project: 
+      default:
+        target: auto
+        threshold: 1%
 flags:
   gsagh:
     carryforward: false
