@@ -18,9 +18,9 @@ steps:
   displayName: 'Delete orphan .ghlink files'
 
 - powershell: |
-    $downloadPath = $(ls -r $(Pipeline.Workspace))
+    $downloadPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
     Write-output "Download Path: ${downloadPath}"
-    Remove-Item -Path ${downloadPath}\*.msi
+    Remove-Item -Path ${downloadPath}
     aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
   displayName: 'Download GSA nightly'
