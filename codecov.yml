@@ -27,7 +27,4 @@ flags:
     carryforward: false
 ignore:
   - "GsaGHTests"  # ignore project (as it is referenced by Integration test)
-  - "GsaGH/Components/GraveyardComp"  # ignore old versions of components in
-  - "GsaGH/UI"  # ignore UI about box
-  - "GsaGH/Properties" # ignore icons etc
-  - "GsaGH/Helpers/Graphics/Colours.cs" # ignore colours library class
+  - "GsaGH/Components/GraveyardComp"  # ignore old versions of components in graveyard folder
