@@ -99,7 +99,17 @@ steps:
     pathToSources: '$(System.DefaultWorkingDirectory)'
 
 - powershell: |
-    Invoke-RestMethod -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) { 
+      Write-Output "codecov.yml is invalid"
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+      exit(1)
+    } else { 
+      Write-Output "codecov.yml is valid"
+    }
+  displayName: Validate codecov.yml
+  failOnStderr: true
+  
+- powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
