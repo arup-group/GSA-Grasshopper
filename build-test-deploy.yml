@@ -99,6 +99,7 @@ steps:
     pathToSources: '$(System.DefaultWorkingDirectory)'
 
 - powershell: |
+    curl --data-binary @codecov.yml https://codecov.io/validate
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
