@@ -41,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="3_Components\GraveyardComp\" />
     <Folder Include="Helpers\Graphics\ResultDiagrams\" />
   </ItemGroup>
 

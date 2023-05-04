@@ -19,14 +19,14 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get geometric properties of a section
   /// </summary>
-  public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("f7463c48b-d901-4820-b43f-3d938f614206");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+  public class GetSectionProperties2_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("fc59d2f7-496e-4862-8f66-31f1068fcab7");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SectionProperties;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public GetSectionProperties() : base("Section Properties", "SectProp",
+    public GetSectionProperties2_OBSOLETE() : base("Section Properties", "SectProp",
       "Get GSA Section Properties", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -79,7 +79,6 @@ namespace GsaGH.Components {
 
     public virtual void VariableParameterMaintenance() {
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
-      VolumeUnit volumeUnit = UnitsHelper.GetVolumeUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
       Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
@@ -89,18 +88,8 @@ namespace GsaGH.Components {
         + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
       Params.Output[3].Name = "Moment of Inertia y-z ["
         + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[4].Name = "Moment of Inertia u-u ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[5].Name = "Moment of Inertia v-v ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[9].Name = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) +
-        "]";
-      Params.Output[10].Name = "Section Modulus in y [" + Volume.GetAbbreviation(volumeUnit) + "]";
-      Params.Output[11].Name = "Section Modulus in z [" + Volume.GetAbbreviation(volumeUnit) + "]";
-      Params.Output[12].Name = "Plastic Modulus in y [" + Volume.GetAbbreviation(volumeUnit) + "]";
-      Params.Output[13].Name = "Plastic Modulus in z [" + Volume.GetAbbreviation(volumeUnit) + "]";
-      Params.Output[14].Name = "Radius of Gyration in y [" + Length.GetAbbreviation(_lengthUnit) + "]";
-      Params.Output[15].Name = "Radius of Gyration in z [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Output[4].Name
+        = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -119,7 +108,6 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
-      VolumeUnit volumeUnit = UnitsHelper.GetVolumeUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
       pManager.AddGenericParameter("Area [" + Area.GetAbbreviation(areaUnit) + "]", "A",
@@ -134,32 +122,12 @@ namespace GsaGH.Components {
         "Moment of Inertia y-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "Iyz",
         "Section Moment of Intertia around local y-z axis", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Moment of Inertia u-u [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "Iuu",
-        "Section Moment of Intertia around principal u-u axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter(
-        "Moment of Inertia v-v [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "Ivv",
-        "Section Moment of Intertia around principal v-v axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Angle [°]", "A", "Angle between local and principal axis",
-        GH_ParamAccess.item);
+        "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "J",
+        "Section Torsion constant J", GH_ParamAccess.item);
       pManager.AddGenericParameter("Shear Area Factor in y", "Ky",
         "Section Shear Area Factor in local y-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Shear Area Factor in z", "Kz",
         "Section Shear Area Factor in local z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter(
-        "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "J",
-        "Section Torsion constant J", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Section Modulus in y [" + Volume.GetAbbreviation(volumeUnit) +
-        "]", "Zy", "Section Modulus in y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Section Modulus in z [" + Volume.GetAbbreviation(volumeUnit) +
-        "]", "Zz", "Section Modulus in z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Plastic Modulus in y [" + Volume.GetAbbreviation(volumeUnit) +
-        "]", "Zpy", "Plastic Section Modulus in y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Plastic Modulus in z [" + Volume.GetAbbreviation(volumeUnit) +
-        "]", "Zpz", "Plastic Section Modulus in z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Radius of Gyration in y [" + Length.GetAbbreviation(_lengthUnit)
-        + "]", "Ry", "Radius of Gyration in y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Radius of Gyration in z [" + Length.GetAbbreviation(_lengthUnit) +
-        "]", "Rz", "Radius of Gyration in z-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Surface A/Length [m²/m]", "S/L",
         "Section Surface Area per Unit Length", GH_ParamAccess.item);
       pManager.AddGenericParameter("Volume/Length [m³/m]", "V/L", "Section Volume per Unit Length",
@@ -187,35 +155,21 @@ namespace GsaGH.Components {
       }
 
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
-      VolumeUnit volumeUnit = UnitsHelper.GetVolumeUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
       da.SetData(0, new GH_UnitNumber(new Area(section.Area.As(areaUnit), areaUnit)));
-
-      da.SetData(1, new GH_UnitNumber(new AreaMomentOfInertia(section.Iyy.As(inertiaUnit), inertiaUnit)));
-      da.SetData(2, new GH_UnitNumber(new AreaMomentOfInertia(section.Izz.As(inertiaUnit), inertiaUnit)));
-      da.SetData(3, new GH_UnitNumber(new AreaMomentOfInertia(section.Iyz.As(inertiaUnit), inertiaUnit)));
-
-      da.SetData(4, new GH_UnitNumber(new AreaMomentOfInertia(section.Iuu.As(inertiaUnit), inertiaUnit)));
-      da.SetData(5, new GH_UnitNumber(new AreaMomentOfInertia(section.Ivv.As(inertiaUnit), inertiaUnit)));
-      da.SetData(6, new GH_UnitNumber(new Angle(section.Angle.As(AngleUnit.Degree), AngleUnit.Degree)));
-
-      da.SetData(7, section.Ky);
-      da.SetData(8, section.Kz);
-
-      da.SetData(9, new GH_UnitNumber(new AreaMomentOfInertia(section.J.As(inertiaUnit), inertiaUnit)));
-
-      da.SetData(10, new GH_UnitNumber(new Volume(section.Zy.As(volumeUnit), volumeUnit)));
-      da.SetData(11, new GH_UnitNumber(new Volume(section.Zz.As(volumeUnit), volumeUnit)));
-
-      da.SetData(12, new GH_UnitNumber(new Volume(section.Zpy.As(volumeUnit), volumeUnit)));
-      da.SetData(13, new GH_UnitNumber(new Volume(section.Zpz.As(volumeUnit), volumeUnit)));
-
-      da.SetData(14, new GH_UnitNumber(new Volume(section.Ry.As(_lengthUnit), _lengthUnit)));
-      da.SetData(15, new GH_UnitNumber(new Volume(section.Rz.As(_lengthUnit), _lengthUnit)));
-
-      da.SetData(16, new GH_UnitNumber(section.SurfaceAreaPerLength));
-      da.SetData(17, new GH_UnitNumber(section.VolumePerLength));
+      da.SetData(1,
+        new GH_UnitNumber(new AreaMomentOfInertia(section.Iyy.As(inertiaUnit), inertiaUnit)));
+      da.SetData(2,
+        new GH_UnitNumber(new AreaMomentOfInertia(section.Izz.As(inertiaUnit), inertiaUnit)));
+      da.SetData(3,
+        new GH_UnitNumber(new AreaMomentOfInertia(section.Iyz.As(inertiaUnit), inertiaUnit)));
+      da.SetData(4,
+        new GH_UnitNumber(new AreaMomentOfInertia(section.J.As(inertiaUnit), inertiaUnit)));
+      da.SetData(5, section.Ky);
+      da.SetData(6, section.Kz);
+      da.SetData(7, new GH_UnitNumber(section.SurfaceAreaPerLength));
+      da.SetData(8, new GH_UnitNumber(section.VolumePerLength));
     }
 
     private void Update(string unit) {
