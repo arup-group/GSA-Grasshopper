@@ -29,25 +29,6 @@ namespace GsaGH.Components {
   ///   Component to get Element1D results
   /// </summary>
   public class Elem1dResultDiagram : GH_OasysDropDownComponent {
-    /// <summary>
-    ///   helper class for drawing our diagram lines with colors and quantities
-    /// </summary>
-    private class DiagramLine {
-      public Line Line { get; private set; }
-      public Color Color { get; private set; }
-      public IQuantity Quantity { get; private set; }
-
-      public DiagramLine(Point3d startPoint, Point3d endPoint, Color color) {
-        Line = new Line(startPoint, endPoint);
-        Color = color;
-      }
-
-      public DiagramLine SetQuantity(IQuantity quantity) {
-        Quantity = quantity;
-        return this;
-      }
-    }
-
     public override Guid ComponentGuid => new Guid("7ae7ac36-f811-4c20-911f-ddb119f45644");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -62,8 +43,6 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
 
-    private ConcurrentBag<DiagramLine> _cachedLines;
-
     public Elem1dResultDiagram() : base("1D Element Result Diagram", "ResultElem1dDiagram",
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) { }
 
@@ -74,17 +53,6 @@ namespace GsaGH.Components {
 
       m_attributes = new DropDownComponentAttributes(this, SetSelected, _dropDownItems,
         _selectedItems, _spacerDescriptions);
-    }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-      if (_cachedLines is null) {
-        return;
-      }
-
-      foreach (DiagramLine diagramLine in _cachedLines) {
-        args.Display.DrawLine(diagramLine.Line, diagramLine.Color);
-      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -190,9 +158,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Result Vectors", "V", "Contoured Vectors with result values",
-        GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Curves", "e", "envelope", GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Diagram lines", "DL", "Lines of the diagram",
+        GH_ParamAccess.list);
     }
 
     protected override void BeforeSolveInstance() {
@@ -241,9 +208,10 @@ namespace GsaGH.Components {
 
       var ghScale = new GH_Number();
       double scale = 1;
-      bool isNormalised = !da.GetData(2, ref ghScale);
-      if (!isNormalised) {
+      bool autoScale = true;
+      if (da.GetData(2, ref ghScale)) {
         GH_Convert.ToDouble(ghScale, out scale, GH_Conversion.Both);
+        autoScale = false;
       }
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
@@ -255,17 +223,17 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
-      double computedScale = ComputeScale(result.Model, scale);
+      double computedScale = ComputeScale(result, scale, _lengthUnit, autoScale);
       var graphic = new GraphicSpecification() {
         Elements = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
          .Select(item => item.GsaApiEnum).FirstOrDefault(),
         Cases = _case,
-        ScaleFactor = isNormalised ? 1 : computedScale,
-        IsNormalised = isNormalised,
+        ScaleFactor = computedScale,
+        IsNormalised = autoScale,
       };
 
-      _cachedLines = new ConcurrentBag<DiagramLine>();
+      var diagramLines = new List<DiagramLineGoo>();
       ReadOnlyCollection<GsaAPI.Line> linesFromModel = result.Model.Model.Draw(graphic).Lines;
 
       foreach (GsaAPI.Line item in linesFromModel) {
@@ -275,10 +243,10 @@ namespace GsaGH.Components {
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
 
-        _cachedLines.Add(new DiagramLine(startPoint, endPoint, (Color)item.Color));
+        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Color));
       }
 
-      da.SetData(1, _cachedLines);
+      da.SetDataList(0, diagramLines);
 
       //PostHog.Result(result.Type, 1, resultType, _displayedDiagramType.ToString());
     }
@@ -311,20 +279,33 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-    private double ComputeScale(GsaModel model, double scaleInput) {
-      double diagramScaleFactor = 1.0d;
-      if (IsForce()) {
-        diagramScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
-      } else if (IsStress()) {
-        diagramScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
-      } else if (IsMoment()) {
-        diagramScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
-      } else {
-        this.AddRuntimeError("Not supported diagramType!");
+    private double ComputeScale(GsaResult result, double userScaleFactor,
+      LengthUnit userLengthUnitIfModelUndefined, bool autoScale) {
+      double unitScaleFactor = 1.0d;
+      if (!autoScale) {
+        if (IsForce()) {
+          unitScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
+        } else if (IsStress()) {
+          unitScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
+        } else if (IsMoment()) {
+          unitScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
+        } else {
+          this.AddRuntimeError("Not supported diagramType!");
+        }
       }
 
-      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, model.ModelUnit);
-      return scaleInput * diagramScaleFactor * lengthScaleFactor;
+      double lengthScaleFactor = 1;
+      if (!autoScale) {
+        LengthUnit lengthUnit = result.Model.ModelUnit == LengthUnit.Undefined
+        ? userLengthUnitIfModelUndefined
+        : result.Model.ModelUnit;
+
+        lengthScaleFactor = UnitConverter.Convert(1, lengthUnit, Length.BaseUnit);
+      }
+
+      // maxLength = 2.5% of bbox diagonal
+      double modelScale = autoScale ? result.Model.BoundingBox.Diagonal.Length * 0.025 : 1;
+      return userScaleFactor * unitScaleFactor * lengthScaleFactor * modelScale;
     }
 
     private bool IsForce() {
