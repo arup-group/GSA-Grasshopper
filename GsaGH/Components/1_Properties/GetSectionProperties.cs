@@ -192,27 +192,27 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GH_UnitNumber(new Area(section.Area.As(areaUnit), areaUnit)));
 
-      da.SetData(1, new GH_UnitNumber(new AreaMomentOfInertia(section.Iyy.As(inertiaUnit), inertiaUnit)));
-      da.SetData(2, new GH_UnitNumber(new AreaMomentOfInertia(section.Izz.As(inertiaUnit), inertiaUnit)));
-      da.SetData(3, new GH_UnitNumber(new AreaMomentOfInertia(section.Iyz.As(inertiaUnit), inertiaUnit)));
+      da.SetData(1, new GH_UnitNumber(section.Iyy.ToUnit(inertiaUnit)));
+      da.SetData(2, new GH_UnitNumber(section.Izz.ToUnit(inertiaUnit)));
+      da.SetData(3, new GH_UnitNumber(section.Iyz.ToUnit(inertiaUnit)));
 
-      da.SetData(4, new GH_UnitNumber(new AreaMomentOfInertia(section.Iuu.As(inertiaUnit), inertiaUnit)));
-      da.SetData(5, new GH_UnitNumber(new AreaMomentOfInertia(section.Ivv.As(inertiaUnit), inertiaUnit)));
-      da.SetData(6, new GH_UnitNumber(new Angle(section.Angle.As(AngleUnit.Degree), AngleUnit.Degree)));
+      da.SetData(4, new GH_UnitNumber(section.Iuu.ToUnit(inertiaUnit)));
+      da.SetData(5, new GH_UnitNumber(section.Ivv.ToUnit(inertiaUnit)));
+      da.SetData(6, new GH_UnitNumber(new Angle(section.Angle, AngleUnit.Degree)));
 
       da.SetData(7, section.Ky);
       da.SetData(8, section.Kz);
 
-      da.SetData(9, new GH_UnitNumber(new AreaMomentOfInertia(section.J.As(inertiaUnit), inertiaUnit)));
+      da.SetData(9, new GH_UnitNumber(section.J.ToUnit(inertiaUnit)));
 
-      da.SetData(10, new GH_UnitNumber(new Volume(section.Zy.As(volumeUnit), volumeUnit)));
-      da.SetData(11, new GH_UnitNumber(new Volume(section.Zz.As(volumeUnit), volumeUnit)));
+      da.SetData(10, new GH_UnitNumber(section.Zy.ToUnit(volumeUnit)));
+      da.SetData(11, new GH_UnitNumber(section.Zz.ToUnit(volumeUnit)));
 
-      da.SetData(12, new GH_UnitNumber(new Volume(section.Zpy.As(volumeUnit), volumeUnit)));
-      da.SetData(13, new GH_UnitNumber(new Volume(section.Zpz.As(volumeUnit), volumeUnit)));
+      da.SetData(12, new GH_UnitNumber(section.Zpy.ToUnit(volumeUnit)));
+      da.SetData(13, new GH_UnitNumber(section.Zpz.ToUnit(volumeUnit)));
 
-      da.SetData(14, new GH_UnitNumber(new Volume(section.Ry.As(_lengthUnit), _lengthUnit)));
-      da.SetData(15, new GH_UnitNumber(new Volume(section.Rz.As(_lengthUnit), _lengthUnit)));
+      da.SetData(14, new GH_UnitNumber(section.Ry.ToUnit(_lengthUnit)));
+      da.SetData(15, new GH_UnitNumber(section.Rz.ToUnit(_lengthUnit)));
 
       da.SetData(16, new GH_UnitNumber(section.SurfaceAreaPerLength));
       da.SetData(17, new GH_UnitNumber(section.VolumePerLength));
