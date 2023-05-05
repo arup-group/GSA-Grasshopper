@@ -386,6 +386,13 @@ namespace GsaGH.Components {
         }
       }
 
+      if ((mem.Type1D == ElementType.BAR || mem.Type1D == ElementType.TIE 
+        || mem.Type1D == ElementType.STRUT) && mem.MeshSize != 0) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+          $"Element type is {mem.Type1D} and mesh size is not zero. " +
+          Environment.NewLine + $"This may cause model instabilities.");
+      }
+
       da.SetData(0, new GsaMember1dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);

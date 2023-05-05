@@ -137,6 +137,17 @@ namespace GsaGH.Helpers.Export {
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.Dictionary;
       gsa.SetMembers(apiMemDict);
 
+      gsa.SetSections(apiSections.Dictionary);
+      gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);
+      gsa.SetProp2Ds(apiProp2ds.Dictionary);
+      gsa.SetProp3Ds(apiProp3ds.Dictionary);
+      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.Dictionary;
+      if (materials.Count > 0) {
+        foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
+          gsa.SetAnalysisMaterial(mat.Key, mat.Value);
+        }
+      }
+      
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoadsNode));
       gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoadsSettle));
@@ -261,17 +272,6 @@ namespace GsaGH.Helpers.Export {
       gsa.SetAxes(new ReadOnlyDictionary<int, Axis>(apiaxes));
       gsa.SetGridPlanes(new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes));
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
-
-      gsa.SetSections(apiSections.Dictionary);
-      gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);
-      gsa.SetProp2Ds(apiProp2ds.Dictionary);
-      gsa.SetProp3Ds(apiProp3ds.Dictionary);
-      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.Dictionary;
-      if (materials.Count > 0) {
-        foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
-          gsa.SetAnalysisMaterial(mat.Key, mat.Value);
-        }
-      }
 
       if (analysisTasks != null) {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = gsa.AnalysisTasks();
