@@ -35,7 +35,7 @@ namespace GsaGH.Components {
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
+    private string _toleranceTxt = string.Empty;
 
     public ElemFromMem() : base("Elements from Members", "ElemFromMem",
       "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -313,7 +313,7 @@ namespace GsaGH.Components {
 
       #endregion
 
-      Model gsa = AssembleModel.Assemble(null, inNodes, null, null, null, inMem1ds, inMem2ds,
+      Model gsa = AssembleModel.Assemble(null, null, inNodes, null, null, null, inMem1ds, inMem2ds,
         inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
 
       UpdateMessage();
@@ -324,8 +324,8 @@ namespace GsaGH.Components {
       var elementLocalAxesDict
         = elementDict.Keys.ToDictionary(id => id, id => gsa.ElementDirectionCosine(id));
 
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict,
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) = Elements.GetElements(elementDict,
         gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(),
         gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
@@ -335,12 +335,12 @@ namespace GsaGH.Components {
       };
 
       da.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
-      da.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
-      da.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
-      da.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(1, e1d.OrderBy(item => item.Value.Id));
+      da.SetDataList(2, e2d.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(3, e3d.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
-      _element2ds = elementTuple.Item2;
+      _element2ds = e2d;
     }
 
     private void MaintainText(ToolStripTextBox tolerance) {
@@ -350,7 +350,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "") {
+      if (_toleranceTxt != string.Empty) {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         } catch (Exception e) {

@@ -576,7 +576,7 @@ namespace GsaGH.Helpers.Graphics {
         }
 
         plane.Origin = pt;
-        string rest = "";
+        string rest = string.Empty;
         if (restraint.X) {
           rest += "X";
         }

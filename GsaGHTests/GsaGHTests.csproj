@@ -6,8 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="1_BaseParameters\5_Results\**" />
+    <Compile Remove="Helpers\Graphics\**" />
     <EmbeddedResource Remove="1_BaseParameters\5_Results\**" />
+    <EmbeddedResource Remove="Helpers\Graphics\**" />
     <None Remove="1_BaseParameters\5_Results\**" />
+    <None Remove="Helpers\Graphics\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
@@ -38,10 +41,6 @@
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helpers\Graphics\ResultDiagrams\" />
   </ItemGroup>
 
   <Import Project="PreBuild.targets" />

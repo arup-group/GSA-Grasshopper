@@ -3,9 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Helpers.Import;
+using OasysGH;
 using OasysUnits.Units;
-//using GsaAPI;
 
 namespace GsaGH.Parameters {
   public enum EntityType {
@@ -49,19 +50,37 @@ namespace GsaGH.Parameters {
         _name = value;
       }
     }
-    private List<int> _cases;
-    private string _definition;
-    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-      ConcurrentBag<GsaElement3dGoo>> _elements;
+
     private EntityType _entityType = EntityType.Undefined;
-    private int _id;
-    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-      ConcurrentBag<GsaMember3dGoo>> _members;
     private GsaModel _model;
-    private string _name;
-    private ConcurrentBag<GsaNodeGoo> _nodes;
+    internal int _id;
+    internal string _name;
+    internal string _definition;
+    internal List<int> _cases;
+    internal (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
+      List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) _properties;
+    internal ConcurrentBag<GsaNodeGoo> _nodes;
+    internal (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) _elements;
+    internal (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
+      ConcurrentBag<GsaMember3dGoo> m3d) _members;
 
     public GsaList() { }
+
+    internal GsaList(int id, EntityList list, GsaModel model) {
+      EntityType = GetEntityFromAPI(list.Type);
+      Id = id;
+      Name = list.Name;
+      Definition = list.Definition;
+      _model = model;
+    }
+    internal EntityList GetApiList() {
+      return new EntityList {
+        Name = Name,
+        Definition = Definition,
+        Type = GetAPIEntityType(EntityType)
+      };
+    }
 
     public GsaList Duplicate() {
       var dup = new GsaList {
@@ -82,19 +101,36 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Element:
-          if (_elements != null) {
-            dup._elements
-              = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-                ConcurrentBag<GsaElement3dGoo>>(_elements.Item1, _elements.Item2, _elements.Item3);
+          if (_properties != (null, null, null, null)) {
+            dup._properties = (new List<GsaMaterialGoo>(_properties.materials.ToList()),
+              new List<GsaSectionGoo>(_properties.sections.ToList()),
+              new List<GsaProp2dGoo>(_properties.prop2ds.ToList()),
+              new List<GsaProp3dGoo>(_properties.prop3ds.ToList()));
+          }
+          if (_elements != (null, null, null)) {
+            dup._elements = (new ConcurrentBag<GsaElement1dGoo>(_elements.e1d.ToList()),
+              new ConcurrentBag<GsaElement2dGoo>(_elements.e2d.ToList()),
+              new ConcurrentBag<GsaElement3dGoo>(_elements.e3d.ToList()));
+          }
+          if (_members != (null, null, null)) {
+            dup._members = (new ConcurrentBag<GsaMember1dGoo>(_members.m1d.ToList()),
+              new ConcurrentBag<GsaMember2dGoo>(_members.m2d.ToList()),
+              new ConcurrentBag<GsaMember3dGoo>(_members.m3d.ToList()));
           }
 
           break;
 
         case EntityType.Member:
-          if (_members != null) {
-            dup._members
-              = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-                ConcurrentBag<GsaMember3dGoo>>(_members.Item1, _members.Item2, _members.Item3);
+          if (_properties != (null, null, null, null)) {
+            dup._properties = (new List<GsaMaterialGoo>(_properties.materials.ToList()),
+              new List<GsaSectionGoo>(_properties.sections.ToList()),
+              new List<GsaProp2dGoo>(_properties.prop2ds.ToList()),
+              new List<GsaProp3dGoo>(_properties.prop3ds.ToList()));
+          }
+          if (_members != (null, null, null)) {
+            dup._members = (new ConcurrentBag<GsaMember1dGoo>(_members.m1d.ToList()),
+              new ConcurrentBag<GsaMember2dGoo>(_members.m2d.ToList()),
+              new ConcurrentBag<GsaMember3dGoo>(_members.m3d.ToList()));
           }
 
           break;
@@ -112,48 +148,70 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string s = Id > 0 ? ("ID:" + Id + " ") : string.Empty;
-      s += Name + " ";
+      if (Name != null) {
+        s += Name + " ";
+      } else {
+        s += EntityType.ToString() + " List ";
+      }
       switch (EntityType) {
         case EntityType.Node:
           if (_nodes != null && _nodes.Count != 0) {
             s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s (" + Definition + ")";
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
 
         case EntityType.Element:
-          if (_elements != null
-            && (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) != 0) {
+          if (_elements != (null, null, null)
+            && (_elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count) != 0) {
             s += "containing "
-              + (_elements.Item1.Count + _elements.Item2.Count + _elements.Item3.Count) + " "
+              + (_elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count) + " "
               + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s (" + Definition + ")";
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
 
         case EntityType.Member:
-          if (_members != null
-            && (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) != 0) {
+          if (_members != (null, null, null)
+            && (_members.m1d.Count + _members.m2d.Count + _members.m3d.Count) != 0) {
             s += "containing "
-              + (_members.Item1.Count + _members.Item2.Count + _members.Item3.Count) + " "
+              + (_members.m1d.Count + _members.m2d.Count + _members.m3d.Count) + " "
               + EntityType.ToString() + "s";
           } else {
-            s += EntityType.ToString() + "s (" + Definition + ")";
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
           }
 
           break;
 
         case EntityType.Case:
+          if (_cases != null && _cases.Count != 0) {
+            s += "containing " + _cases.Count + " " + EntityType.ToString() + "s";
+          } else {
+            s += EntityType.ToString() + "s" + (Definition != null 
+              ? " (" + Definition.Trim() + ")" 
+              : string.Empty);
+          }
+
+          break;
+
         case EntityType.Undefined:
-          s += EntityType.ToString() + " (" + Definition + ")";
+          s += EntityType.ToString() + "s" + (Definition != null 
+            ? " (" + Definition.Trim() + ")" 
+            : string.Empty);
           break;
       }
 
-      return s;
+      return s.Replace("  ", " ");
     }
 
     internal List<object> GetListObjects(LengthUnit unit) {
@@ -172,41 +230,41 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Element:
-          if (_elements == null) {
+          if (_elements == (null, null, null)) {
             return new List<object>();
           }
 
           list = new List<object>();
-          if (_elements.Item1 != null) {
-            list.AddRange(_elements.Item1.OrderBy(x => x.Value.Id));
+          if (_elements.e1d != null) {
+            list.AddRange(_elements.e1d.OrderBy(x => x.Value.Id));
           }
 
-          if (_elements.Item2 != null) {
-            list.AddRange(_elements.Item2.OrderBy(x => x.Value.Ids.Min()));
+          if (_elements.e2d != null) {
+            list.AddRange(_elements.e2d.OrderBy(x => x.Value.Ids.Min()));
           }
 
-          if (_elements.Item3 != null) {
-            list.AddRange(_elements.Item3.OrderBy(x => x.Value.Ids.Min()));
+          if (_elements.e3d != null) {
+            list.AddRange(_elements.e3d.OrderBy(x => x.Value.Ids.Min()));
           }
 
           break;
 
         case EntityType.Member:
-          if (_members == null) {
+          if (_members == (null, null, null)) {
             return new List<object>();
           }
 
           list = new List<object>();
-          if (_members.Item1 != null) {
-            list.AddRange(_members.Item1.OrderBy(x => x.Value.Id));
+          if (_members.m1d != null) {
+            list.AddRange(_members.m1d.OrderBy(x => x.Value.Id));
           }
 
-          if (_members.Item2 != null) {
-            list.AddRange(_members.Item2.OrderBy(x => x.Value.Id));
+          if (_members.m2d != null) {
+            list.AddRange(_members.m2d.OrderBy(x => x.Value.Id));
           }
 
-          if (_members.Item3 != null) {
-            list.AddRange(_members.Item3.OrderBy(x => x.Value.Id));
+          if (_members.m3d != null) {
+            list.AddRange(_members.m3d.OrderBy(x => x.Value.Id));
           }
 
           break;
@@ -222,7 +280,7 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Undefined:
-          if (Definition != null && Definition != "") {
+          if (Definition != null && Definition != string.Empty) {
             list = new List<object>(new List<string>() {
               Definition,
             });
@@ -234,12 +292,12 @@ namespace GsaGH.Parameters {
       return list;
     }
 
-    internal void SetListObjects(List<object> objects) {
+    internal void SetListGooObjects(List<object> gooObjects) {
       var def = new List<string>();
-      for (int i = objects.Count - 1; i >= 0; i--) {
-        if (objects[i] is string txt) {
+      for (int i = gooObjects.Count - 1; i >= 0; i--) {
+        if (gooObjects[i] is string txt) {
           def.Add(txt);
-          objects.RemoveAt(i);
+          gooObjects.RemoveAt(i);
         }
       }
 
@@ -247,74 +305,121 @@ namespace GsaGH.Parameters {
         def.Reverse();
         string definition = string.Join(" ", def);
         // pass the definition through the API here to catch any errors
-        //var apiList = new EntityList() {
-        //  Type = GetAPIEntityType(EntityType),
-        //  Definition = definition
-        //};
-        //Definition = apiList.Definition;
+        var apiList = new EntityList() {
+          Type = GetAPIEntityType(EntityType),
+          Definition = definition
+        };
+        Definition = apiList.Definition;
       }
 
       switch (EntityType) {
         case EntityType.Node:
-          _nodes = new ConcurrentBag<GsaNodeGoo>(objects.Select(x => new GsaNodeGoo((GsaNode)x)));
+          _nodes = new ConcurrentBag<GsaNodeGoo>(gooObjects.Select(x => (GsaNodeGoo)x));
           break;
 
         case EntityType.Element:
-          var elem1ds = new ConcurrentBag<GsaElement1dGoo>();
-          var elem2ds = new ConcurrentBag<GsaElement2dGoo>();
-          var elem3ds = new ConcurrentBag<GsaElement3dGoo>();
-          foreach (object elem in objects) {
-            if (elem is GsaElement1d elem1d) {
-              elem1ds.Add(new GsaElement1dGoo(elem1d));
-            } else if (elem is GsaElement2d elem2d) {
-              elem2ds.Add(new GsaElement2dGoo(elem2d));
-            } else if (elem is GsaElement3d elem3d) {
-              elem3ds.Add(new GsaElement3dGoo(elem3d));
+          _properties.materials = new List<GsaMaterialGoo>();
+          _properties.sections = new List<GsaSectionGoo>();
+          _properties.prop2ds = new List<GsaProp2dGoo>();
+          _properties.prop3ds = new List<GsaProp3dGoo>();
+          _elements.e1d = new ConcurrentBag<GsaElement1dGoo>();
+          _elements.e2d = new ConcurrentBag<GsaElement2dGoo>();
+          _elements.e3d = new ConcurrentBag<GsaElement3dGoo>();
+          _members.m1d = new ConcurrentBag<GsaMember1dGoo>();
+          _members.m2d = new ConcurrentBag<GsaMember2dGoo>();
+          _members.m3d = new ConcurrentBag<GsaMember3dGoo>();
+          foreach (object elem in gooObjects) {
+            switch (elem) {
+              case GsaMaterialGoo materialGoo:
+                _properties.materials.Add(materialGoo);
+                break;
+
+              case GsaSectionGoo sectionGoo:
+                _properties.sections.Add(sectionGoo);
+                break;
+
+              case GsaProp2dGoo prop2dGoo:
+                _properties.prop2ds.Add(prop2dGoo);
+                break;
+
+              case GsaProp3dGoo prop3dGoo:
+                _properties.prop3ds.Add(prop3dGoo);
+                break;
+
+              case GsaElement1dGoo elem1dGoo:
+                _elements.e1d.Add(elem1dGoo);
+                break;
+
+              case GsaElement2dGoo elem2dGoo:
+                _elements.e2d.Add(elem2dGoo);
+                break;
+
+              case GsaElement3dGoo elem3dGoo:
+                _elements.e3d.Add(elem3dGoo);
+                break;
+
+              case GsaMember1dGoo member1dGoo:
+                _members.m1d.Add(member1dGoo);
+                break;
+
+              case GsaMember2dGoo member2dGoo:
+                _members.m2d.Add(member2dGoo);
+                break;
+
+              case GsaMember3dGoo member3dGoo:
+                _members.m3d.Add(member3dGoo);
+                break;
             }
           }
-
-          _elements
-            = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-              ConcurrentBag<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
           break;
 
         case EntityType.Member:
-          var mem1ds = new ConcurrentBag<GsaMember1dGoo>();
-          var mem2ds = new ConcurrentBag<GsaMember2dGoo>();
-          var mem3ds = new ConcurrentBag<GsaMember3dGoo>();
-          foreach (object mem in objects) {
-            if (mem is GsaMember1d mem1d) {
-              mem1ds.Add(new GsaMember1dGoo(mem1d));
-            } else if (mem is GsaMember2d mem2d) {
-              mem2ds.Add(new GsaMember2dGoo(mem2d));
-            } else if (mem is GsaMember3d mem3d) {
-              mem3ds.Add(new GsaMember3dGoo(mem3d));
+          _properties.materials = new List<GsaMaterialGoo>();
+          _properties.sections = new List<GsaSectionGoo>();
+          _properties.prop2ds = new List<GsaProp2dGoo>();
+          _properties.prop3ds = new List<GsaProp3dGoo>();
+          _members.m1d = new ConcurrentBag<GsaMember1dGoo>();
+          _members.m2d = new ConcurrentBag<GsaMember2dGoo>();
+          _members.m3d = new ConcurrentBag<GsaMember3dGoo>();
+          foreach (object elem in gooObjects) {
+            switch (elem) {
+              case GsaMaterialGoo materialGoo:
+                _properties.materials.Add(materialGoo);
+                break;
+
+              case GsaSectionGoo sectionGoo:
+                _properties.sections.Add(sectionGoo);
+                break;
+
+              case GsaProp2dGoo prop2dGoo:
+                _properties.prop2ds.Add(prop2dGoo);
+                break;
+
+              case GsaProp3dGoo prop3dGoo:
+                _properties.prop3ds.Add(prop3dGoo);
+                break;
+
+              case GsaMember1dGoo member1dGoo:
+                _members.m1d.Add(member1dGoo);
+                break;
+
+              case GsaMember2dGoo member2dGoo:
+                _members.m2d.Add(member2dGoo);
+                break;
+
+              case GsaMember3dGoo member3dGoo:
+                _members.m3d.Add(member3dGoo);
+                break;
             }
           }
-
-          _members
-            = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-              ConcurrentBag<GsaMember3dGoo>>(mem1ds, mem2ds, mem3ds);
           break;
 
         case EntityType.Case:
-          _cases = objects.Select(x => (int)x).ToList();
+          _cases = gooObjects.Select(x => (int)x).ToList();
           break;
       }
     }
 
-    //internal GsaList(int id, EntityList list, GsaModel model) {
-    //  EntityType = GetEntityFromAPI(list.Type);
-    //  Id = id;
-    //  Name = list.Name;
-    //  Definition = list.Definition;
-    //  _model = model;
-    //}
-    //internal GsaAPI.EntityList GetApiList() => new GsaAPI.EntityList {
-    //  Name = Name,
-    //  Definition = Definition,
-    //  Type = GetAPIEntityType(EntityType)
-    //};
     private void PopulateListObjectsFromModel(LengthUnit unit) {
       if (_model == null) {
         return;
@@ -330,6 +435,11 @@ namespace GsaGH.Parameters {
           foreach (int id in _model.Model.Elements(Definition).Keys) {
             elementLocalAxesDict.Add(id, _model.Model.ElementDirectionCosine(id));
           }
+          // TO-DO: GSA-6773: add way to get properties/materials by list
+          _properties.materials = new List<GsaMaterialGoo>();
+          _properties.sections = new List<GsaSectionGoo>();
+          _properties.prop2ds = new List<GsaProp2dGoo>();
+          _properties.prop3ds = new List<GsaProp3dGoo>();
 
           _elements = Elements.GetElements(_model.Model.Elements(Definition), _model.Model.Nodes(),
             _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
@@ -342,6 +452,11 @@ namespace GsaGH.Parameters {
           foreach (int id in _model.Model.Members(Definition).Keys) {
             memberLocalAxesDict.Add(id, _model.Model.MemberDirectionCosine(id));
           }
+          // TO-DO: GSA-6773: add way to get properties/materials by list
+          _properties.materials = new List<GsaMaterialGoo>();
+          _properties.sections = new List<GsaSectionGoo>();
+          _properties.prop2ds = new List<GsaProp2dGoo>();
+          _properties.prop3ds = new List<GsaProp3dGoo>();
 
           _members = Members.GetMembers(_model.Model.Members(Definition), _model.Model.Nodes(),
             _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
@@ -350,8 +465,8 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          //var tempApiList = new GsaAPI.EntityList() { Type = GsaAPI.EntityType.Case, Name = Name, Definition = Definition };
-          //_cases = _model.Model.ExpandList(tempApiList).ToList();
+          var tempApiList = new GsaAPI.EntityList() { Type = GsaAPI.EntityType.Case, Name = Name, Definition = Definition };
+          _cases = _model.Model.ExpandList(tempApiList).ToList();
           break;
 
         case EntityType.Undefined:
@@ -360,32 +475,42 @@ namespace GsaGH.Parameters {
       }
     }
 
-    //internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type) {
-    //  switch (type) {
-    //    case GsaAPI.EntityType.Node:
-    //      return EntityType.Node;
-    //    case GsaAPI.EntityType.Element:
-    //      return EntityType.Element;
-    //    case GsaAPI.EntityType.Member:
-    //      return EntityType.Member;
-    //    case GsaAPI.EntityType.Case:
-    //      return EntityType.Case;
-    //  }
-    //  return EntityType.Undefined;
-    //}
+    internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type) {
+      switch (type) {
+        case GsaAPI.EntityType.Node:
+          return EntityType.Node;
 
-    //internal static GsaAPI.EntityType GetAPIEntityType(EntityType type) {
-    //  switch (type) {
-    //    case EntityType.Node:
-    //      return GsaAPI.EntityType.Node;
-    //    case EntityType.Element:
-    //      return GsaAPI.EntityType.Element;
-    //    case EntityType.Member:
-    //      return GsaAPI.EntityType.Member;
-    //    case EntityType.Case:
-    //      return GsaAPI.EntityType.Case;
-    //  }
-    //  return GsaAPI.EntityType.Undefined;
-    //}
+        case GsaAPI.EntityType.Element:
+          return EntityType.Element;
+
+        case GsaAPI.EntityType.Member:
+          return EntityType.Member;
+
+        case GsaAPI.EntityType.Case:
+          return EntityType.Case;
+
+        default:
+          return EntityType.Undefined;
+      }
+    }
+
+    internal static GsaAPI.EntityType GetAPIEntityType(EntityType type) {
+      switch (type) {
+        case EntityType.Node:
+          return GsaAPI.EntityType.Node;
+
+        case EntityType.Element:
+          return GsaAPI.EntityType.Element;
+
+        case EntityType.Member:
+          return GsaAPI.EntityType.Member;
+
+        case EntityType.Case:
+          return GsaAPI.EntityType.Case;
+
+        default:
+          return GsaAPI.EntityType.Undefined;
+      }
+    }
   }
 }

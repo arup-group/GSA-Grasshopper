@@ -19,6 +19,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using static System.Net.WebRequestMethods;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -69,13 +70,14 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list", "El",
-        "Filter results by list." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
+      pManager.AddGenericParameter("Element filter list", "El",
+        "Filter results by list (by default 'all')" + Environment.NewLine
+        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
+        GH_ParamAccess.item);
+      pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
     }
@@ -109,14 +111,9 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
 
-      string elementlist = "All";
-      var ghType = new GH_String();
-      if (da.GetData(1, ref ghType)) {
-        GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
-      }
-
-      if (elementlist.ToLower() == "all" || elementlist == "") {
-        elementlist = "All";
+      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(elementlist)) { 
+        return; 
       }
 
       var ghDivisions = new GH_Integer();
@@ -173,51 +170,51 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                    vals[perm - 1].XyzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) {
+                      continue;
+                    }
+
+                    var path = new GH_Path(result.CaseId,
+                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                    outTransX.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
+                      path); // use ToUnit to capture changes in dropdown
+                    outTransY.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
+                    outTransZ.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
+                    outTransXyz.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
                   }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outTransX.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
-                    path); // use ToUnit to capture changes in dropdown
-                  outTransY.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
-                  outTransZ.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-                  outTransXyz.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
+                  break;
                 }
-
-                break;
-              }
               case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                    vals[perm - 1].XxyyzzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) {
+                      continue;
+                    }
+
+                    var path = new GH_Path(result.CaseId,
+                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                    outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
+                      path); // always use [rad] units
+                    outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
+                    outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
+                    outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
                   }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
-                    path); // always use [rad] units
-                  outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
-                  outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
-                  outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
+                  break;
                 }
-
-                break;
-              }
             }
           });
         }

@@ -40,7 +40,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var m = new ComAuto();
       m.NewFile();
-      string gwa = "";
+      string gwa = string.Empty;
       var strings = new List<string>();
       if (da.GetDataList(0, strings)) {
         gwa = strings.Aggregate(gwa, (current, s) => current + s + "\n");

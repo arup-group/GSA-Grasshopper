@@ -127,7 +127,7 @@ namespace GsaGH.Components {
     private List<string> _profileString = new List<string>() {
       "CAT HE HE200.B",
     };
-    private string _search = "";
+    private string _search = string.Empty;
     private List<string> _sectionList;
     private string _type = "IRectangleProfile";
     private Tuple<List<string>, List<int>> _typedata;
@@ -251,7 +251,7 @@ namespace GsaGH.Components {
           _selectedItems[3] = _sectionList[j];
         }
 
-        if (_search == "") {
+        if (_search == string.Empty) {
           UpdateProfileString();
         }
 
@@ -959,7 +959,7 @@ namespace GsaGH.Components {
         }
 
         _search = null;
-        string inSearch = "";
+        string inSearch = string.Empty;
         if (da.GetData(0, ref inSearch)) {
           _search = inSearch.Trim().ToLower().Replace(".", string.Empty).Replace("*", ".*")
            .Replace(" ", ".*");
@@ -986,7 +986,7 @@ namespace GsaGH.Components {
               _profileString = new List<string>();
               this.AddRuntimeWarning("No profile found that matches selected profile and search!");
             }
-          } else if (_search != "") {
+          } else if (_search != string.Empty) {
             foreach (string section in _sectionList) {
               if (MatchAndAdd(section, _search, ref filteredlist, tryHard)) { } else if (
                 !_search.Any(char.IsDigit)) {

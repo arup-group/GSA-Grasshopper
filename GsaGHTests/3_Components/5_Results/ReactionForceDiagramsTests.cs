@@ -8,7 +8,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using Xunit;
 
-namespace GsaGHTests {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests {
 
@@ -66,10 +66,11 @@ namespace GsaGHTests {
       var expectedStringParam = new Param_String() {
         Name = "Node filter list",
         NickName = "No",
-        Description = "Filter results by list." + Environment.NewLine
-          + "Node list should take the form:" + Environment.NewLine
-          + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-          + "Refer to GSA help file for definition of lists and full vocabulary.",
+        Description = 
+        "Filter results by list (by default 'all')" + Environment.NewLine
+        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
+        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
+        + "Refer to GSA help file for definition of lists and full vocabulary.",
         Access = GH_ParamAccess.item,
         Optional = true,
       };

@@ -4,7 +4,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -202,7 +201,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "G1D",
-        "Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string."
+        "List, Custom Material, Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
@@ -262,10 +261,10 @@ namespace GsaGH.Components {
                   "List must be of type Element or Member to apply to beam loading");
               }
 
-              if (value.Value.EntityType == EntityType.Member) {
-                this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
+            if (value.Value.EntityType == EntityType.Member) {
+              this.AddRuntimeRemark(
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            }
 
               break;
             }
@@ -276,16 +275,26 @@ namespace GsaGH.Components {
               break;
             }
           case GsaMember1dGoo value: {
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Member;
-              if (_mode != FoldMode.Uniform) {
-                this.AddRuntimeWarning(
-                  "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-              } else {
-                this.AddRuntimeRemark(
-                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
+            beamLoad._refObjectGuid = value.Value.Guid;
+            beamLoad._referenceType = ReferenceType.MemberChildElements;
+            if (_mode != FoldMode.Uniform) {
+              this.AddRuntimeWarning(
+                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+            } else {
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            }
 
+            break;
+          }
+          case GsaMaterialGoo value: {
+              if (value.Value.GradeProperty != 0) {
+                this.AddRuntimeWarning(
+                "Reference Material must be a Custom Material");
+                return;
+              }
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Material;
               break;
             }
           case GsaSectionGoo value: {
@@ -321,7 +330,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -331,23 +340,23 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
 
         case "XX":
-          direc = Direction.XX;
+          direc = GsaAPI.Direction.XX;
           break;
 
         case "YY":
-          direc = Direction.YY;
+          direc = GsaAPI.Direction.YY;
           break;
 
         case "ZZ":
-          direc = Direction.ZZ;
+          direc = GsaAPI.Direction.ZZ;
           break;
       }
 
@@ -366,7 +375,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            beamLoad.BeamLoad.Type = BeamLoadType.POINT;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.POINT;
             double pos = 0;
             if (da.GetData(7, ref pos)) {
               pos *= -1;
@@ -380,7 +389,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            beamLoad.BeamLoad.Type = BeamLoadType.UNIFORM;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.UNIFORM;
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
           }
 
@@ -388,7 +397,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Linear:
           if (_mode == FoldMode.Linear) {
-            beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.LINEAR;
             var load2 = (ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit);
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
@@ -398,7 +407,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Patch:
           if (_mode == FoldMode.Patch) {
-            beamLoad.BeamLoad.Type = BeamLoadType.PATCH;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.PATCH;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;
@@ -420,7 +429,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Trilinear:
           if (_mode == FoldMode.Trilinear) {
-            beamLoad.BeamLoad.Type = BeamLoadType.TRILINEAR;
+            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.TRILINEAR;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;

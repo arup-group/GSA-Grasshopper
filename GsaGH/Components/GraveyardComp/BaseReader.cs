@@ -9,15 +9,15 @@ namespace GsaGH.Components.GraveyardComp {
 
     internal static bool Read(
       GH_IReader reader, GH_Component owner, bool ignoreParamCountOverspill = false) {
-      string mName = "";
+      string mName = string.Empty;
       reader.TryGetString("Name", ref mName);
       owner.Name = mName;
 
-      string mNickname = "";
+      string mNickname = string.Empty;
       reader.TryGetString("NickName", ref mNickname);
       owner.NickName = mNickname;
 
-      string mDescription = "";
+      string mDescription = string.Empty;
       reader.TryGetString("Description", ref mDescription);
       owner.Description = mDescription;
       owner.NewInstanceGuid(reader.ItemExists("InstanceGuid") ? reader.GetGuid("InstanceGuid") :

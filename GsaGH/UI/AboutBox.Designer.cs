@@ -203,7 +203,7 @@ namespace GsaGH.Graphics
       // 
       // disclaimer
       // 
-      this.disclaimer.AccessibleName = "";
+      this.disclaimer.AccessibleName = string.Empty;
       this.tableLayoutPanel.SetColumnSpan(this.disclaimer, 3);
       this.disclaimer.Location = new System.Drawing.Point(6, 135);
       this.disclaimer.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);

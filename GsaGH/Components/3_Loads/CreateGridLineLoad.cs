@@ -165,7 +165,7 @@ namespace GsaGH.Components {
             controlPoints = ln.ToList();
           }
 
-          string desc = "";
+          string desc = string.Empty;
 
           for (int i = 0; i < controlPoints.Count; i++) {
             if (i > 0) {
