@@ -1,9 +1,12 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using OasysUnits;
+using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
@@ -40,22 +43,31 @@ namespace GsaGHTests.Components.Properties {
         Pool = 12,
         Name = "byggemandbob",
         Colour = Color.Red,
+        BasicOffset = BasicOffset.Top,
+        AdditionalOffsetY = new Length(10.0, LengthUnit.Millimeter),
+        AdditionalOffsetZ = new Length(-23.0, LengthUnit.Millimeter)
       };
 
       ComponentTestHelper.SetInput(comp, section, 0);
       ComponentTestHelper.SetInput(comp, 42, 1);
       ComponentTestHelper.SetInput(comp, "STD I 300 400 10 20", 2);
       ComponentTestHelper.SetInput(comp, material, 3);
-      ComponentTestHelper.SetInput(comp, modifier, 4);
-      ComponentTestHelper.SetInput(comp, 12, 5);
-      ComponentTestHelper.SetInput(comp, "byggemandbob", 6);
-      ComponentTestHelper.SetInput(comp, Color.Red, 7);
+      ComponentTestHelper.SetInput(comp, BasicOffset.Top, 4);
+      ComponentTestHelper.SetInput(comp, 1.0, 5);
+      ComponentTestHelper.SetInput(comp, -2.3, 6);
+      ComponentTestHelper.SetInput(comp, modifier, 7);
+      ComponentTestHelper.SetInput(comp, 12, 8);
+      ComponentTestHelper.SetInput(comp, "byggemandbob", 9);
+      ComponentTestHelper.SetInput(comp, Color.Red, 10);
 
       int i = 0;
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, i++);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
       var profile = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
       var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
+      var basicOffset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
+      var addiontalOffsetY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
+      var addiontalOffsetZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
       var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, i++);
       var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
@@ -65,6 +77,9 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(42, id.Value);
       Assert.Equal("STD I 300 400 10 20", profile.Value);
       Duplicates.AreEqual(material.Value, mat.Value);
+      Duplicates.AreEqual(BasicOffset.Top, basicOffset.Value);
+      Duplicates.AreEqual(new Length(1.0, LengthUnit.Centimeter), addiontalOffsetY.Value);
+      Duplicates.AreEqual(new Length(-2.3, LengthUnit.Centimeter), addiontalOffsetZ.Value);
       Duplicates.AreEqual(modifier.Value, mod.Value);
       Assert.Equal(12, pool.Value);
       Assert.Equal("byggemandbob", name.Value);
@@ -77,14 +92,14 @@ namespace GsaGHTests.Components.Properties {
     [Fact]
     public void TestColour() {
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, Color.Blue, 7);
+      ComponentTestHelper.SetInput(comp, Color.Blue, 10);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
 
       Assert.Equal(Color.Blue.A, sectionGoo.Value.Colour.A);
       Assert.Equal(Color.Blue.R, sectionGoo.Value.Colour.R);
       Assert.Equal(Color.Blue.G, sectionGoo.Value.Colour.G);
       Assert.Equal(Color.Blue.B, sectionGoo.Value.Colour.B);
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 7);
+      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 10);
       Assert.Equal(Color.Blue.A, colour.Value.A);
       Assert.Equal(Color.Blue.R, colour.Value.R);
       Assert.Equal(Color.Blue.G, colour.Value.G);
@@ -120,30 +135,30 @@ namespace GsaGHTests.Components.Properties {
       var modifier
         = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(CreateSectionModifierTests
          .ComponentMother());
-      ComponentTestHelper.SetInput(comp, modifier, 4);
+      ComponentTestHelper.SetInput(comp, modifier, 7);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
       Duplicates.AreEqual(modifier.Value, sectionGoo.Value.Modifier);
-      var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, 4);
+      var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, 7);
       Duplicates.AreEqual(modifier.Value, mod.Value);
     }
 
     [Fact]
     public void TestName() {
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, "John", 6);
+      ComponentTestHelper.SetInput(comp, "John", 9);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.Equal("John", sectionGoo.Value.Name);
-      var name = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
+      var name = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
       Assert.Equal("John", name.Value);
     }
 
     [Fact]
     public void TestPool() {
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, 99, 5);
+      ComponentTestHelper.SetInput(comp, 99, 8);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.Equal(99, sectionGoo.Value.Pool);
-      var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
+      var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
       Assert.Equal(99, pool.Value);
     }
 

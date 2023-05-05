@@ -46,6 +46,9 @@ namespace GsaGHTests.Parameters {
       sect.Material.MaterialType = GsaMaterial.MatType.Concrete;
       sect.Name = "mariam";
       sect.Pool = 4;
+      sect.BasicOffset = BasicOffset.TopRight;
+      sect.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
+      sect.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
 
       Assert.Equal(0, sect.Material.AnalysisProperty);
       Assert.Equal(2, sect.Material.GradeProperty);
@@ -53,6 +56,9 @@ namespace GsaGHTests.Parameters {
         sect.Material.MaterialType.ToString());
       Assert.Equal("mariam", sect.Name);
       Assert.Equal(4, sect.Pool);
+      Assert.Equal(BasicOffset.TopRight, sect.BasicOffset);
+      Assert.Equal(new Length(1, LengthUnit.Centimeter), sect.AdditionalOffsetY);
+      Assert.Equal(new Length(2, LengthUnit.Centimeter), sect.AdditionalOffsetZ);
     }
 
     [Fact]
@@ -87,6 +93,9 @@ namespace GsaGHTests.Parameters {
         },
         Name = "mariam",
         Pool = 12,
+        BasicOffset = BasicOffset.BottomLeft,
+        AdditionalOffsetY = new Length(-1, LengthUnit.Foot),
+        AdditionalOffsetZ = new Length(-2, LengthUnit.Foot)
       };
 
       GsaSection dup = orig.Duplicate();
@@ -99,6 +108,9 @@ namespace GsaGHTests.Parameters {
       orig.Material.MaterialType = GsaMaterial.MatType.Timber;
       orig.Name = "kris";
       orig.Pool = 99;
+      orig.BasicOffset = BasicOffset.TopLeft;
+      orig.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
+      orig.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
 
       Assert.Equal("STD R 15 20", orig.Profile);
       Assert.Equal(areaExpected.SquareMillimeters, orig.Area.SquareMillimeters);
@@ -112,6 +124,9 @@ namespace GsaGHTests.Parameters {
         dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
       Assert.Equal(12, dup.Pool);
+      Assert.Equal(BasicOffset.BottomLeft, dup.BasicOffset);
+      Assert.Equal(new Length(-1, LengthUnit.Foot), dup.AdditionalOffsetY);
+      Assert.Equal(new Length(-2, LengthUnit.Foot), dup.AdditionalOffsetZ);
 
       Assert.Equal(4, orig.Material.AnalysisProperty);
       Assert.Equal(0, orig.Material.GradeProperty);
@@ -119,6 +134,9 @@ namespace GsaGHTests.Parameters {
         orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal(99, orig.Pool);
+      Assert.Equal(BasicOffset.TopLeft, orig.BasicOffset);
+      Assert.Equal(new Length(1, LengthUnit.Centimeter), orig.AdditionalOffsetY);
+      Assert.Equal(new Length(2, LengthUnit.Centimeter), orig.AdditionalOffsetZ);
     }
   }
 }

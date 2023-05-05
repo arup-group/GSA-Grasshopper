@@ -1,26 +1,82 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Section and ouput the information
   /// </summary>
-  public class EditSection : GH_OasysComponent {
+  public class EditSection : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("cb1f5d76-3b12-4c2a-8d41-c9d4699faaf9");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditSection;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
     public EditSection() : base("Edit Section", "SectionEdit", "Modify GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+
+      Menu_AppendSeparator(menu);
+
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => Update(unit)) {
+          Enabled = true,
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+        };
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+      Params.Input[5].Name = $"Add. Offset Y [{unitAbbreviation}]";
+      Params.Input[6].Name = $"Add. Offset Z [{unitAbbreviation}]";
+      Params.Output[5].Name = $"Add. Offset Y [{unitAbbreviation}]";
+      Params.Output[6].Name = $"Add. Offset Z [{unitAbbreviation}]";
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -35,6 +91,12 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
         GsaMaterialGoo.NickName, "Set " + GsaMaterialGoo.Name, GH_ParamAccess.item);
+      pManager.AddGenericParameter("Basic Offset", "BO",
+        "Set Basic Offset Centroid = 0 (default), Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Add. Offset Y [{Length.GetAbbreviation(_lengthUnit)}]", "AOY",
+        "Set Additional Offset Y", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Add. Offset Z [{Length.GetAbbreviation(_lengthUnit)}]", "AOZ",
+        "Set Additional Offset Z", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
         GsaSectionModifierGoo.NickName, "Set " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
@@ -53,12 +115,18 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Section Number", "ID",
         "Original Section number (ID) if the Section ever belonged to a GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Section Profile", "Pf", "Profile describtion",
+      pManager.AddTextParameter("Section Profile", "Pf", "Profile description",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
         GsaMaterialGoo.NickName, "Get " + GsaMaterialGoo.Name, GH_ParamAccess.item);
+      pManager.AddGenericParameter("Basic Offset", "BO",
+        "Get Basic Offset", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Add. Offset Y [{Length.GetAbbreviation(_lengthUnit)}]", "AOY",
+        "Get Additional Offset Y", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Add. Offset Z [{Length.GetAbbreviation(_lengthUnit)}]", "AOZ",
+        "Get Additional Offset Z", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
-        GsaSectionModifierGoo.NickName, "Set " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
+        GsaSectionModifierGoo.NickName, "Get " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Get Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Get Section name", GH_ParamAccess.item);
       pManager.AddColourParameter("Section Colour", "Co", "Get Section colour",
@@ -100,27 +168,44 @@ namespace GsaGH.Components {
           }
         }
 
+        var ghBasicOffset = new GH_ObjectWrapper();
+        if (da.GetData("Basic Offset", ref ghBasicOffset)) {
+          try {
+            if (GH_Convert.ToInt32(ghBasicOffset.Value, out int offset, GH_Conversion.Both)) {
+              gsaSection.BasicOffset = (BasicOffset)offset;
+            } else if (GH_Convert.ToString(ghBasicOffset, out string value, GH_Conversion.Both)) {
+              gsaSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), value, ignoreCase: true);
+            }
+          } catch {
+            this.AddRuntimeError("Unable to convert input " + ghBasicOffset.Value + " to a Basic Offset (Centroid = 0, Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8)");
+            return;
+          }
+        }
+
+        gsaSection.AdditionalOffsetY = (Length)Input.UnitNumber(this, da, 5, _lengthUnit, true);
+        gsaSection.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 6, _lengthUnit, true);
+
         ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghTyp)) {
+        if (da.GetData(7, ref ghTyp)) {
           if (ghTyp.Value is GsaSectionModifierGoo modifierGoo) {
             gsaSection.Modifier = modifierGoo.Value ?? new GsaSectionModifier();
           }
         }
 
         int pool = 0;
-        if (da.GetData(5, ref pool)) {
+        if (da.GetData(8, ref pool)) {
           gsaSection.Pool = pool;
         }
 
         var ghString = new GH_String();
-        if (da.GetData(6, ref ghString)) {
+        if (da.GetData(9, ref ghString)) {
           if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
             gsaSection.Name = name;
           }
         }
 
         var ghColour = new GH_Colour();
-        if (da.GetData(7, ref ghColour)) {
+        if (da.GetData(10, ref ghColour)) {
           if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
             gsaSection.Colour = col;
           }
@@ -135,13 +220,23 @@ namespace GsaGH.Components {
         da.SetData(1, gsaSection.Id);
         da.SetData(2, prof);
         da.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection)));
-        da.SetData(4, new GsaSectionModifierGoo(gsaSection.Modifier));
-        da.SetData(5, poo);
-        da.SetData(6, nm);
-        da.SetData(7, colour);
+        da.SetData(4, gsaSection.BasicOffset);
+        da.SetData(5, gsaSection.AdditionalOffsetY.ToUnit(_lengthUnit));
+        da.SetData(6, gsaSection.AdditionalOffsetZ.ToUnit(_lengthUnit));
+        da.SetData(7, new GsaSectionModifierGoo(gsaSection.Modifier));
+        da.SetData(8, poo);
+        da.SetData(9, nm);
+        da.SetData(10, colour);
       } else {
         this.AddRuntimeError("Section is Null");
       }
+    }
+
+    private void Update(string unit) {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      Message = unit;
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
     }
   }
 }
