@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper;
+using Grasshopper.GUI;
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -84,7 +85,7 @@ namespace GsaGH.Components {
       "Moment Mzz",
       "Res. Moment |Myz|",
     });
-    private readonly Bitmap _legend = new Bitmap(15, 120);
+    private Bitmap _legend = new Bitmap(15, 120);
     private readonly List<string> _strainenergy = new List<string>(new[] {
       "Intermediate Pts",
       "Average",
@@ -96,7 +97,9 @@ namespace GsaGH.Components {
       "Footfall",
     });
     private string _case = string.Empty;
+    private string _scaleLegendTxt = string.Empty;
     private double _defScale = 250;
+    private double _legendScale = 1;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private EnergyUnit _energyResultUnit = DefaultUnits.EnergyUnit;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -133,16 +136,23 @@ namespace GsaGH.Components {
         return;
       }
 
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
+      int defaultTextHeight = 12;
+      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right -
+        (int)(110 * _legendScale), (int)(20 * _legendScale));
       for (int i = 0; i < _legendValues.Count; i++) {
         args.Display.Draw2dText(_legendValues[i], Color.Black,
-          new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]), false);
+          new Point2d(
+            args.Viewport.Bounds.Right - (int)(85 * _legendScale),
+            _legendValuesPosY[i]),
+          false, (int)(defaultTextHeight * _legendScale));
       }
 
       args.Display.Draw2dText(_resType, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 7), false);
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(7 * _legendScale)), false,
+        (int)(defaultTextHeight * _legendScale));
       args.Display.Draw2dText(_case, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - 110, 145), false);
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(145 * _legendScale)),
+        false, (int)(defaultTextHeight * _legendScale));
     }
 
     public override bool Read(GH_IReader reader) {
@@ -154,6 +164,9 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
+      if (reader.ItemExists("legendScale")) {
+        _legendScale = reader.GetDouble("legendScale");
+      }
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -319,6 +332,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
+      writer.SetDouble("legendScale", _legendScale);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
@@ -418,6 +432,23 @@ namespace GsaGH.Components {
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
       menu.Items.Add(unitsMenu);
+
+      var legendScale = new ToolStripTextBox {
+        Text = _legendScale.ToString(),
+      };
+      legendScale.TextChanged += (s, e) => MaintainScaleLegendText(legendScale);
+      var legendScaleMenu = new ToolStripMenuItem("Scale Legend") {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
+      legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
+        UpdateLegendScale();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
+      menu.Items.Add(legendScaleMenu);
+
 
       Menu_AppendSeparator(menu);
     }
@@ -1169,6 +1200,24 @@ namespace GsaGH.Components {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
+    }
+
+    private void UpdateLegendScale() {
+      try {
+        _legendScale = double.Parse(_scaleLegendTxt);
+      } catch (Exception e) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+        return;
+      }
+      _legend = new Bitmap(
+        (int)(15 * _legendScale), (int)(120 * _legendScale));
+
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+      _scaleLegendTxt = menuitem.Text;
     }
   }
 }

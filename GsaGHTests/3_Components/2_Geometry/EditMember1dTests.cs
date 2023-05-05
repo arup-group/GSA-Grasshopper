@@ -206,5 +206,19 @@ namespace GsaGHTests.Components.Geometry {
       Assert.True(output21.Value);
       Assert.Equal("", output22.Value);
     }
+
+    [Fact]
+    public void TestElementBarInstabilityWarning() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, "Bar", 6);
+      ComponentTestHelper.SetInput(comp, 0.0, 14);
+
+      var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+
+      ComponentTestHelper.SetInput(comp, 1.0, 14);
+      output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
   }
 }

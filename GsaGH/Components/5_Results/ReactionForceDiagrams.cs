@@ -209,12 +209,12 @@ namespace GsaGH.Components {
 
       double scale = 1;
       if (!dataAccess.GetData(2, ref scale)) {
-        scale = ComputeScale(forceValues, gsaResult.Model.BoundingBox);
+        scale = ComputeAutoScale(forceValues, gsaResult.Model.BoundingBox);
       }
 
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes, node => {
-        VectorResultGoo reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
+        VectorResultGoo reactionForceVector = CreateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) {
           _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
         }
@@ -247,44 +247,54 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-    private double ComputeScale(GsaResultsValues forceValues, BoundingBox bbox) {
-      var values = new List<double>(8);
+    private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {
+      double maxValue = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-        case DisplayValue.Y:
-        case DisplayValue.Z:
-        case DisplayValue.ResXyz:
-          values = new List<double>() {
+          maxValue = Math.Max(
             forceValues.DmaxX.As(_forceUnit),
+            Math.Abs(forceValues.DminX.As(_forceUnit)));
+          break;
+        case DisplayValue.Y:
+          maxValue = Math.Max(
             forceValues.DmaxY.As(_forceUnit),
+            Math.Abs(forceValues.DminY.As(_forceUnit)));
+          break;
+        case DisplayValue.Z:
+          maxValue = Math.Max(
             forceValues.DmaxZ.As(_forceUnit),
+            Math.Abs(forceValues.DminZ.As(_forceUnit)));
+          break;
+        case DisplayValue.ResXyz:
+          maxValue = Math.Max(
             forceValues.DmaxXyz.As(_forceUnit),
-            forceValues.DminXyz.As(_forceUnit),
-            Math.Abs(forceValues.DminX.As(_forceUnit)),
-            Math.Abs(forceValues.DminY.As(_forceUnit)),
-            Math.Abs(forceValues.DminZ.As(_forceUnit)),
-          };
+            Math.Abs(forceValues.DminXyz.As(_forceUnit)));
           break;
 
         case DisplayValue.Xx:
-        case DisplayValue.Yy:
-        case DisplayValue.Zz:
-        case DisplayValue.ResXxyyzz:
-          values = new List<double>() {
+          maxValue = Math.Max(
             forceValues.DmaxXx.As(_momentUnit),
-            forceValues.DmaxYy.As(_momentUnit),
-            forceValues.DmaxZz.As(_momentUnit),
-            forceValues.DmaxXxyyzz.As(_momentUnit),
-            forceValues.DminXxyyzz.As(_momentUnit),
-            Math.Abs(forceValues.DminXx.As(_momentUnit)),
-            Math.Abs(forceValues.DminYy.As(_momentUnit)),
-            Math.Abs(forceValues.DminZz.As(_momentUnit)),
-          };
+            Math.Abs(forceValues.DminXx.As(_momentUnit)));
           break;
-      }
+        case DisplayValue.Yy:
+          maxValue = Math.Max(
+            forceValues.DmaxYy.As(_momentUnit),
+            Math.Abs(forceValues.DminYy.As(_momentUnit)));
+          break;
+        case DisplayValue.Zz:
+          maxValue = Math.Max(
+            forceValues.DmaxZz.As(_momentUnit),
+            Math.Abs(forceValues.DminZz.As(_momentUnit)));
+          break;
+        case DisplayValue.ResXxyyzz:
+          maxValue = Math.Max(
+            forceValues.DmaxXxyyzz.As(_momentUnit),
+            Math.Abs(forceValues.DminXxyyzz.As(_momentUnit)));
+          break;
+      };
 
-      double factor = 0.000001;
-      return bbox.Diagonal.Length * values.Max() * factor;
+      double factor = 0.1; // maxVector = 10% of bbox diagonal
+      return bbox.Diagonal.Length * factor / maxValue;
     }
 
     private ToolStripMenuItem GenerateForceUnitsMenu(string menuTitle) {
@@ -336,7 +346,7 @@ namespace GsaGH.Components {
       return momentUnitsMenu;
     }
 
-    private VectorResultGoo GenerateReactionForceVector(
+    private VectorResultGoo CreateReactionForceVector(
       KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults

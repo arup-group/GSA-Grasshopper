@@ -9,15 +9,17 @@ coverage:
   precision: 1
   range:
   - 30.0
-  - 90.0
-  round: up
-  threshold: 1%
+  - 75.0
+  round: down
   status:
     changes: false
     default_rules:
       flag_coverage_not_uploaded_behavior: include
     patch: true
-    project: true
+    project: 
+      default:
+        target: auto
+        threshold: 1%
 flags:
   gsagh:
     carryforward: false
@@ -25,7 +27,4 @@ flags:
     carryforward: false
 ignore:
   - "GsaGHTests"  # ignore project (as it is referenced by Integration test)
-  - "GsaGH/Components/GraveyardComp"  # ignore old versions of components in
-  - "GsaGH/UI"  # ignore UI about box
-  - "GsaGH/Properties" # ignore icons etc
-  - "GsaGH/Helpers/Graphics/Colours.cs" # ignore colours library class
+  - "GsaGH/Components/GraveyardComp"  # ignore old versions of components in graveyard folder
