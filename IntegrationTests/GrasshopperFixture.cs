@@ -56,7 +56,7 @@ namespace IntegrationTests {
 
       LoadRefs();
       Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      TryGsaCom();
+      //TryGsaCom();
 
       InitializeCore();
 
@@ -71,10 +71,10 @@ namespace IntegrationTests {
     //     Dispose(disposing: false);
     // }
 
-    public static void TryGsaCom() {
-      ComAuto gsa = GsaComObject.Instance;
-      gsa.NewFile();
-    }
+    //public static void TryGsaCom() {
+    //  ComAuto gsa = GsaComObject.Instance;
+    //  gsa.NewFile();
+    //}
 
     public void AddPluginToGh() {
       Directory.CreateDirectory(linkFilePath);
