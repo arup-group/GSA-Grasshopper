@@ -93,7 +93,7 @@ namespace GsaGH.Components {
       }
       
       // remove any existing transformations
-      profile = profile.Split('[')[0].Replace("  ", " ");
+      profile = profile.Split('[')[0].TrimEnd();
 
       da.SetData(0, profile + transformation);
     }
