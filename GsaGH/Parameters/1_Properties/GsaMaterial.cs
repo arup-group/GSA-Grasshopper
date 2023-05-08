@@ -33,6 +33,34 @@ namespace GsaGH.Parameters {
       Barmat = 65280,
     }
 
+    public enum StandardMaterialType {
+      Custom,
+      Steel,
+      Concrete,
+      FRP,
+      Aluminium,
+      Timber,
+      Glass,
+      Fabric,
+      Reinforcement
+    }
+
+    public string GradeName { 
+      get {
+        if (Type == StandardMaterialType.Custom && _analysisMaterial != null) {
+          return _analysisMaterial.Name;
+        } else {
+          return _name;
+        }
+      }
+      set {
+        if (Type == StandardMaterialType.Custom) {
+          _analysisMaterial.Name = value;
+        } else {
+          _name = value;
+        }
+      }
+    }
     public int AnalysisProperty {
       get => _analProp;
       set {
@@ -58,6 +86,7 @@ namespace GsaGH.Parameters {
     }
     public Guid Guid => _guid;
     public MatType MaterialType { get; set; } = MatType.Undef;
+    public StandardMaterialType Type { get; set; } = StandardMaterialType.Custom;
     internal AnalysisMaterial AnalysisMaterial {
       get => _analysisMaterial;
       set {
@@ -65,6 +94,7 @@ namespace GsaGH.Parameters {
         _guid = Guid.NewGuid();
       }
     }
+    private string _name = string.Empty;
     private int _analProp = 0;
     private AnalysisMaterial _analysisMaterial;
     private int _grade = 1;
@@ -101,7 +131,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      CreateFromApiObject(section.ApiSection.MaterialType,
+      CreateCustomMaterialFromApiObject(section.ApiSection.MaterialType,
         section.ApiSection.MaterialAnalysisProperty, section.ApiSection.MaterialGradeProperty,
         analysisMaterial);
     }
@@ -119,7 +149,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      CreateFromApiObject(prop.ApiProp2d.MaterialType, prop.ApiProp2d.MaterialAnalysisProperty,
+      CreateCustomMaterialFromApiObject(prop.ApiProp2d.MaterialType, prop.ApiProp2d.MaterialAnalysisProperty,
         prop.ApiProp2d.MaterialGradeProperty, analysisMaterial);
     }
 
@@ -136,7 +166,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty,
+      CreateCustomMaterialFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty,
         prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
 
@@ -145,6 +175,8 @@ namespace GsaGH.Parameters {
         MaterialType = MaterialType,
         _grade = _grade,
         _analProp = _analProp,
+        Type = Type,
+        _name = _name,
       };
       if (_analysisMaterial != null) {
         dup.AnalysisMaterial = new AnalysisMaterial() {
@@ -220,10 +252,11 @@ namespace GsaGH.Parameters {
       return mType;
     }
 
-    private void CreateFromApiObject(
+    private void CreateCustomMaterialFromApiObject(
       MaterialType materialType, int analysisProp, int gradeProp,
       AnalysisMaterial analysisMaterial) {
       MaterialType = GetType(materialType);
+      Type = StandardMaterialType.Custom;
       GradeProperty = gradeProp;
       AnalysisProperty = analysisProp;
       if (!((AnalysisProperty != 0) & (analysisMaterial != null))) {
