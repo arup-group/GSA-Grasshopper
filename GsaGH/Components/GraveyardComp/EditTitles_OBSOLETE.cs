@@ -54,52 +54,52 @@ namespace GsaGH.Components {
       var ghString = new GH_String();
       if (da.GetData(0, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string title, GH_Conversion.Both)) {
-          Titles.SetJobNumber(title);
+          GsaGH.Titles.SetJobNumber(title);
         }
       }
 
       ghString = new GH_String();
       if (da.GetData(1, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string title, GH_Conversion.Both)) {
-          Titles.SetInitials(title);
+          GsaGH.Titles.SetInitials(title);
         }
       }
 
       ghString = new GH_String();
       if (da.GetData(2, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string title, GH_Conversion.Both)) {
-          Titles.SetTitle(title);
+          GsaGH.Titles.SetTitle(title);
         }
       }
 
       ghString = new GH_String();
       if (da.GetData(3, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string title, GH_Conversion.Both)) {
-          Titles.SetSubTitle(title);
+          GsaGH.Titles.SetSubTitle(title);
         }
       }
 
       ghString = new GH_String();
       if (da.GetData(4, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string title, GH_Conversion.Both)) {
-          Titles.SetCalculation(title);
+          GsaGH.Titles.SetCalculation(title);
         }
       }
 
       ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string title, GH_Conversion.Both)) {
-          Titles.SetNotes(title);
+          GsaGH.Titles.SetNotes(title);
         }
       }
 
       var titles = new List<string> {
-        "Job Number: " + Titles.JobNumber,
-        "Initials: " + Titles.Initials,
-        "Title: " + Titles.Title,
-        "Sub Title: " + Titles.SubTitle,
-        "Calculation Header: " + Titles.Calculation,
-        "Notes: " + Titles.Notes,
+        "Job Number: " + GsaGH.Titles.JobNumber,
+        "Initials: " + GsaGH.Titles.Initials,
+        "Title: " + GsaGH.Titles.Title,
+        "Sub Title: " + GsaGH.Titles.SubTitle,
+        "Calculation Header: " + GsaGH.Titles.Calculation,
+        "Notes: " + GsaGH.Titles.Notes,
       };
 
       da.SetDataList(0, titles);
