@@ -314,7 +314,7 @@ namespace GsaGH.Components {
         da.SetData(8, colour);
         da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
         da.SetData(10, prop.ReferenceSurface);
-        da.SetData(11, prop.AdditionalOffsetZ);
+        da.SetData(11, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
 
       } else {
         this.AddRuntimeError("Prop2d is Null");
