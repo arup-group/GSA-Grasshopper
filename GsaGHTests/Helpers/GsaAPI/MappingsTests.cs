@@ -87,7 +87,7 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("ARGFRP", 5632)]
     [InlineData("Bar Material", 65280)]
     public void GetMatTypeTest(string input, int expected) {
-      MatType actual = Mappings.GetMatType(input);
+      GsaGH.Parameters.GsaMaterial.MaterialType actual = Mappings.GetMatType(input);
 
       Assert.Equal(expected, (int)actual);
     }

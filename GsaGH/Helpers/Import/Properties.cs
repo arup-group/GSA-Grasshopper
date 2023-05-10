@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Export;
 using GsaGH.Parameters;
 using Rhino.Geometry;
 
@@ -20,8 +21,7 @@ namespace GsaGH.Helpers.Import {
     /// <param name="axDict"></param>
     /// <returns></returns>
     internal static List<GsaProp2dGoo> GetProp2ds(
-      IReadOnlyDictionary<int, Prop2D> pDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials,
+      IReadOnlyDictionary<int, Prop2D> pDict, Materials materials,
       ReadOnlyDictionary<int, Axis> axDict = null) {
       var prop2ds = new List<GsaProp2dGoo>();
 
@@ -33,11 +33,7 @@ namespace GsaGH.Helpers.Import {
         var prop = new GsaProp2d(key) {
           ApiProp2d = apisection,
         };
-        if (prop.ApiProp2d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.ApiProp2d.MaterialAnalysisProperty)) {
-            prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-          }
-        }
+        prop.Material = materials.GetMaterial(prop);
 
         // Axis property 0 = Global, -1 = Topological
         if (prop.ApiProp2d.AxisProperty > 0) {
@@ -56,9 +52,8 @@ namespace GsaGH.Helpers.Import {
     }
 
     internal static List<GsaProp3dGoo> GetProp3ds(
-      IReadOnlyDictionary<int, Prop3D> pDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials) {
-      var prop2ds = new List<GsaProp3dGoo>();
+      IReadOnlyDictionary<int, Prop3D> pDict, Materials materials) {
+      var prop3ds = new List<GsaProp3dGoo>();
 
       foreach (int key in pDict.Keys) {
         if (!pDict.TryGetValue(key, out Prop3D apisection)) {
@@ -68,16 +63,12 @@ namespace GsaGH.Helpers.Import {
         var prop = new GsaProp3d(key) {
           ApiProp3d = apisection,
         };
-        if (prop.ApiProp3d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.ApiProp3d.MaterialAnalysisProperty)) {
-            prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-          }
-        }
+        prop.Material = materials.GetMaterial(prop);
 
-        prop2ds.Add(new GsaProp3dGoo(prop));
+        prop3ds.Add(new GsaProp3dGoo(prop));
       }
 
-      return prop2ds;
+      return prop3ds;
     }
 
     /// <summary>
@@ -85,12 +76,11 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaSectionsGoo.
     /// </summary>
     /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
-    /// <param name="analysisMaterials"></param>
+    /// <param name="materials"></param>
     /// <param name="modDict"></param>
     /// <returns></returns>
     internal static List<GsaSectionGoo> GetSections(
-      IReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials,
+      IReadOnlyDictionary<int, Section> sDict, Materials materials,
       IReadOnlyDictionary<int, SectionModifier> modDict) {
       var sections = new List<GsaSectionGoo>();
 
@@ -102,11 +92,7 @@ namespace GsaGH.Helpers.Import {
         var sect = new GsaSection(key) {
           ApiSection = apisection,
         };
-        if (sect.ApiSection.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty)) {
-            sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-          }
-        }
+        sect.Material = materials.GetMaterial(sect);
 
         if (modDict.Keys.Contains(key)) {
           sect.Modifier = new GsaSectionModifier(modDict[key]);

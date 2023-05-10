@@ -34,7 +34,7 @@ namespace GsaGHTests.Components.Properties {
 
       var output = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(profile, output.Value.Profile);
-      Assert.Equal(MatType.Timber, output.Value.Material.MaterialType);
+      Assert.Equal(MaterialType.Timber, output.Value.Material.MaterialType);
     }
   }
 }

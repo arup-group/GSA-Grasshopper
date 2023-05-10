@@ -5,6 +5,7 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.Import;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -168,8 +169,7 @@ namespace GsaGH.Parameters {
       List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType,
       List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,
       List<Point3d> includePoints, IReadOnlyDictionary<int, Prop2D> properties,
-      IReadOnlyDictionary<int, AnalysisMaterial> materials, IReadOnlyDictionary<int, Axis> axDict,
-      LengthUnit modelUnit) {
+      Materials materials, IReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit) {
       ApiMember = member;
       MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = id;

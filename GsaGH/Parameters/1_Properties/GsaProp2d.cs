@@ -56,7 +56,7 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public GsaMaterial Material {
+    public IGsaMaterial Material {
       get => _material;
       set {
         _material = value;
@@ -66,9 +66,9 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _prop2d.MaterialType = Materials.ConvertType(_material);
-        _prop2d.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _prop2d.MaterialGradeProperty = _material.GradeProperty;
+        _prop2d.MaterialType = _material.Type;
+        _prop2d.MaterialAnalysisProperty = 0;
+        _prop2d.MaterialGradeProperty = 0;
         IsReferencedById = false;
       }
     }
@@ -78,7 +78,7 @@ namespace GsaGH.Parameters {
         CloneApiObject();
         IsReferencedById = false;
         _prop2d.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _prop2d.MaterialAnalysisProperty;
+        _material.Id = _prop2d.MaterialAnalysisProperty;
       }
     }
     public string Name {
@@ -146,7 +146,7 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _prop2d = value;
-        _material = new GsaMaterial(this);
+        _material = null;
         IsReferencedById = false;
       }
     }
@@ -154,7 +154,7 @@ namespace GsaGH.Parameters {
     private Guid _guid = Guid.NewGuid();
     private int _id;
     private Plane _localAxis = Plane.Unset;
-    private GsaMaterial _material = new GsaMaterial();
+    private IGsaMaterial _material;
     private Prop2D _prop2d = new Prop2D();
 
     public GsaProp2d() { }
@@ -171,7 +171,7 @@ namespace GsaGH.Parameters {
 
     internal GsaProp2d(
       IReadOnlyDictionary<int, Prop2D> pDict, int id,
-      IReadOnlyDictionary<int, AnalysisMaterial> matDict, IReadOnlyDictionary<int, Axis> axDict,
+      Helpers.Import.Materials matDict, IReadOnlyDictionary<int, Axis> axDict,
       LengthUnit unit) : this(id) {
       if (!pDict.ContainsKey(id)) {
         return;
@@ -179,11 +179,6 @@ namespace GsaGH.Parameters {
 
       _prop2d = pDict[id];
       IsReferencedById = false;
-      // material
-      if (_prop2d.MaterialAnalysisProperty != 0
-        && matDict.ContainsKey(_prop2d.MaterialAnalysisProperty)) {
-        _material.AnalysisMaterial = matDict[_prop2d.MaterialAnalysisProperty];
-      }
 
       if (_prop2d.AxisProperty > 0) {
         if (axDict != null && axDict.ContainsKey(_prop2d.AxisProperty)) {
@@ -197,7 +192,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      _material = new GsaMaterial(this);
+      _material = matDict.GetMaterial(this);
     }
 
     public GsaProp2d Duplicate(bool cloneApiElement = false) {
@@ -221,7 +216,7 @@ namespace GsaGH.Parameters {
         + " ";
       string desc = Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
       string mat = Type != Property2D_Type.LOAD ?
-        Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key
+        Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.Type).Key
         + " " : string.Empty;
       string pa = (Id > 0) ? "PA" + Id + " " : "";
       string supportType = Type == Property2D_Type.LOAD ? $"{SupportType}" : string.Empty;

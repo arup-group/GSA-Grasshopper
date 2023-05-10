@@ -145,14 +145,14 @@ namespace GsaGH.Components {
       var ghAnal = new GH_Integer();
       if (da.GetData(0, ref ghAnal)) {
         GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
+        material.Id = anal;
         if (anal == 0) {
           this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
             + Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }
       } else {
-        material.AnalysisProperty = -1;
+        material.Id = -1;
       }
 
       double poisson = 0.3;
@@ -178,39 +178,39 @@ namespace GsaGH.Components {
          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
       };
 
-      material.GradeProperty = 0;
+      material.Id = 0;
 
       switch (_mode) {
         case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MatType.Generic;
+          material.MaterialType = GsaMaterial.MaterialType.Generic;
           break;
 
         case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MatType.Steel;
+          material.MaterialType = GsaMaterial.MaterialType.Steel;
           break;
 
         case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MatType.Concrete;
+          material.MaterialType = GsaMaterial.MaterialType.Concrete;
           break;
 
         case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MatType.Timber;
+          material.MaterialType = GsaMaterial.MaterialType.Timber;
           break;
 
         case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MatType.Aluminium;
+          material.MaterialType = GsaMaterial.MaterialType.Aluminium;
           break;
 
         case FoldMode.Frp:
-          material.MaterialType = GsaMaterial.MatType.Frp;
+          material.MaterialType = GsaMaterial.MaterialType.Frp;
           break;
 
         case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MatType.Glass;
+          material.MaterialType = GsaMaterial.MaterialType.Glass;
           break;
 
         case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MatType.Fabric;
+          material.MaterialType = GsaMaterial.MaterialType.Fabric;
           break;
       }
 

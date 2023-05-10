@@ -264,7 +264,7 @@ namespace GsaGH.Helpers.Import {
     internal static ConcurrentBag<GsaElement2dGoo> ConvertToElement2Ds(
       ConcurrentDictionary<int, Element> elements, ReadOnlyDictionary<int, Node> nodes,
       ReadOnlyDictionary<int, Prop2D> properties,
-      ReadOnlyDictionary<int, AnalysisMaterial> materials, ReadOnlyDictionary<int, Axis> axDict,
+      Materials materials, ReadOnlyDictionary<int, Axis> axDict,
       LengthUnit unit, bool duplicateApiObjects) {
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
 
@@ -336,7 +336,7 @@ namespace GsaGH.Helpers.Import {
     internal static ConcurrentBag<GsaElement3dGoo> ConvertToElement3Ds(
       ConcurrentDictionary<int, Element> elements, ReadOnlyDictionary<int, Node> nodes,
       ReadOnlyDictionary<int, Prop3D> properties,
-      ReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit unit,
+      Materials materials, LengthUnit unit,
       bool duplicateApiObjects) {
       // main sorted dictionary with
       // key = parent member
@@ -416,7 +416,7 @@ namespace GsaGH.Helpers.Import {
         ConcurrentBag<GsaElement3dGoo>> GetElements(
         ReadOnlyDictionary<int, Element> eDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict,
-        ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> mDict,
+        ReadOnlyDictionary<int, Prop3D> p3Dict, Materials mDict,
         ReadOnlyDictionary<int, SectionModifier> modDict,
         Dictionary<int, ReadOnlyCollection<double>> localAxesDict,
         ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit, bool duplicateApiObjects) {

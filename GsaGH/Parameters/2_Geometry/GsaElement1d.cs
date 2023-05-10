@@ -155,8 +155,8 @@ namespace GsaGH.Parameters {
     internal GsaElement1d(
       IReadOnlyDictionary<int, Element> eDict, int id, IReadOnlyDictionary<int, Node> nDict,
       ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
+      Materials matDict, IDictionary<int, ReadOnlyCollection<double>> localAxesDict, 
+      LengthUnit modelUnit) {
       Id = id;
       ApiElement = eDict[id];
       _rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);

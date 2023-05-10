@@ -83,7 +83,7 @@ namespace GsaGH.Helpers.Export {
 
       var apiSections = new GsaGuidDictionary<Section>(gsa.Sections());
       var apiSectionModifiers = new GsaIntDictionary<SectionModifier>(gsa.SectionModifiers());
-      var apiMaterials = new GsaGuidDictionary<AnalysisMaterial>(gsa.AnalysisMaterials());
+      var apiMaterials = new Materials(gsa);
       Sections.ConvertSection(sections, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
       var apiProp2ds = new GsaGuidDictionary<Prop2D>(gsa.Prop2Ds());
@@ -141,13 +141,79 @@ namespace GsaGH.Helpers.Export {
       gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);
       gsa.SetProp2Ds(apiProp2ds.Dictionary);
       gsa.SetProp3Ds(apiProp3ds.Dictionary);
-      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.Dictionary;
-      if (materials.Count > 0) {
-        foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
+
+      ReadOnlyDictionary<int, AnalysisMaterial> customMaterials = 
+        apiMaterials.AnalysisMaterials.Dictionary;
+      if (customMaterials.Count > 0) {
+        foreach (KeyValuePair<int, AnalysisMaterial> mat in customMaterials) {
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
         }
       }
-      
+
+      ReadOnlyDictionary<int, AluminiumMaterial> aluminiumMaterials =
+        apiMaterials.AluminiumMaterials.Dictionary;
+      if (aluminiumMaterials.Count > 0) {
+        foreach (KeyValuePair<int, AluminiumMaterial> mat in aluminiumMaterials) {
+          gsa.SetAluminiumMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, ConcreteMaterial> concreteMaterials =
+        apiMaterials.ConcreteMaterials.Dictionary;
+      if (concreteMaterials.Count > 0) {
+        foreach (KeyValuePair<int, ConcreteMaterial> mat in concreteMaterials) {
+          gsa.SetConcreteMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, FabricMaterial> fabricMaterials =
+        apiMaterials.FabricMaterials.Dictionary;
+      if (fabricMaterials.Count > 0) {
+        foreach (KeyValuePair<int, FabricMaterial> mat in fabricMaterials) {
+          gsa.SetFabricMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, FrpMaterial> frpMaterials =
+        apiMaterials.FrpMaterials.Dictionary;
+      if (frpMaterials.Count > 0) {
+        foreach (KeyValuePair<int, FrpMaterial> mat in frpMaterials) {
+          gsa.SetFrpMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, GlassMaterial> glassMaterials =
+        apiMaterials.GlassMaterials.Dictionary;
+      if (glassMaterials.Count > 0) {
+        foreach (KeyValuePair<int, GlassMaterial> mat in glassMaterials) {
+          gsa.SetGlassMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, ReinforcementMaterial> reinforcementMaterials =
+        apiMaterials.ReinforcementMaterials.Dictionary;
+      if (reinforcementMaterials.Count > 0) {
+        foreach (KeyValuePair<int, ReinforcementMaterial> mat in reinforcementMaterials) {
+          gsa.SetReinforcementMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, SteelMaterial> steelMaterials =
+        apiMaterials.SteelMaterials.Dictionary;
+      if (steelMaterials.Count > 0) {
+        foreach (KeyValuePair<int, SteelMaterial> mat in steelMaterials) {
+          gsa.SetSteelMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, TimberMaterial> timberMaterials =
+        apiMaterials.TimberMaterials.Dictionary;
+      if (timberMaterials.Count > 0) {
+        foreach (KeyValuePair<int, TimberMaterial> mat in timberMaterials) {
+          gsa.SetTimberMaterial(mat.Key, mat.Value);
+        }
+      }
+
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoadsNode));
       gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoadsSettle));

@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       Member apiMember = member1d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
 
@@ -48,7 +48,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (member1ds == null) {
         return;
       }
@@ -64,7 +64,7 @@ namespace GsaGH.Helpers.Export {
       GsaMember2d member2d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      ref Materials apiMaterials,
       ref Dictionary<int, Axis> existingAxes) {
       Member apiMember = member2d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member2d.MeshSize, unit).Meters;
@@ -110,7 +110,7 @@ namespace GsaGH.Helpers.Export {
       List<GsaMember2d> member2ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      ref Materials apiMaterials,
       ref Dictionary<int, Axis> existingAxes) {
       if (member2ds == null) {
         return;
@@ -127,7 +127,7 @@ namespace GsaGH.Helpers.Export {
       GsaMember3d member3d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       Member apiMember = member3d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member3d.MeshSize, unit).Meters;
 
@@ -155,7 +155,7 @@ namespace GsaGH.Helpers.Export {
       List<GsaMember3d> member3ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (member3ds == null) {
         return;
       }

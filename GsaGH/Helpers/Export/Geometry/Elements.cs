@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       LineCurve line = element1d.Line;
       Element apiElement = element1d.GetApiElementClone();
 
@@ -41,7 +41,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (element1ds == null) {
         return;
       }
@@ -57,7 +57,7 @@ namespace GsaGH.Helpers.Export {
       GsaElement2d element2d, ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      ref Materials apiMaterials,
       ref Dictionary<int, Axis> existingAxes) {
       List<Point3d> meshVerticies = element2d.Topology;
 
@@ -85,7 +85,7 @@ namespace GsaGH.Helpers.Export {
       List<GsaElement2d> element2ds, ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      ref Materials apiMaterials,
       ref Dictionary<int, Axis> existingAxes) {
       if (element2ds == null) {
         return;
@@ -104,7 +104,7 @@ namespace GsaGH.Helpers.Export {
       GsaElement3d element3d, ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       List<Point3d> meshVerticies = element3d.Topology;
 
       for (int i = 0; i < element3d.ApiElements.Count; i++) {
@@ -130,7 +130,7 @@ namespace GsaGH.Helpers.Export {
       List<GsaElement3d> element3ds, ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (element3ds == null) {
         return;
       }

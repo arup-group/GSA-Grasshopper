@@ -7,6 +7,7 @@ using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.Import;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -183,8 +184,7 @@ namespace GsaGH.Parameters {
     internal GsaMember1d(
       Member member, int id, List<Point3d> topology, List<string> topoType,
       ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
+      Materials matDict, IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
       ApiMember = member;
       MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = id;

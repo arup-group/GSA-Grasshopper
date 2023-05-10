@@ -23,7 +23,7 @@ namespace GsaGH.Helpers.Import {
         ConcurrentBag<GsaMember3dGoo>> GetMembers(
         ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict,
-        ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+        ReadOnlyDictionary<int, Prop3D> p3Dict, Materials matDict,
         ReadOnlyDictionary<int, SectionModifier> modDict,
         Dictionary<int, ReadOnlyCollection<double>> localAxesDict,
         ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit, bool duplicateApiObjects,

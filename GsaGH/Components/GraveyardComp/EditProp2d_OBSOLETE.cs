@@ -195,7 +195,7 @@ namespace GsaGH.Components {
 
         da.SetData(0, new GsaProp2dGoo(prop));
         da.SetData(1, prop.Id);
-        da.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
+        da.SetData(2, new GsaMaterialGoo(prop.Material.Duplicate()));
         da.SetData(3,
           prop.ApiProp2d?.Description == "" ? new GH_UnitNumber(Length.Zero) :
             new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));

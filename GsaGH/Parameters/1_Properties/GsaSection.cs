@@ -65,19 +65,19 @@ namespace GsaGH.Parameters {
     }
     public double Ky => _section.Ky;
     public double Kz => _section.Kz;
-    public GsaMaterial Material {
+    public IGsaMaterial Material {
       get => _material;
       set {
-        _material = value;
+        _material = value.Duplicate();
         if (_section == null) {
           _section = new Section();
         } else {
           CloneApiObject();
         }
 
-        _section.MaterialType = Materials.ConvertType(_material);
-        _section.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _section.MaterialGradeProperty = _material.GradeProperty;
+        _section.MaterialType = _material.Type;
+        _section.MaterialAnalysisProperty = 0;
+        _section.MaterialGradeProperty = 0;
         IsReferencedById = false;
       }
     }
@@ -86,7 +86,7 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         _section.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _section.MaterialAnalysisProperty;
+        _material.Id = _section.MaterialAnalysisProperty;
         IsReferencedById = false;
       }
     }
@@ -142,14 +142,14 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _section = value;
-        _material = new GsaMaterial(this);
+        _material = null;
         IsReferencedById = false;
       }
     }
     internal bool IsReferencedById { get; set; } = false;
     private Guid _guid = Guid.NewGuid();
     private int _id;
-    private GsaMaterial _material = new GsaMaterial();
+    private IGsaMaterial _material;
     private GsaSectionModifier _modifier = new GsaSectionModifier();
     private Section _section = new Section();
 
@@ -172,7 +172,7 @@ namespace GsaGH.Parameters {
     internal GsaSection(
       ReadOnlyDictionary<int, Section> sDict, int id,
       ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
+      Helpers.Import.Materials matDict) : this(id) {
       if (!sDict.ContainsKey(id)) {
         return;
       }
@@ -183,12 +183,7 @@ namespace GsaGH.Parameters {
         _modifier = new GsaSectionModifier(modDict[id]);
       }
 
-      if (_section.MaterialAnalysisProperty != 0
-        && matDict.ContainsKey(_section.MaterialAnalysisProperty)) {
-        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
-      }
-
-      _material = new GsaMaterial(this);
+      _material = matDict.GetMaterial(this);
     }
 
     public GsaSection Duplicate(bool cloneApiElement = false) {
@@ -211,7 +206,7 @@ namespace GsaGH.Parameters {
       string pb = Id > 0 ? "PB" + Id + " " : "";
       string prof = _section.Profile.Replace("%", " ") + " ";
       string mat = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+       .FirstOrDefault(x => x.Value == Material.Type).Key + " ";
       string mod = _modifier.IsModified ? " modified" : "";
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim()
        .Replace("  ", " ");

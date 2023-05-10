@@ -66,7 +66,7 @@ namespace GsaGH.Components {
         var ghId = new GH_Integer();
         if (da.GetData(1, ref ghId)) {
           if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            material.AnalysisProperty = id;
+            material.Id = id;
           }
         }
 
@@ -76,35 +76,35 @@ namespace GsaGH.Components {
             case GH_Integer ghInt: {
                 switch (ghInt.Value) {
                   case 1:
-                    material.MaterialType = GsaMaterial.MatType.Steel;
+                    material.MaterialType = GsaMaterial.MaterialType.Steel;
                     break;
 
                   case 2:
-                    material.MaterialType = GsaMaterial.MatType.Concrete;
+                    material.MaterialType = GsaMaterial.MaterialType.Concrete;
                     break;
 
                   case 5:
-                    material.MaterialType = GsaMaterial.MatType.Frp;
+                    material.MaterialType = GsaMaterial.MaterialType.Frp;
                     break;
 
                   case 3:
-                    material.MaterialType = GsaMaterial.MatType.Aluminium;
+                    material.MaterialType = GsaMaterial.MaterialType.Aluminium;
                     break;
 
                   case 7:
-                    material.MaterialType = GsaMaterial.MatType.Timber;
+                    material.MaterialType = GsaMaterial.MaterialType.Timber;
                     break;
 
                   case 4:
-                    material.MaterialType = GsaMaterial.MatType.Glass;
+                    material.MaterialType = GsaMaterial.MaterialType.Glass;
                     break;
 
                   case 8:
-                    material.MaterialType = GsaMaterial.MatType.Fabric;
+                    material.MaterialType = GsaMaterial.MaterialType.Fabric;
                     break;
 
                   case 0:
-                    material.MaterialType = GsaMaterial.MatType.Generic;
+                    material.MaterialType = GsaMaterial.MaterialType.Generic;
                     break;
                 }
 
@@ -114,35 +114,35 @@ namespace GsaGH.Components {
             case GH_String ghString: {
                 switch (ghString.Value.ToUpper()) {
                   case "STEEL":
-                    material.MaterialType = GsaMaterial.MatType.Steel;
+                    material.MaterialType = GsaMaterial.MaterialType.Steel;
                     break;
 
                   case "CONCRETE":
-                    material.MaterialType = GsaMaterial.MatType.Concrete;
+                    material.MaterialType = GsaMaterial.MaterialType.Concrete;
                     break;
 
                   case "FRP":
-                    material.MaterialType = GsaMaterial.MatType.Frp;
+                    material.MaterialType = GsaMaterial.MaterialType.Frp;
                     break;
 
                   case "ALUMINIUM":
-                    material.MaterialType = GsaMaterial.MatType.Aluminium;
+                    material.MaterialType = GsaMaterial.MaterialType.Aluminium;
                     break;
 
                   case "TIMBER":
-                    material.MaterialType = GsaMaterial.MatType.Timber;
+                    material.MaterialType = GsaMaterial.MaterialType.Timber;
                     break;
 
                   case "GLASS":
-                    material.MaterialType = GsaMaterial.MatType.Glass;
+                    material.MaterialType = GsaMaterial.MaterialType.Glass;
                     break;
 
                   case "FABRIC":
-                    material.MaterialType = GsaMaterial.MatType.Fabric;
+                    material.MaterialType = GsaMaterial.MaterialType.Fabric;
                     break;
 
                   case "GENERIC":
-                    material.MaterialType = GsaMaterial.MatType.Generic;
+                    material.MaterialType = GsaMaterial.MaterialType.Generic;
                     break;
                 }
 
@@ -157,15 +157,15 @@ namespace GsaGH.Components {
 
         int grd = 0;
         if (da.GetData(3, ref grd)) {
-          material.GradeProperty = grd;
+          material.Id = grd;
         }
 
         da.SetData(0, new GsaMaterialGoo(material));
-        da.SetData(1, material.AnalysisProperty);
+        da.SetData(1, material.Id);
         string mate = material.MaterialType.ToString();
         mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
         da.SetData(2, mate);
-        da.SetData(3, material.GradeProperty);
+        da.SetData(3, material.Id);
       } else {
         this.AddRuntimeError("Material is Null");
       }

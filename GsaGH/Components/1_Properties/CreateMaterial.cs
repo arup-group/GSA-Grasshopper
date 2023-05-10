@@ -72,40 +72,40 @@ namespace GsaGH.Components {
       var ghGrade = new GH_Integer();
       if (da.GetData(0, ref ghGrade)) {
         GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
-        material.GradeProperty = grade;
+        material.Id = grade;
       }
 
       switch (_selectedItems[0]) {
         case "Steel":
-          material.MaterialType = GsaMaterial.MatType.Steel;
+          material.MaterialType = GsaMaterial.MaterialType.Steel;
           break;
 
         case "Concrete":
-          material.MaterialType = GsaMaterial.MatType.Concrete;
+          material.MaterialType = GsaMaterial.MaterialType.Concrete;
           break;
 
         case "Timber":
-          material.MaterialType = GsaMaterial.MatType.Timber;
+          material.MaterialType = GsaMaterial.MaterialType.Timber;
           break;
 
         case "Aluminium":
-          material.MaterialType = GsaMaterial.MatType.Aluminium;
+          material.MaterialType = GsaMaterial.MaterialType.Aluminium;
           break;
 
         case "FRP":
-          material.MaterialType = GsaMaterial.MatType.Frp;
+          material.MaterialType = GsaMaterial.MaterialType.Frp;
           break;
 
         case "Glass":
-          material.MaterialType = GsaMaterial.MatType.Glass;
+          material.MaterialType = GsaMaterial.MaterialType.Glass;
           break;
 
         case "Fabric":
-          material.MaterialType = GsaMaterial.MatType.Fabric;
+          material.MaterialType = GsaMaterial.MaterialType.Fabric;
           break;
 
         default:
-          material.MaterialType = GsaMaterial.MatType.Generic;
+          material.MaterialType = GsaMaterial.MaterialType.Generic;
           break;
       }
 

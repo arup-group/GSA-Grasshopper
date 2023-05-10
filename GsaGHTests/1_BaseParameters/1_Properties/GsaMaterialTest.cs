@@ -10,7 +10,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest1() {
       var original = new GsaMaterial {
-        MaterialType = GsaMaterial.MatType.Aluminium,
+        MaterialType = GsaMaterial.MaterialType.Aluminium,
       };
 
       GsaMaterial duplicate = original.Duplicate();
@@ -27,8 +27,8 @@ namespace GsaGHTests.Parameters {
         Name = "name"
       };
       var original = new GsaMaterial {
-        AnalysisProperty = 7,
-        MaterialType = GsaMaterial.MatType.Generic,
+        Id = 7,
+        MaterialType = GsaMaterial.MaterialType.Generic,
         AnalysisMaterial = analysisMaterial,
       };
 

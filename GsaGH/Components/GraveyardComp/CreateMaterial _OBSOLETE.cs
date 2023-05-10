@@ -151,46 +151,46 @@ namespace GsaGH.Components {
       var ghAnal = new GH_Integer();
       if (da.GetData(0, ref ghAnal)) {
         GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
+        material.Id = anal;
       }
 
       var ghGrade = new GH_Integer();
       if (da.GetData(1, ref ghGrade)) {
         GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
-        material.GradeProperty = grade;
+        material.Id = grade;
       }
 
       switch (_mode) {
         case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MatType.Generic;
+          material.MaterialType = GsaMaterial.MaterialType.Generic;
           break;
 
         case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MatType.Steel;
+          material.MaterialType = GsaMaterial.MaterialType.Steel;
           break;
 
         case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MatType.Concrete;
+          material.MaterialType = GsaMaterial.MaterialType.Concrete;
           break;
 
         case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MatType.Timber;
+          material.MaterialType = GsaMaterial.MaterialType.Timber;
           break;
 
         case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MatType.Aluminium;
+          material.MaterialType = GsaMaterial.MaterialType.Aluminium;
           break;
 
         case FoldMode.Frp:
-          material.MaterialType = GsaMaterial.MatType.Frp;
+          material.MaterialType = GsaMaterial.MaterialType.Frp;
           break;
 
         case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MatType.Glass;
+          material.MaterialType = GsaMaterial.MaterialType.Glass;
           break;
 
         case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MatType.Fabric;
+          material.MaterialType = GsaMaterial.MaterialType.Fabric;
           break;
       }
 

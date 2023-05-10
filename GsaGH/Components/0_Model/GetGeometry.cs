@@ -495,7 +495,7 @@ namespace GsaGH.Components {
           ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
           ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
           ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
-          ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
+          var matDict = new Materials(model);
 
           var elementLocalAxesDict
             = eDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
@@ -504,7 +504,7 @@ namespace GsaGH.Components {
 
           tsk = Task.Run(
             () => Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
-              amDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
+              matDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
         }
 
         TaskList.Add(tsk);
@@ -541,7 +541,7 @@ namespace GsaGH.Components {
           ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
           ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
           ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
-          ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
+          var matDict = new Materials(model);
 
           var elementLocalAxesDict
             = eDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
@@ -549,7 +549,7 @@ namespace GsaGH.Components {
             = mDict.Keys.ToDictionary(id => id, id => model.MemberDirectionCosine(id));
 
           results = Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
-            amDict, elementLocalAxesDict, memberLocalAxesDict);
+            matDict, elementLocalAxesDict, memberLocalAxesDict);
         } else {
           return;
         }
@@ -719,7 +719,7 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Node> nDict, ReadOnlyDictionary<int, Element> eDict,
       ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Section> sDict,
       ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, Prop2D> pDict,
-      ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      ReadOnlyDictionary<int, Prop3D> p3Dict, Materials matDict,
       Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
       Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict) {
       var results = new SolveResults();

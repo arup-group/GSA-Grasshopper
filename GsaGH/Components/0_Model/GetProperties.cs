@@ -50,21 +50,17 @@ namespace GsaGH.Components {
       }
 
       Model model = gsaModel.Model;
-
+      var materials = new Materials(model);
       List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(),
-        model.AnalysisMaterials(), model.SectionModifiers());
+        materials, model.SectionModifiers());
       List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(),
-        model.AnalysisMaterials(), model.Axes());
+        materials, model.Axes());
       List<GsaProp3dGoo> prop3Ds
-        = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
-
-      List<GsaMaterialGoo> customMaterials
-        = Materials.GetCustomMaterials(model.AnalysisMaterials());
+        = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), materials);
 
       da.SetDataList(0, sections);
       da.SetDataList(1, prop2Ds);
       da.SetDataList(2, prop3Ds);
-      da.SetDataList(3, customMaterials);
     }
   }
 }

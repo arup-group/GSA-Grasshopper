@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using static GsaGH.Parameters.GsaMaterial;
+using GsaGH.Parameters;
 using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Helpers.GsaApi {
