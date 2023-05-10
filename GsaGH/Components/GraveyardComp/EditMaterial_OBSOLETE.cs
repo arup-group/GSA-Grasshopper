@@ -12,13 +12,13 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Material and ouput the information
   /// </summary>
-  public class EditMaterial : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("33d14120-7355-414b-96d9-b85d64290d49");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+  public class EditMaterial_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("865f73c7-a057-481a-834b-c7e12873dd39");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMaterial;
 
-    public EditMaterial() : base("Edit Material", "MaterialEdit", "Modify GSA Material",
+    public EditMaterial_OBSOLETE() : base("Edit Material", "MaterialEdit", "Modify GSA Material",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -29,9 +29,7 @@ namespace GsaGH.Components {
         GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new "
         + GsaMaterialGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An",
-        "Set Material Analysis Property Number (0 -> 'from Grade')", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Name", "Na", "Material Name of Custom Material",
-        GH_ParamAccess.item);
+        "Set Material Analysis Property Number (0 -> 'from Grade'", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT",
         "Set Material Type" + Environment.NewLine + "Input either text string or integer:"
         + Environment.NewLine + "Generic : 0" + Environment.NewLine + "Steel : 1"
@@ -52,8 +50,6 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An",
         "Get Material Analysis Property (0 -> 'from Grade')", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Name", "Na", "Material Name of Custom Material",
-        GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT", "Get Material Type", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Material Grade", "Grd", "Get Material Grade",
         GH_ParamAccess.item);
@@ -74,17 +70,8 @@ namespace GsaGH.Components {
           }
         }
 
-        string name = "";
-        if (da.GetData(2, ref name)) {
-          if (material.AnalysisMaterial == null) {
-            this.AddRuntimeWarning("Currently only Custom Materials support material names.");
-          } else {
-            material.AnalysisMaterial.Name = name;
-          }
-        }
-
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(3, ref ghTyp)) {
+        if (da.GetData(2, ref ghTyp)) {
           switch (ghTyp.Value) {
             case GH_Integer ghInt: {
                 switch (ghInt.Value) {
@@ -169,7 +156,7 @@ namespace GsaGH.Components {
         }
 
         int grd = 0;
-        if (da.GetData(4, ref grd)) {
+        if (da.GetData(3, ref grd)) {
           material.GradeProperty = grd;
         }
 
@@ -177,15 +164,10 @@ namespace GsaGH.Components {
         da.SetData(1, material.AnalysisProperty);
         string mate = material.MaterialType.ToString();
         mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
-        string analysisMaterialName = "";
-        if (material.AnalysisMaterial != null) {
-          analysisMaterialName = material.AnalysisMaterial.Name;
-        }
-        da.SetData(2, analysisMaterialName);
-        da.SetData(3, mate);
-        da.SetData(4, material.GradeProperty);
+        da.SetData(2, mate);
+        da.SetData(3, material.GradeProperty);
       } else {
-        this.AddRuntimeError("Material is null");
+        this.AddRuntimeError("Material is Null");
       }
     }
   }
