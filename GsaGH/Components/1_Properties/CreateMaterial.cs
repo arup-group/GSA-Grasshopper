@@ -67,46 +67,43 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+      IGsaMaterial material;
+
+      switch (_selectedItems[0]) {
+        case "Aluminium":
+          material = new GsaAluminiumMaterial();
+          break;
+        
+        case "Concrete":
+          material = new GsaConcreteMaterial();
+          break;
+
+        case "Fabric":
+          material = new GsaFabricMaterial();
+          break;
+
+        case "FRP":
+          material = new GsaFrpMaterial();
+          break;
+
+        case "Glass":
+          material = new GsaGlassMaterial();
+          break;
+
+        case "Timber":
+          material = new GsaTimberMaterial();
+          break;
+
+        case "Steel":
+        default:
+          material = new GsaSteelMaterial();
+          break;
+      }
 
       var ghGrade = new GH_Integer();
       if (da.GetData(0, ref ghGrade)) {
         GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
         material.Id = grade;
-      }
-
-      switch (_selectedItems[0]) {
-        case "Steel":
-          material.MaterialType = GsaMaterial.MaterialType.Steel;
-          break;
-
-        case "Concrete":
-          material.MaterialType = GsaMaterial.MaterialType.Concrete;
-          break;
-
-        case "Timber":
-          material.MaterialType = GsaMaterial.MaterialType.Timber;
-          break;
-
-        case "Aluminium":
-          material.MaterialType = GsaMaterial.MaterialType.Aluminium;
-          break;
-
-        case "FRP":
-          material.MaterialType = GsaMaterial.MaterialType.Frp;
-          break;
-
-        case "Glass":
-          material.MaterialType = GsaMaterial.MaterialType.Glass;
-          break;
-
-        case "Fabric":
-          material.MaterialType = GsaMaterial.MaterialType.Fabric;
-          break;
-
-        default:
-          material.MaterialType = GsaMaterial.MaterialType.Generic;
-          break;
       }
 
       da.SetData(0, new GsaMaterialGoo(material));
