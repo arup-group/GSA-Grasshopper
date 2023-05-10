@@ -21,18 +21,5 @@ namespace GsaGH.Parameters {
     public GsaMaterialParameter() : base(new GH_InstanceDescription(GsaMaterialGoo.Name,
       GsaMaterialGoo.NickName, GsaMaterialGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
-
-    protected override GsaMaterialGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaMaterial)) {
-        return new GsaMaterialGoo((GsaMaterial)data);
-      }
-
-      if (!GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
-      }
-
-      var material = new GsaMaterial(id);
-      return new GsaMaterialGoo(material);
-    }
   }
 }

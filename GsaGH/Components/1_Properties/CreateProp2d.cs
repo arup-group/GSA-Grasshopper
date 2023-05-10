@@ -18,11 +18,13 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Components {
+namespace GsaGH.Components
+{
   /// <summary>
   ///   Component to create a new Prop2d
   /// </summary>
-  public class CreateProp2d : GH_OasysDropDownComponent {
+  public class CreateProp2d : GH_OasysDropDownComponent
+  {
     public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -168,26 +170,26 @@ namespace GsaGH.Components {
 
         if (_mode != Prop2dType.Fabric) {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
-          var ghTyp = new GH_ObjectWrapper();
-          if (da.GetData(1, ref ghTyp)) {
-            GsaMaterial material = null;
-            if (ghTyp.Value is GsaMaterialGoo) {
-              ghTyp.CastTo(ref material);
-              prop.Material = material ?? new GsaMaterial();
-            } else {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-                prop.Material = new GsaMaterial(idd);
-              } else {
-                this.AddRuntimeError(
-                  "Unable to convert PB input to a Section Property of reference integer");
-                return;
-              }
+        }
+        var ghTyp = new GH_ObjectWrapper();
+        if (da.GetData(1, ref ghTyp)) {
+          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+            prop.Material = materialGoo.Value;
+            if (_mode == Prop2dType.Fabric 
+              && prop.Material.Type != MatType.Fabric) {
+              this.AddRuntimeError(
+                "Material type must be Fabric");
+              return;
             }
           } else {
-            prop.Material = new GsaMaterial(2);
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              prop.ApiProp2d.MaterialAnalysisProperty = id;
+            } else {
+              this.AddRuntimeError(
+                "Unable to convert PB input to a Section Property of reference integer");
+              return;
+            }
           }
-        } else {
-          prop.Material = new GsaMaterial(8);
         }
       } else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
@@ -290,7 +292,8 @@ namespace GsaGH.Components {
           AddLengthUnitDropDown();
           break;
 
-        case Prop2dType.Fabric: break;
+        case Prop2dType.Fabric:
+          break;
 
         case Prop2dType.LoadPanel:
           AddSupportTypeDropDown();

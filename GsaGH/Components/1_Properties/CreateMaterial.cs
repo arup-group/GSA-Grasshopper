@@ -1,112 +1,124 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaGH.Helpers.GH;
-using GsaGH.Parameters;
-using GsaGH.Properties;
-using OasysGH;
-using OasysGH.Components;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Drawing;
+//using Grasshopper.Kernel;
+//using Grasshopper.Kernel.Types;
+//using GsaAPI;
+//using GsaGH.Helpers.GH;
+//using GsaGH.Parameters;
+//using GsaGH.Properties;
+//using OasysGH;
+//using OasysGH.Components;
 
-namespace GsaGH.Components {
-  /// <summary>
-  ///   Component to create a new Material
-  /// </summary>
-  public class CreateMaterial : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public static List<string> MaterialTypes = new List<string>() {
-      "Generic",
-      "Steel",
-      "Concrete",
-      "Timber",
-      "Aluminium",
-      "FRP",
-      "Glass",
-      "Fabric",
-    };
+//namespace GsaGH.Components {
+//  /// <summary>
+//  ///   Component to create a new Material
+//  /// </summary>
+//  public class CreateMaterial : GH_OasysDropDownComponent {
+//    public override Guid ComponentGuid => new Guid("4fae5233-2852-44a2-8cd4-6b96ef9e7cd5");
+//    public override GH_Exposure Exposure => GH_Exposure.primary;
+//    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+//    public static List<string> MaterialTypes = new List<string>() {
+//      "Steel",
+//      "Concrete",
+//      "FRP",
+//      "Aluminium",
+//      "Timber",
+//      "Glass",
+//      "Fabric",
+//      "Reinforcement"
+//    };
 
-    protected override Bitmap Icon => Resources.CreateMaterial;
+//    protected override Bitmap Icon => Resources.CreateMaterial;
+//    private Model _model = new Model();
 
-    public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
-      CategoryName.Name(), SubCategoryName.Cat1()) {
-      Hidden = true;
-    }
+//    public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
+//      GsaMaterialGoo.Name.Replace(" ", string.Empty),
+//      "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
+//      CategoryName.Name(), SubCategoryName.Cat1()) {
+//      Hidden = true;
+//    }
 
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      base.UpdateUI();
-    }
+//    public override void SetSelected(int i, int j) {
+//      _selectedItems[i] = _dropDownItems[i][j];
+//      base.UpdateUI();
+//    }
 
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Material type",
-      });
+//    protected override void InitialiseDropdowns() {
+//      _spacerDescriptions = new List<string>(new[] {
+//        "DesignCodes",
+//        string.Empty,
+//        "Type",
+//        "Grade"
+//      });
 
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
+//      _dropDownItems = new List<List<string>>();
+//      _selectedItems = new List<string>();
 
-      _dropDownItems.Add(new List<string>(MaterialTypes));
-      _selectedItems.Add(MaterialTypes[3]);
+//      _dropDownItems.Add(new List<string>(MaterialTypes));
+//      _selectedItems.Add(MaterialTypes[0]); // Default Steel
 
-      _isInitialised = true;
-    }
+//      _dropDownItems.Add(new List<string>(MaterialTypes));
+//      _selectedItems.Add(MaterialTypes[0]); // Default Steel
 
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddIntegerParameter("Grade", "Grd", "Material Grade (default = 1)",
-        GH_ParamAccess.item, 1);
-    }
+//      _isInitialised = true;
+//    }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat",
-        "GSA Standard Material (reference)", GH_ParamAccess.item);
-    }
+//    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+//      pManager.AddIntegerParameter("Grade", "Grd", "Material Grade (default = 1)",
+//        GH_ParamAccess.item, 1);
+//    }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      IGsaMaterial material;
+//    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+//      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat",
+//        "GSA Standard Material (reference)", GH_ParamAccess.item);
+//    }
 
-      switch (_selectedItems[0]) {
-        case "Aluminium":
-          material = new GsaAluminiumMaterial();
-          break;
+//    protected override void SolveInstance(IGH_DataAccess da) {
+//      IGsaMaterial material;
+
+//      switch (_selectedItems[0]) {
+//        case "Aluminium":
+//          material = new GsaAluminiumMaterial();
+//          break;
         
-        case "Concrete":
-          material = new GsaConcreteMaterial();
-          break;
+//        case "Concrete":
+//          material = new GsaConcreteMaterial();
+//          break;
 
-        case "Fabric":
-          material = new GsaFabricMaterial();
-          break;
+//        case "Fabric":
+//          material = new GsaFabricMaterial();
+//          break;
 
-        case "FRP":
-          material = new GsaFrpMaterial();
-          break;
+//        case "FRP":
+//          material = new GsaFrpMaterial();
+//          break;
 
-        case "Glass":
-          material = new GsaGlassMaterial();
-          break;
+//        case "Glass":
+//          material = new GsaGlassMaterial();
+//          break;
 
-        case "Timber":
-          material = new GsaTimberMaterial();
-          break;
+//        case "Timber":
+//          material = new GsaTimberMaterial();
+//          break;
+        
+//        case "Reinforcement":
+//          material = new GsaReinforcementMaterial();
+//          break;
 
-        case "Steel":
-        default:
-          material = new GsaSteelMaterial();
-          break;
-      }
+//        case "Steel":
+//        default:
+//          material = new GsaSteelMaterial();
+//          break;
+//      }
 
-      var ghGrade = new GH_Integer();
-      if (da.GetData(0, ref ghGrade)) {
-        GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
-        material.Id = grade;
-      }
+//      var ghGrade = new GH_Integer();
+//      if (da.GetData(0, ref ghGrade)) {
+//        GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
+//        material.Id = grade;
+//      }
 
-      da.SetData(0, new GsaMaterialGoo(material));
-    }
-  }
-}
+//      da.SetData(0, new GsaMaterialGoo(material));
+//    }
+//  }
+//}

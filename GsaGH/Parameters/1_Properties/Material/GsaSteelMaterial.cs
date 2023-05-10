@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid();
       }
     }
-    public MaterialType Type => MaterialType.STEEL;
+    public MatType Type => MatType.Steel;
 
     private int _id = 0;
     private SteelMaterial _material;

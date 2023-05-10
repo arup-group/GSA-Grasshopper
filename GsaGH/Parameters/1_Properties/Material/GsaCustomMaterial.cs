@@ -29,11 +29,17 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid();
       }
     }
-    public MaterialType Type { get; set; } = MaterialType.GENERIC;
+    public MatType Type {
+      get => _type;
+      set {
+        _type = value;
+        Guid = Guid.NewGuid();
+      }
+    }
 
     private int _id = 0;
     private AnalysisMaterial _material;
-    private MaterialType _type = MaterialType.GENERIC;
+    private MatType _type = MatType.Generic;
 
     internal static AnalysisMaterial Duplicate(AnalysisMaterial material) {
       return new AnalysisMaterial() {
@@ -53,11 +59,6 @@ namespace GsaGH.Parameters {
         Id = _id,
         Guid = new Guid(Guid.ToString())
       };
-    }
-
-    public void ChangeType(MatType type) {
-      Type = (MaterialType)Enum.Parse(typeof(MaterialType), type.ToString(), true);
-      Guid = Guid.NewGuid();
     }
 
     public override string ToString() {

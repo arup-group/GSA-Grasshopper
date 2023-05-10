@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid();
       }
     }
-    public MaterialType Type => MaterialType.FABRIC;
+    public MatType Type => MatType.Fabric;
 
     private int _id = 0;
     private FabricMaterial _material;

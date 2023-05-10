@@ -326,7 +326,7 @@ namespace GsaGH.Components {
 
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
         ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict,
-        gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(),
+        gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), new Helpers.Import.Materials(gsa),
         gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
       var outModel = new GsaModel {

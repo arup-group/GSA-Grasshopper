@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid();
       }
     }
-    public MaterialType Type => MaterialType.FRP;
+    public MatType Type => MatType.Frp;
 
     private int _id = 0;
     private FrpMaterial _material;

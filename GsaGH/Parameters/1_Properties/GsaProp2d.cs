@@ -5,10 +5,12 @@ using System.Globalization;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Export;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -66,7 +68,8 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _prop2d.MaterialType = _material.Type;
+        _prop2d.MaterialType = (MaterialType)Enum.Parse(typeof(MaterialType), 
+          _material.Type.ToString(), true);
         _prop2d.MaterialAnalysisProperty = 0;
         _prop2d.MaterialGradeProperty = 0;
         IsReferencedById = false;
@@ -216,8 +219,7 @@ namespace GsaGH.Parameters {
         + " ";
       string desc = Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
       string mat = Type != Property2D_Type.LOAD ?
-        Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.Type).Key
-        + " " : string.Empty;
+        Material.Type.ToString().ToPascalCase() + " " : string.Empty;
       string pa = (Id > 0) ? "PA" + Id + " " : "";
       string supportType = Type == Property2D_Type.LOAD ? $"{SupportType}" : string.Empty;
       string referenceEdge

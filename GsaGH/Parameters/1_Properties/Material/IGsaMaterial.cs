@@ -7,7 +7,7 @@ namespace GsaGH.Parameters {
     int Id { get; set; }
     Guid Guid { get; }
     AnalysisMaterial AnalysisMaterial { get; set; }
-    MaterialType Type { get; }
+    MatType Type { get; }
     IGsaMaterial Duplicate();
   }
 }

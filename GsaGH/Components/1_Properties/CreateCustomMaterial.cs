@@ -86,6 +86,17 @@ namespace GsaGH.Components {
       Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
     }
 
+    public static List<string> MaterialTypes = new List<string>() {
+          "Steel",
+          "Concrete",
+          "FRP",
+          "Aluminium",
+          "Timber",
+          "Glass",
+          "Fabric",
+          "Reinforcement"
+        };
+
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Material Type",
@@ -97,7 +108,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(CreateMaterial.MaterialTypes);
+      _dropDownItems.Add(MaterialTypes);
       _selectedItems.Add(_mode.ToString());
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
@@ -180,8 +191,7 @@ namespace GsaGH.Components {
 
       material.Id = 0;
 
-      var type = (MatType)Enum.Parse(typeof(MatType), _mode.ToString(), true);
-      material.ChangeType(type);
+      material.Type = (MatType)Enum.Parse(typeof(MatType), _mode.ToString(), true);
 
       string name = "";
       if (da.GetData(1, ref name)) {

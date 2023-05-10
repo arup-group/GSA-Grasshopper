@@ -379,7 +379,7 @@ namespace GsaGH.Components {
               prop.Material = materialGoo.Value;
             } else {
               if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-                prop.Material = new GsaMaterial(idd);
+                prop.MaterialId = idd;
               } else {
                 this.AddRuntimeError(
                   "Unable to convert PB input to a Section Property of reference integer");
@@ -387,12 +387,12 @@ namespace GsaGH.Components {
               }
             }
           } else {
-            prop.Material = new GsaMaterial(2);
+            //prop.Material = new GsaMaterial(2);
           }
 
           prop.Thickness = (Length)Input.UnitNumber(this, da, 1, _lengthUnit);
         } else {
-          prop.Material = new GsaMaterial(8);
+          //prop.Material = new GsaMaterial(8);
         }
       }
 

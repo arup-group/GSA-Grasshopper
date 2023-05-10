@@ -36,18 +36,16 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
         if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-          prop.Material = materialGoo.Value ?? new GsaMaterial();
+          prop.Material = materialGoo.Value;
         } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-            prop.Material = new GsaMaterial(idd);
+          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+            prop.ApiProp3d.MaterialAnalysisProperty = id;
           } else {
             this.AddRuntimeError(
               "Unable to convert PV input to a 3D Property of reference integer");
             return;
           }
         }
-      } else {
-        prop.Material = new GsaMaterial(2);
       }
 
       prop.AxisProperty = 0;

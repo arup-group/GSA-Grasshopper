@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Export;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
@@ -47,7 +48,8 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _prop3d.MaterialType = _material.Type;
+        _prop3d.MaterialType = (MaterialType)Enum.Parse(typeof(MaterialType),
+          _material.Type.ToString(), true);
         _prop3d.MaterialAnalysisProperty = 0;
         _prop3d.MaterialGradeProperty = 0;
         IsReferencedById = false;
@@ -125,8 +127,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string type = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.Type).Key;
+      string type = Material.Type.ToString().ToPascalCase();
       string pa = (Id > 0) ? "PV" + Id + " " : "";
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }

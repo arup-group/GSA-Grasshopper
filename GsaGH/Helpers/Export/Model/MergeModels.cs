@@ -41,7 +41,7 @@ namespace GsaGH.Helpers.Export {
       ReadOnlyDictionary<int, Section> sDict = model.Sections();
       ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
       ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
-      ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
+      var amDict = new Import.Materials(model);
       ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
       ReadOnlyDictionary<int, Axis> axDict = model.Axes();
       var localElemAxesDict
@@ -94,21 +94,21 @@ namespace GsaGH.Helpers.Export {
       }).ToList();
 
       List<GsaSectionGoo> goosections = Import.Properties.GetSections(sDict,
-        model.AnalysisMaterials(), model.SectionModifiers());
+        amDict, model.SectionModifiers());
       var sections = goosections.Select(n => n.Value).ToList();
       sections.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
       List<GsaProp2dGoo> gooprop2Ds
-        = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials(), axDict);
+        = Import.Properties.GetProp2ds(pDict, amDict, axDict);
       var prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
       prop2Ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
       List<GsaProp3dGoo> gooprop3Ds
-        = Import.Properties.GetProp3ds(p3Dict, model.AnalysisMaterials());
+        = Import.Properties.GetProp3ds(p3Dict, amDict);
       var prop3Ds = gooprop3Ds.Select(n => n.Value).ToList();
       prop3Ds.Select(c => {
         c.Id = 0;

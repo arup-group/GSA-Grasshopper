@@ -333,7 +333,7 @@ namespace GsaGH.Parameters {
 
           _elements = Elements.GetElements(_model.Model.Elements(Definition), _model.Model.Nodes(),
             _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
-            _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(), elementLocalAxesDict,
+            new Materials(_model.Model), _model.Model.SectionModifiers(), elementLocalAxesDict,
             _model.Model.Axes(), unit, false);
           break;
 
@@ -345,7 +345,7 @@ namespace GsaGH.Parameters {
 
           _members = Members.GetMembers(_model.Model.Members(Definition), _model.Model.Nodes(),
             _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
-            _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(), memberLocalAxesDict,
+            new Materials(_model.Model), _model.Model.SectionModifiers(), memberLocalAxesDict,
             _model.Model.Axes(), unit, false);
           break;
 

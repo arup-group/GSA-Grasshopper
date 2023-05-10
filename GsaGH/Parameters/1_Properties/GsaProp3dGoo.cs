@@ -24,8 +24,8 @@ namespace GsaGH.Parameters {
         return true;
       }
 
-      if (source.GetType().IsAssignableFrom(typeof(GsaMaterial))) {
-        Value = new GsaProp3d((GsaMaterial)source);
+      if (source.GetType().IsAssignableFrom(typeof(IGsaMaterial))) {
+        Value = new GsaProp3d((IGsaMaterial)source);
         return true;
       }
 

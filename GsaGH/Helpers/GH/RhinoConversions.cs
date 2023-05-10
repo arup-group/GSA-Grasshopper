@@ -20,11 +20,13 @@ using Rhino.Geometry.Collections;
 using Elements = GsaGH.Helpers.Import.Elements;
 using Line = Rhino.Geometry.Line;
 
-namespace GsaGH.Helpers.GH {
+namespace GsaGH.Helpers.GH
+{
   /// <summary>
   ///   Helper class to perform some decent geometry approximations from NURBS to poly-geometry
   /// </summary>
-  public class RhinoConversions {
+  public class RhinoConversions
+  {
 
     public static PolyCurve BuildArcLineCurveFromPtsAndTopoType(
       List<Point3d> topology, List<string> topoType = null) {
@@ -75,10 +77,10 @@ namespace GsaGH.Helpers.GH {
 
       var stopwatch = Stopwatch.StartNew();
       while (brep == null || brep.Length == 0 || !brep[0].IsValid) {
-        if (stopwatch.ElapsedMilliseconds > 5000) { 
-          break; 
+        if (stopwatch.ElapsedMilliseconds > 5000) {
+          break;
         }
-        
+
         tolerance *= 2;
         brep = Brep.CreatePlanarBreps(curves, tolerance);
         if (brep != null && brep.Length > 0 && brep[0].IsValid) {
@@ -213,9 +215,10 @@ namespace GsaGH.Helpers.GH {
       var elementLocalAxesDict
         = elementDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
+      var matDict = new Import.Materials(model);
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
         ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict, nodeDict,
-        model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(),
+        model.Sections(), model.Prop2Ds(), model.Prop3Ds(), matDict,
         model.SectionModifiers(), elementLocalAxesDict, model.Axes(), unit, false);
 
       var elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();
@@ -255,36 +258,33 @@ namespace GsaGH.Helpers.GH {
         return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
       }
 
-      {
-        outElem1ds = new List<GsaElement1d>();
-        ReadOnlyDictionary<int, Element> elemDict = model.Elements();
-        ReadOnlyDictionary<int, Section> sDict = model.Sections();
-        ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
-        ReadOnlyDictionary<int, AnalysisMaterial> aDict = model.AnalysisMaterials();
-        elementLocalAxesDict
-          = elemDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
-        foreach (KeyValuePair<int, Element> kvp in elemDict) {
-          Element elem = kvp.Value;
-          if (elem.Topology.Count != 2) {
-            continue;
-          }
-
-          Vector3 posS = nodeDict[elem.Topology[0]].Position;
-          var start = new Point3d(posS.X, posS.Y, posS.Z);
-          flat.ClosestPoint(start, out double us, out double vs);
-          Point3d mapPts = orig.PointAt(us, vs);
-          Vector3 posE = nodeDict[elem.Topology[1]].Position;
-          var end = new Point3d(posE.X, posE.Y, posE.Z);
-          flat.ClosestPoint(end, out double ue, out double ve);
-          Point3d mapPte = orig.PointAt(ue, ve);
-          var elem1d = new GsaElement1d(elemDict, kvp.Key, nodeDict, sDict, modDict, aDict,
-            elementLocalAxesDict, unit) {
-            Line = new LineCurve(mapPts, mapPte),
-          };
-          elem1d.Section = elem1d.ApiElement.ParentMember.Member > 0 ?
-            memSections[elem1d.ApiElement.ParentMember.Member] : elemSections[kvp.Key];
-          outElem1ds.Add(elem1d);
+      outElem1ds = new List<GsaElement1d>();
+      ReadOnlyDictionary<int, Element> elemDict = model.Elements();
+      ReadOnlyDictionary<int, Section> sDict = model.Sections();
+      ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+      elementLocalAxesDict
+        = elemDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
+      foreach (KeyValuePair<int, Element> kvp in elemDict) {
+        Element elem = kvp.Value;
+        if (elem.Topology.Count != 2) {
+          continue;
         }
+
+        Vector3 posS = nodeDict[elem.Topology[0]].Position;
+        var start = new Point3d(posS.X, posS.Y, posS.Z);
+        flat.ClosestPoint(start, out double us, out double vs);
+        Point3d mapPts = orig.PointAt(us, vs);
+        Vector3 posE = nodeDict[elem.Topology[1]].Position;
+        var end = new Point3d(posE.X, posE.Y, posE.Z);
+        flat.ClosestPoint(end, out double ue, out double ve);
+        Point3d mapPte = orig.PointAt(ue, ve);
+        var elem1d = new GsaElement1d(elemDict, kvp.Key, nodeDict, sDict, modDict, matDict,
+          elementLocalAxesDict, unit) {
+          Line = new LineCurve(mapPts, mapPte),
+        };
+        elem1d.Section = elem1d.ApiElement.ParentMember.Member > 0 ?
+          memSections[elem1d.ApiElement.ParentMember.Member] : elemSections[kvp.Key];
+        outElem1ds.Add(elem1d);
       }
 
       return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
@@ -434,7 +434,7 @@ namespace GsaGH.Helpers.GH {
             break;
 
           case 6: {
-            var topo6 = new List<int> {
+              var topo6 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -442,11 +442,11 @@ namespace GsaGH.Helpers.GH {
               topo[3],
               topo[5],
             };
-            topoInts.Add(topo6);
-            break;
-          }
+              topoInts.Add(topo6);
+              break;
+            }
           case 8: {
-            var topo8 = new List<int> {
+              var topo8 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -456,9 +456,9 @@ namespace GsaGH.Helpers.GH {
               topo[5],
               topo[7],
             };
-            topoInts.Add(topo8);
-            break;
-          }
+              topoInts.Add(topo8);
+              break;
+            }
         }
       }
 
@@ -478,65 +478,65 @@ namespace GsaGH.Helpers.GH {
 
         switch (topo.Count) {
           case 3 when createQuadraticElements: {
-            var pt3 = new Point3d((topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
-              (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
-              (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt3);
-            var pt4 = new Point3d((topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
-              (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
-              (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt4);
-            var pt5 = new Point3d((topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
-              (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
-              (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt5);
+              var pt3 = new Point3d((topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt3);
+              var pt4 = new Point3d((topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt4);
+              var pt5 = new Point3d((topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
+                (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
+                (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt5);
 
-            elem.Type = ElementType.TRI6;
-            topoInts.Add(topo);
-            break;
-          }
+              elem.Type = ElementType.TRI6;
+              topoInts.Add(topo);
+              break;
+            }
           case 3:
             elem.Type = ElementType.TRI3;
             topoInts.Add(topo);
             break;
 
           case 4 when createQuadraticElements: {
-            var pt3 = new Point3d((topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
-              (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
-              (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt3);
-            var pt4 = new Point3d((topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
-              (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
-              (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt4);
-            var pt5 = new Point3d((topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
-              (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
-              (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt5);
-            var pt6 = new Point3d((topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
-              (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
-              (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
-            topo.Add(topoPts.Count);
-            topoPts.Add(pt6);
+              var pt3 = new Point3d((topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt3);
+              var pt4 = new Point3d((topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt4);
+              var pt5 = new Point3d((topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
+                (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
+                (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt5);
+              var pt6 = new Point3d((topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
+                (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
+                (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
+              topo.Add(topoPts.Count);
+              topoPts.Add(pt6);
 
-            elem.Type = ElementType.QUAD8;
-            topoInts.Add(topo);
-            break;
-          }
+              elem.Type = ElementType.QUAD8;
+              topoInts.Add(topo);
+              break;
+            }
           case 4:
             elem.Type = ElementType.QUAD4;
             topoInts.Add(topo);
             break;
 
           case 6: {
-            elem.Type = ElementType.TRI6;
-            var topo6 = new List<int> {
+              elem.Type = ElementType.TRI6;
+              var topo6 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -544,12 +544,12 @@ namespace GsaGH.Helpers.GH {
               topo[3],
               topo[5],
             };
-            topoInts.Add(topo6);
-            break;
-          }
+              topoInts.Add(topo6);
+              break;
+            }
           case 8: {
-            elem.Type = ElementType.QUAD8;
-            var topo8 = new List<int> {
+              elem.Type = ElementType.QUAD8;
+              var topo8 = new List<int> {
               topo[0],
               topo[2],
               topo[4],
@@ -559,9 +559,9 @@ namespace GsaGH.Helpers.GH {
               topo[5],
               topo[7],
             };
-            topoInts.Add(topo8);
-            break;
-          }
+              topoInts.Add(topo8);
+              break;
+            }
         }
 
         elem.Property = prop;

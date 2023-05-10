@@ -53,18 +53,16 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(1, ref ghTyp)) {
           if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            gsaSection.Material = materialGoo.Value ?? new GsaMaterial();
+            gsaSection.Material = materialGoo.Value;
           } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              gsaSection.Material = new GsaMaterial(idd);
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              gsaSection.ApiSection.MaterialAnalysisProperty = id;
             } else {
               this.AddRuntimeError(
                 "Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
-        } else {
-          gsaSection.Material = new GsaMaterial(7);
         }
       }
 

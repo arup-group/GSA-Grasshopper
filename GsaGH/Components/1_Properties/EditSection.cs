@@ -88,10 +88,10 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(3, ref ghTyp)) {
           if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            gsaSection.Material = materialGoo.Value ?? new GsaMaterial();
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              gsaSection.MaterialId = idd;
+            gsaSection.Material = materialGoo.Value;
+          } else {  
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              gsaSection.MaterialId = id;
             } else {
               this.AddRuntimeError(
                 "Unable to convert PB input to a Section Property of reference integer");

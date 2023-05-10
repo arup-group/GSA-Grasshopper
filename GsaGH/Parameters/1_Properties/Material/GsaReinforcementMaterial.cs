@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid();
       }
     }
-    public MaterialType Type => MaterialType.REBAR;
+    public MatType Type => MatType.Rebar;
 
     private int _id = 0;
     private ReinforcementMaterial _material;

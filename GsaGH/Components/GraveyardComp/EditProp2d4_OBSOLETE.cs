@@ -156,10 +156,8 @@ namespace GsaGH.Components.GraveyardComp {
 
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
-          var material = new GsaMaterial();
-          if (ghTyp.Value is GsaMaterialGoo) {
-            ghTyp.CastTo(ref material);
-            prop.Material = material ?? new GsaMaterial();
+          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+            prop.Material = materialGoo.Value;
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
               prop.MaterialId = idd;

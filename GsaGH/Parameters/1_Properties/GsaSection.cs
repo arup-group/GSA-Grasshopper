@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Export;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
 using OasysUnits;
@@ -75,7 +76,8 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _section.MaterialType = _material.Type;
+        _section.MaterialType = (MaterialType)Enum.Parse(typeof(MaterialType),
+          _material.Type.ToString(), true);
         _section.MaterialAnalysisProperty = 0;
         _section.MaterialGradeProperty = 0;
         IsReferencedById = false;
@@ -205,8 +207,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string pb = Id > 0 ? "PB" + Id + " " : "";
       string prof = _section.Profile.Replace("%", " ") + " ";
-      string mat = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.Type).Key + " ";
+      string mat = Material.Type.ToString().ToPascalCase() + " ";
       string mod = _modifier.IsModified ? " modified" : "";
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim()
        .Replace("  ", " ");

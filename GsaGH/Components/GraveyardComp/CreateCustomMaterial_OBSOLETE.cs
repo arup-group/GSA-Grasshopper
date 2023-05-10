@@ -95,7 +95,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(CreateMaterial.MaterialTypes);
+      _dropDownItems.Add(CreateCustomMaterial.MaterialTypes);
       _selectedItems.Add(_mode.ToString());
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
@@ -135,7 +135,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+      var material = new GsaCustomMaterial();
 
       var ghAnal = new GH_Integer();
       if (da.GetData(0, ref ghAnal)) {
@@ -175,39 +175,7 @@ namespace GsaGH.Components {
 
       material.Id = 0;
 
-      switch (_mode) {
-        case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MaterialType.Generic;
-          break;
-
-        case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MaterialType.Steel;
-          break;
-
-        case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MaterialType.Concrete;
-          break;
-
-        case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MaterialType.Timber;
-          break;
-
-        case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MaterialType.Aluminium;
-          break;
-
-        case FoldMode.Frp:
-          material.MaterialType = GsaMaterial.MaterialType.Frp;
-          break;
-
-        case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MaterialType.Glass;
-          break;
-
-        case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MaterialType.Fabric;
-          break;
-      }
+      material.Type = (MatType)Enum.Parse(typeof(MatType), _mode.ToString(), true);
 
       da.SetData(0, new GsaMaterialGoo(material));
     }

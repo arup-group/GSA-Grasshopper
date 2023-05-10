@@ -146,7 +146,42 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+      IGsaMaterial material;
+
+      switch (_mode) {
+        case FoldMode.Steel:
+          material = new GsaSteelMaterial();
+          break;
+
+        case FoldMode.Concrete:
+          material = new GsaConcreteMaterial();
+          break;
+
+        case FoldMode.Timber:
+          material = new GsaTimberMaterial();
+          break;
+
+        case FoldMode.Aluminium:
+          material = new GsaAluminiumMaterial();
+          break;
+
+        case FoldMode.Frp:
+          material = new GsaFrpMaterial();
+          break;
+
+        case FoldMode.Glass:
+          material = new GsaGlassMaterial();
+          break;
+
+        case FoldMode.Fabric:
+          material = new GsaFabricMaterial();
+          break;
+
+        case FoldMode.Generic:
+        default:
+          material = new GsaCustomMaterial();
+          break;
+      }
 
       var ghAnal = new GH_Integer();
       if (da.GetData(0, ref ghAnal)) {
@@ -158,40 +193,6 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghGrade)) {
         GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
         material.Id = grade;
-      }
-
-      switch (_mode) {
-        case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MaterialType.Generic;
-          break;
-
-        case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MaterialType.Steel;
-          break;
-
-        case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MaterialType.Concrete;
-          break;
-
-        case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MaterialType.Timber;
-          break;
-
-        case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MaterialType.Aluminium;
-          break;
-
-        case FoldMode.Frp:
-          material.MaterialType = GsaMaterial.MaterialType.Frp;
-          break;
-
-        case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MaterialType.Glass;
-          break;
-
-        case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MaterialType.Fabric;
-          break;
       }
 
       da.SetData(0, new GsaMaterialGoo(material));

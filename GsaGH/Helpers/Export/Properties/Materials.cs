@@ -1,8 +1,6 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaAPI;
+﻿using GsaAPI;
 using GsaGH.Parameters;
 using System;
-using System.Collections.ObjectModel;
 using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGH.Helpers.Export {
@@ -40,7 +38,8 @@ namespace GsaGH.Helpers.Export {
       if (section.ApiSection.MaterialAnalysisProperty != 0 && section.Material != null
         && section.Material.AnalysisMaterial != null) {
         // set material type in API prop
-        section.ApiSection.MaterialType = section.Material.Type;
+        section.ApiSection.MaterialType = 
+          (MaterialType)Enum.Parse(typeof(MaterialType), section.Material.Type.ToString(), true);
 
         // convert material and set it in dictionary
         int id = ConvertMaterial(section.Material, ref apiMaterials);
@@ -61,7 +60,9 @@ namespace GsaGH.Helpers.Export {
       if (prop2d.ApiProp2d.MaterialAnalysisProperty != 0 && prop2d.Material != null
         && prop2d.Material.AnalysisMaterial != null) {
         // set material type in API prop
-        prop2d.ApiProp2d.MaterialType = prop2d.Material.Type;
+        prop2d.ApiProp2d.MaterialType =
+          (MaterialType)Enum.Parse(typeof(MaterialType), 
+          prop2d.Material.Type.ToString(), true);
 
         // convert material and set it in dictionary
         int id = ConvertMaterial(prop2d.Material, ref apiMaterials);
@@ -82,7 +83,9 @@ namespace GsaGH.Helpers.Export {
       if (prop3d.ApiProp3d.MaterialAnalysisProperty != 0 && prop3d.Material != null
         && prop3d.Material.AnalysisMaterial != null) {
         // set material type in API prop
-        prop3d.ApiProp3d.MaterialType = prop3d.Material.Type;
+        prop3d.ApiProp3d.MaterialType =
+          (MaterialType)Enum.Parse(typeof(MaterialType), 
+          prop3d.Material.Type.ToString(), true);
 
         // convert material and set it in dictionary
         int id = ConvertMaterial(prop3d.Material, ref apiMaterials);
@@ -106,36 +109,36 @@ namespace GsaGH.Helpers.Export {
     private static int AddMaterial(
       IGsaMaterial material, ref Materials apiMaterials) {
       switch (material.Type) {
-        case MaterialType.ALUMINIUM:
+        case MatType.Aluminium:
           return AddOrSetStandardMaterial(
             (GsaAluminiumMaterial)material, ref apiMaterials.AluminiumMaterials);
 
-        case MaterialType.CONCRETE:
+        case MatType.Concrete:
           return AddOrSetStandardMaterial(
             (GsaConcreteMaterial)material, ref apiMaterials.ConcreteMaterials);
 
-        case MaterialType.FABRIC:
+        case MatType.Fabric:
           return AddOrSetStandardMaterial(
             (GsaFabricMaterial)material, ref apiMaterials.FabricMaterials);
 
-        case MaterialType.FRP:
+        case MatType.Frp:
           return AddOrSetStandardMaterial(
             (GsaFrpMaterial)material, ref apiMaterials.FrpMaterials);
 
-        case MaterialType.GLASS:
+        case MatType.Glass:
           return AddOrSetStandardMaterial(
             (GsaGlassMaterial)material, ref apiMaterials.GlassMaterials);
 
-        case MaterialType.REBAR:
+        case MatType.Rebar:
           return AddOrSetStandardMaterial(
             (GsaReinforcementMaterial)material, 
             ref apiMaterials.ReinforcementMaterials);
 
-        case MaterialType.STEEL:
+        case MatType.Steel:
           return AddOrSetStandardMaterial(
             (GsaSteelMaterial)material, ref apiMaterials.SteelMaterials);
 
-        case MaterialType.TIMBER:
+        case MatType.Timber:
           return AddOrSetStandardMaterial(
             (GsaTimberMaterial)material, ref apiMaterials.TimberMaterials);
 

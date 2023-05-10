@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid();
       }
     }
-    public MaterialType Type => MaterialType.GLASS;
+    public MatType Type => MatType.Glass;
 
     private int _id = 0;
     private GlassMaterial _material;

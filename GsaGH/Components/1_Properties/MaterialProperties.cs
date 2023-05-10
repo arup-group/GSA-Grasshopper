@@ -162,11 +162,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaMaterial gsaMaterial = null;
+      IGsaMaterial gsaMaterial = null;
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaMaterialGoo) {
-          ghTyp.CastTo(ref gsaMaterial);
+        if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+          gsaMaterial = materialGoo.Value;
         }
       }
 
@@ -175,7 +175,7 @@ namespace GsaGH.Components {
       }
 
       if (gsaMaterial.AnalysisMaterial == null) {
-        this.AddRuntimeWarning("One or more materials are not custom material");
+        this.AddRuntimeWarning("One or more materials are not valid");
         return;
       }
 
