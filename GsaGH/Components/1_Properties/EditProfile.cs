@@ -36,15 +36,13 @@ namespace GsaGH.Components {
     }
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile", "Pf", "Profile to edit", GH_ParamAccess.item);
-      pManager.AddAngleParameter("Orientation Angle", "⭮A", 
+      pManager.AddAngleParameter("Orientation Angle", "⭮A",
         "Set Profile Orientation Angle in counter-clockwise direction.", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Reflect Horizontal", "Ry",
-        "True to reflect the profile about the local y-axis", GH_ParamAccess.item);
+        "True to reflect the profile about the local y-axis", GH_ParamAccess.item, false);
       pManager.AddBooleanParameter("Reflect Vertical", "Rz",
-        "True to reflect the profile about the local z-axis", GH_ParamAccess.item);
+        "True to reflect the profile about the local z-axis", GH_ParamAccess.item, false);
       pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -65,7 +63,9 @@ namespace GsaGH.Components {
           if (!_useDegrees) {
             angleInDegrees = RhinoMath.ToDegrees(angleInDegrees);
           }
-          transformation += $"R({angleInDegrees})";
+          if (angleInDegrees != 0) {
+            transformation += $"R({angleInDegrees})";
+          }
         }
       }
 
@@ -87,9 +87,13 @@ namespace GsaGH.Components {
       }
 
       transformation += "]";
+
       if (transformation == " []") {
         transformation = string.Empty;
       }
+      
+      // remove any existing transformations
+      profile = profile.Split('[')[0].TrimEnd();
 
       da.SetData(0, profile + transformation);
     }
