@@ -119,9 +119,8 @@ namespace GsaGHTests.Components.Properties {
     [Fact]
     public void TestMaterial() {
       GH_OasysComponent comp = ComponentMother();
-      var material
-        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests
-         .ComponentMother());
+      var material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(
+        CreateCustomMaterialTests.ComponentMother());
       ComponentTestHelper.SetInput(comp, material, 3);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
       Duplicates.AreEqual(material.Value, sectionGoo.Value.Material);
@@ -132,9 +131,8 @@ namespace GsaGHTests.Components.Properties {
     [Fact]
     public void TestModifier() {
       GH_OasysComponent comp = ComponentMother();
-      var modifier
-        = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(CreateSectionModifierTests
-         .ComponentMother());
+      var modifier = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(
+        CreateSectionModifierTests.ComponentMother());
       ComponentTestHelper.SetInput(comp, modifier, 7);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
       Duplicates.AreEqual(modifier.Value, sectionGoo.Value.Modifier);

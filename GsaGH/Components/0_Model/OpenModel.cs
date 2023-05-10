@@ -190,7 +190,7 @@ namespace GsaGH.Components {
     //}
 
     private void GetTitles(Model model) {
-      Titles.GetTitlesFromGsa(model);
+      GsaGH.Titles.GetTitlesFromGsa(model);
       string mes = Path.GetFileName(_fileName);
       mes = mes.Substring(0, mes.Length - 4);
       Message = mes;
