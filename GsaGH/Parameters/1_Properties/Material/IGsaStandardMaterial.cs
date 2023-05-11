@@ -1,10 +1,7 @@
-﻿using System;
-using GsaAPI;
-
-namespace GsaGH.Parameters {
-  public interface IGsaStandardMaterial<T> : IGsaMaterial{
-    T StandardMaterial { get; }
-    string SteelDesignCodeName { get; }
-    string ConcreteDesignCodeName { get; }
-  }
-}
+﻿//namespace GsaGH.Parameters {
+//  internal interface IGsaStandardMaterial<T> : IGsaApiMaterial {
+//    T StandardMaterial { get; }
+//    string SteelDesignCodeName { get; }
+//    string ConcreteDesignCodeName { get; }
+//  }
+//}

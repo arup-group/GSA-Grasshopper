@@ -4,13 +4,11 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGH.Parameters {
   /// <summary>

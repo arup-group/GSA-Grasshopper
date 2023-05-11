@@ -162,18 +162,17 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      IGsaMaterial gsaMaterial = null;
+      IGsaApiMaterial gsaMaterial = null;
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
         if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-          gsaMaterial = materialGoo.Value;
+          gsaMaterial = (IGsaApiMaterial)materialGoo.Value;
         }
       }
 
       if (gsaMaterial == null) {
         return;
       }
-
       if (gsaMaterial.AnalysisMaterial == null) {
         this.AddRuntimeWarning("One or more materials are not valid");
         return;
