@@ -32,8 +32,8 @@ namespace GsaGH.Helpers.Export {
 
     internal static void AddMaterial(
       ref GsaSection section, ref Materials apiMaterials) {
-      if (section.ApiSection.MaterialAnalysisProperty != 0 && section.Material != null) {
-        //&& ((IGsaMaterial)section.Material).AnalysisMaterial != null) {
+      if (section.ApiSection.MaterialAnalysisProperty != 0 && section.Material != null
+        && ((IGsaApiMaterial)section.Material).AnalysisMaterial != null) {
         // set material type in API prop
         section.ApiSection.MaterialType = 
           (MaterialType)Enum.Parse(typeof(MaterialType), section.Material.Type.ToString(), true);
@@ -54,8 +54,8 @@ namespace GsaGH.Helpers.Export {
 
     internal static void AddMaterial(
       ref GsaProp2d prop2d, ref Materials apiMaterials) {
-      if (prop2d.ApiProp2d.MaterialAnalysisProperty != 0 && prop2d.Material != null) {
-        //&& ((IGsaMaterial)prop2d.Material).AnalysisMaterial != null) {
+      if (prop2d.ApiProp2d.MaterialAnalysisProperty != 0 && prop2d.Material != null
+        && ((IGsaApiMaterial)prop2d.Material).AnalysisMaterial != null) {
         // set material type in API prop
         prop2d.ApiProp2d.MaterialType =
           (MaterialType)Enum.Parse(typeof(MaterialType), 
@@ -77,8 +77,8 @@ namespace GsaGH.Helpers.Export {
 
     internal static void AddMaterial(
       ref GsaProp3d prop3d, ref Materials apiMaterials) {
-      if (prop3d.ApiProp3d.MaterialAnalysisProperty != 0 && prop3d.Material != null) {
-        //&& ((IGsaMaterial)prop3d.Material).AnalysisMaterial != null) {
+      if (prop3d.ApiProp3d.MaterialAnalysisProperty != 0 && prop3d.Material != null
+        && ((IGsaApiMaterial)prop3d.Material).AnalysisMaterial != null) {
         // set material type in API prop
         prop3d.ApiProp3d.MaterialType =
           (MaterialType)Enum.Parse(typeof(MaterialType), 
@@ -105,69 +105,67 @@ namespace GsaGH.Helpers.Export {
 
     private static int AddMaterial(
       IGsaMaterial material, ref Materials apiMaterials) {
-      return 1;
-      //switch (material.Type) {
-      //  case MatType.Aluminium:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaAluminiumMaterial)material, ref apiMaterials.AluminiumMaterials);
+      switch (material.Type) {
+        case MatType.Aluminium:
+          return AddOrSetStandardMaterial(
+            (GsaAluminiumMaterial)material, ref apiMaterials.AluminiumMaterials);
 
-      //  case MatType.Concrete:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaConcreteMaterial)material, ref apiMaterials.ConcreteMaterials);
+        case MatType.Concrete:
+          return AddOrSetStandardMaterial(
+            (GsaConcreteMaterial)material, ref apiMaterials.ConcreteMaterials);
 
-      //  case MatType.Fabric:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaFabricMaterial)material, ref apiMaterials.FabricMaterials);
+        case MatType.Fabric:
+          return AddOrSetStandardMaterial(
+            (GsaFabricMaterial)material, ref apiMaterials.FabricMaterials);
 
-      //  case MatType.Frp:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaFrpMaterial)material, ref apiMaterials.FrpMaterials);
+        case MatType.Frp:
+          return AddOrSetStandardMaterial(
+            (GsaFrpMaterial)material, ref apiMaterials.FrpMaterials);
 
-      //  case MatType.Glass:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaGlassMaterial)material, ref apiMaterials.GlassMaterials);
+        case MatType.Glass:
+          return AddOrSetStandardMaterial(
+            (GsaGlassMaterial)material, ref apiMaterials.GlassMaterials);
 
-      //  case MatType.Rebar:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaReinforcementMaterial)material, 
-      //      ref apiMaterials.ReinforcementMaterials);
+        case MatType.Rebar:
+          return AddOrSetStandardMaterial(
+            (GsaReinforcementMaterial)material, 
+            ref apiMaterials.ReinforcementMaterials);
 
-      //  case MatType.Steel:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaSteelMaterial)material, ref apiMaterials.SteelMaterials);
+        case MatType.Steel:
+          return AddOrSetStandardMaterial(
+            (GsaSteelMaterial)material, ref apiMaterials.SteelMaterials);
 
-      //  case MatType.Timber:
-      //    return AddOrSetStandardMaterial(
-      //      (GsaTimberMaterial)material, ref apiMaterials.TimberMaterials);
+        case MatType.Timber:
+          return AddOrSetStandardMaterial(
+            (GsaTimberMaterial)material, ref apiMaterials.TimberMaterials);
 
-      //  default:
-      //    return AddOrSetCustomMaterial(
-      //      (GsaCustomMaterial)material, ref apiMaterials.AnalysisMaterials);
-      //}
+        default:
+          return AddOrSetCustomMaterial(
+            (GsaCustomMaterial)material, ref apiMaterials.AnalysisMaterials);
+      }
     }
 
-    //private static int AddOrSetStandardMaterial<T>(
-    //  IGsaStandardMaterial<T> material, ref GsaGuidDictionary<T> matDict) {
-    //  if (material.Id <= 0) {
-    //    return matDict.AddValue(material.Guid, material.StandardMaterial);
-    //  }
+    private static int AddOrSetStandardMaterial<T>(
+      IGsaStandardMaterial<T> material, ref GsaGuidDictionary<T> matDict) {
+      if (material.Id <= 0) {
+        return matDict.AddValue(material.Guid, material.StandardMaterial);
+      }
 
-    //  matDict.SetValue(material.Id, material.Guid, material.StandardMaterial);
-    //  return material.Id;
-    //}
-    //private static int AddOrSetCustomMaterial(IGsaMaterial material, 
-    //  ref GsaGuidDictionary<AnalysisMaterial> matDict) {
-    //  if (material.Id <= 0) {
-    //    return matDict.AddValue(material.Guid, material.AnalysisMaterial);
-    //  }
+      matDict.SetValue(material.Id, material.Guid, material.StandardMaterial);
+      return material.Id;
+    }
+    private static int AddOrSetCustomMaterial(IGsaApiMaterial material, 
+      ref GsaGuidDictionary<AnalysisMaterial> matDict) {
+      if (material.Id <= 0) {
+        return matDict.AddValue(material.Guid, material.AnalysisMaterial);
+      }
 
-    //  matDict.SetValue(material.Id, material.Guid, material.AnalysisMaterial);
-    //  return material.Id;
-    //}
+      matDict.SetValue(material.Id, material.Guid, material.AnalysisMaterial);
+      return material.Id;
+    }
 
     private static bool IsStandard(IGsaMaterial material) {
-      return true;
-      //return material.GetType() != typeof(GsaCustomMaterial);
+      return material.GetType() != typeof(GsaCustomMaterial);
     }
   }
 }

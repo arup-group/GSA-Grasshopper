@@ -94,15 +94,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, AluminiumMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, AluminiumMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaAluminiumMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, AluminiumMaterial> mat in materials) {
+        var gsaMaterial = new GsaAluminiumMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -110,15 +110,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, ConcreteMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, ConcreteMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaConcreteMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, ConcreteMaterial> mat in materials) {
+        var gsaMaterial = new GsaConcreteMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -126,15 +126,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, FabricMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, FabricMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaFabricMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, FabricMaterial> mat in materials) {
+        var gsaMaterial = new GsaFabricMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -142,15 +142,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, FrpMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, FrpMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaFrpMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, FrpMaterial> mat in materials) {
+        var gsaMaterial = new GsaFrpMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -158,15 +158,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, GlassMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, GlassMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaGlassMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, GlassMaterial> mat in materials) {
+        var gsaMaterial = new GsaGlassMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -174,15 +174,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, ReinforcementMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, ReinforcementMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaReinforcementMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, ReinforcementMaterial> mat in materials) {
+        var gsaMaterial = new GsaReinforcementMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -190,15 +190,15 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, SteelMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, SteelMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaSteelMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, SteelMaterial> mat in materials) {
+        var gsaMaterial = new GsaSteelMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
@@ -206,28 +206,28 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, TimberMaterial> materials, string concreteCodeName,
       string steelCodeName) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, TimberMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaTimberMaterial() {
-      //    StandardMaterial = mat.Value,
-      //    Id = mat.Key,
-      //    ConcreteDesignCodeName = concreteCodeName,
-      //    SteelDesignCodeName = steelCodeName,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, TimberMaterial> mat in materials) {
+        var gsaMaterial = new GsaTimberMaterial() {
+          StandardMaterial = mat.Value,
+          Id = mat.Key,
+          ConcreteDesignCodeName = concreteCodeName,
+          SteelDesignCodeName = steelCodeName,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
 
     internal static ReadOnlyDictionary<int, IGsaMaterial> CreateMaterialsFromAPI(
       ReadOnlyDictionary<int, AnalysisMaterial> materials) {
       var dict = new Dictionary<int, IGsaMaterial>();
-      //foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
-      //  var gsaMaterial = new GsaCustomMaterial() {
-      //    AnalysisMaterial = mat.Value,
-      //    Id = mat.Key,
-      //  };
-      //  dict.Add(gsaMaterial.Id, gsaMaterial);
-      //}
+      foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
+        var gsaMaterial = new GsaCustomMaterial() {
+          AnalysisMaterial = mat.Value,
+          Id = mat.Key,
+        };
+        dict.Add(gsaMaterial.Id, gsaMaterial);
+      }
       return new ReadOnlyDictionary<int, IGsaMaterial>(dict);
     }
   }
