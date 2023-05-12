@@ -5,14 +5,6 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="1_BaseParameters\5_Results\**" />
-    <Compile Remove="Helpers\Graphics\**" />
-    <EmbeddedResource Remove="1_BaseParameters\5_Results\**" />
-    <EmbeddedResource Remove="Helpers\Graphics\**" />
-    <None Remove="1_BaseParameters\5_Results\**" />
-    <None Remove="Helpers\Graphics\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="xunit" Version="2.4.2" />

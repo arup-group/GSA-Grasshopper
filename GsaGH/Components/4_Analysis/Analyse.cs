@@ -9,6 +9,7 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
