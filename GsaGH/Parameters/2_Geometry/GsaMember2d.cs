@@ -177,7 +177,7 @@ namespace GsaGH.Parameters {
       if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
       {
         topology.Add(topology[0]);
-        topologyType.Add("");
+        topologyType.Add(string.Empty);
       }
 
       PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
@@ -192,7 +192,7 @@ namespace GsaGH.Parameters {
         for (int i = 0; i < voidTopology.Count; i++) {
           if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
             voidTopology[i].Add(voidTopology[i][0]);
-            voidTopologyType[i].Add("");
+            voidTopologyType[i].Add(string.Empty);
           }
 
           if (voidTopologyType != null) {
@@ -317,7 +317,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string incl = "";
+      string incl = string.Empty;
       if (_inclCrvs != null) {
         if (_inclCrvs.Count > 0) {
           incl = " Incl.Crv:" + _inclCrvs.Count;
@@ -334,7 +334,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
       return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }

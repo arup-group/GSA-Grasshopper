@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateElemsFromBreps;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
+    private string _toleranceTxt = string.Empty;
 
     public Elem2dFromBrep2_OBSOLETE() : base("Element2d from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -156,8 +156,8 @@ namespace GsaGH.Components {
             pts.Add(new Point3d(pt));
           } else {
             string type = objectWrapper.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", "");
-            type = type.Replace("Goo", "");
+            type = type.Replace("GsaGH.Parameters.", string.Empty);
+            type = type.Replace("Goo", string.Empty);
             this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
               + type + " to point or node");
           }
@@ -176,8 +176,8 @@ namespace GsaGH.Components {
             curves.Add(crv.DuplicateCurve());
           } else {
             string type = objectWrapper.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", "");
-            type = type.Replace("Goo", "");
+            type = type.Replace("GsaGH.Parameters.", string.Empty);
+            type = type.Replace("Goo", string.Empty);
             this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
               + type + " to curve or 1D Member");
           }
@@ -230,7 +230,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "") {
+      if (_toleranceTxt != string.Empty) {
         try {
           var newTolerance = Length.Parse(_toleranceTxt);
           _tolerance = newTolerance;

@@ -195,7 +195,7 @@ namespace GsaGH.Helpers.GsaApi {
 
         NumberFormatInfo noComma = CultureInfo.InvariantCulture.NumberFormat;
 
-        values.AddRange(from val in vals where val != "" select Convert.ToDouble(val, noComma));
+        values.AddRange(from val in vals where val != string.Empty select Convert.ToDouble(val, noComma));
       }
 
       return values;
@@ -282,7 +282,7 @@ namespace GsaGH.Helpers.GsaApi {
               string date = full.Split(new[] {
                 " -- ",
               }, StringSplitOptions.None)[1];
-              date = date.Replace("-", "");
+              date = date.Replace("-", string.Empty);
               date = date.Substring(0, 8);
               sections.Add(profile + " " + date);
             } else {

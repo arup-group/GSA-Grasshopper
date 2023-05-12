@@ -219,7 +219,7 @@ namespace GsaGH.Components {
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
           ctrlPts = polyline.ToList();
-          string desc = "";
+          string desc = string.Empty;
           for (int i = 0; i < ctrlPts.Count - 1; i++) {
             if (i > 0) {
               desc += " ";

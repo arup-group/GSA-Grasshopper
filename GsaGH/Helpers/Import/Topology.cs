@@ -171,7 +171,7 @@ namespace GsaGH.Helpers.Import {
         i -= 1;
       }
 
-      var inclpoint = (from t in pts where t != "" select int.Parse(t)).ToList();
+      var inclpoint = (from t in pts where t != string.Empty select int.Parse(t)).ToList();
 
       // write out topology type (A) to list
       var topoint = new List<int>();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -226,7 +225,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(3, ref ghDir)) {
@@ -236,23 +235,23 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
 
         case "XX":
-          direc = Direction.XX;
+          direc = GsaAPI.Direction.XX;
           break;
 
         case "YY":
-          direc = Direction.YY;
+          direc = GsaAPI.Direction.YY;
           break;
 
         case "ZZ":
-          direc = Direction.ZZ;
+          direc = GsaAPI.Direction.ZZ;
           break;
       }
 

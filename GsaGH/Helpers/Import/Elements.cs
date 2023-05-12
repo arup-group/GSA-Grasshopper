@@ -412,8 +412,8 @@ namespace GsaGH.Helpers.Import {
     }
 
     internal static
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> GetElements(
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) GetElements(
         ReadOnlyDictionary<int, Element> eDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict,
         ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> mDict,
@@ -476,9 +476,7 @@ namespace GsaGH.Helpers.Import {
           duplicateApiObjects);
       }
 
-      return new
-        Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-          ConcurrentBag<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
+      return (elem1ds, elem2ds, elem3ds);
     }
   }
 }

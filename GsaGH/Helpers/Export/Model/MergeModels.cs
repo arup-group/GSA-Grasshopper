@@ -55,23 +55,22 @@ namespace GsaGH.Helpers.Export {
         return c;
       }).ToList();
 
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> elementTuple = Import.Elements.GetElements(eDict, nDict,
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) = Import.Elements.GetElements(eDict, nDict,
         sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, axDict, LengthUnit.Meter, true);
-      var elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
+      var elem1ds = e1d.Select(n => n.Value).ToList();
       elem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
+      var elem2ds = e2d.Select(n => n.Value).ToList();
       foreach (GsaElement2d elem2d in elem2ds) {
         elem2d.Ids.Select(c => {
           c = 0;
           return c;
         }).ToList();
       }
-
-      var elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
+      var elem3ds = e3d.Select(n => n.Value).ToList();
       foreach (GsaElement3d elem3d in elem3ds) {
         elem3d.Ids.Select(c => {
           c = 0;
@@ -79,15 +78,20 @@ namespace GsaGH.Helpers.Export {
         }).ToList();
       }
 
-      Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-        ConcurrentBag<GsaMember3dGoo>> memberTuple = Import.Members.GetMembers(mDict, nDict, sDict,
+      (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
+      ConcurrentBag<GsaMember3dGoo> m3d) = Import.Members.GetMembers(mDict, nDict, sDict,
         pDict, p3Dict, amDict, modDict, localMemAxesDict, axDict, LengthUnit.Meter, true);
-      var mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
+      var mem1ds = m1d.Select(n => n.Value).ToList();
       mem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
+      var mem2ds = m2d.Select(n => n.Value).ToList();
+      mem2ds.Select(c => {
+        c.Id = 0;
+        return c;
+      }).ToList();
+      var mem3ds = m3d.Select(n => n.Value).ToList();
       mem2ds.Select(c => {
         c.Id = 0;
         return c;
@@ -137,9 +141,12 @@ namespace GsaGH.Helpers.Export {
             Import.Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key, LengthUnit.Meter)))
        .ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();
-      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds,
-        mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter,
-        tolerance, false, owner);
+
+      List<GsaList> lists = Import.Lists.GetLists(appendModel);
+
+      mainModel.Model = AssembleModel.Assemble(mainModel, lists, nodes, elem1ds, elem2ds, elem3ds,
+        mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gps, null, null, 
+        LengthUnit.Meter, tolerance, false, owner);
       return mainModel;
     }
   }

@@ -89,6 +89,24 @@ steps:
   failOnStderr: true
 
 - powershell: |
+    $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
+    echo $coverage_file_gsagh
+    $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
+    echo $coverage_file_integration
+    Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+    Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+  displayName: Copy coverage files
+  failOnStderr: true
+  
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+  artifact: GsaGHTestsCoverage
+  displayName: Publish GsaGHTest to Azure
+
+- publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+  artifact: IntegrationTestsCoverage
+  displayName: Publish IntegrationTest to Azure
+
+- powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
     Write-output "Installer Path: ${installerPath}"
     $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait

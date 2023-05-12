@@ -58,7 +58,7 @@ namespace GsaGH.Components {
 
       ComAuto m = GsaComHelper.GetGsaComModel(model);
 
-      string gwa = "";
+      string gwa = string.Empty;
       var strings = new List<string>();
       if (da.GetDataList(1, strings)) {
         gwa = strings.Aggregate(gwa, (current, s) => current + s + "\n");

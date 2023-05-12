@@ -10,7 +10,7 @@ using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to edit a Node
+  ///   Component to create a new EntityList
   /// </summary>
   public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");
@@ -80,12 +80,12 @@ namespace GsaGH.Components {
         list.Name = name;
       }
 
-      List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, _type);
+      List<object> listGooObjects = Inputs.GetGooObjectsForLists(this, DA, 2, _type);
 
       try {
-        list.SetListObjects(listObjects);
+        list.SetListGooObjects(listGooObjects);
       } catch (ArgumentException) {
-        string message = "";
+        string message = string.Empty;
         switch (_type) {
           case EntityType.Node:
             message
