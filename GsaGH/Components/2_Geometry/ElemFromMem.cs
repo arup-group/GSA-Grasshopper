@@ -240,6 +240,7 @@ namespace GsaGH.Components {
         }
       }
 
+      ghTypes = new List<GH_ObjectWrapper>();
       var inMem1ds = new List<GsaMember1d>();
       if (da.GetDataList(1, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
