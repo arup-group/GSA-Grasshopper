@@ -176,9 +176,9 @@ namespace GsaGH.Components {
       da.SetData(5, gsaGridPlaneSurface.AxisId);
       da.SetData(6, gsaGridPlaneSurface.GridPlane == null ? "0" : gsaGridPlaneSurface.Elevation);
       da.SetData(7,
-        gsaGridPlaneSurface.GridPlane == null ? "" : gsaGridPlaneSurface.StoreyToleranceAbove);
+        gsaGridPlaneSurface.GridPlane == null ? string.Empty : gsaGridPlaneSurface.StoreyToleranceAbove);
       da.SetData(8,
-        gsaGridPlaneSurface.GridPlane == null ? "" : gsaGridPlaneSurface.StoreyToleranceBelow);
+        gsaGridPlaneSurface.GridPlane == null ? string.Empty : gsaGridPlaneSurface.StoreyToleranceBelow);
       da.SetData(9, gsaGridPlaneSurface.GridSurfaceId);
       da.SetData(10, gsaGridPlaneSurface.GridSurface.Name);
       da.SetData(11, gsaGridPlaneSurface.GridSurface.Elements);

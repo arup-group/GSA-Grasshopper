@@ -82,7 +82,7 @@ namespace GsaGH.Components {
       "Displacement",
       "Reaction",
     });
-    private string _case = "";
+    private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private List<string> _legendValues;

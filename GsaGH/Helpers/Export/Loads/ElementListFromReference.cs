@@ -18,52 +18,56 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static string GetRefElementIds(
-      GsaGridPlaneSurface load, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GsaGridPlaneSurface load, GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
+      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
+      GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
-      return GetReference(load._refObjectGuid, load._referenceType, apiSections, apiProp2ds,
-        apiProp3ds, apiElements, apiMembers, memberElementRelationship);
+      return GetReference(load._refObjectGuid, load._referenceType, apiMaterials, apiSections,
+        apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
     }
 
     internal static string GetRefElementIds(
-      GsaGravityLoad load, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GsaGravityLoad load, GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
+      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
+      GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
-      return GetReference(load._refObjectGuid, load._referenceType, apiSections, apiProp2ds,
-        apiProp3ds, apiElements, apiMembers, memberElementRelationship);
+      return GetReference(load._refObjectGuid, load._referenceType, apiMaterials, apiSections,
+        apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
     }
 
     internal static string GetRefElementIds(
-      GsaFaceLoad load, GsaGuidDictionary<Prop2D> apiProp2ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GsaFaceLoad load, GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidIntListDictionary<Element> apiElements,
+      GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
-      return GetReference(load._refObjectGuid, load._referenceType, null, apiProp2ds, null,
-        apiElements, apiMembers, memberElementRelationship);
+      return GetReference(load._refObjectGuid, load._referenceType, apiMaterials, null,
+        apiProp2ds, null, apiElements, apiMembers, memberElementRelationship);
     }
 
     internal static string GetRefElementIds(
-      GsaBeamLoad load, GsaGuidDictionary<Section> apiSections,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GsaBeamLoad load, GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      GsaGuidDictionary<Section> apiSections, GsaGuidIntListDictionary<Element> apiElements,
+      GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
-      return GetReference(load._refObjectGuid, load._referenceType, apiSections, null, null,
-        apiElements, apiMembers, memberElementRelationship);
+      return GetReference(load._refObjectGuid, load._referenceType, apiMaterials, apiSections,
+        null, null, apiElements, apiMembers, memberElementRelationship);
     }
 
     private static string GetElementRef<T>(Guid guid, GsaGuidIntListDictionary<T> dictionary) {
       return dictionary.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
-        string.Join(" ", ids) : "";
+        string.Join(" ", ids) : string.Empty;
     }
 
-    private static string GetMemberRef<T>(
+    private static string GetMemberChildElementsRef<T>(
       Guid guid, GsaGuidDictionary<T> dictionary,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
+      ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
       return !dictionary.GuidDictionary.TryGetValue(guid, out int id) ?
-        "" :
+        string.Empty :
         memberElementRelationship.TryGetValue(id, out ConcurrentBag<int> ids) ?
           string.Join(" ", ids) :
-          "";
+          string.Empty;
     }
 
     private static string GetRef<T>(Guid guid, GsaGuidDictionary<T> dictionary) {
@@ -81,31 +85,47 @@ namespace GsaGH.Helpers.Export {
           t = "PV";
         }
 
+        if (typeof(T) == typeof(AnalysisMaterial)) {
+          t = "M";
+        }
+
         return t + id;
       } else {
-        return "";
+        return string.Empty;
       }
     }
 
-    private static string GetReference(
-      Guid guid, ReferenceType referenceType, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+    internal static string GetReference(
+      Guid guid, ReferenceType referenceType, GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
+      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
+      GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
       switch (referenceType) {
-        case ReferenceType.Section: return GetRef(guid, apiSections);
+        case ReferenceType.Material:
+          return GetRef(guid, apiMaterials);
 
-        case ReferenceType.Prop2d: return GetRef(guid, apiProp2ds);
+        case ReferenceType.Section:
+          return GetRef(guid, apiSections);
 
-        case ReferenceType.Prop3d: return GetRef(guid, apiProp3ds);
+        case ReferenceType.Prop2d:
+          return GetRef(guid, apiProp2ds);
 
-        case ReferenceType.Element: return GetElementRef(guid, apiElements);
+        case ReferenceType.Prop3d:
+          return GetRef(guid, apiProp3ds);
 
-        case ReferenceType.Member: return GetMemberRef(guid, apiMembers, memberElementRelationship);
+        case ReferenceType.Element:
+          return GetElementRef(guid, apiElements);
 
-        default:
+        case ReferenceType.MemberChildElements:
+          return GetMemberChildElementsRef(guid, apiMembers, ref memberElementRelationship);
+
+        case ReferenceType.Member:
+          return GetRef(guid, apiMembers);
+
         case ReferenceType.None:
-          return "";
+        default:
+          return string.Empty;
       }
     }
   }

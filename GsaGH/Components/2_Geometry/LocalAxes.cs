@@ -81,14 +81,11 @@ namespace GsaGH.Components {
           axes = member.LocalAxes;
           if (axes == null) {
             var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, new List<GsaNode>(),
-              new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(),
-              new List<GsaMember1d>() {
-                member,
-              }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(),
-              new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(),
-              new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(),
-              new List<GsaCombinationCase>(), LengthUnit.Meter, Length.Zero, false, null);
+            model.Model = AssembleModel.Assemble(model, null, null, null, null, null, 
+              new List<GsaMember1d>() { 
+                member 
+              }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
+              Length.Zero, false, null);
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
             this.AddRuntimeWarning(
@@ -109,14 +106,11 @@ namespace GsaGH.Components {
           axes = element.LocalAxes;
           if (axes == null) {
             var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, new List<GsaNode>(),
+            model.Model = AssembleModel.Assemble(model, null, null,
               new List<GsaElement1d>() {
                 element,
-              }, new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>(),
-              new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(),
-              new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(),
-              new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(),
-              new List<GsaCombinationCase>(), LengthUnit.Meter, Length.Zero, false, null);
+              }, null, null, null, null, null, null, null, null, null, null, null, null,
+              LengthUnit.Meter, Length.Zero, false, null);
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
             this.AddRuntimeWarning(

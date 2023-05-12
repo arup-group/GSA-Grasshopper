@@ -89,7 +89,7 @@ namespace GsaGH.Components {
       "Reaction",
       "Footfall",
     });
-    private string _case = "";
+    private string _case = string.Empty;
     private string _scaleLegendTxt = string.Empty;
     private double _defScale = 250;
     private double _legendScale = 1;
@@ -390,7 +390,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Footfall:
-          Message = "";
+          Message = string.Empty;
           break;
       }
     }
@@ -417,21 +417,22 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No",
-        "Filter results by list." + Environment.NewLine + "Node list should take the form:"
-        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
+      pManager.AddGenericParameter("Node filter list", "No",
+        "Filter results by list (by default 'all')" + Environment.NewLine
+        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
+        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
+        GH_ParamAccess.item);
+      pManager[1].Optional = true;
       pManager.AddColourParameter("Colour", "Co",
         "Optional list of colours to override default colours." + Environment.NewLine
         + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+      pManager[2].Optional = true;
       pManager.AddIntervalParameter("Min/Max Domain", "I",
         "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+      pManager[3].Optional = true;
       pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size",
         GH_ParamAccess.item, 10);
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
       pManager[4].Optional = true;
     }
 
@@ -448,8 +449,8 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
-      _case = "";
-      _resType = "";
+      _case = string.Empty;
+      _resType = string.Empty;
 
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
@@ -490,16 +491,9 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = "All";
-      var ghNoList = new GH_String();
-      if (da.GetData(1, ref ghNoList)) {
-        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both)) {
-          nodeList = tempnodeList;
-        }
-      }
-
-      if (nodeList.ToLower() == "all" || nodeList == "") {
-        nodeList = "All";
+      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(nodeList)) { 
+        return; 
       }
 
       var ghColours = new List<GH_Colour>();
@@ -842,12 +836,12 @@ namespace GsaGH.Components {
               break;
             }
           case FoldMode.Footfall: {
-              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(responseFactor));
-              Message = "";
-              break;
-            }
+            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(responseFactor));
+            Message = string.Empty;
+            break;
+          }
         }
 
         if (Math.Abs(t) > 1) {

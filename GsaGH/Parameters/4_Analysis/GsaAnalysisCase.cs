@@ -22,8 +22,8 @@
     }
 
     public override string ToString() {
-      string id = Id == 0 ? "" : "ID:" + Id + " ";
-      string s = "";
+      string id = Id == 0 ? string.Empty : "ID:" + Id + " ";
+      string s = string.Empty;
       if (Name != null) {
         s += " '" + Name + "'";
       }

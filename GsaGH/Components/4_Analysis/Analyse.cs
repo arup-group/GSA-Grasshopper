@@ -41,7 +41,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private bool _reMesh = true;
     private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
+    private string _toleranceTxt = string.Empty;
 
     public GhAnalyse() : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat4()) {
@@ -149,8 +149,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(), "Model(s)", "GSA",
-        "Existing GSA Model(s) to append to" + Environment.NewLine
+      pManager.AddGenericParameter("Model(s) and Lists", "GSA",
+        "Existing GSA Model(s) to append to and Lists" + Environment.NewLine
         + "If you input more than one model they will be merged" + Environment.NewLine
         + "with first model in list taking priority for IDs", GH_ParamAccess.list);
       pManager.AddGenericParameter("Properties", "Pro",
@@ -177,32 +177,26 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      #region GetData
-
-      List<GsaModel> models = GetInputsForModelAssembly.GetModels(this, da, 0, true);
-
+      // Collect inputs
+      (List<GsaModel> models, List<GsaList> lists) = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
       (List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds)
         = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
-
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
         List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
-
       (List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
         = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
-
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & nodes is null & elem1ds is null & elem2ds is null & mem1ds is null
-        & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null & loads is null
-        & gridPlaneSurfaces is null) {
+      if (models is null & lists is null & nodes is null & elem1ds is null & elem2ds is null 
+        & mem1ds is null & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null 
+        & loads is null & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
 
-      #endregion
-
+      // Merge models
       var model = new GsaModel();
       if (models != null) {
         if (models.Count > 0) {
@@ -211,12 +205,12 @@ namespace GsaGH.Components {
         }
       }
 
-      model.Model = AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds,
+      // Assemble model
+      model.Model = AssembleModel.Assemble(model, lists, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds,
         mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks,
         combinationCases, _lengthUnit, _tolerance, _reMesh, this);
 
-      #region analysis
-
+      // Run analysis
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
         if (gsaTasks.Count < 1) {
@@ -285,8 +279,6 @@ namespace GsaGH.Components {
         }
       }
 
-      #endregion
-
       model.ModelUnit = _lengthUnit;
       da.SetData(0, new GsaModelGoo(model));
     }
@@ -303,7 +295,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "") {
+      if (_toleranceTxt != string.Empty) {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
         } catch (Exception e) {

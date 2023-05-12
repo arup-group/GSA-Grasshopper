@@ -73,8 +73,8 @@ namespace GsaGH.Parameters {
           s = Path.GetFileName(FileNameAndPath).Replace(".gwb", string.Empty);
         }
 
-        if (Titles?.Title != null && Titles.Title != "") {
-          if (s == "" || s == "Invalid") {
+        if (Titles?.Title != null && Titles.Title != string.Empty) {
+          if (s == string.Empty || s == "Invalid") {
             s = Titles.Title;
           } else {
             s += " {" + Titles.Title + "}";

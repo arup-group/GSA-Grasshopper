@@ -19,11 +19,9 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null, null, new List<GsaElement1d>() {
-            e1d,
-          }, null, null, null, null, null, null, null, null, null, null, null, null,
-          LengthUnit.Meter,
-          Length.Zero, false, null),
+        Model = AssembleModel.Assemble(null, null, null, new List<GsaElement1d>() { e1d }, 
+        null, null, null, null, null, null, null, null, null, null, null, null,
+          LengthUnit.Meter, Length.Zero, false, null),
       };
 
       var startAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(0));
@@ -41,10 +39,9 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() {
-            m1d,
-          }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero,
-          false, null),
+        Model = AssembleModel.Assemble(null, null, null, null, null, null, 
+        new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, 
+        LengthUnit.Meter, Length.Zero, false, null),
       };
 
       var startAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(0).Releases);

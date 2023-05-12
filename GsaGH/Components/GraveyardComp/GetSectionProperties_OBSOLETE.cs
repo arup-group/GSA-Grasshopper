@@ -121,7 +121,7 @@ namespace GsaGH.Components {
       if (ghTyp.Value is GsaSectionGoo sectionGoo) {
         section = sectionGoo.Value;
       } else {
-        string profile = "";
+        string profile = string.Empty;
         ghTyp.CastTo(ref profile);
         section = new GsaSection(profile);
       }

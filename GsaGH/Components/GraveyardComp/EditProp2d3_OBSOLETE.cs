@@ -214,7 +214,7 @@ namespace GsaGH.Components {
         da.SetData(1, prop.Id);
         da.SetData(2, new GsaMaterialGoo(prop.Material));
         da.SetData(3,
-          prop.ApiProp2d?.Description == "" ? new GH_UnitNumber(Length.Zero) :
+          prop.ApiProp2d?.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
             new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
         da.SetData(4, ax);
         da.SetData(5, nm);

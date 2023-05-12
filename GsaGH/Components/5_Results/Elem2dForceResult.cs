@@ -119,13 +119,14 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list", "El",
-        "Filter results by list." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
+      pManager.AddGenericParameter("Element filter list", "El",
+        "Filter results by list (by default 'all')" + Environment.NewLine
+        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
+        GH_ParamAccess.item);
+      pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -169,14 +170,9 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
 
-      string elementlist = "All";
-      var ghType = new GH_String();
-      if (da.GetData(1, ref ghType)) {
-        GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
-      }
-
-      if (elementlist.ToLower() == "all" || elementlist == "") {
-        elementlist = "All";
+      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
       }
 
       var outX = new DataTree<GH_UnitNumber>();

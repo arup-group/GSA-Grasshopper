@@ -153,7 +153,7 @@ namespace GsaGH.Components {
         }
 
         profile = gsaSection.Profile;
-        if (profile.Trim() == "") {
+        if (profile.Trim() == string.Empty) {
           this.AddRuntimeWarning("Profile not set in Section");
           return;
         }

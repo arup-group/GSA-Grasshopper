@@ -53,7 +53,7 @@ namespace GsaGH {
     private static string pluginPath;
 
     public override GH_LoadingInstruction PriorityLoad() {
-      if (TryFindPluginPath("GSA.gha") == "") {
+      if (TryFindPluginPath("GSA.gha") == string.Empty) {
         return GH_LoadingInstruction.Abort;
       }
 
@@ -65,7 +65,7 @@ namespace GsaGH {
       Environment.SetEnvironmentVariable(name, value, target);
 
       // ### Reference GSA API dlls ###
-      string gsaVersion = "";
+      string gsaVersion = string.Empty;
       if (!File.Exists(InstallPath + "\\GsaAPI.dll")) {
         var exception = new Exception("GsaGH requires GSA to be installed in " + InstallPath
           + ". Unable to find GsaAPI.dll. It looks like you haven't got GSA installed, or it may be installed in an unknown path. Please install or reinstall GSA in "
@@ -81,9 +81,10 @@ namespace GsaGH {
         var gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
         gsaVersion = gsaVers.FileMajorPart + "." + gsaVers.FileMinorPart + "."
           + gsaVers.FileBuildPart;
-        if (gsaVers.FileBuildPart < 65) {
+        int minGsaVersion = 66;
+        if (gsaVers.FileBuildPart < minGsaVersion) {
           var exception = new Exception("Version " + GsaGhInfo.Vers
-            + " of GSA-Grasshopper requires GSA 10.1.65 installed. Please upgrade GSA.");
+            + " of GSA-Grasshopper requires GSA 10.1." + minGsaVersion + " installed. Please upgrade GSA.");
           var ghLoadingException
             = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
@@ -93,7 +94,7 @@ namespace GsaGH {
       } catch (Exception e) {
         ReadOnlyCollection<GH_AssemblyInfo> plugins = Instances.ComponentServer.Libraries;
         string loadedPlugins = plugins.Where(plugin => !plugin.IsCoreLibrary)
-         .Where(plugin => !plugin.Name.StartsWith("Kangaroo")).Aggregate("",
+         .Where(plugin => !plugin.Name.StartsWith("Kangaroo")).Aggregate(string.Empty,
             (current, plugin) => current + "-" + plugin.Name + Environment.NewLine);
 
         string message = e.Message + Environment.NewLine + Environment.NewLine
@@ -165,7 +166,7 @@ namespace GsaGH {
           exception);
       Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
       PostHog.PluginLoaded(PluginInfo.Instance, message);
-      return "";
+      return string.Empty;
     }
   }
 
@@ -175,7 +176,7 @@ namespace GsaGH {
     public override string Description
       =>
         //Return a short string describing the purpose of this GHA library.
-        "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine + (isBeta ? disclaimer : "")
+        "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine + (isBeta ? disclaimer : string.Empty)
         + Environment.NewLine + "A licensed version of GSA 10.1.65 or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin." + Environment.NewLine
         + "Contact oasys@arup.com to request a free trial version." + Environment.NewLine

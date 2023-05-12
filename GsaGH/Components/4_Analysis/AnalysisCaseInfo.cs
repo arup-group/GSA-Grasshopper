@@ -49,8 +49,8 @@ namespace GsaGH.Components {
         da.SetData(2, gsaCase.Id);
       } else {
         string type = ghTyp.Value.GetType().ToString();
-        type = type.Replace("GsaGH.Parameters.", "");
-        type = type.Replace("Goo", "");
+        type = type.Replace("GsaGH.Parameters.", string.Empty);
+        type = type.Replace("Goo", string.Empty);
         Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
           + type + " to GsaAnalysisCase");
       }

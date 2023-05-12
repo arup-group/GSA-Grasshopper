@@ -378,7 +378,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string name = "";
+      string name = string.Empty;
       switch (LoadType) {
         case LoadTypes.Gravity:
           name = GravityLoad.GravityLoad.Name;
@@ -457,14 +457,16 @@ namespace GsaGH.Parameters {
   }
 
   /// <summary>
-  ///   When referencing load by GsaGH object through Guid, use this to set the type of object
+  /// When referencing load by GsaGH object through Guid, use this to set the type of object
   /// </summary>
   internal enum ReferenceType {
     None,
+    Material,
     Section,
     Prop2d,
     Prop3d,
     Element,
+    MemberChildElements,
     Member,
     List,
   }
