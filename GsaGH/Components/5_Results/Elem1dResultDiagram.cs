@@ -11,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -223,7 +224,8 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
-      double computedScale = ComputeScale(result, scale, _lengthUnit, autoScale);
+      double unitScale = ComputeUnitScale(autoScale);
+      double computedScale = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new GraphicSpecification() {
         Elements = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
@@ -279,8 +281,9 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-    private double ComputeScale(GsaResult result, double userScaleFactor,
-      LengthUnit userLengthUnitIfModelUndefined, bool autoScale) {
+    
+
+    private double ComputeUnitScale(bool autoScale) {
       double unitScaleFactor = 1.0d;
       if (!autoScale) {
         if (IsForce()) {
@@ -293,19 +296,7 @@ namespace GsaGH.Components {
           this.AddRuntimeError("Not supported diagramType!");
         }
       }
-
-      double lengthScaleFactor = 1;
-      if (!autoScale) {
-        LengthUnit lengthUnit = result.Model.ModelUnit == LengthUnit.Undefined
-        ? userLengthUnitIfModelUndefined
-        : result.Model.ModelUnit;
-
-        lengthScaleFactor = UnitConverter.Convert(1, lengthUnit, Length.BaseUnit);
-      }
-
-      // maxLength = 2.5% of bbox diagonal
-      double modelScale = autoScale ? result.Model.BoundingBox.Diagonal.Length * 0.025 : 1;
-      return userScaleFactor * unitScaleFactor * lengthScaleFactor * modelScale;
+      return unitScaleFactor;
     }
 
     private bool IsForce() {
