@@ -663,6 +663,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Elem1dDiagram {
+            get {
+                object obj = ResourceManager.GetObject("Elem1dDiagram", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Elem1dParam {
             get {
                 object obj = ResourceManager.GetObject("Elem1dParam", resourceCulture);
