@@ -1,8 +1,6 @@
 ﻿using GsaGH.Parameters;
 using OasysUnits.Units;
 using OasysUnits;
-using Rhino.Commands;
-using GsaAPI;
 
 namespace GsaGH.Helpers.GsaApi.Grahics {
   internal class GraphicsScalar {

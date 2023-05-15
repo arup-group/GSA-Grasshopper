@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -8,7 +7,6 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
@@ -23,7 +21,6 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>
