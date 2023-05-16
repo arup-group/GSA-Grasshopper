@@ -858,25 +858,25 @@ namespace GsaGH.Components {
             break;
 
           case "IPerimeterProfile": {
-            Params.Input[i].NickName = "B";
-            Params.Input[i].Name = "Boundary";
-            Params.Input[i].Description = "Planar Brep or closed planar curve.";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = false;
+              Params.Input[i].NickName = "B";
+              Params.Input[i].Name = "Boundary";
+              Params.Input[i].Description = "Planar Brep or closed planar curve.";
+              Params.Input[i].Access = GH_ParamAccess.item;
+              Params.Input[i].Optional = false;
 
-            if (Params.Input.Count == 1) {
-              Params.RegisterInputParam(new Param_Plane());
+              if (Params.Input.Count == 1) {
+                Params.RegisterInputParam(new Param_Plane());
+              }
+
+              i++;
+              Params.Input[i].NickName = "P";
+              Params.Input[i].Name = "Plane";
+              Params.Input[i].Description
+                = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
+              Params.Input[i].Access = GH_ParamAccess.item;
+              Params.Input[i].Optional = true;
+              break;
             }
-
-            i++;
-            Params.Input[i].NickName = "P";
-            Params.Input[i].Name = "Plane";
-            Params.Input[i].Description
-              = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = true;
-            break;
-          }
         }
       }
     }
@@ -1009,7 +1009,6 @@ namespace GsaGH.Components {
             }
           } else {
             this.AddRuntimeWarning("No profile found that matches selection and search!");
-            return;
           }
         }
 
@@ -1027,7 +1026,11 @@ namespace GsaGH.Components {
         var path = new GH_Path(new[] {
           pathCount,
         });
-        tree.AddRange(_profileString, path);
+        if (_profileString.Count > 0) {
+          tree.AddRange(_profileString, path);
+        } else {
+          tree.Add(null, path);
+        }
 
         da.SetDataTree(0, tree);
       }
@@ -1144,23 +1147,23 @@ namespace GsaGH.Components {
             break;
 
           case "ISecantPileProfile": {
-            int pileCount = 0;
-            if (!da.GetData(2, ref pileCount)) {
-              this.AddRuntimeError("Unable to convert input PileCount to integer.");
-              return;
-            }
+              int pileCount = 0;
+              if (!da.GetData(2, ref pileCount)) {
+                this.AddRuntimeError("Unable to convert input PileCount to integer.");
+                return;
+              }
 
-            bool isWallNotSection = false;
-            if (!da.GetData(3, ref isWallNotSection)) {
-              this.AddRuntimeError("Unable to convert input isWall to boolean.");
-              return;
-            }
+              bool isWallNotSection = false;
+              if (!da.GetData(3, ref isWallNotSection)) {
+                this.AddRuntimeError("Unable to convert input isWall to boolean.");
+                return;
+              }
 
-            profile += (isWallNotSection ? "SP" : "SPW") + unit
-              + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit) + " "
-              + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " " + pileCount;
-            break;
-          }
+              profile += (isWallNotSection ? "SP" : "SPW") + unit
+                + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit) + " "
+                + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " " + pileCount;
+              break;
+            }
           case "ISheetPileProfile":
             profile += "SHT" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
               + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
@@ -1189,144 +1192,144 @@ namespace GsaGH.Components {
             break;
 
           case "IPerimeterProfile": {
-            var perimeter = new ProfileHelper() {
-              ProfileType = ProfileHelper.ProfileTypes.Geometric,
-            };
-            var ghBrep = new GH_Brep();
+              var perimeter = new ProfileHelper() {
+                ProfileType = ProfileHelper.ProfileTypes.Geometric,
+              };
+              var ghBrep = new GH_Brep();
 
-            if (da.GetData(0, ref ghBrep)) {
-              var brep = new Brep();
-              if (GH_Convert.ToBrep(ghBrep, ref brep, GH_Conversion.Both)) {
-                Curve[] edgeSegments = brep.DuplicateEdgeCurves();
-                Curve[] edges = Curve.JoinCurves(edgeSegments);
+              if (da.GetData(0, ref ghBrep)) {
+                var brep = new Brep();
+                if (GH_Convert.ToBrep(ghBrep, ref brep, GH_Conversion.Both)) {
+                  Curve[] edgeSegments = brep.DuplicateEdgeCurves();
+                  Curve[] edges = Curve.JoinCurves(edgeSegments);
 
-                var ctrlPts = new List<Point3d>();
-                if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
-                  ctrlPts = tempCrv.ToList();
-                } else {
-                  this.AddRuntimeError("Cannot convert edge to Polyline");
-                  return;
-                }
-
-                bool localPlaneNotSet = true;
-                Plane plane = Plane.Unset;
-                if (da.GetData(1, ref plane)) {
-                  localPlaneNotSet = false;
-                }
-
-                var origin = new Point3d();
-                if (localPlaneNotSet) {
-                  foreach (Point3d p in ctrlPts) {
-                    origin.X += p.X;
-                    origin.Y += p.Y;
-                    origin.Z += p.Z;
+                  var ctrlPts = new List<Point3d>();
+                  if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
+                    ctrlPts = tempCrv.ToList();
+                  } else {
+                    this.AddRuntimeError("Cannot convert edge to Polyline");
+                    return;
                   }
 
-                  origin.X /= ctrlPts.Count;
-                  origin.Y /= ctrlPts.Count;
-                  origin.Z /= ctrlPts.Count;
+                  bool localPlaneNotSet = true;
+                  Plane plane = Plane.Unset;
+                  if (da.GetData(1, ref plane)) {
+                    localPlaneNotSet = false;
+                  }
 
-                  Plane.FitPlaneToPoints(ctrlPts, out plane);
+                  var origin = new Point3d();
+                  if (localPlaneNotSet) {
+                    foreach (Point3d p in ctrlPts) {
+                      origin.X += p.X;
+                      origin.Y += p.Y;
+                      origin.Z += p.Z;
+                    }
 
-                  var xDirection = new Vector3d(Math.Abs(plane.XAxis.X), Math.Abs(plane.XAxis.Y),
-                    Math.Abs(plane.XAxis.Z));
-                  xDirection.Unitize();
-                  var yDirection = new Vector3d(Math.Abs(plane.YAxis.X), Math.Abs(plane.YAxis.Y),
-                    Math.Abs(plane.YAxis.Z));
-                  xDirection.Unitize();
+                    origin.X /= ctrlPts.Count;
+                    origin.Y /= ctrlPts.Count;
+                    origin.Z /= ctrlPts.Count;
 
-                  Vector3d normal = plane.Normal;
-                  normal.Unitize();
-                  plane = normal.X == 1 ?
-                    Plane.WorldYZ :
-                    normal.Y == 1 ?
-                      Plane.WorldZX :
-                      normal.Z == 1 ?
-                        Plane.WorldXY :
-                        new Plane(Point3d.Origin, xDirection, yDirection);
+                    Plane.FitPlaneToPoints(ctrlPts, out plane);
 
-                  plane.Origin = origin;
-                } else {
-                  origin = plane.Origin;
-                }
+                    var xDirection = new Vector3d(Math.Abs(plane.XAxis.X), Math.Abs(plane.XAxis.Y),
+                      Math.Abs(plane.XAxis.Z));
+                    xDirection.Unitize();
+                    var yDirection = new Vector3d(Math.Abs(plane.YAxis.X), Math.Abs(plane.YAxis.Y),
+                      Math.Abs(plane.YAxis.Z));
+                    xDirection.Unitize();
 
-                var translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
-                var rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis,
-                  plane.XAxis, plane.YAxis, plane.ZAxis);
-                if (localPlaneNotSet) {
-                  rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis,
-                    plane.YAxis, plane.XAxis, plane.ZAxis);
-                }
+                    Vector3d normal = plane.Normal;
+                    normal.Unitize();
+                    plane = normal.X == 1 ?
+                      Plane.WorldYZ :
+                      normal.Y == 1 ?
+                        Plane.WorldZX :
+                        normal.Z == 1 ?
+                          Plane.WorldXY :
+                          new Plane(Point3d.Origin, xDirection, yDirection);
 
-                perimeter.GeoType = ProfileHelper.GeoTypes.Perim;
+                    plane.Origin = origin;
+                  } else {
+                    origin = plane.Origin;
+                  }
 
-                var pts = new List<Point2d>();
-                foreach (Point3d pt3d in ctrlPts) {
-                  pt3d.Transform(translation);
-                  pt3d.Transform(rotation);
-                  var pt2d = new Point2d(pt3d);
-                  pts.Add(pt2d);
-                }
+                  var translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
+                  var rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis,
+                    plane.XAxis, plane.YAxis, plane.ZAxis);
+                  if (localPlaneNotSet) {
+                    rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis,
+                      plane.YAxis, plane.XAxis, plane.ZAxis);
+                  }
 
-                perimeter.PerimeterPoints = pts;
+                  perimeter.GeoType = ProfileHelper.GeoTypes.Perim;
 
-                if (edges.Length > 1) {
-                  var voidPoints = new List<List<Point2d>>();
-                  for (int i = 1; i < edges.Length; i++) {
-                    ctrlPts.Clear();
-                    if (!edges[i].IsPlanar()) {
-                      for (int j = 0; j < edges.Length; j++) {
-                        edges[j] = Curve.ProjectToPlane(edges[j], plane);
+                  var pts = new List<Point2d>();
+                  foreach (Point3d pt3d in ctrlPts) {
+                    pt3d.Transform(translation);
+                    pt3d.Transform(rotation);
+                    var pt2d = new Point2d(pt3d);
+                    pts.Add(pt2d);
+                  }
+
+                  perimeter.PerimeterPoints = pts;
+
+                  if (edges.Length > 1) {
+                    var voidPoints = new List<List<Point2d>>();
+                    for (int i = 1; i < edges.Length; i++) {
+                      ctrlPts.Clear();
+                      if (!edges[i].IsPlanar()) {
+                        for (int j = 0; j < edges.Length; j++) {
+                          edges[j] = Curve.ProjectToPlane(edges[j], plane);
+                        }
+                      }
+
+                      if (edges[i].TryGetPolyline(out tempCrv)) {
+                        ctrlPts = tempCrv.ToList();
+                        pts = new List<Point2d>();
+                        foreach (Point3d pt3d in ctrlPts) {
+                          pt3d.Transform(translation);
+                          pt3d.Transform(rotation);
+                          var pt2d = new Point2d(pt3d);
+                          pts.Add(pt2d);
+                        }
+
+                        voidPoints.Add(pts);
+                      } else {
+                        this.AddRuntimeError("Cannot convert internal edge to Polyline");
+                        return;
                       }
                     }
 
-                    if (edges[i].TryGetPolyline(out tempCrv)) {
-                      ctrlPts = tempCrv.ToList();
-                      pts = new List<Point2d>();
-                      foreach (Point3d pt3d in ctrlPts) {
-                        pt3d.Transform(translation);
-                        pt3d.Transform(rotation);
-                        var pt2d = new Point2d(pt3d);
-                        pts.Add(pt2d);
-                      }
-
-                      voidPoints.Add(pts);
-                    } else {
-                      this.AddRuntimeError("Cannot convert internal edge to Polyline");
-                      return;
-                    }
+                    perimeter.VoidPoints = voidPoints;
                   }
-
-                  perimeter.VoidPoints = voidPoints;
                 }
               }
+
+              switch (_lengthUnit) {
+                case LengthUnit.Millimeter:
+                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UMm;
+                  break;
+
+                case LengthUnit.Centimeter:
+                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UCm;
+                  break;
+
+                case LengthUnit.Meter:
+                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.Um;
+                  break;
+
+                case LengthUnit.Foot:
+                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UFt;
+                  break;
+
+                case LengthUnit.Inch:
+                  perimeter.SectUnit = ProfileHelper.SectUnitOptions.UIn;
+                  break;
+              }
+
+              da.SetData(0, ConvertSection.ProfileConversion(perimeter));
+              return;
             }
-
-            switch (_lengthUnit) {
-              case LengthUnit.Millimeter:
-                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UMm;
-                break;
-
-              case LengthUnit.Centimeter:
-                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UCm;
-                break;
-
-              case LengthUnit.Meter:
-                perimeter.SectUnit = ProfileHelper.SectUnitOptions.Um;
-                break;
-
-              case LengthUnit.Foot:
-                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UFt;
-                break;
-
-              case LengthUnit.Inch:
-                perimeter.SectUnit = ProfileHelper.SectUnitOptions.UIn;
-                break;
-            }
-
-            da.SetData(0, ConvertSection.ProfileConversion(perimeter));
-            return;
-          }
           default:
             this.AddRuntimeError("Unable to create profile");
             return;
