@@ -857,26 +857,25 @@ namespace GsaGH.Components {
             Params.Input[i].Optional = false;
             break;
 
-          case "IPerimeterProfile": {
-              Params.Input[i].NickName = "B";
-              Params.Input[i].Name = "Boundary";
-              Params.Input[i].Description = "Planar Brep or closed planar curve.";
-              Params.Input[i].Access = GH_ParamAccess.item;
-              Params.Input[i].Optional = false;
+          case "IPerimeterProfile":
+            Params.Input[i].NickName = "B";
+            Params.Input[i].Name = "Boundary";
+            Params.Input[i].Description = "Planar Brep or closed planar curve.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
 
-              if (Params.Input.Count == 1) {
-                Params.RegisterInputParam(new Param_Plane());
-              }
-
-              i++;
-              Params.Input[i].NickName = "P";
-              Params.Input[i].Name = "Plane";
-              Params.Input[i].Description
-                = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
-              Params.Input[i].Access = GH_ParamAccess.item;
-              Params.Input[i].Optional = true;
-              break;
+            if (Params.Input.Count == 1) {
+              Params.RegisterInputParam(new Param_Plane());
             }
+
+            i++;
+            Params.Input[i].NickName = "P";
+            Params.Input[i].Name = "Plane";
+            Params.Input[i].Description
+              = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = true;
+            break;
         }
       }
     }
