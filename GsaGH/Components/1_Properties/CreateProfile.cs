@@ -1146,24 +1146,24 @@ namespace GsaGH.Components {
               + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " 2";
             break;
 
-          case "ISecantPileProfile": {
-              int pileCount = 0;
-              if (!da.GetData(2, ref pileCount)) {
-                this.AddRuntimeError("Unable to convert input PileCount to integer.");
-                return;
-              }
-
-              bool isWallNotSection = false;
-              if (!da.GetData(3, ref isWallNotSection)) {
-                this.AddRuntimeError("Unable to convert input isWall to boolean.");
-                return;
-              }
-
-              profile += (isWallNotSection ? "SP" : "SPW") + unit
-                + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit) + " "
-                + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " " + pileCount;
-              break;
+          case "ISecantPileProfile":
+            int pileCount = 0;
+            if (!da.GetData(2, ref pileCount)) {
+              this.AddRuntimeError("Unable to convert input PileCount to integer.");
+              return;
             }
+
+            bool isWallNotSection = false;
+            if (!da.GetData(3, ref isWallNotSection)) {
+              this.AddRuntimeError("Unable to convert input isWall to boolean.");
+              return;
+            }
+
+            profile += (isWallNotSection ? "SP" : "SPW") + unit
+              + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit) + " "
+              + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " " + pileCount;
+            break;
+
           case "ISheetPileProfile":
             profile += "SHT" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
               + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
