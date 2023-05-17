@@ -39,11 +39,11 @@ namespace GsaGH {
     internal static int MinGsaVersion = 66;
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
-    internal const string Vers = "0.9.48";
+    internal const string Vers = "0.9.49";
     internal static string disclaimer = $"{PluginName} is pre-release and under active development, " +
       $"including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. " +
       $"Future versions may contain breaking changes. Any files, results, or other types of output information created using " +
-      $"{PluginName} should not be relied upon without thorough and independent checking." +
+      $"{PluginName} should not be relied upon without thorough and independent checking. " +
       $"{PluginName} {Vers} requires {ProductName} 10.1.{MinGsaVersion} or higher installed.";
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     internal static bool isBeta = true;
