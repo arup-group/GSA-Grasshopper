@@ -182,6 +182,7 @@ steps:
     Add-Content manifest.yml '- gsagh'
     Add-Content manifest.yml '- fe'
     Add-Content manifest.yml '- fea'
+    Add-Content manifest.yml '- fem'
     Add-Content manifest.yml '- structural'
     Add-Content manifest.yml '- structuralanalysis'
     ..\yak build --platform win
