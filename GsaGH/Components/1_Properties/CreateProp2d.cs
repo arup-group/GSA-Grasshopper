@@ -263,11 +263,11 @@ namespace GsaGH.Components {
 
     private void SetInputProperties(
       int index, string nickname, string name, string description,
-      GH_ParamAccess access = GH_ParamAccess.item, bool optional = true) {
+      bool optional = true) {
       Params.Input[index].NickName = nickname;
       Params.Input[index].Name = name;
       Params.Input[index].Description = description;
-      Params.Input[index].Access = access;
+      Params.Input[index].Access = GH_ParamAccess.item;
       Params.Input[index].Optional = optional;
     }
 
