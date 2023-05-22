@@ -103,8 +103,8 @@ namespace GsaGHTests.Helpers.Export {
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
 
-      TestElement1d(Element1d(ln2, section2).Value, LengthUnit.Foot, 1, modelGoo.Value);
-      TestElement1d(Element1d(ln1, section1).Value, LengthUnit.Foot, 2, modelGoo.Value);
+      TestElement1d(Element1d(ln1, section1).Value, LengthUnit.Foot, 1, modelGoo.Value);
+      TestElement1d(Element1d(ln2, section2).Value, LengthUnit.Foot, 2, modelGoo.Value);
     }
 
     [Fact]
