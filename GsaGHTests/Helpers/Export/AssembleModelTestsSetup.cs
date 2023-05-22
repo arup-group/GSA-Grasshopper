@@ -49,12 +49,27 @@ namespace GsaGHTests.Helpers.Export {
       ComponentTestHelper.SetInput(comp, section, 1);
       return (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp);
     }
+    public static GsaElement1dGoo Element1d(GH_Line line, int sectionId) {
+      var comp = new CreateElement1d();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, line, 0);
+      ComponentTestHelper.SetInput(comp, sectionId, 1);
+      return (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp);
+    }
 
     public static GsaElement2dGoo Element2d(GH_Mesh mesh, GsaProp2dGoo prop) {
       var comp = new CreateElement2d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, mesh, 0);
       ComponentTestHelper.SetInput(comp, prop, 1);
+      return (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+    }
+
+    public static GsaElement2dGoo Element2d(GH_Mesh mesh, int propId) {
+      var comp = new CreateElement2d();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, mesh, 0);
+      ComponentTestHelper.SetInput(comp, propId, 1);
       return (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
@@ -66,11 +81,27 @@ namespace GsaGHTests.Helpers.Export {
       return (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
+    public static GsaMember1dGoo Member1d(GH_Curve crv, int sectionId) {
+      var comp = new CreateMember1d();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, crv, 0);
+      ComponentTestHelper.SetInput(comp, sectionId, 1);
+      return (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
+    }
+
     public static GsaMember2dGoo Member2d(GH_Brep brep, GsaProp2dGoo prop) {
       var comp = new CreateMember2d();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, brep, 0);
       ComponentTestHelper.SetInput(comp, prop, 3);
+      return (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+    }
+
+    public static GsaMember2dGoo Member2d(GH_Brep brep, int propId) {
+      var comp = new CreateMember2d();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, brep, 0);
+      ComponentTestHelper.SetInput(comp, propId, 3);
       return (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
