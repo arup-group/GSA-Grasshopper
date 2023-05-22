@@ -183,13 +183,13 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No",
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No",
         "Nodes to be included in meshing", GH_ParamAccess.list);
-      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D",
+      pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]", "M1D",
         "1D Members to create 1D Elements from", GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D",
+      pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]", "M2D",
         "2D Members to create 2D Elements from", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D",
+      pManager.AddParameter(new GsaMember3dParameter(), "3D Members [" + unitAbbreviation + "]", "M3D",
         "3D Members to create 3D Elements from", GH_ParamAccess.list);
 
       pManager[0].Optional = true;
@@ -204,12 +204,12 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
       pManager.HideParameter(0);
-      pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.item);
-      pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model with Elements and Members",
+      pManager.AddParameter(new GsaElement1dParameter(), "1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement3dParameter(), "3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA Model with Elements and Members",
         GH_ParamAccess.item);
     }
 

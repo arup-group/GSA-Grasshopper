@@ -15,9 +15,7 @@ namespace GsaGH.Parameters {
       get => _prop3d.AxisProperty;
       set {
         CloneApiObject();
-        value = Math.Min(1, value);
-        value = Math.Max(0, value);
-        _prop3d.AxisProperty = value * -1;
+        _prop3d.AxisProperty = value;
         IsReferencedById = false;
       }
     }

@@ -28,6 +28,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name,
         GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " to get or set information for.",
         GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Number", "ID", "Set Element Number", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
         "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model",
         GH_ParamAccess.list);
@@ -58,7 +59,7 @@ namespace GsaGH.Components {
         + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
         GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp2dParameter(), "3D Property", "PV",
+      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
         "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model",
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);

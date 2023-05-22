@@ -32,7 +32,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddIntegerParameter("Axis", "Ax",
-        "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
+        "Set Axis as integer: Global (0) or Topological (-1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop3d Name", "Na", "Set Name of 3D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop3d Colour", "Co", "Set 3D Property Colour",
         GH_ParamAccess.item);
@@ -48,7 +48,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Prop2d Number", "ID", "3D Property Number",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (1)",
+      pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (-1)",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Prop3d Name", "Na", "Name of 3D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop3d Colour", "Co", "3D Property Colour", GH_ParamAccess.item);
