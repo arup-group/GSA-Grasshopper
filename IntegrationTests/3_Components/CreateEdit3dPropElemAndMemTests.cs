@@ -25,9 +25,14 @@ namespace IntegrationTests.Components {
     }
 
     [Theory]
-    [InlineData("Test", 0)]
+    [InlineData("MemId", 6)]
+    [InlineData("MemCount", 1)]
+    [InlineData("MemName", "Member")]
+    [InlineData("EditMemTest", 0)]
+    [InlineData("EditElemTest", 0)]
     [InlineData("MeshCount", 146)]
-    [InlineData("Material", "Timber")]
+    [InlineData("ElemMaterial", "Timber")]
+    [InlineData("ElemGrp", 99)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
