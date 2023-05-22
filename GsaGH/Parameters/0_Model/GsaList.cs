@@ -310,6 +310,8 @@ namespace GsaGH.Parameters {
           Definition = definition
         };
         Definition = apiList.Definition;
+        var m = new Model();
+        m.AddList(apiList);
       }
 
       switch (EntityType) {
