@@ -10,7 +10,8 @@ namespace GsaGHTests.CustomComponent {
 
     [Theory]
     [InlineData(typeof(CreateModel), true)]
-    [InlineData(typeof(CreateList), true)]
+    [InlineData(typeof(CreateList))]
+    [InlineData(typeof(ListInfo))]
     [InlineData(typeof(GetLoads))]
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
