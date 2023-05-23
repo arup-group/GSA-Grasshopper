@@ -30,7 +30,7 @@ namespace IntegrationTests.Components {
     [InlineData("MemName", "Member")]
     [InlineData("EditMemTest", 0)]
     [InlineData("EditElemTest", 0)]
-    [InlineData("MeshCount", 146)]
+    [InlineData("MeshCount", 120)]
     [InlineData("ElemMaterial", "Timber")]
     [InlineData("ElemGrp", 99)]
     public void Test(string groupIdentifier, object expected) {
