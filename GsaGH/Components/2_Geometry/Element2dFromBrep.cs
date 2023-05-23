@@ -23,7 +23,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Node
   /// </summary>
-  public class Elem2dFromBrep : GH_OasysDropDownComponent {
+  public class Element2dFromBrep : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("18c5913e-cbce-42e8-8563-18e28b079d34");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -32,7 +32,7 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = string.Empty;
 
-    public Elem2dFromBrep() : base("Element2d from Brep", "Elem2dFromBrep",
+    public Element2dFromBrep() : base("Element2d from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {

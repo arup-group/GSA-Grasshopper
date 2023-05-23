@@ -15,7 +15,7 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-  public class LoadProp : GH_OasysDropDownComponent {
+  public class LoadProperties : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public LoadProp() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
+    public LoadProperties() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }

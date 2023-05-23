@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Node
   /// </summary>
-  public class ElemFromMem : GH_OasysDropDownComponent {
+  public class ElementFromMembers : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -37,7 +37,7 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = string.Empty;
 
-    public ElemFromMem() : base("Elements from Members", "ElemFromMem",
+    public ElementFromMembers() : base("Elements from Members", "ElemFromMem",
       "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
