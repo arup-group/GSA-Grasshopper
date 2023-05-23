@@ -22,26 +22,6 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      var ln = new Line();
-      if (!GH_Convert.ToLine(source, ref ln, GH_Conversion.Both)) {
-        return false;
-      }
-
-      var crv = new LineCurve(ln);
-      var elem = new GsaElement1d(crv);
-      Value = elem;
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       if (base.CastTo(ref target)) {
         return true;
@@ -141,7 +121,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.Line;
+      return Value == null ? null : (GeometryBase)Value.Line;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

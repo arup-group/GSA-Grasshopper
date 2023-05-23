@@ -28,8 +28,13 @@ namespace GsaGH.Parameters {
       }
 
       var goo = new GsaBool6Goo(new GsaBool6());
-      bool flag = goo.CastFrom(data);
-      return flag ? goo : base.PreferredCast(data);
+      if (goo.CastFrom(data)) {
+        return goo;
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+      $"Data conversion failed from {data.GetTypeName()} to Bool6");
+      return new GsaBool6Goo(null);
     }
   }
 }

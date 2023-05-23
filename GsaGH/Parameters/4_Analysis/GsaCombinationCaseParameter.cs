@@ -25,8 +25,22 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaCombinationCaseGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaCombinationCase) ?
-        new GsaCombinationCaseGoo((GsaCombinationCase)data) : base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaCombinationCase)) {
+        return new GsaCombinationCaseGoo((GsaCombinationCase)data);
+      }
+
+      if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
+        return new GsaCombinationCaseGoo(
+          new GsaCombinationCase(id, "Combination Case " + id, string.Empty));
+      }
+
+      if (GH_Convert.ToString(data, out string name, GH_Conversion.Both)) {
+        return new GsaCombinationCaseGoo(new GsaCombinationCase(0, "Combination Case", name));
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to CombinationCase");
+      return new GsaCombinationCaseGoo(null);
     }
   }
 }

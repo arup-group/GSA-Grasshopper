@@ -9,7 +9,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   This class provides a parameter interface for the <see cref="GsaResultGoo" /> type.
   /// </summary>
-  public class GsaResultsParameter : GH_OasysPersistentParam<GsaResultGoo> {
+  public class GsaResultParameter : GH_OasysPersistentParam<GsaResultGoo> {
     public override Guid ComponentGuid => new Guid("81f6f103-cb53-414c-908b-6adf46c3260d");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override string InstanceDescription
@@ -18,13 +18,18 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaResultGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.ResultParam;
 
-    public GsaResultsParameter() : base(new GH_InstanceDescription(GsaResultGoo.Name,
+    public GsaResultParameter() : base(new GH_InstanceDescription(GsaResultGoo.Name,
       GsaResultGoo.NickName, GsaResultGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaResultGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaResult) ? new GsaResultGoo((GsaResult)data) :
-        base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaResult)) {
+        return new GsaResultGoo((GsaResult)data);
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to Result");
+      return new GsaResultGoo(null);
     }
   }
 }

@@ -42,26 +42,6 @@ namespace GsaGH.Parameters {
       return true;
     }
 
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (!typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        return base.CastTo(ref target);
-      }
-
-      if (Value == null) {
-        target = default;
-      } else {
-        var ghint = new GH_Integer();
-        target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-          (TQ)(object)ghint : default;
-      }
-
-      return true;
-    }
-
     public override IGH_Goo Duplicate() {
       return new GsaAnalysisTaskGoo(Value);
     }

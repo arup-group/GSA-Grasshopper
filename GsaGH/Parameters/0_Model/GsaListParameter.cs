@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -27,7 +28,9 @@ namespace GsaGH.Parameters {
         return new GsaListGoo((GsaList)data);
       }
 
-      return base.PreferredCast(data);
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to Entity List");
+      return new GsaListGoo(null);
     }
   }
 }

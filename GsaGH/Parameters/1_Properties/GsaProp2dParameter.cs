@@ -3,7 +3,10 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -27,12 +30,33 @@ namespace GsaGH.Parameters {
         return new GsaProp2dGoo((GsaProp2d)data);
       }
 
-      if (!GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
+      if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
+        return new GsaProp2dGoo(new GsaProp2d(id));
       }
 
-      var prop = new GsaProp2d(id);
-      return new GsaProp2dGoo(prop);
+      if (GH_Convert.ToDouble(data, out double val1, GH_Conversion.Both)) {
+        if (Quantity.TryFrom(val1, DefaultUnits.LengthUnitSection, out IQuantity length1)) {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Number converted to thickness in " +
+          DefaultUnits.LengthUnitSection.ToString());
+          return new GsaProp2dGoo(new GsaProp2d((Length)length1));
+        }
+      }
+
+      if (GH_Convert.ToString(data, out string val2, GH_Conversion.Both)) {
+        Quantity.TryFrom(0.0, DefaultUnits.LengthUnitSection, out IQuantity length2);
+        Type type = length2.QuantityInfo.ValueType;
+        if (val2.EndsWith("m") && type == typeof(Duration)) {
+          type = typeof(Length);
+        }
+
+        if (Quantity.TryParse(type, val2, out IQuantity length3)) {
+          return new GsaProp2dGoo(new GsaProp2d((Length)length3));
+        }
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+      $"Data conversion failed from {data.GetTypeName()} to Prop2d");
+      return new GsaProp2dGoo(null);
     }
   }
 }

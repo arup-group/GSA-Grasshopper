@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using OasysUnits;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -22,11 +25,19 @@ namespace GsaGH.Parameters {
       GsaMember1dGoo.NickName, GsaMember1dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
-
     protected override GsaMember1dGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaMember1d) ? new GsaMember1dGoo((GsaMember1d)data) :
-        base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaMember1d)) {
+        return new GsaMember1dGoo((GsaMember1d)data);
+      }
+
+      Curve crv = null;
+      if (GH_Convert.ToCurve(data, ref crv, GH_Conversion.Both)) {
+        return new GsaMember1dGoo(new GsaMember1d(crv));
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to Member1d");
+      return new GsaMember1dGoo(null);
     }
   }
 }

@@ -23,8 +23,22 @@ namespace GsaGH.Parameters {
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaAnalysisCaseGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaAnalysisCase) ?
-        new GsaAnalysisCaseGoo((GsaAnalysisCase)data) : base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaAnalysisCase)) {
+        return new GsaAnalysisCaseGoo((GsaAnalysisCase)data);
+      }
+
+      if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
+        return new GsaAnalysisCaseGoo(
+          new GsaAnalysisCase(id, "Analysis Case " + id, string.Empty));
+      }
+
+      if (GH_Convert.ToString(data, out string name, GH_Conversion.Both)) {
+        return new GsaAnalysisCaseGoo(new GsaAnalysisCase(0, "Analysis Case", name));
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+      $"Data conversion failed from {data.GetTypeName()} to AnalysisCase");
+      return new GsaAnalysisCaseGoo(null);
     }
   }
 }

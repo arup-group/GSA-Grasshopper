@@ -35,7 +35,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
@@ -143,15 +143,11 @@ namespace GsaGH.Components {
       GsaSection section;
       if (ghTyp.Value is GsaSectionGoo sectionGoo) {
         section = sectionGoo.Value;
-      } else {
-        string profile = string.Empty;
-        ghTyp.CastTo(ref profile);
-        if (GsaSection.ValidProfile(profile)) {
-          section = new GsaSection(profile);
-        } else {
-          this.AddRuntimeWarning("Invalid profile syntax: " + profile);
+        if (section == null) {
           return;
         }
+      } else {
+        return;
       }
 
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);

@@ -241,8 +241,8 @@ namespace GsaGH.Components {
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
       double load2 = load1;
-      if (da.GetData(8, ref load2)) {
-        load2 = ((ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit, true))
+      if (Params.Input[8].SourceCount > 0) {
+        load2 = ((ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit))
          .NewtonsPerMeter;
       }
 

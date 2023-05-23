@@ -46,6 +46,9 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value == null || Value.DisplayMesh == null) {
+        return;
+      }
       args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
         args.Material.Diffuse
         == Color.FromArgb(255, 150, 0,
@@ -73,7 +76,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.DisplayMesh;
+      return Value == null ? null : (GeometryBase)Value.DisplayMesh;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

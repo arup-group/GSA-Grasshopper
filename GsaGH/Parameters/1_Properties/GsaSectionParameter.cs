@@ -33,14 +33,15 @@ namespace GsaGH.Parameters {
       }
 
       if (!GH_Convert.ToString(data, out string profile, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+          $"Data conversion failed from {data.GetTypeName()} to Section");
+        return new GsaSectionGoo(null);
       }
 
-      {
-        if (!GsaSection.ValidProfile(profile)) {
-          return base.PreferredCast(data);
-        }
-
+      if (!GsaSection.ValidProfile(profile)) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Invalid profile syntax: {profile}");
+        return new GsaSectionGoo(null);
+      } else {
         var section = new GsaSection(profile);
         return new GsaSectionGoo(section);
       }

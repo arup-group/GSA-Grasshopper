@@ -23,35 +23,6 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaMember.
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      var brep = new Brep();
-      if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both)) {
-        var member = new GsaMember3d(brep);
-        Value = member;
-        return true;
-      }
-
-      var mesh = new Mesh();
-
-      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both)) {
-        return false;
-      } else {
-        var member = new GsaMember3d(mesh);
-        Value = member;
-        return true;
-      }
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       // instance of GsaMember into some other type Q.
@@ -163,7 +134,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.SolidMesh;
+      return Value == null ? null : (GeometryBase)Value.SolidMesh;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

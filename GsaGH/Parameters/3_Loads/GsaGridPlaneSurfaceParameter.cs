@@ -3,7 +3,10 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+using Newtonsoft.Json.Linq;
 using OasysGH.Parameters;
+using OasysUnits;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -26,8 +29,18 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
 
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaGridPlaneSurface) ?
-        new GsaGridPlaneSurfaceGoo((GsaGridPlaneSurface)data) : base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaGridPlaneSurface)) {
+        return new GsaGridPlaneSurfaceGoo((GsaGridPlaneSurface)data);
+      }
+
+      var pln = new Plane();
+      if (GH_Convert.ToPlane(data, ref pln, GH_Conversion.Both)) {
+        return new GsaGridPlaneSurfaceGoo(new GsaGridPlaneSurface(pln));
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to GridPlaneSurface");
+      return new GsaGridPlaneSurfaceGoo(null);
     }
   }
 }

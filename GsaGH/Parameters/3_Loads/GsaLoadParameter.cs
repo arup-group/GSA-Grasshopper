@@ -23,8 +23,13 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaLoadGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaLoad) ? new GsaLoadGoo((GsaLoad)data) :
-        base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaLoad)) {
+        return new GsaLoadGoo((GsaLoad)data);
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to Load");
+      return new GsaLoadGoo(null);
     }
   }
 }

@@ -25,27 +25,6 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaMember.
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      Curve crv = null;
-      if (!GH_Convert.ToCurve(source, ref crv, GH_Conversion.Both)) {
-        return false;
-      }
-
-      var member = new GsaMember1d(crv);
-      Value = member;
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       // instance of GsaMember into some other type Q.
@@ -204,7 +183,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.PolyCurve;
+      return Value == null ? null : (GeometryBase)Value.PolyCurve;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

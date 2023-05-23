@@ -28,7 +28,9 @@ namespace GsaGH.Parameters {
       }
 
       if (!GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+          $"Data conversion failed from {data.GetTypeName()} to Material");
+        return new GsaMaterialGoo(null);
       }
 
       var material = new GsaMaterial(id);

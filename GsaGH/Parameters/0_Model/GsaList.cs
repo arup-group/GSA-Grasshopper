@@ -307,7 +307,8 @@ namespace GsaGH.Parameters {
         // pass the definition through the API here to catch any errors
         var apiList = new EntityList() {
           Type = GetAPIEntityType(EntityType),
-          Definition = definition
+          Definition = definition,
+          Name = "nm"
         };
         Definition = apiList.Definition;
         var m = new Model();

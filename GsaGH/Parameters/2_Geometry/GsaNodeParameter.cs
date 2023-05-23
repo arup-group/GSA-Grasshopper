@@ -32,7 +32,9 @@ namespace GsaGH.Parameters {
 
       var pt = new Point3d();
       if (!GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+          $"Data conversion failed from {data.GetTypeName()} to Node");
+        return new GsaNodeGoo(null);
       }
 
       var node = new GsaNode(pt);

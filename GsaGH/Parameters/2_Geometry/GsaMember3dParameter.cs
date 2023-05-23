@@ -4,6 +4,8 @@ using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using OasysUnits;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +25,23 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaMember3dGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaMember3d) ? new GsaMember3dGoo((GsaMember3d)data) :
-        base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaMember3d)) {
+        return new GsaMember3dGoo((GsaMember3d)data);
+      }
+
+      var brep = new Brep();
+      if (GH_Convert.ToBrep(data, ref brep, GH_Conversion.Both)) {
+        return new GsaMember3dGoo(new GsaMember3d(brep));
+      }
+
+      var mesh = new Mesh();
+      if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
+        return new GsaMember3dGoo(new GsaMember3d(mesh));
+      }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to Member3d");
+      return new GsaMember3dGoo(null);
     }
   }
 }
