@@ -129,8 +129,7 @@ namespace GsaGH.Components {
                 FileNameAndPath = _fileName,
               };
 
-              GetTitles(model);
-              //GetUnit(ref gsaModel);
+              UpdateMessage();
 
               da.SetData(0, new GsaModelGoo(gsaModel));
 
@@ -165,8 +164,7 @@ namespace GsaGH.Components {
             FileNameAndPath = _fileName,
           };
 
-          GetTitles(model);
-          //GetUnit(ref gsaModel);
+          UpdateMessage();
 
           da.SetData(0, new GsaModelGoo(gsaModel));
         } else {
@@ -175,22 +173,7 @@ namespace GsaGH.Components {
       }
     }
 
-    //private static void GetUnit(ref GsaModel gsaModel) {
-    // none of this works:
-    // 1. save as gwa is not possible with GsaAPI
-    // 2. Output_UnitFactor and Output_String() both result COM error
-
-    //Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
-    //string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwa";
-    //gsaModel.Model.SaveAs(temp);
-    //m.Open(temp);
-    //float unit = m.Output_UnitFactor();
-
-    //gsaModel.ModelGeometryUnit = (OasysUnits.Units.LengthUnit)OasysGH.Units.Helpers.UnitsHelper.Parse(typeof(OasysUnits.Units.LengthUnit), unit);
-    //}
-
-    private void GetTitles(Model model) {
-      GsaGH.Titles.GetTitlesFromGsa(model);
+    private void UpdateMessage() {
       string mes = Path.GetFileName(_fileName);
       mes = mes.Substring(0, mes.Length - 4);
       Message = mes;
