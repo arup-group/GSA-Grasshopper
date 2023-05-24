@@ -33,8 +33,7 @@ namespace GsaGH.Parameters {
       }
 
       if (data.GetType() != typeof(GsaMaterialGoo)) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Prop3d");
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop3d");
         return new GsaProp3dGoo(null);
       }
 

@@ -36,8 +36,7 @@ namespace GsaGH.Parameters {
 
       if (GH_Convert.ToDouble(data, out double val1, GH_Conversion.Both)) {
         if (Quantity.TryFrom(val1, DefaultUnits.LengthUnitSection, out IQuantity length1)) {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Number converted to thickness in " +
-          DefaultUnits.LengthUnitSection.ToString());
+         this.AddRuntimeWarning($"Number converted to thickness in {DefaultUnits.LengthUnitSection}");
           return new GsaProp2dGoo(new GsaProp2d((Length)length1));
         }
       }
@@ -54,8 +53,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-      $"Data conversion failed from {data.GetTypeName()} to Prop2d");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2d");
       return new GsaProp2dGoo(null);
     }
   }

@@ -30,13 +30,12 @@ namespace GsaGH.Parameters {
       }
 
       if (GH_Convert.ToDouble(data, out double myval, GH_Conversion.Both)) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Number converted to Z-offset in "+
+        this.AddRuntimeWarning("Number converted to Z-offset in "+
           DefaultUnits.LengthUnitSection.ToString());
         return new GsaOffsetGoo(new GsaOffset(0, 0, 0, myval, DefaultUnits.LengthUnitSection));
       }
       
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Offset");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Offset");
       return new GsaOffsetGoo(null);
     }
   }

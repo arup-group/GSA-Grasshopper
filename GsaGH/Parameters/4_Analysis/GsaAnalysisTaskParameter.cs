@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -27,8 +27,7 @@ namespace GsaGH.Parameters {
         return new GsaAnalysisTaskGoo((GsaAnalysisTask)data);
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to AnalysisTask");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to AnalysisTask");
       return new GsaAnalysisTaskGoo(null);
     }
   }

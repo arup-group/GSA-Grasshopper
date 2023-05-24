@@ -31,8 +31,7 @@ namespace GsaGH.Parameters {
         return new GsaBucklingLengthFactorsGoo((GsaBucklingLengthFactors)data);
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
       return new GsaBucklingLengthFactorsGoo(null);
     }
   }

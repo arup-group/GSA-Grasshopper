@@ -1,12 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
-using Newtonsoft.Json.Linq;
 using OasysGH.Parameters;
-using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -38,8 +36,7 @@ namespace GsaGH.Parameters {
         return new GsaGridPlaneSurfaceGoo(new GsaGridPlaneSurface(pln));
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to GridPlaneSurface");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to GridPlaneSurface");
       return new GsaGridPlaneSurfaceGoo(null);
     }
   }

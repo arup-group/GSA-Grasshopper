@@ -1280,7 +1280,7 @@ namespace GsaGH.Components {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       } catch (Exception e) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+        this.AddRuntimeWarning(e.Message);
         return;
       }
       _legend = new Bitmap(

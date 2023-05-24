@@ -31,8 +31,7 @@ namespace GsaGH.Parameters {
         return new GsaSectionModifierGoo(((GsaSectionGoo)data).Value.Modifier);
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to SectionModifier");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to SectionModifier");
       return new GsaSectionModifierGoo(null);
     }
   }

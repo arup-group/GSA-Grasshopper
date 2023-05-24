@@ -28,8 +28,7 @@ namespace GsaGH.Parameters {
         return new GsaListGoo((GsaList)data);
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Entity List");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Entity List");
       return new GsaListGoo(null);
     }
   }

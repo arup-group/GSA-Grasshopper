@@ -1,11 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -39,8 +38,7 @@ namespace GsaGH.Parameters {
         return new GsaMember3dGoo(new GsaMember3d(mesh));
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Member3d");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member3d");
       return new GsaMember3dGoo(null);
     }
   }
