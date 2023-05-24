@@ -109,7 +109,7 @@ namespace GsaGH.Components {
             break;
         }
 
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, message);
+        this.AddRuntimeWarning(message);
       }
 
       DA.SetData(0, list);

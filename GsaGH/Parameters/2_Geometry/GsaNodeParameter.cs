@@ -1,10 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
 using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -32,8 +32,7 @@ namespace GsaGH.Parameters {
 
       var pt = new Point3d();
       if (!GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both)) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-          $"Data conversion failed from {data.GetTypeName()} to Node");
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Node");
         return new GsaNodeGoo(null);
       }
 

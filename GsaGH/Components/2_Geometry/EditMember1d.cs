@@ -388,8 +388,7 @@ namespace GsaGH.Components {
 
       if ((mem.Type1D == ElementType.BAR || mem.Type1D == ElementType.TIE 
         || mem.Type1D == ElementType.STRUT) && mem.MeshSize != 0) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-          $"Element type is {mem.Type1D} and mesh size is not zero. " +
+        this.AddRuntimeWarning($"Element type is {mem.Type1D} and mesh size is not zero. " +
           Environment.NewLine + $"This may cause model instabilities.");
       }
 

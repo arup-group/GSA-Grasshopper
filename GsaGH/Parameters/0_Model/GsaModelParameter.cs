@@ -27,8 +27,7 @@ namespace GsaGH.Parameters {
         return new GsaModelGoo((GsaModel)data);
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Model");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Model");
       return new GsaModelGoo(null);
     }
   }

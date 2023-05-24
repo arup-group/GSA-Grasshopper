@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -33,13 +33,12 @@ namespace GsaGH.Parameters {
       }
 
       if (!GH_Convert.ToString(data, out string profile, GH_Conversion.Both)) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-          $"Data conversion failed from {data.GetTypeName()} to Section");
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section");
         return new GsaSectionGoo(null);
       }
 
       if (!GsaSection.ValidProfile(profile)) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Invalid profile syntax: {profile}");
+        this.AddRuntimeError($"Invalid profile syntax: {profile}");
         return new GsaSectionGoo(null);
       } else {
         var section = new GsaSection(profile);

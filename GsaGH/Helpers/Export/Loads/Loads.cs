@@ -69,8 +69,7 @@ namespace GsaGH.Helpers.Export {
               if (load.GravityLoad._refList == null
                 && (load.GravityLoad._refList.EntityType != Parameters.EntityType.Element
                 || load.GravityLoad._refList.EntityType != Parameters.EntityType.Member)) {
-                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-                  "Invalid List type for GravityLoad " + load.ToString()
+                owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
                   + Environment.NewLine + "Element list has not been set");
               }
               objectElemList +=
@@ -109,8 +108,7 @@ namespace GsaGH.Helpers.Export {
               if (load.BeamLoad._refList == null 
                 && (load.BeamLoad._refList.EntityType != Parameters.EntityType.Element 
                 || load.BeamLoad._refList.EntityType != Parameters.EntityType.Member)) {
-                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-                  "Invalid List type for BeamLoad " + load.ToString()
+                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
                   + Environment.NewLine + "Element list has not been set");
               }
               objectElemList +=
@@ -148,8 +146,7 @@ namespace GsaGH.Helpers.Export {
               if (load.FaceLoad._refList == null
                 && (load.FaceLoad._refList.EntityType != Parameters.EntityType.Element
                 || load.FaceLoad._refList.EntityType != Parameters.EntityType.Member)) {
-                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-                  "Invalid List type for BeamLoad " + load.ToString()
+                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
                   + Environment.NewLine + "Element list has not been set");
               }
               objectElemList +=

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -34,8 +33,7 @@ namespace GsaGH.Parameters {
         return new GsaElement1dGoo(new GsaElement1d(new LineCurve(ln)));
       }
 
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Element1d");
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element1d");
       return new GsaElement1dGoo(null);
     }
   }
