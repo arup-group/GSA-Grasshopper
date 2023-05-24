@@ -32,16 +32,14 @@ namespace GsaGH.Parameters {
         return new GsaProp3dGoo(prop);
       }
 
-      if (data.GetType() != typeof(GsaMaterialGoo)) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-        $"Data conversion failed from {data.GetTypeName()} to Prop3d");
-        return new GsaProp3dGoo(null);
-      }
-
-      {
+      if (data.GetType() == typeof(GsaMaterialGoo)) {
         var prop = new GsaProp3d(((GsaMaterialGoo)data).Value);
         return new GsaProp3dGoo(prop);
       }
+
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"Data conversion failed from {data.GetTypeName()} to Prop3d");
+      return new GsaProp3dGoo(null);
     }
   }
 }

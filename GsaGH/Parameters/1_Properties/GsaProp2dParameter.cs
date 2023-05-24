@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Helpers;
@@ -30,8 +31,12 @@ namespace GsaGH.Parameters {
         return new GsaProp2dGoo((GsaProp2d)data);
       }
 
-      if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        return new GsaProp2dGoo(new GsaProp2d(id));
+      if (data.GetType() != typeof(GH_Number) && 
+        GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
+        GH_Convert.ToString(data, out string val, GH_Conversion.Both);
+        if (!val.Contains(".")) {
+          return new GsaProp2dGoo(new GsaProp2d(id));
+        }
       }
 
       if (GH_Convert.ToDouble(data, out double val1, GH_Conversion.Both)) {

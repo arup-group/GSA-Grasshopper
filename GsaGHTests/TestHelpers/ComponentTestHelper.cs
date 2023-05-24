@@ -54,6 +54,13 @@ namespace GsaGHTests.Helpers {
       component.Params.Input[index].AddSource(input);
     }
 
+    public static void SetInput(GH_Component component, int id, int index = 0) {
+      var input = new Param_Integer();
+      input.CreateAttributes();
+      input.PersistentData.Append(new GH_Integer(id));
+      component.Params.Input[index].AddSource(input);
+    }
+
     public static void SetInput(GH_Component component, object obj, int index = 0) {
       var input = new Param_GenericObject();
       input.CreateAttributes();
