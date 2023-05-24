@@ -71,6 +71,27 @@ namespace IntegrationTests.Parameters {
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
+    [Theory]
+    [InlineData("PropId")]
+    [InlineData("NodePoint")]
+    [InlineData("NodeId")]
+    [InlineData("ElementLine")]
+    [InlineData("ElementId")]
+    [InlineData("Elem2dMesh")]
+    [InlineData("Elem3dMesh")]
+    [InlineData("Mem1dCrv")]
+    [InlineData("MemberId")]
+    [InlineData("Member2dBrep")]
+    [InlineData("Member3dMesh")]
+    public void TestCastTo(string groupIdentifier) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
+        Assert.True(data.IsValid);
+      }
+      Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
