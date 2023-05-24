@@ -14,10 +14,34 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaSection {
     public double Angle => _section.Angle;
+    public Length AdditionalOffsetY {
+      get => new Length(_section.AdditionalOffsetY, UnitSystem.SI);
+      set {
+        CloneApiObject();
+        _section.AdditionalOffsetY = value.Meters;
+        IsReferencedById = false;
+      }
+    }
+    public Length AdditionalOffsetZ {
+      get => new Length(_section.AdditionalOffsetZ, UnitSystem.SI);
+      set {
+        CloneApiObject();
+        _section.AdditionalOffsetZ = value.Meters;
+        IsReferencedById = false;
+      }
+    }
     public Area Area {
       get {
         var area = new Area(_section.Area, UnitSystem.SI);
         return new Area(area.As(DefaultUnits.SectionAreaUnit), DefaultUnits.SectionAreaUnit);
+      }
+    }
+    public BasicOffset BasicOffset {
+      get => _section.BasicOffset;
+      set {
+        CloneApiObject();
+        _section.BasicOffset = value;
+        IsReferencedById = false;
       }
     }
     public Color Colour {
@@ -294,6 +318,9 @@ namespace GsaGH.Parameters {
         MaterialGradeProperty = _section.MaterialGradeProperty,
         MaterialType = _section.MaterialType,
         Name = _section.Name.ToString(),
+        BasicOffset = _section.BasicOffset,
+        AdditionalOffsetY = _section.AdditionalOffsetY,
+        AdditionalOffsetZ = _section.AdditionalOffsetZ,
         Pool = _section.Pool,
         Profile = prfl,
       };

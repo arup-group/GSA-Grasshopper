@@ -603,6 +603,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EditProfile {
+            get {
+                object obj = ResourceManager.GetObject("EditProfile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap EditProp2d {
             get {
                 object obj = ResourceManager.GetObject("EditProp2d", resourceCulture);
@@ -646,6 +656,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap EditSpring {
             get {
                 object obj = ResourceManager.GetObject("EditSpring", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Elem1dDiagram {
+            get {
+                object obj = ResourceManager.GetObject("Elem1dDiagram", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

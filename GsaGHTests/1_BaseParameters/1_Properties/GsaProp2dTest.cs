@@ -15,6 +15,8 @@ namespace GsaGHTests.Parameters {
       var original = new GsaProp2d {
         Name = "Name",
         Thickness = new Length(200, LengthUnit.Millimeter),
+        AdditionalOffsetZ = new Length(1, LengthUnit.Centimeter),
+        ReferenceSurface = ReferenceSurface.Top
       };
 
       GsaProp2d duplicate = original.Duplicate();
@@ -65,12 +67,16 @@ namespace GsaGHTests.Parameters {
       string name = "mariam";
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.SHELL;
+      ReferenceSurface referenceSurface = ReferenceSurface.Bottom;
+      var offset = new Length(-100.0, LengthUnit.Millimeter);
 
       var orig = new GsaProp2d(14) {
         AxisProperty = axisProperty,
         Name = name,
         Description = description,
         Type = type,
+        ReferenceSurface = referenceSurface,
+        AdditionalOffsetZ = offset
       };
       var mat = new GsaMaterial((int)materialType) {
         AnalysisProperty = materialAnalysisProperty,
@@ -89,6 +95,8 @@ namespace GsaGHTests.Parameters {
       orig.Type = Property2D_Type.LOAD;
       orig.SupportType = SupportType.AllEdges;
       orig.ReferenceEdge = 4;
+      orig.ReferenceSurface = ReferenceSurface.Top;
+      orig.AdditionalOffsetZ = new Length(50.0, LengthUnit.Millimeter);
 
       Assert.Equal(0, dup.AxisProperty);
       Assert.Equal(0, dup.Material.GradeProperty);
@@ -99,6 +107,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("awesome property", dup.Description);
       Assert.Equal(Property2D_Type.SHELL.ToString(), dup.Type.ToString());
       Assert.Equal(14, dup.Id);
+      Assert.Equal(ReferenceSurface.Bottom, dup.ReferenceSurface);
+      Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter));
 
       Assert.Equal(1, orig.AxisProperty);
       Assert.Equal(0, orig.Material.GradeProperty);
@@ -111,6 +121,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(SupportType.AllEdges, orig.SupportType);
       Assert.Equal(4, orig.ReferenceEdge);
       Assert.Equal(4, orig.Id);
+      Assert.Equal(ReferenceSurface.Top, orig.ReferenceSurface);
+      Assert.Equal(50, orig.AdditionalOffsetZ.As(LengthUnit.Millimeter));
     }
   }
 }

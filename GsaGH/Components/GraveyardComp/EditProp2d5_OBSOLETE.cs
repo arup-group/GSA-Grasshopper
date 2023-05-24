@@ -24,16 +24,16 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Prop2d and ouput the information
   /// </summary>
-  public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("5e7627a2-9c3c-4ace-9a08-f9c9a7106755");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+  public class EditProp2d5_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("8cb4eacb-5f7d-49cf-a89a-87f8456fc308");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProp2d;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private int _referenceEdge;
     private int _supportTypeIndex;
 
-    public EditProp2d() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
+    public EditProp2d5_OBSOLETE() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -137,11 +137,6 @@ namespace GsaGH.Components {
         + Environment.NewLine + "Curved Shell : 7" + Environment.NewLine + "Torsion : 8"
         + Environment.NewLine + "Wall : 9" + Environment.NewLine + "Load : 10",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
-        GH_ParamAccess.item);
-
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
       }
@@ -166,10 +161,6 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
-        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -271,27 +262,6 @@ namespace GsaGH.Components {
           }
         }
 
-        var ghReferenceSurface = new GH_ObjectWrapper();
-        if (da.GetData("Reference Surface", ref ghReferenceSurface)) {
-          try {
-            if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
-              prop.ReferenceSurface = (ReferenceSurface)reference;
-            } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
-              prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
-            }
-          } catch {
-            this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value + " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
-            return;
-          }
-        }
-
-        var ghOffset = new GH_Number();
-        if (da.GetData(11, ref ghOffset)) {
-          if (GH_Convert.ToDouble(ghOffset, out double offset, GH_Conversion.Both)) {
-            prop.AdditionalOffsetZ = new Length(offset, _lengthUnit);
-          }
-        }
-
         int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
         string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
         ValueType colour = prop.ApiProp2d?.Colour;
@@ -312,10 +282,8 @@ namespace GsaGH.Components {
         da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
         da.SetData(7, nm);
         da.SetData(8, colour);
-        da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
-        da.SetData(10, prop.ReferenceSurface);
-        da.SetData(11, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
 
+        da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
       } else {
         this.AddRuntimeError("Prop2d is Null");
       }

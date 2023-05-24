@@ -1,4 +1,5 @@
-﻿using GsaGH.Components;
+﻿using GsaAPI;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
@@ -14,8 +15,7 @@ namespace GsaGHTests.Components.Properties {
       comp.CreateAttributes();
 
       var material
-        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(),
-          0);
+        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(), 0);
 
       ComponentTestHelper.SetInput(comp, profile, 0);
       ComponentTestHelper.SetInput(comp, material, 1);
@@ -35,6 +35,7 @@ namespace GsaGHTests.Components.Properties {
       var output = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(profile, output.Value.Profile);
       Assert.Equal(MatType.Timber, output.Value.Material.MaterialType);
+      Assert.Equal(BasicOffset.Centroid, output.Value.BasicOffset);
     }
   }
 }
