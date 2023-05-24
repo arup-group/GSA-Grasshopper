@@ -25,9 +25,7 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionModifierGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaSectionModifier)) {
-        return new GsaSectionModifierGoo((GsaSectionModifier)data);
-      } else if (data.GetType() == typeof(GsaSectionGoo)) {
+      if (data.GetType() == typeof(GsaSectionGoo)) {
         return new GsaSectionModifierGoo(((GsaSectionGoo)data).Value.Modifier);
       }
 

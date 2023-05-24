@@ -83,7 +83,7 @@ namespace GsaGH.Components {
         "Ln", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaLoadParameter(), "Grid Area Loads [" + unitAbbreviation + "]",
         "Ar", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaGridPlaneParameter(),
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(),
         "Grid Plane Surfaces [" + unitAbbreviation + "]", "GPS",
         "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
       pManager.HideParameter(7);

@@ -24,10 +24,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaListGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaList)) {
-        return new GsaListGoo((GsaList)data);
-      }
-
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Entity List");
       return new GsaListGoo(null);
     }

@@ -23,10 +23,6 @@ namespace GsaGH.Parameters {
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaAnalysisCaseGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaAnalysisCase)) {
-        return new GsaAnalysisCaseGoo((GsaAnalysisCase)data);
-      }
-
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         return new GsaAnalysisCaseGoo(
           new GsaAnalysisCase(id, "Analysis Case " + id, string.Empty));

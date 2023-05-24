@@ -24,10 +24,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaElement1dGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaElement1d)) {
-        return new GsaElement1dGoo((GsaElement1d)data);
-      }
-
       var ln = new Line();
       if (GH_Convert.ToLine(data, ref ln, GH_Conversion.Both)) {
         return new GsaElement1dGoo(new GsaElement1d(new LineCurve(ln)));

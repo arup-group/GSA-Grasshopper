@@ -33,6 +33,16 @@ namespace GsaGHTests.Helpers {
       return component.Params.Output[index].VolatileData.get_Branch(path)[item];
     }
 
+    public static object GetOutput(IGH_Param param, int branch = 0, int item = 0) {
+      return param.VolatileData.get_Branch(branch)[item];
+    }
+
+    public static void SetInput(IGH_Param param, object data, int index = 0) {
+      param.CreateAttributes();
+      var path = new GH_Path(0);
+      param.AddVolatileData(path, index, data);
+    }
+
     public static void SetInput(GH_Component component, string str, int index = 0) {
       var input = new Param_String();
       input.CreateAttributes();

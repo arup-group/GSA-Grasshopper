@@ -23,10 +23,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaModelGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaModel)) {
-        return new GsaModelGoo((GsaModel)data);
-      }
-
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Model");
       return new GsaModelGoo(null);
     }

@@ -23,10 +23,6 @@ namespace GsaGH.Parameters {
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaAnalysisTaskGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaAnalysisTask)) {
-        return new GsaAnalysisTaskGoo((GsaAnalysisTask)data);
-      }
-
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to AnalysisTask");
       return new GsaAnalysisTaskGoo(null);
     }

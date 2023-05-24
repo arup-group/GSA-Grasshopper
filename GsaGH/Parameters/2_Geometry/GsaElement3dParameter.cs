@@ -24,10 +24,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaElement3dGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaElement3d)) {
-        return new GsaElement3dGoo((GsaElement3d)data);
-      }
-
       var mesh = new Mesh();
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
         return new GsaElement3dGoo(new GsaElement3d(mesh));

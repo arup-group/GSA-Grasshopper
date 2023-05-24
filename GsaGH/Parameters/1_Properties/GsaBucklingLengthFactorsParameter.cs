@@ -27,10 +27,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaBucklingLengthFactorsGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaBucklingLengthFactors)) {
-        return new GsaBucklingLengthFactorsGoo((GsaBucklingLengthFactors)data);
-      }
-
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
       return new GsaBucklingLengthFactorsGoo(null);
     }

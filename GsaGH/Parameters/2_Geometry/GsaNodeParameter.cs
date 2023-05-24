@@ -26,10 +26,6 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
 
     protected override GsaNodeGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaNode)) {
-        return new GsaNodeGoo((GsaNode)data);
-      }
-
       var pt = new Point3d();
       if (!GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both)) {
         this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Node");

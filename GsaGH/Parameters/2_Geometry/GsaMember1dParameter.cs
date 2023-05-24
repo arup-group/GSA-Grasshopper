@@ -24,10 +24,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaMember1dGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaMember1d)) {
-        return new GsaMember1dGoo((GsaMember1d)data);
-      }
-
       Curve crv = null;
       if (GH_Convert.ToCurve(data, ref crv, GH_Conversion.Both)) {
         return new GsaMember1dGoo(new GsaMember1d(crv));

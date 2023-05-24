@@ -25,10 +25,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaOffsetGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaOffset)) {
-        return new GsaOffsetGoo((GsaOffset)data);
-      }
-
       if (GH_Convert.ToDouble(data, out double myval, GH_Conversion.Both)) {
         this.AddRuntimeWarning("Number converted to Z-offset in "+
           DefaultUnits.LengthUnitSection.ToString());

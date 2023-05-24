@@ -98,7 +98,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Plane Surface", "GPS",
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Plane Surface", "GPS",
         "Grid Plane Surface to get a bit more info out of.", GH_ParamAccess.item);
     }
 

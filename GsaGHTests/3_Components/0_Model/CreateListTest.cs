@@ -20,7 +20,7 @@ namespace GsaGHTests.Model {
     [InlineData(1)] // element
     [InlineData(2)] // member
     [InlineData(3)] // case
-    public void TestWarningMessages(int i) {
+    public void TestErrorMessages(int i) {
       GH_OasysDropDownComponent comp = ComponentMother();
       
       // Act

@@ -25,10 +25,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaCombinationCaseGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaCombinationCase)) {
-        return new GsaCombinationCaseGoo((GsaCombinationCase)data);
-      }
-
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         return new GsaCombinationCaseGoo(
           new GsaCombinationCase(id, "Combination Case " + id, string.Empty));
