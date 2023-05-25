@@ -133,8 +133,10 @@ namespace GsaGH.Helpers.Import {
           GridLineLoad = gridLineLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit), };
-        var load = new GsaLoad(myload);
-        loads.Add(new GsaLoadGoo(load));
+
+        myload.UpdatePoints(unit);
+
+        loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
       }
 
       return loads;
@@ -231,8 +233,7 @@ namespace GsaGH.Helpers.Import {
           myload.GridPointLoad.Y = new Length(myload.GridPointLoad.Y, LengthUnit.Meter).As(unit);
         }
 
-        var load = new GsaLoad(myload);
-        loads.Add(new GsaLoadGoo(load));
+        loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
       }
 
       return loads;
@@ -283,8 +284,7 @@ namespace GsaGH.Helpers.Import {
               NodeLoad = gsaLoad,
               Type = ntyp,
             };
-            var load = new GsaLoad(myload);
-            loads.Add(new GsaLoadGoo(load));
+            loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
           }
         } catch (Exception) {
           // ignored

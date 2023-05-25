@@ -217,6 +217,10 @@ namespace GsaGH.Helpers.Export {
           }
 
           GsaGridLineLoad gridlnref = load.LineLoad;
+          if (unit != LengthUnit.Meter) {
+            gridlnref.GridLineLoad.PolyLineDefinition += "(" + Length.GetAbbreviation(unit) + ")";
+          }
+
           gridplnsrf = gridlnref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {

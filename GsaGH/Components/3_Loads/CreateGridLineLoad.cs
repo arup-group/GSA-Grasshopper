@@ -165,19 +165,7 @@ namespace GsaGH.Components {
             controlPoints = ln.ToList();
           }
 
-          string desc = string.Empty;
-
-          for (int i = 0; i < controlPoints.Count; i++) {
-            if (i > 0) {
-              desc += " ";
-            }
-
-            plane.RemapToPlaneSpace(controlPoints[i], out Point3d temppt);
-            // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
-            desc += "(" + temppt.X + "," + temppt.Y + ")";
-          }
-
-          desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
+          string desc = gridlineload.CreateDefinition(controlPoints, plane);
 
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
           gridlineload.GridLineLoad.PolyLineDefinition = desc;
