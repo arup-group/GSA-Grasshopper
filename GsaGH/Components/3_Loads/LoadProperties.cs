@@ -201,9 +201,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridPoint:
             da.SetData(0, gsaLoad.PointLoad.GridPointLoad.Case);
             da.SetData(1, gsaLoad.PointLoad.GridPointLoad.Name);
-            da.SetData(2,
-              "(" + gsaLoad.PointLoad.GridPointLoad.X + "," + gsaLoad.PointLoad.GridPointLoad.Y
-              + ")");
+            da.SetData(2, new GH_Point(gsaLoad.PointLoad.GetPoint(_lengthUnit)));
             da.SetData(3, gsaLoad.PointLoad.GridPointLoad.AxisProperty);
             da.SetData(4, gsaLoad.PointLoad.GridPointLoad.Direction);
             var apiPointForce = new Force(gsaLoad.PointLoad.GridPointLoad.Value, ForceUnit.Newton);
