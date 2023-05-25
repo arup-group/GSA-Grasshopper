@@ -213,7 +213,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridLine:
             da.SetData(0, gsaLoad.LineLoad.GridLineLoad.Case);
             da.SetData(1, gsaLoad.LineLoad.GridLineLoad.Name);
-            da.SetData(2, gsaLoad.LineLoad.GridLineLoad.PolyLineDefinition);
+            da.SetData(2, new Rhino.Geometry.Polyline(gsaLoad.LineLoad.Points));
             da.SetData(3, gsaLoad.LineLoad.GridLineLoad.AxisProperty);
             da.SetData(4, gsaLoad.LineLoad.GridLineLoad.Direction);
             var apiLineForce1 = new ForcePerLength(gsaLoad.LineLoad.GridLineLoad.ValueAtStart,
