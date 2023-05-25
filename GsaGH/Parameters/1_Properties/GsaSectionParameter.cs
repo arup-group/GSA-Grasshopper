@@ -23,6 +23,14 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionGoo PreferredCast(object data) {
+      switch (data) {
+        case GsaElement1dGoo elem1d:
+          return new GsaSectionGoo(elem1d.Value.Section);
+
+        case GsaMember1dGoo mem1d:
+          return new GsaSectionGoo(mem1d.Value.Section);
+      }
+
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         var section = new GsaSection(id);
         return new GsaSectionGoo(section);

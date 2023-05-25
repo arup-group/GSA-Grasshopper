@@ -27,6 +27,14 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProp2dGoo PreferredCast(object data) {
+      switch (data) {
+        case GsaElement2dGoo elem2d:
+          return new GsaProp2dGoo(elem2d.Value.Prop2ds[0]);
+
+        case GsaMember2dGoo mem2d:
+          return new GsaProp2dGoo(mem2d.Value.Prop2d);
+      }
+
       if (data.GetType() != typeof(GH_Number) && 
         GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         GH_Convert.ToString(data, out string val, GH_Conversion.Both);

@@ -23,6 +23,14 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProp3dGoo PreferredCast(object data) {
+      switch (data) {
+        case GsaElement3dGoo elem3d:
+          return new GsaProp3dGoo(elem3d.Value.Prop3ds[0]);
+
+        case GsaMember3dGoo mem3d:
+          return new GsaProp3dGoo(mem3d.Value.Prop3d);
+      }
+
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         var prop = new GsaProp3d(id);
         return new GsaProp3dGoo(prop);
