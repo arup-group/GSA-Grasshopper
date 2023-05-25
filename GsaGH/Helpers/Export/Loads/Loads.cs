@@ -182,7 +182,12 @@ namespace GsaGH.Helpers.Export {
             break;
           }
 
-          GsaGridPointLoad gridptref = load.PointLoad;
+          GsaGridPointLoad gridptref = load.PointLoad.Duplicate();
+          if (unit != LengthUnit.Meter) {
+            gridptref.GridPointLoad.X = new Length(gridptref.GridPointLoad.X, unit).As(LengthUnit.Meter);
+            gridptref.GridPointLoad.Y = new Length(gridptref.GridPointLoad.Y, unit).As(LengthUnit.Meter);
+          }
+
           GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {

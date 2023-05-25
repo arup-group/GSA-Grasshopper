@@ -226,6 +226,11 @@ namespace GsaGH.Helpers.Import {
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit), };
 
+        if (unit != LengthUnit.Meter) {
+          myload.GridPointLoad.X = new Length(myload.GridPointLoad.X, LengthUnit.Meter).As(unit);
+          myload.GridPointLoad.Y = new Length(myload.GridPointLoad.Y, LengthUnit.Meter).As(unit);
+        }
+
         var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
