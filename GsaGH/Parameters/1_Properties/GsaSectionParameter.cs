@@ -23,22 +23,16 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaSection)) {
-        return new GsaSectionGoo((GsaSection)data);
-      }
-
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         var section = new GsaSection(id);
         return new GsaSectionGoo(section);
       }
 
-      if (!GH_Convert.ToString(data, out string profile, GH_Conversion.Both)) {
-        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section");
-        return new GsaSectionGoo(null);
-      }
+      GH_Convert.ToString(data, out string profile, GH_Conversion.Both);
 
       if (!GsaSection.ValidProfile(profile)) {
-        this.AddRuntimeError($"Invalid profile syntax: {profile}");
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section." +
+          $"{Environment.NewLine}Invalid profile syntax: {profile}");
         return new GsaSectionGoo(null);
       } else {
         var section = new GsaSection(profile);
