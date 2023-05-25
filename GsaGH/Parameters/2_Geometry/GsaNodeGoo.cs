@@ -27,33 +27,6 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaNode.
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (typeof(Node).IsAssignableFrom(source.GetType())) {
-        Value = new GsaNode {
-          ApiNode = (Node)source,
-        };
-        return true;
-      }
-
-      var pt = new Point3d();
-      if (!GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = new GsaNode(pt);
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       // instance of GsaNode into some other type Q.
