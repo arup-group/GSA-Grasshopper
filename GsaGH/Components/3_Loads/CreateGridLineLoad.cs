@@ -116,11 +116,11 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo value: {
-            gridPlaneSurface = value.Value.Duplicate();
-            plane = gridPlaneSurface.Plane;
-            planeSet = true;
-            break;
-          }
+              gridPlaneSurface = value.Value.Duplicate();
+              plane = gridPlaneSurface.Plane;
+              planeSet = true;
+              break;
+            }
           case Plane _:
             ghTyp.CastTo(ref plane);
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
@@ -128,19 +128,19 @@ namespace GsaGH.Components {
             break;
 
           default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gridlineload.GridLineLoad.GridSurface = id;
-              gridlineload.GridPlaneSurface = null;
-            } else {
-              this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the line's best-fit plane will be used");
-              return;
-            }
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gridlineload.GridLineLoad.GridSurface = id;
+                gridlineload.GridPlaneSurface = null;
+              } else {
+                this.AddRuntimeError(
+                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                  + Environment.NewLine
+                  + "If no input here then the line's best-fit plane will be used");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 
@@ -165,10 +165,10 @@ namespace GsaGH.Components {
             controlPoints = ln.ToList();
           }
 
-          string desc = gridlineload.CreateDefinition(controlPoints, plane);
-
+          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(controlPoints, plane);
+          gridlineload.Points = points;
+          gridlineload.GridLineLoad.PolyLineDefinition = definition;
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
-          gridlineload.GridLineLoad.PolyLineDefinition = desc;
         } else {
           this.AddRuntimeError("Could not convert Curve to Polyline");
         }

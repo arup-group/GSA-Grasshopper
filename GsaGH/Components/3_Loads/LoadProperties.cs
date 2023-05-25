@@ -232,7 +232,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridArea:
             da.SetData(0, gsaLoad.AreaLoad.GridAreaLoad.Case);
             da.SetData(1, gsaLoad.AreaLoad.GridAreaLoad.Name);
-            da.SetData(2, gsaLoad.AreaLoad.GridAreaLoad.PolyLineDefinition);
+            da.SetData(2, new Rhino.Geometry.Polyline(gsaLoad.AreaLoad.Points));
             da.SetData(3, gsaLoad.AreaLoad.GridAreaLoad.AxisProperty);
             da.SetData(4, gsaLoad.AreaLoad.GridAreaLoad.Direction);
             var apiAreaForce = new Pressure(gsaLoad.AreaLoad.GridAreaLoad.Value,

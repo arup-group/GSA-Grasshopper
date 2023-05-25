@@ -83,6 +83,18 @@ namespace IntegrationTests.Parameters {
     [InlineData("MemberId")]
     [InlineData("Member2dBrep")]
     [InlineData("Member3dMesh")]
+    [InlineData("MaterialFromProp")]
+    [InlineData("MaterialFromGeo")]
+    [InlineData("SectionFromGeo")]
+    [InlineData("Prop2dFromGeo")]
+    [InlineData("Prop3dFromGeo")]
+    [InlineData("Plane")]
+    [InlineData("LoadCaseId")]
+    [InlineData("CaseId")]
+    [InlineData("CrvFromGridLoad")]
+    [InlineData("PtFromGridLoad")]
+    [InlineData("SrfFromGridLoad")]
+    [InlineData("BrepFromGridLoad")]
     public void TestCastTo(string groupIdentifier) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {

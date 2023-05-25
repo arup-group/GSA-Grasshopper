@@ -217,8 +217,11 @@ namespace GsaGH.Helpers.Export {
           }
 
           GsaGridLineLoad gridlnref = load.LineLoad;
-          if (unit != LengthUnit.Meter) {
-            gridlnref.GridLineLoad.PolyLineDefinition += "(" + Length.GetAbbreviation(unit) + ")";
+          if (unit != LengthUnit.Meter 
+            && gridlnref.GridLineLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
+            gridlnref.GridLineLoad.PolyLineDefinition = 
+              GridLoadHelper.ClearDefinitionForUnit(gridlnref.GridLineLoad.PolyLineDefinition) +
+              $"({Length.GetAbbreviation(unit)})";
           }
 
           gridplnsrf = gridlnref.GridPlaneSurface;
@@ -246,8 +249,9 @@ namespace GsaGH.Helpers.Export {
           PostHog.Load(load.LoadType, ReferenceType.None,
             load.AreaLoad.GridAreaLoad.Type.ToString());
           if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
-            load.AreaLoad.GridAreaLoad.PolyLineDefinition
-              += "(" + Length.GetAbbreviation(unit) + ")";
+              load.AreaLoad.GridAreaLoad.PolyLineDefinition =
+              GridLoadHelper.ClearDefinitionForUnit(load.AreaLoad.GridAreaLoad.PolyLineDefinition) +
+              $"({Length.GetAbbreviation(unit)})";
           }
 
           if (load.AreaLoad.GridPlaneSurface == null) {

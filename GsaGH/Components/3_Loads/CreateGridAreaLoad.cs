@@ -219,20 +219,11 @@ namespace GsaGH.Components {
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
           ctrlPts = polyline.ToList();
-          string desc = string.Empty;
-          for (int i = 0; i < ctrlPts.Count - 1; i++) {
-            if (i > 0) {
-              desc += " ";
-            }
-
-            plane.RemapToPlaneSpace(ctrlPts[i], out Point3d temppt);
-
-            // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
-            desc += "(" + temppt.X + "," + temppt.Y + ")";
-          }
+          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(ctrlPts, plane);
+          gridareaload.Points = points;
 
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
-          gridareaload.GridAreaLoad.PolyLineDefinition = desc;
+          gridareaload.GridAreaLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Brep edge to Polyline");
         }

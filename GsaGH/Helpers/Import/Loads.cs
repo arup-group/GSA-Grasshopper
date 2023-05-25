@@ -102,9 +102,16 @@ namespace GsaGH.Helpers.Import {
         var myload = new GsaGridAreaLoad {
           GridAreaLoad = gridAreaLoad,
           GridPlaneSurface
-            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit), };
-        var load = new GsaLoad(myload);
-        loads.Add(new GsaLoadGoo(load));
+            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit)
+        };
+
+        if (gridAreaLoad.PolyLineDefinition != string.Empty &&
+          gridAreaLoad.PolyLineDefinition.Contains('(')) {
+          myload.Points = GridLoadHelper.ConvertPoints(
+            gridAreaLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
+        }
+
+        loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
       }
 
       return loads;
@@ -132,9 +139,14 @@ namespace GsaGH.Helpers.Import {
         var myload = new GsaGridLineLoad {
           GridLineLoad = gridLineLoad,
           GridPlaneSurface
-            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit), };
+            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit)
+        };
 
-        myload.UpdatePoints(unit);
+        if (gridLineLoad.PolyLineDefinition != string.Empty &&
+          gridLineLoad.PolyLineDefinition.Contains('(')) {
+          myload.Points = GridLoadHelper.ConvertPoints(
+          gridLineLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
+        }
 
         loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
       }
