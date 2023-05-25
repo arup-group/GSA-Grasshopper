@@ -427,13 +427,13 @@ namespace GsaGH.Components {
               case AlignmentType.TopLeft:
               case AlignmentType.TopCentre:
               case AlignmentType.TopRight:
-                alignmentOffset.Z = mem2d.Property.Thickness * -1 / 2;
+                alignmentOffset.Z = mem2d.Prop2d.Thickness * -1 / 2;
                 break;
 
               case AlignmentType.BottomLeft:
               case AlignmentType.BottomCentre:
               case AlignmentType.BottomRight:
-                alignmentOffset.Z = mem2d.Property.Thickness / 2;
+                alignmentOffset.Z = mem2d.Prop2d.Thickness / 2;
                 break;
             }
 
@@ -444,7 +444,7 @@ namespace GsaGH.Components {
 
           if (elem2d != null) {
             var offsets = new List<GsaOffset>();
-            foreach (GsaProp2d prop in elem2d.Properties) {
+            foreach (GsaProp2d prop in elem2d.Prop2ds) {
               alignmentOffset = new GsaOffset();
               switch (alignmentType) {
                 case AlignmentType.TopLeft:

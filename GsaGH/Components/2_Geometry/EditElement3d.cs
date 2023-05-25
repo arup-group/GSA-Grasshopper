@@ -144,7 +144,7 @@ namespace GsaGH.Components {
           }
         }
 
-        elem.Properties = prop3Ds;
+        elem.Prop3ds = prop3Ds;
       }
 
       var ghgrp = new List<GH_Integer>();
@@ -241,7 +241,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetDataList(2, outMeshes);
       da.SetDataList(3,
-        new List<GsaProp3dGoo>(elem.Properties.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
+        new List<GsaProp3dGoo>(elem.Prop3ds.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6, elem.Names);

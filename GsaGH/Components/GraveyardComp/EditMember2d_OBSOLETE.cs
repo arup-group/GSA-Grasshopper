@@ -248,7 +248,7 @@ namespace GsaGH.Components {
           }
         }
 
-        mem.Property = prop2d;
+        mem.Prop2d = prop2d;
       }
 
       var ghGroup = new GH_Integer();
@@ -333,7 +333,7 @@ namespace GsaGH.Components {
       da.SetDataList(3, mem.InclusionPoints);
       da.SetDataList(4, mem.InclusionLines);
 
-      da.SetData(5, new GsaProp2dGoo(mem.Property));
+      da.SetData(5, new GsaProp2dGoo(mem.Prop2d));
       da.SetData(6, mem.Group);
 
       da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);

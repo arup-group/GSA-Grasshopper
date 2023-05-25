@@ -168,7 +168,7 @@ namespace GsaGH.Components {
           }
         }
 
-        elem.Properties = prop2Ds;
+        elem.Prop2ds = prop2Ds;
       }
 
       // 3 Group
@@ -306,7 +306,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
       da.SetDataList(3,
-        new List<GsaProp2dGoo>(elem.Properties.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
+        new List<GsaProp2dGoo>(elem.Prop2ds.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6,
