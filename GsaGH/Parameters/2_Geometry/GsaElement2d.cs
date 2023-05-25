@@ -93,7 +93,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp2d> Properties { get; set; } = new List<GsaProp2d>();
+    public List<GsaProp2d> Prop2ds { get; set; } = new List<GsaProp2d>();
     public List<List<int>> TopoInt { get; private set; }
     public List<Point3d> Topology { get; private set; }
     public DataTree<int> TopologyIDs {
@@ -129,7 +129,7 @@ namespace GsaGH.Parameters {
       Ids = new List<int>(new int[Mesh.Faces.Count]);
       var singleProp = new GsaProp2d();
       for (int i = 0; i < Mesh.Faces.Count; i++) {
-        Properties.Add(singleProp.Duplicate());
+        Prop2ds.Add(singleProp.Duplicate());
       }
     }
 
@@ -157,7 +157,7 @@ namespace GsaGH.Parameters {
       Ids = new List<int> {
         id,
       };
-      Properties = new List<GsaProp2d> {
+      Prop2ds = new List<GsaProp2d> {
         prop2d,
       };
     }
@@ -169,7 +169,7 @@ namespace GsaGH.Parameters {
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
       ApiElements = elements.Values.ToList();
       Ids = elements.Keys.ToList();
-      Properties = prop2ds;
+      Prop2ds = prop2ds;
     }
 
     public static Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
@@ -203,7 +203,7 @@ namespace GsaGH.Parameters {
 
       dup.Ids = Ids.ToList();
       dup.Mesh = (Mesh)Mesh.DuplicateShallow();
-      dup.Properties = Properties.ConvertAll(x => x.Duplicate());
+      dup.Prop2ds = Prop2ds.ConvertAll(x => x.Duplicate());
       dup.Topology = Topology;
       dup.TopoInt = TopoInt;
       return dup;

@@ -99,7 +99,7 @@ namespace GsaGH.Parameters {
       }
     }
     public PolyCurve PolyCurve { get; private set; }
-    public GsaProp2d Property { get; set; } = new GsaProp2d();
+    public GsaProp2d Prop2d { get; set; } = new GsaProp2d();
     public List<Point3d> Topology { get; private set; }
     public List<string> TopologyType { get; private set; }
     public MemberType Type {
@@ -232,7 +232,7 @@ namespace GsaGH.Parameters {
       Brep = RhinoConversions.BuildBrep(PolyCurve, _voidCrvs,
         new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
-      Property = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
+      Prop2d = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
     }
 
     public GsaMember2d Duplicate(bool cloneApiMember = false) {
@@ -246,7 +246,7 @@ namespace GsaGH.Parameters {
         dup.CloneApiObject();
       }
 
-      dup.Property = Property.Duplicate();
+      dup.Prop2d = Prop2d.Duplicate();
 
       if (Brep == null) {
         return dup;
@@ -378,7 +378,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
         Id = Id,
         ApiMember = ApiMember,
-        Property = Property.Duplicate(),
+        Prop2d = Prop2d.Duplicate(),
       };
 
       return dup;
