@@ -28,10 +28,6 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
         target = Value == null ? default : (TQ)(object)new GH_Point(Value.Point);
         return true;
@@ -39,9 +35,7 @@ namespace GsaGH.Parameters {
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
-          var ghint = new GH_Integer();
-          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
-          target = (TQ)(object)ghint;
+          target = (TQ)(object)new GH_Integer(Value.Id);
           return true;
         }
       }

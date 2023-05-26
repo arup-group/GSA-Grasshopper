@@ -15,15 +15,9 @@ namespace GsaGH.Parameters {
 
     public GsaCombinationCaseGoo(GsaCombinationCase item) : base(item) { }
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
-          var ghint = new GH_Integer();
-          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
-          target = (TQ)(object)ghint;
+          target = (TQ)(object)new GH_Integer(Value.Id);
           return true;
         }
       }

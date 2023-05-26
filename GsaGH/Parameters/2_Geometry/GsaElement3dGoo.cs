@@ -24,10 +24,6 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.DisplayMesh);
         return true;
