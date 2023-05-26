@@ -242,9 +242,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var modifier = new GsaSectionModifier();
-      var gsaModifier = new GsaSectionModifier();
-      if (da.GetData(0, ref gsaModifier)) {
-        modifier = gsaModifier.Duplicate();
+      GsaSectionModifierGoo modifierGoo = null;
+      if (da.GetData(0, ref modifierGoo)) {
+        modifier = modifierGoo.Value.Duplicate();
       }
 
       if (modifier == null) {
@@ -259,8 +259,8 @@ namespace GsaGH.Components {
             modifier.AreaModifier = res;
           } else {
             try {
-              modifier.AreaModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true)
-               .Value;
+              modifier.AreaModifier 
+                = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true).Value;
             } catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;

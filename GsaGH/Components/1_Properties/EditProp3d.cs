@@ -55,10 +55,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaProp3d = new GsaProp3d();
+      GsaProp3dGoo prop3dGoo = null;
       var prop = new GsaProp3d();
-      if (da.GetData(0, ref gsaProp3d)) {
-        prop = gsaProp3d.Duplicate();
+      if (da.GetData(0, ref prop3dGoo)) {
+        prop = prop3dGoo.Value.Duplicate();
       }
 
       if (prop != null) {
@@ -72,7 +72,7 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
           if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            prop.Material = materialGoo.Value ?? new GsaMaterial();
+            prop.Material = materialGoo.Value.Duplicate() ?? new GsaMaterial();
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop.MaterialId = id;

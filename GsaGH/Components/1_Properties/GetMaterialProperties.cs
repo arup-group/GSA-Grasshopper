@@ -162,38 +162,36 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaMaterial gsaMaterial = null;
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-          gsaMaterial = materialGoo.Value.Duplicate();
-        }
+      GsaMaterial material = null;
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(0, ref materialGoo)) {
+        material = materialGoo.Value.Duplicate();
       }
 
-      if (gsaMaterial == null) {
+      if (material == null) {
         return;
       }
 
-      if (gsaMaterial.AnalysisMaterial == null) {
+      if (material.AnalysisMaterial == null) {
         this.AddRuntimeWarning("One or more materials are not custom material");
         return;
       }
 
       var eModulus
-        = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus,
+        = new Pressure(material.AnalysisMaterial.ElasticModulus,
           PressureUnit.Pascal); //create unit from SI as API is in SI units
       eModulus = new Pressure(eModulus.As(_stressUnit), _stressUnit);
       da.SetData(0, new GH_UnitNumber(eModulus));
 
-      da.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
+      da.SetData(1, material.AnalysisMaterial.PoissonsRatio);
 
-      var density = new Density(gsaMaterial.AnalysisMaterial.Density,
+      var density = new Density(material.AnalysisMaterial.Density,
         DensityUnit.KilogramPerCubicMeter); //create unit from SI as API is in SI units
       density = new Density(density.As(_densityUnit), _densityUnit);
       da.SetData(2, new GH_UnitNumber(density));
 
       var deltaT = new CoefficientOfThermalExpansion(
-        gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion,
+        material.AnalysisMaterial.CoefficientOfThermalExpansion,
         CoefficientOfThermalExpansionUnit
          .InverseDegreeCelsius); //create unit from SI as API is in SI units
       CoefficientOfThermalExpansionUnit temp

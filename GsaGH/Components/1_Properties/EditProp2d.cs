@@ -164,10 +164,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaProp2d = new GsaProp2d();
+      GsaProp2dGoo prop2dGoo = null;
       var prop = new GsaProp2d();
-      if (da.GetData(0, ref gsaProp2d)) {
-        prop = gsaProp2d.Duplicate();
+      if (da.GetData(0, ref prop2dGoo)) {
+        prop = prop2dGoo.Value.Duplicate();
       }
 
       if (prop != null) {

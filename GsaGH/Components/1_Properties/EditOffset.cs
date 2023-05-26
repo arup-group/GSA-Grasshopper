@@ -135,9 +135,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var offset = new GsaOffset();
-      var gsaoffset = new GsaOffset();
-      if (da.GetData(0, ref gsaoffset)) {
-        offset = gsaoffset.Duplicate();
+      GsaOffsetGoo offsetGoo = null;
+      if (da.GetData(0, ref offsetGoo)) {
+        offset = offsetGoo.Value.Duplicate();
       }
 
       if (offset == null) {

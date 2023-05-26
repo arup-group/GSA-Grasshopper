@@ -156,7 +156,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
       ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (member3ds == null && member3ds.Count > 0) {
+      if (member3ds == null) {
         return;
       }
 

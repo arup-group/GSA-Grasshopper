@@ -96,16 +96,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaElement2d = new GsaElement2d();
-      if (!da.GetData(0, ref gsaElement2d)) {
-        return;
+      GsaElement2dGoo element2dGoo = null;
+      var elem = new GsaElement2d();
+      if (da.GetData(0, ref element2dGoo)) {
+        elem = element2dGoo.Value.Duplicate(true);
       }
-
-      if (gsaElement2d == null) {
-        this.AddRuntimeWarning("Element2D input is null");
-      }
-
-      GsaElement2d elem = gsaElement2d.Duplicate(true);
 
       // #### inputs ####
 
