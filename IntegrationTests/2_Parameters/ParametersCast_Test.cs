@@ -95,6 +95,10 @@ namespace IntegrationTests.Parameters {
     [InlineData("PtFromGridLoad")]
     [InlineData("SrfFromGridLoad")]
     [InlineData("BrepFromGridLoad")]
+    [InlineData("GeoMorph")]
+    [InlineData("GeoTransform")]
+    [InlineData("LoadMorph")]
+    [InlineData("LoadTransform")]
     public void TestCastTo(string groupIdentifier) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
