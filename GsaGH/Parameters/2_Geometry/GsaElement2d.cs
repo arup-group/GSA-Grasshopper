@@ -147,21 +147,6 @@ namespace GsaGH.Parameters {
       Ids = new List<int>(new int[Mesh.Faces.Count]);
     }
 
-    internal GsaElement2d(Element element, int id, Mesh mesh, GsaProp2d prop2d) {
-      Mesh = mesh;
-      Topology = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
-      TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
-      ApiElements = new List<Element> {
-        element,
-      };
-      Ids = new List<int> {
-        id,
-      };
-      Prop2ds = new List<GsaProp2d> {
-        prop2d,
-      };
-    }
-
     internal GsaElement2d(
       ConcurrentDictionary<int, Element> elements, Mesh mesh, List<GsaProp2d> prop2ds) {
       Mesh = mesh;
