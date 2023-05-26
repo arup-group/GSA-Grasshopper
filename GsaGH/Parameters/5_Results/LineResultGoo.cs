@@ -55,11 +55,6 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
-        target = (TQ)(object)Value;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
         target = (TQ)(object)new GH_Line(Value);
         return true;

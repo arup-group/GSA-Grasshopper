@@ -71,11 +71,6 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value.IsValid ? (TQ)(object)Value : (TQ)(object)ValidMesh;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value.IsValid ? (TQ)(object)new GH_Mesh(Value) :
           (TQ)(object)new GH_Mesh(ValidMesh);

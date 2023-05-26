@@ -31,11 +31,6 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Point3d))) {
-        target = (TQ)(object)Value;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
         target = (TQ)(object)new GH_Point(Value);
         return true;

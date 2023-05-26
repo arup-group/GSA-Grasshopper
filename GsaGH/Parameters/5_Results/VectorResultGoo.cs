@@ -43,11 +43,6 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Vector3d))) {
-        target = (TQ)(object)Value;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
         target = (TQ)(object)new GH_Vector(Value);
         return true;
