@@ -72,8 +72,8 @@ namespace GsaGH.Helpers.Export {
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
 
-        GsaProp2d prop = (i > element2d.Properties.Count - 1) ? element2d.Properties.Last() :
-          element2d.Properties[i];
+        GsaProp2d prop = (i > element2d.Prop2ds.Count - 1) ? element2d.Prop2ds.Last() :
+          element2d.Prop2ds[i];
         apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref apiProp2ds, ref apiMaterials,
           ref existingAxes, unit);
 
@@ -118,8 +118,8 @@ namespace GsaGH.Helpers.Export {
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
 
-        GsaProp3d prop = (i > element3d.Properties.Count - 1) ? element3d.Properties.Last() :
-          element3d.Properties[i];
+        GsaProp3d prop = (i > element3d.Prop3ds.Count - 1) ? element3d.Prop3ds.Last() :
+          element3d.Prop3ds[i];
         apiMeshElement.Property = Prop3ds.ConvertProp3d(prop, ref apiProp3ds, ref apiMaterials);
 
         AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false, ref apiElements);

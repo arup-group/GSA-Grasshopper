@@ -109,10 +109,11 @@ namespace GsaGH.Components {
             break;
         }
 
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, message);
+        this.AddRuntimeWarning(message);
+        return;
       }
 
-      DA.SetData(0, list);
+      DA.SetData(0, new GsaListGoo(list));
     }
 
     protected override void UpdateUIFromSelectedItems() {

@@ -1,15 +1,17 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
   ///   This class provides a parameter interface for the <see cref="GsaGridPlaneSurfaceGoo" /> type.
   /// </summary>
-  public class GsaGridPlaneParameter : GH_OasysPersistentGeometryParam<GsaGridPlaneSurfaceGoo> {
+  public class GsaGridPlaneSurfaceParameter : GH_OasysPersistentGeometryParam<GsaGridPlaneSurfaceGoo> {
     public override Guid ComponentGuid => new Guid("161e2439-83b6-4fda-abb9-2ed938612530");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override string InstanceDescription
@@ -19,15 +21,39 @@ namespace GsaGH.Parameters {
       => SourceCount == 0 ? GsaGridPlaneSurfaceGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.GridPlaneParam;
 
-    public GsaGridPlaneParameter() : base(new GH_InstanceDescription(GsaGridPlaneSurfaceGoo.Name,
+    public GsaGridPlaneSurfaceParameter() : base(new GH_InstanceDescription(GsaGridPlaneSurfaceGoo.Name,
       GsaGridPlaneSurfaceGoo.NickName, GsaGridPlaneSurfaceGoo.Description + " parameter",
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
-
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaGridPlaneSurface) ?
-        new GsaGridPlaneSurfaceGoo((GsaGridPlaneSurface)data) : base.PreferredCast(data);
+      if (data.GetType() == typeof(GsaLoadGoo)) { 
+        var loadGoo = (GsaLoadGoo)data;
+        if (loadGoo.Value != null) {
+          switch (loadGoo.Value.LoadType) {
+            case GsaLoad.LoadTypes.GridPoint:
+              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.PointLoad.GridPlaneSurface);
+
+            case GsaLoad.LoadTypes.GridLine:
+              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.LineLoad.GridPlaneSurface);
+
+            case GsaLoad.LoadTypes.GridArea:
+              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.AreaLoad.GridPlaneSurface);
+
+            default:
+              this.AddRuntimeError(
+                $"Load is {loadGoo.Value.LoadType} but must be a GridLoad to convert to GridPlaneSurface");
+              return new GsaGridPlaneSurfaceGoo(null);
+          }
+        }
+      }
+
+      var pln = new Plane();
+      if (GH_Convert.ToPlane(data, ref pln, GH_Conversion.Both)) {
+        return new GsaGridPlaneSurfaceGoo(new GsaGridPlaneSurface(pln));
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to GridPlaneSurface");
+      return new GsaGridPlaneSurfaceGoo(null);
     }
   }
 }

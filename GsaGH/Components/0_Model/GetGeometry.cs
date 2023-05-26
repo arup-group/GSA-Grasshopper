@@ -470,8 +470,8 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         Task<SolveResults> tsk = null;
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo) {
-            ghTyp.CastTo(ref gsaModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            gsaModel = modelGoo.Value.Clone();
           } else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
@@ -546,8 +546,8 @@ namespace GsaGH.Components {
         var gsaModel = new GsaModel();
         var ghTyp = new GH_ObjectWrapper();
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo) {
-            ghTyp.CastTo(ref gsaModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            gsaModel = modelGoo.Value.Clone();
           } else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
@@ -621,7 +621,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement2dGoo>();
           foreach (GsaElement2dGoo element in results.Elem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Properties.First().Id));
+            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
           }
 
           data.SetDataTree(2, tree);
@@ -714,7 +714,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaMember2dGoo>();
           foreach (GsaMember2dGoo element in results.Mem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Property.Id));
+            tree.Add(element, new GH_Path(element.Value.Prop2d.Id));
           }
 
           data.SetDataTree(5, tree);

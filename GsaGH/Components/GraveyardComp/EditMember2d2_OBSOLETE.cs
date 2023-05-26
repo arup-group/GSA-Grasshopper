@@ -203,8 +203,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(5, ref ghTyp)) {
         var prop2d = new GsaProp2d();
-        if (ghTyp.Value is GsaProp2dGoo) {
-          ghTyp.CastTo(ref prop2d);
+        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
+          prop2d = prop2DGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             prop2d = new GsaProp2d(id);
@@ -215,7 +215,7 @@ namespace GsaGH.Components {
           }
         }
 
-        mem.Property = prop2d;
+        mem.Prop2d = prop2d;
       }
 
       var ghGroup = new GH_Integer();
@@ -294,7 +294,7 @@ namespace GsaGH.Components {
       da.SetData(2, mem.Brep);
       da.SetDataList(3, mem.InclusionPoints);
       da.SetDataList(4, mem.InclusionLines);
-      da.SetData(5, new GsaProp2dGoo(mem.Property));
+      da.SetData(5, new GsaProp2dGoo(mem.Prop2d));
       da.SetData(6, mem.Group);
       da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
       da.SetData(8, Mappings.analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);

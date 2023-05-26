@@ -115,32 +115,32 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo value: {
-            gridPlaneSurface = value.Value.Duplicate();
-            plane = gridPlaneSurface.Plane;
-            planeSet = true;
-            break;
-          }
-          case Plane _:
-            ghTyp.CastTo(ref plane);
+          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
+              gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
+              plane = gridPlaneSurface.Plane;
+              planeSet = true;
+              break;
+            }
+          case Plane pln:
+            plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             planeSet = true;
             break;
 
           default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gridlineload.GridLineLoad.GridSurface = id;
-              gridlineload.GridPlaneSurface = null;
-            } else {
-              this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the line's best-fit plane will be used");
-              return;
-            }
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gridlineload.GridLineLoad.GridSurface = id;
+                gridlineload.GridPlaneSurface = null;
+              } else {
+                this.AddRuntimeError(
+                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                  + Environment.NewLine
+                  + "If no input here then the line's best-fit plane will be used");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 
@@ -165,22 +165,10 @@ namespace GsaGH.Components {
             controlPoints = ln.ToList();
           }
 
-          string desc = string.Empty;
-
-          for (int i = 0; i < controlPoints.Count; i++) {
-            if (i > 0) {
-              desc += " ";
-            }
-
-            plane.RemapToPlaneSpace(controlPoints[i], out Point3d temppt);
-            // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
-            desc += "(" + temppt.X + "," + temppt.Y + ")";
-          }
-
-          desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
-
+          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(controlPoints, plane);
+          gridlineload.Points = points;
+          gridlineload.GridLineLoad.PolyLineDefinition = definition;
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
-          gridlineload.GridLineLoad.PolyLineDefinition = desc;
         } else {
           this.AddRuntimeError("Could not convert Curve to Polyline");
         }
@@ -241,8 +229,8 @@ namespace GsaGH.Components {
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
       double load2 = load1;
-      if (da.GetData(8, ref load2)) {
-        load2 = ((ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit, true))
+      if (Params.Input[8].SourceCount > 0) {
+        load2 = ((ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit))
          .NewtonsPerMeter;
       }
 

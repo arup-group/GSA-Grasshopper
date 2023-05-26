@@ -391,7 +391,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Element filter list", "El",
         "Filter import by list." + Environment.NewLine + "Element list should take the form:"

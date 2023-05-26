@@ -415,7 +415,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Node filter list", "No",
         "Filter results by list (by default 'all')" + Environment.NewLine
@@ -975,7 +975,7 @@ namespace GsaGH.Components {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       } catch (Exception e) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+        this.AddRuntimeWarning(e.Message);
         return;
       }
       _legend = new Bitmap(

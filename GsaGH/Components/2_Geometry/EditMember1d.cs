@@ -207,18 +207,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember1d = new GsaMember1d();
       var mem = new GsaMember1d();
-      if (da.GetData(0, ref gsaMember1d)) {
-        if (gsaMember1d == null) {
-          this.AddRuntimeWarning("Member1D input is null");
-        }
-
-        mem = gsaMember1d.Duplicate(true);
-      }
-
-      if (mem == null) {
-        return;
+      GsaMember1dGoo member1dGoo = null;
+      if (da.GetData(0, ref member1dGoo)) {
+        mem = member1dGoo.Value.Duplicate(true);
       }
 
       var ghId = new GH_Integer();
@@ -244,8 +236,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo) {
-          ghTyp.CastTo(ref section);
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          section = sectionGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             section = new GsaSection(id);
@@ -330,10 +322,8 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(13, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          mem.OrientationNode = node;
+        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+          mem.OrientationNode = nodeGoo.Value.Duplicate();
         } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }
@@ -353,13 +343,15 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(16, ref ghTyp)) {
-        var fls = new GsaBucklingLengthFactors();
-        if (ghTyp.Value is GsaBucklingLengthFactorsGoo) {
-          ghTyp.CastTo(ref fls);
+        var bucklingLengthFactors = new GsaBucklingLengthFactors();
+        if (ghTyp.Value is GsaBucklingLengthFactorsGoo blfGoo) {
+          bucklingLengthFactors = blfGoo.Value.Duplicate();
           mem.ApiMember.MomentAmplificationFactorStrongAxis
-            = fls.MomentAmplificationFactorStrongAxis;
-          mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
+            = bucklingLengthFactors.MomentAmplificationFactorStrongAxis;
+          mem.ApiMember.MomentAmplificationFactorWeakAxis 
+            = bucklingLengthFactors.MomentAmplificationFactorWeakAxis;
+          mem.ApiMember.EquivalentUniformMomentFactor 
+            = bucklingLengthFactors.EquivalentUniformMomentFactor;
         } else {
           this.AddRuntimeWarning("Unable to change buckling length factors");
         }
@@ -388,8 +380,7 @@ namespace GsaGH.Components {
 
       if ((mem.Type1D == ElementType.BAR || mem.Type1D == ElementType.TIE 
         || mem.Type1D == ElementType.STRUT) && mem.MeshSize != 0) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-          $"Element type is {mem.Type1D} and mesh size is not zero. " +
+        this.AddRuntimeWarning($"Element type is {mem.Type1D} and mesh size is not zero. " +
           Environment.NewLine + $"This may cause model instabilities.");
       }
 

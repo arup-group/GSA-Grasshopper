@@ -112,7 +112,7 @@ namespace GsaGH.Parameters {
         Prop3d = Prop3d.Duplicate(),
       };
       if (cloneApiMember) {
-        dup.CloneApiObject();
+        dup.ApiMember = GetAPI_MemberClone();
       } else {
         dup.ApiMember = ApiMember;
       }
@@ -175,6 +175,7 @@ namespace GsaGH.Parameters {
       var mem = new Member {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
+        IsIntersector = ApiMember.IsIntersector,
         MeshSize = ApiMember.MeshSize,
         Name = ApiMember.Name,
         Offset = ApiMember.Offset,

@@ -97,10 +97,10 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
-          mem.Property = prop2dGoo.Value;
+          mem.Prop2d = prop2dGoo.Value;
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            mem.Property = new GsaProp2d(id);
+            mem.Prop2d = new GsaProp2d(id);
           } else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");

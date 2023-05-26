@@ -69,7 +69,7 @@ namespace GsaGH.Components {
           prop2Ds.Add(prop2d);
         }
 
-        elem.Properties = prop2Ds;
+        elem.Prop2ds = prop2Ds;
       }
 
       da.SetData(0, new GsaElement2dGoo(elem));

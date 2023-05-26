@@ -22,18 +22,18 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get GSA reaction forces
+  ///   Component to get GSA spring reaction forces
   /// </summary>
-  public class ReactionForce : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
+  public class SpringReactionForce : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ReactionForces;
+    protected override Bitmap Icon => Resources.SpringReactionForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public ReactionForce() : base("Reaction Forces", "ReacForce", "Reaction Force result values",
-      CategoryName.Name(), SubCategoryName.Cat5()) {
+    public SpringReactionForce() : base("Spring Forces", "SpringForce",
+      "Spring Reaction Force result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
@@ -85,7 +85,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Node filter list", "No",
         "Filter results by list (by default 'all')" + Environment.NewLine
@@ -163,8 +163,10 @@ namespace GsaGH.Components {
             return;
         }
 
-        (List<GsaResultsValues> vals, List<int> sortedIDs)
-          = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
+        Tuple<List<GsaResultsValues>, List<int>> resultgetter
+          = result.SpringReactionForceValues(nodeList, _forceUnit, _momentUnit);
+        List<GsaResultsValues> vals = resultgetter.Item1;
+        List<int> sortedIDs = resultgetter.Item2;
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -190,9 +192,9 @@ namespace GsaGH.Components {
           {
             switch (item) {
               case 0: {
-                foreach (int key in sortedIDs) {
-                  ids.Add(key);
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].XyzResults[key];
+                foreach (int id in sortedIDs) {
+                  ids.Add(id);
+                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].XyzResults[id];
                   GsaResultQuantity values = res[0]; // there is only one result per node
                   transX.Add(
                     new GH_UnitNumber(
@@ -241,7 +243,7 @@ namespace GsaGH.Components {
       da.SetDataTree(7, outRotXyz);
       da.SetDataTree(8, outIDs);
 
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force);
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force, "Spring");
     }
 
     protected override void UpdateUIFromSelectedItems() {

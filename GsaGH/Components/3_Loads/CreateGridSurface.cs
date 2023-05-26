@@ -169,7 +169,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
         GH_ParamAccess.item);
     }
 

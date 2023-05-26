@@ -23,47 +23,7 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaMember.
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      var brep = new Brep();
-      if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both)) {
-        var member = new GsaMember3d(brep);
-        Value = member;
-        return true;
-      }
-
-      var mesh = new Mesh();
-
-      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both)) {
-        return false;
-      } else {
-        var member = new GsaMember3d(mesh);
-        Value = member;
-        return true;
-      }
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaMember into some other type Q.
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null ? default : (TQ)(object)Value.SolidMesh;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         if (Value == null) {
           target = default;
@@ -78,15 +38,10 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
         }
-
-        return true;
       }
 
       target = default;
@@ -163,7 +118,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.SolidMesh;
+      return Value == null ? null : (GeometryBase)Value.SolidMesh;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

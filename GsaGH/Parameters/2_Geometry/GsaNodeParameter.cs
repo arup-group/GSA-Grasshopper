@@ -1,10 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
 using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -26,13 +26,10 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
 
     protected override GsaNodeGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaNode)) {
-        return new GsaNodeGoo((GsaNode)data);
-      }
-
       var pt = new Point3d();
       if (!GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Node");
+        return new GsaNodeGoo(null);
       }
 
       var node = new GsaNode(pt);

@@ -15,7 +15,7 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-  public class LoadProp : GH_OasysDropDownComponent {
+  public class LoadProperties : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public LoadProp() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
+    public LoadProperties() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
@@ -201,9 +201,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridPoint:
             da.SetData(0, gsaLoad.PointLoad.GridPointLoad.Case);
             da.SetData(1, gsaLoad.PointLoad.GridPointLoad.Name);
-            da.SetData(2,
-              "(" + gsaLoad.PointLoad.GridPointLoad.X + "," + gsaLoad.PointLoad.GridPointLoad.Y
-              + ")");
+            da.SetData(2, new GH_Point(gsaLoad.PointLoad.GetPoint(_lengthUnit)));
             da.SetData(3, gsaLoad.PointLoad.GridPointLoad.AxisProperty);
             da.SetData(4, gsaLoad.PointLoad.GridPointLoad.Direction);
             var apiPointForce = new Force(gsaLoad.PointLoad.GridPointLoad.Value, ForceUnit.Newton);
@@ -215,7 +213,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridLine:
             da.SetData(0, gsaLoad.LineLoad.GridLineLoad.Case);
             da.SetData(1, gsaLoad.LineLoad.GridLineLoad.Name);
-            da.SetData(2, gsaLoad.LineLoad.GridLineLoad.PolyLineDefinition);
+            da.SetData(2, new Rhino.Geometry.Polyline(gsaLoad.LineLoad.Points));
             da.SetData(3, gsaLoad.LineLoad.GridLineLoad.AxisProperty);
             da.SetData(4, gsaLoad.LineLoad.GridLineLoad.Direction);
             var apiLineForce1 = new ForcePerLength(gsaLoad.LineLoad.GridLineLoad.ValueAtStart,
@@ -234,7 +232,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridArea:
             da.SetData(0, gsaLoad.AreaLoad.GridAreaLoad.Case);
             da.SetData(1, gsaLoad.AreaLoad.GridAreaLoad.Name);
-            da.SetData(2, gsaLoad.AreaLoad.GridAreaLoad.PolyLineDefinition);
+            da.SetData(2, new Rhino.Geometry.Polyline(gsaLoad.AreaLoad.Points));
             da.SetData(3, gsaLoad.AreaLoad.GridAreaLoad.AxisProperty);
             da.SetData(4, gsaLoad.AreaLoad.GridAreaLoad.Direction);
             var apiAreaForce = new Pressure(gsaLoad.AreaLoad.GridAreaLoad.Value,

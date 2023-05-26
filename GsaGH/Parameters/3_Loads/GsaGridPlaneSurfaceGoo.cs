@@ -20,28 +20,6 @@ namespace GsaGH.Parameters {
 
     public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaGridPlane.
-      if (source == null) {
-        return false;
-      }
-
-      if (typeof(GsaGridPlaneSurface).IsAssignableFrom(source.GetType())) {
-        Value = (GsaGridPlaneSurface)source;
-        return true;
-      }
-
-      var pln = new Plane();
-      if (!GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both)) {
-        return false;
-      }
-
-      var gridplane = new GsaGridPlaneSurface(pln);
-      Value = gridplane;
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       // This function is called when Grasshopper needs to convert this
       if (base.CastTo<TQ>(ref target)) {

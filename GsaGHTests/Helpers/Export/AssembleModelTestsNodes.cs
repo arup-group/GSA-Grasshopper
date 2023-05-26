@@ -52,5 +52,39 @@ namespace GsaGHTests.Helpers.Export {
 
       TestNode(node.Value, LengthUnit.Inch, 42, modelGoo.Value);
     }
+
+    [Fact]
+    public void AssembleModelFromModelsWithNodesTest() {
+      var node1 = new GsaNodeGoo(new GsaNode());
+      node1.Value.Colour = Color.Red;
+      node1.Value.Name = "name Name Name";
+      node1.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
+      node1.Value.Point = new Point3d(1, 1, 1);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp1 = 
+        CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
+          node1,
+        }, null, null, null, null, null, ModelUnit.M);
+
+      var node2 = new GsaNodeGoo(new GsaNode());
+      node2.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
+      node2.Value.Point = new Point3d(-0.5, 1, -1);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp2 =
+        CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
+          node2,
+        }, null, null, null, null, null, ModelUnit.Cm);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp =
+        CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
+          (GsaModelGoo)ComponentTestHelper.GetOutput(comp1),
+          (GsaModelGoo)ComponentTestHelper.GetOutput(comp2),
+        });
+
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+
+      TestNode(node1.Value, LengthUnit.Meter, 1, modelGoo.Value);
+      TestNode(node2.Value, LengthUnit.Centimeter, 2, modelGoo.Value);
+    }
   }
 }

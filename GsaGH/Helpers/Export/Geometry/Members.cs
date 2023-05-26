@@ -100,7 +100,7 @@ namespace GsaGH.Helpers.Export {
           + error);
       }
 
-      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref apiProp2ds,
+      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Prop2d, ref apiProp2ds,
         ref apiMaterials, ref existingAxes, unit);
 
       AddMember(member2d.Id, member2d.Guid, apiMember, ref apiMembers);

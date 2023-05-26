@@ -157,7 +157,7 @@ namespace GsaGHTests.Parameters {
       var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
         new Force(4, ForceUnit.Kilonewton), 0);
 
-      string expectedString = "A GSA result vector3d type.";
+      string expectedString = "A GSA result vector type.";
 
       Assert.Equal(expectedString, obj.TypeDescription);
     }
@@ -167,7 +167,7 @@ namespace GsaGHTests.Parameters {
       var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero,
         new Force(4, ForceUnit.Kilonewton), 0);
 
-      string expectedString = "Result Vector3d";
+      string expectedString = "Result Vector";
 
       Assert.Equal(expectedString, obj.TypeName);
     }

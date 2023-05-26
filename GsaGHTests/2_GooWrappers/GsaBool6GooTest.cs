@@ -1,4 +1,7 @@
-﻿using GsaGH.Parameters;
+﻿using Grasshopper.Kernel.Types;
+using GsaGH.Components;
+using GsaGH.Parameters;
+using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -9,16 +12,17 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(true)]
     [InlineData(false)]
     public void CastFromBoolTest(bool b) {
-      var goo = new GsaBool6Goo(new GsaBool6());
+      var param = new GsaBool6Parameter();
+      param.CreateAttributes();
+      ComponentTestHelper.SetInput(param, new GH_Boolean(b));
+      var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
 
-      goo.CastFrom(b);
-
-      Assert.Equal(b, goo.Value.X);
-      Assert.Equal(b, goo.Value.Y);
-      Assert.Equal(b, goo.Value.Z);
-      Assert.Equal(b, goo.Value.Xx);
-      Assert.Equal(b, goo.Value.Yy);
-      Assert.Equal(b, goo.Value.Zz);
+      Assert.Equal(b, output.Value.X);
+      Assert.Equal(b, output.Value.Y);
+      Assert.Equal(b, output.Value.Z);
+      Assert.Equal(b, output.Value.Xx);
+      Assert.Equal(b, output.Value.Yy);
+      Assert.Equal(b, output.Value.Zz);
     }
 
     [Theory]
@@ -37,16 +41,17 @@ namespace GsaGHTests.GooWrappers {
     public void CastFromStringtest(
       string s, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy,
       bool expectedZz) {
-      var goo = new GsaBool6Goo(new GsaBool6());
+      var param = new GsaBool6Parameter();
+      param.CreateAttributes();
+      ComponentTestHelper.SetInput(param, new GH_String(s));
+      var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
 
-      goo.CastFrom(s);
-
-      Assert.Equal(expectedX, goo.Value.X);
-      Assert.Equal(expectedY, goo.Value.Y);
-      Assert.Equal(expectedZ, goo.Value.Z);
-      Assert.Equal(expectedXx, goo.Value.Xx);
-      Assert.Equal(expectedYy, goo.Value.Yy);
-      Assert.Equal(expectedZz, goo.Value.Zz);
+      Assert.Equal(expectedX, output.Value.X);
+      Assert.Equal(expectedY, output.Value.Y);
+      Assert.Equal(expectedZ, output.Value.Z);
+      Assert.Equal(expectedXx, output.Value.Xx);
+      Assert.Equal(expectedYy, output.Value.Yy);
+      Assert.Equal(expectedZz, output.Value.Zz);
     }
   }
 }

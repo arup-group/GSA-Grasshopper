@@ -24,8 +24,7 @@ namespace GsaGHTests.Components.Loads {
       GH_OasysDropDownComponent comp = ComponentMother();
 
       var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      GsaGridPlaneSurface gridPlane = null;
-      output.CastTo(ref gridPlane);
+      GsaGridPlaneSurface gridPlane = output.Value;
 
       Assert.Equal(42, gridPlane.GridPlaneId);
       Assert.Equal("10", gridPlane.Elevation);
