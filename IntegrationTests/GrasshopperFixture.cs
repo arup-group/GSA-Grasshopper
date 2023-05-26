@@ -56,7 +56,7 @@ namespace IntegrationTests {
 
       LoadRefs();
       Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      //TryGsaCom();
+      TryGsaCom();
 
       InitializeCore();
 
