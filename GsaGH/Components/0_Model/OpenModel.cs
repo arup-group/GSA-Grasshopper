@@ -142,15 +142,6 @@ namespace GsaGH.Components {
             this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
             return;
           }
-          case Model _: {
-            ghTyp.CastTo(ref model);
-            var gsaModel = new GsaModel {
-              Model = model,
-            };
-
-            da.SetData(0, new GsaModelGoo(gsaModel));
-            return;
-          }
           default:
             this.AddRuntimeError("Unable to open Model");
             return;

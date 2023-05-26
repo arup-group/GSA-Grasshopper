@@ -147,7 +147,7 @@ namespace GsaGH.Components {
           if (GsaSection.ValidProfile(profile)) {
             gsaSection = new GsaSection(profile);
           } else {
-            this.AddRuntimeWarning("Invalid profile syntax: " + profile);
+            this.AddRuntimeError("Invalid profile syntax: " + profile);
             return;
           }
         }

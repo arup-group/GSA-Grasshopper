@@ -176,10 +176,8 @@ namespace GsaGH.Components {
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
           var pt = new Point3d();
-          if (ghObjectWrapper.Value is GsaNodeGoo) {
-            var gsanode = new GsaNode();
-            ghObjectWrapper.CastTo(ref gsanode);
-            nodes.Add(gsanode.Duplicate(true));
+          if (ghObjectWrapper.Value is GsaNodeGoo nodeGoo) {
+            nodes.Add(nodeGoo.Value.Duplicate(true));
           } else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {
@@ -200,27 +198,20 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper ghType in ghTypes) {
           Curve crv = null;
           switch (ghType.Value) {
-            case GsaElement1dGoo _: {
-              var gsaelem1d = new GsaElement1d();
-              ghType.CastTo(ref gsaelem1d);
-              elem1ds.Add(gsaelem1d.Duplicate(true));
+            case GsaElement1dGoo element1DGoo: {
+              elem1ds.Add(element1DGoo.Value.Duplicate(true));
               break;
             }
-            case GsaMember1dGoo _: {
-              var gsamem1d = new GsaMember1d();
-              ghType.CastTo(ref gsamem1d);
-              mem1ds.Add(gsamem1d.Duplicate(true));
+            case GsaMember1dGoo member1DGoo: {
+              mem1ds.Add(member1DGoo.Value.Duplicate(true));
               break;
             }
             default: {
               if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
                 crvs.Add(crv.DuplicateCurve());
               } else {
-                string type = ghType.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", string.Empty);
-                type = type.Replace("Goo", string.Empty);
-                this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
-                  + type + " to curve or 1D Member");
+                this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
+                  + $"{ghType.GetTypeName()} to curve or 1D Member");
               }
 
               break;
@@ -239,8 +230,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo) {
-          ghTyp.CastTo(ref prop2d);
+        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
+          prop2d = prop2DGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;

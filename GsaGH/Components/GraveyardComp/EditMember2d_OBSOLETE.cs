@@ -236,8 +236,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(5, ref ghTyp)) {
         var prop2d = new GsaProp2d();
-        if (ghTyp.Value is GsaProp2dGoo) {
-          ghTyp.CastTo(ref prop2d);
+        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
+          prop2d = prop2DGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d = new GsaProp2d(idd);

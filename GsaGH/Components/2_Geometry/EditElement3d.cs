@@ -130,9 +130,8 @@ namespace GsaGH.Components {
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var prop3d = new GsaProp3d();
-          if (ghTyp.Value is GsaProp3dGoo) {
-            ghTyp.CastTo(ref prop3d);
-            prop3Ds.Add(prop3d);
+          if (ghTyp.Value is GsaProp3dGoo prop3DGoo) {
+            prop3Ds.Add(prop3DGoo.Value.Duplicate());
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop3Ds.Add(new GsaProp3d(id));

@@ -470,8 +470,8 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         Task<SolveResults> tsk = null;
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo) {
-            ghTyp.CastTo(ref gsaModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            gsaModel = modelGoo.Value.Clone();
           } else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
@@ -546,8 +546,8 @@ namespace GsaGH.Components {
         var gsaModel = new GsaModel();
         var ghTyp = new GH_ObjectWrapper();
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo) {
-            ghTyp.CastTo(ref gsaModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            gsaModel = modelGoo.Value.Clone();
           } else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;

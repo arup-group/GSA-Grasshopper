@@ -165,8 +165,8 @@ namespace GsaGH.Components {
       GsaMaterial gsaMaterial = null;
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaMaterialGoo) {
-          ghTyp.CastTo(ref gsaMaterial);
+        if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+          gsaMaterial = materialGoo.Value.Duplicate();
         }
       }
 

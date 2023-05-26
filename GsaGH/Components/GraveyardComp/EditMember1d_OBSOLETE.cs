@@ -222,8 +222,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo) {
-          ghTyp.CastTo(ref section);
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          section = sectionGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             section = new GsaSection(idd);
@@ -296,10 +296,8 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(11, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          mem.OrientationNode = node;
+        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+          mem.OrientationNode = nodeGoo.Value.Duplicate(); ;
         } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }
@@ -321,8 +319,8 @@ namespace GsaGH.Components {
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(14, ref ghTyp)) {
         var fls = new GsaBucklingLengthFactors();
-        if (ghTyp.Value is GsaBucklingLengthFactorsGoo) {
-          ghTyp.CastTo(ref fls);
+        if (ghTyp.Value is GsaBucklingLengthFactorsGoo flsGoo) {
+          fls = flsGoo.Value.Duplicate();
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;

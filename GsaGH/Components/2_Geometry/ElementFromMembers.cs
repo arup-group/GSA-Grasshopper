@@ -229,10 +229,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaNodeGoo) {
-            var gsanode = new GsaNode();
-            ghTyp.CastTo(ref gsanode);
-            inNodes.Add(gsanode);
+          if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+            inNodes.Add(nodeGoo.Value);
           } else {
             this.AddRuntimeError("Error in Node input");
             return;
@@ -251,10 +249,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaMember1dGoo) {
-            var gsamem1 = new GsaMember1d();
-            ghTyp.CastTo(ref gsamem1);
-            inMem1ds.Add(gsamem1);
+          if (ghTyp.Value is GsaMember1dGoo member1DGoo) {
+            inMem1ds.Add(member1DGoo.Value.Duplicate());
           } else {
             this.AddRuntimeError("Error in Mem1D input");
             return;
@@ -273,10 +269,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaMember2dGoo) {
-            var gsamem2 = new GsaMember2d();
-            ghTyp.CastTo(ref gsamem2);
-            inMem2ds.Add(gsamem2);
+          if (ghTyp.Value is GsaMember2dGoo member2DGoo) {
+            inMem2ds.Add(member2DGoo.Value.Duplicate());
           } else {
             this.AddRuntimeError("Error in Mem2D input");
             return;
@@ -295,10 +289,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaMember3dGoo) {
-            var gsamem3 = new GsaMember3d();
-            ghTyp.CastTo(ref gsamem3);
-            inMem3ds.Add(gsamem3);
+          if (ghTyp.Value is GsaMember3dGoo member3DGoo) {
+            inMem3ds.Add(member3DGoo.Value);
           } else {
             this.AddRuntimeError("Error in Mem3D input");
             return;

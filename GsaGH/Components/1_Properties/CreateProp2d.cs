@@ -170,10 +170,8 @@ namespace GsaGH.Components {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
-            GsaMaterial material = null;
-            if (ghTyp.Value is GsaMaterialGoo) {
-              ghTyp.CastTo(ref material);
-              prop.Material = material ?? new GsaMaterial();
+            if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+              prop.Material = materialGoo.Value.Duplicate() ?? new GsaMaterial();
             } else {
               if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
                 prop.Material = new GsaMaterial(idd);
