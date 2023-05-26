@@ -115,14 +115,11 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.CaseId, GH_Conversion.Both, ref ghint)) {
-            target = (TQ)(object)ghint;
-            return true;
-          }
+          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
+          target = (TQ)(object)ghint;
+          return true;
         }
       }
 
