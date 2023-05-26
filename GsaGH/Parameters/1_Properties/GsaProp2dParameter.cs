@@ -35,7 +35,7 @@ namespace GsaGH.Parameters {
           return new GsaProp2dGoo(mem2d.Value.Prop2d);
       }
 
-      if (data.GetType() != typeof(GH_Number) && 
+      if (data.GetType() != typeof(GH_Number) && // assume GH_Number is double and we do that below
         GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         GH_Convert.ToString(data, out string val, GH_Conversion.Both);
         if (!val.Contains(".")) {
