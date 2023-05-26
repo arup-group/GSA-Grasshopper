@@ -54,29 +54,6 @@ namespace GsaGH.Parameters {
       _resultLineSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null: return false;
-
-        case Line line1:
-          Value = line1;
-          return true;
-
-        case GH_Line lineGoo:
-          Value = lineGoo.Value;
-          return true;
-      }
-
-      var line = new Line();
-      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = line;
-
-      return true;
-    }
-
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
         target = (TQ)(object)Value;

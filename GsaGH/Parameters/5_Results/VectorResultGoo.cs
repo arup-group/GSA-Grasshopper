@@ -42,29 +42,6 @@ namespace GsaGH.Parameters {
       Value = GetGhVector();
     }
 
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null: return false;
-
-        case Vector3d vector:
-          Value = new GH_Vector(vector);
-          return true;
-
-        case GH_Vector lineGoo:
-          Value = lineGoo;
-          return true;
-      }
-
-      var vector3d = new Vector3d();
-      if (!GH_Convert.ToVector3d(source, ref vector3d, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = new GH_Vector(vector3d);
-
-      return true;
-    }
-
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(Vector3d))) {
         target = (TQ)(object)Value;
