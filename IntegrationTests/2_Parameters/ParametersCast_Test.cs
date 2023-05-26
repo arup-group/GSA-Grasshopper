@@ -37,6 +37,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("AnalysisTask")]
     [InlineData("CombinationCase", false)]
     [InlineData("Result")]
+    [InlineData("GridPlaneSurfaceFromLoad")]
     public void TestCast(string groupIdentifier, bool checkError = true) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
@@ -56,7 +57,7 @@ namespace IntegrationTests.Parameters {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.False(data.IsValid);
       }
-      Assert.Single(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.NotEmpty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Theory]

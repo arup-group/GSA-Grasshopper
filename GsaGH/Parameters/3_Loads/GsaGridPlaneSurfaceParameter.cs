@@ -1,4 +1,5 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -25,6 +26,27 @@ namespace GsaGH.Parameters {
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) {
+      if (data.GetType() == typeof(GsaLoadGoo)) { 
+        var loadGoo = (GsaLoadGoo)data;
+        if (loadGoo.Value != null) {
+          switch (loadGoo.Value.LoadType) {
+            case GsaLoad.LoadTypes.GridPoint:
+              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.PointLoad.GridPlaneSurface);
+
+            case GsaLoad.LoadTypes.GridLine:
+              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.LineLoad.GridPlaneSurface);
+
+            case GsaLoad.LoadTypes.GridArea:
+              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.AreaLoad.GridPlaneSurface);
+
+            default:
+              this.AddRuntimeError(
+                $"Load is {loadGoo.Value.LoadType} but must be a GridLoad to convert to GridPlaneSurface");
+              return new GsaGridPlaneSurfaceGoo(null);
+          }
+        }
+      }
+
       var pln = new Plane();
       if (GH_Convert.ToPlane(data, ref pln, GH_Conversion.Both)) {
         return new GsaGridPlaneSurfaceGoo(new GsaGridPlaneSurface(pln));
