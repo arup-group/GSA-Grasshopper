@@ -65,6 +65,8 @@ namespace IntegrationTests.ExampleFiles {
         Assert.True(item.Value.IsValid);
         Assert.True(item.Boundingbox.IsValid);
         Assert.True(item.ClippingBox.IsValid);
+        Assert.Equal("A GSA result vector type.", item.TypeDescription);
+        Assert.Equal("Result Vector", item.TypeName);
       }
     }
 
