@@ -22,44 +22,8 @@ namespace GsaGH.Parameters {
         return true;
       }
 
-      if (typeof(TQ).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          if (Value.AreaLoad != null) {
-            GsaGridPlaneSurface gridplane = Value.AreaLoad.GridPlaneSurface;
-            var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
-            target = (TQ)(object)gpgoo;
-            return true;
-          }
-
-          if (Value.LineLoad != null) {
-            GsaGridPlaneSurface gridplane = Value.LineLoad.GridPlaneSurface;
-            var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
-            target = (TQ)(object)gpgoo;
-            return true;
-          }
-
-          if (Value.PointLoad == null) {
-            return true;
-          }
-
-          {
-            GsaGridPlaneSurface gridplane = Value.PointLoad.GridPlaneSurface;
-            var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
-            target = (TQ)(object)gpgoo;
-            return true;
-          }
-        }
-
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
-        if (Value == null) {
-          target = default;
-          return false;
-        } else {
+        if (Value != null) {
           switch (Value.LoadType) {
             case GsaLoad.LoadTypes.GridArea: {
                 var ghpln = new GH_Plane();
@@ -104,8 +68,6 @@ namespace GsaGH.Parameters {
           target = (TQ)(object)ghpt;
           return true;
         }
-
-        return false;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
@@ -124,8 +86,6 @@ namespace GsaGH.Parameters {
             return true;
           }
         }
-
-        return false;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Surface))) {
@@ -139,8 +99,6 @@ namespace GsaGH.Parameters {
             return true;
           }
         }
-
-        return false;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
@@ -154,8 +112,6 @@ namespace GsaGH.Parameters {
             return true;
           }
         }
-
-        return false;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
