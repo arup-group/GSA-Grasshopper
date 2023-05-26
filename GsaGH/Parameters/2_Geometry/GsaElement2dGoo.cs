@@ -25,14 +25,7 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaElement2D into some other type Q.
       if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null ? default : (TQ)(object)Value.Mesh;
         return true;
       }
 

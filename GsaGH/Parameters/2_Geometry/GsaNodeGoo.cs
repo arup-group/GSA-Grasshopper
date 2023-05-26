@@ -28,15 +28,7 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaNode into some other type Q.
       if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      //Cast to Point3d
-      if (typeof(TQ).IsAssignableFrom(typeof(Point3d))) {
-        target = Value == null ? default : (TQ)(object)new Point3d(Value.Point);
         return true;
       }
 
@@ -45,21 +37,13 @@ namespace GsaGH.Parameters {
         return true;
       }
 
-      if (typeof(TQ).IsAssignableFrom(typeof(Point))) {
-        target = Value == null ? default : (TQ)(object)new Point(Value.Point);
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
+          target = (TQ)(object)ghint;
+          return true;
         }
-
-        return true;
       }
 
       target = default;

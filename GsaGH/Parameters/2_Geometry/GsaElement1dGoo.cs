@@ -27,26 +27,13 @@ namespace GsaGH.Parameters {
         return true;
       }
 
-      if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
-        target = Value == null ? default : (TQ)(object)Value.Line;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghLine = new GH_Line();
           GH_Convert.ToGHLine(Value.Line, GH_Conversion.Both, ref ghLine);
           target = (TQ)(object)ghLine;
+          return true;
         }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
-        target = Value == null ? default : (TQ)(object)Value.Line;
-        return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
@@ -55,15 +42,12 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
+          target = (TQ)(object)ghint;
+          return true;
         }
-
-        return true;
       }
 
       target = default;

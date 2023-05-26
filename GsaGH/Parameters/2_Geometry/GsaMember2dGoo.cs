@@ -29,117 +29,31 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaMember into some other type Q.
       if (base.CastTo(ref target)) {
         return true;
       }
 
-      //Cast to Curve
-      if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
-        target = Value == null ? default : (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
-        return true;
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Brep(Value.Brep.DuplicateBrep());
+          return true;
+        }
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           target = (TQ)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
-          if (Value.PolyCurve == null) {
-            return false;
-          }
+          return true;
         }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(PolyCurve))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          target = (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
-          if (Value.PolyCurve == null) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Polyline))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          target = (TQ)(object)Value.PolyCurve.DuplicatePolyCurve();
-          if (Value.PolyCurve == null) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          target = (TQ)(object)Value.PolyCurve.ToPolyline(
-            DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), 2, 0, 0);
-          if (Value.PolyCurve == null) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Brep))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          target = (TQ)(object)Value.Brep.DuplicateBrep();
-          if (Value.Brep == null) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          target = (TQ)(object)new GH_Brep(Value.Brep.DuplicateBrep());
-          if (Value.Brep == null) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(List<Point3d>))) {
-        target = Value == null ? default : (TQ)(object)Value.Topology.ToList();
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(List<GH_Point>))) {
-        target = Value == null ? default : (TQ)(object)Value.Topology.ToList();
-        return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
+          target = (TQ)(object)ghint;
+          return true;
         }
-
-        return true;
       }
 
       target = default;

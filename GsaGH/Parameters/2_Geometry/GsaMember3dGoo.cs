@@ -24,14 +24,7 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaMember into some other type Q.
       if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null ? default : (TQ)(object)Value.SolidMesh;
         return true;
       }
 
@@ -49,15 +42,12 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+          GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint);
+          target = (TQ)(object)ghint;
+          return true;
         }
-
-        return true;
       }
 
       target = default;
