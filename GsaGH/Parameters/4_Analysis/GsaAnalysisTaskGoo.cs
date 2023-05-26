@@ -16,32 +16,6 @@ namespace GsaGH.Parameters {
 
     public GsaAnalysisTaskGoo(GsaAnalysisTask item) : base(item) { }
 
-    public override bool CastFrom(object source) {
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (!GH_Convert.ToString(source, out string name, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = new GsaAnalysisTask {
-        Name = name,
-      };
-      try {
-        Value.Type
-          = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), name);
-      } catch (Exception) {
-        return false;
-      }
-
-      return true;
-    }
-
     public override IGH_Goo Duplicate() {
       return new GsaAnalysisTaskGoo(Value);
     }
