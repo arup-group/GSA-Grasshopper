@@ -302,15 +302,17 @@ namespace GsaGH.Parameters {
     internal static List<Point3d> ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
       (LengthUnit lengthUnit, string def) = ClearDefGetUnit(definition);
       var points = new List<Point3d>();
-      string[] pts = def.Split('(');
+      string[] pts = def.Split(')');
       var map = Transform.ChangeBasis(localPlane, Plane.WorldXY);
-      foreach (string pt in pts) {
-        pt.Replace(")", string.Empty).Trim();
-        var x = new Length(double.Parse(pt.Split(',')[0]), lengthUnit);
-        var y = new Length(double.Parse(pt.Split(',')[1]), lengthUnit);
-        var point = new Point3d(x.As(desiredUnit), y.As(desiredUnit), 0);
-        point.Transform(map);
-        points.Add(point);
+      foreach (string ptStr in pts) {
+        if (ptStr != string.Empty) {
+          string pt = ptStr.Replace("(", string.Empty).Trim();
+          var x = new Length(double.Parse(pt.Split(',')[0]), lengthUnit);
+          var y = new Length(double.Parse(pt.Split(',')[1]), lengthUnit);
+          var point = new Point3d(x.As(desiredUnit), y.As(desiredUnit), 0);
+          point.Transform(map);
+          points.Add(point);
+        }
       }
       return points;
     }
@@ -319,21 +321,21 @@ namespace GsaGH.Parameters {
       LengthUnit lengthUnit = LengthUnit.Meter;
       if (definition.EndsWith("(mm)")) {
         lengthUnit = LengthUnit.Millimeter;
-        definition.Replace("(mm)", string.Empty);
+        definition = definition.Replace("(mm)", string.Empty);
       }
       if (definition.EndsWith("(cm)")) {
         lengthUnit = LengthUnit.Centimeter;
-        definition.Replace("(cm)", string.Empty);
+        definition = definition.Replace("(cm)", string.Empty);
       }
       if (definition.EndsWith("(ft)")) {
         lengthUnit = LengthUnit.Foot;
-        definition.Replace("(ft)", string.Empty);
+        definition = definition.Replace("(ft)", string.Empty);
       }
       if (definition.EndsWith("(in)")) {
         lengthUnit = LengthUnit.Inch;
-        definition.Replace("(in)", string.Empty);
+        definition = definition.Replace("(in)", string.Empty);
       }
-      definition.Replace("(m)", string.Empty);
+      definition = definition.Replace("(m)", string.Empty);
       return (lengthUnit, definition);
     }
   }
