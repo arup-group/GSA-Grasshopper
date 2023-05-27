@@ -21,21 +21,13 @@ namespace GsaGH.Parameters {
     public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      if (base.CastTo<TQ>(ref target)) {
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var pln = new GH_Plane();
           GH_Convert.ToGHPlane(Value.Plane, GH_Conversion.Both, ref pln);
           target = (TQ)(object)pln;
+          return true;
         }
-
-        return true;
       }
 
       target = default;
