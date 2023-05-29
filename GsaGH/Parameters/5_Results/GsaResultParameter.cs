@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel;
+﻿using Grasshopper;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Special;
+using GsaGH.Components;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -23,7 +26,12 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaResultGoo PreferredCast(object data) {
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Result");
+      if (data.GetType() == typeof(GsaModelGoo)) {
+        this.AddRuntimeError($"Use 'SelectResults' component to pick results case." +
+          $"{Environment.NewLine}Data conversion failed from {data.GetTypeName()} to Result");
+      } else {
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Result");
+      }
       return new GsaResultGoo(null);
     }
   }
