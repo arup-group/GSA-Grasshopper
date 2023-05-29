@@ -621,11 +621,11 @@ namespace GsaGH.Components {
       #region Inputs
 
       switch (ghTyp?.Value) {
-        case null:
-          this.AddRuntimeWarning("Input is null");
-          return;
-
         case GsaResultGoo goo:
+          if (goo.Value == null) {
+            return;
+          }
+
           result = goo.Value;
           switch (result.Type) {
             case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
