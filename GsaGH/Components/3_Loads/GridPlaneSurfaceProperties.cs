@@ -141,29 +141,23 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaGridPlaneSurface = new GsaGridPlaneSurface();
-      if (!da.GetData(0, ref gsaGridPlaneSurface)) {
-        return;
-      }
+      GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo = null;
+      da.GetData(0, ref gridPlaneSurfaceGoo);
+      GsaGridPlaneSurface gridPlaneSurface = gridPlaneSurfaceGoo.Value;
 
-      if (gsaGridPlaneSurface == null) {
-        this.AddRuntimeWarning("Null GridPlaneSurface");
-        return;
-      }
-
-      da.SetData(0, gsaGridPlaneSurface == null ? Plane.Unset : gsaGridPlaneSurface.Plane);
-      da.SetData(1, gsaGridPlaneSurface.GridPlane == null ? 0 : gsaGridPlaneSurface.GridPlaneId);
-      da.SetData(2, gsaGridPlaneSurface.GridPlane?.Name);
-      da.SetData(3, gsaGridPlaneSurface.GridPlane?.IsStoreyType ?? false);
+      da.SetData(0, gridPlaneSurface == null ? Plane.Unset : gridPlaneSurface.Plane);
+      da.SetData(1, gridPlaneSurface.GridPlane == null ? 0 : gridPlaneSurface.GridPlaneId);
+      da.SetData(2, gridPlaneSurface.GridPlane?.Name);
+      da.SetData(3, gridPlaneSurface.GridPlane?.IsStoreyType ?? false);
       var axis = new Plane();
-      if (gsaGridPlaneSurface.GridPlane != null) {
-        axis = new Plane(gsaGridPlaneSurface.Plane);
-        if (gsaGridPlaneSurface.Elevation != "0") {
+      if (gridPlaneSurface.GridPlane != null) {
+        axis = new Plane(gridPlaneSurface.Plane);
+        if (gridPlaneSurface.Elevation != "0") {
           var elevation = new Length();
           try {
-            elevation = Length.Parse(gsaGridPlaneSurface.Elevation);
+            elevation = Length.Parse(gridPlaneSurface.Elevation);
           } catch (Exception) {
-            if (double.TryParse(gsaGridPlaneSurface.Elevation, out double elev)) {
+            if (double.TryParse(gridPlaneSurface.Elevation, out double elev)) {
               elevation = new Length(elev, _lengthUnit);
             }
           }
@@ -172,26 +166,26 @@ namespace GsaGH.Components {
         }
       }
 
-      da.SetData(4, gsaGridPlaneSurface.GridPlane == null ? Plane.Unset : axis);
-      da.SetData(5, gsaGridPlaneSurface.AxisId);
-      da.SetData(6, gsaGridPlaneSurface.GridPlane == null ? "0" : gsaGridPlaneSurface.Elevation);
+      da.SetData(4, gridPlaneSurface.GridPlane == null ? Plane.Unset : axis);
+      da.SetData(5, gridPlaneSurface.AxisId);
+      da.SetData(6, gridPlaneSurface.GridPlane == null ? "0" : gridPlaneSurface.Elevation);
       da.SetData(7,
-        gsaGridPlaneSurface.GridPlane == null ? string.Empty : gsaGridPlaneSurface.StoreyToleranceAbove);
+        gridPlaneSurface.GridPlane == null ? string.Empty : gridPlaneSurface.StoreyToleranceAbove);
       da.SetData(8,
-        gsaGridPlaneSurface.GridPlane == null ? string.Empty : gsaGridPlaneSurface.StoreyToleranceBelow);
-      da.SetData(9, gsaGridPlaneSurface.GridSurfaceId);
-      da.SetData(10, gsaGridPlaneSurface.GridSurface.Name);
-      da.SetData(11, gsaGridPlaneSurface.GridSurface.Elements);
-      string elemtype = gsaGridPlaneSurface.GridSurface.ElementType.ToString();
+        gridPlaneSurface.GridPlane == null ? string.Empty : gridPlaneSurface.StoreyToleranceBelow);
+      da.SetData(9, gridPlaneSurface.GridSurfaceId);
+      da.SetData(10, gridPlaneSurface.GridSurface.Name);
+      da.SetData(11, gridPlaneSurface.GridSurface.Elements);
+      string elemtype = gridPlaneSurface.GridSurface.ElementType.ToString();
       da.SetData(12, char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
-      da.SetData(13, gsaGridPlaneSurface.Tolerance);
-      string spantype = gsaGridPlaneSurface.GridSurface.SpanType.ToString();
+      da.SetData(13, gridPlaneSurface.Tolerance);
+      string spantype = gridPlaneSurface.GridSurface.SpanType.ToString();
       da.SetData(14, char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
-      da.SetData(15, gsaGridPlaneSurface.GridSurface.Direction);
-      string expantype = gsaGridPlaneSurface.GridSurface.ExpansionType.ToString();
+      da.SetData(15, gridPlaneSurface.GridSurface.Direction);
+      string expantype = gridPlaneSurface.GridSurface.ExpansionType.ToString();
       da.SetData(16,
         char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
-      bool simple = gsaGridPlaneSurface.GridSurface.SpanType
+      bool simple = gridPlaneSurface.GridSurface.SpanType
         == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
       da.SetData(17, simple);
     }
