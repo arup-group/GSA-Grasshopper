@@ -151,21 +151,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghcrv = new GH_Curve();
-      if (!da.GetData(0, ref ghcrv)) {
-        return;
-      }
+      GH_Curve ghcrv = null;
+      da.GetData(0, ref ghcrv);
+      var mem = new GsaMember1d(ghcrv.Value);
 
-      if (ghcrv == null) {
-        this.AddRuntimeWarning("Curve input is null");
-      }
-
-      Curve crv = null;
-      if (!GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both)) {
-        return;
-      }
-
-      var mem = new GsaMember1d(crv);
       if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)) {
         this.AddRuntimeRemark(
           "Service message from your favourite Oasys dev team:" + Environment.NewLine 
@@ -201,23 +190,14 @@ namespace GsaGH.Components {
       };
       mem.ReleaseEnd = rel2;
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+      GsaSectionGoo sectionGoo = null;
+      if (da.GetData(1, ref sectionGoo)) {
           mem.Section = sectionGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            mem.Section = new GsaSection(id);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PB input to a Section Property of reference integer");
-          }
-        }
       }
 
-      double meshSize = 0;
+      GH_Number meshSize = null;
       if (da.GetData(2, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.MeshSize = meshSize.Value;
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

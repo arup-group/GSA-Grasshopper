@@ -143,24 +143,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var node = new GsaNode();
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        var tempPt = new Point3d();
-        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
-          node = nodeGoo.Value.Duplicate();
-          if (node == null) {
-            this.AddRuntimeError("Node input is null");
-          }
 
-          if (node.ApiNode == null) {
-            this.AddRuntimeError("Node input is null");
-          }
-        } else if (GH_Convert.ToPoint3d(ghTyp.Value, ref tempPt, GH_Conversion.Both)) {
-          node.Point = tempPt;
-        } else {
-          this.AddRuntimeError("Unable to convert input to Node");
-          return;
-        }
+      GsaNodeGoo nodeGoo = null;
+      if (da.GetData(0, ref nodeGoo)) {
+        node = nodeGoo.Value;
       } else {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0) {
@@ -168,68 +154,50 @@ namespace GsaGH.Components {
         }
       }
 
-      var ghPt = new GH_Point();
+      GH_Point ghPt = null;
       if (da.GetData(2, ref ghPt)) {
-        var pt = new Point3d();
-        if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both)) {
-          node.Point = pt;
-        }
+        node.Point = ghPt.Value;
       }
 
       // 1 ID (do ID after point, as setting point will clear the Node.ID value
-      var ghInt = new GH_Integer();
+      GH_Integer ghInt = null;
       if (da.GetData(1, ref ghInt)) {
-        if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both)) {
-          node.Id = id;
-        }
+        node.Id = ghInt.Value;
       }
 
-      var ghPln = new GH_Plane();
+      GH_Plane ghPln = null;
       if (da.GetData(3, ref ghPln)) {
-        var pln = new Plane();
-        if (GH_Convert.ToPlane(ghPln, ref pln, GH_Conversion.Both)) {
-          node.LocalAxis = pln;
-        }
+        node.LocalAxis = ghPln.Value;
       }
 
-      var restraint = new GsaBool6();
-      if (da.GetData(4, ref restraint)) {
-        node.Restraint = restraint;
+      GsaBool6Goo restraintGoo = null;
+      if (da.GetData(4, ref restraintGoo)) {
+        node.Restraint = restraintGoo.Value;
       }
 
-      ghInt = new GH_Integer();
+      ghInt = null;
       if (da.GetData(5, ref ghInt)) {
-        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both)) {
-          node.DamperProperty = prop;
-        }
+        node.DamperProperty = ghInt.Value;
       }
 
-      ghInt = new GH_Integer();
+      ghInt = null;
       if (da.GetData(6, ref ghInt)) {
-        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both)) {
-          node.MassProperty = prop;
-        }
+        node.MassProperty = ghInt.Value;
       }
 
-      ghInt = new GH_Integer();
+      ghInt = null;
       if (da.GetData(7, ref ghInt)) {
-        if (GH_Convert.ToInt32(ghInt, out int prop, GH_Conversion.Both)) {
-          node.SpringProperty = prop;
-        }
+        node.SpringProperty = ghInt.Value;
       }
 
-      var ghStr = new GH_String();
+      GH_String ghStr = null;
       if (da.GetData(8, ref ghStr)) {
-        if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both)) {
-          node.Name = name;
-        }
+        node.Name = ghStr.Value;
       }
 
-      var ghcol = new GH_Colour();
+      GH_Colour ghcol = null;
       if (da.GetData(9, ref ghcol)) {
-        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both)) {
-          node.Colour = col;
-        }
+        node.Colour = ghcol.Value;
       }
 
       da.SetData(0, new GsaNodeGoo(node));

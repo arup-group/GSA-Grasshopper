@@ -36,37 +36,15 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghmesh = new GH_Mesh();
-      if (!da.GetData(0, ref ghmesh)) {
-        return;
-      }
+      GH_Mesh ghmesh = null;
+      da.GetData(0, ref ghmesh);
+      var elem = new GsaElement2d(ghmesh.Value);
 
-      if (ghmesh == null) {
-        this.AddRuntimeWarning("Mesh input is null");
-      }
-
-      var mesh = new Mesh();
-      if (!GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both)) {
-        return;
-      }
-
-      var elem = new GsaElement2d(mesh);
-
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp)) {
-        GsaProp2d prop2d;
-        if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
-          prop2d = prop2dGoo.Value;
-        } else if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-          prop2d = new GsaProp2d(id);
-        } else {
-          this.AddRuntimeError("Unable to convert PA input to a 2D Property or reference integer");
-          return;
-        }
-
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(1, ref prop2dGoo)) {
         var prop2Ds = new List<GsaProp2d>();
         for (int i = 0; i < elem.ApiElements.Count; i++) {
-          prop2Ds.Add(prop2d);
+          prop2Ds.Add(prop2dGoo.Value);
         }
 
         elem.Prop2ds = prop2Ds;
