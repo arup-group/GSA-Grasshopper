@@ -59,7 +59,7 @@ namespace GsaGH.Components {
           return;
         }
       } else {
-        this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
+        this.AddRuntimeError($"Unable to convert Geometry input ({ghTyp.GetTypeName()}) to a 3D Member");
         return;
       }
 
