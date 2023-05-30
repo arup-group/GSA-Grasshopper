@@ -97,16 +97,15 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var mem = new GsaMember3d();
+
       GsaMember3dGoo member3dGoo = null;
       if (da.GetData(0, ref member3dGoo)) {
         mem = member3dGoo.Value.Duplicate(true);
       }
 
-      var ghId = new GH_Integer();
+      GH_Integer ghId = null;
       if (da.GetData(1, ref ghId)) {
-        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-          mem.Id = id;
-        }
+        mem.Id = ghId.Value;
       }
 
       var ghTyp = new GH_ObjectWrapper();
@@ -123,64 +122,41 @@ namespace GsaGH.Components {
         }
       }
 
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        GsaProp3d prop3d;
-        if (ghTyp.Value is GsaProp3dGoo prop3dGoo) {
-          prop3d = prop3dGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            prop3d = new GsaProp3d(id);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 3D Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Prop3d = prop3d;
+      GsaProp3dGoo prop3dGoo = null;
+      if (da.GetData(3, ref prop3dGoo)) {
+        mem.Prop3d = prop3dGoo.Value;
       }
 
-      double meshSize = 0;
+      GH_Number meshSize = null;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.MeshSize = meshSize.Value;
       }
 
-      var ghbool = new GH_Boolean();
+      GH_Boolean ghbool = null;
       if (da.GetData(5, ref ghbool)) {
-        if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both)) {
-          if (mem.MeshWithOthers != mbool) {
-            mem.MeshWithOthers = mbool;
-          }
+        if (mem.MeshWithOthers != ghbool.Value) {
+          mem.MeshWithOthers = ghbool.Value;
         }
       }
 
-      var ghnm = new GH_String();
+      GH_String ghnm = null;
       if (da.GetData(6, ref ghnm)) {
-        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both)) {
-          mem.Name = name;
-        }
+        mem.Name = ghnm.Value;
       }
 
-      var ghgrp = new GH_Integer();
+      GH_Integer ghgrp = null;
       if (da.GetData(7, ref ghgrp)) {
-        if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both)) {
-          mem.Group = grp;
-        }
+        mem.Group = ghgrp.Value;
       }
 
-      var ghcol = new GH_Colour();
+      GH_Colour ghcol = null;
       if (da.GetData(8, ref ghcol)) {
-        if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both)) {
-          mem.Colour = col;
-        }
+        mem.Colour = ghcol.Value;
       }
 
-      var ghdum = new GH_Boolean();
+      GH_Boolean ghdum = null;
       if (da.GetData(9, ref ghdum)) {
-        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both)) {
-          mem.IsDummy = dum;
-        }
+        mem.IsDummy = ghdum.Value;
       }
 
       da.SetData(0, new GsaMember3dGoo(mem));
