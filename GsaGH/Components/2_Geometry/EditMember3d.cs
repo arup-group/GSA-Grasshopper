@@ -103,9 +103,9 @@ namespace GsaGH.Components {
         mem = member3dGoo.Value.Duplicate(true);
       }
 
-      GH_Integer ghId = null;
-      if (da.GetData(1, ref ghId)) {
-        mem.Id = ghId.Value;
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        mem.Id = id;
       }
 
       var ghTyp = new GH_ObjectWrapper();
@@ -127,36 +127,34 @@ namespace GsaGH.Components {
         mem.Prop3d = prop3dGoo.Value;
       }
 
-      GH_Number meshSize = null;
+      double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize.Value;
+        mem.MeshSize = meshSize;
       }
 
-      GH_Boolean ghbool = null;
-      if (da.GetData(5, ref ghbool)) {
-        if (mem.MeshWithOthers != ghbool.Value) {
-          mem.MeshWithOthers = ghbool.Value;
-        }
+      bool intersector = false;
+      if (da.GetData(5, ref intersector)) {
+        mem.MeshWithOthers = intersector;
       }
 
-      GH_String ghnm = null;
-      if (da.GetData(6, ref ghnm)) {
-        mem.Name = ghnm.Value;
+      string name = string.Empty;
+      if (da.GetData(6, ref name)) {
+        mem.Name = name;
       }
 
-      GH_Integer ghgrp = null;
-      if (da.GetData(7, ref ghgrp)) {
-        mem.Group = ghgrp.Value;
+      int group = 0;
+      if (da.GetData(7, ref group)) {
+        mem.Group = group;
       }
 
-      GH_Colour ghcol = null;
-      if (da.GetData(8, ref ghcol)) {
-        mem.Colour = ghcol.Value;
+      Color colour = Color.Empty;
+      if (da.GetData(8, ref colour)) {
+        mem.Colour = colour;
       }
 
-      GH_Boolean ghdum = null;
-      if (da.GetData(9, ref ghdum)) {
-        mem.IsDummy = ghdum.Value;
+      bool dummy = false;
+      if (da.GetData(9, ref dummy)) {
+        mem.IsDummy = dummy;
       }
 
       da.SetData(0, new GsaMember3dGoo(mem));

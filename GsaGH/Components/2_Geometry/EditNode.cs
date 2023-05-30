@@ -160,9 +160,9 @@ namespace GsaGH.Components {
       }
 
       // 1 ID (do ID after point, as setting point will clear the Node.ID value
-      GH_Integer ghInt = null;
-      if (da.GetData(1, ref ghInt)) {
-        node.Id = ghInt.Value;
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        node.Id = id;
       }
 
       GH_Plane ghPln = null;
@@ -175,29 +175,29 @@ namespace GsaGH.Components {
         node.Restraint = restraintGoo.Value;
       }
 
-      ghInt = null;
-      if (da.GetData(5, ref ghInt)) {
-        node.DamperProperty = ghInt.Value;
+      int damperId = 0;
+      if (da.GetData(5, ref damperId)) {
+        node.DamperProperty = damperId;
       }
 
-      ghInt = null;
-      if (da.GetData(6, ref ghInt)) {
-        node.MassProperty = ghInt.Value;
+      int massId = 0;
+      if (da.GetData(6, ref massId)) {
+        node.MassProperty = massId;
       }
 
-      ghInt = null;
-      if (da.GetData(7, ref ghInt)) {
-        node.SpringProperty = ghInt.Value;
+      int springId = 0;
+      if (da.GetData(7, ref springId)) {
+        node.SpringProperty = springId;
       }
 
-      GH_String ghStr = null;
-      if (da.GetData(8, ref ghStr)) {
-        node.Name = ghStr.Value;
+      string name = string.Empty;
+      if (da.GetData(8, ref name)) {
+        node.Name = name;
       }
 
-      GH_Colour ghcol = null;
-      if (da.GetData(9, ref ghcol)) {
-        node.Colour = ghcol.Value;
+      Color colour = Color.Empty;
+      if (da.GetData(9, ref colour)) {
+        node.Colour = colour;
       }
 
       da.SetData(0, new GsaNodeGoo(node));

@@ -97,14 +97,14 @@ namespace GsaGH.Components {
         localAxis = ghPlane.Value;
       }
 
-      var bool6 = new GsaBool6();
-      if (da.GetData(2, ref bool6)) {
-        _x = bool6.X;
-        _y = bool6.Y;
-        _z = bool6.Z;
-        _xx = bool6.Xx;
-        _yy = bool6.Yy;
-        _zz = bool6.Zz;
+      GsaBool6Goo bool6Goo = null;
+      if (da.GetData(2, ref bool6Goo)) {
+        _x = bool6Goo.Value.X;
+        _y = bool6Goo.Value.Y;
+        _z = bool6Goo.Value.Z;
+        _xx = bool6Goo.Value.Xx;
+        _yy = bool6Goo.Value.Yy;
+        _zz = bool6Goo.Value.Zz;
       }
 
       var node = new GsaNode(ghpt.Value) {

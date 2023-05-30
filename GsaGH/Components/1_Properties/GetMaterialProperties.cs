@@ -38,7 +38,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var stressUnitsMenu = new ToolStripMenuItem("Stress") {
@@ -162,15 +162,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaMaterial material = null;
       GsaMaterialGoo materialGoo = null;
-      if (da.GetData(0, ref materialGoo)) {
-        material = materialGoo.Value.Duplicate();
-      }
-
-      if (material == null) {
-        return;
-      }
+      da.GetData(0, ref materialGoo);
+      GsaMaterial material = materialGoo.Value;
 
       if (material.AnalysisMaterial == null) {
         this.AddRuntimeWarning("One or more materials are not custom material");

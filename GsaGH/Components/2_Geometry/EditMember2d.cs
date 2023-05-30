@@ -160,9 +160,9 @@ namespace GsaGH.Components {
         mem = member2dGoo.Value.Duplicate(true);
       }
 
-      GH_Integer ghId = null;
-      if (da.GetData(1, ref ghId)) {
-        mem.Id = ghId.Value;
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        mem.Id = id;
       }
 
       Brep brep = mem.Brep;
@@ -196,9 +196,9 @@ namespace GsaGH.Components {
         mem.Prop2d = prop2dGoo.Value;
       }
 
-      GH_Integer ghgrp = null;
-      if (da.GetData(6, ref ghgrp)) {
-        mem.Group = ghgrp.Value;
+      int group = 0;
+      if (da.GetData(6, ref group)) {
+        mem.Group = group;
       }
 
       GH_String ghstring = null;
@@ -227,24 +227,24 @@ namespace GsaGH.Components {
         }
       }
 
-      GsaOffset offset = null;
+      GsaOffsetGoo offset = null;
       if (da.GetData(9, ref offset)) {
-        mem.Offset = offset;
+        mem.Offset = offset.Value;
       }
 
-      GH_Boolean ioData = null;
-      if (da.GetData(10, ref ioData)) {
-        mem.AutomaticInternalOffset = ioData.Value;
+      bool internalOffset = false;
+      if (da.GetData(10, ref internalOffset)) {
+        mem.AutomaticInternalOffset = internalOffset;
       }
 
-      GH_Number meshSize = null;
+      double meshSize = 0;
       if (da.GetData(11, ref meshSize)) {
-        mem.MeshSize = meshSize.Value;
+        mem.MeshSize = meshSize;
       }
 
-      GH_Boolean ghbool = null;
-      if (da.GetData(12, ref ghbool)) {
-        mem.MeshWithOthers = ghbool.Value;
+      bool intersector = false;
+      if (da.GetData(12, ref intersector)) {
+        mem.MeshWithOthers = intersector;
       }
 
       GH_Number ghangle = null;
@@ -252,19 +252,19 @@ namespace GsaGH.Components {
         mem.OrientationAngle = new Angle(ghangle.Value, _angleUnit);
       }
 
-      GH_String ghnm = null;
-      if (da.GetData(14, ref ghnm)) {
-        mem.Name = ghnm.Value;
+      string name = string.Empty;
+      if (da.GetData(14, ref name)) {
+        mem.Name = name;
       }
 
-      GH_Colour ghcol = null;
-      if (da.GetData(15, ref ghcol)) {
-        mem.Colour = ghcol.Value;
+      Color colour = Color.Empty;
+      if (da.GetData(15, ref colour)) {
+        mem.Colour = colour;
       }
 
-      GH_Boolean ghdum = null;
-      if (da.GetData(16, ref ghdum)) {
-        mem.IsDummy = ghdum.Value;
+      bool dummy = false;
+      if (da.GetData(16, ref dummy)) {
+        mem.IsDummy = dummy;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));
