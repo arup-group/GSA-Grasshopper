@@ -69,9 +69,8 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var material = new GsaMaterial();
 
-      var ghGrade = new GH_Integer();
-      if (da.GetData(0, ref ghGrade)) {
-        GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
+      int grade = 0;
+      if (da.GetData(0, ref grade)) {
         material.GradeProperty = grade;
       }
 

@@ -81,14 +81,14 @@ namespace GsaGH.Components {
           mem.Prop2d = prop2dGoo.Value;
       }
 
-      GH_Number meshSize = null;
+      double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize.Value;
+        mem.MeshSize = meshSize;
       }
 
-      GH_Boolean ioData = null;
-      if (da.GetData(5, ref ioData)) {
-        mem.AutomaticInternalOffset = ioData.Value;
+      bool internalOffset = false;
+      if (da.GetData(5, ref internalOffset)) {
+        mem.AutomaticInternalOffset = internalOffset;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

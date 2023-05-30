@@ -195,9 +195,9 @@ namespace GsaGH.Components {
           mem.Section = sectionGoo.Value;
       }
 
-      GH_Number meshSize = null;
+      double meshSize = 0;
       if (da.GetData(2, ref meshSize)) {
-        mem.MeshSize = meshSize.Value;
+        mem.MeshSize = meshSize;
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

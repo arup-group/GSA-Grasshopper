@@ -36,13 +36,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghProfile = new GH_String();
-      da.GetData(0, ref ghProfile);
-      GH_Convert.ToString(ghProfile, out string start, GH_Conversion.Both);
+      string start = string.Empty;
+      da.GetData(0, ref start);
 
-      ghProfile = new GH_String();
-      da.GetData(1, ref ghProfile);
-      GH_Convert.ToString(ghProfile, out string end, GH_Conversion.Both);
+      string end = string.Empty;
+      da.GetData(1, ref end);
 
       string[] startParts = start.Split(' ');
       string[] endParts = end.Split(' ');

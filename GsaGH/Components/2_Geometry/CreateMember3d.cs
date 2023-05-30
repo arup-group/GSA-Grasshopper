@@ -38,12 +38,12 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghTyp = new GH_ObjectWrapper();
-      da.GetData(0, ref ghTyp);
-
       GsaMember3d member;
       var brep = new Brep();
       var mesh = new Mesh();
+
+      var ghTyp = new GH_ObjectWrapper();
+      da.GetData(0, ref ghTyp);
       if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
         try {
           member = new GsaMember3d(brep);
@@ -68,9 +68,9 @@ namespace GsaGH.Components {
         member.Prop3d = prop3dGoo.Value;
       }
 
-      GH_Number meshSize = null;
+      double meshSize = 0;
       if (da.GetData(2, ref meshSize)) {
-        member.MeshSize = meshSize.Value;
+        member.MeshSize = meshSize;
       }
 
       da.SetData(0, new GsaMember3dGoo(member));

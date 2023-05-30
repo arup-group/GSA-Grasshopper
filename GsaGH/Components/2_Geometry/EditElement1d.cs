@@ -184,9 +184,9 @@ namespace GsaGH.Components {
         elem.ReleaseEnd = end;
       }
 
-      GH_Number ghangle = null;
-      if (da.GetData(9, ref ghangle)) {
-        elem.OrientationAngle = new Angle(ghangle.Value, _angleUnit);
+      double angle = 0;
+      if (da.GetData(9, ref angle)) {
+        elem.OrientationAngle = new Angle(angle, _angleUnit);
       }
 
       GsaNodeGoo nodeGoo = null;
@@ -194,19 +194,19 @@ namespace GsaGH.Components {
         elem.OrientationNode = nodeGoo.Value.Duplicate();
       }
 
-      GH_String ghName = null;
-      if (da.GetData(11, ref ghName)) {
-        elem.Name = ghName.Value;
+      string name = string.Empty;
+      if (da.GetData(11, ref name)) {
+        elem.Name = name;
       }
 
-      GH_Colour ghColour = null;
-      if (da.GetData(12, ref ghColour)) {
-        elem.Colour = ghColour.Value;
+      Color colour = Color.Empty;
+      if (da.GetData(12, ref colour)) {
+        elem.Colour = colour;
       }
 
-      GH_Boolean ghdum = null;
-      if (da.GetData(13, ref ghdum)) {
-        elem.IsDummy = ghdum.Value;
+      bool dummy = false;
+      if (da.GetData(13, ref dummy)) {
+        elem.IsDummy = dummy;
       }
 
       da.SetData(0, new GsaElement1dGoo(elem));
