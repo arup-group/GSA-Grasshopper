@@ -14,8 +14,8 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateMember1d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)),
-        0);
+      ComponentTestHelper.SetInput(
+        comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)), 0);
       ComponentTestHelper.SetInput(comp, "STD CH(ft) 1 2 3 4", 1);
       ComponentTestHelper.SetInput(comp, 0.5, 2);
 
@@ -87,6 +87,18 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(releases[i++], output.Value.ReleaseEnd.Xx);
       Assert.Equal(releases[i++], output.Value.ReleaseEnd.Yy);
       Assert.Equal(releases[i++], output.Value.ReleaseEnd.Zz);
+    }
+
+    [Fact]
+    public void TestShortLineWarning() {
+      var comp = new CreateMember1d();
+      comp.CreateAttributes();
+
+      ComponentTestHelper.SetInput(
+        comp, new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 0.001)), 0);
+
+      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
     }
   }
 }
