@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -15,42 +12,22 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new Section
   /// </summary>
-  public class CreateSection : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("d779f9b7-5380-4474-aadd-d1e88f9d45b8");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+  public class CreateSection_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
     protected override Bitmap Icon => Resources.CreateSection;
 
-    public CreateSection() : base("Create Section", "Section", "Create GSA Section",
+    public CreateSection_OBSOLETE() : base("Create Section", "Section", "Create GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
-    }
-
-    public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      base.UpdateUI();
-    }
-
-    protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Basic Offset",
-      });
-
-      _dropDownItems = new List<List<string>>();
-      _selectedItems = new List<string>();
-
-      var basicOffset = Enum.GetNames(typeof(BasicOffset)).ToList();
-      _dropDownItems.Add(basicOffset);
-      _selectedItems.Add(basicOffset[0]);
-
-      _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile", "Pf",
         "Cross-Section Profile defined using the GSA Profile string syntax", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-
       pManager[1].Optional = true;
     }
 
@@ -90,8 +67,6 @@ namespace GsaGH.Components {
           gsaSection.Material = new GsaMaterial(7);
         }
       }
-
-      gsaSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);
 
       da.SetData(0, new GsaSectionGoo(gsaSection));
     }

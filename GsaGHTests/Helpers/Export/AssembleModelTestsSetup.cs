@@ -22,9 +22,9 @@ namespace GsaGHTests.Helpers.Export {
       comp.SetSelected(2, 5); // set density unit to "kg/m^3"
       comp.SetSelected(3, 1); // set temperature unit to "K"
       ComponentTestHelper.SetInput(comp, 2, 0); // ID = 2
-      ComponentTestHelper.SetInput(comp, 30, 1); // E = 30 GPa
-      ComponentTestHelper.SetInput(comp, 0.3, 2); // v = 0.3
-      ComponentTestHelper.SetInput(comp, 2500, 3); // p = 2500 kg/m^3
+      ComponentTestHelper.SetInput(comp, 30, 2); // E = 30 GPa
+      ComponentTestHelper.SetInput(comp, 0.3, 3); // v = 0.3
+      ComponentTestHelper.SetInput(comp, 2500, 4); // p = 2500 kg/m^3
       return (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
     }
 
@@ -36,9 +36,9 @@ namespace GsaGHTests.Helpers.Export {
       comp.SetSelected(2, 5); // set density unit to "kg/m^3"
       comp.SetSelected(3, 1); // set temperature unit to "K"
       ComponentTestHelper.SetInput(comp, 1, 0); // ID = 1
-      ComponentTestHelper.SetInput(comp, 205, 1); // E = 205 GPa
-      ComponentTestHelper.SetInput(comp, 0.5, 2); // v = 0.5
-      ComponentTestHelper.SetInput(comp, 7850, 3); // p = 7850 kg/m^3
+      ComponentTestHelper.SetInput(comp, 205, 2); // E = 205 GPa
+      ComponentTestHelper.SetInput(comp, 0.5, 3); // v = 0.5
+      ComponentTestHelper.SetInput(comp, 7850, 4); // p = 7850 kg/m^3
       return (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
     }
 
