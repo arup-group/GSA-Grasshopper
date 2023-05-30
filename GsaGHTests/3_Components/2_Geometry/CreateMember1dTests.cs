@@ -3,6 +3,7 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -34,6 +35,58 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, output.Value.PolyCurve.PointAtEnd.Z);
       Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.Profile);
       Assert.Equal(0.5, output.Value.MeshSize);
+    }
+
+    [Theory]
+    [InlineData(new bool[] {
+      true, true, true, false, false, false, true, true, true, false, false, false})]
+    [InlineData(new bool[] {
+      false, false, false, true, true, true, false, false, false, true, true, true})]
+    [InlineData(new bool[] {
+      false, false, false, false, false, false, false, false, false, true, true, true})]
+    [InlineData(new bool[] {
+      true, true, true, false, false, false, false, false, false, false, false, false})]
+    [InlineData(new bool[] {
+      true, false, true, false, true, false, true, false, true, false, true, false})]
+    [InlineData(new bool[] {
+      false, true, false, true, false, true, false, true, false, true, false, true})]
+    public void CanToggleReleases(bool[] releases) {
+      var comp = (CreateMember1d)ComponentMother();
+      int i = 0;
+      var restraints = new List<List<bool>> {
+        new List<bool> {
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+        },
+        new List<bool> {
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+        }
+      };
+      comp.SetReleases(restraints);
+
+      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
+      i = 0;
+      Assert.Equal(releases[i++], output.Value.ReleaseStart.X);
+      Assert.Equal(releases[i++], output.Value.ReleaseStart.Y);
+      Assert.Equal(releases[i++], output.Value.ReleaseStart.Z);
+      Assert.Equal(releases[i++], output.Value.ReleaseStart.Xx);
+      Assert.Equal(releases[i++], output.Value.ReleaseStart.Yy);
+      Assert.Equal(releases[i++], output.Value.ReleaseStart.Zz);
+      Assert.Equal(releases[i++], output.Value.ReleaseEnd.X);
+      Assert.Equal(releases[i++], output.Value.ReleaseEnd.Y);
+      Assert.Equal(releases[i++], output.Value.ReleaseEnd.Z);
+      Assert.Equal(releases[i++], output.Value.ReleaseEnd.Xx);
+      Assert.Equal(releases[i++], output.Value.ReleaseEnd.Yy);
+      Assert.Equal(releases[i++], output.Value.ReleaseEnd.Zz);
     }
   }
 }
