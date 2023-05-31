@@ -1,16 +1,33 @@
-﻿using System;
+﻿using GH_IO.Serialization;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
+using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.GsaApi.Grahics;
+using GsaGH.Parameters;
+using GsaGH.Properties;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.UI;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
 
-namespace GsaGH.Components
-{
+namespace GsaGH.Components {
   /// <summary>
   ///   Component to get Element1D results
   /// </summary>
-  public class Elem1dResultDiagram : GH_OasysDropDownComponent
-  {
+  public class Elem1dResultDiagram : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("7ae7ac36-f811-4c20-911f-ddb119f45644");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -145,6 +162,8 @@ namespace GsaGH.Components
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddGenericParameter("Diagram lines", "DL", "Lines of the diagram",
         GH_ParamAccess.list);
+      pManager.AddGenericParameter("Annotations", "Text", "Annotations for the diagram",
+        GH_ParamAccess.list);
     }
 
     protected override void BeforeSolveInstance() {
@@ -226,8 +245,9 @@ namespace GsaGH.Components
       ReadOnlyCollection<GsaAPI.Line> linesFromModel = diagramResults.Lines;
       ReadOnlyCollection<Annotation> annotationsFromModel = diagramResults.Annotations;
 
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (GsaAPI.Line item in linesFromModel) {
-        double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+
         var startPoint = new Point3d(item.Start.X, item.Start.Y, item.Start.Z);
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
@@ -239,12 +259,13 @@ namespace GsaGH.Components
       foreach (Annotation annotation in annotationsFromModel) {
         {
           var vector = new Vector3d(annotation.Position.X, annotation.Position.Y, annotation.Position.Z);
+          vector *= lengthScaleFactor;
           diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color, annotation.String));
         }
       }
 
       da.SetDataList(0, diagramLines);
-
+      da.SetDataList(1, diagramAnnotations);
       //PostHog.Result(result.Type, 1, resultType, _displayedDiagramType.ToString());
     }
 
