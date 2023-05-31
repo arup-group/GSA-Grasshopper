@@ -79,151 +79,123 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaElement3dGoo element3dGoo = null;
       var elem = new GsaElement3d();
+
+      GsaElement3dGoo element3dGoo = null;
       if (da.GetData(0, ref element3dGoo)) {
         elem = element3dGoo.Value.Duplicate(true);
       }
 
-      var ghId = new List<GH_Integer>();
-      var inIds = new List<int>();
-      if (da.GetDataList(1, ghId)) {
-        for (int i = 0; i < ghId.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("ID input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess ID's have been ignored");
-            continue;
+      // 1 ID
+      var ghIds = new List<GH_Integer>();
+      if (da.GetDataList(1, ghIds)) {
+        if (ghIds.Count == 1) {
+          elem.Ids = new List<int>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Ids.Add(ghIds[i].Value);
           }
-
-          if (!GH_Convert.ToInt32(ghId[i], out int id, GH_Conversion.Both)) {
-            continue;
+        } else {
+          if (ghIds.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("ID input must either be a single Integer or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
-
-          if (inIds.Contains(id)) {
-            if (id > 0) {
-              this.AddRuntimeWarning("ID input(" + i + ") = " + id
-                + " already exist in your input list." + Environment.NewLine
-                + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
-              continue;
-            }
-          }
-
-          inIds.Add(id);
+          elem.Ids = ghIds.Select(x => x.Value).ToList();
         }
-
-        elem.Ids = inIds;
       }
 
-      var ghTypes = new List<GH_ObjectWrapper>();
-      if (da.GetDataList(2, ghTypes)) {
-        var prop3Ds = new List<GsaProp3d>();
-        for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("PA input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess PA's have been ignored");
+      // 2 property
+      var prop3dGoos = new List<GsaProp3dGoo>();
+      if (da.GetDataList(2, prop3dGoos)) {
+        if (prop3dGoos.Count == 1) {
+          elem.Prop3ds = new List<GsaProp3d>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Prop3ds.Add(prop3dGoos[i].Value);
           }
-
-          GH_ObjectWrapper ghTyp = ghTypes[i];
-          var prop3d = new GsaProp3d();
-          if (ghTyp.Value is GsaProp3dGoo prop3DGoo) {
-            prop3Ds.Add(prop3DGoo.Value.Duplicate());
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              prop3Ds.Add(new GsaProp3d(id));
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PA input to a 2D Property of reference integer");
-              return;
-            }
+        } else {
+          if (prop3dGoos.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("PA input must either be a single Prop2d or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Prop3ds = prop3dGoos.Select(x => x.Value).ToList();
         }
-
-        elem.Prop3ds = prop3Ds;
       }
 
-      var ghgrp = new List<GH_Integer>();
-      if (da.GetDataList(3, ghgrp)) {
-        var inGroups = new List<int>();
-        for (int i = 0; i < ghgrp.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Group input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Group numbers have been ignored");
-            continue;
+      // 3 Group
+      var ghGrps = new List<GH_Integer>();
+      if (da.GetDataList(3, ghGrps)) {
+        if (ghGrps.Count == 1) {
+          elem.Groups = new List<int>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Groups.Add(ghGrps[i].Value);
           }
-
-          if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both)) {
-            inGroups.Add(grp);
+        } else {
+          if (ghGrps.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Gr input must either be a single Group ID or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Groups = ghGrps.Select(x => x.Value).ToList();
         }
-
-        elem.Groups = inGroups;
       }
 
-      var ghStrings = new List<GH_String>();
-      if (da.GetDataList(4, ghStrings)) {
-        var inNames = new List<string>();
-        for (int i = 0; i < ghStrings.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Name input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Names have been ignored");
-            continue;
+      // 4 name
+      var ghnm = new List<GH_String>();
+      if (da.GetDataList(4, ghnm)) {
+        if (ghnm.Count == 1) {
+          elem.Names = new List<string>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Names.Add(ghnm[i].Value);
           }
-
-          if (GH_Convert.ToString(ghStrings[i], out string name, GH_Conversion.Both)) {
-            inNames.Add(name);
+        } else {
+          if (ghnm.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Nm input must either be a single Text string or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Names = ghnm.Select(x => x.Value).ToList();
         }
-
-        elem.Names = inNames;
       }
 
-      var ghColours = new List<GH_Colour>();
-      if (da.GetDataList(5, ghColours)) {
-        var inColours = new List<Color>();
-        for (int i = 0; i < ghColours.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Colour input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Colours have been ignored");
-            continue;
+      // 5 Colour
+      var ghcols = new List<GH_Colour>();
+      if (da.GetDataList(5, ghcols)) {
+        if (ghcols.Count == 1) {
+          elem.Colours = new List<Color>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Colours.Add(ghcols[i].Value);
           }
-
-          if (GH_Convert.ToColor(ghColours[i], out Color col, GH_Conversion.Both)) {
-            inColours.Add(col);
+        } else {
+          if (ghcols.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Co input must either be a single Colour or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Colours = ghcols.Select(x => x.Value).ToList();
         }
-
-        elem.Colours = inColours;
       }
 
-      var ghdum = new List<GH_Boolean>();
-      if (da.GetDataList(6, ghdum)) {
-        var inDummies = new List<bool>();
-        for (int i = 0; i < ghdum.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dummy input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Dummy booleans have been ignored");
-            continue;
+      // 6 Dummy
+      var ghdummies = new List<GH_Boolean>();
+      if (da.GetDataList(6, ghdummies)) {
+        if (ghdummies.Count == 1) {
+          elem.IsDummies = new List<bool>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.IsDummies.Add(ghdummies[i].Value);
           }
-
-          if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both)) {
-            inDummies.Add(dum);
+        } else {
+          if (ghdummies.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Dm input must either be a single Boolean or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.IsDummies = ghdummies.Select(x => x.Value).ToList();
         }
-
-        elem.IsDummies = inDummies;
       }
 
       var outMeshes = new List<Mesh>();
-      Mesh x = elem.NgonMesh;
-
-      var ngons = x.GetNgonAndFacesEnumerable().ToList();
-
+      var ngons = elem.NgonMesh.GetNgonAndFacesEnumerable().ToList();
       foreach (MeshNgon ngon in ngons) {
         var m = new Mesh();
-        m.Vertices.AddVertices(x.Vertices.ToList());
+        m.Vertices.AddVertices(m.Vertices.ToList());
         var faceindex = ngon.FaceIndexList().Select(u => (int)u).ToList();
         foreach (int index in faceindex) {
-          m.Faces.AddFace(x.Faces[index]);
+          m.Faces.AddFace(m.Faces[index]);
         }
 
         m.Vertices.CullUnused();
@@ -235,7 +207,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetDataList(2, outMeshes);
       da.SetDataList(3,
-        new List<GsaProp3dGoo>(elem.Prop3ds.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
+        new List<GsaProp3dGoo>(elem.Prop3ds.Select(x => new GsaProp3dGoo(x))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6, elem.Names);

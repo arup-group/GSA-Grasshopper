@@ -10,7 +10,6 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -109,191 +108,139 @@ namespace GsaGH.Components {
       // suggest users re-create from scratch //
 
       // 1 ID
-      var ghId = new List<GH_Integer>();
-      var inIds = new List<int>();
-      if (da.GetDataList(1, ghId)) {
-        for (int i = 0; i < ghId.Count; i++) {
-          if (i > elem.ApiElements.Count - 1) {
-            this.AddRuntimeWarning("ID input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess ID's have been ignored");
-            continue;
+      var ghIds = new List<GH_Integer>();
+      if (da.GetDataList(1, ghIds)) {
+        if (ghIds.Count == 1) {
+          elem.Ids = new List<int>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Ids.Add(ghIds[i].Value);
           }
-
-          if (!GH_Convert.ToInt32(ghId[i], out int id, GH_Conversion.Both)) {
-            continue;
+        } else {
+          if (ghIds.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("ID input must either be a single Integer or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
-
-          if (inIds.Contains(id)) {
-            if (id > 0) {
-              this.AddRuntimeWarning("ID input(" + i + ") = " + id
-                + " already exist in your input list." + Environment.NewLine
-                + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
-              continue;
-            }
-          }
-
-          inIds.Add(id);
+          elem.Ids = ghIds.Select(x => x.Value).ToList();
         }
-
-        elem.Ids = inIds;
       }
 
-      // 2 section
-      var ghTypes = new List<GH_ObjectWrapper>();
-      if (da.GetDataList(2, ghTypes)) {
-        var prop2Ds = new List<GsaProp2d>();
-        for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("PA input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess PA's have been ignored");
+      // 2 property
+      var prop2dGoos = new List<GsaProp2dGoo>();
+      if (da.GetDataList(2, prop2dGoos)) {
+        if (prop2dGoos.Count == 1) {
+          elem.Prop2ds = new List<GsaProp2d>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Prop2ds.Add(prop2dGoos[i].Value);
           }
-
-          GH_ObjectWrapper ghTyp = ghTypes[i];
-          var prop2d = new GsaProp2d();
-          if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
-            prop2Ds.Add(prop2DGoo.Value);
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              prop2Ds.Add(new GsaProp2d(id));
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PA input to a 2D Property of reference integer");
-              return;
-            }
+        } else {
+          if (prop2dGoos.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("PA input must either be a single Prop2d or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Prop2ds = prop2dGoos.Select(x => x.Value).ToList();
         }
-
-        elem.Prop2ds = prop2Ds;
       }
 
       // 3 Group
-      var ghgrp = new List<GH_Integer>();
-      if (da.GetDataList(3, ghgrp)) {
-        var inGroups = new List<int>();
-        for (int i = 0; i < ghgrp.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Group input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Group numbers have been ignored");
-            continue;
+      var ghGrps = new List<GH_Integer>();
+      if (da.GetDataList(3, ghGrps)) {
+        if (ghGrps.Count == 1) {
+          elem.Groups = new List<int>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Groups.Add(ghGrps[i].Value);
           }
-
-          if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both)) {
-            inGroups.Add(grp);
+        } else {
+          if (ghGrps.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Gr input must either be a single Group ID or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Groups = ghGrps.Select(x => x.Value).ToList();
         }
-
-        elem.Groups = inGroups;
       }
 
       // 4 offset
-      ghTypes = new List<GH_ObjectWrapper>();
-      if (da.GetDataList(4, ghTypes)) {
-        var inOffsets = new List<GsaOffset>();
-        for (int i = 0; i < ghTypes.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Offset input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Offsets have been ignored");
+      var offsetGoos = new List<GsaOffsetGoo>();
+      if (da.GetDataList(4, offsetGoos)) {
+        if (offsetGoos.Count == 1) {
+          elem.Offsets = new List<GsaOffset>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Offsets.Add(offsetGoos[i].Value);
           }
-
-          GH_ObjectWrapper ghTyp = ghTypes[i];
-          var offset = new GsaOffset();
-          if (ghTyp.Value is GsaOffsetGoo offsetGoo) {
-            offset = offsetGoo.Value.Duplicate();
-          } else {
-            if (GH_Convert.ToDouble(ghTyp.Value, out double z, GH_Conversion.Both)) {
-              offset.Z = new Length(z, DefaultUnits.LengthUnitGeometry);
-              string unitAbbreviation = string.Concat(offset.Z.ToString().Where(char.IsLetter));
-              this.AddRuntimeRemark("Offset input converted to Z-offset in [" + unitAbbreviation
-                + "]" + Environment.NewLine
-                + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
-            } else {
-              this.AddRuntimeError("Unable to convert Offset input to Offset or double");
-              return;
-            }
+        } else {
+          if (offsetGoos.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Of input must either be a single Offset or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
-
-          inOffsets.Add(offset);
+          elem.Offsets = offsetGoos.Select(x => x.Value).ToList();
         }
-
-        elem.Offsets = inOffsets;
       }
 
       // 5 orientation angle
       var ghangles = new List<GH_Number>();
       if (da.GetDataList(5, ghangles)) {
-        var inAngles = new List<Angle>();
-        for (int i = 0; i < ghangles.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning(
-              "Orientation Angle input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Angles have been ignored");
-            continue;
+        if (ghangles.Count == 1) {
+          elem.OrientationAngles = new List<Angle>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.OrientationAngles.Add(new Angle(ghangles[i].Value, _angleUnit));
           }
-
-          if (GH_Convert.ToDouble(ghangles[i], out double angle, GH_Conversion.Both)) {
-            inAngles.Add(new Angle(angle, _angleUnit));
+        } else {
+          if (ghangles.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("⭮A input must either be a single Number or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.OrientationAngles = ghangles.Select(x => new Angle(x.Value, _angleUnit)).ToList();
         }
-
-        elem.OrientationAngles = inAngles;
       }
 
       // 6 name
       var ghnm = new List<GH_String>();
       if (da.GetDataList(6, ghnm)) {
-        var inNames = new List<string>();
-        for (int i = 0; i < ghnm.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Name input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Names have been ignored");
-            continue;
+        if (ghnm.Count == 1) {
+          elem.Names = new List<string>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Names.Add(ghnm[i].Value);
           }
-
-          if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both)) {
-            inNames.Add(name);
+        } else {
+          if (ghnm.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Nm input must either be a single Text string or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Names = ghnm.Select(x => x.Value).ToList();
         }
-
-        elem.Names = inNames;
       }
 
       // 7 Colour
-      var ghcol = new List<GH_Colour>();
-      if (da.GetDataList(7, ghcol)) {
-        var inColours = new List<Color>();
-        for (int i = 0; i < ghcol.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Colour input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Colours have been ignored");
-            continue;
+      var ghcols = new List<GH_Colour>();
+      if (da.GetDataList(7, ghcols)) {
+        if (ghcols.Count == 1) {
+          elem.Colours = new List<Color>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.Colours.Add(ghcols[i].Value);
           }
-
-          if (GH_Convert.ToColor(ghcol[i], out Color col, GH_Conversion.Both)) {
-            inColours.Add(col);
+        } else {
+          if (ghcols.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Co input must either be a single Colour or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.Colours = ghcols.Select(x => x.Value).ToList();
         }
-
-        elem.Colours = inColours;
       }
 
       // 8 Dummy
-      var ghdum = new List<GH_Boolean>();
-
-      if (da.GetDataList(8, ghdum)) {
-        var inDummies = new List<bool>();
-        for (int i = 0; i < ghdum.Count; i++) {
-          if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dummy input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Dummy booleans have been ignored");
-            continue;
+      var ghdummies = new List<GH_Boolean>();
+      if (da.GetDataList(8, ghdummies)) {
+        if (ghdummies.Count == 1) {
+          elem.IsDummies = new List<bool>();
+          for (int i = 0; i < elem.ApiElements.Count; i++) {
+            elem.IsDummies.Add(ghdummies[i].Value);
           }
-
-          if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both)) {
-            inDummies.Add(dum);
+        } else {
+          if (ghdummies.Count != elem.ApiElements.Count) {
+            this.AddRuntimeWarning("Dm input must either be a single Boolean or a" +
+              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+          elem.IsDummies = ghdummies.Select(x => x.Value).ToList();
         }
-
-        elem.IsDummies = inDummies;
       }
 
       // #### outputs ####
@@ -301,12 +248,12 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
       da.SetDataList(3,
-        new List<GsaProp2dGoo>(elem.Prop2ds.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
+        new List<GsaProp2dGoo>(elem.Prop2ds.Select(x => new GsaProp2dGoo(x))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6,
-        new List<GsaOffsetGoo>(elem.Offsets.ConvertAll(offset => new GsaOffsetGoo(offset))));
-      da.SetDataList(7, elem.OrientationAngles.ConvertAll(angle => angle.Radians));
+        new List<GsaOffsetGoo>(elem.Offsets.Select(x => new GsaOffsetGoo(x))));
+      da.SetDataList(7, elem.OrientationAngles.Select(x => x.Radians));
       da.SetDataList(8, elem.Names);
       da.SetDataList(9, elem.Colours);
       da.SetDataList(10, elem.IsDummies);

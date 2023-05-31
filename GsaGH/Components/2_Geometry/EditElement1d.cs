@@ -220,11 +220,7 @@ namespace GsaGH.Components {
       da.SetData(12, elem.Colour);
       da.SetData(13, elem.IsDummy);
 
-      try {
-        da.SetData(14, elem.ParentMember);
-      } catch (Exception) {
-        // ignored
-      }
+      da.SetData(14, elem.ParentMember);
 
       var topo = new DataTree<int>();
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
