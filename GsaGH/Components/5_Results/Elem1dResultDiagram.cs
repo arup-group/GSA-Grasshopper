@@ -1,4 +1,10 @@
-﻿using GH_IO.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -15,13 +21,8 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
+using Line = GsaAPI.Line;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -43,8 +44,7 @@ namespace GsaGH.Components {
     private bool _undefinedModelLengthUnit;
 
     public Elem1dResultDiagram() : base("1D Element Result Diagram", "ResultElem1dDiagram",
-      "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) {
-    }
+      "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {
@@ -58,8 +58,8 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       //warning - sensitive for description string! do not change description if not needed!
       _displayedDiagramType = Mappings.diagramTypeMapping
-        .Where(item => item.Description == reader.GetString("diagramType"))
-        .Select(item => item.GsaGhEnum).FirstOrDefault();
+       .Where(item => item.Description == reader.GetString("diagramType"))
+       .Select(item => item.GsaGhEnum).FirstOrDefault();
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -81,7 +81,7 @@ namespace GsaGH.Components {
     public override bool Write(GH_IWriter writer) {
       writer.SetString("diagramType",
         Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
-          .Select(item => item.Description).FirstOrDefault());
+         .Select(item => item.Description).FirstOrDefault());
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
@@ -109,8 +109,7 @@ namespace GsaGH.Components {
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
-      unitsMenu.DropDownItems.AddRange(new ToolStripItem[]
-      {
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,
         forceUnitsMenu,
         momentUnitsMenu,
@@ -132,8 +131,7 @@ namespace GsaGH.Components {
     }
 
     protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[]
-      {
+      _spacerDescriptions = new List<string>(new[] {
         "Diagram Type",
       });
 
@@ -228,11 +226,12 @@ namespace GsaGH.Components {
       }
 
       double unitScale = ComputeUnitScale(autoScale);
-      double computedScale = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
+      double computedScale
+        = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         Elements = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
-          .Select(item => item.GsaApiEnum).FirstOrDefault(),
+         .Select(item => item.GsaApiEnum).FirstOrDefault(),
         Cases = _case,
         ScaleFactor = computedScale,
         IsNormalised = autoScale,
@@ -242,12 +241,11 @@ namespace GsaGH.Components {
       var diagramAnnotations = new List<AnnotationGoo>();
 
       GraphicDrawResult diagramResults = result.Model.Model.Get1dElementDiagrams(graphic);
-      ReadOnlyCollection<GsaAPI.Line> linesFromModel = diagramResults.Lines;
+      ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
       ReadOnlyCollection<Annotation> annotationsFromModel = diagramResults.Annotations;
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
-      foreach (GsaAPI.Line item in linesFromModel) {
-
+      foreach (Line item in linesFromModel) {
         var startPoint = new Point3d(item.Start.X, item.Start.Y, item.Start.Z);
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
@@ -258,9 +256,11 @@ namespace GsaGH.Components {
 
       foreach (Annotation annotation in annotationsFromModel) {
         {
-          var vector = new Vector3d(annotation.Position.X, annotation.Position.Y, annotation.Position.Z);
+          var vector = new Vector3d(annotation.Position.X, annotation.Position.Y,
+            annotation.Position.Z);
           vector *= lengthScaleFactor;
-          diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color, annotation.String));
+          diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color,
+            $"{annotation.String} {Message}"));
         }
       }
 
@@ -286,9 +286,8 @@ namespace GsaGH.Components {
       string nodeList = string.Empty;
       var ghNoList = new GH_String();
       if (dataAccess.GetData(1, ref ghNoList)) {
-        nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both)
-          ? tempNodeList
-          : string.Empty;
+        nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both) ?
+          tempNodeList : string.Empty;
       }
 
       if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList)) {
