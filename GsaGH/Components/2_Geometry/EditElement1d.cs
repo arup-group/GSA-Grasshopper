@@ -132,13 +132,9 @@ namespace GsaGH.Components {
         elem = element1dGoo.Value.Duplicate(true);
       }
 
-      if (elem == null) {
-        return;
-      }
-
-      GH_Integer ghId = null;
-      if (da.GetData(1, ref ghId)) {
-        elem.Id = ghId.Value;
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        elem.Id = id;
       }
 
       GH_Line ghcrv = null;
@@ -151,9 +147,9 @@ namespace GsaGH.Components {
         elem.Section = sectionGoo.Value;
       }
 
-      GH_Integer ghGrp = null;
-      if (da.GetData(4, ref ghGrp)) {
-        elem.Group = ghGrp.Value;
+      int group = 0;
+      if (da.GetData(4, ref group)) {
+        elem.Group = group;
       }
 
       var ghString = new GH_String();
@@ -169,19 +165,19 @@ namespace GsaGH.Components {
         }
       }
 
-      GsaOffset offset = null;
+      GsaOffsetGoo offset = null;
       if (da.GetData(6, ref offset)) {
-        elem.Offset = offset;
+        elem.Offset = offset.Value;
       }
 
-      GsaBool6 start = null;
+      GsaBool6Goo start = null;
       if (da.GetData(7, ref start)) {
-        elem.ReleaseStart = start;
+        elem.ReleaseStart = start.Value;
       }
 
-      GsaBool6 end = null;
+      GsaBool6Goo end = null;
       if (da.GetData(8, ref end)) {
-        elem.ReleaseEnd = end;
+        elem.ReleaseEnd = end.Value;
       }
 
       double angle = 0;
