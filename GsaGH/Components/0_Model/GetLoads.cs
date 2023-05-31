@@ -90,12 +90,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) {
-        return;
-      }
+      GsaModelGoo modelGoo = null;
+      da.GetData(0, ref modelGoo);
 
-      Model model = gsaModel.Model;
+      Model model = modelGoo.Value.Model;
 
       List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads());
       List<GsaLoadGoo> node = Loads.GetNodeLoads(model);
