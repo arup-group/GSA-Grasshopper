@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits.Units;
@@ -18,7 +19,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       AddNodeList(list, ref apiLists, ref apiNodes, unit);
-      
+
       return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name + "\"";
     }
 

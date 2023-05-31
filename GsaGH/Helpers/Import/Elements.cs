@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -43,16 +44,16 @@ namespace GsaGH.Helpers.Import {
           break;
 
         default: {
-          if (topo.Count > 4) {
-            // so we introduce the average middle point and create more faces
+            if (topo.Count > 4) {
+              // so we introduce the average middle point and create more faces
 
-            switch (topo.Count) {
-              case 6: {
-                outMesh.Faces.AddFace(0, 3, 5);
-                outMesh.Faces.AddFace(1, 4, 3);
-                outMesh.Faces.AddFace(2, 5, 4);
-                outMesh.Faces.AddFace(3, 4, 5);
-                var tri6Vert = new List<int>() {
+              switch (topo.Count) {
+                case 6: {
+                    outMesh.Faces.AddFace(0, 3, 5);
+                    outMesh.Faces.AddFace(1, 4, 3);
+                    outMesh.Faces.AddFace(2, 5, 4);
+                    outMesh.Faces.AddFace(3, 4, 5);
+                    var tri6Vert = new List<int>() {
                   0,
                   3,
                   1,
@@ -60,44 +61,44 @@ namespace GsaGH.Helpers.Import {
                   2,
                   5,
                 };
-                var tri6Face = new List<int>() {
+                    var tri6Face = new List<int>() {
                   0,
                   1,
                   2,
                   3,
                 };
-                var meshGon = MeshNgon.Create(tri6Vert, tri6Face);
+                    var meshGon = MeshNgon.Create(tri6Vert, tri6Face);
 
-                outMesh.Ngons.AddNgon(meshGon);
-                break;
-              }
-              case 8: {
-                var ave = new Point3d {
-                  X = 0,
-                  Y = 0,
-                  Z = 0,
-                };
-                for (int k = 0; k < topo.Count; k++) {
-                  ave.X += outMesh.Vertices[k].X;
-                  ave.Y += outMesh.Vertices[k].Y;
-                  ave.Z += outMesh.Vertices[k].Z;
-                }
+                    outMesh.Ngons.AddNgon(meshGon);
+                    break;
+                  }
+                case 8: {
+                    var ave = new Point3d {
+                      X = 0,
+                      Y = 0,
+                      Z = 0,
+                    };
+                    for (int k = 0; k < topo.Count; k++) {
+                      ave.X += outMesh.Vertices[k].X;
+                      ave.Y += outMesh.Vertices[k].Y;
+                      ave.Z += outMesh.Vertices[k].Z;
+                    }
 
-                ave.X /= topo.Count;
-                ave.Y /= topo.Count;
-                ave.Z /= topo.Count;
+                    ave.X /= topo.Count;
+                    ave.Y /= topo.Count;
+                    ave.Z /= topo.Count;
 
-                outMesh.Vertices.Add(ave);
+                    outMesh.Vertices.Add(ave);
 
-                outMesh.Faces.AddFace(0, 4, 8);
-                outMesh.Faces.AddFace(1, 8, 4);
-                outMesh.Faces.AddFace(1, 5, 8);
-                outMesh.Faces.AddFace(2, 8, 5);
-                outMesh.Faces.AddFace(2, 6, 8);
-                outMesh.Faces.AddFace(3, 8, 6);
-                outMesh.Faces.AddFace(3, 7, 8);
-                outMesh.Faces.AddFace(0, 8, 7);
-                var quad8Vert = new List<int>() {
+                    outMesh.Faces.AddFace(0, 4, 8);
+                    outMesh.Faces.AddFace(1, 8, 4);
+                    outMesh.Faces.AddFace(1, 5, 8);
+                    outMesh.Faces.AddFace(2, 8, 5);
+                    outMesh.Faces.AddFace(2, 6, 8);
+                    outMesh.Faces.AddFace(3, 8, 6);
+                    outMesh.Faces.AddFace(3, 7, 8);
+                    outMesh.Faces.AddFace(0, 8, 7);
+                    var quad8Vert = new List<int>() {
                   0,
                   4,
                   1,
@@ -107,7 +108,7 @@ namespace GsaGH.Helpers.Import {
                   3,
                   7,
                 };
-                var quad8Face = new List<int>() {
+                    var quad8Face = new List<int>() {
                   0,
                   1,
                   2,
@@ -118,16 +119,16 @@ namespace GsaGH.Helpers.Import {
                   7,
                 };
 
-                var meshGon = MeshNgon.Create(quad8Vert, quad8Face);
+                    var meshGon = MeshNgon.Create(quad8Vert, quad8Face);
 
-                outMesh.Ngons.AddNgon(meshGon);
-                break;
+                    outMesh.Ngons.AddNgon(meshGon);
+                    break;
+                  }
               }
             }
-          }
 
-          break;
-        }
+            break;
+          }
       }
 
       return outMesh;

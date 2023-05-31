@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI.EnumMappings;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using static GsaGH.Parameters.GsaMaterial;
 using static GsaGH.Parameters.GsaOffset;
 using Diagram = GsaGH.Parameters.Enums;

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
