@@ -3,6 +3,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
+using OasysGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
 
@@ -18,8 +19,8 @@ namespace GsaGH.Parameters {
       });
     public BoundingBox ClippingBox => Boundingbox;
     public Vector3d Direction { get; private set; }
-    public override string TypeDescription => "A GSA result vector3d type.";
-    public override string TypeName => "Result Vector3d";
+    public override string TypeDescription => "A GSA result vector type.";
+    public override string TypeName => "Result Vector";
     public readonly IQuantity ForceValue;
     public readonly int NodeId;
     public readonly Point3d StartingPoint;
@@ -42,37 +43,19 @@ namespace GsaGH.Parameters {
       Value = GetGhVector();
     }
 
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null: return false;
-
-        case Vector3d vector:
-          Value = new GH_Vector(vector);
-          return true;
-
-        case GH_Vector lineGoo:
-          Value = lineGoo;
-          return true;
-      }
-
-      var vector3d = new Vector3d();
-      if (!GH_Convert.ToVector3d(source, ref vector3d, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = new GH_Vector(vector3d);
-
-      return true;
-    }
-
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Vector3d))) {
-        target = (TQ)(object)Value;
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
+        target = (TQ)(object)new GH_Vector(Value);
         return true;
       }
 
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
-        target = (TQ)(object)new GH_Vector(Value);
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Number))) {
+        target = (TQ)(object)new GH_Number(ForceValue.Value);
+        return true;
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
+        target = (TQ)(object)new GH_Integer(NodeId);
         return true;
       }
 

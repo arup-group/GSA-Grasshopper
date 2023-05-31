@@ -205,7 +205,7 @@ namespace GsaGH.Helpers.GH {
         Type = MemberType.GENERIC_2D,
       };
 
-      Model model = AssembleModel.Assemble(null, nodes, elem1ds, null, null, mem1ds,
+      Model model = AssembleModel.Assemble(null, null, nodes, elem1ds, null, null, mem1ds,
         new List<GsaMember2d> {
           mem,
         }, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
@@ -214,12 +214,12 @@ namespace GsaGH.Helpers.GH {
       var elementLocalAxesDict
         = elementDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(elementDict, nodeDict,
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) = Elements.GetElements(elementDict, nodeDict,
         model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(),
         model.SectionModifiers(), elementLocalAxesDict, model.Axes(), unit, false);
 
-      var elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();
+      var elem2dgoo = e2d.OrderBy(item => item.Value.Ids).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;
 
       Surface flat = flattened[0].Surfaces[0];
@@ -841,69 +841,10 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Plane CreateBestFitUnitisedPlaneFromPts(
-      List<Point3d> ctrlPts, bool round = false) {
+      List<Point3d> ctrlPts) {
       Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
-      plane.Origin = plane.ClosestPoint(new Point3d(0, 0, 0));
-      int dig = UnitsHelper.SignificantDigits;
       plane.Normal.Unitize();
-      if (Math.Abs(Math.Round(plane.Normal.Z, dig)) == 1) {
-        plane.XAxis = Vector3d.XAxis;
-        plane.YAxis = Vector3d.YAxis;
-      }
-
-      if (round) {
-        plane.OriginX = ResultHelper.RoundToSignificantDigits(plane.OriginX, dig);
-        plane.OriginY = ResultHelper.RoundToSignificantDigits(plane.OriginY, dig);
-        plane.OriginZ = ResultHelper.RoundToSignificantDigits(plane.OriginZ, dig);
-
-        plane.XAxis.Unitize();
-        Vector3d xaxis = plane.XAxis;
-        xaxis.X = ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
-        xaxis.Y = ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
-        xaxis.Z = ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
-        plane.XAxis = xaxis;
-
-        plane.YAxis.Unitize();
-        Vector3d yaxis = plane.YAxis;
-        yaxis.X = ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
-        yaxis.Y = ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
-        yaxis.Z = ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
-        plane.YAxis = yaxis;
-
-        plane.ZAxis.Unitize();
-        Vector3d zaxis = plane.ZAxis;
-        zaxis.X = ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
-        zaxis.Y = ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
-        zaxis.Z = ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
-        plane.ZAxis = zaxis;
-      } else {
-        plane.OriginX = Math.Round(plane.OriginX, dig);
-        plane.OriginY = Math.Round(plane.OriginY, dig);
-        plane.OriginZ = Math.Round(plane.OriginZ, dig);
-
-        plane.XAxis.Unitize();
-        Vector3d xaxis = plane.XAxis;
-        xaxis.X = Math.Round(Math.Abs(xaxis.X), dig);
-        xaxis.Y = Math.Round(Math.Abs(xaxis.Y), dig);
-        xaxis.Z = Math.Round(Math.Abs(xaxis.Z), dig);
-        plane.XAxis = xaxis;
-
-        plane.YAxis.Unitize();
-        Vector3d yaxis = plane.YAxis;
-        yaxis.X = Math.Round(Math.Abs(yaxis.X), dig);
-        yaxis.Y = Math.Round(Math.Abs(yaxis.Y), dig);
-        yaxis.Z = Math.Round(Math.Abs(yaxis.Z), dig);
-        plane.YAxis = yaxis;
-
-        plane.ZAxis.Unitize();
-        Vector3d zaxis = plane.ZAxis;
-        zaxis.X = Math.Round(Math.Abs(zaxis.X), dig);
-        zaxis.Y = Math.Round(Math.Abs(zaxis.Y), dig);
-        zaxis.Z = Math.Round(Math.Abs(zaxis.Z), dig);
-        plane.ZAxis = zaxis;
-      }
-
-      return plane;
+      return new Plane(plane.Origin, plane.Normal);
     }
   }
 }

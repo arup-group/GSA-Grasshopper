@@ -4,7 +4,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -204,7 +203,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "G2D",
-        "Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
+        "List, Custom Material, 2D Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
@@ -260,10 +259,10 @@ namespace GsaGH.Components {
                   "List must be of type Element or Member to apply to face loading");
               }
 
-              if (value.Value.EntityType == EntityType.Member) {
-                this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
+            if (value.Value.EntityType == EntityType.Member) {
+              this.AddRuntimeRemark(
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            }
 
               break;
             }
@@ -273,16 +272,26 @@ namespace GsaGH.Components {
               break;
             }
           case GsaMember2dGoo value: {
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Member;
-              if (_mode != FoldMode.Uniform) {
-                this.AddRuntimeWarning(
-                  "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-              } else {
-                this.AddRuntimeRemark(
-                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
+            faceLoad._refObjectGuid = value.Value.Guid;
+            faceLoad._referenceType = ReferenceType.MemberChildElements;
+            if (_mode != FoldMode.Uniform) {
+              this.AddRuntimeWarning(
+                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+            } else {
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            }
 
+            break;
+          }
+          case GsaMaterialGoo value: {
+              if (value.Value.GradeProperty != 0) {
+                this.AddRuntimeWarning(
+                "Reference Material must be a Custom Material");
+                return;
+              }
+              faceLoad._refObjectGuid = value.Value.Guid;
+              faceLoad._referenceType = ReferenceType.Material;
               break;
             }
           case GsaProp2dGoo value: {
@@ -318,7 +327,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -328,11 +337,11 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
       }
 
@@ -341,7 +350,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            faceLoad.FaceLoad.Type = FaceLoadType.CONSTANT;
+            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.CONSTANT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -359,7 +368,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Variable:
           if (_mode == FoldMode.Variable) {
-            faceLoad.FaceLoad.Type = FaceLoadType.GENERAL;
+            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.GENERAL;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -386,7 +395,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            faceLoad.FaceLoad.Type = FaceLoadType.POINT;
+            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.POINT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();

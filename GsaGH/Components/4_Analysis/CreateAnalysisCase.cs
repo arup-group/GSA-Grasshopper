@@ -38,10 +38,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      string name = "";
+      string name = string.Empty;
       da.GetData(0, ref name);
 
-      string desc = "";
+      string desc = string.Empty;
       da.GetData(1, ref desc);
 
       da.SetData(0, new GsaAnalysisCaseGoo(new GsaAnalysisCase(name, desc)));

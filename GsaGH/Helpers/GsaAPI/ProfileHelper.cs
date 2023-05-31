@@ -135,7 +135,7 @@ namespace GsaGH.Helpers.GsaApi {
           }
         }
         case ProfileHelper.ProfileTypes.Catalogue: {
-          string outputSectionString = "";
+          string outputSectionString = string.Empty;
 
           if (gsaProfile.CatalogueProfileName != null) {
             outputSectionString = gsaProfile.CatalogueProfileName;
@@ -145,7 +145,7 @@ namespace GsaGH.Helpers.GsaApi {
         }
         case ProfileHelper.ProfileTypes.Geometric
           when gsaProfile.GeoType == ProfileHelper.GeoTypes.Perim: {
-          string unit = "";
+          string unit = string.Empty;
 
           switch (gsaProfile.SectUnit) {
             case ProfileHelper.SectUnitOptions.UMm:
@@ -247,7 +247,7 @@ namespace GsaGH.Helpers.GsaApi {
 
     public double B1;
     public double B2;
-    public string CatalogueProfileName = "";
+    public string CatalogueProfileName = string.Empty;
     public double D;
     public GeoTypes GeoType;
     public bool IsB2B;

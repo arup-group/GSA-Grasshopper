@@ -22,51 +22,14 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      var ln = new Line();
-      if (!GH_Convert.ToLine(source, ref ln, GH_Conversion.Both)) {
-        return false;
-      }
-
-      var crv = new LineCurve(ln);
-      var elem = new GsaElement1d(crv);
-      Value = elem;
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Line))) {
-        target = Value == null ? default : (TQ)(object)Value.Line;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           var ghLine = new GH_Line();
           GH_Convert.ToGHLine(Value.Line, GH_Conversion.Both, ref ghLine);
           target = (TQ)(object)ghLine;
+          return true;
         }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Curve))) {
-        target = Value == null ? default : (TQ)(object)Value.Line;
-        return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
@@ -75,15 +38,10 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
         }
-
-        return true;
       }
 
       target = default;
@@ -141,7 +99,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.Line;
+      return Value == null ? null : (GeometryBase)Value.Line;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

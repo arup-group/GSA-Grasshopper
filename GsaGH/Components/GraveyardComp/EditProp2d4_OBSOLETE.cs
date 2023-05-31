@@ -156,10 +156,8 @@ namespace GsaGH.Components.GraveyardComp {
 
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
-          var material = new GsaMaterial();
-          if (ghTyp.Value is GsaMaterialGoo) {
-            ghTyp.CastTo(ref material);
-            prop.Material = material ?? new GsaMaterial();
+          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+            prop.Material = materialGoo.Value.Duplicate() ?? new GsaMaterial();
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
               prop.MaterialId = idd;
@@ -218,7 +216,7 @@ namespace GsaGH.Components.GraveyardComp {
         da.SetData(1, prop.Id);
         da.SetData(2, new GsaMaterialGoo(prop.Material));
         da.SetData(3,
-          prop.ApiProp2d.Description == "" ? new GH_UnitNumber(Length.Zero) :
+          prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
             new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
         if (prop.AxisProperty == -2) {
           da.SetData(4, new GH_Plane(prop.LocalAxis));

@@ -417,24 +417,24 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No",
-        "Filter import by list." + Environment.NewLine + "Node list should take the form:"
+      pManager.AddGenericParameter("Node filter list", "No",
+        "Filter import by list. (by default 'all')" + Environment.NewLine + "Node list should take the form:"
         + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
-      pManager.AddTextParameter("Element filter list", "El",
-        "Filter import by list." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Element filter list", "El",
+        "Filter import by list (by default 'all')." + Environment.NewLine + "Element list should take the form:"
+        + Environment.NewLine 
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
-      pManager.AddTextParameter("Member filter list", "Me",
-        "Filter import by list." + Environment.NewLine + "Member list should take the form:"
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Member filter list", "Me",
+        "Filter import by list (by default 'all')." + Environment.NewLine + "Member list should take the form:"
         + Environment.NewLine + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
+        GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
@@ -471,19 +471,50 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         Task<SolveResults> tsk = null;
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo) {
-            ghTyp.CastTo(ref gsaModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            gsaModel = modelGoo.Value.Clone();
           } else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
           }
 
+          ghTyp = new GH_ObjectWrapper();
           string nodeList = "all";
-          data.GetData(1, ref nodeList);
+          if (data.GetData(1, ref ghTyp)) {
+            if (ghTyp.Value is GsaListGoo listGoo) {
+              if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
+                this.AddRuntimeWarning(
+                "List must be of type Node to apply to node filter");
+              }
+              nodeList = "\"" + listGoo.Value.Name + "\"";
+            } else {
+              GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
+            }
+          }
           string elemList = "all";
-          data.GetData(2, ref elemList);
+          if (data.GetData(2, ref ghTyp)) {
+            if (ghTyp.Value is GsaListGoo listGoo) {
+              if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
+                this.AddRuntimeWarning(
+                "List must be of type Element to apply to element filter");
+              }
+              elemList = "\"" + listGoo.Value.Name + "\"";
+            } else {
+              GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
+            }
+          }
           string memList = "all";
-          data.GetData(3, ref memList);
+          if (data.GetData(3, ref ghTyp)) {
+            if (ghTyp.Value is GsaListGoo listGoo) {
+              if (listGoo.Value.EntityType != Parameters.EntityType.Member) {
+                this.AddRuntimeWarning(
+                "List must be of type Member to apply to member filter");
+              }
+              memList = "\"" + listGoo.Value.Name + "\"";
+            } else {
+              GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
+            }
+          }
 
           Model model = gsaModel.Model;
           ReadOnlyDictionary<int, Node> nDict = model.Nodes();
@@ -516,8 +547,8 @@ namespace GsaGH.Components {
         var gsaModel = new GsaModel();
         var ghTyp = new GH_ObjectWrapper();
         if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo) {
-            ghTyp.CastTo(ref gsaModel);
+          if (ghTyp.Value is GsaModelGoo modelGoo) {
+            gsaModel = modelGoo.Value.Clone();
           } else {
             this.AddRuntimeError("Error converting input to GSA Model");
             return;
@@ -591,7 +622,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement2dGoo>();
           foreach (GsaElement2dGoo element in results.Elem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Properties.First().Id));
+            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
           }
 
           data.SetDataTree(2, tree);
@@ -684,7 +715,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaMember2dGoo>();
           foreach (GsaMember2dGoo element in results.Mem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Property.Id));
+            tree.Add(element, new GH_Path(element.Value.Prop2d.Id));
           }
 
           data.SetDataTree(5, tree);
@@ -740,25 +771,16 @@ namespace GsaGH.Components {
               break;
 
             case 1:
-              Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-                ConcurrentBag<GsaElement3dGoo>> elementTuple = Elements.GetElements(eDict, allnDict,
-                sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict, axDict, _lengthUnit,
+              (results.Elem1ds, results.Elem2ds, results.Elem3ds) = Elements.GetElements(
+                eDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict,
+                axDict, _lengthUnit,
                 false);
-
-              results.Elem1ds = elementTuple.Item1;
-              results.Elem2ds = elementTuple.Item2;
-              results.Elem3ds = elementTuple.Item3;
               break;
 
             case 2:
-              Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-                ConcurrentBag<GsaMember3dGoo>> memberTuple = Members.GetMembers(mDict, allnDict,
+              (results.Mem1ds, results.Mem2ds, results.Mem3ds) = Members.GetMembers(mDict, allnDict,
                 sDict, pDict, p3Dict, matDict, modDict, memberLocalAxesDict, axDict, _lengthUnit,
                 false, this);
-
-              results.Mem1ds = memberTuple.Item1;
-              results.Mem2ds = memberTuple.Item2;
-              results.Mem3ds = memberTuple.Item3;
               break;
           }
         });

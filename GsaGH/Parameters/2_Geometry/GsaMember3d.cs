@@ -112,7 +112,7 @@ namespace GsaGH.Parameters {
         Prop3d = Prop3d.Duplicate(),
       };
       if (cloneApiMember) {
-        dup.CloneApiObject();
+        dup.ApiMember = GetAPI_MemberClone();
       } else {
         dup.ApiMember = ApiMember;
       }
@@ -135,7 +135,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
       return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
@@ -175,6 +175,7 @@ namespace GsaGH.Parameters {
       var mem = new Member {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
+        IsIntersector = ApiMember.IsIntersector,
         MeshSize = ApiMember.MeshSize,
         Name = ApiMember.Name,
         Offset = ApiMember.Offset,

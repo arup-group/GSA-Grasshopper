@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -19,11 +20,12 @@ namespace GsaGH.Helpers.Export {
       ref List<GridLineLoad> gridLineLoads, ref List<GridAreaLoad> gridAreaLoads,
       ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
       ref Dictionary<int, GridSurface> existingGridSurfaces, ref Dictionary<Guid, int> gpGuid,
-      ref Dictionary<Guid, int> gsGuid, LengthUnit unit,
-      ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
-      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
-      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
-      GsaGuidDictionary<Member> apiMembers, GH_Component owner) {
+      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit,
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
+      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
+      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
+      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GH_Component owner) {
       if (loads == null) {
         return;
       }
@@ -39,8 +41,8 @@ namespace GsaGH.Helpers.Export {
         ConvertLoad(load, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads,
           ref gridLineLoads, ref gridAreaLoads, ref existingAxes, ref axisidcounter,
           ref existingGridPlanes, ref gridplaneidcounter, ref existingGridSurfaces,
-          ref gridsurfaceidcounter, ref gpGuid, ref gsGuid, unit, ref memberElementRelationship,
-          model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+          ref gridsurfaceidcounter, ref gpGuid, ref gsGuid, ref apiLists, unit, memberElementRelationship,
+          model, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
       }
     }
 
@@ -51,24 +53,36 @@ namespace GsaGH.Helpers.Export {
       ref Dictionary<int, Axis> existingAxes, ref int axisidcounter,
       ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter,
       ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter,
-      ref Dictionary<Guid, int> gpGuid, ref Dictionary<Guid, int> gsGuid, LengthUnit unit,
-      ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
-      GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds,
-      GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements,
-      GsaGuidDictionary<Member> apiMembers, GH_Component owner) {
+      ref Dictionary<Guid, int> gpGuid, ref Dictionary<Guid, int> gsGuid,
+      ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit,
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
+      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
+      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
+      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
+      GH_Component owner) {
       switch (load.LoadType) {
         case GsaLoad.LoadTypes.Gravity:
           PostHog.Load(load.LoadType, load.GravityLoad._referenceType);
           if (load.GravityLoad._referenceType != ReferenceType.None) {
-            if (memberElementRelationship == null) {
-              memberElementRelationship
-                = ElementListFromReference.GetMemberElementRelationship(model);
+            string objectElemList = load.GravityLoad.GravityLoad.Elements;
+
+            if (load.GravityLoad._referenceType == ReferenceType.List) {
+              if (load.GravityLoad._refList == null
+                && (load.GravityLoad._refList.EntityType != Parameters.EntityType.Element
+                || load.GravityLoad._refList.EntityType != Parameters.EntityType.Member)) {
+                owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
+                  + Environment.NewLine + "Element list has not been set");
+              }
+              objectElemList +=
+                Lists.GetElementList(load.GravityLoad._refList, ref apiLists, apiMaterials, apiSections,
+                apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
+            } else {
+              objectElemList += ElementListFromReference.GetRefElementIds(load.GravityLoad,
+              apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers,
+              memberElementRelationship);
             }
 
-            string objectElemList = ElementListFromReference.GetRefElementIds(load.GravityLoad,
-              apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers,
-              memberElementRelationship);
-            if (objectElemList.Trim() != "") {
+            if (objectElemList.Trim() != string.Empty) {
               load.GravityLoad.GravityLoad.Elements = objectElemList;
             } else {
               string warning = "One or more GravityLoads with reference to a "
@@ -89,14 +103,24 @@ namespace GsaGH.Helpers.Export {
         case GsaLoad.LoadTypes.Beam:
           PostHog.Load(load.LoadType, load.BeamLoad._referenceType);
           if (load.BeamLoad._referenceType != ReferenceType.None) {
-            if (memberElementRelationship == null) {
-              memberElementRelationship
-                = ElementListFromReference.GetMemberElementRelationship(model);
+            string objectElemList = load.BeamLoad.BeamLoad.Elements;
+
+            if (load.BeamLoad._referenceType == ReferenceType.List) {
+              if (load.BeamLoad._refList == null
+                && (load.BeamLoad._refList.EntityType != Parameters.EntityType.Element
+                || load.BeamLoad._refList.EntityType != Parameters.EntityType.Member)) {
+                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+                  + Environment.NewLine + "Element list has not been set");
+              }
+              objectElemList +=
+                Lists.GetElementList(load.BeamLoad._refList, ref apiLists, apiMaterials, apiSections,
+                apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
+            } else {
+              objectElemList += ElementListFromReference.GetRefElementIds(load.BeamLoad,
+              apiMaterials, apiSections, apiElements, apiMembers, memberElementRelationship);
             }
 
-            string objectElemList = ElementListFromReference.GetRefElementIds(load.BeamLoad,
-              apiSections, apiElements, apiMembers, memberElementRelationship);
-            if (objectElemList.Trim() != "") {
+            if (objectElemList.Trim() != string.Empty) {
               load.BeamLoad.BeamLoad.Elements = objectElemList;
             } else {
               string warning = "One or more BeamLoads with reference to a "
@@ -117,14 +141,24 @@ namespace GsaGH.Helpers.Export {
         case GsaLoad.LoadTypes.Face:
           PostHog.Load(load.LoadType, load.FaceLoad._referenceType);
           if (load.FaceLoad._referenceType != ReferenceType.None) {
-            if (memberElementRelationship == null) {
-              memberElementRelationship
-                = ElementListFromReference.GetMemberElementRelationship(model);
+            string objectElemList = load.FaceLoad.FaceLoad.Elements;
+
+            if (load.FaceLoad._referenceType == ReferenceType.List) {
+              if (load.FaceLoad._refList == null
+                && (load.FaceLoad._refList.EntityType != Parameters.EntityType.Element
+                || load.FaceLoad._refList.EntityType != Parameters.EntityType.Member)) {
+                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+                  + Environment.NewLine + "Element list has not been set");
+              }
+              objectElemList +=
+                Lists.GetElementList(load.FaceLoad._refList, ref apiLists, apiMaterials, apiSections,
+                apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
+            } else {
+              objectElemList += ElementListFromReference.GetRefElementIds(load.FaceLoad,
+              apiMaterials, apiProp2ds, apiElements, apiMembers, memberElementRelationship);
             }
 
-            string objectElemList = ElementListFromReference.GetRefElementIds(load.FaceLoad,
-              apiProp2ds, apiElements, apiMembers, memberElementRelationship);
-            if (objectElemList.Trim() != "") {
+            if (objectElemList.Trim() != string.Empty) {
               load.FaceLoad.FaceLoad.Elements = objectElemList;
             } else {
               string warning = "One or more FaceLoads with reference to a "
@@ -149,7 +183,12 @@ namespace GsaGH.Helpers.Export {
             break;
           }
 
-          GsaGridPointLoad gridptref = load.PointLoad;
+          GsaGridPointLoad gridptref = load.PointLoad.Duplicate();
+          if (unit != LengthUnit.Meter) {
+            gridptref.GridPointLoad.X = new Length(gridptref.GridPointLoad.X, unit).As(LengthUnit.Meter);
+            gridptref.GridPointLoad.Y = new Length(gridptref.GridPointLoad.Y, unit).As(LengthUnit.Meter);
+          }
+
           GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {
@@ -163,9 +202,9 @@ namespace GsaGH.Helpers.Export {
             gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes,
               ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
             gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf,
-              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes,
-              existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds,
-              apiProp3ds, apiElements, apiMembers);
+              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, ref apiLists, existingGridPlanes,
+              existingAxes, unit, memberElementRelationship, model, apiMaterials, apiSections,
+              apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
           }
 
           gridPointLoads.Add(gridptref.GridPointLoad);
@@ -179,6 +218,13 @@ namespace GsaGH.Helpers.Export {
           }
 
           GsaGridLineLoad gridlnref = load.LineLoad;
+          if (unit != LengthUnit.Meter
+            && gridlnref.GridLineLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
+            gridlnref.GridLineLoad.PolyLineDefinition =
+              GridLoadHelper.ClearDefinitionForUnit(gridlnref.GridLineLoad.PolyLineDefinition) +
+              $"({Length.GetAbbreviation(unit)})";
+          }
+
           gridplnsrf = gridlnref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {
@@ -192,9 +238,9 @@ namespace GsaGH.Helpers.Export {
             gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes,
               ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
             gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf,
-              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes,
-              existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds,
-              apiProp3ds, apiElements, apiMembers);
+              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, ref apiLists,
+              existingGridPlanes, existingAxes, unit, memberElementRelationship, model, apiMaterials,
+              apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
           }
 
           gridLineLoads.Add(gridlnref.GridLineLoad);
@@ -204,8 +250,9 @@ namespace GsaGH.Helpers.Export {
           PostHog.Load(load.LoadType, ReferenceType.None,
             load.AreaLoad.GridAreaLoad.Type.ToString());
           if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
-            load.AreaLoad.GridAreaLoad.PolyLineDefinition
-              += "(" + Length.GetAbbreviation(unit) + ")";
+            load.AreaLoad.GridAreaLoad.PolyLineDefinition =
+            GridLoadHelper.ClearDefinitionForUnit(load.AreaLoad.GridAreaLoad.PolyLineDefinition) +
+            $"({Length.GetAbbreviation(unit)})";
           }
 
           if (load.AreaLoad.GridPlaneSurface == null) {
@@ -227,9 +274,9 @@ namespace GsaGH.Helpers.Export {
             gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes,
               ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
             gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf,
-              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, existingGridPlanes,
-              existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds,
-              apiProp3ds, apiElements, apiMembers);
+              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, ref apiLists,
+              existingGridPlanes, existingAxes, unit, memberElementRelationship, model, apiMaterials,
+              apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
           }
 
           gridAreaLoads.Add(gridarref.GridAreaLoad);
@@ -239,7 +286,8 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertNodeLoad(
       List<GsaLoad> loads, ref List<NodeLoad> nodeLoadsNode, ref List<NodeLoad> nodeLoadsDispl,
-      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
+      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes,
+      ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit) {
       if (loads == null) {
         return;
       }
@@ -247,16 +295,21 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaLoad load in loads.Where(load => load != null)
        .Where(load => load.LoadType == GsaLoad.LoadTypes.Node)) {
         ConvertNodeLoad(load, ref nodeLoadsNode, ref nodeLoadsDispl, ref nodeLoadsSettle,
-          ref apiNodes, unit);
+          ref apiNodes, ref apiLists, unit);
       }
     }
 
     internal static void ConvertNodeLoad(
       GsaLoad load, ref List<NodeLoad> nodeLoadsNode, ref List<NodeLoad> nodeLoadsDispl,
-      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
+      ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes,
+      ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit) {
       if (load.NodeLoad._refPoint != Point3d.Unset) {
         load.NodeLoad.NodeLoad.Nodes
           = Nodes.AddNode(ref apiNodes, load.NodeLoad._refPoint, unit).ToString();
+      }
+      if (load.NodeLoad._refList != null) {
+        load.NodeLoad.NodeLoad.Nodes = Lists.GetNodeList(
+          load.NodeLoad._refList, ref apiLists, ref apiNodes, unit);
       }
 
       switch (load.NodeLoad.Type) {

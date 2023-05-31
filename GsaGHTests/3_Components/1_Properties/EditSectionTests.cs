@@ -60,18 +60,17 @@ namespace GsaGHTests.Components.Properties {
       ComponentTestHelper.SetInput(comp, "byggemandbob", 9);
       ComponentTestHelper.SetInput(comp, Color.Red, 10);
 
-      int i = 0;
-      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, i++);
-      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
-      var profile = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
-      var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
-      var basicOffset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
-      var addiontalOffsetY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
-      var addiontalOffsetZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
-      var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, i++);
-      var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
-      var name = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, i++);
+      var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
+      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
+      var profile = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
+      var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var basicOffset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 4);
+      var addiontalOffsetY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 5);
+      var addiontalOffsetZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
+      var mod = (GsaSectionModifierGoo)ComponentTestHelper.GetOutput(comp, 7);
+      var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
+      var name = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
+      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 10);
 
       Duplicates.AreEqual(edit, sectionGoo.Value);
       Assert.Equal(42, id.Value);

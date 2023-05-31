@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateElemsFromBreps;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = "";
+    private string _toleranceTxt = string.Empty;
 
     public Elem2dFromBrep2_OBSOLETE() : base("Element2d from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -156,8 +156,8 @@ namespace GsaGH.Components {
             pts.Add(new Point3d(pt));
           } else {
             string type = objectWrapper.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", "");
-            type = type.Replace("Goo", "");
+            type = type.Replace("GsaGH.Parameters.", string.Empty);
+            type = type.Replace("Goo", string.Empty);
             this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
               + type + " to point or node");
           }
@@ -176,8 +176,8 @@ namespace GsaGH.Components {
             curves.Add(crv.DuplicateCurve());
           } else {
             string type = objectWrapper.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", "");
-            type = type.Replace("Goo", "");
+            type = type.Replace("GsaGH.Parameters.", string.Empty);
+            type = type.Replace("Goo", string.Empty);
             this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
               + type + " to curve or 1D Member");
           }
@@ -190,8 +190,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProp2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo) {
-          ghTyp.CastTo(ref prop2d);
+        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
+          prop2d = prop2DGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
@@ -210,7 +210,7 @@ namespace GsaGH.Components {
         prop2Ds.Add(prop2d);
       }
 
-      elem2d.Properties = prop2Ds;
+      elem2d.Prop2ds = prop2Ds;
 
       da.SetData(0, new GsaElement2dGoo(elem2d, false));
 
@@ -230,7 +230,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      if (_toleranceTxt != "") {
+      if (_toleranceTxt != string.Empty) {
         try {
           var newTolerance = Length.Parse(_toleranceTxt);
           _tolerance = newTolerance;

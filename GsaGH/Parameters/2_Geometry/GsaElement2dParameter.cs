@@ -1,9 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +24,13 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaElement2dGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaElement2d) ? new GsaElement2dGoo((GsaElement2d)data) :
-        base.PreferredCast(data);
+      var mesh = new Mesh();
+      if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
+        return new GsaElement2dGoo(new GsaElement2d(mesh));
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element2d");
+      return new GsaElement2dGoo(null);
     }
   }
 }

@@ -17,24 +17,6 @@ namespace GsaGH.Parameters {
 
     public GsaOffsetGoo(GsaOffset item) : base(item) { }
 
-    public override bool CastFrom(object source) {
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (!GH_Convert.ToDouble(source, out double myval, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value.Z = new Length(myval, DefaultUnits.LengthUnitGeometry);
-      // if input to parameter is a single number convert it to the most common Z-offset
-      return true;
-    }
-
     public override IGH_Goo Duplicate() {
       return new GsaOffsetGoo(Value);
     }

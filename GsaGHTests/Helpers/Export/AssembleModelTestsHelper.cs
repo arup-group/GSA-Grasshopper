@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -108,8 +109,8 @@ namespace GsaGHTests.Helpers.Export {
           expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
-        GsaProp2d prop = (i > expected.Properties.Count - 1) ? expected.Properties.Last() :
-          expected.Properties[i];
+        GsaProp2d prop = (i > expected.Prop2ds.Count - 1) ? expected.Prop2ds.Last() :
+          expected.Prop2ds[i];
         TestProp2d(prop, api.Property, actualModel);
       }
     }
@@ -195,7 +196,7 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(expected.Offset.Z.Meters, api.Offset.Z);
       Assert.Equal(expected.OrientationAngle.Degrees, api.OrientationAngle);
 
-      TestProp2d(expected.Property, api.Property, actualModel);
+      TestProp2d(expected.Prop2d, api.Property, actualModel);
     }
 
     internal void TestMember3d(

@@ -31,8 +31,7 @@ namespace GsaGHTests.Components.Loads {
       ComponentTestHelper.SetInput(comp, 0.5, 5);
 
       var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      GsaGridPlaneSurface gridSurface = null;
-      output.CastTo(ref gridSurface);
+      GsaGridPlaneSurface gridSurface = output.Value;
 
       Assert.Equal(42, gridSurface.GridPlaneId);
       Assert.Equal("10", gridSurface.Elevation);

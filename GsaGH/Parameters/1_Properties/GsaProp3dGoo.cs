@@ -15,46 +15,12 @@ namespace GsaGH.Parameters {
 
     public GsaProp3dGoo(GsaProp3d item) : base(item) { }
 
-    public override bool CastFrom(object source) {
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (source.GetType().IsAssignableFrom(typeof(GsaMaterial))) {
-        Value = new GsaProp3d((GsaMaterial)source);
-        return true;
-      }
-
-      if (!source.GetType().IsAssignableFrom(typeof(GsaMaterialGoo))) {
-        return false;
-      }
-
-      Value = new GsaProp3d(((GsaMaterialGoo)source).Value);
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          var ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)) {
-            target = (TQ)(object)ghint;
-          } else {
-            target = default;
-          }
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
         }
-
-        return true;
       }
 
       target = default;

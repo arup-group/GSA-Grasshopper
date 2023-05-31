@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GsaAPI;
+using OasysGH.Units;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
+using Rhino.Input.Custom;
 
 namespace GsaGH.Parameters {
   public class GsaBeamLoad {
@@ -184,11 +190,11 @@ namespace GsaGH.Parameters {
   public class GsaGridAreaLoad {
     public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+    internal List<Point3d> Points { get; set; } = new List<Point3d>();
 
     public GsaGridAreaLoad() {
       GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
     }
-
     public GsaGridAreaLoad Duplicate() {
       var dup = new GsaGridAreaLoad {
         GridAreaLoad = {
@@ -204,6 +210,7 @@ namespace GsaGH.Parameters {
           Value = GridAreaLoad.Value,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
+        Points = Points.ToList(),
       };
       return dup;
     }
@@ -212,11 +219,11 @@ namespace GsaGH.Parameters {
   public class GsaGridLineLoad {
     public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+    internal List<Point3d> Points { get; set; } = new List<Point3d>();
 
     public GsaGridLineLoad() {
       GridLineLoad.PolyLineReference = 0;
     }
-
     public GsaGridLineLoad Duplicate() {
       var dup = new GsaGridLineLoad {
         GridLineLoad = {
@@ -233,6 +240,7 @@ namespace GsaGH.Parameters {
           ValueAtEnd = GridLineLoad.ValueAtEnd,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
+        Points = Points.ToList(),
       };
       return dup;
     }
@@ -241,8 +249,6 @@ namespace GsaGH.Parameters {
   public class GsaGridPointLoad {
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
     public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
-    internal Point3d _refPoint;
-
     public GsaGridPointLoad() { }
 
     public GsaGridPointLoad Duplicate() {
@@ -261,8 +267,78 @@ namespace GsaGH.Parameters {
       };
       return dup;
     }
+
+    internal Point3d GetPoint(LengthUnit unit) {
+      LengthUnit m = LengthUnit.Meter;
+      return new Point3d(
+              new Length(GridPointLoad.X, m).As(unit),
+              new Length(GridPointLoad.Y, m).As(unit),
+              new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
+    }
   }
 
+  internal static class GridLoadHelper {
+    internal static (List<Point3d>, string) CreateDefinition(List<Point3d> controlPoints, Plane plane) {
+      string desc = string.Empty;
+      var points = new List<Point3d>();
+      for (int i = 0; i < controlPoints.Count; i++) {
+        if (i > 0) {
+          desc += " ";
+        }
+
+        plane.RemapToPlaneSpace(controlPoints[i], out Point3d temppt);
+        // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
+        desc += $"({temppt.X},{temppt.Y})";
+        points.Add(temppt);
+      }
+
+      return (points, desc);
+    }
+
+    internal static string ClearDefinitionForUnit(string definition) {
+      return ClearDefGetUnit(definition).def;
+    }
+
+    internal static List<Point3d> ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
+      (LengthUnit lengthUnit, string def) = ClearDefGetUnit(definition);
+      var points = new List<Point3d>();
+      string[] pts = def.Split(')');
+      var map = Transform.ChangeBasis(localPlane, Plane.WorldXY);
+      foreach (string ptStr in pts) {
+        if (ptStr != string.Empty) {
+          string pt = ptStr.Replace("(", string.Empty).Trim();
+          var x = new Length(double.Parse(pt.Split(',')[0]), lengthUnit);
+          var y = new Length(double.Parse(pt.Split(',')[1]), lengthUnit);
+          var point = new Point3d(x.As(desiredUnit), y.As(desiredUnit), 0);
+          point.Transform(map);
+          points.Add(point);
+        }
+      }
+      return points;
+    }
+
+    private static (LengthUnit lengthUnit, string def) ClearDefGetUnit(string definition) {
+      LengthUnit lengthUnit = LengthUnit.Meter;
+      if (definition.EndsWith("(mm)")) {
+        lengthUnit = LengthUnit.Millimeter;
+        definition = definition.Replace("(mm)", string.Empty);
+      }
+      if (definition.EndsWith("(cm)")) {
+        lengthUnit = LengthUnit.Centimeter;
+        definition = definition.Replace("(cm)", string.Empty);
+      }
+      if (definition.EndsWith("(ft)")) {
+        lengthUnit = LengthUnit.Foot;
+        definition = definition.Replace("(ft)", string.Empty);
+      }
+      if (definition.EndsWith("(in)")) {
+        lengthUnit = LengthUnit.Inch;
+        definition = definition.Replace("(in)", string.Empty);
+      }
+      definition = definition.Replace("(m)", string.Empty);
+      return (lengthUnit, definition);
+    }
+  }
   /// <summary>
   ///   GsaLoad class holding all load types
   /// </summary>
@@ -285,6 +361,33 @@ namespace GsaGH.Parameters {
     public GsaNodeLoad NodeLoad { get; set; }
     public GsaGridPointLoad PointLoad { get; set; }
     public LoadTypes LoadType = LoadTypes.Gravity;
+    internal int CaseId {
+      get {
+        switch (LoadType) {
+          case LoadTypes.Node:
+            return NodeLoad.NodeLoad.Case;
+
+          case LoadTypes.Beam:
+            return BeamLoad.BeamLoad.Case;
+
+          case LoadTypes.Face:
+            return FaceLoad.FaceLoad.Case;
+
+          case LoadTypes.GridPoint:
+            return PointLoad.GridPointLoad.Case;
+
+          case LoadTypes.GridLine:
+            return LineLoad.GridLineLoad.Case;
+
+          case LoadTypes.GridArea:
+            return AreaLoad.GridAreaLoad.Case;
+
+          case LoadTypes.Gravity:
+          default:
+            return GravityLoad.GravityLoad.Case;
+        }
+      }
+    }
 
     public GsaLoad() {
       GravityLoad = new GsaGravityLoad();
@@ -378,7 +481,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string name = "";
+      string name = string.Empty;
       switch (LoadType) {
         case LoadTypes.Gravity:
           name = GravityLoad.GravityLoad.Name;
@@ -457,15 +560,19 @@ namespace GsaGH.Parameters {
   }
 
   /// <summary>
-  ///   When referencing load by GsaGH object through Guid, use this to set the type of object
+  /// When referencing load by GsaGH object through Guid, use this to set the type of object
   /// </summary>
   internal enum ReferenceType {
     None,
+    Material,
     Section,
     Prop2d,
     Prop3d,
     Element,
+    MemberChildElements,
     Member,
     List,
   }
+
+
 }

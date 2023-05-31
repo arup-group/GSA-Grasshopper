@@ -28,14 +28,14 @@
     }
 
     public override string ToString() {
-      string y = MomentAmplificationFactorStrongAxis == null ? "" :
+      string y = MomentAmplificationFactorStrongAxis == null ? string.Empty :
         "fLsy:" + MomentAmplificationFactorStrongAxis;
-      string z = MomentAmplificationFactorWeakAxis == null ? "" :
+      string z = MomentAmplificationFactorWeakAxis == null ? string.Empty :
         "fLsz:" + MomentAmplificationFactorWeakAxis;
-      string lt = EquivalentUniformMomentFactor == null ? "" :
+      string lt = EquivalentUniformMomentFactor == null ? string.Empty :
         "fLtb:" + EquivalentUniformMomentFactor;
       string output = string.Join(" ", y, z, lt).Trim();
-      return output == "" ? "Automatic" : output;
+      return output == string.Empty ? "Automatic" : output;
     }
   }
 }

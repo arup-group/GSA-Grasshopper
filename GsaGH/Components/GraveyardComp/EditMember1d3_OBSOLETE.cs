@@ -232,8 +232,8 @@ namespace GsaGH.Components.GraveyardComp {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo) {
-          ghTyp.CastTo(ref section);
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          section = sectionGoo.Value.Duplicate();
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             section = new GsaSection(id);
@@ -304,10 +304,8 @@ namespace GsaGH.Components.GraveyardComp {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(11, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          mem.OrientationNode = node;
+        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+          mem.OrientationNode = nodeGoo.Value.Duplicate();
         } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }
@@ -329,13 +327,15 @@ namespace GsaGH.Components.GraveyardComp {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(14, ref ghTyp)) {
-        var fls = new GsaBucklingLengthFactors();
-        if (ghTyp.Value is GsaBucklingLengthFactorsGoo) {
-          ghTyp.CastTo(ref fls);
-          mem.ApiMember.MomentAmplificationFactorStrongAxis
-            = fls.MomentAmplificationFactorStrongAxis;
-          mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.EquivalentUniformMomentFactor = fls.EquivalentUniformMomentFactor;
+        var bucklingLengthFactors = new GsaBucklingLengthFactors();
+        if (ghTyp.Value is GsaBucklingLengthFactorsGoo blfGoo) {
+          bucklingLengthFactors = blfGoo.Value.Duplicate();
+          mem.ApiMember.MomentAmplificationFactorStrongAxis 
+            = bucklingLengthFactors.MomentAmplificationFactorStrongAxis;
+          mem.ApiMember.MomentAmplificationFactorWeakAxis 
+            = bucklingLengthFactors.MomentAmplificationFactorWeakAxis;
+          mem.ApiMember.EquivalentUniformMomentFactor 
+            = bucklingLengthFactors.EquivalentUniformMomentFactor;
         } else {
           this.AddRuntimeWarning("Unable to change buckling length factors");
         }

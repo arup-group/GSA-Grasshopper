@@ -51,9 +51,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var myBool = new GsaBool6();
-      var gsaBool = new GsaBool6();
-      if (da.GetData(0, ref gsaBool)) {
-        myBool = gsaBool.Duplicate();
+      GsaBool6Goo bool6Goo = null;
+      if (da.GetData(0, ref bool6Goo)) {
+        myBool = bool6Goo.Value.Duplicate();
       }
 
       if (myBool != null) {

@@ -50,11 +50,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaTask = new GsaAnalysisTask();
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaAnalysisTaskGoo goo) {
-          gsaTask = goo.Value.Duplicate();
-        }
+      GsaAnalysisTaskGoo analysisTaskGoo = null;
+      if (da.GetData(0, ref analysisTaskGoo)) {
+        gsaTask = analysisTaskGoo.Value.Duplicate();
       }
 
       if (gsaTask != null) {
@@ -73,8 +71,8 @@ namespace GsaGH.Components {
               cases.Add(goo.Value.Duplicate());
             } else {
               string typ = ghTyp2.Value.GetType().ToString();
-              typ = typ.Replace("GsaGH.Parameters.", "");
-              typ = typ.Replace("Goo", "");
+              typ = typ.Replace("GsaGH.Parameters.", string.Empty);
+              typ = typ.Replace("Goo", string.Empty);
               Params.Owner.AddRuntimeError(
                 "Unable to convert Analysis Case input parameter of type " + typ
                 + " to GsaAnalysisCase");
@@ -97,9 +95,9 @@ namespace GsaGH.Components {
         da.SetData(3, gsaTask.Type.ToString());
         da.SetData(4, gsaTask.Id);
       } else {
-        string type = ghTyp.Value.GetType().ToString();
-        type = type.Replace("GsaGH.Parameters.", "");
-        type = type.Replace("Goo", "");
+        string type = analysisTaskGoo.Value.GetType().ToString();
+        type = type.Replace("GsaGH.Parameters.", string.Empty);
+        type = type.Replace("Goo", string.Empty);
         Params.Owner.AddRuntimeError("Unable to convert Analysis Task input parameter of type "
           + type + " to GsaAnalysisTask");
       }

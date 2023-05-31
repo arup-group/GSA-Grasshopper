@@ -217,7 +217,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
       string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
       string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
       return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");

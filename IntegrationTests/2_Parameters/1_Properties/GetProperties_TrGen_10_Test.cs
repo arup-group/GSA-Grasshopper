@@ -144,6 +144,12 @@ namespace IntegrationTests.Parameters {
       "Shell",
       "Shell",
     })]
+    [InlineData("SupportType", new string[] {
+      "Auto", "Undefined", "Undefined",
+    })]
+    [InlineData("ReferenceEdge", new int[] {
+      -1, 1, 1
+    })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

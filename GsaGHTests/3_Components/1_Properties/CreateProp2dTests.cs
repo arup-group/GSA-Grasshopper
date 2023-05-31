@@ -21,8 +21,9 @@ namespace GsaGHTests.Components.Properties {
       if (isLoadType) {
         ComponentTestHelper.SetInput(comp, 2, 0);
       } else {
-        ComponentTestHelper.SetInput(comp, 14, 0);
-        ComponentTestHelper.SetInput(comp, CreateCustomMaterialTests.ComponentMother(), 1);
+        ComponentTestHelper.SetInput(comp, 14.0, 0); // 14 inch thickness
+        ComponentTestHelper.SetInput(comp,
+          ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother()), 1);
       }
 
       return comp;

@@ -135,8 +135,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
         var tempPt = new Point3d();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
+        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+          node = nodeGoo.Value.Duplicate();
           if (node?.ApiNode == null) {
             this.AddRuntimeError("Node input is null");
           }

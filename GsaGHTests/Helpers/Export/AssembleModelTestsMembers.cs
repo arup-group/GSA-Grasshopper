@@ -36,6 +36,76 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     [Fact]
+    public void AssembleModelWithMember1dsByRefTest() {
+      string profile1 = "STD I 900 300 9 4";
+      GsaSectionGoo section1 = Section(profile1, false);
+      section1.Value.Id = 1;
+
+      var crv1 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(10, 0, 0)).ToNurbsCurve());
+      GsaMember1dGoo mem1d1 = Member1d(crv1, section1.Value.Id);
+
+      string profile2 = "STD R 400 600";
+      GsaSectionGoo section2 = Section(profile2, true);
+      section2.Value.Id = 2;
+
+      var crv2 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(0, 9, 0)).ToNurbsCurve());
+      GsaMember1dGoo mem1d2 = Member1d(crv2, section2.Value.Id);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp =
+        CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() {
+          mem1d1,
+          mem1d2,
+        }, null, null, ModelUnit.Cm);
+      ComponentTestHelper.SetInput(comp, section1, 1);
+      ComponentTestHelper.SetInput(comp, section2, 1);
+
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+
+      TestMember1d(Member1d(crv1, section1).Value, LengthUnit.Centimeter, 1, modelGoo.Value);
+      TestMember1d(Member1d(crv2, section2).Value, LengthUnit.Centimeter, 2, modelGoo.Value);
+    }
+
+    [Fact]
+    public void AssembleModelWithModelsFromMember1dsByRefTest() {
+      string profile1 = "STD I 900 300 9 4";
+      GsaSectionGoo section1 = Section(profile1, false);
+      section1.Value.Id = 1;
+
+      string profile2 = "STD R 400 600";
+      GsaSectionGoo section2 = Section(profile2, true);
+      section2.Value.Id = 2;
+
+      OasysGH.Components.GH_OasysDropDownComponent comp1 =
+        CreateModelTest.CreateModelFromProperties(new List<GsaSectionGoo>() {
+          section1,
+          section2,
+        }, null, null);
+
+      var crv1 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(10, 0, 0)).ToNurbsCurve());
+      GsaMember1dGoo mem1d1 = Member1d(crv1, section1.Value.Id);
+
+      var crv2 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(0, 9, 0)).ToNurbsCurve());
+      GsaMember1dGoo mem1d2 = Member1d(crv2, section2.Value.Id);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp2 =
+        CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() {
+          mem1d1,
+          mem1d2,
+        }, null, null, ModelUnit.Cm);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp =
+        CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
+          (GsaModelGoo)ComponentTestHelper.GetOutput(comp1),
+          (GsaModelGoo)ComponentTestHelper.GetOutput(comp2),
+        });
+
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+
+      TestMember1d(Member1d(crv1, section1).Value, LengthUnit.Centimeter, 1, modelGoo.Value);
+      TestMember1d(Member1d(crv2, section2).Value, LengthUnit.Centimeter, 2, modelGoo.Value);
+    }
+
+    [Fact]
     public void AssembleModelWithMember1dTest() {
       string profile = "STD I 900 300 9 4";
       GsaSectionGoo section = Section(profile, false);
@@ -84,6 +154,38 @@ namespace GsaGHTests.Helpers.Export {
 
       TestMember2d(mem2d1.Value, LengthUnit.Foot, 1, modelGoo.Value);
       TestMember2d(mem2d2.Value, LengthUnit.Foot, 2, modelGoo.Value);
+    }
+
+    [Fact]
+    public void AssembleModelWithMember2dsByRefTest() {
+      var thickness1 = new Length(200, LengthUnit.Millimeter);
+      GsaProp2dGoo prop1 = Prop2d(thickness1, true);
+      prop1.Value.Id = 1;
+
+      var brep1 = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0),
+        new Point3d(10, 0, 0), new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1));
+      GsaMember2dGoo mem2d1 = Member2d(brep1, prop1.Value.Id);
+
+      var thickness2 = new Length(2, LengthUnit.Centimeter);
+      GsaProp2dGoo prop2 = Prop2d(thickness2, false);
+      prop2.Value.Id = 2;
+
+      var brep2 = new GH_Brep(Brep.CreateFromCornerPoints(new Point3d(0, 5, -5),
+        new Point3d(10, 5, -5), new Point3d(10, 5, 5), new Point3d(0, 5, 5), 1));
+      GsaMember2dGoo mem2d2 = Member2d(brep2, prop2.Value.Id);
+
+      OasysGH.Components.GH_OasysDropDownComponent comp =
+        CreateModelTest.CreateModelFromGeometry(null, null, null, null, new List<GsaMember2dGoo>() {
+          mem2d1,
+          mem2d2,
+        }, null, ModelUnit.Ft);
+      ComponentTestHelper.SetInput(comp, prop1, 1);
+      ComponentTestHelper.SetInput(comp, prop2, 1);
+
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+
+      TestMember2d(Member2d(brep1, prop1).Value, LengthUnit.Foot, 1, modelGoo.Value);
+      TestMember2d(Member2d(brep2, prop2).Value, LengthUnit.Foot, 2, modelGoo.Value);
     }
 
     [Fact]

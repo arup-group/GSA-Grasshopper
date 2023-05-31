@@ -11,6 +11,10 @@ namespace GsaGH.Helpers.GH {
     /// </summary>
     /// <returns>PascalCased name</returns>
     public static string ToPascalCase(this string value) {
+      if (!value.Contains(' ') && !value.Contains('_')) {
+        return value[0].ToString().ToUpper() + value.Substring(1).ToLower();
+      }
+
       string returnValue = string.Empty;
       string[] splittedText = value.ToLower().Replace(' ', '_').Split('_');
 

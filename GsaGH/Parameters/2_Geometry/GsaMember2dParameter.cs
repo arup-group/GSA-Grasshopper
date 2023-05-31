@@ -1,9 +1,11 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +25,13 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaMember2dGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaMember2d) ? new GsaMember2dGoo((GsaMember2d)data) :
-        base.PreferredCast(data);
+      var brep = new Brep();
+      if (GH_Convert.ToBrep(data, ref brep, GH_Conversion.Both)) {
+        return new GsaMember2dGoo(new GsaMember2d(brep, new List<Curve>(), new List<Point3d>()));
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member2d");
+      return new GsaMember2dGoo(null);
     }
   }
 }

@@ -127,7 +127,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Plane", "GP", "GSA Grid Plane",
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Plane", "GP", "GSA Grid Plane",
         GH_ParamAccess.item);
     }
 
@@ -151,7 +151,7 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         string elevationIn = ghTyp.Value.ToString();
         double elevation = 0;
-        if (elevationIn != "" && elevationIn.ToLower() != "0") {
+        if (elevationIn != string.Empty && elevationIn.ToLower() != "0") {
           try {
             var newElevation = Length.Parse(elevationIn);
             gps.Elevation = elevationIn;
@@ -192,7 +192,7 @@ namespace GsaGH.Components {
         ghTyp = new GH_ObjectWrapper();
         if (da.GetData(4, ref ghTyp)) {
           string tolIn = ghTyp.Value.ToString();
-          if (tolIn != "" && tolIn.ToLower() != "auto") {
+          if (tolIn != string.Empty && tolIn.ToLower() != "auto") {
             try {
               Length.Parse(tolIn);
               gps.StoreyToleranceAbove = tolIn;
@@ -209,7 +209,7 @@ namespace GsaGH.Components {
         ghTyp = new GH_ObjectWrapper();
         if (da.GetData(5, ref ghTyp)) {
           string tolIn = ghTyp.Value.ToString();
-          if (tolIn != "" && tolIn.ToLower() != "auto") {
+          if (tolIn != string.Empty && tolIn.ToLower() != "auto") {
             try {
               var newTolerance = Length.Parse(tolIn);
               gps.StoreyToleranceBelow = tolIn;

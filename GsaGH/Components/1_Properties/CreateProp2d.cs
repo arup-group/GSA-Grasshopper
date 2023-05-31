@@ -166,10 +166,8 @@ namespace GsaGH.Components {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
-            GsaMaterial material = null;
-            if (ghTyp.Value is GsaMaterialGoo) {
-              ghTyp.CastTo(ref material);
-              prop.Material = material ?? new GsaMaterial();
+            if (ghTyp.Value is GsaMaterialGoo materialGoo) {
+              prop.Material = materialGoo.Value.Duplicate() ?? new GsaMaterial();
             } else {
               if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
                 prop.Material = new GsaMaterial(idd);
@@ -276,12 +274,13 @@ namespace GsaGH.Components {
       }
     }
 
-    private void SetInputProperties(int index, string nickname, string name, string description,
-      GH_ParamAccess access = GH_ParamAccess.item, bool optional = true) {
+    private void SetInputProperties(
+      int index, string nickname, string name, string description,
+      bool optional = true) {
       Params.Input[index].NickName = nickname;
       Params.Input[index].Name = name;
       Params.Input[index].Description = description;
-      Params.Input[index].Access = access;
+      Params.Input[index].Access = GH_ParamAccess.item;
       Params.Input[index].Optional = optional;
     }
 

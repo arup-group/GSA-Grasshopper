@@ -20,8 +20,8 @@ namespace GsaGH.Helpers.Import {
   internal class Members {
 
     internal static
-      Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-        ConcurrentBag<GsaMember3dGoo>> GetMembers(
+      (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
+      ConcurrentBag<GsaMember3dGoo> m3d) GetMembers(
         ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict,
         ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
@@ -157,9 +157,7 @@ namespace GsaGH.Helpers.Import {
         }
       });
 
-      return new
-        Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>,
-          ConcurrentBag<GsaMember3dGoo>>(mem1ds, mem2ds, mem3ds);
+      return (mem1ds, mem2ds, mem3ds);
     }
   }
 }

@@ -58,7 +58,7 @@ namespace GsaGH.Parameters {
       }
     }
     public Guid Guid => _guid;
-    public MatType MaterialType { get; set; } = MatType.Undef;
+    public MatType MaterialType { get; set; } = MatType.Concrete;
     internal AnalysisMaterial AnalysisMaterial {
       get => _analysisMaterial;
       set {

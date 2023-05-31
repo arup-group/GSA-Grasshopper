@@ -177,13 +177,14 @@ steps:
     ..\yak spec
     Add-Content manifest.yml 'icon: GsaIcon.png'
     Add-Content manifest.yml 'keywords:'
-    Add-Content manifest.yml '- Oasys'
-    Add-Content manifest.yml '- GSA'
-    Add-Content manifest.yml '- GsaGH'
-    Add-Content manifest.yml '- FE'
-    Add-Content manifest.yml '- FEA'
-    Add-Content manifest.yml '- Structural'
-    Add-Content manifest.yml '- Structural Analysis'
+    Add-Content manifest.yml '- oasys'
+    Add-Content manifest.yml '- gsa'
+    Add-Content manifest.yml '- gsagh'
+    Add-Content manifest.yml '- fe'
+    Add-Content manifest.yml '- fea'
+    Add-Content manifest.yml '- fem'
+    Add-Content manifest.yml '- structural'
+    Add-Content manifest.yml '- structuralanalysis'
     ..\yak build --platform win
     $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"

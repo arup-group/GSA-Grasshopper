@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
@@ -143,7 +144,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
@@ -223,7 +224,7 @@ namespace GsaGH.Components {
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
-      var graphic = new GraphicSpecification() {
+      var graphic = new DiagramSpecification() {
         Elements = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
          .Select(item => item.GsaApiEnum).FirstOrDefault(),
@@ -233,7 +234,7 @@ namespace GsaGH.Components {
       };
 
       var diagramLines = new List<DiagramLineGoo>();
-      ReadOnlyCollection<GsaAPI.Line> linesFromModel = result.Model.Model.Draw(graphic).Lines;
+      ReadOnlyCollection<GsaAPI.Line> linesFromModel = result.Model.Model.Get1dElementDiagrams(graphic).Lines;
 
       foreach (GsaAPI.Line item in linesFromModel) {
         double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
@@ -278,7 +279,7 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-    
+
 
     private double ComputeUnitScale(bool autoScale) {
       double unitScaleFactor = 1.0d;

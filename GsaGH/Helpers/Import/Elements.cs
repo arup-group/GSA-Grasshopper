@@ -316,11 +316,15 @@ namespace GsaGH.Helpers.Import {
           foreach (int key in elems.Keys) {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element apiElem);
+            var apiElems = new ConcurrentDictionary<int, Element>();
+            apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
             prop2Ds.TryGetValue(key, out GsaProp2d prop);
+            var propList = new List<GsaProp2d>() { 
+              prop 
+            };
 
-            var singleelement2D = new GsaElement2d(apiElem, key, mesh, prop);
-
+            var singleelement2D = new GsaElement2d(apiElems, mesh, propList);
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D, duplicateApiObjects));
           }
         } else {
@@ -413,8 +417,8 @@ namespace GsaGH.Helpers.Import {
     }
 
     internal static
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-        ConcurrentBag<GsaElement3dGoo>> GetElements(
+      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
+      ConcurrentBag<GsaElement3dGoo> e3d) GetElements(
         ReadOnlyDictionary<int, Element> eDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict,
         ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> mDict,
@@ -477,9 +481,7 @@ namespace GsaGH.Helpers.Import {
           duplicateApiObjects);
       }
 
-      return new
-        Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>,
-          ConcurrentBag<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
+      return (elem1ds, elem2ds, elem3ds);
     }
   }
 }

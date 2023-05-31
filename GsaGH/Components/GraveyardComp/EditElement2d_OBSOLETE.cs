@@ -133,10 +133,8 @@ namespace GsaGH.Components {
           }
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
-          var prop2d = new GsaProp2d();
-          if (ghTyp.Value is GsaProp2dGoo) {
-            ghTyp.CastTo(ref prop2d);
-            prop2Ds.Add(prop2d);
+          if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
+            prop2Ds.Add(prop2DGoo.Value);
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop2Ds.Add(new GsaProp2d(id));
@@ -148,7 +146,7 @@ namespace GsaGH.Components {
           }
         }
 
-        elem.Properties = prop2Ds;
+        elem.Prop2ds = prop2Ds;
       }
 
       var ghGroups = new List<GH_Integer>();
@@ -180,8 +178,8 @@ namespace GsaGH.Components {
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var offset = new GsaOffset();
-          if (ghTyp.Value is GsaOffsetGoo) {
-            ghTyp.CastTo(ref offset);
+          if (ghTyp.Value is GsaOffsetGoo offsetGoo) {
+            offset = offsetGoo.Value.Duplicate();
           } else {
             if (GH_Convert.ToDouble(ghTyp.Value, out double z, GH_Conversion.Both)) {
               offset.Z = new Length(z, DefaultUnits.LengthUnitGeometry);
@@ -260,7 +258,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
       da.SetDataList(3,
-        new List<GsaProp2dGoo>(elem.Properties.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
+        new List<GsaProp2dGoo>(elem.Prop2ds.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6,

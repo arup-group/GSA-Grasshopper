@@ -163,23 +163,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
-
-      GsaSection section;
-      if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+      var section = new GsaSection();
+      GsaSectionGoo sectionGoo = null;
+      if (da.GetData(0, ref sectionGoo)) {
         section = sectionGoo.Value;
-      } else {
-        string profile = string.Empty;
-        ghTyp.CastTo(ref profile);
-        if (GsaSection.ValidProfile(profile)) {
-          section = new GsaSection(profile);
-        } else {
-          this.AddRuntimeWarning("Invalid profile syntax: " + profile);
-          return;
-        }
       }
 
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);

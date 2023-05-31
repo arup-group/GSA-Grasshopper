@@ -23,8 +23,12 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProp3dGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaProp3d)) {
-        return new GsaProp3dGoo((GsaProp3d)data);
+      switch (data) {
+        case GsaElement3dGoo elem3d:
+          return new GsaProp3dGoo(elem3d.Value.Prop3ds[0]);
+
+        case GsaMember3dGoo mem3d:
+          return new GsaProp3dGoo(mem3d.Value.Prop3d);
       }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
@@ -32,14 +36,13 @@ namespace GsaGH.Parameters {
         return new GsaProp3dGoo(prop);
       }
 
-      if (data.GetType() != typeof(GsaMaterialGoo)) {
-        return base.PreferredCast(data);
-      }
-
-      {
+      if (data.GetType() == typeof(GsaMaterialGoo)) {
         var prop = new GsaProp3d(((GsaMaterialGoo)data).Value);
         return new GsaProp3dGoo(prop);
       }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop3d");
+      return new GsaProp3dGoo(null);
     }
   }
 }

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Export;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
 using Rhino.Geometry;
@@ -11,6 +12,21 @@ namespace GsaGH.Helpers.Import {
   ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Properties {
+    internal static (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
+      List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) GetProperties(Model model) {
+      
+      // TO-DO: GSA-6773: add way to get properties/materials by list
+
+      List<GsaMaterialGoo> customMaterials
+        = Materials.GetCustomMaterials(model.AnalysisMaterials());
+      List<GsaSectionGoo> sections = GetSections(model.Sections(),
+        model.AnalysisMaterials(), model.SectionModifiers());
+      List<GsaProp2dGoo> prop2ds = GetProp2ds(model.Prop2Ds(),
+        model.AnalysisMaterials(), model.Axes());
+      List<GsaProp3dGoo> prop3ds
+        = GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
+      return (customMaterials, sections, prop2ds, prop3ds);
+    }
 
     /// <summary>
     ///   Method to import Prop2ds from a GSA model.

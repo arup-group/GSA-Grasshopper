@@ -32,7 +32,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddIntegerParameter("Axis", "Ax",
-        "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
+        "Set Axis as integer: Global (0) or Topological (-1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop3d Name", "Na", "Set Name of 3D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop3d Colour", "Co", "Set 3D Property Colour",
         GH_ParamAccess.item);
@@ -48,17 +48,17 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Prop2d Number", "ID", "3D Property Number",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (1)",
+      pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (-1)",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Prop3d Name", "Na", "Name of 3D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop3d Colour", "Co", "3D Property Colour", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaProp3d = new GsaProp3d();
+      GsaProp3dGoo prop3dGoo = null;
       var prop = new GsaProp3d();
-      if (da.GetData(0, ref gsaProp3d)) {
-        prop = gsaProp3d.Duplicate();
+      if (da.GetData(0, ref prop3dGoo)) {
+        prop = prop3dGoo.Value.Duplicate();
       }
 
       if (prop != null) {
@@ -72,13 +72,13 @@ namespace GsaGH.Components {
         var ghTyp = new GH_ObjectWrapper();
         if (da.GetData(2, ref ghTyp)) {
           if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            prop.Material = materialGoo.Value ?? new GsaMaterial();
+            prop.Material = materialGoo.Value.Duplicate() ?? new GsaMaterial();
           } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              prop.MaterialId = idd;
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              prop.MaterialId = id;
             } else {
               this.AddRuntimeError(
-                "Unable to convert PB input to a Section Property of reference integer");
+                "Unable to convert PV input to a 3D Property of reference integer");
               return;
             }
           }

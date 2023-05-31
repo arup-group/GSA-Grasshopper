@@ -22,7 +22,7 @@ namespace GsaGH.Helpers.Export {
 
       string topo
         = CreateTopology(member1d.Topology, member1d.TopologyType, ref existingNodes, unit);
-      if (topo != "") {
+      if (topo != string.Empty) {
         try {
           apiMember.Topology = string.Copy(topo.Replace("  ", " "));
         } catch (Exception) {
@@ -101,7 +101,7 @@ namespace GsaGH.Helpers.Export {
           + error);
       }
 
-      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref apiProp2ds,
+      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Prop2d, ref apiProp2ds,
         ref apiMaterials, ref existingAxes, unit);
 
       AddMember(member2d.Id, member2d.Guid, apiMember, ref apiMembers);
@@ -180,7 +180,7 @@ namespace GsaGH.Helpers.Export {
     private static string CreateTopology(
       IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
-      string topo = "";
+      string topo = string.Empty;
       if (topology == null) {
         return topo;
       }
@@ -189,7 +189,7 @@ namespace GsaGH.Helpers.Export {
         if (topoType != null) {
           if (j > 0) {
             string topologyType = topoType[j];
-            if (topologyType == "" | topologyType == " ") {
+            if (topologyType == string.Empty | topologyType == " ") {
               topo += " ";
             } else {
               topo += topologyType.ToLower()

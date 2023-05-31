@@ -14,7 +14,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get information from a GSA List
+  ///   Component to get information of an EntityList
   /// </summary>
   public class ListInfo : GH_OasysDropDownComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("2fb6f3b8-275b-452c-9387-bdf7ab9b7827");
