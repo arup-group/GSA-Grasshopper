@@ -220,7 +220,7 @@ namespace GsaGH.Components {
         da.SetData(1, section.Id);
         da.SetData(2, prof);
         da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
-        da.SetData(4, sectionsection.AdditionalOffsetY.ToUnit(_lengthUnit));
+        da.SetData(4, section.AdditionalOffsetY.ToUnit(_lengthUnit));
         da.SetData(6, section.AdditionalOffsetZ.ToUnit(_lengthUnit));
         da.SetData(7, new GsaSectionModifierGoo(section.Modifier));
         da.SetData(8, poo);
