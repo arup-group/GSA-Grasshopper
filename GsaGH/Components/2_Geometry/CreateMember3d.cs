@@ -45,19 +45,9 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
       if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
-        try {
-          member = new GsaMember3d(brep);
-        } catch (Exception e) {
-          this.AddRuntimeError(e.Message);
-          return;
-        }
+        member = new GsaMember3d(brep);
       } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
-        try {
-          member = new GsaMember3d(mesh);
-        } catch (Exception e) {
-          this.AddRuntimeError(e.Message);
-          return;
-        }
+        member = new GsaMember3d(mesh);
       } else {
         this.AddRuntimeError($"Unable to convert Geometry input ({ghTyp.GetTypeName()}) to a 3D Member");
         return;
