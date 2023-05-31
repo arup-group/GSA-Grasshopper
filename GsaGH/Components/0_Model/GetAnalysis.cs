@@ -38,13 +38,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) {
-        return;
-      }
+      GsaModelGoo modelGoo = null;
+      da.GetData(0, ref modelGoo);
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
+        = Analyses.GetAnalysisTasksAndCombinations(modelGoo.Value);
 
       da.SetDataList(0, tuple.Item1);
       da.SetDataList(1, tuple.Item2);

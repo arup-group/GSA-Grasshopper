@@ -136,15 +136,13 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var section = new GsaSection();
       GsaSectionGoo sectionGoo = null;
-      if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value;
-      }
+      da.GetData(0, ref sectionGoo);
+      GsaSection section = sectionGoo.Value;
 
       string profile = section.Profile;
       if (profile.Trim() == string.Empty) {
-        this.AddRuntimeWarning("Profile not set in Section");
+        this.AddRuntimeError("Profile not set in Section");
         return;
       }
 

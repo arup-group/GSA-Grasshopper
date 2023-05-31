@@ -50,10 +50,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaModelGoo gooModel = null;
       GsaModel model = null;
-      if (da.GetData(0, ref gooModel)) {
-        model = gooModel.Value;
+
+      GsaModelGoo modelGoo = null;
+      if (da.GetData(0, ref modelGoo)) {
+        model = modelGoo.Value;
       }
 
       ComAuto m = GsaComHelper.GetGsaComModel(model);

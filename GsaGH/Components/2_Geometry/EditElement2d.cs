@@ -96,8 +96,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaElement2dGoo element2dGoo = null;
       var elem = new GsaElement2d();
+
+      GsaElement2dGoo element2dGoo = null;
       if (da.GetData(0, ref element2dGoo)) {
         elem = element2dGoo.Value.Duplicate(true);
       }
