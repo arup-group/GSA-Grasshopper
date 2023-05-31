@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -315,7 +316,7 @@ namespace GsaGH.Helpers.Export {
     internal static int SetGridSurface(
       ref GsaGridPlaneSurface gridplanesurface,
       ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter,
-      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists, 
+      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists,
       Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes,
       LengthUnit modelUnit, ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship,
       Model model, GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
@@ -344,11 +345,11 @@ namespace GsaGH.Helpers.Export {
 
       if (model != null && gridplanesurface._referenceType != ReferenceType.None) {
         if (gridplanesurface._referenceType == ReferenceType.List) {
-          if (gridplanesurface._refList == null 
+          if (gridplanesurface._refList == null
             || gridplanesurface._refList.EntityType != Parameters.EntityType.Element
             || gridplanesurface._refList.EntityType != Parameters.EntityType.Member) {
             owner.AddRuntimeWarning("Invalid List type for GridSurface " + gridplanesurface.ToString()
-              +Environment.NewLine + "Element list has not been set");
+              + Environment.NewLine + "Element list has not been set");
           }
           gridplanesurface.GridSurface.Elements +=
             Lists.GetElementList(gridplanesurface._refList, ref apiLists, apiMaterials, apiSections,

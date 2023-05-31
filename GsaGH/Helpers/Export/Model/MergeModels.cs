@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;

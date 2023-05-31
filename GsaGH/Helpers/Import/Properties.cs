@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Export;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 using Rhino.Geometry;
 
