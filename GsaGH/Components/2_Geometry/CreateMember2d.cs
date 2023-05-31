@@ -70,11 +70,7 @@ namespace GsaGH.Components {
       }
 
       var mem = new GsaMember2d();
-      try {
-        mem = new GsaMember2d(ghbrep.Value, crvs, points);
-      } catch (Exception e) {
-        this.AddRuntimeWarning(e.Message);
-      }
+      mem = new GsaMember2d(ghbrep.Value, crvs, points);
 
       GsaProp2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
