@@ -43,7 +43,7 @@ namespace GsaGHTests.Parameters {
       var off = new List<GsaOffset>();
       for (int i = 0; i < elem.Count; i++) {
         elem.Ids[i] = elid++;
-        elem.Properties[i].Id = secid++;
+        elem.Prop2ds[i].Id = secid++;
         grps.Add(22);
         dum.Add(true);
         nms.Add("Shahin");
@@ -99,7 +99,7 @@ namespace GsaGHTests.Parameters {
         }
 
         Assert.Equal(chelid++, elem.Ids[i]);
-        Assert.Equal(chsecid++, elem.Properties[i].Id);
+        Assert.Equal(chsecid++, elem.Prop2ds[i].Id);
         Assert.Equal(22, elem.Groups[i]);
         Assert.True(elem.IsDummies[i]);
         Assert.Equal("Shahin", elem.Names[i]);
@@ -130,8 +130,8 @@ namespace GsaGHTests.Parameters {
       var off = new List<GsaOffset>();
       for (int i = 0; i < origi.Count; i++) {
         origi.Ids[i] = elid++;
-        origi.Properties.Add(new GsaProp2d());
-        origi.Properties[i].Id = secid++;
+        origi.Prop2ds.Add(new GsaProp2d());
+        origi.Prop2ds[i].Id = secid++;
         grps.Add(2);
         dum.Add(false);
         nms.Add("Esmaeil");
@@ -198,7 +198,7 @@ namespace GsaGHTests.Parameters {
       var off2 = new List<GsaOffset>();
       for (int i = 0; i < origi.Count; i++) {
         origi.Ids[i] = elid++;
-        origi.Properties[i].Id = secid++;
+        origi.Prop2ds[i].Id = secid++;
         origi.Groups[i] = 4;
         origi.IsDummies[i] = true;
         origi.Names[i] = "Mani";
@@ -219,7 +219,7 @@ namespace GsaGHTests.Parameters {
       int chsecid = 4;
       for (int i = 0; i < dup.Count; i++) {
         Assert.Equal(chelid++, dup.Ids[i]);
-        Assert.Equal(chsecid++, dup.Properties[i].Id);
+        Assert.Equal(chsecid++, dup.Prop2ds[i].Id);
         Assert.Equal(2, dup.Groups[i]);
         Assert.False(dup.IsDummies[i]);
         Assert.Equal("Esmaeil", dup.Names[i]);
@@ -232,7 +232,7 @@ namespace GsaGHTests.Parameters {
       for (int i = 0; i < origi.Count; i++) {
         // check other members are valid
         Assert.Equal(chelid++, origi.Ids[i]);
-        Assert.Equal(chsecid++, origi.Properties[i].Id);
+        Assert.Equal(chsecid++, origi.Prop2ds[i].Id);
         Assert.Equal(4, origi.Groups[i]);
         Assert.True(origi.IsDummies[i]);
         Assert.Equal("Mani", origi.Names[i]);

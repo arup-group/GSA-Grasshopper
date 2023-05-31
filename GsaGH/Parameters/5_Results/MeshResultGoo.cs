@@ -70,34 +70,7 @@ namespace GsaGH.Parameters {
       Finalise();
     }
 
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null: return false;
-
-        case Mesh mesh:
-          Value = mesh;
-          return true;
-
-        case GH_Mesh meshGoo:
-          Value = meshGoo.Value;
-          return true;
-      }
-
-      var m = new Mesh();
-      if (!GH_Convert.ToMesh(source, ref m, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = m;
-      return true;
-    }
-
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value.IsValid ? (TQ)(object)Value : (TQ)(object)ValidMesh;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value.IsValid ? (TQ)(object)new GH_Mesh(Value) :
           (TQ)(object)new GH_Mesh(ValidMesh);

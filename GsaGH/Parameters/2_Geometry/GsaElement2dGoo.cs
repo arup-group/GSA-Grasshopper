@@ -24,49 +24,7 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaElement.
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (typeof(Element).IsAssignableFrom(source.GetType())) {
-        if (Value.ApiElements.Count > 1) {
-          return false; // we cannot convert a list on the fly
-        }
-
-        Value.ApiElements[0]
-          = (Element)source; //If someone should want to just test if they can convert a Mesh face
-        return true;
-      }
-
-      var mesh = new Mesh();
-      if (!GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both)) {
-        return false;
-      }
-
-      var elem = new GsaElement2d(mesh);
-      Value = elem;
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaElement2D into some other type Q.
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null ? default : (TQ)(object)Value.Mesh;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Mesh);
 
@@ -78,6 +36,9 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value == null || Value.Mesh == null) {
+        return;
+      }
       args.Pipeline.DrawMeshShaded(Value.Mesh,
         args.Material.Diffuse
         == Color.FromArgb(255, 150, 0,
@@ -105,7 +66,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.Mesh;
+      return Value == null ? null : (GeometryBase)Value.Mesh;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

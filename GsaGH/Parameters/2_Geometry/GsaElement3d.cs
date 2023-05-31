@@ -100,7 +100,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp3d> Properties { get; set; } = new List<GsaProp3d>();
+    public List<GsaProp3d> Prop3ds { get; set; } = new List<GsaProp3d>();
     public List<int> PropertyIDs {
       get => (from element in ApiElements where element != null select element.Property).ToList();
       set => CloneApiElements(ApiObjectMember.Dummy, null, null, null, null, null, value);
@@ -140,9 +140,9 @@ namespace GsaGH.Parameters {
 
       Ids = new List<int>(new int[NgonMesh.Faces.Count]);
 
-      Properties = new List<GsaProp3d>();
+      Prop3ds = new List<GsaProp3d>();
       for (int i = 0; i < NgonMesh.Faces.Count; i++) {
-        Properties.Add(new GsaProp3d());
+        Prop3ds.Add(new GsaProp3d());
       }
 
       UpdatePreview();
@@ -161,7 +161,7 @@ namespace GsaGH.Parameters {
       Ids = new List<int>() {
         id,
       };
-      Properties = new List<GsaProp3d>() {
+      Prop3ds = new List<GsaProp3d>() {
         prop3d,
       };
       UpdatePreview();
@@ -177,7 +177,7 @@ namespace GsaGH.Parameters {
       TopoInt = convertMesh.Item3;
       FaceInt = convertMesh.Item4;
       Ids = elements.Keys.ToList();
-      Properties = prop3ds;
+      Prop3ds = prop3ds;
       UpdatePreview();
     }
 
@@ -195,7 +195,7 @@ namespace GsaGH.Parameters {
       }
 
       dup.Ids = Ids.ToList();
-      dup.Properties = Properties.ConvertAll(x => x.Duplicate());
+      dup.Prop3ds = Prop3ds.ConvertAll(x => x.Duplicate());
       dup.UpdatePreview();
       return dup;
     }

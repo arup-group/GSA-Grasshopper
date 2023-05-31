@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +23,8 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaLoadGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaLoad) ? new GsaLoadGoo((GsaLoad)data) :
-        base.PreferredCast(data);
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Load");
+      return new GsaLoadGoo(null);
     }
   }
 }

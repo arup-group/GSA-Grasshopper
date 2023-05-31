@@ -113,13 +113,13 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo value: {
-            gridPlaneSurface = value.Value.Duplicate();
+          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
+            gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
             gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
             break;
           }
-          case Plane _:
-            ghTyp.CastTo(ref plane);
+          case Plane pln:
+            plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
             break;

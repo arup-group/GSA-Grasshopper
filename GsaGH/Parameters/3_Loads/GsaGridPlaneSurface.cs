@@ -16,7 +16,7 @@ namespace GsaGH.Parameters {
         _axisId = value;
       }
     }
-    public string AxisName { get; set; } = "";
+    public string AxisName { get; set; } = string.Empty;
     /// <summary>
     ///   String either in the format of a double (will be converted into Model Units)
     ///   or in the format of a OasysUnits.Length ('5 m')
@@ -154,7 +154,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string ax = (AxisId == 0) ? "" : "Ax:" + AxisId.ToString() + " ";
+      string ax = (AxisId == 0) ? string.Empty : "Ax:" + AxisId.ToString() + " ";
       bool global = false;
       if (Plane.Origin.X == 0 && Plane.Origin.Y == 0 && Plane.Origin.Z == 0) {
         if (Plane.XAxis.X == 1 && Plane.XAxis.Y == 0 && Plane.XAxis.Z == 0) {
@@ -164,9 +164,9 @@ namespace GsaGH.Parameters {
         }
       }
 
-      string gp = (GridPlaneId == 0) ? "" : "GPln:" + GridPlaneId.ToString() + " ";
-      string gpName = GridPlane == null ? "" : GridPlane.Name;
-      gp += gpName == "" ? "" : "'" + gpName + "' ";
+      string gp = (GridPlaneId == 0) ? string.Empty : "GPln:" + GridPlaneId.ToString() + " ";
+      string gpName = GridPlane == null ? string.Empty : GridPlane.Name;
+      gp += gpName == string.Empty ? string.Empty : "'" + gpName + "' ";
 
       if (global) {
         gp += "Global grid ";
@@ -182,9 +182,9 @@ namespace GsaGH.Parameters {
         gp += "Storey ";
       }
 
-      string gs = (GridSurfaceId == 0) ? "" : "GSrf:" + GridSurfaceId.ToString() + " ";
-      string gsName = GridSurface == null ? "" : GridSurface.Name;
-      gs += gsName == "" ? "" : "'" + gsName + "' ";
+      string gs = (GridSurfaceId == 0) ? string.Empty : "GSrf:" + GridSurfaceId.ToString() + " ";
+      string gsName = GridSurface == null ? string.Empty : GridSurface.Name;
+      gs += gsName == string.Empty ? string.Empty : "'" + gsName + "' ";
       if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
         if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
           gs += "1D, One-way ";
@@ -204,7 +204,7 @@ namespace GsaGH.Parameters {
          .Replace(" ", string.Empty) + " ";
       }
 
-      gs += GridSurface.Elements == "all" ? "" : GridSurface.Elements;
+      gs += GridSurface.Elements == "all" ? string.Empty : GridSurface.Elements;
 
       return string.Join(" ", ax.Trim(), gp.Trim(), gs.Trim()).Replace("''", string.Empty).Trim()
        .Replace("  ", " ");

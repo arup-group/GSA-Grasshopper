@@ -15,9 +15,7 @@ namespace GsaGH.Parameters {
       get => _prop3d.AxisProperty;
       set {
         CloneApiObject();
-        value = Math.Min(1, value);
-        value = Math.Max(0, value);
-        _prop3d.AxisProperty = value * -1;
+        _prop3d.AxisProperty = value;
         IsReferencedById = false;
       }
     }
@@ -132,7 +130,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string type = Mappings.materialTypeMapping
        .FirstOrDefault(x => x.Value == Material.MaterialType).Key;
-      string pa = (Id > 0) ? "PV" + Id + " " : "";
+      string pa = (Id > 0) ? "PV" + Id + " " : string.Empty;
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 

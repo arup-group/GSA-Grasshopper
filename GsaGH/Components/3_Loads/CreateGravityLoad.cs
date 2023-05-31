@@ -2,7 +2,6 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -27,7 +26,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (by default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "El",
-        "Properties, Elements or Members to apply load to; either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
+        "Lists, Custom Materials, Properties, Elements or Members to apply load to; either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
@@ -60,7 +59,7 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
-        gravityLoad.GravityLoad.Elements = "";
+        gravityLoad.GravityLoad.Elements = string.Empty;
         if (ghTyp.Value is GsaElement1dGoo goo) {
           gravityLoad._refObjectGuid = goo.Value.Guid;
           gravityLoad._referenceType = ReferenceType.Element;
@@ -77,10 +76,10 @@ namespace GsaGH.Components {
                   "List must be of type Element or Member to apply to beam loading");
               }
 
-              if (value.Value.EntityType == EntityType.Member) {
-                this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
+            if (value.Value.EntityType == EntityType.Member) {
+              this.AddRuntimeRemark(
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            }
 
               break;
             }
@@ -90,24 +89,34 @@ namespace GsaGH.Components {
               break;
             }
           case GsaMember1dGoo value: {
-              gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Member;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              break;
-            }
+            gravityLoad._refObjectGuid = value.Value.Guid;
+            gravityLoad._referenceType = ReferenceType.MemberChildElements;
+            this.AddRuntimeRemark(
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            break;
+          }
           case GsaMember2dGoo value: {
-              gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Member;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              break;
-            }
+            gravityLoad._refObjectGuid = value.Value.Guid;
+            gravityLoad._referenceType = ReferenceType.MemberChildElements;
+            this.AddRuntimeRemark(
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            break;
+          }
           case GsaMember3dGoo value: {
+            gravityLoad._refObjectGuid = value.Value.Guid;
+            gravityLoad._referenceType = ReferenceType.MemberChildElements;
+            this.AddRuntimeRemark(
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            break;
+          }
+          case GsaMaterialGoo value: {
+              if (value.Value.GradeProperty != 0) {
+                this.AddRuntimeWarning(
+                "Reference Material must be a Custom Material");
+                return;
+              }
               gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Member;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              gravityLoad._referenceType = ReferenceType.Material;
               break;
             }
           case GsaSectionGoo value: {
@@ -150,7 +159,7 @@ namespace GsaGH.Components {
         GH_Convert.ToVector3d(ghFactor, ref vect, GH_Conversion.Both);
       }
 
-      var factor = new Vector3() {
+      var factor = new GsaAPI.Vector3() {
         X = vect.X,
         Y = vect.Y,
         Z = vect.Z,

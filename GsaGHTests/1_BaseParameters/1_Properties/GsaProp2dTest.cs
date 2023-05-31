@@ -53,7 +53,8 @@ namespace GsaGHTests.Parameters {
         prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.Name);
       Assert.Equal("awesome property", prop.Description);
-      Assert.Equal(Property2D_Type.LOAD.ToString(), prop.Type.ToString());
+      Assert.Equal(Property2D_Type.LOAD.ToString().ToPascalCase(), 
+        prop.Type.ToString().ToPascalCase());
       Assert.Equal(SupportType.ThreeEdges, prop.SupportType);
       Assert.Equal(2, prop.ReferenceEdge);
       Assert.Equal(0, prop.Id);

@@ -50,10 +50,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaFls = new GsaBucklingLengthFactors();
+      GsaBucklingLengthFactorsGoo bucklingFactorsGoo = null;
       var fls = new GsaBucklingLengthFactors();
-      if (da.GetData(0, ref gsaFls)) {
-        fls = gsaFls.Duplicate();
+      if (da.GetData(0, ref bucklingFactorsGoo)) {
+        fls = bucklingFactorsGoo.Value.Duplicate();
       }
 
       if (fls != null) {

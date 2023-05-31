@@ -38,7 +38,6 @@ namespace GsaGH.Components {
         "2D Properties from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Properties", "PV",
         "3D Properties from GSA Model", GH_ParamAccess.list);
-
       pManager.AddParameter(new GsaMaterialParameter(), "Custom Materials", "Mat",
         "Custom Materials from GSA Model", GH_ParamAccess.list);
     }
@@ -49,22 +48,14 @@ namespace GsaGH.Components {
         return;
       }
 
-      Model model = gsaModel.Model;
-
-      List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(),
-        model.AnalysisMaterials(), model.SectionModifiers());
-      List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(),
-        model.AnalysisMaterials(), model.Axes());
-      List<GsaProp3dGoo> prop3Ds
-        = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
-
-      List<GsaMaterialGoo> customMaterials
-        = Materials.GetCustomMaterials(model.AnalysisMaterials());
+      (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
+      List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) =
+        Helpers.Import.Properties.GetProperties(gsaModel.Model);
 
       da.SetDataList(0, sections);
-      da.SetDataList(1, prop2Ds);
-      da.SetDataList(2, prop3Ds);
-      da.SetDataList(3, customMaterials);
+      da.SetDataList(1, prop2ds);
+      da.SetDataList(2, prop3ds);
+      da.SetDataList(3, materials);
     }
   }
 }

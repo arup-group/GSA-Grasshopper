@@ -96,18 +96,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember3d = new GsaMember3d();
       var mem = new GsaMember3d();
-      if (da.GetData(0, ref gsaMember3d)) {
-        if (gsaMember3d == null) {
-          this.AddRuntimeWarning("Member3D input is null");
-        }
-
-        mem = gsaMember3d.Duplicate(true);
-      }
-
-      if (mem == null) {
-        return;
+      GsaMember3dGoo member3dGoo = null;
+      if (da.GetData(0, ref member3dGoo)) {
+        mem = member3dGoo.Value.Duplicate(true);
       }
 
       var ghId = new GH_Integer();

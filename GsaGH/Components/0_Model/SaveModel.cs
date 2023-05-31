@@ -29,7 +29,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      Message = "";
+      Message = string.Empty;
       if (!da.GetData(0, ref ghTyp)) {
         return;
       }
@@ -39,15 +39,15 @@ namespace GsaGH.Components {
       }
 
       var gsaModel = new GsaModel();
-      if (ghTyp.Value is GsaModelGoo) {
-        ghTyp.CastTo(ref gsaModel);
-        Message = "";
+      if (ghTyp.Value is GsaModelGoo modelGoo) {
+        gsaModel = modelGoo.Value;
+        Message = string.Empty;
       } else {
         this.AddRuntimeError("Error converting input to GSA Model");
         return;
       }
 
-      string fileName = "";
+      string fileName = string.Empty;
       da.GetData(2, ref fileName);
 
       bool save = false;

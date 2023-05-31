@@ -4,6 +4,8 @@ using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +25,14 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaOffsetGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaOffset) ? new GsaOffsetGoo((GsaOffset)data) :
-        base.PreferredCast(data);
+      if (GH_Convert.ToDouble(data, out double myval, GH_Conversion.Both)) {
+        this.AddRuntimeWarning("Number converted to Z-offset in "+
+          DefaultUnits.LengthUnitSection.ToString());
+        return new GsaOffsetGoo(new GsaOffset(0, 0, 0, myval, DefaultUnits.LengthUnitSection));
+      }
+      
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Offset");
+      return new GsaOffsetGoo(null);
     }
   }
 }

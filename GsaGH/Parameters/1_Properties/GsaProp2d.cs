@@ -237,7 +237,7 @@ namespace GsaGH.Parameters {
       string mat = Type != Property2D_Type.LOAD ?
         Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key
         + " " : string.Empty;
-      string pa = (Id > 0) ? "PA" + Id + " " : "";
+      string pa = (Id > 0) ? "PA" + Id + " " : string.Empty;
       string supportType = Type == Property2D_Type.LOAD ? $"{SupportType}" : string.Empty;
       string referenceEdge
         = Type == Property2D_Type.LOAD && SupportType != SupportType.Auto

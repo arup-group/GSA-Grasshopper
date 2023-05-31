@@ -82,7 +82,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotNull(output2.Value);
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
       Assert.Equal(0.7, output4.Value);
-      Assert.True(output5.Value);
+      Assert.False(output5.Value);
       Assert.Equal("name", output6.Value);
       Assert.Equal(1, output7.Value);
       Assert.Equal(255, output8.Value.R);

@@ -27,8 +27,7 @@ namespace GsaGHTests.Model {
       GH_OasysComponent comp = OpenModelComponentMother();
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
 
-      var model = new GsaModel();
-      output.CastTo(ref model);
+      GsaModel model = output.Value;
 
       Assert.Equal(GsaFile.SteelDesignSimple, model.FileNameAndPath);
       Assert.NotEqual(new Guid(), model.Guid);

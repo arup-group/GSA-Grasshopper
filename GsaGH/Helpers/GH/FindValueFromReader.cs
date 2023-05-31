@@ -34,10 +34,8 @@ namespace GsaGH.Helpers.GH {
     private static string TryGetStringFrom(GH_IReader reader, IEnumerable<string> elementsToCheck) {
       string result = string.Empty;
       foreach (string value in elementsToCheck) {
-        try {
-          result = reader.GetString(value);
-        } catch {
-          //ignored
+        if (reader.TryGetString(value, ref result)) {
+          return result;
         }
       }
 

@@ -124,14 +124,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaElement1d = new GsaElement1d();
+      GsaElement1dGoo element1dGoo = null;
       var elem = new GsaElement1d();
-      if (da.GetData(0, ref gsaElement1d)) {
-        if (gsaElement1d == null) {
-          this.AddRuntimeWarning("Element1D input is null");
-        }
-
-        elem = gsaElement1d.Duplicate(true);
+      if (da.GetData(0, ref element1dGoo)) {
+        elem = element1dGoo.Value.Duplicate(true);
       }
 
       if (elem == null) {
@@ -157,8 +153,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(3, ref ghTyp)) {
         var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo) {
-          ghTyp.CastTo(ref section);
+        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
+          section = sectionGoo.Value;
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
             section = new GsaSection(id);
@@ -216,10 +212,8 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(10, ref ghTyp)) {
-        var node = new GsaNode();
-        if (ghTyp.Value is GsaNodeGoo) {
-          ghTyp.CastTo(ref node);
-          elem.OrientationNode = node;
+        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+          elem.OrientationNode = nodeGoo.Value.Duplicate();
         } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }

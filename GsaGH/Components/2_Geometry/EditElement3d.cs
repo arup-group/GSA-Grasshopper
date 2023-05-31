@@ -28,6 +28,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name,
         GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " to get or set information for.",
         GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Number", "ID", "Set Element Number", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
         "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model",
         GH_ParamAccess.list);
@@ -58,7 +59,7 @@ namespace GsaGH.Components {
         + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
         GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp2dParameter(), "3D Property", "PV",
+      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
         "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model",
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
@@ -78,16 +79,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaElement3d = new GsaElement3d();
-      if (!da.GetData(0, ref gsaElement3d)) {
-        return;
+      GsaElement3dGoo element3dGoo = null;
+      var elem = new GsaElement3d();
+      if (da.GetData(0, ref element3dGoo)) {
+        elem = element3dGoo.Value.Duplicate(true);
       }
-
-      if (gsaElement3d == null) {
-        this.AddRuntimeWarning("Element3D input is null");
-      }
-
-      GsaElement3d elem = gsaElement3d.Duplicate(true);
 
       var ghId = new List<GH_Integer>();
       var inIds = new List<int>();
@@ -129,9 +125,8 @@ namespace GsaGH.Components {
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
           var prop3d = new GsaProp3d();
-          if (ghTyp.Value is GsaProp3dGoo) {
-            ghTyp.CastTo(ref prop3d);
-            prop3Ds.Add(prop3d);
+          if (ghTyp.Value is GsaProp3dGoo prop3DGoo) {
+            prop3Ds.Add(prop3DGoo.Value.Duplicate());
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
               prop3Ds.Add(new GsaProp3d(id));
@@ -143,7 +138,7 @@ namespace GsaGH.Components {
           }
         }
 
-        elem.Properties = prop3Ds;
+        elem.Prop3ds = prop3Ds;
       }
 
       var ghgrp = new List<GH_Integer>();
@@ -240,7 +235,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetDataList(2, outMeshes);
       da.SetDataList(3,
-        new List<GsaProp3dGoo>(elem.Properties.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
+        new List<GsaProp3dGoo>(elem.Prop3ds.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6, elem.Names);

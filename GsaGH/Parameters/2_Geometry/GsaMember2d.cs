@@ -99,7 +99,7 @@ namespace GsaGH.Parameters {
       }
     }
     public PolyCurve PolyCurve { get; private set; }
-    public GsaProp2d Property { get; set; } = new GsaProp2d();
+    public GsaProp2d Prop2d { get; set; } = new GsaProp2d();
     public List<Point3d> Topology { get; private set; }
     public List<string> TopologyType { get; private set; }
     public MemberType Type {
@@ -177,7 +177,7 @@ namespace GsaGH.Parameters {
       if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
       {
         topology.Add(topology[0]);
-        topologyType.Add("");
+        topologyType.Add(string.Empty);
       }
 
       PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
@@ -192,7 +192,7 @@ namespace GsaGH.Parameters {
         for (int i = 0; i < voidTopology.Count; i++) {
           if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
             voidTopology[i].Add(voidTopology[i][0]);
-            voidTopologyType[i].Add("");
+            voidTopologyType[i].Add(string.Empty);
           }
 
           if (voidTopologyType != null) {
@@ -232,7 +232,7 @@ namespace GsaGH.Parameters {
       Brep = RhinoConversions.BuildBrep(PolyCurve, _voidCrvs,
         new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
-      Property = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
+      Prop2d = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
     }
 
     public GsaMember2d Duplicate(bool cloneApiMember = false) {
@@ -246,7 +246,7 @@ namespace GsaGH.Parameters {
         dup.CloneApiObject();
       }
 
-      dup.Property = Property.Duplicate();
+      dup.Prop2d = Prop2d.Duplicate();
 
       if (Brep == null) {
         return dup;
@@ -317,7 +317,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string incl = "";
+      string incl = string.Empty;
       if (_inclCrvs != null) {
         if (_inclCrvs.Count > 0) {
           incl = " Incl.Crv:" + _inclCrvs.Count;
@@ -334,7 +334,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      string idd = Id == 0 ? "" : "ID:" + Id + " ";
+      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
       return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
@@ -378,7 +378,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
         Id = Id,
         ApiMember = ApiMember,
-        Property = Property.Duplicate(),
+        Prop2d = Prop2d.Duplicate(),
       };
 
       return dup;

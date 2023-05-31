@@ -91,63 +91,58 @@ namespace GsaGH.Components {
 
       bool oneD = true;
 
-      string profile = "";
+      string profile = string.Empty;
 
       switch (ghTyp.Value) {
-        case GsaMember1dGoo _: {
-          ghTyp.CastTo(ref mem1d);
+        case GsaMember1dGoo member1DGoo:
+          mem1d = member1DGoo.Value.Duplicate();
           if (mem1d == null) {
             this.AddRuntimeError("Input is null");
             return;
           }
 
-          mem1d = mem1d.Duplicate();
           profile = mem1d.Section.Profile;
-          if (profile == "") {
+          if (profile == string.Empty) {
             this.AddRuntimeError("Member has no section attached");
             return;
           }
 
           break;
-        }
-        case GsaElement1dGoo _: {
-          ghTyp.CastTo(ref elem1d);
+        case GsaElement1dGoo element1DGoo:
+          elem1d = element1DGoo.Value.Duplicate();
           if (elem1d == null) {
             this.AddRuntimeError("Input is null");
             return;
           }
 
-          elem1d = elem1d.Duplicate();
           profile = elem1d.Section.Profile;
-          if (profile == "") {
+          if (profile == string.Empty) {
             this.AddRuntimeError("Element has no section attached");
             return;
           }
 
           break;
-        }
-        case GsaMember2dGoo _: {
-          ghTyp.CastTo(ref mem2d);
+
+        case GsaMember2dGoo member2DGoo:
+          mem2d = member2DGoo.Value.Duplicate();
           if (mem2d == null) {
             this.AddRuntimeError("Input is null");
             return;
           }
 
-          mem2d = mem2d.Duplicate();
           oneD = false;
           break;
-        }
-        case GsaElement2dGoo _: {
-          ghTyp.CastTo(ref elem2d);
+
+        case GsaElement2dGoo element2DGoo:
+          elem2d = element2DGoo.Value.Duplicate();
           if (elem2d == null) {
             this.AddRuntimeError("Input is null");
             return;
           }
 
-          elem2d = elem2d.Duplicate();
           oneD = false;
           break;
-        }
+
         default:
           this.AddRuntimeError("Unable to convert input to Element1D or Member1D");
           return;
@@ -427,13 +422,13 @@ namespace GsaGH.Components {
               case AlignmentType.TopLeft:
               case AlignmentType.TopCentre:
               case AlignmentType.TopRight:
-                alignmentOffset.Z = mem2d.Property.Thickness * -1 / 2;
+                alignmentOffset.Z = mem2d.Prop2d.Thickness * -1 / 2;
                 break;
 
               case AlignmentType.BottomLeft:
               case AlignmentType.BottomCentre:
               case AlignmentType.BottomRight:
-                alignmentOffset.Z = mem2d.Property.Thickness / 2;
+                alignmentOffset.Z = mem2d.Prop2d.Thickness / 2;
                 break;
             }
 
@@ -444,7 +439,7 @@ namespace GsaGH.Components {
 
           if (elem2d != null) {
             var offsets = new List<GsaOffset>();
-            foreach (GsaProp2d prop in elem2d.Properties) {
+            foreach (GsaProp2d prop in elem2d.Prop2ds) {
               alignmentOffset = new GsaOffset();
               switch (alignmentType) {
                 case AlignmentType.TopLeft:

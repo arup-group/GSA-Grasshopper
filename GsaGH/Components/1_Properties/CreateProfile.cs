@@ -127,7 +127,7 @@ namespace GsaGH.Components {
     private List<string> _profileString = new List<string>() {
       "CAT HE HE200.B",
     };
-    private string _search = "";
+    private string _search = string.Empty;
     private List<string> _sectionList;
     private string _type = "IRectangleProfile";
     private Tuple<List<string>, List<int>> _typedata;
@@ -251,7 +251,7 @@ namespace GsaGH.Components {
           _selectedItems[3] = _sectionList[j];
         }
 
-        if (_search == "") {
+        if (_search == string.Empty) {
           UpdateProfileString();
         }
 
@@ -857,7 +857,7 @@ namespace GsaGH.Components {
             Params.Input[i].Optional = false;
             break;
 
-          case "IPerimeterProfile": {
+          case "IPerimeterProfile":
             Params.Input[i].NickName = "B";
             Params.Input[i].Name = "Boundary";
             Params.Input[i].Description = "Planar Brep or closed planar curve.";
@@ -876,7 +876,6 @@ namespace GsaGH.Components {
             Params.Input[i].Access = GH_ParamAccess.item;
             Params.Input[i].Optional = true;
             break;
-          }
         }
       }
     }
@@ -959,7 +958,7 @@ namespace GsaGH.Components {
         }
 
         _search = null;
-        string inSearch = "";
+        string inSearch = string.Empty;
         if (da.GetData(0, ref inSearch)) {
           _search = inSearch.Trim().ToLower().Replace(".", string.Empty).Replace("*", ".*")
            .Replace(" ", ".*");
@@ -986,7 +985,7 @@ namespace GsaGH.Components {
               _profileString = new List<string>();
               this.AddRuntimeWarning("No profile found that matches selected profile and search!");
             }
-          } else if (_search != "") {
+          } else if (_search != string.Empty) {
             foreach (string section in _sectionList) {
               if (MatchAndAdd(section, _search, ref filteredlist, tryHard)) { } else if (
                 !_search.Any(char.IsDigit)) {
@@ -1009,7 +1008,6 @@ namespace GsaGH.Components {
             }
           } else {
             this.AddRuntimeWarning("No profile found that matches selection and search!");
-            return;
           }
         }
 
@@ -1027,7 +1025,11 @@ namespace GsaGH.Components {
         var path = new GH_Path(new[] {
           pathCount,
         });
-        tree.AddRange(_profileString, path);
+        if (_profileString.Count > 0) {
+          tree.AddRange(_profileString, path);
+        } else {
+          tree.Add(null, path);
+        }
 
         da.SetDataTree(0, tree);
       }
@@ -1143,7 +1145,7 @@ namespace GsaGH.Components {
               + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit) + " 2";
             break;
 
-          case "ISecantPileProfile": {
+          case "ISecantPileProfile":
             int pileCount = 0;
             if (!da.GetData(2, ref pileCount)) {
               this.AddRuntimeError("Unable to convert input PileCount to integer.");
@@ -1160,7 +1162,7 @@ namespace GsaGH.Components {
               + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit) + " "
               + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " " + pileCount;
             break;
-          }
+
           case "ISheetPileProfile":
             profile += "SHT" + unit + Input.LengthOrRatio(this, da, 0, _lengthUnit).As(_lengthUnit)
               + " " + Input.LengthOrRatio(this, da, 1, _lengthUnit).As(_lengthUnit) + " "
@@ -1188,7 +1190,7 @@ namespace GsaGH.Components {
               + Input.LengthOrRatio(this, da, 3, _lengthUnit).As(_lengthUnit);
             break;
 
-          case "IPerimeterProfile": {
+          case "IPerimeterProfile":
             var perimeter = new ProfileHelper() {
               ProfileType = ProfileHelper.ProfileTypes.Geometric,
             };
@@ -1326,7 +1328,6 @@ namespace GsaGH.Components {
 
             da.SetData(0, ConvertSection.ProfileConversion(perimeter));
             return;
-          }
           default:
             this.AddRuntimeError("Unable to create profile");
             return;

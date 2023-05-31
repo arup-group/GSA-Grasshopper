@@ -30,35 +30,7 @@ namespace GsaGH.Parameters {
       NodeId = id;
     }
 
-    public override bool CastFrom(object source) {
-      switch (source) {
-        case null: return false;
-
-        case Point3d point3d:
-          Value = point3d;
-          return true;
-
-        case GH_Point pointGoo:
-          Value = pointGoo.Value;
-          return true;
-      }
-
-      Point3d point = Point3d.Unset;
-      if (!GH_Convert.ToPoint3d(source, ref point, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = point;
-
-      return true;
-    }
-
     public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(Point3d))) {
-        target = (TQ)(object)Value;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
         target = (TQ)(object)new GH_Point(Value);
         return true;

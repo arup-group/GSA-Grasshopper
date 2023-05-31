@@ -33,8 +33,8 @@ namespace GsaGHTests.Components.Geometry {
 
       var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(100, output.Value.Brep.GetArea());
-      Assert.Equal(Property2D_Type.PLATE, output.Value.Property.Type);
-      Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Property.Thickness);
+      Assert.Equal(Property2D_Type.PLATE, output.Value.Prop2d.Type);
+      Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2d.Thickness);
       Assert.Equal(0.5, output.Value.MeshSize);
     }
   }
