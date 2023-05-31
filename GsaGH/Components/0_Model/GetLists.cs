@@ -37,12 +37,11 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess DA) {
-      var gsaModel = new GsaModel();
-      if (DA.GetData(0, ref gsaModel)) {
-        List<GsaList> lists = Lists.GetLists(gsaModel);
-        DA.SetDataList(0, lists.Select(x => new GsaListGoo(x)));
-      }
+    protected override void SolveInstance(IGH_DataAccess da) {
+      GsaModelGoo modelGoo = null;
+      da.GetData(0, ref modelGoo);
+      List<GsaList> lists = Lists.GetLists(modelGoo.Value);
+      da.SetDataList(0, lists.Select(x => new GsaListGoo(x)));
     }
   }
 }

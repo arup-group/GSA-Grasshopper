@@ -141,10 +141,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaProp2d = new GsaProp2d();
       var prop = new GsaProp2d();
-      if (da.GetData(0, ref gsaProp2d)) {
-        prop = gsaProp2d.Duplicate();
+
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(0, ref prop2dGoo)) {
+        prop = prop2dGoo.Value.Duplicate();
       }
 
       if (prop != null) {
@@ -155,19 +156,9 @@ namespace GsaGH.Components {
           }
         }
 
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp)) {
-          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            prop.Material = materialGoo.Value.Duplicate();
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              prop.MaterialId = idd;
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PB input to a Section Property of reference integer");
-              return;
-            }
-          }
+        GsaMaterialGoo materialGoo = null;
+        if (da.GetData(2, ref materialGoo)) {
+          prop.Material = materialGoo.Value;
         }
 
         if (Params.Input[3].SourceCount > 0) {

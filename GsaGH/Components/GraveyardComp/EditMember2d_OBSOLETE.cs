@@ -176,18 +176,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember2d = new GsaMember2d();
       var mem = new GsaMember2d();
-      if (da.GetData(0, ref gsaMember2d)) {
-        if (gsaMember2d == null) {
-          this.AddRuntimeWarning("Member2D input is null");
-        }
 
-        mem = gsaMember2d.Duplicate();
-      }
-
-      if (mem == null) {
-        return;
+      GsaMember2dGoo member2dGoo = null;
+      if (da.GetData(0, ref member2dGoo)) {
+        mem = member2dGoo.Value.Duplicate(true);
       }
 
       var ghId = new GH_Integer();
@@ -233,22 +226,9 @@ namespace GsaGH.Components {
         mem = mem.UpdateGeometry(brep, curves, pts);
       }
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(5, ref ghTyp)) {
-        var prop2d = new GsaProp2d();
-        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
-          prop2d = prop2DGoo.Value.Duplicate();
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-            prop2d = new GsaProp2d(idd);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 2D Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Prop2d = prop2d;
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(5, ref prop2dGoo)) {
+        mem.Prop2d = prop2dGoo.Value;
       }
 
       var ghGroup = new GH_Integer();
@@ -288,9 +268,9 @@ namespace GsaGH.Components {
         }
       }
 
-      var offset = new GsaOffset();
+      GsaOffsetGoo offset = null;
       if (da.GetData(9, ref offset)) {
-        mem.Offset = offset;
+        mem.Offset = offset.Value;
       }
 
       if (Params.Input[10].Sources.Count > 0) {

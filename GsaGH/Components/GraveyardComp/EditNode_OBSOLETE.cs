@@ -132,29 +132,15 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var node = new GsaNode();
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        var tempPt = new Point3d();
-        if (ghTyp.Value is GsaNodeGoo nodeGoo) {
-          node = nodeGoo.Value.Duplicate();
-          if (node?.ApiNode == null) {
-            this.AddRuntimeError("Node input is null");
-          }
-        } else if (GH_Convert.ToPoint3d(ghTyp.Value, ref tempPt, GH_Conversion.Both)) {
-          node.Point = tempPt;
-        } else {
-          this.AddRuntimeError("Unable to convert input to Node");
-          return;
-        }
+
+      GsaNodeGoo nodeGoo = null;
+      if (da.GetData(0, ref nodeGoo)) {
+        node = nodeGoo.Value;
       } else {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0) {
           this.AddRuntimeRemark("New node created at {0, 0, 0}");
         }
-      }
-
-      if (node == null) {
-        return;
       }
 
       var ghPoint = new GH_Point();
@@ -181,9 +167,9 @@ namespace GsaGH.Components {
         }
       }
 
-      var restraint = new GsaBool6();
-      if (da.GetData(4, ref restraint)) {
-        node.Restraint = restraint;
+      GsaBool6Goo restraintGoo = null;
+      if (da.GetData(4, ref restraintGoo)) {
+        node.Restraint = restraintGoo.Value;
       }
 
       var ghName = new GH_String();
