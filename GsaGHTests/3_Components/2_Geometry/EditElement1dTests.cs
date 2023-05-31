@@ -23,7 +23,7 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void CreateComponentTest1() {
+    public void GetOutputsFromInputElements() {
       GH_OasysComponent comp = ComponentMother();
 
       var elem = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp, 0);
@@ -82,18 +82,18 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(0, colour.Value.G);
       Assert.Equal(0, colour.Value.B);
       Assert.False(dummy.Value);
-      Assert.Null(parentMem);
+      Assert.Equal(0, parentMem.Value);
     }
 
     [Fact]
-    public void CreateComponentTest2() {
+    public void EditElementByInputs() {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 1, 1);
       ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)),
         2);
       ComponentTestHelper.SetInput(comp, "STD CH 10 20 30 40", 3);
       ComponentTestHelper.SetInput(comp, 7, 4);
-      ComponentTestHelper.SetInput(comp, "Damper", 5);
+      ComponentTestHelper.SetInput(comp, "Beam", 5);
       ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 6);
       ComponentTestHelper.SetInput(comp,
         new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 7);
@@ -137,7 +137,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, line.Value.To.Z);
       Assert.Equal("STD CH 10 20 30 40", section.Value.Profile);
       Assert.Equal(7, group.Value);
-      Assert.Equal("Damper", type.Value);
+      Assert.Equal("Beam", type.Value);
       Assert.Equal(1, offset.Value.X1.Value);
       Assert.Equal(2, offset.Value.X2.Value);
       Assert.Equal(3, offset.Value.Y.Value);
@@ -164,7 +164,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, colour.Value.G);
       Assert.Equal(255, colour.Value.B);
       Assert.True(dummy.Value);
-      Assert.Null(parentMem);
+      Assert.Equal(0, parentMem.Value);
     }
   }
 }
