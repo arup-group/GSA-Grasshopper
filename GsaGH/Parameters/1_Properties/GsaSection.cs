@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
@@ -13,7 +14,7 @@ namespace GsaGH.Parameters {
   ///   Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section" />
   /// </summary>
   public class GsaSection {
-    public double Angle => _section.Angle;
+    public double Angle => _section.Properties().Angle;
     public Length AdditionalOffsetY {
       get => new Length(_section.AdditionalOffsetY, UnitSystem.SI);
       set {
@@ -62,14 +63,14 @@ namespace GsaGH.Parameters {
     }
     public AreaMomentOfInertia Iuu {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Iuu, UnitSystem.SI);
+        var inertia = new AreaMomentOfInertia(_section.Properties().Iuu, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
           DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Ivv {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Ivv, UnitSystem.SI);
+        var inertia = new AreaMomentOfInertia(_section.Properties().Ivv, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
           DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
@@ -167,14 +168,14 @@ namespace GsaGH.Parameters {
     }
     public Length Ry {
       get {
-        var inertia = new Length(_section.Ry, UnitSystem.SI);
+        var inertia = new Length(_section.Properties().Ry, UnitSystem.SI);
         return new Length(inertia.As(DefaultUnits.LengthUnitSection),
           DefaultUnits.LengthUnitSection);
       }
     }
     public Length Rz {
       get {
-        var inertia = new Length(_section.Rz, UnitSystem.SI);
+        var inertia = new Length(_section.Properties().Rz, UnitSystem.SI);
         return new Length(inertia.As(DefaultUnits.LengthUnitSection),
           DefaultUnits.LengthUnitSection);
       }
@@ -192,28 +193,28 @@ namespace GsaGH.Parameters {
       => new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
     public Volume Zpy {
       get {
-        var inertia = new Volume(_section.Zpy, UnitSystem.SI);
+        var inertia = new Volume(_section.Properties().Zpy, UnitSystem.SI);
         return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
           DefaultUnits.SectionVolumeUnit);
       }
     }
     public Volume Zpz {
       get {
-        var inertia = new Volume(_section.Zpz, UnitSystem.SI);
+        var inertia = new Volume(_section.Properties().Zpz, UnitSystem.SI);
         return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
           DefaultUnits.SectionVolumeUnit);
       }
     }
     public Volume Zy {
       get {
-        var inertia = new Volume(_section.Zy, UnitSystem.SI);
+        var inertia = new Volume(_section.Properties().Zy, UnitSystem.SI);
         return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
           DefaultUnits.SectionVolumeUnit);
       }
     }
     public Volume Zz {
       get {
-        var inertia = new Volume(_section.Zz, UnitSystem.SI);
+        var inertia = new Volume(_section.Properties().Zz, UnitSystem.SI);
         return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
           DefaultUnits.SectionVolumeUnit);
       }

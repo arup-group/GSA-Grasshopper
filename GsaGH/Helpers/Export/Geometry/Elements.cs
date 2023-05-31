@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits.Units;
 using Rhino.Geometry;

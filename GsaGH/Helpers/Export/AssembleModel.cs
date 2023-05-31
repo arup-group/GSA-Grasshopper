@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -147,7 +148,7 @@ namespace GsaGH.Helpers.Export {
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
         }
       }
-      
+
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoadsDispl));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoadsNode));
       gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoadsSettle));

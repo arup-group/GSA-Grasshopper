@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;

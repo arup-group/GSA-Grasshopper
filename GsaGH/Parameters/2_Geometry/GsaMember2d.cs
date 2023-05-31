@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
