@@ -75,6 +75,7 @@ namespace GsaGH.Components {
       DA.GetData(0, ref listGoo);
       list = listGoo.Value;
 
+      DA.SetData(0, list.Id);
       DA.SetData(1, list.Name);
       DA.SetData(2, list.EntityType.ToString());
       DA.SetData(3, list.Definition);
