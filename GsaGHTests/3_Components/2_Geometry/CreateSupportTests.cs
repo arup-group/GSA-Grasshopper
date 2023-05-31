@@ -4,6 +4,7 @@ using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -60,6 +61,34 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(0, output.Value.DamperProperty);
       Assert.Equal(0, output.Value.MassProperty);
       Assert.Equal(0, output.Value.SpringProperty);
+    }
+
+    [Theory]
+    [InlineData(new bool[] { true, true, true, false, false, false })]
+    [InlineData(new bool[] { false, false, false, true, true, true })]
+    [InlineData(new bool[] { true, false, true, false, true, false })]
+    [InlineData(new bool[] { false, true, false, true, false, true })]
+    [InlineData(new bool[] { false, false, false, false, false, false })]
+    [InlineData(new bool[] { true, true, true, true, true, true })]
+    public void CanToggleRestraints(bool[] releases) {
+      var comp = (CreateSupport)ComponentMother();
+      int i = 0;
+        
+      comp.SetRestraints(releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++],
+          releases[i++]);
+
+      var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
+      i = 0;
+      Assert.Equal(releases[i++], output.Value.Restraint.X);
+      Assert.Equal(releases[i++], output.Value.Restraint.Y);
+      Assert.Equal(releases[i++], output.Value.Restraint.Z);
+      Assert.Equal(releases[i++], output.Value.Restraint.Xx);
+      Assert.Equal(releases[i++], output.Value.Restraint.Yy);
+      Assert.Equal(releases[i++], output.Value.Restraint.Zz);
     }
   }
 }
