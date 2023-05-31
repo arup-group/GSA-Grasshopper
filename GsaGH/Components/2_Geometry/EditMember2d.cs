@@ -247,9 +247,9 @@ namespace GsaGH.Components {
         mem.MeshWithOthers = intersector;
       }
 
-      GH_Number ghangle = null;
-      if (da.GetData(13, ref ghangle)) {
-        mem.OrientationAngle = new Angle(ghangle.Value, _angleUnit);
+      double angle = 0;
+      if (da.GetData(13, ref angle)) {
+        mem.OrientationAngle = new Angle(angle, _angleUnit);
       }
 
       string name = string.Empty;
