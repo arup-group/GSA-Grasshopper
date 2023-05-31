@@ -98,29 +98,9 @@ namespace GsaGH.Components {
         return;
       }
 
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp)) {
-        switch (ghTyp.Value) {
-          case GsaProp3dGoo value:
-            member.Prop3d = value.Value;
-            break;
-
-          case GsaMaterialGoo value: {
-            member.Prop3d = new GsaProp3d(value.Value);
-            break;
-          }
-          default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              member.Prop3d = new GsaProp3d(id);
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PA input to a 2D Property of reference integer");
-              return;
-            }
-
-            break;
-          }
-        }
+      GsaProp3dGoo prop3dGoo = null;
+      if (da.GetData(1, ref prop3dGoo)) {
+        member.Prop3d = prop3dGoo.Value;
       }
 
       if (Params.Input[2].SourceCount > 0) {
