@@ -73,7 +73,6 @@ namespace GsaGHTests.Components.Geometry {
     public void CanToggleRestraints(bool[] releases) {
       var comp = (CreateSupport)ComponentMother();
       int i = 0;
-        
       comp.SetRestraints(releases[i++],
           releases[i++],
           releases[i++],
