@@ -256,11 +256,17 @@ namespace GsaGH.Components {
 
       foreach (Annotation annotation in annotationsFromModel) {
         {
+          //move position
           var vector = new Vector3d(annotation.Position.X, annotation.Position.Y,
             annotation.Position.Z);
           vector *= lengthScaleFactor;
-          diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color,
-            $"{annotation.String} {Message}"));
+
+          //recalculate annotation value
+          double valueScaleFactor = ComputeUnitScale();
+          if (double.TryParse(annotation.String, out double valResult)) {
+            diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color,
+              $"{valResult * valueScaleFactor} {Message}"));
+          }
         }
       }
 
@@ -297,7 +303,7 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-    private double ComputeUnitScale(bool autoScale) {
+    private double ComputeUnitScale(bool autoScale = false) {
       double unitScaleFactor = 1.0d;
       if (!autoScale) {
         if (IsForce()) {
