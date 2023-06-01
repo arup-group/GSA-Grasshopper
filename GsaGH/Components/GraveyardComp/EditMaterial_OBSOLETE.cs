@@ -56,10 +56,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMaterial = new GsaMaterial();
       var material = new GsaMaterial();
-      if (da.GetData(0, ref gsaMaterial)) {
-        material = gsaMaterial.Duplicate();
+
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(0, ref materialGoo)) {
+        material = materialGoo.Value.Duplicate();
       }
 
       if (material != null) {

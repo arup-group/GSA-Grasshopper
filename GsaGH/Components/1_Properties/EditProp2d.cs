@@ -194,14 +194,14 @@ namespace GsaGH.Components {
         prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
       }
 
-      var ghObjectWrapper = new GH_ObjectWrapper();
-      if (da.GetData(4, ref ghObjectWrapper)) {
+      var ghPlaneOrInt = new GH_ObjectWrapper();
+      if (da.GetData(4, ref ghPlaneOrInt)) {
         var pln = new Plane();
-        if (ghObjectWrapper.Value.GetType() == typeof(GH_Plane)) {
-          if (GH_Convert.ToPlane(ghObjectWrapper.Value, ref pln, GH_Conversion.Both)) {
+        if (ghPlaneOrInt.Value.GetType() == typeof(GH_Plane)) {
+          if (GH_Convert.ToPlane(ghPlaneOrInt.Value, ref pln, GH_Conversion.Both)) {
             prop.LocalAxis = pln;
           }
-        } else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both)) {
+        } else if (GH_Convert.ToInt32(ghPlaneOrInt.Value, out int axis, GH_Conversion.Both)) {
           prop.AxisProperty = axis;
         }
       }
