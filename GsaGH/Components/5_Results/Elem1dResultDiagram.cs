@@ -149,10 +149,10 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item, "All");
-      pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
-        GH_ParamAccess.item);
       pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
         GH_ParamAccess.item);
 
       pManager[1].Optional = true;
@@ -215,7 +215,7 @@ namespace GsaGH.Components {
       var ghScale = new GH_Number();
       double scale = 1;
       bool autoScale = true;
-      if (da.GetData(2, ref ghScale)) {
+      if (da.GetData(4, ref ghScale)) {
         GH_Convert.ToDouble(ghScale, out scale, GH_Conversion.Both);
         autoScale = false;
       }
@@ -260,8 +260,8 @@ namespace GsaGH.Components {
       bool showAnnotations = true;
       int significantDigits = 5;
 
-      da.GetData(3, ref showAnnotations);
-      da.GetData(4, ref significantDigits);
+      da.GetData(2, ref showAnnotations);
+      da.GetData(3, ref significantDigits);
 
       if (showAnnotations) {
         diagramAnnotations = GenerateAnnotations(diagramResults.Annotations, lengthScaleFactor,
