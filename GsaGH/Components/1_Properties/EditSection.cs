@@ -134,102 +134,85 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaSectionGoo sectionGoo = null;
       var section = new GsaSection();
+
+      GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
         section = sectionGoo.Value.Duplicate();
       }
 
-      if (section != null) {
-        var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId)) {
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            section.Id = id;
-          }
-        }
-
-        string profile = string.Empty;
-        if (da.GetData(2, ref profile)) {
-          section.Profile = profile;
-        }
-
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(3, ref ghTyp)) {
-          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            section.Material = materialGoo.Value ?? new GsaMaterial();
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              section.MaterialId = idd;
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PB input to a Section Property of reference integer");
-              return;
-            }
-          }
-        }
-
-        var ghBasicOffset = new GH_ObjectWrapper();
-        if (da.GetData("Basic Offset", ref ghBasicOffset)) {
-          try {
-            if (GH_Convert.ToInt32(ghBasicOffset.Value, out int offset, GH_Conversion.Both)) {
-              section.BasicOffset = (BasicOffset)offset;
-            } else if (GH_Convert.ToString(ghBasicOffset, out string value, GH_Conversion.Both)) {
-              section.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), value, ignoreCase: true);
-            }
-          } catch {
-            this.AddRuntimeError("Unable to convert input " + ghBasicOffset.Value + " to a Basic Offset (Centroid = 0, Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8)");
-            return;
-          }
-        }
-
-        section.AdditionalOffsetY = (Length)Input.UnitNumber(this, da, 5, _lengthUnit, true);
-        section.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 6, _lengthUnit, true);
-
-        ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(7, ref ghTyp)) {
-          if (ghTyp.Value is GsaSectionModifierGoo modifierGoo) {
-            section.Modifier = modifierGoo.Value ?? new GsaSectionModifier();
-          }
-        }
-
-        int pool = 0;
-        if (da.GetData(8, ref pool)) {
-          section.Pool = pool;
-        }
-
-        var ghString = new GH_String();
-        if (da.GetData(9, ref ghString)) {
-          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-            section.Name = name;
-          }
-        }
-
-        var ghColour = new GH_Colour();
-        if (da.GetData(10, ref ghColour)) {
-          if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-            section.Colour = col;
-          }
-        }
-
-        string prof = (section.ApiSection == null) ? "--" : section.Profile;
-        int poo = (section.ApiSection == null) ? 0 : section.Pool;
-        string nm = (section.ApiSection == null) ? "--" : section.Name;
-        ValueType colour = section.ApiSection?.Colour;
-
-        da.SetData(0, new GsaSectionGoo(section));
-        da.SetData(1, section.Id);
-        da.SetData(2, prof);
-        da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
-        da.SetData(4, section.BasicOffset);
-        da.SetData(5, section.AdditionalOffsetY.ToUnit(_lengthUnit));
-        da.SetData(6, section.AdditionalOffsetZ.ToUnit(_lengthUnit));
-        da.SetData(7, new GsaSectionModifierGoo(section.Modifier));
-        da.SetData(8, poo);
-        da.SetData(9, nm);
-        da.SetData(10, colour);
-      } else {
-        this.AddRuntimeError("Section is Null");
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        section.Id = id;
       }
+
+      string profile = string.Empty;
+      if (da.GetData(2, ref profile)) {
+        if (GsaSection.ValidProfile(profile)) {
+          section.Profile = profile;
+        } else {
+          this.AddRuntimeError("Invalid profile syntax: " + profile);
+          return;
+        }
+      }
+
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(3, ref materialGoo)) {
+        section.Material = materialGoo.Value;
+      }
+
+      var ghBasicOffset = new GH_ObjectWrapper();
+      if (da.GetData("Basic Offset", ref ghBasicOffset)) {
+        try {
+          if (GH_Convert.ToInt32(ghBasicOffset.Value, out int offset, GH_Conversion.Both)) {
+            section.BasicOffset = (BasicOffset)offset;
+          } else if (GH_Convert.ToString(ghBasicOffset, out string value, GH_Conversion.Both)) {
+            section.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), value, ignoreCase: true);
+          }
+        } catch {
+          this.AddRuntimeError("Unable to convert input " + ghBasicOffset.Value + " to a Basic Offset (Centroid = 0, Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8)");
+          return;
+        }
+      }
+
+      section.AdditionalOffsetY = (Length)Input.UnitNumber(this, da, 5, _lengthUnit, true);
+      section.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 6, _lengthUnit, true);
+
+      GsaSectionModifierGoo modifierGoo = null;
+      if (da.GetData(7, ref modifierGoo)) {
+        section.Modifier = modifierGoo.Value;
+      }
+
+      int pool = 0;
+      if (da.GetData(8, ref pool)) {
+        section.Pool = pool;
+      }
+
+      string name = string.Empty;
+      if (da.GetData(9, ref name)) {
+        section.Name = name;
+      }
+
+      Color colour = Color.Empty;
+      if (da.GetData(10, ref colour)) {
+        section.Colour = colour;
+      }
+
+      string prof = (section.ApiSection == null) ? "--" : section.Profile;
+      int poo = (section.ApiSection == null) ? 0 : section.Pool;
+      string nm = (section.ApiSection == null) ? "--" : section.Name;
+
+      da.SetData(0, new GsaSectionGoo(section));
+      da.SetData(1, section.Id);
+      da.SetData(2, prof);
+      da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
+      da.SetData(4, section.BasicOffset);
+      da.SetData(5, section.AdditionalOffsetY.ToUnit(_lengthUnit));
+      da.SetData(6, section.AdditionalOffsetZ.ToUnit(_lengthUnit));
+      da.SetData(7, new GsaSectionModifierGoo(section.Modifier));
+      da.SetData(8, poo);
+      da.SetData(9, nm);
+      da.SetData(10, section.Colour);
     }
 
     private void Update(string unit) {

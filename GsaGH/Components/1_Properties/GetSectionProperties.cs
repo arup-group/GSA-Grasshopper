@@ -162,11 +162,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var section = new GsaSection();
       GsaSectionGoo sectionGoo = null;
-      if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value;
-      }
+      da.GetData(0, ref sectionGoo);
+      GsaSection section = sectionGoo.Value;
 
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
       VolumeUnit volumeUnit = UnitsHelper.GetVolumeUnit(_lengthUnit);

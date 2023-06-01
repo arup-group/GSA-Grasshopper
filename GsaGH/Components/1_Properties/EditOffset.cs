@@ -135,13 +135,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var offset = new GsaOffset();
+
       GsaOffsetGoo offsetGoo = null;
       if (da.GetData(0, ref offsetGoo)) {
         offset = offsetGoo.Value.Duplicate();
-      }
-
-      if (offset == null) {
-        return;
       }
 
       int inp = 1;
@@ -163,7 +160,6 @@ namespace GsaGH.Components {
 
       int outp = 0;
       da.SetData(outp++, new GsaOffsetGoo(offset));
-
       da.SetData(outp++, new GH_UnitNumber(offset.X1.ToUnit(_lengthUnit)));
       da.SetData(outp++, new GH_UnitNumber(offset.X2.ToUnit(_lengthUnit)));
       da.SetData(outp++, new GH_UnitNumber(offset.Y.ToUnit(_lengthUnit)));

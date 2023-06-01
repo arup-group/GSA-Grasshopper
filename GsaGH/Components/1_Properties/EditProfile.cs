@@ -51,38 +51,30 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghProfile = new GH_String();
-      da.GetData(0, ref ghProfile);
-      GH_Convert.ToString(ghProfile, out string profile, GH_Conversion.Both);
-
+      string profile = string.Empty;
+      da.GetData(0, ref profile);
       string transformation = " [";
+      double angle = 0;
+      if (da.GetData(1, ref angle)) {
+        if (!_useDegrees) {
+          angle = RhinoMath.ToDegrees(angle);
+        }
 
-      var ghangle = new GH_Number();
-      if (da.GetData(1, ref ghangle)) {
-        if (GH_Convert.ToDouble(ghangle, out double angleInDegrees, GH_Conversion.Both)) {
-          if (!_useDegrees) {
-            angleInDegrees = RhinoMath.ToDegrees(angleInDegrees);
-          }
-          if (angleInDegrees != 0) {
-            transformation += $"R({angleInDegrees})";
-          }
+        if (angle != 0) {
+          transformation += $"R({angle})";
         }
       }
 
-      var ghHorizontal = new GH_Boolean();
+      bool ghHorizontal = false;
       if (da.GetData(2, ref ghHorizontal)) {
-        if (GH_Convert.ToBoolean(ghHorizontal, out bool horizontal, GH_Conversion.Both)) {
-          if (horizontal) {
-            transformation += "H";
-          }
+        if (ghHorizontal) {
+          transformation += "H";
         }
       }
-      var ghVertical = new GH_Boolean();
+      bool ghVertical = false;
       if (da.GetData(3, ref ghVertical)) {
-        if (GH_Convert.ToBoolean(ghVertical, out bool vertical, GH_Conversion.Both)) {
-          if (vertical) {
-            transformation += "V";
-          }
+        if (ghVertical) {
+          transformation += "V";
         }
       }
 
@@ -91,7 +83,7 @@ namespace GsaGH.Components {
       if (transformation == " []") {
         transformation = string.Empty;
       }
-      
+
       // remove any existing transformations
       profile = profile.Split('[')[0].TrimEnd();
 

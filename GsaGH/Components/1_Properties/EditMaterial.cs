@@ -60,133 +60,128 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaMaterialGoo materialGoo = null;
       var material = new GsaMaterial();
+
+      GsaMaterialGoo materialGoo = null;
       if (da.GetData(0, ref materialGoo)) {
         material = materialGoo.Value.Duplicate();
       }
 
-      if (material != null) {
-        var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId)) {
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            material.AnalysisProperty = id;
-          }
-        }
-
-        string name = "";
-        if (da.GetData(2, ref name)) {
-          if (material.AnalysisMaterial == null) {
-            this.AddRuntimeWarning("Currently only Custom Materials support material names.");
-          } else {
-            material.AnalysisMaterial.Name = name;
-          }
-        }
-
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(3, ref ghTyp)) {
-          switch (ghTyp.Value) {
-            case GH_Integer ghInt: {
-                switch (ghInt.Value) {
-                  case 1:
-                    material.MaterialType = GsaMaterial.MatType.Steel;
-                    break;
-
-                  case 2:
-                    material.MaterialType = GsaMaterial.MatType.Concrete;
-                    break;
-
-                  case 5:
-                    material.MaterialType = GsaMaterial.MatType.Frp;
-                    break;
-
-                  case 3:
-                    material.MaterialType = GsaMaterial.MatType.Aluminium;
-                    break;
-
-                  case 7:
-                    material.MaterialType = GsaMaterial.MatType.Timber;
-                    break;
-
-                  case 4:
-                    material.MaterialType = GsaMaterial.MatType.Glass;
-                    break;
-
-                  case 8:
-                    material.MaterialType = GsaMaterial.MatType.Fabric;
-                    break;
-
-                  case 0:
-                    material.MaterialType = GsaMaterial.MatType.Generic;
-                    break;
-                }
-
-                break;
-              }
-
-            case GH_String ghString: {
-                switch (ghString.Value.ToUpper()) {
-                  case "STEEL":
-                    material.MaterialType = GsaMaterial.MatType.Steel;
-                    break;
-
-                  case "CONCRETE":
-                    material.MaterialType = GsaMaterial.MatType.Concrete;
-                    break;
-
-                  case "FRP":
-                    material.MaterialType = GsaMaterial.MatType.Frp;
-                    break;
-
-                  case "ALUMINIUM":
-                    material.MaterialType = GsaMaterial.MatType.Aluminium;
-                    break;
-
-                  case "TIMBER":
-                    material.MaterialType = GsaMaterial.MatType.Timber;
-                    break;
-
-                  case "GLASS":
-                    material.MaterialType = GsaMaterial.MatType.Glass;
-                    break;
-
-                  case "FABRIC":
-                    material.MaterialType = GsaMaterial.MatType.Fabric;
-                    break;
-
-                  case "GENERIC":
-                    material.MaterialType = GsaMaterial.MatType.Generic;
-                    break;
-                }
-
-                break;
-              }
-
-            default:
-              this.AddRuntimeError("Unable to convert Material Type input");
-              return;
-          }
-        }
-
-        int grd = 0;
-        if (da.GetData(4, ref grd)) {
-          material.GradeProperty = grd;
-        }
-
-        da.SetData(0, new GsaMaterialGoo(material));
-        da.SetData(1, material.AnalysisProperty);
-        string mate = material.MaterialType.ToString();
-        mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
-        string analysisMaterialName = "";
-        if (material.AnalysisMaterial != null) {
-          analysisMaterialName = material.AnalysisMaterial.Name;
-        }
-        da.SetData(2, analysisMaterialName);
-        da.SetData(3, mate);
-        da.SetData(4, material.GradeProperty);
-      } else {
-        this.AddRuntimeError("Material is null");
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        material.AnalysisProperty = id;
       }
+
+      string name = "";
+      if (da.GetData(2, ref name)) {
+        if (material.AnalysisMaterial == null) {
+          this.AddRuntimeWarning("Currently only Custom Materials support material names.");
+        } else {
+          material.AnalysisMaterial.Name = name;
+        }
+      }
+
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(3, ref ghTyp)) {
+        switch (ghTyp.Value) {
+          case GH_Integer ghInt: {
+              switch (ghInt.Value) {
+                case 1:
+                  material.MaterialType = GsaMaterial.MatType.Steel;
+                  break;
+
+                case 2:
+                  material.MaterialType = GsaMaterial.MatType.Concrete;
+                  break;
+
+                case 5:
+                  material.MaterialType = GsaMaterial.MatType.Frp;
+                  break;
+
+                case 3:
+                  material.MaterialType = GsaMaterial.MatType.Aluminium;
+                  break;
+
+                case 7:
+                  material.MaterialType = GsaMaterial.MatType.Timber;
+                  break;
+
+                case 4:
+                  material.MaterialType = GsaMaterial.MatType.Glass;
+                  break;
+
+                case 8:
+                  material.MaterialType = GsaMaterial.MatType.Fabric;
+                  break;
+
+                case 0:
+                  material.MaterialType = GsaMaterial.MatType.Generic;
+                  break;
+              }
+
+              break;
+            }
+
+          case GH_String ghString: {
+              switch (ghString.Value.ToUpper()) {
+                case "STEEL":
+                  material.MaterialType = GsaMaterial.MatType.Steel;
+                  break;
+
+                case "CONCRETE":
+                  material.MaterialType = GsaMaterial.MatType.Concrete;
+                  break;
+
+                case "FRP":
+                  material.MaterialType = GsaMaterial.MatType.Frp;
+                  break;
+
+                case "ALUMINIUM":
+                  material.MaterialType = GsaMaterial.MatType.Aluminium;
+                  break;
+
+                case "TIMBER":
+                  material.MaterialType = GsaMaterial.MatType.Timber;
+                  break;
+
+                case "GLASS":
+                  material.MaterialType = GsaMaterial.MatType.Glass;
+                  break;
+
+                case "FABRIC":
+                  material.MaterialType = GsaMaterial.MatType.Fabric;
+                  break;
+
+                case "GENERIC":
+                  material.MaterialType = GsaMaterial.MatType.Generic;
+                  break;
+              }
+
+              break;
+            }
+
+          default:
+            this.AddRuntimeError("Unable to convert Material Type input");
+            return;
+        }
+      }
+
+      int grd = 0;
+      if (da.GetData(4, ref grd)) {
+        material.GradeProperty = grd;
+      }
+
+      da.SetData(0, new GsaMaterialGoo(material));
+      da.SetData(1, material.AnalysisProperty);
+      string mate = material.MaterialType.ToString();
+      mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
+      string analysisMaterialName = "";
+      if (material.AnalysisMaterial != null) {
+        analysisMaterialName = material.AnalysisMaterial.Name;
+      }
+      da.SetData(2, analysisMaterialName);
+      da.SetData(3, mate);
+      da.SetData(4, material.GradeProperty);
     }
   }
 }
