@@ -70,13 +70,16 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess DA) {
       var list = new GsaList();
-      if (DA.GetData(0, ref list)) {
-        DA.SetData(0, list.Id);
-        DA.SetData(1, list.Name);
-        DA.SetData(2, list.EntityType.ToString());
-        DA.SetData(3, list.Definition);
-        DA.SetDataList(4, list.GetListObjects(_lengthUnit));
-      }
+
+      GsaListGoo listGoo = null;
+      DA.GetData(0, ref listGoo);
+      list = listGoo.Value;
+
+      DA.SetData(0, list.Id);
+      DA.SetData(1, list.Name);
+      DA.SetData(2, list.EntityType.ToString());
+      DA.SetData(3, list.Definition);
+      DA.SetDataList(4, list.GetListObjects(_lengthUnit));
     }
   }
 }

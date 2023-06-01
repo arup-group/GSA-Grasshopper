@@ -424,7 +424,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Element filter list", "El",
         "Filter import by list (by default 'all')." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine 
+        + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
@@ -467,124 +467,109 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess data) {
       var memberKeys = new List<int>();
       if (InPreSolve) {
-        var gsaModel = new GsaModel();
-        var ghTyp = new GH_ObjectWrapper();
+        GsaModelGoo modelGoo = null;
+        data.GetData(0, ref modelGoo);
+
         Task<SolveResults> tsk = null;
-        if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo modelGoo) {
-            gsaModel = modelGoo.Value.Clone();
+
+        var ghTyp = new GH_ObjectWrapper();
+        string nodeList = "all";
+        if (data.GetData(1, ref ghTyp)) {
+          if (ghTyp.Value is GsaListGoo listGoo) {
+            if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
+              this.AddRuntimeWarning(
+              "List must be of type Node to apply to node filter");
+            }
+            nodeList = "\"" + listGoo.Value.Name + "\"";
           } else {
-            this.AddRuntimeError("Error converting input to GSA Model");
-            return;
+            GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
           }
-
-          ghTyp = new GH_ObjectWrapper();
-          string nodeList = "all";
-          if (data.GetData(1, ref ghTyp)) {
-            if (ghTyp.Value is GsaListGoo listGoo) {
-              if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-                this.AddRuntimeWarning(
-                "List must be of type Node to apply to node filter");
-              }
-              nodeList = "\"" + listGoo.Value.Name + "\"";
-            } else {
-              GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
-            }
-          }
-          string elemList = "all";
-          if (data.GetData(2, ref ghTyp)) {
-            if (ghTyp.Value is GsaListGoo listGoo) {
-              if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
-                this.AddRuntimeWarning(
-                "List must be of type Element to apply to element filter");
-              }
-              elemList = "\"" + listGoo.Value.Name + "\"";
-            } else {
-              GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
-            }
-          }
-          string memList = "all";
-          if (data.GetData(3, ref ghTyp)) {
-            if (ghTyp.Value is GsaListGoo listGoo) {
-              if (listGoo.Value.EntityType != Parameters.EntityType.Member) {
-                this.AddRuntimeWarning(
-                "List must be of type Member to apply to member filter");
-              }
-              memList = "\"" + listGoo.Value.Name + "\"";
-            } else {
-              GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
-            }
-          }
-
-          Model model = gsaModel.Model;
-          ReadOnlyDictionary<int, Node> nDict = model.Nodes();
-          ReadOnlyDictionary<int, Axis> axDict = model.Axes();
-          ReadOnlyDictionary<int, Node> allNDict
-            = (nodeList.ToLower() == "all") ? nDict : model.Nodes(nodeList);
-          ReadOnlyDictionary<int, Element> eDict = model.Elements(elemList);
-          ReadOnlyDictionary<int, Member> mDict = model.Members(memList);
-          ReadOnlyDictionary<int, Section> sDict = model.Sections();
-          ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
-          ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
-          ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
-          ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
-
-          var elementLocalAxesDict
-            = eDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
-          var memberLocalAxesDict
-            = mDict.Keys.ToDictionary(id => id, id => model.MemberDirectionCosine(id));
-
-          tsk = Task.Run(
-            () => Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
-              amDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
         }
+        string elemList = "all";
+        if (data.GetData(2, ref ghTyp)) {
+          if (ghTyp.Value is GsaListGoo listGoo) {
+            if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
+              this.AddRuntimeWarning(
+              "List must be of type Element to apply to element filter");
+            }
+            elemList = "\"" + listGoo.Value.Name + "\"";
+          } else {
+            GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
+          }
+        }
+        string memList = "all";
+        if (data.GetData(3, ref ghTyp)) {
+          if (ghTyp.Value is GsaListGoo listGoo) {
+            if (listGoo.Value.EntityType != Parameters.EntityType.Member) {
+              this.AddRuntimeWarning(
+              "List must be of type Member to apply to member filter");
+            }
+            memList = "\"" + listGoo.Value.Name + "\"";
+          } else {
+            GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
+          }
+        }
+
+        Model m = modelGoo.Value.Model.Clone();
+        ReadOnlyDictionary<int, Node> nDict = m.Nodes();
+        ReadOnlyDictionary<int, Axis> axDict = m.Axes();
+        ReadOnlyDictionary<int, Node> allNDict
+          = (nodeList.ToLower() == "all") ? nDict : m.Nodes(nodeList);
+        ReadOnlyDictionary<int, Element> eDict = m.Elements(elemList);
+        ReadOnlyDictionary<int, Member> mDict = m.Members(memList);
+        ReadOnlyDictionary<int, Section> sDict = m.Sections();
+        ReadOnlyDictionary<int, SectionModifier> modDict = m.SectionModifiers();
+        ReadOnlyDictionary<int, Prop2D> pDict = m.Prop2Ds();
+        ReadOnlyDictionary<int, Prop3D> p3Dict = m.Prop3Ds();
+        ReadOnlyDictionary<int, AnalysisMaterial> amDict = m.AnalysisMaterials();
+
+        var elementLocalAxesDict
+          = eDict.Keys.ToDictionary(id => id, id => m.ElementDirectionCosine(id));
+        var memberLocalAxesDict
+          = mDict.Keys.ToDictionary(id => id, id => m.MemberDirectionCosine(id));
+
+        tsk = Task.Run(
+          () => Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
+            amDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
+
 
         TaskList.Add(tsk);
         return;
       }
 
       if (!GetSolveResults(data, out SolveResults results)) {
-        var gsaModel = new GsaModel();
-        var ghTyp = new GH_ObjectWrapper();
-        if (data.GetData(0, ref ghTyp)) {
-          if (ghTyp.Value is GsaModelGoo modelGoo) {
-            gsaModel = modelGoo.Value.Clone();
-          } else {
-            this.AddRuntimeError("Error converting input to GSA Model");
-            return;
-          }
+        GsaModelGoo modelGoo = null;
+        data.GetData(0, ref modelGoo);
 
-          string nodeList = "all";
-          data.GetData(1, ref nodeList);
-          string elemList = "all";
-          data.GetData(2, ref elemList);
-          string memList = "all";
-          data.GetData(3, ref memList);
+        string nodeList = "all";
+        data.GetData(1, ref nodeList);
+        string elemList = "all";
+        data.GetData(2, ref elemList);
+        string memList = "all";
+        data.GetData(3, ref memList);
 
-          Model model = gsaModel.Model;
-          ReadOnlyDictionary<int, Node> nDict = model.Nodes();
-          ReadOnlyDictionary<int, Axis> axDict = model.Axes();
-          ReadOnlyDictionary<int, Node> allNDict
-            = (nodeList.ToLower() == "all") ? nDict : model.Nodes(nodeList);
-          ReadOnlyDictionary<int, Element> eDict = model.Elements(elemList);
-          ReadOnlyDictionary<int, Member> mDict = model.Members(memList);
-          memberKeys = mDict.Keys.ToList();
-          ReadOnlyDictionary<int, Section> sDict = model.Sections();
-          ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
-          ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
-          ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
-          ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
+        Model m = modelGoo.Value.Model.Clone();
+        ReadOnlyDictionary<int, Node> nDict = m.Nodes();
+        ReadOnlyDictionary<int, Axis> axDict = m.Axes();
+        ReadOnlyDictionary<int, Node> allNDict
+          = (nodeList.ToLower() == "all") ? nDict : m.Nodes(nodeList);
+        ReadOnlyDictionary<int, Element> eDict = m.Elements(elemList);
+        ReadOnlyDictionary<int, Member> mDict = m.Members(memList);
+        memberKeys = mDict.Keys.ToList();
+        ReadOnlyDictionary<int, Section> sDict = m.Sections();
+        ReadOnlyDictionary<int, SectionModifier> modDict = m.SectionModifiers();
+        ReadOnlyDictionary<int, Prop2D> pDict = m.Prop2Ds();
+        ReadOnlyDictionary<int, Prop3D> p3Dict = m.Prop3Ds();
+        ReadOnlyDictionary<int, AnalysisMaterial> amDict = m.AnalysisMaterials();
 
-          var elementLocalAxesDict
-            = eDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
-          var memberLocalAxesDict
-            = mDict.Keys.ToDictionary(id => id, id => model.MemberDirectionCosine(id));
+        var elementLocalAxesDict
+          = eDict.Keys.ToDictionary(id => id, id => m.ElementDirectionCosine(id));
+        var memberLocalAxesDict
+          = mDict.Keys.ToDictionary(id => id, id => m.MemberDirectionCosine(id));
 
-          results = Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
-            amDict, elementLocalAxesDict, memberLocalAxesDict);
-        } else {
-          return;
-        }
+        results = Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
+          amDict, elementLocalAxesDict, memberLocalAxesDict);
+
       }
 
       if (results is null) {
@@ -725,7 +710,6 @@ namespace GsaGH.Components {
       if (results.Mem3ds is null) {
         return;
       }
-
       {
         var invalid3dMem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid3dMem.Count > 0) {

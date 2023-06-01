@@ -132,18 +132,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember3d = new GsaMember3d();
       var mem = new GsaMember3d();
-      if (da.GetData(0, ref gsaMember3d)) {
-        if (gsaMember3d == null) {
-          this.AddRuntimeWarning("Member3D input is null");
-        }
 
-        mem = gsaMember3d.Duplicate();
-      }
-
-      if (mem == null) {
-        return;
+      GsaMember3dGoo member3dGoo = null;
+      if (da.GetData(0, ref member3dGoo)) {
+        mem = member3dGoo.Value.Duplicate(true);
       }
 
       var ghId = new GH_Integer();
@@ -167,19 +160,9 @@ namespace GsaGH.Components {
         }
       }
 
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp3dGoo prop3dGoo) {
-          mem.Prop3d = prop3dGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            mem.Prop3d = new GsaProp3d(id);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 3D Property of reference integer");
-            return;
-          }
-        }
+      GsaProp3dGoo prop3dGoo = null;
+      if (da.GetData(3, ref prop3dGoo)) {
+        mem.Prop3d = prop3dGoo.Value;
       }
 
       if (Params.Input[4].Sources.Count > 0) {
