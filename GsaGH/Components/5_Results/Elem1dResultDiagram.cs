@@ -40,6 +40,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private bool _showAnnotations = true;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
 
@@ -67,7 +68,7 @@ namespace GsaGH.Components {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
       _stressUnit
         = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
-
+      _showAnnotations = reader.GetBoolean("annotations");
       return base.Read(reader);
     }
 
@@ -87,6 +88,7 @@ namespace GsaGH.Components {
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnit));
+      writer.SetBoolean("annotations", _showAnnotations);
 
       return base.Write(writer);
     }
@@ -97,6 +99,7 @@ namespace GsaGH.Components {
       }
 
       Menu_AppendSeparator(menu);
+      Menu_AppendItem(menu, "Show Annotations", ShowAnnotations, true, _showAnnotations);
 
       ToolStripMenuItem lengthUnitsMenu = GetToolStripMenuItem("Displacement",
         EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
@@ -242,7 +245,6 @@ namespace GsaGH.Components {
 
       GraphicDrawResult diagramResults = result.Model.Model.Get1dElementDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
-      ReadOnlyCollection<Annotation> annotationsFromModel = diagramResults.Annotations;
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
@@ -254,18 +256,21 @@ namespace GsaGH.Components {
         diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Color));
       }
 
-      foreach (Annotation annotation in annotationsFromModel) {
-        {
-          //move position
-          var vector = new Vector3d(annotation.Position.X, annotation.Position.Y,
-            annotation.Position.Z);
-          vector *= lengthScaleFactor;
+      if (_showAnnotations) {
+        ReadOnlyCollection<Annotation> annotationsFromModel = diagramResults.Annotations;
+        foreach (Annotation annotation in annotationsFromModel) {
+          {
+            //move position
+            var vector = new Vector3d(annotation.Position.X, annotation.Position.Y,
+              annotation.Position.Z);
+            vector *= lengthScaleFactor;
 
-          //recalculate annotation value
-          double valueScaleFactor = ComputeUnitScale();
-          if (double.TryParse(annotation.String, out double valResult)) {
-            diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color,
-              $"{valResult * valueScaleFactor} {Message}"));
+            //recalculate annotation value
+            double valueScaleFactor = ComputeUnitScale();
+            if (double.TryParse(annotation.String, out double valResult)) {
+              diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color,
+                $"{valResult * valueScaleFactor} {Message}"));
+            }
           }
         }
       }
@@ -409,6 +414,12 @@ namespace GsaGH.Components {
 
     private void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    private void ShowAnnotations(object sender, EventArgs e) {
+      _showAnnotations = !_showAnnotations;
       ExpirePreview(true);
       base.UpdateUI();
     }
