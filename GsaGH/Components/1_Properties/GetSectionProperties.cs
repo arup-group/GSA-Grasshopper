@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -20,7 +19,7 @@ namespace GsaGH.Components {
   ///   Component to get geometric properties of a section
   /// </summary>
   public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("f7463c48b-d901-4820-b43f-3d938f614206");
+    public override Guid ComponentGuid => new Guid("8385abdc-d06f-45f1-86ce-412ceb592955");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SectionProperties;
