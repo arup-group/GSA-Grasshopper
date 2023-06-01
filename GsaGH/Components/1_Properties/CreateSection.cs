@@ -60,35 +60,21 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaSection = new GsaSection();
-      var ghProfile = new GH_String();
-      if (!da.GetData(0, ref ghProfile)) {
+      string profile = string.Empty;
+      da.GetData(0, ref profile);
+
+      if (GsaSection.ValidProfile(profile)) {
+        gsaSection = new GsaSection(profile);
+      } else {
+        this.AddRuntimeError("Invalid profile syntax: " + profile);
         return;
       }
 
-      if (GH_Convert.ToString(ghProfile, out string profile, GH_Conversion.Both)) {
-        if (GsaSection.ValidProfile(profile)) {
-          gsaSection = new GsaSection(profile);
-        } else {
-          this.AddRuntimeWarning("Invalid profile syntax: " + profile);
-          return;
-        }
-
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(1, ref ghTyp)) {
-          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            gsaSection.Material = materialGoo.Value ?? new GsaMaterial();
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              gsaSection.Material = new GsaMaterial(idd);
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PB input to a Section Property of reference integer");
-              return;
-            }
-          }
-        } else {
-          gsaSection.Material = new GsaMaterial(7);
-        }
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(1, ref materialGoo)) {
+        gsaSection.Material = materialGoo.Value;
+      } else {
+        gsaSection.Material = new GsaMaterial(7);
       }
 
       gsaSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);

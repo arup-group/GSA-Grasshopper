@@ -88,33 +88,26 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghpt = new GH_Point();
-      if (!da.GetData(0, ref ghpt)) {
-        return;
-      }
+      GH_Point ghpt = null;
+      da.GetData(0, ref ghpt);
 
-      var pt = new Point3d();
-      if (!GH_Convert.ToPoint3d(ghpt, ref pt, GH_Conversion.Both)) {
-        return;
-      }
-
-      var ghPlane = new GH_Plane();
       Plane localAxis = Plane.WorldXY;
+      GH_Plane ghPlane = null;
       if (da.GetData(1, ref ghPlane)) {
-        GH_Convert.ToPlane(ghPlane, ref localAxis, GH_Conversion.Both);
+        localAxis = ghPlane.Value;
       }
 
-      var bool6 = new GsaBool6();
-      if (da.GetData(2, ref bool6)) {
-        _x = bool6.X;
-        _y = bool6.Y;
-        _z = bool6.Z;
-        _xx = bool6.Xx;
-        _yy = bool6.Yy;
-        _zz = bool6.Zz;
+      GsaBool6Goo bool6Goo = null;
+      if (da.GetData(2, ref bool6Goo)) {
+        _x = bool6Goo.Value.X;
+        _y = bool6Goo.Value.Y;
+        _z = bool6Goo.Value.Z;
+        _xx = bool6Goo.Value.Xx;
+        _yy = bool6Goo.Value.Yy;
+        _zz = bool6Goo.Value.Zz;
       }
 
-      var node = new GsaNode(pt) {
+      var node = new GsaNode(ghpt.Value) {
         LocalAxis = localAxis,
         Restraint = new GsaBool6 {
           X = _x,

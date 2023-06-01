@@ -43,14 +43,12 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) {
-        return;
-      }
+      GsaModelGoo modelGoo = null;
+      da.GetData(0, ref modelGoo);
 
       (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
       List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) =
-        Helpers.Import.Properties.GetProperties(gsaModel.Model);
+        Helpers.Import.Properties.GetProperties(modelGoo.Value.Model);
 
       da.SetDataList(0, sections);
       da.SetDataList(1, prop2ds);

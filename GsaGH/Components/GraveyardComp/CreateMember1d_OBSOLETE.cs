@@ -206,19 +206,9 @@ namespace GsaGH.Components {
       };
       mem.ReleaseEnd = rel2;
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
-          mem.Section = sectionGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-            mem.Section = new GsaSection(idd);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PB input to a Section Property of reference integer");
-            return;
-          }
-        }
+      GsaSectionGoo sectionGoo = null;
+      if (da.GetData(1, ref sectionGoo)) {
+        mem.Section = sectionGoo.Value;
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

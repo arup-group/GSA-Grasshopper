@@ -185,18 +185,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember1d = new GsaMember1d();
       var mem = new GsaMember1d();
-      if (da.GetData(0, ref gsaMember1d)) {
-        if (gsaMember1d == null) {
-          this.AddRuntimeWarning("Member1D input is null");
-        }
 
-        mem = gsaMember1d.Duplicate();
-      }
-
-      if (mem == null) {
-        return;
+      GsaMember1dGoo member1dGoo = null;
+      if (da.GetData(0, ref member1dGoo)) {
+        mem = member1dGoo.Value.Duplicate(true);
       }
 
       var ghId = new GH_Integer();
@@ -219,22 +212,9 @@ namespace GsaGH.Components {
         }
       }
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        var section = new GsaSection();
-        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
-          section = sectionGoo.Value.Duplicate();
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-            section = new GsaSection(idd);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PB input to a Section Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Section = section;
+      GsaSectionGoo sectionGoo = null;
+      if (da.GetData(3, ref sectionGoo)) {
+        mem.Section = sectionGoo.Value;
       }
 
       var ghgrp = new GH_Integer();
@@ -272,19 +252,19 @@ namespace GsaGH.Components {
         }
       }
 
-      var offset = new GsaOffset();
+      GsaOffsetGoo offset = null;
       if (da.GetData(7, ref offset)) {
-        mem.Offset = offset;
+        mem.Offset = offset.Value;
       }
 
-      var start = new GsaBool6();
+      GsaBool6Goo start = null;
       if (da.GetData(8, ref start)) {
-        mem.ReleaseStart = start;
+        mem.ReleaseStart = start.Value;
       }
 
-      var end = new GsaBool6();
+      GsaBool6Goo end = null;
       if (da.GetData(9, ref end)) {
-        mem.ReleaseEnd = end;
+        mem.ReleaseEnd = end.Value;
       }
 
       var ghAngle = new GH_Number();
@@ -294,7 +274,7 @@ namespace GsaGH.Components {
         }
       }
 
-      ghTyp = new GH_ObjectWrapper();
+      var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(11, ref ghTyp)) {
         if (ghTyp.Value is GsaNodeGoo nodeGoo) {
           mem.OrientationNode = nodeGoo.Value.Duplicate(); ;
