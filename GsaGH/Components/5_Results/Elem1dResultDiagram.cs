@@ -149,9 +149,9 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item, "All");
-      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item, true);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
-        GH_ParamAccess.item);
+        GH_ParamAccess.item, 3);
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
         GH_ParamAccess.item);
 
@@ -258,7 +258,7 @@ namespace GsaGH.Components {
       }
 
       bool showAnnotations = true;
-      int significantDigits = 5;
+      int significantDigits = 3;
 
       da.GetData(2, ref showAnnotations);
       da.GetData(3, ref significantDigits);
@@ -281,9 +281,9 @@ namespace GsaGH.Components {
       foreach (Annotation annotation in annotationsFromModel) {
         {
           //move position
-          var vector = new Vector3d(annotation.Position.X, annotation.Position.Y,
+          var location = new Point3d(annotation.Position.X, annotation.Position.Y,
             annotation.Position.Z);
-          vector *= lengthScaleFactor;
+          location *= lengthScaleFactor;
 
           string valueToAnnotate = annotation.String;
           if (double.TryParse(annotation.String, out double valResult)) {
@@ -293,7 +293,7 @@ namespace GsaGH.Components {
               = Math.Round(valResult * valueScaleFactor, significantDigits).ToString();
           }
 
-          diagramAnnotations.Add(new AnnotationGoo(vector, (Color)annotation.Color,
+          diagramAnnotations.Add(new AnnotationGoo(location, (Color)annotation.Color,
             $"{valueToAnnotate} {Message}"));
         }
       }

@@ -7,34 +7,27 @@ using OasysGH.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  internal class AnnotationGoo : GH_OasysGeometricGoo<TextDot>, IGH_PreviewData {
+  public class AnnotationGoo : GH_OasysGeometricGoo<TextDot>, IGH_PreviewData {
     public override string TypeName => "Annotation";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public override string TypeDescription => "Annotation for diagram result";
-
-    public Vector3d Position { get; private set; }
     public Color Color { get; private set; }
-    public string Text { get; private set; }
 
-    public AnnotationGoo(Vector3d position, Color color, string text) : base(new TextDot(text,
-      new Point3d(position))) {
-      Position = position;
+    public AnnotationGoo(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
-      Text = text;
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      var coordinate = new Point3d(Position.X, Position.Y, Position.Z);
-      args.Pipeline.Draw2dText(Text, Color, coordinate, true);
+      args.Pipeline.Draw2dText(Value.Text, Color, Value.Point, true);
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override IGH_GeometricGoo Duplicate() {
-      return new AnnotationGoo(Position, Color, Text);
+      return new AnnotationGoo(Value.Point, Color, Value.Text);
     }
 
-    public override string ToString() { return $"Position {Position}, Value: {Text}"; }
+    public override string ToString() { return $"Position {Value.Point}, Value: {Value.Text}"; }
 
     public override GeometryBase GetGeometry() {
       if (Value?.Point == null) {
@@ -51,13 +44,15 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Transform(Transform xform) {
       TextDot value = Value;
-      value.Transform(xform);
-      return new AnnotationGoo(new Vector3d(value.Point), Color, Text);
+      Point3d point = Value.Point;
+      point.Transform(xform);
+      return new AnnotationGoo(point, Color, Value.Text);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      Point3d point = xmorph.MorphPoint(new Point3d(Position));
-      return new AnnotationGoo(new Vector3d(point), Color, Text);
+      TextDot value = Value;
+      Point3d point = xmorph.MorphPoint(Value.Point);
+      return new AnnotationGoo(point, Color, Value.Text);
     }
   }
 }
