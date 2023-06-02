@@ -43,8 +43,6 @@ namespace GsaGHTests.Components.Properties {
       3.97000,
       0.03925,
       LengthUnit.Meter)]
-
-
     public void CreateComponent(string profile, double expectedArea, double expectedIyy,
       double expectedIzz, double expectedIyz, double expectedIuu, double expectedIvv,
       double expectedAngle, double expectedKyy, double expectedKzz, double expectedKuu,
