@@ -36,7 +36,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
@@ -138,8 +138,8 @@ namespace GsaGH.Components {
         new GH_UnitNumber(new AreaMomentOfInertia(section.Iyz.As(inertiaUnit), inertiaUnit)));
       da.SetData(4,
         new GH_UnitNumber(new AreaMomentOfInertia(section.J.As(inertiaUnit), inertiaUnit)));
-      da.SetData(5, section.Ky);
-      da.SetData(6, section.Kz);
+      da.SetData(5, section.Kyy);
+      da.SetData(6, section.Kzz);
       da.SetData(7, new GH_UnitNumber(section.SurfaceAreaPerLength));
       da.SetData(8, new GH_UnitNumber(section.VolumePerLength));
     }

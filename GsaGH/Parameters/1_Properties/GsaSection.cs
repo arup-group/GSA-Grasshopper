@@ -8,13 +8,13 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
   ///   Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section" />
   /// </summary>
   public class GsaSection {
-    public double Angle => _section.Properties().Angle;
     public Length AdditionalOffsetY {
       get => new Length(_section.AdditionalOffsetY, UnitSystem.SI);
       set {
@@ -31,10 +31,16 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+    public Angle Angle {
+      get {
+        var angle = new Angle(_section.Properties().Angle, AngleUnit.Degree);
+        return angle.ToUnit(DefaultUnits.AngleUnit);
+      }
+    }
     public Area Area {
       get {
-        var area = new Area(_section.Area, UnitSystem.SI);
-        return new Area(area.As(DefaultUnits.SectionAreaUnit), DefaultUnits.SectionAreaUnit);
+        var area = new Area(_section.Properties().Area, UnitSystem.SI);
+        return area.ToUnit(DefaultUnits.SectionAreaUnit);
       }
     }
     public BasicOffset BasicOffset {
@@ -45,12 +51,30 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
+    public SectionModulus C {
+      get {
+        var c = new SectionModulus(_section.Properties().C, UnitSystem.SI);
+        return c.ToUnit(SectionModulusUnit.CubicMillimeter);
+      }
+    }
     public Color Colour {
       get => (Color)_section.Colour;
       set {
         CloneApiObject();
         _section.Colour = value;
         IsReferencedById = false;
+      }
+    }
+    public Length Cy {
+      get {
+        var cy = new Length(_section.Properties().Cy, UnitSystem.SI);
+        return cy.ToUnit(DefaultUnits.LengthUnitSection);
+      }
+    }
+    public Length Cz {
+      get {
+        var cz = new Length(_section.Properties().Cz, UnitSystem.SI);
+        return cz.ToUnit(DefaultUnits.LengthUnitSection);
       }
     }
     public Guid Guid => _guid;
@@ -63,48 +87,44 @@ namespace GsaGH.Parameters {
     }
     public AreaMomentOfInertia Iuu {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Properties().Iuu, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
-          DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        var iuu = new AreaMomentOfInertia(_section.Properties().Iuu, UnitSystem.SI);
+        return iuu.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Ivv {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Properties().Ivv, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
-          DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        var ivv = new AreaMomentOfInertia(_section.Properties().Ivv, UnitSystem.SI);
+        return ivv.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Iyy {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Iyy, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
-          DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        var iyy = new AreaMomentOfInertia(_section.Properties().Iyy, UnitSystem.SI);
+        return iyy.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Iyz {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Iyz, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
-          DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        var iyz = new AreaMomentOfInertia(_section.Properties().Iyz, UnitSystem.SI);
+        return iyz.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia Izz {
       get {
-        var inertia = new AreaMomentOfInertia(_section.Izz, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
-          DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        var izz = new AreaMomentOfInertia(_section.Properties().Izz, UnitSystem.SI);
+        return izz.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public AreaMomentOfInertia J {
       get {
-        var inertia = new AreaMomentOfInertia(_section.J, UnitSystem.SI);
-        return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit),
-          DefaultUnits.SectionAreaMomentOfInertiaUnit);
+        var j = new AreaMomentOfInertia(_section.Properties().J, UnitSystem.SI);
+        return j.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
-    public double Ky => _section.Ky;
-    public double Kz => _section.Kz;
+    public double Kuu => _section.Properties().Kuu;
+    public double Kvv => _section.Properties().Kvv;
+    public double Kyy => _section.Properties().Kyy;
+    public double Kzz => _section.Properties().Kzz;
     public GsaMaterial Material {
       get => _material;
       set {
@@ -168,55 +188,48 @@ namespace GsaGH.Parameters {
     }
     public Length Ry {
       get {
-        var inertia = new Length(_section.Properties().Ry, UnitSystem.SI);
-        return new Length(inertia.As(DefaultUnits.LengthUnitSection),
-          DefaultUnits.LengthUnitSection);
+        var ry = new Length(_section.Properties().Ry, UnitSystem.SI);
+        return ry.ToUnit(DefaultUnits.LengthUnitSection);
       }
     }
     public Length Rz {
       get {
-        var inertia = new Length(_section.Properties().Rz, UnitSystem.SI);
-        return new Length(inertia.As(DefaultUnits.LengthUnitSection),
-          DefaultUnits.LengthUnitSection);
+        var rz = new Length(_section.Properties().Rz, UnitSystem.SI);
+        return rz.ToUnit(DefaultUnits.LengthUnitSection);
       }
     }
     public IQuantity SurfaceAreaPerLength {
       get {
-        var area = new Area(_section.SurfaceAreaPerLength, UnitSystem.SI);
-        var len = new Length(1, DefaultUnits.LengthUnitSection);
+        var area = new Area(_section.Properties().SurfaceAreaPerLength, UnitSystem.SI);
+        var len = new Length(1, UnitSystem.SI);
         Area unitArea = len * len;
-        var areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
-        return areaOut / len;
+        return area / len;
       }
     }
     public VolumePerLength VolumePerLength
-      => new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
-    public Volume Zpy {
+      => new VolumePerLength(_section.Properties().VolumePerLength, UnitSystem.SI);
+    public SectionModulus Zpy {
       get {
-        var inertia = new Volume(_section.Properties().Zpy, UnitSystem.SI);
-        return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
-          DefaultUnits.SectionVolumeUnit);
+        var zpy = new SectionModulus(_section.Properties().Zpy, UnitSystem.SI);
+        return zpy.ToUnit(DefaultUnits.SectionModulusUnit);
       }
     }
-    public Volume Zpz {
+    public SectionModulus Zpz {
       get {
-        var inertia = new Volume(_section.Properties().Zpz, UnitSystem.SI);
-        return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
-          DefaultUnits.SectionVolumeUnit);
+        var zpz = new SectionModulus(_section.Properties().Zpz, UnitSystem.SI);
+        return zpz.ToUnit(DefaultUnits.SectionModulusUnit);
       }
     }
-    public Volume Zy {
+    public SectionModulus Zy {
       get {
-        var inertia = new Volume(_section.Properties().Zy, UnitSystem.SI);
-        return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
-          DefaultUnits.SectionVolumeUnit);
+        var zy = new SectionModulus(_section.Properties().Zy, UnitSystem.SI);
+        return zy.ToUnit(DefaultUnits.SectionModulusUnit);
       }
     }
-    public Volume Zz {
+    public SectionModulus Zz {
       get {
-        var inertia = new Volume(_section.Properties().Zz, UnitSystem.SI);
-        return new Volume(inertia.As(DefaultUnits.SectionVolumeUnit),
-          DefaultUnits.SectionVolumeUnit);
+        var zz = new SectionModulus(_section.Properties().Zz, UnitSystem.SI);
+        return zz.ToUnit(DefaultUnits.SectionModulusUnit);
       }
     }
     internal Section ApiSection {
