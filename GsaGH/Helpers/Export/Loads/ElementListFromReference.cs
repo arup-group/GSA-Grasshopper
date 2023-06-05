@@ -55,6 +55,13 @@ namespace GsaGH.Helpers.Export {
         null, null, apiElements, apiMembers, memberElementRelationship);
     }
 
+    internal static string GetMemberChildElementsRef(
+      int memberId, ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
+      return memberElementRelationship.TryGetValue(memberId, out ConcurrentBag<int> ids) ?
+          string.Join(" ", ids) :
+          string.Empty;
+    }
+
     private static string GetElementRef<T>(Guid guid, GsaGuidIntListDictionary<T> dictionary) {
       return dictionary.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
         string.Join(" ", ids) : string.Empty;
@@ -62,13 +69,12 @@ namespace GsaGH.Helpers.Export {
 
     private static string GetMemberChildElementsRef<T>(
       Guid guid, GsaGuidDictionary<T> dictionary,
-      ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
       return !dictionary.GuidDictionary.TryGetValue(guid, out int id) ?
         string.Empty :
-        memberElementRelationship.TryGetValue(id, out ConcurrentBag<int> ids) ?
-          string.Join(" ", ids) :
-          string.Empty;
+        GetMemberChildElementsRef(id, memberElementRelationship);
     }
+    
 
     private static string GetRef<T>(Guid guid, GsaGuidDictionary<T> dictionary) {
       if (dictionary.GuidDictionary.TryGetValue(guid, out int id)) {
@@ -118,7 +124,7 @@ namespace GsaGH.Helpers.Export {
           return GetElementRef(guid, apiElements);
 
         case ReferenceType.MemberChildElements:
-          return GetMemberChildElementsRef(guid, apiMembers, ref memberElementRelationship);
+          return GetMemberChildElementsRef(guid, apiMembers, memberElementRelationship);
 
         case ReferenceType.Member:
           return GetRef(guid, apiMembers);
