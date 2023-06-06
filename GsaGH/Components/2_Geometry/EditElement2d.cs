@@ -113,7 +113,7 @@ namespace GsaGH.Components {
         if (ghIds.Count == 1) {
           elem.Ids = new List<int>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Ids.Add(ghIds[i].Value);
+            elem.Ids.Add(ghIds[0].Value);
           }
         } else {
           if (ghIds.Count != elem.ApiElements.Count) {
@@ -130,7 +130,7 @@ namespace GsaGH.Components {
         if (prop2dGoos.Count == 1) {
           elem.Prop2ds = new List<GsaProp2d>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Prop2ds.Add(prop2dGoos[i].Value);
+            elem.Prop2ds.Add(prop2dGoos[0].Value);
           }
         } else {
           if (prop2dGoos.Count != elem.ApiElements.Count) {
@@ -147,7 +147,7 @@ namespace GsaGH.Components {
         if (ghGrps.Count == 1) {
           elem.Groups = new List<int>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Groups.Add(ghGrps[i].Value);
+            elem.Groups.Add(ghGrps[0].Value);
           }
         } else {
           if (ghGrps.Count != elem.ApiElements.Count) {
@@ -164,7 +164,7 @@ namespace GsaGH.Components {
         if (offsetGoos.Count == 1) {
           elem.Offsets = new List<GsaOffset>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Offsets.Add(offsetGoos[i].Value);
+            elem.Offsets.Add(offsetGoos[0].Value);
           }
         } else {
           if (offsetGoos.Count != elem.ApiElements.Count) {
@@ -181,7 +181,7 @@ namespace GsaGH.Components {
         if (ghangles.Count == 1) {
           elem.OrientationAngles = new List<Angle>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.OrientationAngles.Add(new Angle(ghangles[i].Value, _angleUnit));
+            elem.OrientationAngles.Add(new Angle(ghangles[0].Value, _angleUnit));
           }
         } else {
           if (ghangles.Count != elem.ApiElements.Count) {
@@ -198,7 +198,7 @@ namespace GsaGH.Components {
         if (ghnm.Count == 1) {
           elem.Names = new List<string>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Names.Add(ghnm[i].Value);
+            elem.Names.Add(ghnm[0].Value);
           }
         } else {
           if (ghnm.Count != elem.ApiElements.Count) {
@@ -215,7 +215,7 @@ namespace GsaGH.Components {
         if (ghcols.Count == 1) {
           elem.Colours = new List<Color>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Colours.Add(ghcols[i].Value);
+            elem.Colours.Add(ghcols[0].Value);
           }
         } else {
           if (ghcols.Count != elem.ApiElements.Count) {
@@ -232,7 +232,7 @@ namespace GsaGH.Components {
         if (ghdummies.Count == 1) {
           elem.IsDummies = new List<bool>();
           for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.IsDummies.Add(ghdummies[i].Value);
+            elem.IsDummies.Add(ghdummies[0].Value);
           }
         } else {
           if (ghdummies.Count != elem.ApiElements.Count) {
