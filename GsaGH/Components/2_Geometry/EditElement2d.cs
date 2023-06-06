@@ -110,18 +110,12 @@ namespace GsaGH.Components {
       // 1 ID
       var ghIds = new List<GH_Integer>();
       if (da.GetDataList(1, ghIds)) {
-        if (ghIds.Count == 1) {
-          elem.Ids = new List<int>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Ids.Add(ghIds[0].Value);
-          }
-        } else {
-          if (ghIds.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("ID input must either be a single Integer or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
-          }
-          elem.Ids = ghIds.Select(x => x.Value).ToList();
+        if (ghIds.Count != elem.ApiElements.Count) {
+          this.AddRuntimeError("ID input must be a list matching the number of elements " +
+            $"({elem.ApiElements.Count})");
+          return;
         }
+        elem.Ids = ghIds.Select(x => x.Value).ToList();
       }
 
       // 2 property
