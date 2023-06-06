@@ -188,24 +188,9 @@ namespace GsaGH.Components {
         }
       }
 
-      var outMeshes = new List<Mesh>();
-      var ngons = elem.NgonMesh.GetNgonAndFacesEnumerable().ToList();
-      foreach (MeshNgon ngon in ngons) {
-        var m = new Mesh();
-        m.Vertices.AddVertices(m.Vertices.ToList());
-        var faceindex = ngon.FaceIndexList().Select(u => (int)u).ToList();
-        foreach (int index in faceindex) {
-          m.Faces.AddFace(m.Faces[index]);
-        }
-
-        m.Vertices.CullUnused();
-        m.RebuildNormals();
-        outMeshes.Add(m);
-      }
-
       da.SetData(0, new GsaElement3dGoo(elem));
       da.SetDataList(1, elem.Ids);
-      da.SetDataList(2, outMeshes);
+      da.SetDataList(2, elem.DisplayMesh.ExplodeAtUnweldedEdges());
       da.SetDataList(3,
         new List<GsaProp3dGoo>(elem.Prop3ds.Select(x => new GsaProp3dGoo(x))));
       da.SetDataList(4, elem.Groups);
