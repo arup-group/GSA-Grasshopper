@@ -139,10 +139,9 @@ namespace GsaGH.Components {
       var ghGrps = new List<GH_Integer>();
       if (da.GetDataList(3, ghGrps)) {
         if (ghGrps.Count == 1) {
-          elem.Groups = new List<int>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Groups.Add(ghGrps[0].Value);
-          }
+          elem.Groups = new List<int>() {
+            ghGrps[0].Value
+          };
         } else {
           if (ghGrps.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("Gr input must either be a single Group ID or a" +
@@ -156,10 +155,9 @@ namespace GsaGH.Components {
       var offsetGoos = new List<GsaOffsetGoo>();
       if (da.GetDataList(4, offsetGoos)) {
         if (offsetGoos.Count == 1) {
-          elem.Offsets = new List<GsaOffset>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Offsets.Add(offsetGoos[0].Value);
-          }
+          elem.Offsets = new List<GsaOffset>() {
+            offsetGoos[0].Value
+          };
         } else {
           if (offsetGoos.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("Of input must either be a single Offset or a" +
@@ -173,10 +171,9 @@ namespace GsaGH.Components {
       var ghangles = new List<GH_Number>();
       if (da.GetDataList(5, ghangles)) {
         if (ghangles.Count == 1) {
-          elem.OrientationAngles = new List<Angle>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.OrientationAngles.Add(new Angle(ghangles[0].Value, _angleUnit));
-          }
+          elem.OrientationAngles = new List<Angle>() {
+            new Angle(ghangles[0].Value, _angleUnit)
+          };
         } else {
           if (ghangles.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("⭮A input must either be a single Number or a" +
@@ -190,10 +187,9 @@ namespace GsaGH.Components {
       var ghnm = new List<GH_String>();
       if (da.GetDataList(6, ghnm)) {
         if (ghnm.Count == 1) {
-          elem.Names = new List<string>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Names.Add(ghnm[0].Value);
-          }
+          elem.Names = new List<string>() {
+            ghnm[0].Value
+          };
         } else {
           if (ghnm.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("Nm input must either be a single Text string or a" +
@@ -207,10 +203,9 @@ namespace GsaGH.Components {
       var ghcols = new List<GH_Colour>();
       if (da.GetDataList(7, ghcols)) {
         if (ghcols.Count == 1) {
-          elem.Colours = new List<Color>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.Colours.Add(ghcols[0].Value);
-          }
+          elem.Colours = new List<Color>() {
+            ghcols[0].Value
+          };
         } else {
           if (ghcols.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("Co input must either be a single Colour or a" +
@@ -224,10 +219,9 @@ namespace GsaGH.Components {
       var ghdummies = new List<GH_Boolean>();
       if (da.GetDataList(8, ghdummies)) {
         if (ghdummies.Count == 1) {
-          elem.IsDummies = new List<bool>();
-          for (int i = 0; i < elem.ApiElements.Count; i++) {
-            elem.IsDummies.Add(ghdummies[0].Value);
-          }
+          elem.IsDummies = new List<bool>() {
+            ghdummies[0].Value
+          };
         } else {
           if (ghdummies.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("Dm input must either be a single Boolean or a" +
