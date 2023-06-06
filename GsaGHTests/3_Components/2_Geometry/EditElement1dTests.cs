@@ -51,7 +51,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal("STD CH(ft) 1 2 3 4", elem.Value.Section.Profile);
       Assert.Equal(0, id.Value);
       Assert.Equal(0, line.Value.From.X, 6);
-      Assert.Equal(-1, line.Value.From.Y, 6  );
+      Assert.Equal(-1, line.Value.From.Y, 6);
       Assert.Equal(0, line.Value.From.Z, 6);
       Assert.Equal(7, line.Value.To.X, 6);
       Assert.Equal(3, line.Value.To.Y, 6);
@@ -165,6 +165,16 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, colour.Value.B);
       Assert.True(dummy.Value);
       Assert.Equal(0, parentMem.Value);
+
+      
+    }
+
+    [Fact]
+    public void EditElementByInputsOverride() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, "1", 5); // set beam type by int
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5, 0, 0, true);
+      Assert.Equal("Bar", type.Value);
     }
   }
 }

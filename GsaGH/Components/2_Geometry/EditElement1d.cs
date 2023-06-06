@@ -157,11 +157,7 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
           elem.Type = (ElementType)typeInt;
         } else {
-          try {
-            elem.Type = Mappings.GetElementType(ghString.Value);
-          } catch (ArgumentException) {
-            this.AddRuntimeError("Unable to change Element Type");
-          }
+          elem.Type = Mappings.GetElementType(ghString.Value);
         }
       }
 
