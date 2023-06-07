@@ -8,6 +8,7 @@ using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -127,6 +128,7 @@ namespace GsaGH.Components {
               var gsaModel = new GsaModel {
                 Model = model,
                 FileNameAndPath = _fileName,
+                ModelUnit = UnitMapping.GetLengthUnit(model)
               };
 
               UpdateMessage();
@@ -153,6 +155,7 @@ namespace GsaGH.Components {
           var gsaModel = new GsaModel {
             Model = model,
             FileNameAndPath = _fileName,
+            ModelUnit = UnitMapping.GetLengthUnit(model)
           };
 
           UpdateMessage();

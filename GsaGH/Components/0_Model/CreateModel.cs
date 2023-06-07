@@ -207,8 +207,11 @@ namespace GsaGH.Components {
       var model = new GsaModel();
       if (models != null) {
         if (models.Count > 0) {
-          model = models.Count > 1 ? MergeModels.MergeModel(models, this, _tolerance) :
+          model = models.Count > 1 
+            ? MergeModels.MergeModel(models, this, _tolerance) :
             models[0].Clone();
+        } else {
+          model = null;
         }
       }
 
