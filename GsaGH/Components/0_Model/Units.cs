@@ -215,6 +215,10 @@ namespace GsaGH.Components {
       da.SetData(i++, units.TimeMedium.ToString());
       da.SetData(i++, units.TimeShort.ToString());
       da.SetData(i++, units.Velocity.ToString());
+
+      this.AddRuntimeRemark(
+        "This component can be used to set the default units when the model is saved and opening in GSA. " +
+        Environment.NewLine + "To change the default units used inside Grasshopper go to the Oasys menu -> Oasys Units.");
     }
   }
 }
