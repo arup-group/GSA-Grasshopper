@@ -8,6 +8,7 @@ using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   public class MergeModels {
