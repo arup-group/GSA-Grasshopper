@@ -1,7 +1,11 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.GsaApi.EnumMappings;
+using OasysUnits.Units;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Helpers.GsaAPITests {
   [Collection("GrasshopperFixture collection")]
@@ -130,6 +134,19 @@ namespace GsaGHTests.Helpers.GsaAPITests {
       Property2D_Type actual = Mappings.GetProperty2D_Type(input);
 
       Assert.Equal(expected, (int)actual);
+    }
+
+    [Fact]
+    public void LengthUnitMappingTest() {
+      foreach (GsaAPI.LengthUnit apiLengthUnit in 
+        (GsaAPI.LengthUnit[])Enum.GetValues(typeof(GsaAPI.LengthUnit))) {
+        
+        LengthUnit lengthUnit = UnitMapping.GetLengthUnit(apiLengthUnit);
+        Assert.Equal(lengthUnit.ToString(), apiLengthUnit.ToString());
+
+        GsaAPI.LengthUnit apiLengthUnitFromOasysUnit = UnitMapping.GetAPILengthUnit(lengthUnit);
+        Assert.Equal(lengthUnit.ToString(), apiLengthUnitFromOasysUnit.ToString());
+      }
     }
   }
 }
