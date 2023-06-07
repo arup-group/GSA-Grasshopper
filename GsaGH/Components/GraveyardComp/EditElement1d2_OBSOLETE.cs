@@ -14,8 +14,8 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {

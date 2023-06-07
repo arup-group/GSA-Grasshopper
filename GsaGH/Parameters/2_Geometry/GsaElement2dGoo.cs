@@ -2,7 +2,6 @@
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;

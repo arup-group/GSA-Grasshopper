@@ -8,6 +8,9 @@ using GsaAPI;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using OasysUnits.Units;
+using EnergyUnit = OasysUnits.Units.EnergyUnit;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   public class GsaResult {

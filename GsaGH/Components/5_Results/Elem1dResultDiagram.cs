@@ -23,6 +23,8 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
 using Line = GsaAPI.Line;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>

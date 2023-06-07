@@ -4,7 +4,6 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Model;
-using OasysGH.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;

@@ -16,6 +16,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Components {
   /// <summary>
