@@ -34,11 +34,11 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddTextParameter("Force", "F", "Set Force Unit for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Length Large", "LL", "Set Length Large Unit for this GSA Model",
+      pManager.AddTextParameter("Geometry", "LL", "Set 'Length - large' Unit used for Node Geometry for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Length Properties", "LP", "Set Length Section Properties Unit for this GSA Model",
+      pManager.AddTextParameter("Property Dimension", "LP", "Set 'Length - sections' Unit used for Property Dimensions for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Length Small", "LS", "Set Length Small Unit for this GSA Model",
+      pManager.AddTextParameter("Displacement", "LS", "Set 'Length - small' Unit used for Displacement Results for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Mass", "M", "Set Mass Unit for this GSA Model",
         GH_ParamAccess.item);
@@ -67,11 +67,11 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddTextParameter("Force", "F", "Get Force Unit for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Length Large", "LL", "Get Length Large Unit for this GSA Model",
+      pManager.AddTextParameter("Geometry", "LL", "Get 'Length - large' Unit for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Length Properties", "LP", "Get Length Section Properties Unit for this GSA Model",
+      pManager.AddTextParameter("Property Dimension", "LP", "Get 'Length - sections' Unit for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Length Small", "LS", "Get Length Small Unit for this GSA Model",
+      pManager.AddTextParameter("Displacement", "LS", "Get 'Length - small' Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Mass", "M", "Get Mass Unit for this GSA Model",
         GH_ParamAccess.item);
