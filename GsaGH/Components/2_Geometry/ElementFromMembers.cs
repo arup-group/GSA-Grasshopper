@@ -19,8 +19,8 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Elements = GsaGH.Helpers.Import.Elements;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Nodes = GsaGH.Helpers.Import.Nodes;
 
 namespace GsaGH.Components {

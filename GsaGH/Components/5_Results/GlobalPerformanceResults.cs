@@ -16,6 +16,8 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
+using MassUnit = OasysUnits.Units.MassUnit;
 
 namespace GsaGH.Components {
   /// <summary>

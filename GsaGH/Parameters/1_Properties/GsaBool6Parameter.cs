@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
-using Newtonsoft.Json.Linq;
 using OasysGH.Parameters;
-using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>
