@@ -68,8 +68,22 @@ namespace GsaGH.Helpers.Export {
       var gsa = new Model();
       if (model != null) {
         gsa = model.Model; 
-        foreach (int taskId in gsa.AnalysisTasks().Keys) {
-          gsa.DeleteResults(taskId);
+        // delete any existing results unless we are only adding lists, tasks or combinations
+        if ((nodes != null && nodes.Count > 0)
+          || (elem1ds != null && elem1ds.Count > 0)
+          || (elem2ds != null && elem2ds.Count > 0)
+          || (elem3ds != null && elem3ds.Count > 0)
+          || (mem1ds != null && mem1ds.Count > 0)
+          || (mem2ds != null && mem2ds.Count > 0)
+          || (mem3ds != null && mem3ds.Count > 0)
+          || (sections != null && sections.Count > 0)
+          || (prop2Ds != null && prop2Ds.Count > 0)
+          || (prop3Ds != null && prop3Ds.Count > 0)
+          || (loads != null && loads.Count > 0)
+          || (gridPlaneSurfaces != null && gridPlaneSurfaces.Count > 0)) {
+          foreach (int taskId in gsa.AnalysisTasks().Keys) {
+            gsa.DeleteResults(taskId);
+          }
         }
       }
 
