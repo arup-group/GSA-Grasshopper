@@ -16,6 +16,9 @@ namespace GsaGH.Helpers.Export {
     internal GsaGuidDictionary(IDictionary<int, T> dictionary) {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => kvp.Key);
+      if (dictionary.Keys.Count > 0) {
+        _firstEmptyKey = dictionary.Keys.Max() + 1;
+      }
     }
 
     internal int AddValue(Guid guid, T value) {
@@ -33,14 +36,6 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void SetValue(int key, Guid guid, T value) {
-      if (_dictionary.TryGetValue(key, out T oldValue)) {
-        // if value already exist then give it new key and overwrite existing entry
-        Guid oldGuid = _guidDictionary.FirstOrDefault(x => x.Value == key).Key;
-        _firstEmptyKey++;
-        _dictionary[_firstEmptyKey] = oldValue;
-        _guidDictionary[oldGuid] = _firstEmptyKey;
-      }
-
       _dictionary[key] = value;
       _guidDictionary[guid] = key;
     }
