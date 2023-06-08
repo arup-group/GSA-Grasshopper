@@ -115,6 +115,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(
         OasysGH.Units.DefaultUnits.TimeShortUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.TimeShort).ToString());
+      Assert.Equal(
+        OasysGH.Units.DefaultUnits.VelocityUnit.ToString(),
+        UnitMapping.GetUnit(uiUnits.Velocity).ToString());
     }
 
     [Fact]

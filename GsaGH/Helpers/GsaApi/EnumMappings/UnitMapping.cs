@@ -63,6 +63,13 @@ namespace GsaGH.Helpers.GsaApi.EnumMappings {
       return timeUnitMapping.FirstOrDefault(x => x.Value == unit).Key;
     }
 
+    internal static SpeedUnit GetUnit(GsaAPI.VelocityUnit apiUnit) {
+      return velocityUnitMapping[apiUnit];
+    }
+    internal static GsaAPI.VelocityUnit GetApiUnit(SpeedUnit unit) {
+      return velocityUnitMapping.FirstOrDefault(x => x.Value == unit).Key;
+    }
+
     private static readonly Dictionary<GsaAPI.LengthUnit, LengthUnit> lengthUnitMapping
       = new Dictionary<GsaAPI.LengthUnit, LengthUnit>() {
         {
@@ -206,6 +213,25 @@ namespace GsaGH.Helpers.GsaApi.EnumMappings {
            GsaAPI.TimeUnit.Minute, DurationUnit.Minute
         }, {
            GsaAPI.TimeUnit.Second, DurationUnit.Second
+        }
+     };
+
+    private static readonly Dictionary<GsaAPI.VelocityUnit, SpeedUnit> velocityUnitMapping
+     = new Dictionary<GsaAPI.VelocityUnit, SpeedUnit>() {
+        {
+           GsaAPI.VelocityUnit.CentimeterPerSecond, SpeedUnit.CentimeterPerSecond
+        }, {
+           GsaAPI.VelocityUnit.FootPerSecond, SpeedUnit.FootPerSecond
+        }, {
+           GsaAPI.VelocityUnit.InchPerSecond, SpeedUnit.InchPerSecond
+        }, {
+           GsaAPI.VelocityUnit.KilometerPerHour, SpeedUnit.KilometerPerHour
+        }, {
+           GsaAPI.VelocityUnit.MeterPerSecond, SpeedUnit.MeterPerSecond
+        }, {
+           GsaAPI.VelocityUnit.MilePerHour, SpeedUnit.MilePerHour
+        }, {
+           GsaAPI.VelocityUnit.MillimeterPerSecond, SpeedUnit.MillimeterPerSecond
         }
      };
   }

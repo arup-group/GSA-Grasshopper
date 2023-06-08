@@ -125,6 +125,8 @@ namespace GsaGH.Parameters {
        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.TimeMediumUnit);
       uiUnits.TimeShort
        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.TimeShortUnit);
+      uiUnits.Velocity
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.VelocityUnit);
     }
 
     private BoundingBox GetBoundingBox() {

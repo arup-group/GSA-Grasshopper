@@ -299,5 +299,26 @@ namespace GsaGHTests.Helpers.GsaAPITests {
         Assert.Equal(expectedApiUnit.ToString(), apiUnit.ToString());
       }
     }
+
+    [Theory]
+    [InlineData("CentimeterPerSecond", "CentimeterPerSecond")]
+    [InlineData("FootPerSecond", "FootPerSecond")]
+    [InlineData("InchPerSecond", "InchPerSecond")]
+    [InlineData("KilometerPerHour", "KilometerPerHour")]
+    [InlineData("MeterPerSecond", "MeterPerSecond")]
+    [InlineData("MilePerHour", "MilePerHour")]
+    [InlineData("MillimeterPerSecond", "MillimeterPerSecond")]
+    public void VelocityUnitMappingTest(string gsaUnit, string oasysUnit, bool castBack = true) {
+      var expectedUnit = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), oasysUnit, true);
+      var expectedApiUnit = (GsaAPI.VelocityUnit)Enum.Parse(typeof(GsaAPI.VelocityUnit), gsaUnit, true);
+
+      SpeedUnit unit = UnitMapping.GetUnit(expectedApiUnit);
+      Assert.Equal(expectedUnit.ToString(), unit.ToString());
+
+      if (castBack) {
+        GsaAPI.VelocityUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
+        Assert.Equal(expectedApiUnit.ToString(), apiUnit.ToString());
+      }
+    }
   }
 }
