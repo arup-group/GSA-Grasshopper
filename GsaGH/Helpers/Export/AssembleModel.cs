@@ -67,7 +67,10 @@ namespace GsaGH.Helpers.Export {
       GH_Component owner) {
       var gsa = new Model();
       if (model != null) {
-        gsa = model.Model;
+        gsa = model.Model; 
+        foreach (int taskId in gsa.AnalysisTasks().Keys) {
+          gsa.DeleteResults(taskId);
+        }
       }
 
       // Convert GsaGH Nodes to API Objects
