@@ -71,9 +71,7 @@ namespace GsaGH.Helpers.Export {
       var gsa = new Model();
       if (model != null) {
         gsa = model.Model;
-      } else {
-        gsa.UiUnits().LengthLarge = UnitMapping.GetApiUnit(modelUnit);
-      }
+      } 
 
       // Convert GsaGH Nodes to API Objects
       var apiNodes = new GsaIntDictionary<Node>(gsa.Nodes());

@@ -10,6 +10,7 @@ using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -199,13 +200,12 @@ namespace GsaGH.Components {
 
       // Merge models
       var model = new GsaModel();
+      model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
             ? MergeModels.MergeModel(models, this, _tolerance) :
             models[0].Clone();
-        } else {
-          model = null;
         }
       }
 
