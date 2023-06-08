@@ -79,14 +79,14 @@ namespace GsaGHTests.Model {
       Assert.Equal("Degree", units.Angle.ToString());
       Assert.Equal("Megajoule", units.Energy.ToString());
       Assert.Equal("KiloNewton", units.Force.ToString());
-      //Assert.Equal("Centimeter", units.LengthLarge.ToString());
-      //Assert.Equal("Millimeter", units.LengthSections.ToString());
-      //Assert.Equal("Inch", units.LengthSmall.ToString());
+      Assert.Equal("Centimeter", units.LengthLarge.ToString());
+      Assert.Equal("Millimeter", units.LengthSections.ToString());
+      Assert.Equal("Inch", units.LengthSmall.ToString());
       Assert.Equal("Slug", units.Mass.ToString());
       Assert.Equal("Gigapascal", units.Stress.ToString());
-      //Assert.Equal("Day", units.TimeLong.ToString());
-      //Assert.Equal("Hour", units.TimeMedium.ToString());
-      //Assert.Equal("Minute", units.TimeShort.ToString());
+      Assert.Equal("Day", units.TimeLong.ToString());
+      Assert.Equal("Hour", units.TimeMedium.ToString());
+      Assert.Equal("Minute", units.TimeShort.ToString());
       Assert.Equal("KilometerPerHour", units.Velocity.ToString());
 
       i = 1;
@@ -107,14 +107,14 @@ namespace GsaGHTests.Model {
       Assert.Equal("Degree", angle);
       Assert.Equal("Megajoule", energy);
       Assert.Equal("KiloNewton", force);
-      //Assert.Equal("Centimeter", lengthLarge);
-      //Assert.Equal("Millimeter", lengthSection);
-      //Assert.Equal("Inch", lengthSmall);
+      Assert.Equal("Centimeter", lengthLarge);
+      Assert.Equal("Millimeter", lengthSection);
+      Assert.Equal("Inch", lengthSmall);
       Assert.Equal("Slug", mass);
       Assert.Equal("Gigapascal", stress);
-      //Assert.Equal("Day", timeLong);
-      //Assert.Equal("Hour", timeMedium);
-      //Assert.Equal("Minute", timeShort);
+      Assert.Equal("Day", timeLong);
+      Assert.Equal("Hour", timeMedium);
+      Assert.Equal("Minute", timeShort);
       Assert.Equal("KilometerPerHour", velocity);
     }
 
