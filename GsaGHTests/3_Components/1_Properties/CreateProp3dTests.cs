@@ -13,7 +13,8 @@ namespace GsaGHTests.Components.Properties {
       var comp = new CreateProp3d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, CreateMaterialTests.ComponentMother(), 0);
+      ComponentTestHelper.SetInput(comp, 
+        (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateMaterialTests.ComponentMother()));
 
       return comp;
     }
@@ -23,7 +24,7 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysComponent comp = ComponentMother();
 
       var output = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(MatType.Concrete, output.Value.Material.MaterialType);
+      Assert.Equal(MatType.Timber, output.Value.Material.MaterialType);
     }
   }
 }

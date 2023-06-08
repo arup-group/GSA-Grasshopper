@@ -66,82 +66,60 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaSectionGoo sectionGoo = null;
       var section = new GsaSection();
+      
+      GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
         section = sectionGoo.Value.Duplicate();
       }
 
-      if (section != null) {
-        var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId)) {
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            section.Id = id;
-          }
-        }
-
-        string profile = string.Empty;
-        if (da.GetData(2, ref profile)) {
-          section.Profile = profile;
-        }
-
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(3, ref ghTyp)) {
-          if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-            section.Material = materialGoo.Value ?? new GsaMaterial();
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              section.MaterialId = idd;
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PB input to a Section Property of reference integer");
-              return;
-            }
-          }
-        }
-
-        ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghTyp)) {
-          if (ghTyp.Value is GsaSectionModifierGoo modifierGoo) {
-            section.Modifier = modifierGoo.Value ?? new GsaSectionModifier();
-          }
-        }
-
-        int pool = 0;
-        if (da.GetData(5, ref pool)) {
-          section.Pool = pool;
-        }
-
-        var ghString = new GH_String();
-        if (da.GetData(6, ref ghString)) {
-          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-            section.Name = name;
-          }
-        }
-
-        var ghColour = new GH_Colour();
-        if (da.GetData(7, ref ghColour)) {
-          if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-            section.Colour = col;
-          }
-        }
-
-        string prof = (section.ApiSection == null) ? "--" : section.Profile;
-        int poo = (section.ApiSection == null) ? 0 : section.Pool;
-        string nm = (section.ApiSection == null) ? "--" : section.Name;
-        ValueType colour = section.ApiSection?.Colour;
-
-        da.SetData(0, new GsaSectionGoo(section));
-        da.SetData(1, section.Id);
-        da.SetData(2, prof);
-        da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
-        da.SetData(4, new GsaSectionModifierGoo(section.Modifier));
-        da.SetData(5, poo);
-        da.SetData(6, nm);
-        da.SetData(7, colour);
-      } else {
-        this.AddRuntimeError("Section is Null");
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        section.Id = id;
       }
+
+      string profile = string.Empty;
+      if (da.GetData(2, ref profile)) {
+        section.Profile = profile;
+      }
+
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(3, ref materialGoo)) {
+        section.Material = materialGoo.Value;
+      }
+
+      GsaSectionModifierGoo modifierGoo = null;
+      if (da.GetData(4, ref modifierGoo)) {
+        section.Modifier = modifierGoo.Value;
+      }
+
+      int pool = 0;
+      if (da.GetData(5, ref pool)) {
+        section.Pool = pool;
+      }
+
+      string ghString = string.Empty;
+      if (da.GetData(6, ref ghString)) {
+        section.Name = ghString;
+      }
+
+      Color colour = Color.Empty;
+      if (da.GetData(7, ref colour)) {
+        section.Colour = colour;
+      }
+
+      string prof = (section.ApiSection == null) ? "--" : section.Profile;
+      int poo = (section.ApiSection == null) ? 0 : section.Pool;
+      string nm = (section.ApiSection == null) ? "--" : section.Name;
+
+      da.SetData(0, new GsaSectionGoo(section));
+      da.SetData(1, section.Id);
+      da.SetData(2, prof);
+      da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
+      da.SetData(4, new GsaSectionModifierGoo(section.Modifier));
+      da.SetData(5, poo);
+      da.SetData(6, nm);
+      da.SetData(7, section.Colour);
     }
   }
 }

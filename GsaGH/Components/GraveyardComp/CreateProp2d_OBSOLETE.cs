@@ -373,19 +373,9 @@ namespace GsaGH.Components {
         prop.AxisProperty = 0;
 
         if (_mode != FoldMode.Fabric) {
-          var ghTyp = new GH_ObjectWrapper();
-          if (da.GetData(0, ref ghTyp)) {
-            if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-              prop.Material = materialGoo.Value;
-            } else {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-                prop.Material = new GsaMaterial(idd);
-              } else {
-                this.AddRuntimeError(
-                  "Unable to convert PB input to a Section Property of reference integer");
-                return;
-              }
-            }
+          GsaMaterialGoo materialGoo = null;
+          if (da.GetData(0, ref materialGoo)) {
+            prop.Material = materialGoo.Value;
           } else {
             prop.Material = new GsaMaterial(2);
           }

@@ -32,7 +32,7 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother();
 
       var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(MatType.Concrete, output.Value.Prop3d.Material.MaterialType);
+      Assert.Equal(MatType.Timber, output.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output.Value.MeshSize);
     }
   }

@@ -242,13 +242,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var modifier = new GsaSectionModifier();
+
       GsaSectionModifierGoo modifierGoo = null;
       if (da.GetData(0, ref modifierGoo)) {
         modifier = modifierGoo.Value.Duplicate();
-      }
-
-      if (modifier == null) {
-        return;
       }
 
       if (Params.Input[1].SourceCount > 0) {
