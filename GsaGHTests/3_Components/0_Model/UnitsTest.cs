@@ -1,9 +1,13 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using System;
 using Xunit;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
@@ -112,6 +116,32 @@ namespace GsaGHTests.Model {
       //Assert.Equal("Hour", timeMedium);
       //Assert.Equal("Minute", timeShort);
       Assert.Equal("KilometerPerHour", velocity);
+    }
+
+    [Theory]
+    [InlineData(1)] // acceleration
+    [InlineData(2)] // angle
+    [InlineData(3)] // energy
+    [InlineData(4)] // force
+    [InlineData(5)] // lengthLarge
+    [InlineData(6)] // lengthSection
+    [InlineData(7)] // lengthSmall
+    [InlineData(8)] // mass
+    [InlineData(9)] // stress
+    [InlineData(10)] // timeLong
+    [InlineData(11)] // timeMedium
+    [InlineData(12)] // timeShort
+    [InlineData(13)] // velocity
+    public void TestErrorFromWrongInput(int id) {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, "invalid", id);
+
+      // test that items have been set into API model
+      var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+      
+      Assert.Equal(GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
   }
 }
