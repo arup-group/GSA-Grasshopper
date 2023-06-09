@@ -235,7 +235,7 @@ namespace GsaGH.Components {
       double computedScale
         = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
-        Elements = elementlist,
+        ListDefinition = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
          .Select(item => item.GsaApiEnum).FirstOrDefault(),
         Cases = _case,
@@ -246,7 +246,7 @@ namespace GsaGH.Components {
       var diagramLines = new List<DiagramLineGoo>();
       var diagramAnnotations = new List<AnnotationGoo>();
 
-      GraphicDrawResult diagramResults = result.Model.Model.Get1dElementDiagrams(graphic);
+      GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
@@ -256,7 +256,7 @@ namespace GsaGH.Components {
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
 
-        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Color));
+        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Colour));
       }
 
       bool showAnnotations = true;
@@ -295,7 +295,7 @@ namespace GsaGH.Components {
               = Math.Round(valResult * valueScaleFactor, significantDigits).ToString();
           }
 
-          diagramAnnotations.Add(new AnnotationGoo(location, (Color)annotation.Color,
+          diagramAnnotations.Add(new AnnotationGoo(location, (Color)annotation.Colour,
             $"{valueToAnnotate} {Message}"));
         }
       }
