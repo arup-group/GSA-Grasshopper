@@ -266,7 +266,8 @@ namespace GsaGH.Components {
       }
 
       i = 0;
-      da.SetData(i++, new GsaModelGoo(model));
+      
+      da.SetData(i++, new GsaModelGoo(new GsaModel(model.Model)));
       da.SetData(i++, units.Acceleration.ToString());
       da.SetData(i++, units.Angle.ToString());
       da.SetData(i++, units.Energy.ToString());

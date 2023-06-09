@@ -43,6 +43,11 @@ namespace GsaGH.Parameters {
       SetUserDefaultUnits(Model.UiUnits());
     }
 
+    internal GsaModel(Model model) {
+      Model = model;
+      _lengthUnit = UnitMapping.GetUnit(model.UiUnits().LengthLarge);
+    }
+
     /// <summary>
     ///   Clones this model so we can make changes safely
     /// </summary>
