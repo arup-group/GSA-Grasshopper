@@ -59,7 +59,8 @@ namespace GsaGH.Helpers.Export {
       GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
       GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, GH_Component owner) {
-      if (apiLists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
+      if (list.EntityType == Parameters.EntityType.Element 
+        && apiLists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
         return "\"" + apiLists.ReadOnlyDictionary[id].Name + "\"";
       }
 
