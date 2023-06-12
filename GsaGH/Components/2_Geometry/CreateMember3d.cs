@@ -38,65 +38,24 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
-
-      if (ghTyp == null) {
-        this.AddRuntimeWarning("Solid input is null");
-      }
-
       GsaMember3d member;
       var brep = new Brep();
       var mesh = new Mesh();
+
+      var ghTyp = new GH_ObjectWrapper();
+      da.GetData(0, ref ghTyp);
       if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
-        if (brep.IsValid) {
-          try {
-            member = new GsaMember3d(brep);
-          } catch (Exception e) {
-            this.AddRuntimeWarning(e.Message);
-            return;
-          }
-        } else {
-          this.AddRuntimeWarning("S input is not a valid Brep geometry");
-          return;
-        }
+        member = new GsaMember3d(brep);
       } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
-        try {
-          member = new GsaMember3d(mesh);
-        } catch (Exception e) {
-          this.AddRuntimeWarning(e.Message);
-          return;
-        }
+        member = new GsaMember3d(mesh);
       } else {
         this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
         return;
       }
 
-      ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp)) {
-        switch (ghTyp.Value) {
-          case GsaProp3dGoo value:
-            member.Prop3d = value.Value;
-            break;
-
-          case GsaMaterialGoo value: {
-            member.Prop3d = new GsaProp3d(value.Value);
-            break;
-          }
-
-          default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              member.Prop3d = new GsaProp3d(id);
-            } else {
-              this.AddRuntimeWarning(
-                "Unable to convert PA input to a 2D Property of reference integer");
-            }
-
-            break;
-          }
-        }
+      GsaProp3dGoo prop3dGoo = null;
+      if (da.GetData(1, ref prop3dGoo)) {
+        member.Prop3d = prop3dGoo.Value;
       }
 
       double meshSize = 0;

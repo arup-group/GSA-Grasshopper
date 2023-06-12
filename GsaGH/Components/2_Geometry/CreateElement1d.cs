@@ -35,34 +35,13 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghln = new GH_Line();
-      if (!da.GetData(0, ref ghln)) {
-        return;
-      }
+      GH_Line ghln = null;
+      da.GetData(0, ref ghln);
+      var elem = new GsaElement1d(new LineCurve(ghln.Value));
 
-      if (ghln == null) {
-        this.AddRuntimeWarning("Line input is null");
-      }
-
-      var ln = new Line();
-      if (!GH_Convert.ToLine(ghln, ref ln, GH_Conversion.Both)) {
-        return;
-      }
-
-      var elem = new GsaElement1d(new LineCurve(ln));
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(1, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo sectionGoo) {
-          elem.Section = sectionGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            elem.Section = new GsaSection(id);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PB input to a Section Property of reference integer");
-            return;
-          }
-        }
+      GsaSectionGoo sectionGoo = null;
+      if (da.GetData(1, ref sectionGoo)) {
+        elem.Section = sectionGoo.Value;
       }
 
       da.SetData(0, new GsaElement1dGoo(elem));
