@@ -76,7 +76,7 @@ namespace GsaGH.Helpers.Export {
                 Lists.GetElementList(load.GravityLoad._refList, ref apiLists, apiMaterials, apiSections,
                 apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
             } else {
-              objectElemList += ElementListFromReference.GetRefElementIds(load.GravityLoad,
+              objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(load.GravityLoad,
               apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers,
               memberElementRelationship);
             }
@@ -115,7 +115,7 @@ namespace GsaGH.Helpers.Export {
                 Lists.GetElementList(load.BeamLoad._refList, ref apiLists, apiMaterials, apiSections,
                 apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
             } else {
-              objectElemList += ElementListFromReference.GetRefElementIds(load.BeamLoad,
+              objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(load.BeamLoad,
               apiMaterials, apiSections, apiElements, apiMembers, memberElementRelationship);
             }
 
@@ -153,7 +153,7 @@ namespace GsaGH.Helpers.Export {
                 Lists.GetElementList(load.FaceLoad._refList, ref apiLists, apiMaterials, apiSections,
                 apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
             } else {
-              objectElemList += ElementListFromReference.GetRefElementIds(load.FaceLoad,
+              objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(load.FaceLoad,
               apiMaterials, apiProp2ds, apiElements, apiMembers, memberElementRelationship);
             }
             
