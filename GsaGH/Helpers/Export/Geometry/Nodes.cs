@@ -3,8 +3,8 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Nodes {

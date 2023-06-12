@@ -3,7 +3,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
-using OasysGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
 

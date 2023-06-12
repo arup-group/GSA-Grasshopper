@@ -32,6 +32,10 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using EnergyUnit = OasysUnits.Units.EnergyUnit;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
@@ -665,7 +669,11 @@ namespace GsaGH.Components {
 
       if (res.DmaxX == null) {
         string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
+        string filter = string.Empty;
+        if (elementlist.ToLower() != "all") {
+          filter = " for element list " + elementlist;
+        }
+        this.AddRuntimeWarning("Case " + acase + " contains no Element1D results" + filter);
         return;
       }
 

@@ -16,8 +16,9 @@ using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming

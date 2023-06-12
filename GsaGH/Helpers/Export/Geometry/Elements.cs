@@ -5,8 +5,8 @@ using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Elements {

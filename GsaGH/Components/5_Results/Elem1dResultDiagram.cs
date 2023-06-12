@@ -22,6 +22,8 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -225,7 +227,7 @@ namespace GsaGH.Components {
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
-        Elements = elementlist,
+        ListDefinition = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
          .Select(item => item.GsaApiEnum).FirstOrDefault(),
         Cases = _case,
@@ -234,7 +236,7 @@ namespace GsaGH.Components {
       };
 
       var diagramLines = new List<DiagramLineGoo>();
-      ReadOnlyCollection<GsaAPI.Line> linesFromModel = result.Model.Model.Get1dElementDiagrams(graphic).Lines;
+      ReadOnlyCollection<GsaAPI.Line> linesFromModel = result.Model.Model.GetDiagrams(graphic).Lines;
 
       foreach (GsaAPI.Line item in linesFromModel) {
         double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
@@ -243,7 +245,7 @@ namespace GsaGH.Components {
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
 
-        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Color));
+        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Colour));
       }
 
       da.SetDataList(0, diagramLines);

@@ -11,6 +11,7 @@ using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using Xunit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Properties {
   [Collection("GrasshopperFixture collection")]

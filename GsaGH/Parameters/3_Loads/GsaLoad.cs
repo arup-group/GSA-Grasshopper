@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using OasysGH.Units;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
-using Rhino.Input.Custom;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   public class GsaBeamLoad {

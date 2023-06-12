@@ -19,7 +19,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using static System.Net.WebRequestMethods;
 
 namespace GsaGH.Components {
   /// <summary>

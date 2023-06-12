@@ -1,5 +1,4 @@
 ﻿using GsaAPI;
-using GsaGH.Helpers.GsaAPI.EnumMappings;
 using Diagram = GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.GsaApi.EnumMappings {
