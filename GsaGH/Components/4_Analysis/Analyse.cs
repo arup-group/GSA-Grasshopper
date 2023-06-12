@@ -206,6 +206,8 @@ namespace GsaGH.Components {
           model = models.Count > 1
             ? MergeModels.MergeModel(models, this, _tolerance) :
             models[0].Clone();
+        } else {
+          model = null;
         }
       }
 

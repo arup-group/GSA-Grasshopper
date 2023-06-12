@@ -17,7 +17,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Units;
 
     public Units() : base("Model Units", "Units",
-      "Get or set the units used by GSA when opening this Model",
+      "Get or set the units used by GSA when opening this Model", 
       CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
     }
@@ -105,8 +105,8 @@ namespace GsaGH.Components {
             string[] names = Enum.GetNames(typeof(AngleUnit));
             this.AddRuntimeError($"Unable to convert '{txt}' to a known Acceleration Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
-          }
         }
+      }
       }
 
       ghString = new GH_String();
@@ -118,8 +118,8 @@ namespace GsaGH.Components {
             string[] names = Enum.GetNames(typeof(AngleUnit));
             this.AddRuntimeError($"Unable to convert '{txt}' to a known Angle Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
-          }
         }
+      }
       }
 
       ghString = new GH_String();
@@ -131,8 +131,8 @@ namespace GsaGH.Components {
             string[] names = Enum.GetNames(typeof(EnergyUnit));
             this.AddRuntimeError($"Unable to convert '{txt}' to a known Energy Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
-          }
         }
+      }
       }
 
       ghString = new GH_String();
@@ -144,8 +144,8 @@ namespace GsaGH.Components {
             string[] names = Enum.GetNames(typeof(ForceUnit));
             this.AddRuntimeError($"Unable to convert '{txt}' to a known Force Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
-          }
         }
+      }
       }
 
       ghString = new GH_String();
@@ -157,8 +157,8 @@ namespace GsaGH.Components {
             string[] names = Enum.GetNames(typeof(LengthUnit));
             this.AddRuntimeError($"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
-          }
         }
+      }
       }
 
       ghString = new GH_String();
@@ -170,8 +170,8 @@ namespace GsaGH.Components {
             string[] names = Enum.GetNames(typeof(LengthUnit));
             this.AddRuntimeError($"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
-          }
         }
+      }
       }
 
       ghString = new GH_String();
@@ -251,7 +251,7 @@ namespace GsaGH.Components {
           }
         }
       }
-
+ 
       ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {

@@ -213,7 +213,7 @@ namespace GsaGH.Helpers.GsaApi.EnumMappings {
            GsaAPI.TimeUnit.Minute, DurationUnit.Minute
         }, {
            GsaAPI.TimeUnit.Second, DurationUnit.Second
-        }
+      }
      };
 
     private static readonly Dictionary<GsaAPI.VelocityUnit, SpeedUnit> velocityUnitMapping
@@ -232,7 +232,7 @@ namespace GsaGH.Helpers.GsaApi.EnumMappings {
            GsaAPI.VelocityUnit.MilePerHour, SpeedUnit.MilePerHour
         }, {
            GsaAPI.VelocityUnit.MillimeterPerSecond, SpeedUnit.MillimeterPerSecond
-        }
+    }
      };
   }
 }
