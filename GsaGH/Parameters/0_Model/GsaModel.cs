@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using OasysUnits;
 using Rhino.Geometry;
@@ -23,15 +24,29 @@ namespace GsaGH.Parameters {
         return _boundingBox;
       }
     }
+    public LengthUnit ModelUnit { 
+      get => _lengthUnit;
+      set {
+        _lengthUnit = value;
+        Units.LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
+      }
+    }
     public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
     public Model Model { get; set; } = new Model();
-    public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     internal GsaAPI.Titles Titles => Model.Titles();
     internal GsaAPI.UiUnits Units => Model.UiUnits();
     private BoundingBox _boundingBox = BoundingBox.Empty;
+    private LengthUnit _lengthUnit = LengthUnit.Undefined;
 
-    public GsaModel() { }
+    public GsaModel() { 
+      SetUserDefaultUnits(Model.UiUnits());
+    }
+
+    internal GsaModel(Model model) {
+      Model = model;
+      _lengthUnit = UnitMapping.GetUnit(model.UiUnits().LengthLarge);
+    }
 
     /// <summary>
     ///   Clones this model so we can make changes safely
@@ -88,6 +103,35 @@ namespace GsaGH.Parameters {
       }
 
       return s;
+    }
+
+    internal static void SetUserDefaultUnits(UiUnits uiUnits) {
+      uiUnits.Acceleration 
+        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.AccelerationUnit);
+      uiUnits.Angle
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.AngleUnit);
+      uiUnits.Energy
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.EnergyUnit);
+      uiUnits.Force
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.ForceUnit);
+      uiUnits.LengthLarge
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.LengthUnitGeometry);
+      uiUnits.LengthSections
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.LengthUnitSection);
+      uiUnits.LengthSmall
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.LengthUnitResult);
+      uiUnits.Mass
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.MassUnit);
+      uiUnits.Stress
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.StressUnitResult);
+      uiUnits.TimeLong
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.TimeLongUnit);
+      uiUnits.TimeMedium
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.TimeMediumUnit);
+      uiUnits.TimeShort
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.TimeShortUnit);
+      uiUnits.Velocity
+       = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.VelocityUnit);
     }
 
     private BoundingBox GetBoundingBox() {

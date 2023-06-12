@@ -13,6 +13,7 @@ using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -307,7 +308,6 @@ namespace GsaGH.Components {
       }
 
       #endregion
-
       Model gsa = AssembleModel.Assemble(null, null, inNodes, null, null, null, inMem1ds, inMem2ds,
         inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
 

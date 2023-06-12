@@ -128,7 +128,7 @@ namespace GsaGH.Components {
               var gsaModel = new GsaModel {
                 Model = model,
                 FileNameAndPath = _fileName,
-                ModelUnit = UnitMapping.GetLengthUnit(model)
+                ModelUnit = UnitMapping.GetUnit(model)
               };
 
               UpdateMessage();
@@ -155,7 +155,7 @@ namespace GsaGH.Components {
           var gsaModel = new GsaModel {
             Model = model,
             FileNameAndPath = _fileName,
-            ModelUnit = UnitMapping.GetLengthUnit(model)
+            ModelUnit = UnitMapping.GetUnit(model)
           };
 
           UpdateMessage();
