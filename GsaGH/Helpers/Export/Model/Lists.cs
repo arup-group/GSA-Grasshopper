@@ -6,6 +6,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits.Units;
 
@@ -136,7 +137,7 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaMaterialGoo material in copyList._properties.materials
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(material.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(material.Value.Guid,
           ReferenceType.Material, apiMaterials, null, null, null, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + System.Environment.NewLine
@@ -148,7 +149,7 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaSectionGoo section in copyList._properties.sections
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(section.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(section.Value.Guid,
           ReferenceType.Section, null, apiSections, null, null, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
@@ -160,7 +161,7 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaProp2dGoo prop2d in copyList._properties.prop2ds
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(prop2d.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(prop2d.Value.Guid,
           ReferenceType.Prop2d, null, null, apiProp2ds, null, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
@@ -172,7 +173,7 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaProp3dGoo prop3d in copyList._properties.prop3ds
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(prop3d.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(prop3d.Value.Guid,
           ReferenceType.Prop3d, null, null, null, apiProp3ds, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
@@ -196,8 +197,12 @@ namespace GsaGH.Helpers.Export {
       if (copyList._elements != (null, null, null)) {
         foreach (GsaElement1dGoo element1d in copyList._elements.e1d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReference(element1d.Value.Guid,
+          string id = ElementListFromReference.GetReferenceDefinition(element1d.Value.Guid,
             ReferenceType.Element, null, null, null, null, apiElements, null, null);
+          if (id == string.Empty && element1d.Value.Id != 0) {
+            id = element1d.Value.Id.ToString();
+          }
+
           if (id == string.Empty) {
             owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
               + element1d.Value.ToString() + " not found in Model");
@@ -208,8 +213,12 @@ namespace GsaGH.Helpers.Export {
 
         foreach (GsaElement2dGoo element2d in copyList._elements.e2d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReference(element2d.Value.Guid,
+          string id = ElementListFromReference.GetReferenceDefinition(element2d.Value.Guid,
             ReferenceType.Element, null, null, null, null, apiElements, null, null);
+          if (id == string.Empty && element2d.Value.Ids.Count != 0) {
+            id = string.Join(" ", element2d.Value.Ids.Where(x => x != 0));
+          }
+
           if (id == string.Empty) {
             owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
               + element2d.Value.ToString() + " not found in Model");
@@ -220,8 +229,12 @@ namespace GsaGH.Helpers.Export {
 
         foreach (GsaElement3dGoo element3d in copyList._elements.e3d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReference(element3d.Value.Guid,
+          string id = ElementListFromReference.GetReferenceDefinition(element3d.Value.Guid,
             ReferenceType.Element, null, null, null, null, apiElements, null, null);
+          if (id == string.Empty && element3d.Value.Ids.Count != 0) {
+            id = string.Join(" ", element3d.Value.Ids.Where(x => x != 0));
+          }
+
           if (id == string.Empty) {
             owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
               + element3d.Value.ToString() + " not found in Model");
@@ -234,9 +247,13 @@ namespace GsaGH.Helpers.Export {
       if (copyList._members != (null, null, null)) {
         foreach (GsaMember1dGoo member1d in copyList._members.m1d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReference(member1d.Value.Guid,
+          string id = ElementListFromReference.GetReferenceDefinition(member1d.Value.Guid,
             ReferenceType.MemberChildElements, null, null, null, null, null, apiMembers,
             memberElementRelationship);
+          if (id == string.Empty && member1d.Value.Id != 0) {
+            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(member1d.Value.Id, memberElementRelationship);
+          }
+
           if (id == string.Empty) {
             owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
               + member1d.Value.ToString() + " not found in Model");
@@ -247,9 +264,13 @@ namespace GsaGH.Helpers.Export {
 
         foreach (GsaMember2dGoo member2d in copyList._members.m2d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReference(member2d.Value.Guid,
+          string id = ElementListFromReference.GetReferenceDefinition(member2d.Value.Guid,
             ReferenceType.MemberChildElements, null, null, null, null, null, apiMembers,
             memberElementRelationship);
+          if (id == string.Empty && member2d.Value.Id != 0) {
+            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(member2d.Value.Id, memberElementRelationship);
+          }
+
           if (id == string.Empty) {
             owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
               + member2d.Value.ToString() + " not found in Model");
@@ -260,9 +281,13 @@ namespace GsaGH.Helpers.Export {
 
         foreach (GsaMember3dGoo member3d in copyList._members.m3d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReference(member3d.Value.Guid,
+          string id = ElementListFromReference.GetReferenceDefinition(member3d.Value.Guid,
             ReferenceType.MemberChildElements, null, null, null, null, null, apiMembers,
             memberElementRelationship);
+          if (id == string.Empty && member3d.Value.Id != 0) {
+            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(member3d.Value.Id, memberElementRelationship);
+          }
+
           if (id == string.Empty) {
             owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
               + member3d.Value.ToString() + " not found in Model");
@@ -288,8 +313,12 @@ namespace GsaGH.Helpers.Export {
       var ids = new Collection<string>();
       foreach (GsaMember1dGoo member1d in copyList._members.m1d
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(member1d.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(member1d.Value.Guid,
           ReferenceType.Member, null, null, null, null, null, apiMembers, null);
+        if (id == string.Empty && member1d.Value.Id != 0) {
+          id = member1d.Value.Id.ToString();
+        }
+
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
             + member1d.Value.ToString() + " not found in Model");
@@ -300,8 +329,12 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaMember2dGoo member2d in copyList._members.m2d
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(member2d.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(member2d.Value.Guid,
           ReferenceType.Member, null, null, null, null, null, apiMembers, null);
+        if (id == string.Empty && member2d.Value.Id != 0) {
+          id = member2d.Value.Id.ToString();
+        }
+
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
             + member2d.Value.ToString() + " not found in Model");
@@ -312,8 +345,12 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaMember3dGoo member3d in copyList._members.m3d
         .Where(x => x != null && x.Value != null)) {
-        string id = ElementListFromReference.GetReference(member3d.Value.Guid,
+        string id = ElementListFromReference.GetReferenceDefinition(member3d.Value.Guid,
           ReferenceType.Member, null, null, null, null, null, apiMembers, null);
+        if (id == string.Empty && member3d.Value.Id != 0) {
+          id = member3d.Value.Id.ToString();
+        }
+
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
             + member3d.Value.ToString() + " not found in Model");
