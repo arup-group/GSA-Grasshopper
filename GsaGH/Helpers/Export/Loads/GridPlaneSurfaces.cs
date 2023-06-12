@@ -355,7 +355,7 @@ namespace GsaGH.Helpers.Export {
             Lists.GetElementList(gridplanesurface._refList, ref apiLists, apiMaterials, apiSections,
             apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
         } else {
-          gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(
+          gridplanesurface.GridSurface.Elements += ElementListFromReference.GetReferenceElementIdsDefinition(
             gridplanesurface, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements,
             apiMembers, memberElementRelationship);
         }

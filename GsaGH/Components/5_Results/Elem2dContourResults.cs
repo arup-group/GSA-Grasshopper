@@ -731,7 +731,11 @@ namespace GsaGH.Components {
 
       if ((_isShear ? resShear.DmaxX : res.DmaxX) == null) {
         string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
+        string filter = string.Empty;
+        if (elementlist.ToLower() != "all") {
+          filter = " for element list " + elementlist;
+        }
+        this.AddRuntimeWarning("Case " + acase + " contains no Element2D results" + filter);
         return;
       }
 

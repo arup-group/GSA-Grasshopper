@@ -669,7 +669,11 @@ namespace GsaGH.Components {
 
       if (res.DmaxX == null) {
         string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
+        string filter = string.Empty;
+        if (elementlist.ToLower() != "all") {
+          filter = " for element list " + elementlist;
+        }
+        this.AddRuntimeWarning("Case " + acase + " contains no Element1D results" + filter);
         return;
       }
 
