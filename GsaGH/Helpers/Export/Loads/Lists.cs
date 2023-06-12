@@ -17,14 +17,17 @@ namespace GsaGH.Helpers.Export {
     internal static List<GsaList> GetLoadLists(List<GsaLoad> loads) {
       var loadLists = new List<GsaList>();
       foreach (GsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
-        GsaList list = GetLoadLists(load);
+        GsaList list = GetLoadList(load);
         if (list != null) {
           loadLists.Add(list);
         }
       }
       return loadLists;
     }
-    private static GsaList GetLoadLists(GsaLoad load) {
+    private static GsaList GetLoadList(GsaLoad load) {
+      if (load == null) {
+        return null;
+      }
       switch (load.LoadType) {
         case GsaLoad.LoadTypes.Gravity:
           if (load.GravityLoad._referenceType == ReferenceType.List) {
