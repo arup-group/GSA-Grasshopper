@@ -19,7 +19,7 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -201,8 +201,11 @@ namespace GsaGH.Components {
       var model = new GsaModel();
       if (models != null) {
         if (models.Count > 0) {
-          model = models.Count > 1 ? MergeModels.MergeModel(models, this, _tolerance) :
+          model = models.Count > 1
+            ? MergeModels.MergeModel(models, this, _tolerance) :
             models[0].Clone();
+        } else {
+          model = null;
         }
       }
 

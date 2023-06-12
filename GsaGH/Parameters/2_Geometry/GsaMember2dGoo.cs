@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
-using OasysGH.Units;
 using Rhino.Display;
 using Rhino.Geometry;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>

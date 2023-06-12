@@ -5,8 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Import;
-using OasysGH;
-using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   public enum EntityType {

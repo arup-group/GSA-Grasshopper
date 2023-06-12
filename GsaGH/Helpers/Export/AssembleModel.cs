@@ -7,9 +7,11 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class AssembleModel {
@@ -69,6 +71,8 @@ namespace GsaGH.Helpers.Export {
       var gsa = new Model();
       if (model != null) {
         gsa = model.Model;
+      } else {
+        gsa.UiUnits().LengthLarge = UnitMapping.GetAPILengthUnit(modelUnit);
       }
 
       // Convert GsaGH Nodes to API Objects

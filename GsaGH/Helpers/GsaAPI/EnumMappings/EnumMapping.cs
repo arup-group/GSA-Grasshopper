@@ -1,4 +1,4 @@
-﻿namespace GsaGH.Helpers.GsaAPI.EnumMappings {
+﻿namespace GsaGH.Helpers.GsaApi.EnumMappings {
   public class EnumMapping<T1, T2> {
     public string Description { get; private set; }
     public T1 GsaApiEnum { get; private set; }

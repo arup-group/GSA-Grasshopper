@@ -32,6 +32,10 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using EnergyUnit = OasysUnits.Units.EnergyUnit;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {

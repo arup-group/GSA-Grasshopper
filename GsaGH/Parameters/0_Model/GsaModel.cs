@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers.Import;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -28,6 +28,7 @@ namespace GsaGH.Parameters {
     public Model Model { get; set; } = new Model();
     public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     internal GsaAPI.Titles Titles => Model.Titles();
+    internal GsaAPI.UiUnits Units => Model.UiUnits();
     private BoundingBox _boundingBox = BoundingBox.Empty;
 
     public GsaModel() { }

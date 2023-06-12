@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
