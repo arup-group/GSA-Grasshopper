@@ -126,7 +126,7 @@ namespace GsaGH.Helpers.Export {
       // Convert GsaGH Node lists to API Objects
       var apiNodeLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
       Lists.ConvertNodeList(lists, ref apiNodeLists, ref apiNodes, modelUnit);
-      
+
       // Convert GsaGH Node loads to API Objects
       var nodeLoadsNode = new List<NodeLoad>();
       var nodeLoadsDispl = new List<NodeLoad>();
@@ -240,13 +240,21 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship 
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
         = ElementListFromReference.GetMemberElementRelationship(gsa);
 
       // Convert rest of GsaGH Lists to API Objects (nodes done prior to collapse coinciding nodes)
       // Convert GsaGH Node lists to API Objects
       var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
-      Lists.ConvertList(lists, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds, 
+      
+      // Add lists embedded in loads as they may have ID > 0 set
+      if (lists == null && loads != null && loads.Count > 0) {
+        lists = Loads.GetLoadLists(loads);
+      } else if (loads != null && loads.Count > 0) {
+        lists.AddRange(Loads.GetLoadLists(loads));
+      }
+
+      Lists.ConvertList(lists, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds,
         apiElements, apiMembers, memberElementRelationship, owner);
 
       // Convert rest of GsaGH Loads to API objects (nodes done prior to collapse coinciding nodes)
@@ -267,12 +275,12 @@ namespace GsaGH.Helpers.Export {
       var gsGuid = new Dictionary<Guid, int>();
 
       Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes,
-        ref apiGridSurfaces, ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, 
+        ref apiGridSurfaces, ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship,
         gsa, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
       Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads,
         ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-        ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, gsa, apiMaterials, 
+        ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, gsa, apiMaterials,
         apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
       // Add API Loads in model
