@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
@@ -9,7 +8,6 @@ using OasysGH.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
-using Point = Rhino.Geometry.Point;
 
 namespace GsaGH.Parameters {
   /// <summary>

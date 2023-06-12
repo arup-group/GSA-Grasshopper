@@ -4,7 +4,6 @@ using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using OasysGH.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>

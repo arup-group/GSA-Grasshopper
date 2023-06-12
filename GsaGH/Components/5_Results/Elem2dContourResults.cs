@@ -33,6 +33,9 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -728,7 +731,11 @@ namespace GsaGH.Components {
 
       if ((_isShear ? resShear.DmaxX : res.DmaxX) == null) {
         string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
+        string filter = string.Empty;
+        if (elementlist.ToLower() != "all") {
+          filter = " for element list " + elementlist;
+        }
+        this.AddRuntimeWarning("Case " + acase + " contains no Element2D results" + filter);
         return;
       }
 

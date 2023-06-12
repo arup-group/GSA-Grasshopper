@@ -8,6 +8,7 @@ using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]

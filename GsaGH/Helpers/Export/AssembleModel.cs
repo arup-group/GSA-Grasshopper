@@ -7,9 +7,11 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class AssembleModel {
@@ -68,7 +70,24 @@ namespace GsaGH.Helpers.Export {
       GH_Component owner) {
       var gsa = new Model();
       if (model != null) {
-        gsa = model.Model;
+        gsa = model.Model; 
+        // delete any existing results unless we are only adding lists, tasks or combinations
+        if ((nodes != null && nodes.Count > 0)
+          || (elem1ds != null && elem1ds.Count > 0)
+          || (elem2ds != null && elem2ds.Count > 0)
+          || (elem3ds != null && elem3ds.Count > 0)
+          || (mem1ds != null && mem1ds.Count > 0)
+          || (mem2ds != null && mem2ds.Count > 0)
+          || (mem3ds != null && mem3ds.Count > 0)
+          || (sections != null && sections.Count > 0)
+          || (prop2Ds != null && prop2Ds.Count > 0)
+          || (prop3Ds != null && prop3Ds.Count > 0)
+          || (loads != null && loads.Count > 0)
+          || (gridPlaneSurfaces != null && gridPlaneSurfaces.Count > 0)) {
+          foreach (int taskId in gsa.AnalysisTasks().Keys) {
+            gsa.DeleteResults(taskId);
+          }
+        }
       }
 
       // Convert GsaGH Nodes to API Objects
@@ -110,7 +129,7 @@ namespace GsaGH.Helpers.Export {
       // Convert GsaGH Node lists to API Objects
       var apiNodeLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
       Lists.ConvertNodeList(lists, ref apiNodeLists, ref apiNodes, modelUnit);
-      
+
       // Convert GsaGH Node loads to API Objects
       var nodeLoadsNode = new List<NodeLoad>();
       var nodeLoadsDispl = new List<NodeLoad>();
@@ -224,13 +243,21 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship 
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
         = ElementListFromReference.GetMemberElementRelationship(gsa);
 
       // Convert rest of GsaGH Lists to API Objects (nodes done prior to collapse coinciding nodes)
       // Convert GsaGH Node lists to API Objects
       var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
-      Lists.ConvertList(lists, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds, 
+      
+      // Add lists embedded in loads as they may have ID > 0 set
+      if (lists == null && loads != null && loads.Count > 0) {
+        lists = Loads.GetLoadLists(loads);
+      } else if (loads != null && loads.Count > 0) {
+        lists.AddRange(Loads.GetLoadLists(loads));
+      }
+
+      Lists.ConvertList(lists, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds,
         apiElements, apiMembers, memberElementRelationship, owner);
 
       // Convert rest of GsaGH Loads to API objects (nodes done prior to collapse coinciding nodes)
@@ -251,12 +278,12 @@ namespace GsaGH.Helpers.Export {
       var gsGuid = new Dictionary<Guid, int>();
 
       Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes,
-        ref apiGridSurfaces, ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, 
+        ref apiGridSurfaces, ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship,
         gsa, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
       Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads,
         ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-        ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, gsa, apiMaterials, 
+        ref gpGuid, ref gsGuid, ref apiLists, modelUnit, memberElementRelationship, gsa, apiMaterials,
         apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
 
       // Add API Loads in model

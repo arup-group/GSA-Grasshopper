@@ -11,7 +11,6 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
 using OasysGH.Units;
-using Rhino.Geometry;
 
 namespace GsaGH.Components {
   /// <summary>

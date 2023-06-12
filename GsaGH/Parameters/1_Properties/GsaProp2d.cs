@@ -8,8 +8,8 @@ using GsaAPI.Materials;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>

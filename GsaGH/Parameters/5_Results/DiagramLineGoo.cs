@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.GUI.Gradient;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
