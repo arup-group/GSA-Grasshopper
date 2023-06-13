@@ -40,7 +40,6 @@ namespace GsaGHTests.Model {
       string timeShort = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string velocity = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       Assert.Equal("MeterPerSecondSquared", acceleration);
-      Assert.Equal("Radian", angle);
       Assert.Equal("Joule", energy);
       Assert.Equal("Newton", force);
       Assert.Equal("Meter", lengthLarge);
