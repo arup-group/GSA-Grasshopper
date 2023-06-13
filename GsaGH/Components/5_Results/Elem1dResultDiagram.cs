@@ -22,6 +22,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
+using Line = GsaAPI.Line;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -68,7 +69,6 @@ namespace GsaGH.Components {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
       _stressUnit
         = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
-
       return base.Read(reader);
     }
 
@@ -151,15 +151,22 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item, "All");
+      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item, true);
+      pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
+        GH_ParamAccess.item, 3);
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
         GH_ParamAccess.item);
 
       pManager[1].Optional = true;
       pManager[2].Optional = true;
+      pManager[3].Optional = true;
+      pManager[4].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Diagram lines", "DL", "Lines of the diagram",
+      pManager.AddGenericParameter("Diagram lines", "L", "Lines of the diagram",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
     }
 
@@ -210,7 +217,7 @@ namespace GsaGH.Components {
       var ghScale = new GH_Number();
       double scale = 1;
       bool autoScale = true;
-      if (da.GetData(2, ref ghScale)) {
+      if (da.GetData(4, ref ghScale)) {
         GH_Convert.ToDouble(ghScale, out scale, GH_Conversion.Both);
         autoScale = false;
       }
@@ -225,7 +232,8 @@ namespace GsaGH.Components {
       }
 
       double unitScale = ComputeUnitScale(autoScale);
-      double computedScale = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
+      double computedScale
+        = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = elementlist,
         Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
@@ -236,10 +244,13 @@ namespace GsaGH.Components {
       };
 
       var diagramLines = new List<DiagramLineGoo>();
-      ReadOnlyCollection<GsaAPI.Line> linesFromModel = result.Model.Model.GetDiagrams(graphic).Lines;
+      var diagramAnnotations = new List<AnnotationGoo>();
 
-      foreach (GsaAPI.Line item in linesFromModel) {
-        double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+      GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
+      ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
+
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+      foreach (Line item in linesFromModel) {
         var startPoint = new Point3d(item.Start.X, item.Start.Y, item.Start.Z);
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
@@ -248,9 +259,48 @@ namespace GsaGH.Components {
         diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, (Color)item.Colour));
       }
 
-      da.SetDataList(0, diagramLines);
+      bool showAnnotations = true;
+      int significantDigits = 3;
 
+      da.GetData(2, ref showAnnotations);
+      da.GetData(3, ref significantDigits);
+
+      if (showAnnotations) {
+        diagramAnnotations = GenerateAnnotations(diagramResults.Annotations, lengthScaleFactor,
+          significantDigits);
+      }
+
+      da.SetDataList(0, diagramLines);
+      da.SetDataList(1, diagramAnnotations);
       //PostHog.Result(result.Type, 1, resultType, _displayedDiagramType.ToString());
+    }
+
+    private List<AnnotationGoo> GenerateAnnotations(
+      IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
+      int significantDigits) {
+      var diagramAnnotations = new List<AnnotationGoo>();
+
+      foreach (Annotation annotation in annotationsFromModel) {
+        {
+          //move position
+          var location = new Point3d(annotation.Position.X, annotation.Position.Y,
+            annotation.Position.Z);
+          location *= lengthScaleFactor;
+
+          string valueToAnnotate = annotation.String;
+          if (double.TryParse(annotation.String, out double valResult)) {
+            //convert annotation value
+            double valueScaleFactor = ComputeUnitScale();
+            valueToAnnotate
+              = Math.Round(valResult * valueScaleFactor, significantDigits).ToString();
+          }
+
+          diagramAnnotations.Add(new AnnotationGoo(location, (Color)annotation.Colour,
+            $"{valueToAnnotate} {Message}"));
+        }
+      }
+
+      return diagramAnnotations;
     }
 
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject) {
@@ -281,9 +331,7 @@ namespace GsaGH.Components {
       return nodeList;
     }
 
-
-
-    private double ComputeUnitScale(bool autoScale) {
+    private double ComputeUnitScale(bool autoScale = false) {
       double unitScaleFactor = 1.0d;
       if (!autoScale) {
         if (IsForce()) {
@@ -296,6 +344,7 @@ namespace GsaGH.Components {
           this.AddRuntimeError("Not supported diagramType!");
         }
       }
+
       return unitScaleFactor;
     }
 

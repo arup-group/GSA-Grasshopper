@@ -153,7 +153,7 @@ namespace GsaGH.Parameters {
           Density = AnalysisMaterial.Density,
           ElasticModulus = AnalysisMaterial.ElasticModulus,
           PoissonsRatio = AnalysisMaterial.PoissonsRatio,
-          Name = AnalysisMaterial.Name
+          Name = AnalysisMaterial.Name,
         };
       }
 
@@ -167,6 +167,7 @@ namespace GsaGH.Parameters {
         if (_analProp != 0) {
           name += "Custom ";
         }
+
         string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
         name += type.Trim() + " Material";
       } else {
@@ -237,7 +238,7 @@ namespace GsaGH.Parameters {
         Density = analysisMaterial.Density,
         ElasticModulus = analysisMaterial.ElasticModulus,
         PoissonsRatio = analysisMaterial.PoissonsRatio,
-        Name = analysisMaterial.Name
+        Name = analysisMaterial.Name,
       };
     }
   }
