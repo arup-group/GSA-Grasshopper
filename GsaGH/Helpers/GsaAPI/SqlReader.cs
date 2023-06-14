@@ -41,7 +41,12 @@ namespace GsaGH.Helpers.GsaApi {
       PostHog.Debug(properties);
 
       AppDomain.CurrentDomain.UnhandledException += UEHandler;
-      Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+
+      // this is a temporary fix for TDA
+      // needs more investigation!
+      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
+        Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+      }
 
       return new MicrosoftSQLiteReader();
     }
