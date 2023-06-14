@@ -70,7 +70,7 @@ namespace GsaGH.Components {
       _dropDownItems.Add(MaterialTypes);
       _selectedItems.Add(MaterialTypes[1]); // concrete
 
-      _dropDownItems.Add(DesignCode.GetConcreteDesignCodeNames().ToList());
+      _dropDownItems.Add(GetCodeNames(false));
       _concreteCode = _dropDownItems[1][0];
       _selectedItems.Add(_concreteCode); // first code
 
@@ -135,6 +135,10 @@ namespace GsaGH.Components {
       var type = (GsaMaterial.MatType)Enum.Parse(
         typeof(GsaMaterial.MatType), _selectedItems[0], ignoreCase: true);
 
+      string steelCode = _steelCode.Replace("HK", "Hong Kong").Replace("CoP", "Code of Practice");
+      string concreteCode = _concreteCode.Replace("CoP", "CP");
+      
+
       da.SetData(0, new GsaMaterialGoo(
         new GsaMaterial(type, _selectedItems.Last(), _steelCode, _concreteCode)));
     }
@@ -155,6 +159,7 @@ namespace GsaGH.Components {
             });
             ReDrawComponent();
           }
+
           _dropDownItems[1] = type == GsaMaterial.MatType.Steel
             ? DesignCode.GetSteelDesignCodeNames().ToList()
             : DesignCode.GetConcreteDesignCodeNames().ToList();
@@ -208,6 +213,17 @@ namespace GsaGH.Components {
       Attributes.Pivot = pivot;
       Attributes.ExpireLayout();
       Attributes.PerformLayout();
+    }
+
+    private List<string> GetCodeNames(bool isSteel) {
+      List<string> codes = isSteel 
+        ? DesignCode.GetSteelDesignCodeNames().ToList()
+        : DesignCode.GetConcreteDesignCodeNames().ToList();
+      for (int i = 0; i < codes.Count; i++) {
+        codes[i] = codes[i].Replace("Hong Kong", "HK").Replace("Code of Practice", "CoP")
+          .Replace("CP", "CoP");
+      }
+      return codes;
     }
   }
 }
