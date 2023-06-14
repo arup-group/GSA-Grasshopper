@@ -156,16 +156,16 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo value: {
-            gridPlaneSurface = value.Value.Duplicate();
+          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
+            gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
             plane = gridPlaneSurface.Plane;
             planeSet = true;
             _expansionType = ExpansionType.UseGpsSettings;
             UpdateMessage();
             break;
           }
-          case Plane _:
-            ghTyp.CastTo(ref plane);
+          case Plane pln:
+            plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             planeSet = true;
             break;
@@ -219,20 +219,11 @@ namespace GsaGH.Components {
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
           ctrlPts = polyline.ToList();
-          string desc = string.Empty;
-          for (int i = 0; i < ctrlPts.Count - 1; i++) {
-            if (i > 0) {
-              desc += " ";
-            }
-
-            plane.RemapToPlaneSpace(ctrlPts[i], out Point3d temppt);
-
-            // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
-            desc += "(" + temppt.X + "," + temppt.Y + ")";
-          }
+          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(ctrlPts, plane);
+          gridareaload.Points = points;
 
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
-          gridareaload.GridAreaLoad.PolyLineDefinition = desc;
+          gridareaload.GridAreaLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Brep edge to Polyline");
         }

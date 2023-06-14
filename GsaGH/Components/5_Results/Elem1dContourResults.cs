@@ -495,7 +495,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Element filter list", "El",
         "Filter results by list (by default 'all')" + Environment.NewLine
@@ -665,7 +665,11 @@ namespace GsaGH.Components {
 
       if (res.DmaxX == null) {
         string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
+        string filter = string.Empty;
+        if (elementlist.ToLower() != "all") {
+          filter = " for element list " + elementlist;
+        }
+        this.AddRuntimeWarning("Case " + acase + " contains no Element1D results" + filter);
         return;
       }
 
@@ -1206,7 +1210,7 @@ namespace GsaGH.Components {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       } catch (Exception e) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+        this.AddRuntimeWarning(e.Message);
         return;
       }
       _legend = new Bitmap(

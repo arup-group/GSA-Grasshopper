@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using OasysGH.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -26,8 +27,8 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaBucklingLengthFactorsGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaBucklingLengthFactors) ?
-        new GsaBucklingLengthFactorsGoo((GsaBucklingLengthFactors)data) : base.PreferredCast(data);
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
+      return new GsaBucklingLengthFactorsGoo(null);
     }
   }
 }

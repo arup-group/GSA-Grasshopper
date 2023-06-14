@@ -164,129 +164,103 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaProp2d = new GsaProp2d();
       var prop = new GsaProp2d();
-      if (da.GetData(0, ref gsaProp2d)) {
-        prop = gsaProp2d.Duplicate();
+
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(0, ref prop2dGoo)) {
+        prop = prop2dGoo.Value.Duplicate();
       }
 
-      if (prop != null) {
-        var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId)) {
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            prop.Id = id;
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        prop.Id = id;
+      }
+
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(2, ref materialGoo)) {
+        prop.Material = materialGoo.Value;
+      }
+
+      if (Params.Input[3].SourceCount > 0) {
+        prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
+      }
+
+      var ghObjectWrapper = new GH_ObjectWrapper();
+      if (da.GetData(4, ref ghObjectWrapper)) {
+        var pln = new Plane();
+        if (ghObjectWrapper.Value.GetType() == typeof(GH_Plane)) {
+          if (GH_Convert.ToPlane(ghObjectWrapper.Value, ref pln, GH_Conversion.Both)) {
+            prop.LocalAxis = pln;
           }
+        } else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both)) {
+          prop.AxisProperty = axis;
         }
+      }
 
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp)) {
-          var material = new GsaMaterial();
-          if (ghTyp.Value is GsaMaterialGoo) {
-            ghTyp.CastTo(ref material);
-            prop.Material = material ?? new GsaMaterial();
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-              prop.MaterialId = idd;
-            } else {
-              this.AddRuntimeError(
-                "Unable to convert PB input to a Section Property of reference integer");
-              return;
-            }
-          }
+      // first we need to set type then if load
+      // we can set support Type and then if not load support type
+      // we can set reference egde
+      GH_ObjectWrapper ghType = null;
+      if (da.GetData(9, ref ghType)) {
+        if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both)) {
+          prop.Type = (Property2D_Type)number;
+        } else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
+          prop.Type = GsaProp2d.PropTypeFromString(type);
         }
+      }
 
-        if (Params.Input[3].SourceCount > 0) {
-          prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
-        }
-
-        var ghObjectWrapper = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghObjectWrapper)) {
-          var pln = new Plane();
-          if (ghObjectWrapper.Value.GetType() == typeof(GH_Plane)) {
-            if (GH_Convert.ToPlane(ghObjectWrapper.Value, ref pln, GH_Conversion.Both)) {
-              prop.LocalAxis = pln;
-            }
-          } else if (GH_Convert.ToInt32(ghObjectWrapper.Value, out int axis, GH_Conversion.Both)) {
-            prop.AxisProperty = axis;
-          }
-        }
-
-        // first we need to set type then if load
-        // we can set support Type and then if not load support type
-        // we can set reference egde
-        var ghType = new GH_ObjectWrapper();
-        if (da.GetData(9, ref ghType)) {
-          if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both)) {
-            prop.Type = (Property2D_Type)number;
-          } else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
-            prop.Type = GsaProp2d.PropTypeFromString(type);
-          }
-        }
-
-        var ghSupportType = new GH_ObjectWrapper();
-        if (da.GetData(5, ref ghSupportType)) {
-          var supportTypeIndex = new GH_Integer();
-          if (ghTyp.Value is GH_Integer) {
-            ghTyp.CastTo(ref supportTypeIndex);
-            prop.SupportType = (SupportType)supportTypeIndex.Value;
-          } else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName,
-            GH_Conversion.Both)) {
-            supportTypeName = supportTypeName.Replace(" ", string.Empty).Replace("1", "One")
-             .Replace("2", "Two").Replace("3", "Three");
-            supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
-             .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
-            prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
-          } else {
-            this.AddRuntimeError("Cannot convert support type");
-          }
-        }
-
-        var ghReferenceEdge = new GH_Integer();
-        if (da.GetData(6, ref ghReferenceEdge)) {
-          if (GH_Convert.ToInt32(ghReferenceEdge, out int referenceEdge, GH_Conversion.Both)) {
-            prop.ReferenceEdge = referenceEdge;
-          }
-        }
-
-        var ghString = new GH_String();
-        if (da.GetData(7, ref ghString)) {
-          if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-            prop.Name = name;
-          }
-        }
-
-        var ghColour = new GH_Colour();
-        if (da.GetData(8, ref ghColour)) {
-          if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-            prop.Colour = col;
-          }
-        }
-
-        int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-        string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
-        ValueType colour = prop.ApiProp2d?.Colour;
-
-        da.SetData(0, new GsaProp2dGoo(prop));
-        da.SetData(1, prop.Id);
-        da.SetData(2, new GsaMaterialGoo(prop.Material));
-        da.SetData(3,
-          prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
-            new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
-        if (prop.AxisProperty == -2) {
-          da.SetData(4, new GH_Plane(prop.LocalAxis));
+      GH_ObjectWrapper ghSupportType = null;
+      if (da.GetData(5, ref ghSupportType)) {
+        if (ghSupportType.Value is GH_Integer supportTypeIndex) {
+          prop.SupportType = (SupportType)supportTypeIndex.Value;
+        } else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName,
+          GH_Conversion.Both)) {
+          supportTypeName = supportTypeName.Replace(" ", string.Empty).Replace("1", "One")
+           .Replace("2", "Two").Replace("3", "Three");
+          supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
+           .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
+          prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
         } else {
-          da.SetData(4, ax);
+          this.AddRuntimeError("Cannot convert support type to 'int' or 'string'");
         }
-
-        da.SetData(5, prop.SupportType);
-        da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
-        da.SetData(7, nm);
-        da.SetData(8, colour);
-
-        da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
-      } else {
-        this.AddRuntimeError("Prop2d is Null");
       }
+
+      int refEdge = 0;
+      if (da.GetData(6, ref refEdge)) {
+        prop.ReferenceEdge = refEdge;
+      }
+
+      string name = string.Empty;
+      if (da.GetData(7, ref name)) {
+        prop.Name = name;
+      }
+
+      Color colour = Color.Empty;
+      if (da.GetData(8, ref colour)) {
+        prop.Colour = colour;
+      }
+
+      int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
+      string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+
+      da.SetData(0, new GsaProp2dGoo(prop));
+      da.SetData(1, prop.Id);
+      da.SetData(2, new GsaMaterialGoo(prop.Material));
+      da.SetData(3,
+        prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
+          new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
+      if (prop.AxisProperty == -2) {
+        da.SetData(4, new GH_Plane(prop.LocalAxis));
+      } else {
+        da.SetData(4, ax);
+      }
+
+      da.SetData(5, prop.SupportType);
+      da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
+      da.SetData(7, nm);
+      da.SetData(8, prop.Colour);
+
+      da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
     }
 
     private void Update(string unit) {

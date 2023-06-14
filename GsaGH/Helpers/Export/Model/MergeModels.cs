@@ -49,7 +49,7 @@ namespace GsaGH.Helpers.Export {
       var localMemAxesDict
         = mDict.Keys.ToDictionary(id => id, id => model.MemberDirectionCosine(id));
       ConcurrentBag<GsaNodeGoo> goonodes = Import.Nodes.GetNodes(nDict, LengthUnit.Meter);
-      var nodes = goonodes.Select(n => n.Value).ToList();
+      var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
         c.Id = 0;
         return c;
@@ -58,19 +58,19 @@ namespace GsaGH.Helpers.Export {
       (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
       ConcurrentBag<GsaElement3dGoo> e3d) = Import.Elements.GetElements(eDict, nDict,
         sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, axDict, LengthUnit.Meter, true);
-      var elem1ds = e1d.Select(n => n.Value).ToList();
+      var elem1ds = e1d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       elem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var elem2ds = e2d.Select(n => n.Value).ToList();
+      var elem2ds = e2d.Select(n => n.Value).OrderByDescending(x => x.Ids.First()).ToList();
       foreach (GsaElement2d elem2d in elem2ds) {
         elem2d.Ids.Select(c => {
           c = 0;
           return c;
         }).ToList();
       }
-      var elem3ds = e3d.Select(n => n.Value).ToList();
+      var elem3ds = e3d.Select(n => n.Value).OrderByDescending(x => x.Ids.First()).ToList();
       foreach (GsaElement3d elem3d in elem3ds) {
         elem3d.Ids.Select(c => {
           c = 0;
@@ -81,17 +81,17 @@ namespace GsaGH.Helpers.Export {
       (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
       ConcurrentBag<GsaMember3dGoo> m3d) = Import.Members.GetMembers(mDict, nDict, sDict,
         pDict, p3Dict, amDict, modDict, localMemAxesDict, axDict, LengthUnit.Meter, true);
-      var mem1ds = m1d.Select(n => n.Value).ToList();
+      var mem1ds = m1d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       mem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var mem2ds = m2d.Select(n => n.Value).ToList();
+      var mem2ds = m2d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       mem2ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var mem3ds = m3d.Select(n => n.Value).ToList();
+      var mem3ds = m3d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       mem2ds.Select(c => {
         c.Id = 0;
         return c;
@@ -99,21 +99,21 @@ namespace GsaGH.Helpers.Export {
 
       List<GsaSectionGoo> goosections = Import.Properties.GetSections(sDict,
         model.AnalysisMaterials(), model.SectionModifiers());
-      var sections = goosections.Select(n => n.Value).ToList();
+      var sections = goosections.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       sections.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
       List<GsaProp2dGoo> gooprop2Ds
         = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials(), axDict);
-      var prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
+      var prop2Ds = gooprop2Ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       prop2Ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
       List<GsaProp3dGoo> gooprop3Ds
         = Import.Properties.GetProp3ds(p3Dict, model.AnalysisMaterials());
-      var prop3Ds = gooprop3Ds.Select(n => n.Value).ToList();
+      var prop3Ds = gooprop3Ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       prop3Ds.Select(c => {
         c.Id = 0;
         return c;

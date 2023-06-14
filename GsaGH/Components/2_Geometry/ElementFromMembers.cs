@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -27,7 +28,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Node
   /// </summary>
-  public class ElemFromMem : GH_OasysDropDownComponent {
+  public class ElementFromMembers : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -37,7 +38,7 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = string.Empty;
 
-    public ElemFromMem() : base("Elements from Members", "ElemFromMem",
+    public ElementFromMembers() : base("Elements from Members", "ElemFromMem",
       "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
@@ -58,6 +59,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
+      var menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
       toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
         UpdateMessage();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -183,13 +185,13 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No",
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No",
         "Nodes to be included in meshing", GH_ParamAccess.list);
-      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D",
+      pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]", "M1D",
         "1D Members to create 1D Elements from", GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D",
+      pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]", "M2D",
         "2D Members to create 2D Elements from", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D",
+      pManager.AddParameter(new GsaMember3dParameter(), "3D Members [" + unitAbbreviation + "]", "M3D",
         "3D Members to create 3D Elements from", GH_ParamAccess.list);
 
       pManager[0].Optional = true;
@@ -204,12 +206,12 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
       pManager.HideParameter(0);
-      pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.item);
-      pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model with Elements and Members",
+      pManager.AddParameter(new GsaElement1dParameter(), "1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement3dParameter(), "3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA Model with Elements and Members",
         GH_ParamAccess.item);
     }
 
@@ -229,10 +231,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaNodeGoo) {
-            var gsanode = new GsaNode();
-            ghTyp.CastTo(ref gsanode);
-            inNodes.Add(gsanode);
+          if (ghTyp.Value is GsaNodeGoo nodeGoo) {
+            inNodes.Add(nodeGoo.Value);
           } else {
             this.AddRuntimeError("Error in Node input");
             return;
@@ -251,10 +251,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaMember1dGoo) {
-            var gsamem1 = new GsaMember1d();
-            ghTyp.CastTo(ref gsamem1);
-            inMem1ds.Add(gsamem1);
+          if (ghTyp.Value is GsaMember1dGoo member1DGoo) {
+            inMem1ds.Add(member1DGoo.Value.Duplicate());
           } else {
             this.AddRuntimeError("Error in Mem1D input");
             return;
@@ -273,10 +271,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaMember2dGoo) {
-            var gsamem2 = new GsaMember2d();
-            ghTyp.CastTo(ref gsamem2);
-            inMem2ds.Add(gsamem2);
+          if (ghTyp.Value is GsaMember2dGoo member2DGoo) {
+            inMem2ds.Add(member2DGoo.Value.Duplicate());
           } else {
             this.AddRuntimeError("Error in Mem2D input");
             return;
@@ -295,10 +291,8 @@ namespace GsaGH.Components {
             continue;
           }
 
-          if (ghTyp.Value is GsaMember3dGoo) {
-            var gsamem3 = new GsaMember3d();
-            ghTyp.CastTo(ref gsamem3);
-            inMem3ds.Add(gsamem3);
+          if (ghTyp.Value is GsaMember3dGoo member3DGoo) {
+            inMem3ds.Add(member3DGoo.Value);
           } else {
             this.AddRuntimeError("Error in Mem3D input");
             return;

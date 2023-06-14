@@ -24,14 +24,14 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class Elem3dStress : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("c9bdab98-0fe2-4852-b99c-c626515b3781");
-    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
+  public class Elem2dStress : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("b5eb8a78-e0dd-442b-bbd7-0384d6c944cb");
+    public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Stress3D;
+    protected override Bitmap Icon => Resources.Stress2D;
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
 
-    public Elem3dStress() : base("3D Stresses", "Stress3D", "3D Element Stress result values",
+    public Elem2dStress() : base("2D Stresses", "Stress2D", "2D Projected Stress result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -68,7 +68,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Element filter list", "El",
         "Filter results by list (by default 'all')" + Environment.NewLine
@@ -78,6 +78,11 @@ namespace GsaGH.Components {
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager.AddNumberParameter("Stress Layer", "σL",
+        "Layer within the cross-section to get results." + Environment.NewLine
+        + "Input a number between -1 and 1, representing the normalised thickness,"
+        + Environment.NewLine + "default value is zero => middle of the element.",
+        GH_ParamAccess.item, 0);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -87,8 +92,10 @@ namespace GsaGH.Components {
         + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
         + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
         + "branch contains a list of results in the following order:" + Environment.NewLine
-        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre." + Environment.NewLine
-        + "+ve stresses: tensile (ie. +ve direct strain)";
+        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" + Environment.NewLine
+        + "+ve in-plane stresses: tensile(ie. + ve direct strain)." + Environment.NewLine
+        + "+ve bending stress gives rise to tension on the top surface." + Environment.NewLine
+        + "+ve shear stresses: +ve shear strain.";
 
       pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx",
         "Stress in XX-direction in Global Axis." + note, GH_ParamAccess.tree);
@@ -110,6 +117,12 @@ namespace GsaGH.Components {
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
       if (string.IsNullOrEmpty(elementlist)) {
         return;
+      }
+
+      double layer = 0;
+      var ghType1 = new GH_String();
+      if (da.GetData(2, ref ghType1)) {
+        GH_Convert.ToDouble(ghType1, out layer, GH_Conversion.Both);
       }
 
       var outXx = new DataTree<GH_UnitNumber>();
@@ -139,7 +152,8 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultsValues> vals = result.Element3DStressValues(elementlist, _stresshUnit);
+        List<GsaResultsValues> vals
+          = result.Element2DStressValues(elementlist, layer, _stresshUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -151,7 +165,7 @@ namespace GsaGH.Components {
         foreach (int perm in permutations) {
           if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element3D results.");
+            this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
             continue;
           }
 
@@ -193,7 +207,7 @@ namespace GsaGH.Components {
                     result.SelectedPermutationIds == null ? 0 : perm, elementId);
 
                   outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_stresshUnit))),
-                    path);
+                    path); // always use [rad] units
                   outYz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_stresshUnit))),
                     path);
                   outZx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_stresshUnit))),
@@ -214,7 +228,7 @@ namespace GsaGH.Components {
       da.SetDataTree(4, outYz);
       da.SetDataTree(5, outZx);
 
-      PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Stress);
+      PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Stress);
     }
 
     protected override void UpdateUIFromSelectedItems() {

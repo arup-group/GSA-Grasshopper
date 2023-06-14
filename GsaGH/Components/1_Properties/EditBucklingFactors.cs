@@ -50,41 +50,32 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaFls = new GsaBucklingLengthFactors();
       var fls = new GsaBucklingLengthFactors();
-      if (da.GetData(0, ref gsaFls)) {
-        fls = gsaFls.Duplicate();
+
+      GsaBucklingLengthFactorsGoo bucklingFactorsGoo = null;
+      if (da.GetData(0, ref bucklingFactorsGoo)) {
+        fls = bucklingFactorsGoo.Value.Duplicate();
       }
 
-      if (fls != null) {
-        var y = new GH_Number();
-        if (da.GetData(1, ref y)) {
-          if (GH_Convert.ToDouble(y, out double yy, GH_Conversion.Both)) {
-            fls.MomentAmplificationFactorStrongAxis = yy;
-          }
-        }
-
-        var z = new GH_Number();
-        if (da.GetData(2, ref z)) {
-          if (GH_Convert.ToDouble(z, out double zz, GH_Conversion.Both)) {
-            fls.MomentAmplificationFactorWeakAxis = zz;
-          }
-        }
-
-        var lt = new GH_Number();
-        if (da.GetData(3, ref lt)) {
-          if (GH_Convert.ToDouble(lt, out double ltb, GH_Conversion.Both)) {
-            fls.EquivalentUniformMomentFactor = ltb;
-          }
-        }
-
-        da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
-        da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
-        da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
-        da.SetData(3, fls.EquivalentUniformMomentFactor);
-      } else {
-        this.AddRuntimeError("Buckling Factors is Null");
+      double? y = null;
+      if (da.GetData(1, ref y)) {
+        fls.MomentAmplificationFactorStrongAxis = y;
       }
+
+      double? z = null;
+      if (da.GetData(2, ref z)) {
+        fls.MomentAmplificationFactorWeakAxis = z;
+      }
+
+      double? lt = null;
+      if (da.GetData(3, ref lt)) {
+        fls.EquivalentUniformMomentFactor = lt;
+      }
+
+      da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
+      da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
+      da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
+      da.SetData(3, fls.EquivalentUniformMomentFactor);
     }
   }
 }

@@ -17,40 +17,12 @@ namespace GsaGH.Parameters {
 
     public GsaProp2dGoo(GsaProp2d item) : base(item) { }
 
-    public override bool CastFrom(object source) {
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both)) {
-        Value = new GsaProp2d(new Length(thk, DefaultUnits.LengthUnitSection));
-      }
-
-      return false;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          var ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint)) {
-            target = (TQ)(object)ghint;
-          } else {
-            target = default;
-          }
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
         }
-
-        return true;
       }
 
       target = default;

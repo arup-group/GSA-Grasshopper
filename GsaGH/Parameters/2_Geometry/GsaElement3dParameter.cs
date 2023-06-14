@@ -1,9 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +24,13 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaElement3dGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaElement3d) ? new GsaElement3dGoo((GsaElement3d)data) :
-        base.PreferredCast(data);
+      var mesh = new Mesh();
+      if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
+        return new GsaElement3dGoo(new GsaElement3d(mesh));
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element3d");
+      return new GsaElement3dGoo(null);
     }
   }
 }

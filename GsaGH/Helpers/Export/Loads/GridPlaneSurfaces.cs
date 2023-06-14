@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -346,15 +347,14 @@ namespace GsaGH.Helpers.Export {
           if (gridplanesurface._refList == null 
             || gridplanesurface._refList.EntityType != Parameters.EntityType.Element
             || gridplanesurface._refList.EntityType != Parameters.EntityType.Member) {
-            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-              "Invalid List type for GridSurface " + gridplanesurface.ToString()
+            owner.AddRuntimeWarning("Invalid List type for GridSurface " + gridplanesurface.ToString()
               +Environment.NewLine + "Element list has not been set");
           }
           gridplanesurface.GridSurface.Elements +=
             Lists.GetElementList(gridplanesurface._refList, ref apiLists, apiMaterials, apiSections,
             apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
         } else {
-          gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(
+          gridplanesurface.GridSurface.Elements += ElementListFromReference.GetReferenceElementIdsDefinition(
             gridplanesurface, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements,
             apiMembers, memberElementRelationship);
         }

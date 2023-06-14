@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -53,61 +54,27 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var ghbrep = new GH_Brep();
-      if (!da.GetData(0, ref ghbrep)) {
-        return;
-      }
-
-      if (ghbrep == null) {
-        this.AddRuntimeWarning("Brep input is null");
-      }
-
-      var brep = new Brep();
-      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both)) {
-        return;
-      }
+      GH_Brep ghbrep = null;
+      da.GetData(0, ref ghbrep);
 
       var points = new List<Point3d>();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
-        foreach (GH_Point point in ghpts) {
-          var pt = new Point3d();
-          if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both)) {
-            points.Add(pt);
-          }
-        }
+        points = ghpts.Select(pt => pt.Value).ToList();
       }
 
       var crvs = new List<Curve>();
       var ghcrvs = new List<GH_Curve>();
       if (da.GetDataList(2, ghcrvs)) {
-        foreach (GH_Curve curve in ghcrvs) {
-          Curve crv = null;
-          if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both)) {
-            crvs.Add(crv);
-          }
-        }
+        crvs = ghcrvs.Select(crv => crv.Value).ToList();
       }
 
       var mem = new GsaMember2d();
-      try {
-        mem = new GsaMember2d(brep, crvs, points);
-      } catch (Exception e) {
-        this.AddRuntimeWarning(e.Message);
-      }
+      mem = new GsaMember2d(ghbrep.Value, crvs, points);
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
-          mem.Property = prop2dGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            mem.Property = new GsaProp2d(id);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 2D Property of reference integer");
-          }
-        }
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(3, ref prop2dGoo)) {
+          mem.Prop2d = prop2dGoo.Value;
       }
 
       double meshSize = 0;
@@ -115,11 +82,9 @@ namespace GsaGH.Components {
         mem.MeshSize = meshSize;
       }
 
-      var ioData = new GH_Boolean();
-      if (da.GetData(5, ref ioData)) {
-        if (GH_Convert.ToBoolean(ioData, out bool ioBool, GH_Conversion.Both)) {
-          mem.AutomaticInternalOffset = ioBool;
-        }
+      bool internalOffset = false;
+      if (da.GetData(5, ref internalOffset)) {
+        mem.AutomaticInternalOffset = internalOffset;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.Geometry;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -22,11 +23,14 @@ namespace GsaGH.Parameters {
       GsaElement1dGoo.NickName, GsaElement1dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
-
     protected override GsaElement1dGoo PreferredCast(object data) {
-      return data.GetType() == typeof(GsaElement1d) ? new GsaElement1dGoo((GsaElement1d)data) :
-        base.PreferredCast(data);
+      var ln = new Line();
+      if (GH_Convert.ToLine(data, ref ln, GH_Conversion.Both)) {
+        return new GsaElement1dGoo(new GsaElement1d(new LineCurve(ln)));
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element1d");
+      return new GsaElement1dGoo(null);
     }
   }
 }

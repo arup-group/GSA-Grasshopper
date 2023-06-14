@@ -163,7 +163,7 @@ namespace GsaGHTests.Model {
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModelFromModels(List<GsaModel> models) {
+    public static GH_OasysDropDownComponent CreateModelFromModels(List<GsaModelGoo> models) {
       var comp = new CreateModel();
       comp.CreateAttributes();
       comp.Params.Input[2].DataMapping = GH_DataMapping.Flatten;
@@ -171,32 +171,32 @@ namespace GsaGHTests.Model {
         return comp;
       }
 
-      foreach (GsaModel input in models) {
+      foreach (GsaModelGoo input in models) {
         ComponentTestHelper.SetInput(comp, input, 0);
       }
 
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModelFromPropeties(
-      List<GsaSection> sections, List<GsaProp2d> prop2ds, List<GsaProp3d> prop3ds) {
+    public static GH_OasysDropDownComponent CreateModelFromProperties(
+      List<GsaSectionGoo> sections, List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) {
       var comp = new CreateModel();
       comp.CreateAttributes();
       comp.Params.Input[2].DataMapping = GH_DataMapping.Flatten;
       if (sections != null) {
-        foreach (GsaSection input in sections) {
+        foreach (GsaSectionGoo input in sections) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }
 
       if (prop2ds != null) {
-        foreach (GsaProp2d input in prop2ds) {
+        foreach (GsaProp2dGoo input in prop2ds) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }
 
       if (prop3ds != null) {
-        foreach (GsaProp3d input in prop3ds) {
+        foreach (GsaProp3dGoo input in prop3ds) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }

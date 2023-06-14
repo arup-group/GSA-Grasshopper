@@ -168,21 +168,9 @@ namespace GsaGH.Components {
 
         if (_mode != Prop2dType.Fabric) {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
-          var ghTyp = new GH_ObjectWrapper();
-          if (da.GetData(1, ref ghTyp)) {
-            GsaMaterial material = null;
-            if (ghTyp.Value is GsaMaterialGoo) {
-              ghTyp.CastTo(ref material);
-              prop.Material = material ?? new GsaMaterial();
-            } else {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-                prop.Material = new GsaMaterial(idd);
-              } else {
-                this.AddRuntimeError(
-                  "Unable to convert PB input to a Section Property of reference integer");
-                return;
-              }
-            }
+          GsaMaterialGoo materialGoo = null;
+          if (da.GetData(1, ref materialGoo)) {
+            prop.Material = materialGoo.Value;
           } else {
             prop.Material = new GsaMaterial(2);
           }
@@ -263,11 +251,11 @@ namespace GsaGH.Components {
 
     private void SetInputProperties(
       int index, string nickname, string name, string description,
-      GH_ParamAccess access = GH_ParamAccess.item, bool optional = true) {
+      bool optional = true) {
       Params.Input[index].NickName = nickname;
       Params.Input[index].Name = name;
       Params.Input[index].Description = description;
-      Params.Input[index].Access = access;
+      Params.Input[index].Access = GH_ParamAccess.item;
       Params.Input[index].Optional = optional;
     }
 

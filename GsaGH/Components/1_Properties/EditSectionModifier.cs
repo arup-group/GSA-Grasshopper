@@ -242,13 +242,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var modifier = new GsaSectionModifier();
-      var gsaModifier = new GsaSectionModifier();
-      if (da.GetData(0, ref gsaModifier)) {
-        modifier = gsaModifier.Duplicate();
-      }
 
-      if (modifier == null) {
-        return;
+      GsaSectionModifierGoo modifierGoo = null;
+      if (da.GetData(0, ref modifierGoo)) {
+        modifier = modifierGoo.Value.Duplicate();
       }
 
       if (Params.Input[1].SourceCount > 0) {
@@ -259,8 +256,8 @@ namespace GsaGH.Components {
             modifier.AreaModifier = res;
           } else {
             try {
-              modifier.AreaModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true)
-               .Value;
+              modifier.AreaModifier 
+                = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true).Value;
             } catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
@@ -391,42 +388,7 @@ namespace GsaGH.Components {
       var obj = new GH_ObjectWrapper();
       if (da.GetData(11, ref obj)) {
         if (GH_Convert.ToInt32(obj.Value, out int stress, GH_Conversion.Both)) {
-          switch (stress) {
-            case 0:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-              break;
-
-            case 1:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
-              break;
-
-            case 2:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-              break;
-
-            default:
-              this.AddRuntimeError("Error in " + Params.Input[11].NickName
-                + " input: Must be either 0, 1 or 2 but is " + stress);
-              return;
-          }
-        } else if (GH_Convert.ToString(obj.Value, out string stressString, GH_Conversion.Both)) {
-          if (stressString.ToLower().Contains("no")) {
-            modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-          } else if (stressString.ToLower().Replace(" ", string.Empty).Contains("unmod")) {
-            modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-          } else if (stressString.ToLower().Replace(" ", string.Empty).Contains("mod")) {
-            modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
-          } else {
-            this.AddRuntimeError("Error in " + Params.Input[11].NickName
-              + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '"
-              + stress + "'");
-            return;
-          }
-        } else {
-          this.AddRuntimeError("Error in " + Params.Input[11].NickName
-            + " input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is "
-            + stress + "'");
-          return;
+          modifier.StressOption = (GsaSectionModifier.StressOptionType)stress;
         }
       }
 

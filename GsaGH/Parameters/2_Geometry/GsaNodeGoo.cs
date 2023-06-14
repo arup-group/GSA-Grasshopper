@@ -27,66 +27,17 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastFrom(object source) {
-      // This function is called when Grasshopper needs to convert other data
-      // into GsaNode.
-      if (source == null) {
-        return false;
-      }
-
-      if (base.CastFrom(source)) {
-        return true;
-      }
-
-      if (typeof(Node).IsAssignableFrom(source.GetType())) {
-        Value = new GsaNode {
-          ApiNode = (Node)source,
-        };
-        return true;
-      }
-
-      var pt = new Point3d();
-      if (!GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both)) {
-        return false;
-      }
-
-      Value = new GsaNode(pt);
-      return true;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaNode into some other type Q.
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      //Cast to Point3d
-      if (typeof(TQ).IsAssignableFrom(typeof(Point3d))) {
-        target = Value == null ? default : (TQ)(object)new Point3d(Value.Point);
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
         target = Value == null ? default : (TQ)(object)new GH_Point(Value.Point);
         return true;
       }
 
-      if (typeof(TQ).IsAssignableFrom(typeof(Point))) {
-        target = Value == null ? default : (TQ)(object)new Point(Value.Point);
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          var ghint = new GH_Integer();
-          target = GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint) ?
-            (TQ)(object)ghint : default;
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
         }
-
-        return true;
       }
 
       target = default;

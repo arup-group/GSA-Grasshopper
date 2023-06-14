@@ -139,19 +139,9 @@ namespace GsaGH.Components {
 
       var mem = new GsaMember2d(brep, curves, point3ds);
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo prop2dGoo) {
-          mem.Property = prop2dGoo.Value;
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-            mem.Property = new GsaProp2d(idd);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 2D Property of reference integer");
-            return;
-          }
-        }
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(3, ref prop2dGoo)) {
+        mem.Prop2d = prop2dGoo.Value;
       }
 
       if (Params.Input[4].SourceCount > 0) {

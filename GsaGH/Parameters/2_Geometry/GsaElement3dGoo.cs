@@ -24,20 +24,8 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      // This function is called when Grasshopper needs to convert this
-      // instance of GsaElement3D into some other type Q.
-      if (base.CastTo(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(Mesh))) {
-        target = Value == null ? default : (TQ)(object)Value.DisplayMesh;
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.DisplayMesh);
-
         return true;
       }
 
@@ -46,6 +34,9 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value == null || Value.DisplayMesh == null) {
+        return;
+      }
       args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
         args.Material.Diffuse
         == Color.FromArgb(255, 150, 0,
@@ -73,7 +64,7 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value.DisplayMesh;
+      return Value == null ? null : (GeometryBase)Value.DisplayMesh;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

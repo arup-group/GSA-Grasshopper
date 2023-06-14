@@ -39,8 +39,8 @@ namespace GsaGH.Components {
       }
 
       var gsaModel = new GsaModel();
-      if (ghTyp.Value is GsaModelGoo) {
-        ghTyp.CastTo(ref gsaModel);
+      if (ghTyp.Value is GsaModelGoo modelGoo) {
+        gsaModel = modelGoo.Value;
         Message = string.Empty;
       } else {
         this.AddRuntimeError("Error converting input to GSA Model");

@@ -187,7 +187,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
         GH_ParamAccess.item);
     }
 
@@ -196,27 +196,12 @@ namespace GsaGH.Components {
       Plane plane = Plane.Unset;
       bool idSet = false;
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo) {
-          gsaGridPlaneSurface = gridPlaneSurfaceGoo.Value.Duplicate();
-        } else {
-          if (ghTyp.CastTo(ref plane)) {
-            gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
-          } else {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gsaGridPlaneSurface = new GsaGridPlaneSurface {
-                GridSurface = {
-                  GridPlane = id,
-                },
-                GridPlane = null,
-              };
-              idSet = true;
-            } else {
-              this.AddRuntimeError("Cannot convert your input to GridPlaneSurface or Plane");
-              return;
-            }
-          }
+      GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo = null;
+      if (da.GetData(0, ref gridPlaneSurfaceGoo)) {
+        gsaGridPlaneSurface = gridPlaneSurfaceGoo.Value;
+        if (gsaGridPlaneSurface.GridPlane == null 
+          && gsaGridPlaneSurface.GridSurface.GridPlane != 0) {
+          idSet = true;
         }
       } else {
         plane = Plane.WorldXY;
@@ -235,7 +220,7 @@ namespace GsaGH.Components {
         gsaGridPlaneSurface.GridSurfaceId = id;
       }
 
-      ghTyp = new GH_ObjectWrapper();
+      var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         string type = ghTyp.Value.ToString().ToUpper();
         if (type.StartsWith("GSA ")) {

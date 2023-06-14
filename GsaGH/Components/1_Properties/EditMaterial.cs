@@ -56,24 +56,22 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMaterial = new GsaMaterial();
       var material = new GsaMaterial();
-      if (da.GetData(0, ref gsaMaterial)) {
-        material = gsaMaterial.Duplicate();
+
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(0, ref materialGoo)) {
+        material = materialGoo.Value.Duplicate();
       }
 
-      if (material != null) {
-        var ghId = new GH_Integer();
-        if (da.GetData(1, ref ghId)) {
-          if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            material.AnalysisProperty = id;
-          }
-        }
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        material.AnalysisProperty = id;
+      }
 
-        var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp)) {
-          switch (ghTyp.Value) {
-            case GH_Integer ghInt: {
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(2, ref ghTyp)) {
+        switch (ghTyp.Value) {
+          case GH_Integer ghInt: {
               switch (ghInt.Value) {
                 case 1:
                   material.MaterialType = GsaMaterial.MatType.Steel;
@@ -111,7 +109,7 @@ namespace GsaGH.Components {
               break;
             }
 
-            case GH_String ghString: {
+          case GH_String ghString: {
               switch (ghString.Value.ToUpper()) {
                 case "STEEL":
                   material.MaterialType = GsaMaterial.MatType.Steel;
@@ -149,26 +147,24 @@ namespace GsaGH.Components {
               break;
             }
 
-            default:
-              this.AddRuntimeError("Unable to convert Material Type input");
-              return;
-          }
+          default:
+            this.AddRuntimeError("Unable to convert Material Type input");
+            return;
         }
-
-        int grd = 0;
-        if (da.GetData(3, ref grd)) {
-          material.GradeProperty = grd;
-        }
-
-        da.SetData(0, new GsaMaterialGoo(material));
-        da.SetData(1, material.AnalysisProperty);
-        string mate = material.MaterialType.ToString();
-        mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
-        da.SetData(2, mate);
-        da.SetData(3, material.GradeProperty);
-      } else {
-        this.AddRuntimeError("Material is Null");
       }
+
+      int grd = 0;
+      if (da.GetData(3, ref grd)) {
+        material.GradeProperty = grd;
+      }
+
+      da.SetData(0, new GsaMaterialGoo(material));
+      da.SetData(1, material.AnalysisProperty);
+      string mate = material.MaterialType.ToString();
+      mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
+      da.SetData(2, mate);
+      da.SetData(3, material.GradeProperty);
+
     }
   }
 }

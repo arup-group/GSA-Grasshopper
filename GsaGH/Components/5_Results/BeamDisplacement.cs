@@ -19,20 +19,22 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using static System.Net.WebRequestMethods;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to GSA 2D Element displacement values
+  ///   Component to get GSA beam displacement values
   /// </summary>
-  public class Elem2dDisplacement : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
-    public override GH_Exposure Exposure => GH_Exposure.quinary;
+  public class BeamDisplacement : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("21ec9005-1b2f-4eb8-8171-b2c0190a4a54");
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Displacement2D;
+    protected override Bitmap Icon => Resources.BeamDisplacement;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public Elem2dDisplacement() : base("2D Displacements", "Disp2D",
-      "2D Translation and Rotation result values", CategoryName.Name(), SubCategoryName.Cat5()) {
+    public BeamDisplacement() : base("Beam Displacements", "BeamDisp",
+      "Element1D Translation and Rotation result values", CategoryName.Name(),
+      SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
@@ -66,7 +68,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result",
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Element filter list", "El",
         "Filter results by list (by default 'all')" + Environment.NewLine
@@ -76,6 +78,8 @@ namespace GsaGH.Components {
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager.AddIntegerParameter("Intermediate Points", "nP",
+        "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -84,8 +88,7 @@ namespace GsaGH.Components {
       string note = Environment.NewLine
         + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
         + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results in the following order:" + Environment.NewLine
-        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre";
+        + "branch contains a list of results per element position.";
 
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
         "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
@@ -109,9 +112,14 @@ namespace GsaGH.Components {
       var result = new GsaResult();
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) {
-        return;
+      if (string.IsNullOrEmpty(elementlist)) { 
+        return; 
       }
+
+      var ghDivisions = new GH_Integer();
+      da.GetData(2, ref ghDivisions);
+      GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
+      positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -128,33 +136,33 @@ namespace GsaGH.Components {
       }
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
-          case GsaResultGoo goo:
-            result = goo.Value;
-            break;
-
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
+        if (ghTyp?.Value == null) {
+          this.AddRuntimeWarning("Input is null");
+          return;
         }
 
-        List<GsaResultsValues> vals = result.Element2DDisplacementValues(elementlist, _lengthUnit);
+        if (ghTyp.Value is GsaResultGoo goo) {
+          result = goo.Value;
+        } else {
+          this.AddRuntimeError("Error converting input to GSA Result");
+          return;
+        }
 
-        List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
+        List<GsaResultsValues> vals
+          = result.Element1DDisplacementValues(elementlist, positionsCount, _lengthUnit);
+
+        List<int> permutations = result.SelectedPermutationIds is null ? new List<int>() {
           1,
-        };
+        } : result.SelectedPermutationIds;
         if (permutations.Count == 1 && permutations[0] == -1) {
           permutations = Enumerable.Range(1, vals.Count).ToList();
         }
 
+        // loop through all permutations (analysis case will just have one)
         foreach (int perm in permutations) {
           if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
+            this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
             continue;
           }
 
@@ -162,51 +170,51 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                    vals[perm - 1].XyzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) {
+                      continue;
+                    }
+
+                    var path = new GH_Path(result.CaseId,
+                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                    outTransX.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
+                      path); // use ToUnit to capture changes in dropdown
+                    outTransY.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
+                    outTransZ.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
+                    outTransXyz.AddRange(
+                      res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
                   }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outTransX.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
-                    path); // use ToUnit to capture changes in dropdown
-                  outTransY.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
-                  outTransZ.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-                  outTransXyz.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
+                  break;
                 }
-
-                break;
-              }
               case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                    vals[perm - 1].XxyyzzResults) {
+                    int elementId = kvp.Key;
+                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                    if (res.Count == 0) {
+                      continue;
+                    }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-                  if (res.Count == 0) {
-                    continue;
+                    var path = new GH_Path(result.CaseId,
+                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                    outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
+                      path); // always use [rad] units
+                    outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
+                    outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
+                    outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
                   }
 
-                  outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
-                    path); // always use [rad] units
-                  outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
-                  outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
-                  outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
+                  break;
                 }
-
-                break;
-              }
             }
           });
         }
@@ -221,7 +229,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
 
-      PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Displacement);
+      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {

@@ -155,19 +155,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaMember2d = new GsaMember2d();
       var mem = new GsaMember2d();
-      if (da.GetData(0, ref gsaMember2d)) {
-        if (gsaMember2d == null) {
-          this.AddRuntimeWarning("Member2D input is null");
-          return;
-        }
 
-        mem = gsaMember2d.Duplicate(true);
-      }
-
-      if (mem == null) {
-        return;
+      GsaMember2dGoo member2dGoo = null;
+      if (da.GetData(0, ref member2dGoo)) {
+        mem = member2dGoo.Value.Duplicate(true);
       }
 
       var ghId = new GH_Integer();
@@ -215,22 +207,9 @@ namespace GsaGH.Components {
         mem = mem.UpdateGeometry(brep, crvs, pts);
       }
 
-      var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(5, ref ghTyp)) {
-        var prop2d = new GsaProp2d();
-        if (ghTyp.Value is GsaProp2dGoo) {
-          ghTyp.CastTo(ref prop2d);
-        } else {
-          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-            prop2d = new GsaProp2d(id);
-          } else {
-            this.AddRuntimeError(
-              "Unable to convert PA input to a 2D Property of reference integer");
-            return;
-          }
-        }
-
-        mem.Property = prop2d;
+      GsaProp2dGoo prop2dGoo = null;
+      if (da.GetData(5, ref prop2dGoo)) {
+        mem.Prop2d = prop2dGoo.Value;
       }
 
       var ghgrp = new GH_Integer();
@@ -266,9 +245,9 @@ namespace GsaGH.Components {
         }
       }
 
-      var offset = new GsaOffset();
+      GsaOffsetGoo offset = null;
       if (da.GetData(9, ref offset)) {
-        mem.Offset = offset;
+        mem.Offset = offset.Value;
       }
 
       double meshSize = 0;
@@ -316,7 +295,7 @@ namespace GsaGH.Components {
       da.SetData(2, mem.Brep);
       da.SetDataList(3, mem.InclusionPoints);
       da.SetDataList(4, mem.InclusionLines);
-      da.SetData(5, new GsaProp2dGoo(mem.Property));
+      da.SetData(5, new GsaProp2dGoo(mem.Prop2d));
       da.SetData(6, mem.Group);
       da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
       da.SetData(8, Mappings.analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);

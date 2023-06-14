@@ -18,73 +18,32 @@ namespace GsaGH.Parameters {
     public GsaLoadGoo(GsaLoad item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (base.CastTo<TQ>(ref target)) {
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          if (Value.AreaLoad != null) {
-            GsaGridPlaneSurface gridplane = Value.AreaLoad.GridPlaneSurface;
-            var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
-            target = (TQ)(object)gpgoo;
-            return true;
-          }
-
-          if (Value.LineLoad != null) {
-            GsaGridPlaneSurface gridplane = Value.LineLoad.GridPlaneSurface;
-            var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
-            target = (TQ)(object)gpgoo;
-            return true;
-          }
-
-          if (Value.PointLoad == null) {
-            return true;
-          }
-
-          {
-            GsaGridPlaneSurface gridplane = Value.PointLoad.GridPlaneSurface;
-            var gpgoo = new GsaGridPlaneSurfaceGoo(gridplane);
-            target = (TQ)(object)gpgoo;
-            return true;
-          }
-        }
-
-        return true;
-      }
-
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
-        if (Value == null) {
-          target = default;
-        } else {
+        if (Value != null) {
           switch (Value.LoadType) {
             case GsaLoad.LoadTypes.GridArea: {
-              var ghpln = new GH_Plane();
-              GH_Convert.ToGHPlane(Value.AreaLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
-                ref ghpln);
-              target = (TQ)(object)ghpln;
-              return true;
-            }
+                var ghpln = new GH_Plane();
+                GH_Convert.ToGHPlane(Value.AreaLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
+                  ref ghpln);
+                target = (TQ)(object)ghpln;
+                return true;
+              }
             case GsaLoad.LoadTypes.GridLine: {
-              var ghpln = new GH_Plane();
-              GH_Convert.ToGHPlane(Value.LineLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
-                ref ghpln);
-              target = (TQ)(object)ghpln;
-              return true;
-            }
+                var ghpln = new GH_Plane();
+                GH_Convert.ToGHPlane(Value.LineLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
+                  ref ghpln);
+                target = (TQ)(object)ghpln;
+                return true;
+              }
             case GsaLoad.LoadTypes.GridPoint: {
-              var ghpln = new GH_Plane();
-              GH_Convert.ToGHPlane(Value.PointLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
-                ref ghpln);
-              target = (TQ)(object)ghpln;
-              return true;
-            }
+                var ghpln = new GH_Plane();
+                GH_Convert.ToGHPlane(Value.PointLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
+                  ref ghpln);
+                target = (TQ)(object)ghpln;
+                return true;
+              }
           }
         }
-
-        return false;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
@@ -105,26 +64,57 @@ namespace GsaGH.Parameters {
           target = (TQ)(object)ghpt;
           return true;
         }
-
-        return false;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
         if (Value == null) {
           target = default;
         } else {
-          if (Value.LoadType != GsaLoad.LoadTypes.GridLine) {
-            return false;
+          if (Value.LoadType == GsaLoad.LoadTypes.GridLine
+            && Value.LineLoad.Points.Count > 0) {
+            var crv = new Polyline(Value.LineLoad.Points);
+            target = (TQ)(object)new GH_Curve(crv.ToPolylineCurve());
+            return true;
+          } else if (Value.LoadType == GsaLoad.LoadTypes.GridArea
+            && Value.AreaLoad.Points.Count > 0) {
+            var crv = new Polyline(Value.AreaLoad.Points);
+            target = (TQ)(object)new GH_Curve(crv.ToPolylineCurve());
+            return true;
           }
-
-          var pts = new List<Point3d>();
-          string def = Value.LineLoad.GridLineLoad.PolyLineDefinition; //implement converter
-          // to be done
-          //target = (Q)(object)ghpt;
-          //return true;
         }
+      }
 
-        return false;
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Surface))) {
+        if (Value == null) {
+          target = default;
+        } else {
+          if (Value.LoadType == GsaLoad.LoadTypes.GridArea) {
+            var crv = new Polyline(Value.AreaLoad.Points);
+            Brep brp = Brep.CreatePlanarBreps(crv.ToPolylineCurve(), 0.000001)[0];
+            target = (TQ)(object)new GH_Surface(brp);
+            return true;
+          }
+        }
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
+        if (Value == null) {
+          target = default;
+        } else {
+          if (Value.LoadType == GsaLoad.LoadTypes.GridArea) {
+            var crv = new Polyline(Value.AreaLoad.Points);
+            Brep brp = Brep.CreatePlanarBreps(crv.ToPolylineCurve(), 0.000001)[0];
+            target = (TQ)(object)new GH_Brep(brp);
+            return true;
+          }
+        }
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.CaseId);
+          return true;
+        }
       }
 
       target = default;

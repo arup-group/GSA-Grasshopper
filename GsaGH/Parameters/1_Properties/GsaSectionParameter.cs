@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using System;
+using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,8 +23,12 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaSection)) {
-        return new GsaSectionGoo((GsaSection)data);
+      switch (data) {
+        case GsaElement1dGoo elem1d:
+          return new GsaSectionGoo(elem1d.Value.Section);
+
+        case GsaMember1dGoo mem1d:
+          return new GsaSectionGoo(mem1d.Value.Section);
       }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
@@ -32,15 +36,13 @@ namespace GsaGH.Parameters {
         return new GsaSectionGoo(section);
       }
 
-      if (!GH_Convert.ToString(data, out string profile, GH_Conversion.Both)) {
-        return base.PreferredCast(data);
-      }
+      GH_Convert.ToString(data, out string profile, GH_Conversion.Both);
 
-      {
-        if (!GsaSection.ValidProfile(profile)) {
-          return base.PreferredCast(data);
-        }
-
+      if (!GsaSection.ValidProfile(profile)) {
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section." +
+          $"{Environment.NewLine}Invalid profile syntax: {profile}");
+        return new GsaSectionGoo(null);
+      } else {
         var section = new GsaSection(profile);
         return new GsaSectionGoo(section);
       }

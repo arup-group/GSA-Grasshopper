@@ -137,18 +137,16 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var material = new GsaMaterial();
 
-      var ghAnal = new GH_Integer();
-      if (da.GetData(0, ref ghAnal)) {
-        GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
-        if (anal == 0) {
+      int id = -1;
+      if (da.GetData(0, ref id)) {
+        material.AnalysisProperty = id;
+        if (id == 0) {
           this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
             + Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }
-      } else {
-        material.AnalysisProperty = -1;
       }
+      material.AnalysisProperty = id;
 
       double poisson = 0.3;
       da.GetData(2, ref poisson);

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Parameters;
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
@@ -40,6 +42,52 @@ namespace IntegrationTests.ExampleFiles {
       IGH_Param param = Helper.FindParameter(Document(), "SumLoadForce");
       var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
       Assert.True(output.Value);
+    }
+
+    [Fact]
+    public void LineResultsGooTest() {
+      IGH_Param param = Helper.FindParameter(Document(), "ResultLine");
+      foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
+        var item = (LineResultGoo)data;
+        Assert.True(item.Value.IsValid);
+        Assert.True(item.Boundingbox.IsValid);
+        Assert.True(item.ClippingBox.IsValid);
+        Assert.Equal("A GSA result line type.", item.TypeDescription);
+        Assert.Equal("Result Line", item.TypeName);
+      }
+    }
+
+    [Fact]
+    public void VectorResultGooTest() {
+      IGH_Param param = Helper.FindParameter(Document(), "ReactionForceVector");
+      foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
+        var item = (VectorResultGoo)data;
+        Assert.True(item.Value.IsValid);
+        Assert.True(item.Boundingbox.IsValid);
+        Assert.True(item.ClippingBox.IsValid);
+        Assert.Equal("A GSA result vector type.", item.TypeDescription);
+        Assert.Equal("Result Vector", item.TypeName);
+      }
+    }
+
+    [Theory]
+    [InlineData("Number")]
+    [InlineData("MorphVectorResult")]
+    [InlineData("TransformVectorResult")]
+    [InlineData("MorphLineResult")]
+    [InlineData("TransformLineResult")]
+    [InlineData("Line")]
+    [InlineData("Curve")]
+    [InlineData("NodeId")]
+    [InlineData("CaseId")]
+    [InlineData("Vector")]
+    public void TestCastTo(string groupIdentifier) {
+      IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
+      foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
+        Assert.True(data.IsValid);
+      }
+      Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }

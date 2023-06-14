@@ -56,7 +56,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     private void InputParamsAreValid() {
       var obj = new ReactionForceDiagrams();
-      var expectedParam = new GsaResultsParameter() {
+      var expectedParam = new GsaResultParameter() {
         Name = "Result",
         NickName = "Res",
         Description = "GSA Result",

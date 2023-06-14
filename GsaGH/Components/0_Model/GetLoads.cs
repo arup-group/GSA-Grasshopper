@@ -83,19 +83,17 @@ namespace GsaGH.Components {
         "Ln", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaLoadParameter(), "Grid Area Loads [" + unitAbbreviation + "]",
         "Ar", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaGridPlaneParameter(),
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(),
         "Grid Plane Surfaces [" + unitAbbreviation + "]", "GPS",
         "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
       pManager.HideParameter(7);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) {
-        return;
-      }
+      GsaModelGoo modelGoo = null;
+      da.GetData(0, ref modelGoo);
 
-      Model model = gsaModel.Model;
+      Model model = modelGoo.Value.Model;
 
       List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads());
       List<GsaLoadGoo> node = Loads.GetNodeLoads(model);
