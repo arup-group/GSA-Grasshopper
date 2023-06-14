@@ -44,7 +44,7 @@ namespace GsaGH.Helpers.GsaApi {
 
       // this is a temporary fix for TDA
       // needs more investigation!
-      if (!Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
+      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
         Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
       }
 
