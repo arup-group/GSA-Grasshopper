@@ -1,4 +1,5 @@
-﻿using GsaGH.Components;
+﻿using GsaAPI.Materials;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
@@ -12,9 +13,6 @@ namespace GsaGHTests.Components.Properties {
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateMaterial();
       comp.CreateAttributes();
-
-      comp.SetSelected(0, 3); // set dropdown to "Timber"
-
       return comp;
     }
 
@@ -23,9 +21,11 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysDropDownComponent comp = ComponentMother();
 
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(0, output.Value.Id);
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal(MatType.Timber, output.Value.MaterialType);
+      Assert.Equal(MatType.Concrete, output.Value.MaterialType);
+
+      var expected = new GsaMaterial(MatType.Concrete, "C30/37", "", "EC2-1-1");
+
+      Duplicates.AreEqual(expected, output.Value);
     }
   }
 }
