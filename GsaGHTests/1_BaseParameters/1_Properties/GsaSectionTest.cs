@@ -43,7 +43,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(areaExpected.Value, sect.Area.SquareMillimeters, 10);
 
-      sect.Material.GradeProperty = 2;
+      sect.Material.Id = 2;
       sect.Material.MaterialType = GsaMaterial.MatType.Concrete;
       sect.Name = "mariam";
       sect.Pool = 4;
@@ -51,8 +51,8 @@ namespace GsaGHTests.Parameters {
       sect.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
       sect.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
 
-      Assert.Equal(0, sect.Material.AnalysisProperty);
-      Assert.Equal(2, sect.Material.GradeProperty);
+      Assert.Equal(0, sect.Material.Id);
+      Assert.Equal(2, sect.Material.Id);
       Assert.Equal(MaterialType.CONCRETE.ToString().ToPascalCase(),
         sect.Material.MaterialType.ToString());
       Assert.Equal("mariam", sect.Name);
@@ -89,7 +89,7 @@ namespace GsaGHTests.Parameters {
       var orig = new GsaSection(profile) {
         MaterialId = 1,
         Material = {
-          GradeProperty = 2,
+          Id = 2,
           MaterialType = GsaMaterial.MatType.Steel,
         },
         Name = "mariam",
@@ -105,7 +105,7 @@ namespace GsaGHTests.Parameters {
       double myarea2 = 15 * 20;
       var areaExpected = new Area(myarea2, AreaUnit.SquareMillimeter);
       orig.Profile = profile2;
-      orig.Material.AnalysisProperty = 4;
+      orig.Material.Id = 4;
       orig.Material.MaterialType = GsaMaterial.MatType.Timber;
       orig.Name = "kris";
       orig.Pool = 99;
@@ -119,8 +119,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(profile, dup.Profile.Substring(0, profile.Length));
       Assert.Equal(myarea1, dup.Area.SquareMillimeters, 5);
 
-      Assert.Equal(0, dup.Material.AnalysisProperty);
-      Assert.Equal(2, dup.Material.GradeProperty);
+      Assert.Equal(0, dup.Material.Id);
+      Assert.Equal(2, dup.Material.Id);
       Assert.Equal(MaterialType.STEEL.ToString().ToPascalCase(),
         dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
@@ -129,8 +129,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(new Length(-1, LengthUnit.Foot), dup.AdditionalOffsetY);
       Assert.Equal(new Length(-2, LengthUnit.Foot), dup.AdditionalOffsetZ);
 
-      Assert.Equal(4, orig.Material.AnalysisProperty);
-      Assert.Equal(0, orig.Material.GradeProperty);
+      Assert.Equal(4, orig.Material.Id);
+      Assert.Equal(0, orig.Material.Id);
       Assert.Equal(MaterialType.TIMBER.ToString().ToPascalCase(),
         orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);

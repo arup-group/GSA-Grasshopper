@@ -23,8 +23,8 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysDropDownComponent comp = ComponentMother();
 
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(0, output.Value.AnalysisProperty);
-      Assert.Equal(1, output.Value.GradeProperty);
+      Assert.Equal(0, output.Value.Id);
+      Assert.Equal(1, output.Value.Id);
       Assert.Equal(MatType.Timber, output.Value.MaterialType);
     }
   }

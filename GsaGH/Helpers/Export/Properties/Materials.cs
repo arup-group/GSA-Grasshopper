@@ -7,12 +7,12 @@ namespace GsaGH.Helpers.Export {
 
     internal static int AddMaterial(
       GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
-      if (material.AnalysisProperty <= 0 || material.AnalysisMaterial == null) {
+      if (material.Id <= 0 || material.AnalysisMaterial == null) {
         return apiMaterials.AddValue(material.Guid, material.AnalysisMaterial);
       }
 
-      apiMaterials.SetValue(material.AnalysisProperty, material.Guid, material.AnalysisMaterial);
-      return material.AnalysisProperty;
+      apiMaterials.SetValue(material.Id, material.Guid, material.AnalysisMaterial);
+      return material.Id;
     }
 
     internal static void AddMaterial(

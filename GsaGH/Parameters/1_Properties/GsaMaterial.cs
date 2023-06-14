@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
@@ -34,29 +35,18 @@ namespace GsaGH.Parameters {
       Barmat = 65280,
     }
 
-    public int AnalysisProperty {
-      get => _analProp;
+    public int Id {
+      get => _id;
       set {
-        _analProp = value;
-        if (_analProp == 0) {
+        _id = value;
+        if (_id == 0) {
           return;
         }
 
-        _grade = 0;
         _guid = Guid.NewGuid();
       }
     }
-    public int GradeProperty {
-      get => _grade;
-      set {
-        _grade = value;
-        if (_grade > 0) {
-          _analProp = 0;
-        }
 
-        _guid = Guid.NewGuid();
-      }
-    }
     public Guid Guid => _guid;
     public MatType MaterialType { get; set; } = MatType.Concrete;
     internal AnalysisMaterial AnalysisMaterial {
@@ -66,10 +56,47 @@ namespace GsaGH.Parameters {
         _guid = Guid.NewGuid();
       }
     }
-    private int _analProp = 0;
+    internal object StandardMaterial {
+      get {
+        switch (MaterialType) {
+          case MatType.Aluminium:
+            return _aluminiumMaterial
+              ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Concrete:
+            return _concreteMaterial
+              ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Fabric:
+            return _fabricMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Frp:
+            return _frpMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Glass:
+            return _glassMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Steel:
+            return _steelMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Timber:
+            return _timberMaterial ?? throw new Exception("Material is not a standard material.");
+
+          default:
+            throw new Exception("Material is not a standard material.");
+        }
+      }
+    }
+    private int _id = 0;
     private AnalysisMaterial _analysisMaterial;
-    private int _grade = 1;
     private Guid _guid = Guid.NewGuid();
+    private AluminiumMaterial _aluminiumMaterial;
+    private ConcreteMaterial _concreteMaterial;
+    private FabricMaterial _fabricMaterial;
+    private FrpMaterial _frpMaterial;
+    private GlassMaterial _glassMaterial;
+    private SteelMaterial _steelMaterial;
+    private TimberMaterial _timberMaterial;
 
     public GsaMaterial() { }
 
@@ -141,11 +168,48 @@ namespace GsaGH.Parameters {
         prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
     }
 
+    internal GsaMaterial(MatType type, string gradeName,
+      string steelDesignCode = "", string concreteDesignCode = "") {
+      Model m = CreateMaterialModel(steelDesignCode, concreteDesignCode);
+      MaterialType = type;
+      switch (type) {
+        case MatType.Aluminium:
+          _aluminiumMaterial = m.CreateAluminiumMaterial(gradeName);
+          return;
+
+        case MatType.Concrete:
+          _concreteMaterial = m.CreateConcreteMaterial(gradeName);
+          return;
+
+        case MatType.Fabric:
+          _fabricMaterial = m.CreateFabricMaterial(gradeName);
+          return;
+
+        case MatType.Frp:
+          _frpMaterial = m.CreateFrpMaterial(gradeName);
+          return;
+
+        case MatType.Glass:
+          _glassMaterial = m.CreateGlassMaterial(gradeName);
+          return;
+
+        case MatType.Steel:
+          _steelMaterial = m.CreateSteelMaterial(gradeName);
+          return;
+
+        case MatType.Timber:
+          _timberMaterial = m.CreateTimberMaterial(gradeName);
+          return;
+
+        default:
+          throw new Exception($"Material type {type} does not have standard materials");
+      }
+    }
+
     public GsaMaterial Duplicate() {
       var dup = new GsaMaterial {
         MaterialType = MaterialType,
-        _grade = _grade,
-        _analProp = _analProp,
+        _id = _id,
       };
       if (_analysisMaterial != null) {
         dup.AnalysisMaterial = new AnalysisMaterial() {
@@ -164,7 +228,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string name = "";
       if (AnalysisMaterial == null || string.IsNullOrEmpty(AnalysisMaterial.Name)) {
-        if (_analProp != 0) {
+        if (_id != 0) {
           name += "Custom ";
         }
 
@@ -174,12 +238,45 @@ namespace GsaGH.Parameters {
         name = AnalysisMaterial.Name;
       }
 
-      if (_analProp != 0) {
-        return "ID:" + _analProp + " " + name;
+      if (_id != 0) {
+        return "ID:" + _id + " " + name;
       }
 
-      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
+      string id = Id == 0 ? "" : "Grd:" + Id + " ";
       return (id + name).Trim();
+    }
+
+    internal static List<string> GetGradeNames(
+      MatType type, string steelDesignCode = "", string concreteDesignCode = "") {
+      Model m = CreateMaterialModel(steelDesignCode, concreteDesignCode);
+      switch (type) {
+        case MatType.Aluminium:
+          return new List<string>(m.GetStandardAluminumMaterialNames());
+
+        case MatType.Concrete:
+          return new List<string>(m.GetStandardConcreteMaterialNames());
+
+        case MatType.Fabric:
+          return new List<string>(m.GetStandardFabricMaterialNames());
+
+        case MatType.Frp:
+          return new List<string>(m.GetStandardFrpMaterialNames());
+
+        case MatType.Glass:
+          return new List<string>(m.GetStandardGlassMaterialNames());
+
+        case MatType.Rebar:
+          return new List<string>(m.GetStandardReinforcementMaterialNames());
+
+        case MatType.Steel:
+          return new List<string>(m.GetStandardSteelMaterialNames());
+
+        case MatType.Timber:
+          return new List<string>(m.GetStandardTimberMaterialNames());
+
+        default:
+          throw new Exception($"Material type {type} does not have standard materials");
+      }
     }
 
     private static MatType GetType(MaterialType materialType) {
@@ -222,13 +319,26 @@ namespace GsaGH.Parameters {
       return mType;
     }
 
+    private static Model CreateMaterialModel(
+      string steelDesignCode = "", string concreteDesignCode = "") {
+      if (steelDesignCode == string.Empty) {
+        steelDesignCode = DesignCode.GetSteelDesignCodeNames()[0];
+      }
+
+      if (concreteDesignCode == string.Empty) {
+        concreteDesignCode = DesignCode.GetConcreteDesignCodeNames()[0];
+      }
+
+      return new Model(concreteDesignCode, steelDesignCode);
+    }
+
     private void CreateFromApiObject(
-      MaterialType materialType, int analysisProp, int gradeProp,
-      AnalysisMaterial analysisMaterial) {
+    MaterialType materialType, int analysisProp, int gradeProp,
+    AnalysisMaterial analysisMaterial) {
       MaterialType = GetType(materialType);
-      GradeProperty = gradeProp;
-      AnalysisProperty = analysisProp;
-      if (!((AnalysisProperty != 0) & (analysisMaterial != null))) {
+      Id = gradeProp;
+      Id = analysisProp;
+      if (!((Id != 0) & (analysisMaterial != null))) {
         return;
       }
 

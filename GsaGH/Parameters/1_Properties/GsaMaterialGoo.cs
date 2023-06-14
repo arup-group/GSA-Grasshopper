@@ -17,8 +17,8 @@ namespace GsaGH.Parameters {
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
-          target = (TQ)(object)new GH_Integer(Value.GradeProperty == 0
-            ? Value.AnalysisProperty : Value.GradeProperty);
+          target = (TQ)(object)new GH_Integer(Value.Id == 0
+            ? Value.Id : Value.Id);
           return true;
         }
       }

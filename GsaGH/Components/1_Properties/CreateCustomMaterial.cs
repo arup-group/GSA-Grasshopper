@@ -29,7 +29,16 @@ namespace GsaGH.Components {
       Glass,
       Fabric,
     }
-
+    public static List<string> MaterialTypes = new List<string>() {
+      "Generic",
+      "Steel",
+      "Concrete",
+      "Timber",
+      "Aluminium",
+      "FRP",
+      "Glass",
+      "Fabric",
+    };
     public override Guid ComponentGuid => new Guid("f2906b65-208f-4a46-8e1f-06d6270cc90c");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -96,7 +105,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(CreateMaterial.MaterialTypes);
+      _dropDownItems.Add(MaterialTypes);
       _selectedItems.Add(_mode.ToString());
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
@@ -143,14 +152,14 @@ namespace GsaGH.Components {
 
       int id = -1;
       if (da.GetData(0, ref id)) {
-        material.AnalysisProperty = id;
+        material.Id = id;
         if (id == 0) {
           this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
             + Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }
       }
-      material.AnalysisProperty = id;
+      material.Id = id;
 
       double poisson = 0.3;
       da.GetData(3, ref poisson);
@@ -175,7 +184,7 @@ namespace GsaGH.Components {
          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
       };
 
-      material.GradeProperty = 0;
+      material.Id = 0;
 
       switch (_mode) {
         case FoldMode.Generic:

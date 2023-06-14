@@ -285,7 +285,7 @@ namespace GsaGH.Components {
             break;
           }
           case GsaMaterialGoo value: {
-              if (value.Value.GradeProperty != 0) {
+              if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(
                 "Reference Material must be a Custom Material");
                 return;

@@ -16,7 +16,7 @@ namespace GsaGH.Helpers.Import {
         }
 
         var material = new GsaMaterial {
-          AnalysisProperty = key,
+          Id = key,
           AnalysisMaterial = analysisMaterial,
         };
 

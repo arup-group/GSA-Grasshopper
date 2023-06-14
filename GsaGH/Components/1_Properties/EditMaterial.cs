@@ -69,7 +69,7 @@ namespace GsaGH.Components {
 
       int id = 0;
       if (da.GetData(1, ref id)) {
-        material.AnalysisProperty = id;
+        material.Id = id;
       }
 
       string name = "";
@@ -168,11 +168,11 @@ namespace GsaGH.Components {
 
       int grd = 0;
       if (da.GetData(4, ref grd)) {
-        material.GradeProperty = grd;
+        material.Id = grd;
       }
 
       da.SetData(0, new GsaMaterialGoo(material));
-      da.SetData(1, material.AnalysisProperty);
+      da.SetData(1, material.Id);
       string mate = material.MaterialType.ToString();
       mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
       string analysisMaterialName = "";
@@ -181,7 +181,7 @@ namespace GsaGH.Components {
       }
       da.SetData(2, analysisMaterialName);
       da.SetData(3, mate);
-      da.SetData(4, material.GradeProperty);
+      da.SetData(4, material.Id);
     }
   }
 }

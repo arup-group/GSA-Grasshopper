@@ -67,7 +67,7 @@ namespace GsaGH.Components {
         var ghId = new GH_Integer();
         if (da.GetData(1, ref ghId)) {
           if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both)) {
-            material.AnalysisProperty = id;
+            material.Id = id;
           }
         }
 
@@ -158,15 +158,15 @@ namespace GsaGH.Components {
 
         int grd = 0;
         if (da.GetData(3, ref grd)) {
-          material.GradeProperty = grd;
+          material.Id = grd;
         }
 
         da.SetData(0, new GsaMaterialGoo(material));
-        da.SetData(1, material.AnalysisProperty);
+        da.SetData(1, material.Id);
         string mate = material.MaterialType.ToString();
         mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
         da.SetData(2, mate);
-        da.SetData(3, material.GradeProperty);
+        da.SetData(3, material.Id);
       } else {
         this.AddRuntimeError("Material is Null");
       }
