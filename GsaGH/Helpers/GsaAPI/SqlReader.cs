@@ -57,7 +57,10 @@ namespace GsaGH.Helpers.GsaApi {
 
       try {
         AppDomain.CurrentDomain.UnhandledException += UEHandler;
-        Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+        if (!Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) 
+        {
+          Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+        }
       } catch (Exception ex1) {
         string exeAssembly = Assembly.GetCallingAssembly().FullName;
 
