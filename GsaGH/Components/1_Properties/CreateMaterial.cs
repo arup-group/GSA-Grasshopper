@@ -71,12 +71,12 @@ namespace GsaGH.Components {
       _selectedItems.Add(MaterialTypes[1]); // concrete
 
       _dropDownItems.Add(GetCodeNames(false));
-      _concreteCode = _dropDownItems[1][0];
-      _selectedItems.Add(_concreteCode); // first code
+      _concreteCode = _dropDownItems[1][8];
+      _selectedItems.Add(_concreteCode); // EN1992-1-1
 
       _dropDownItems.Add(GsaMaterial.GetGradeNames(
-        GsaMaterial.MatType.Concrete, "", _dropDownItems[1][0]));
-      _selectedItems.Add(_dropDownItems[2][0]); // first grade
+        GsaMaterial.MatType.Concrete, "", _concreteCode));
+      _selectedItems.Add(_dropDownItems[2][4]); // C30/37
 
       _isInitialised = true;
     }
@@ -160,16 +160,13 @@ namespace GsaGH.Components {
             ReDrawComponent();
           }
 
-          _dropDownItems[1] = type == GsaMaterial.MatType.Steel
-            ? DesignCode.GetSteelDesignCodeNames().ToList()
-            : DesignCode.GetConcreteDesignCodeNames().ToList();
+          _dropDownItems[1] = GetCodeNames(type == GsaMaterial.MatType.Steel);
 
           if (type == GsaMaterial.MatType.Steel && _steelCode == string.Empty) {
-            _steelCode = _dropDownItems[1][0];
+            _steelCode = _dropDownItems[1][8]; // EN 1993-1-1
           }
 
           _selectedItems[1] = type == GsaMaterial.MatType.Steel ? _steelCode : _concreteCode;
-
           break;
 
         default:
@@ -194,6 +191,11 @@ namespace GsaGH.Components {
         typeof(GsaMaterial.MatType), _selectedItems[0], ignoreCase: true);
       
       List<string> grades = GsaMaterial.GetGradeNames(type, _steelCode, _concreteCode);
+      for (int i = grades.Count - 1; i >= 0; i--) {
+        if (grades[i].StartsWith("<")) {
+          grades.RemoveAt(i);
+        }
+      }
       
       _dropDownItems[_dropDownItems.Count - 1] = grades;
       _selectedItems[_selectedItems.Count - 1] = grades[0];
@@ -223,6 +225,13 @@ namespace GsaGH.Components {
         codes[i] = codes[i].Replace("Hong Kong", "HK").Replace("Code of Practice", "CoP")
           .Replace("CP", "CoP");
       }
+
+      for (int i = codes.Count - 1; i >= 0; i--) {
+        if (codes[i].StartsWith("<")) {
+          codes.RemoveAt(i);
+        }
+      }
+
       return codes;
     }
   }
