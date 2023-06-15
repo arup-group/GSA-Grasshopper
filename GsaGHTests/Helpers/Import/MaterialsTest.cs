@@ -4,6 +4,7 @@ using Xunit;
 using System.Collections.Generic;
 using GsaGHTests.Parameters;
 using System;
+using GsaAPI.Materials;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]
@@ -11,6 +12,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportSteelMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.SteelMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.SteelMaterials) {
         Assert.NotNull(kvp.Value);
@@ -24,6 +26,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportConcreteMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.ConcreteMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.ConcreteMaterials) {
         Assert.NotNull(kvp.Value);
@@ -38,6 +41,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportFrpMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.FrpMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.FrpMaterials) {
         Assert.NotNull(kvp.Value);
@@ -51,6 +55,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportAluminiumMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.AluminiumMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AluminiumMaterials) {
         Assert.NotNull(kvp.Value);
@@ -64,6 +69,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportTimberMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.TimberMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.TimberMaterials) {
         Assert.NotNull(kvp.Value);
@@ -77,6 +83,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportGlassMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.GlassMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.GlassMaterials) {
         Assert.NotNull(kvp.Value);
@@ -90,6 +97,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportFabricMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.FabricMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.FabricMaterials) {
         Assert.NotNull(kvp.Value);
@@ -104,6 +112,7 @@ namespace GsaGHTests.Helpers.Import {
     [Fact]
     public void ImportCustomMaterialTest() {
       Materials materials = ImportMaterialsMother();
+      Assert.True(materials.AnalysisMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AnalysisMaterials) {
         Assert.NotNull(kvp.Value);
@@ -113,11 +122,8 @@ namespace GsaGHTests.Helpers.Import {
         GsaMaterialTest.DuplicateTest(kvp.Value);
       }
     }
-
-    private static Materials ImportMaterialsMother() {
-      return new Materials(ImportMaterialsMotherModel());
-    }
-    private static GsaAPI.Model ImportMaterialsMotherModel() {
+    
+    internal static GsaAPI.Model ImportMaterialsMotherModel() {
       string steelCodeName = "EN 1993-1-1:2005";
       string concreteCodeName = "EC2-1-1";
       var model = new GsaAPI.Model(concreteCodeName, steelCodeName);
@@ -145,7 +151,27 @@ namespace GsaGHTests.Helpers.Import {
         model.AddFabricMaterial(model.CreateFabricMaterial(grade));
       }
 
+      model.AddAnalysisMaterial(new AnalysisMaterial() {
+        CoefficientOfThermalExpansion = 0.05,
+        Density = 7800,
+        ElasticModulus = 205000,
+        Name = "mySteel",
+        PoissonsRatio = 0.3,
+      });
+
+      model.AddAnalysisMaterial(new AnalysisMaterial() {
+        CoefficientOfThermalExpansion = 0.025,
+        Density = 2450,
+        ElasticModulus = 32000,
+        Name = "myConcrete",
+        PoissonsRatio = 0.25,
+      });
+
       return model;
+    }
+
+    internal static Materials ImportMaterialsMother() {
+      return new Materials(ImportMaterialsMotherModel());
     }
   }
 }

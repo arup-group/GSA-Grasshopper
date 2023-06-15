@@ -36,6 +36,24 @@ namespace GsaGH.Parameters {
     public Model Model { get; set; } = new Model();
     internal GsaAPI.Titles Titles => Model.Titles();
     internal GsaAPI.UiUnits Units => Model.UiUnits();
+    internal Materials Materials {
+      get {
+        if (_materials == null) {
+          _materials = new Materials(Model);
+        }
+        return _materials;
+      }
+    }
+    internal Helpers.Import.Properties Properties {
+      get {
+        if (_properties == null) {
+          _properties = new Helpers.Import.Properties(Model, Materials);
+        }
+        return _properties;
+      }
+    }
+    private Materials _materials;
+    private Helpers.Import.Properties _properties;
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
 
@@ -59,6 +77,7 @@ namespace GsaGH.Parameters {
         ModelUnit = ModelUnit,
         Guid = Guid.NewGuid(),
         _boundingBox = _boundingBox,
+        _materials = _materials,
       };
       return clone;
     }
@@ -79,6 +98,7 @@ namespace GsaGH.Parameters {
       dup.Guid = new Guid(Guid.ToString());
       dup.ModelUnit = ModelUnit;
       dup._boundingBox = _boundingBox;
+      dup._materials = _materials;
       return dup;
     }
 

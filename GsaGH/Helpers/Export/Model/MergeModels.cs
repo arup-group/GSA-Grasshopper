@@ -98,23 +98,22 @@ namespace GsaGH.Helpers.Export {
         return c;
       }).ToList();
 
-      List<GsaSectionGoo> goosections = Import.Properties.GetSections(sDict,
-        model.AnalysisMaterials(), model.SectionModifiers());
-      var sections = goosections.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      var sections = appendModel.Properties.Sections.
+        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       sections.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      List<GsaProp2dGoo> gooprop2Ds
-        = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials(), axDict);
-      var prop2Ds = gooprop2Ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      
+      var prop2Ds = appendModel.Properties.Prop2ds.
+        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop2Ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      List<GsaProp3dGoo> gooprop3Ds
-        = Import.Properties.GetProp3ds(p3Dict, model.AnalysisMaterials());
-      var prop3Ds = gooprop3Ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      
+      var prop3Ds = appendModel.Properties.Prop3ds.
+        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop3Ds.Select(c => {
         c.Id = 0;
         return c;

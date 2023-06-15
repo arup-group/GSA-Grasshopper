@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
-using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 
-namespace GsaGH.Components {
+namespace GsaGH.Components.GraveyardComp {
   /// <summary>
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   public class GetProperties_OBSOLETE : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("f5926fb3-06e5-4b18-b037-6234fff16586");
+    public override Guid ComponentGuid => new Guid("e7914f27-ea03-48e4-b7bd-a87121141f1e");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetSection;
@@ -37,26 +38,36 @@ namespace GsaGH.Components {
         "2D Properties from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Properties", "PV",
         "3D Properties from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMaterialParameter(), "Custom Materials", "Mat",
+        "Custom Materials from GSA Model", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaModel = new GsaModel();
-      if (!da.GetData(0, ref gsaModel)) {
-        return;
-      }
+      GsaModelGoo modelGoo = null;
+      da.GetData(0, ref modelGoo);
 
-      Model model = gsaModel.Model;
+      var materials = new List<GsaMaterialGoo>();
+      materials.AddRange(
+        modelGoo.Value.Materials.SteelMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.ConcreteMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.FrpMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.AluminiumMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.TimberMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.GlassMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.FabricMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+      materials.AddRange(
+        modelGoo.Value.Materials.AnalysisMaterials.Values.Select(x => new GsaMaterialGoo(x)));
 
-      List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(),
-        model.AnalysisMaterials(), model.SectionModifiers());
-      List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(),
-        model.AnalysisMaterials(), model.Axes());
-      List<GsaProp3dGoo> prop3Ds
-        = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
-
-      da.SetDataList(0, sections);
-      da.SetDataList(1, prop2Ds);
-      da.SetDataList(2, prop3Ds);
+      da.SetDataList(0, modelGoo.Value.Properties.Sections);
+      da.SetDataList(1, modelGoo.Value.Properties.Prop2ds);
+      da.SetDataList(2, modelGoo.Value.Properties.Prop3ds);
+      da.SetDataList(3, materials);
     }
   }
 }

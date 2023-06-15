@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
@@ -14,7 +15,7 @@ namespace GsaGH.Helpers.Import {
     internal ReadOnlyDictionary<int, GsaMaterial> GlassMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> FabricMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> AnalysisMaterials { get; private set; }
-
+    
     internal Materials(Model model) {
       string concreteCodeName = model.ConcreteDesignCode();
       string steelCodeName = model.SteelDesignCode();
@@ -61,25 +62,25 @@ namespace GsaGH.Helpers.Import {
       id = gradeProp;
       switch (type) {
         case MaterialType.ALUMINIUM:
-          return AluminiumMaterials[id];
+          return AluminiumMaterials.TryGetValue(id, out GsaMaterial aluminium) ? aluminium : null;
 
         case MaterialType.CONCRETE:
-          return ConcreteMaterials[id];
+          return ConcreteMaterials.TryGetValue(id, out GsaMaterial concrete) ? concrete : null;
 
         case MaterialType.FABRIC:
-          return FabricMaterials[id];
+          return FabricMaterials.TryGetValue(id, out GsaMaterial fabric) ? fabric : null;
 
         case MaterialType.FRP:
-          return FrpMaterials[id];
+          return FrpMaterials.TryGetValue(id, out GsaMaterial frp) ? frp : null;
 
         case MaterialType.GLASS:
-          return GlassMaterials[id];
+          return GlassMaterials.TryGetValue(id, out GsaMaterial glass) ? glass : null;
 
         case MaterialType.STEEL:
-          return SteelMaterials[id];
+          return SteelMaterials.TryGetValue(id, out GsaMaterial steel) ? steel : null;
 
         case MaterialType.TIMBER:
-          return TimberMaterials[id];
+          return TimberMaterials.TryGetValue(id, out GsaMaterial timber) ? timber : null;
 
         default:
           return null;

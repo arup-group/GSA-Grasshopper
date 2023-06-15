@@ -97,15 +97,15 @@ namespace GsaGH.Helpers.Export {
       Nodes.ConvertNodes(nodes, ref apiNodes, ref apiaxes, modelUnit);
 
       // Convert GsaGH Sections & Materials to API Objects
-      var apiSections = new GsaGuidDictionary<Section>(gsa.Sections());
+      GsaGuidDictionary<Section> apiSections = Properties.GetSectionDictionary(model);
       var apiSectionModifiers = new GsaIntDictionary<SectionModifier>(gsa.SectionModifiers());
       var apiMaterials = new GsaGuidDictionary<AnalysisMaterial>(gsa.AnalysisMaterials());
       Sections.ConvertSection(sections, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
-      var apiProp2ds = new GsaGuidDictionary<Prop2D>(gsa.Prop2Ds());
+      GsaGuidDictionary<Prop2D> apiProp2ds = Properties.GetProp2dDictionary(model);
       Prop2ds.ConvertProp2d(prop2Ds, ref apiProp2ds, ref apiMaterials, ref apiaxes, modelUnit);
 
-      var apiProp3ds = new GsaGuidDictionary<Prop3D>(gsa.Prop3Ds());
+      GsaGuidDictionary<Prop3D> apiProp3ds = Properties.GetProp3dDictionary(model);
       Prop3ds.ConvertProp3d(prop3Ds, ref apiProp3ds, ref apiMaterials);
 
       // Convert GsaGH Elements to API Objects
