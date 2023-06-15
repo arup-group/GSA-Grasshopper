@@ -111,7 +111,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaSectionGoo(section));
       da.SetData(1, section.Id);
       da.SetData(2, prof);
-      da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
+      da.SetData(3, new GsaMaterialGoo(section.Material));
       da.SetData(4, poo);
       da.SetData(5, nm);
       da.SetData(6, colour);

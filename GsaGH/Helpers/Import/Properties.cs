@@ -16,8 +16,8 @@ namespace GsaGH.Helpers.Import {
       
       // TO-DO: GSA-6773: add way to get properties/materials by list
 
-      List<GsaMaterialGoo> customMaterials
-        = Materials.GetCustomMaterials(model.AnalysisMaterials());
+      var customMaterials = Materials.CreateMaterialsFromAPI(
+          model.AnalysisMaterials()).Select(x => new GsaMaterialGoo(x.Value)).ToList();
       List<GsaSectionGoo> sections = GetSections(model.Sections(),
         model.AnalysisMaterials(), model.SectionModifiers());
       List<GsaProp2dGoo> prop2ds = GetProp2ds(model.Prop2Ds(),

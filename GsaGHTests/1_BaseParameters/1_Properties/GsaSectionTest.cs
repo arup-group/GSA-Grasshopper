@@ -44,7 +44,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(areaExpected.Value, sect.Area.SquareMillimeters, 10);
 
       sect.Material.Id = 2;
-      sect.Material.MaterialType = GsaMaterial.MatType.Concrete;
+      //sect.Material.MaterialType = GsaMaterial.MatType.Concrete;
       sect.Name = "mariam";
       sect.Pool = 4;
       sect.BasicOffset = BasicOffset.TopRight;
@@ -88,10 +88,10 @@ namespace GsaGHTests.Parameters {
       double myarea1 = 7808.121;
       var orig = new GsaSection(profile) {
         MaterialId = 1,
-        Material = {
-          Id = 2,
-          MaterialType = GsaMaterial.MatType.Steel,
-        },
+        //Material = {
+        //  Id = 2,
+        //  MaterialType = GsaMaterial.MatType.Steel,
+        //},
         Name = "mariam",
         Pool = 12,
         BasicOffset = BasicOffset.BottomLeft,
@@ -106,7 +106,7 @@ namespace GsaGHTests.Parameters {
       var areaExpected = new Area(myarea2, AreaUnit.SquareMillimeter);
       orig.Profile = profile2;
       orig.Material.Id = 4;
-      orig.Material.MaterialType = GsaMaterial.MatType.Timber;
+      //orig.Material.MaterialType = GsaMaterial.MatType.Timber;
       orig.Name = "kris";
       orig.Pool = 99;
       orig.BasicOffset = BasicOffset.TopLeft;

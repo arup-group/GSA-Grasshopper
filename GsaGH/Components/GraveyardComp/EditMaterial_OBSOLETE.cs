@@ -72,89 +72,89 @@ namespace GsaGH.Components {
         }
 
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp)) {
-          switch (ghTyp.Value) {
-            case GH_Integer ghInt: {
-                switch (ghInt.Value) {
-                  case 1:
-                    material.MaterialType = GsaMaterial.MatType.Steel;
-                    break;
+        //if (da.GetData(2, ref ghTyp)) {
+        //  switch (ghTyp.Value) {
+        //    case GH_Integer ghInt: {
+        //        switch (ghInt.Value) {
+        //          case 1:
+        //            material.MaterialType = GsaMaterial.MatType.Steel;
+        //            break;
 
-                  case 2:
-                    material.MaterialType = GsaMaterial.MatType.Concrete;
-                    break;
+        //          case 2:
+        //            material.MaterialType = GsaMaterial.MatType.Concrete;
+        //            break;
 
-                  case 5:
-                    material.MaterialType = GsaMaterial.MatType.Frp;
-                    break;
+        //          case 5:
+        //            material.MaterialType = GsaMaterial.MatType.Frp;
+        //            break;
 
-                  case 3:
-                    material.MaterialType = GsaMaterial.MatType.Aluminium;
-                    break;
+        //          case 3:
+        //            material.MaterialType = GsaMaterial.MatType.Aluminium;
+        //            break;
 
-                  case 7:
-                    material.MaterialType = GsaMaterial.MatType.Timber;
-                    break;
+        //          case 7:
+        //            material.MaterialType = GsaMaterial.MatType.Timber;
+        //            break;
 
-                  case 4:
-                    material.MaterialType = GsaMaterial.MatType.Glass;
-                    break;
+        //          case 4:
+        //            material.MaterialType = GsaMaterial.MatType.Glass;
+        //            break;
 
-                  case 8:
-                    material.MaterialType = GsaMaterial.MatType.Fabric;
-                    break;
+        //          case 8:
+        //            material.MaterialType = GsaMaterial.MatType.Fabric;
+        //            break;
 
-                  case 0:
-                    material.MaterialType = GsaMaterial.MatType.Generic;
-                    break;
-                }
+        //          case 0:
+        //            material.MaterialType = GsaMaterial.MatType.Generic;
+        //            break;
+        //        }
 
-                break;
-              }
+        //        break;
+        //      }
 
-            case GH_String ghString: {
-                switch (ghString.Value.ToUpper()) {
-                  case "STEEL":
-                    material.MaterialType = GsaMaterial.MatType.Steel;
-                    break;
+        //    case GH_String ghString: {
+        //        switch (ghString.Value.ToUpper()) {
+        //          case "STEEL":
+        //            material.MaterialType = GsaMaterial.MatType.Steel;
+        //            break;
 
-                  case "CONCRETE":
-                    material.MaterialType = GsaMaterial.MatType.Concrete;
-                    break;
+        //          case "CONCRETE":
+        //            material.MaterialType = GsaMaterial.MatType.Concrete;
+        //            break;
 
-                  case "FRP":
-                    material.MaterialType = GsaMaterial.MatType.Frp;
-                    break;
+        //          case "FRP":
+        //            material.MaterialType = GsaMaterial.MatType.Frp;
+        //            break;
 
-                  case "ALUMINIUM":
-                    material.MaterialType = GsaMaterial.MatType.Aluminium;
-                    break;
+        //          case "ALUMINIUM":
+        //            material.MaterialType = GsaMaterial.MatType.Aluminium;
+        //            break;
 
-                  case "TIMBER":
-                    material.MaterialType = GsaMaterial.MatType.Timber;
-                    break;
+        //          case "TIMBER":
+        //            material.MaterialType = GsaMaterial.MatType.Timber;
+        //            break;
 
-                  case "GLASS":
-                    material.MaterialType = GsaMaterial.MatType.Glass;
-                    break;
+        //          case "GLASS":
+        //            material.MaterialType = GsaMaterial.MatType.Glass;
+        //            break;
 
-                  case "FABRIC":
-                    material.MaterialType = GsaMaterial.MatType.Fabric;
-                    break;
+        //          case "FABRIC":
+        //            material.MaterialType = GsaMaterial.MatType.Fabric;
+        //            break;
 
-                  case "GENERIC":
-                    material.MaterialType = GsaMaterial.MatType.Generic;
-                    break;
-                }
+        //          case "GENERIC":
+        //            material.MaterialType = GsaMaterial.MatType.Generic;
+        //            break;
+        //        }
 
-                break;
-              }
+        //        break;
+        //      }
 
-            default:
-              this.AddRuntimeError("Unable to convert Material Type input");
-              return;
-          }
-        }
+        //    default:
+        //      this.AddRuntimeError("Unable to convert Material Type input");
+        //      return;
+        //  }
+        //}
 
         int grd = 0;
         if (da.GetData(3, ref grd)) {

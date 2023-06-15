@@ -74,7 +74,7 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _prop3d = value;
-        _material = new GsaMaterial(this);
+        _material = Material.Duplicate();
         IsReferencedById = false;
       }
     }
@@ -110,7 +110,7 @@ namespace GsaGH.Parameters {
         _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
       }
 
-      _material = new GsaMaterial(this);
+      _material = Material.Duplicate();
     }
 
     public GsaProp3d Duplicate(bool cloneApiElement = false) {

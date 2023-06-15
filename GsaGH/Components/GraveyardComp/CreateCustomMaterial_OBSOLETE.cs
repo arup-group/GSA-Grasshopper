@@ -175,39 +175,39 @@ namespace GsaGH.Components {
 
       material.Id = 0;
 
-      switch (_mode) {
-        case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MatType.Generic;
-          break;
+      //switch (_mode) {
+      //  case FoldMode.Generic:
+      //    material.MaterialType = GsaMaterial.MatType.Generic;
+      //    break;
 
-        case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MatType.Steel;
-          break;
+      //  case FoldMode.Steel:
+      //    material.MaterialType = GsaMaterial.MatType.Steel;
+      //    break;
 
-        case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MatType.Concrete;
-          break;
+      //  case FoldMode.Concrete:
+      //    material.MaterialType = GsaMaterial.MatType.Concrete;
+      //    break;
 
-        case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MatType.Timber;
-          break;
+      //  case FoldMode.Timber:
+      //    material.MaterialType = GsaMaterial.MatType.Timber;
+      //    break;
 
-        case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MatType.Aluminium;
-          break;
+      //  case FoldMode.Aluminium:
+      //    material.MaterialType = GsaMaterial.MatType.Aluminium;
+      //    break;
 
-        case FoldMode.Frp:
-          material.MaterialType = GsaMaterial.MatType.Frp;
-          break;
+      //  case FoldMode.Frp:
+      //    material.MaterialType = GsaMaterial.MatType.Frp;
+      //    break;
 
-        case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MatType.Glass;
-          break;
+      //  case FoldMode.Glass:
+      //    material.MaterialType = GsaMaterial.MatType.Glass;
+      //    break;
 
-        case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MatType.Fabric;
-          break;
-      }
+      //  case FoldMode.Fabric:
+      //    material.MaterialType = GsaMaterial.MatType.Fabric;
+      //    break;
+      //}
 
       da.SetData(0, new GsaMaterialGoo(material));
     }

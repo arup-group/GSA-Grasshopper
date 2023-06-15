@@ -170,12 +170,8 @@ namespace GsaGH.Components {
           GsaMaterialGoo materialGoo = null;
           if (da.GetData(1, ref materialGoo)) {
             prop.Material = materialGoo.Value;
-          } else {
-            prop.Material = new GsaMaterial(2);
-          }
-        } else {
-          prop.Material = new GsaMaterial(8);
-        }
+          } 
+        } 
       } else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (prop.SupportType != SupportType.Auto) {

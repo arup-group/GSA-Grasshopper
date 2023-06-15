@@ -161,7 +161,7 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _prop2d = value;
-        _material = new GsaMaterial(this);
+        _material = Material.Duplicate();
         IsReferencedById = false;
       }
     }
@@ -212,7 +212,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      _material = new GsaMaterial(this);
+      _material = Material.Duplicate();
     }
 
     public GsaProp2d Duplicate(bool cloneApiElement = false) {

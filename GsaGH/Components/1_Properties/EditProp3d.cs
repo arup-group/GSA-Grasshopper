@@ -91,7 +91,7 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaProp3dGoo(prop));
       da.SetData(1, prop.Id);
-      da.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
+      da.SetData(2, new GsaMaterialGoo(prop.Material));
       da.SetData(3, ax);
       da.SetData(4, nm);
       da.SetData(5, prop.Colour);

@@ -42,10 +42,10 @@ namespace GsaGHTests.Parameters {
         SupportType = SupportType.ThreeEdges,
         ReferenceEdge = 2,
       };
-      var mat = new GsaMaterial((int)materialType) {
-        Id = materialGradeProperty,
-      };
-      prop.Material = mat;
+      //var mat = new GsaMaterial((int)materialType) {
+      //  Id = materialGradeProperty,
+      //};
+      //prop.Material = mat;
 
       Assert.Equal(1, prop.AxisProperty);
       Assert.Equal(4, prop.Material.Id);
@@ -80,10 +80,10 @@ namespace GsaGHTests.Parameters {
         ReferenceSurface = referenceSurface,
         AdditionalOffsetZ = offset
       };
-      var mat = new GsaMaterial((int)materialType) {
-        Id = materialAnalysisProperty,
-      };
-      orig.Material = mat;
+      //var mat = new GsaMaterial((int)materialType) {
+      //  Id = materialAnalysisProperty,
+      //};
+      //orig.Material = mat;
 
       GsaProp2d dup = orig.Duplicate();
 
@@ -91,7 +91,7 @@ namespace GsaGHTests.Parameters {
       orig.AxisProperty = 1;
       orig.Material.Id = 4;
       orig.Material.Id = 42;
-      orig.Material.MaterialType = GsaMaterial.MatType.Fabric;
+      //orig.Material.MaterialType = GsaMaterial.MatType.Fabric;
       orig.Name = "kris";
       orig.Description = "less cool property";
       orig.Type = Property2D_Type.LOAD;

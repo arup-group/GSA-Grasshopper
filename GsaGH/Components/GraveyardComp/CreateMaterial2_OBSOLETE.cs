@@ -73,39 +73,39 @@ namespace GsaGH.Components.GraveyardComp {
         material.Id = grade;
       }
 
-      switch (_selectedItems[0]) {
-        case "Steel":
-          material.MaterialType = GsaMaterial.MatType.Steel;
-          break;
+      //switch (_selectedItems[0]) {
+      //  case "Steel":
+      //    material.MaterialType = GsaMaterial.MatType.Steel;
+      //    break;
 
-        case "Concrete":
-          material.MaterialType = GsaMaterial.MatType.Concrete;
-          break;
+      //  case "Concrete":
+      //    material.MaterialType = GsaMaterial.MatType.Concrete;
+      //    break;
 
-        case "Timber":
-          material.MaterialType = GsaMaterial.MatType.Timber;
-          break;
+      //  case "Timber":
+      //    material.MaterialType = GsaMaterial.MatType.Timber;
+      //    break;
 
-        case "Aluminium":
-          material.MaterialType = GsaMaterial.MatType.Aluminium;
-          break;
+      //  case "Aluminium":
+      //    material.MaterialType = GsaMaterial.MatType.Aluminium;
+      //    break;
 
-        case "FRP":
-          material.MaterialType = GsaMaterial.MatType.Frp;
-          break;
+      //  case "FRP":
+      //    material.MaterialType = GsaMaterial.MatType.Frp;
+      //    break;
 
-        case "Glass":
-          material.MaterialType = GsaMaterial.MatType.Glass;
-          break;
+      //  case "Glass":
+      //    material.MaterialType = GsaMaterial.MatType.Glass;
+      //    break;
 
-        case "Fabric":
-          material.MaterialType = GsaMaterial.MatType.Fabric;
-          break;
+      //  case "Fabric":
+      //    material.MaterialType = GsaMaterial.MatType.Fabric;
+      //    break;
 
-        default:
-          material.MaterialType = GsaMaterial.MatType.Generic;
-          break;
-      }
+      //  default:
+      //    material.MaterialType = GsaMaterial.MatType.Generic;
+      //    break;
+      //}
 
       da.SetData(0, new GsaMaterialGoo(material));
     }
