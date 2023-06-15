@@ -32,6 +32,5 @@ namespace GsaGH.Helpers.Export {
       }
       return propDict;
     }
-
   }
 }
