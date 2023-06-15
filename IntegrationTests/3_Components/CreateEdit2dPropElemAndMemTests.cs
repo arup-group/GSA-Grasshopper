@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
-  public class CreateEdit3dPropElemAndMemTests {
+  public class CreateEdit2dPropElemAndMemTests {
     public static GH_Document Document {
       get {
         if (document == null) {
@@ -20,19 +20,14 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error, "ExpectedError");
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
 
     [Theory]
-    [InlineData("MemId", 6)]
-    [InlineData("MemCount", 1)]
-    [InlineData("MemName", "Member")]
-    [InlineData("EditMemTest", 0)]
-    [InlineData("EditElemTest", 0)]
-    [InlineData("MeshCount", 120)]
-    [InlineData("ElemMaterial", "Timber")]
-    [InlineData("ElemGrp", 99)]
+    [InlineData("DiaphragmNodeCount", 5)]
+    [InlineData("EditElem2dInfo", 0)]
+    [InlineData("EditElem2dSet", 0)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

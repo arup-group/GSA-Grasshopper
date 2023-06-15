@@ -1,4 +1,6 @@
-﻿using GsaAPI;
+﻿using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Properties;
@@ -7,6 +9,7 @@ using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System.ComponentModel;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -36,6 +39,34 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(Property2D_Type.PLATE, output.Value.Prop2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2d.Thickness);
       Assert.Equal(0.5, output.Value.MeshSize);
+    }
+
+    [Fact]
+    public void InclusionLineTest() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(
+        comp, new LineCurve(new Point3d(1, 1, 0), new Point3d(9, 9, 0)), 2);
+
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Single(output.Value.InclusionLines);
+
+      ComponentTestHelper.SetInput(
+        comp, new LineCurve(new Point3d(9, 9, 0), new Point3d(1, 1, 0)), 2);
+      output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(2, output.Value.InclusionLines.Count);
+    }
+
+    [Fact]
+    public void InclusionPointTest() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new Point3d(9, 9, 0), 1);
+
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Single(output.Value.InclusionPoints);
+
+      ComponentTestHelper.SetInput(comp, new Point3d(1, 1, 0), 1);
+      output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(2, output.Value.InclusionPoints.Count);
     }
   }
 }
