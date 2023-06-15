@@ -70,7 +70,7 @@ namespace GsaGH.Parameters {
     }
     public List<string> Names {
       get => (from element in ApiElements where element != null select element.Name).ToList();
-      set => CloneApiElements(ApiObjectMember.Dummy, null, null, value);
+      set => CloneApiElements(ApiObjectMember.Name, null, null, value);
     }
     public Mesh NgonMesh { get; private set; } = new Mesh();
     public List<GsaOffset> Offsets {
@@ -78,13 +78,13 @@ namespace GsaGH.Parameters {
         => (from element in ApiElements where element != null
           select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
             element.Offset.Z)).ToList();
-      set => CloneApiElements(ApiObjectMember.Dummy, null, null, null, null, value);
+      set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
     }
     public List<double> OrientationAngles {
       get
         => (from element in ApiElements where element != null select element.OrientationAngle)
          .ToList();
-      set => CloneApiElements(ApiObjectMember.Dummy, null, null, null, value);
+      set => CloneApiElements(ApiObjectMember.OrientationAngle, null, null, null, value);
     }
     public List<int> ParentMembers {
       get {
@@ -103,7 +103,7 @@ namespace GsaGH.Parameters {
     public List<GsaProp3d> Prop3ds { get; set; } = new List<GsaProp3d>();
     public List<int> PropertyIDs {
       get => (from element in ApiElements where element != null select element.Property).ToList();
-      set => CloneApiElements(ApiObjectMember.Dummy, null, null, null, null, null, value);
+      set => CloneApiElements(ApiObjectMember.Property, null, null, null, null, null, value);
     }
     public List<List<int>> TopoInt { get; set; }
     public List<Point3d> Topology { get; set; }
@@ -121,7 +121,7 @@ namespace GsaGH.Parameters {
     }
     public List<ElementType> Types {
       get => (from element in ApiElements where element != null select element.Type).ToList();
-      set => CloneApiElements(ApiObjectMember.Dummy, null, null, null, null, null, null, value);
+      set => CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
     private Mesh _displayMesh;

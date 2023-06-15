@@ -12,7 +12,6 @@ using Microsoft.Data.Sqlite;
 namespace GsaGH.Helpers.GsaApi {
   /// <summary>
   ///   Class containing functions to interface with SQLite db files.
-  ///   In case of problems loading SQLite the singleton is executed in a separate AppDomain.
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class MicrosoftSQLiteReader : MarshalByRefObject {
@@ -21,20 +20,6 @@ namespace GsaGH.Helpers.GsaApi {
       = new Lazy<MicrosoftSQLiteReader>(Initialize);
 
     public MicrosoftSQLiteReader() { }
-
-    public static AppDomain CreateAppDomain(string friendlyName, string applicationBase) {
-      var ads = new AppDomainSetup {
-        ApplicationBase = applicationBase,
-        PrivateBinPath = @"runtimes\win-x64\native",
-        DisallowBindingRedirects = false,
-        DisallowCodeDownload = true,
-        ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
-      };
-
-      var ad = AppDomain.CreateDomain(friendlyName, null, ads);
-
-      return ad;
-    }
 
     public static MicrosoftSQLiteReader Initialize() {
       string codeBase = Assembly.GetCallingAssembly().CodeBase;
@@ -55,57 +40,12 @@ namespace GsaGH.Helpers.GsaApi {
 
       PostHog.Debug(properties);
 
-      try {
-        AppDomain.CurrentDomain.UnhandledException += UEHandler;
+      AppDomain.CurrentDomain.UnhandledException += UEHandler;
+
+      // this is a temporary fix for TDA
+      // needs more investigation!
+      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
         Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
-      } catch (Exception ex1) {
-        string exeAssembly = Assembly.GetCallingAssembly().FullName;
-
-        AppDomain ad2 = CreateAppDomain("SQLite AppDomain", pluginPath);
-        ad2.UnhandledException += UEHandler;
-
-        try {
-          PostHog.Debug(new Dictionary<string, object>() {
-            {
-              "source", "AppDomain"
-            }, {
-              "attempt", "first"
-            }, {
-              "exception", ex1.ToString()
-            }, {
-              "applicationBase", "pluginPath"
-            },
-          });
-
-          string fullName = typeof(MicrosoftSQLiteReader).FullName;
-          if (fullName != null) {
-            var reader = (MicrosoftSQLiteReader)ad2.CreateInstanceAndUnwrap(exeAssembly, fullName);
-
-            return reader;
-          }
-        } catch (Exception ex2) {
-          AppDomain ad3 = CreateAppDomain("SQLite AppDomain", codeBasePath);
-          ad3.UnhandledException += UEHandler;
-
-          PostHog.Debug(new Dictionary<string, object>() {
-            {
-              "source", "AppDomain"
-            }, {
-              "attempt", "second"
-            }, {
-              "exception", ex2.ToString()
-            }, {
-              "applicationBase", "codeBasePath"
-            },
-          });
-
-          string fullName = typeof(MicrosoftSQLiteReader).FullName;
-          if (fullName != null) {
-            var reader = (MicrosoftSQLiteReader)ad3.CreateInstanceAndUnwrap(exeAssembly, fullName);
-
-            return reader;
-          }
-        }
       }
 
       return new MicrosoftSQLiteReader();
