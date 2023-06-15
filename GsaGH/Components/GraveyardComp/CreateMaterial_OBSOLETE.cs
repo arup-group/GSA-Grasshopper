@@ -151,13 +151,13 @@ namespace GsaGH.Components {
       var ghAnal = new GH_Integer();
       if (da.GetData(0, ref ghAnal)) {
         GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
+        material.Id = anal;
       }
 
       var ghGrade = new GH_Integer();
       if (da.GetData(1, ref ghGrade)) {
         GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
-        material.GradeProperty = grade;
+        material.Id = grade;
       }
 
       switch (_mode) {

@@ -101,8 +101,8 @@ namespace GsaGH.Parameters {
         }
 
         _section.MaterialType = Materials.ConvertType(_material);
-        _section.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _section.MaterialGradeProperty = _material.GradeProperty;
+        _section.MaterialAnalysisProperty = _material.Id;
+        _section.MaterialGradeProperty = _material.Id;
         IsReferencedById = false;
       }
     }
@@ -111,7 +111,7 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         _section.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _section.MaterialAnalysisProperty;
+        _material.Id = _section.MaterialAnalysisProperty;
         IsReferencedById = false;
       }
     }

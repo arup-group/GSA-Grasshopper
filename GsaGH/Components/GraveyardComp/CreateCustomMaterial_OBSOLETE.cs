@@ -95,7 +95,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(CreateMaterial.MaterialTypes);
+      _dropDownItems.Add(CreateCustomMaterial.MaterialTypes);
       _selectedItems.Add(_mode.ToString());
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
@@ -140,14 +140,14 @@ namespace GsaGH.Components {
       var ghAnal = new GH_Integer();
       if (da.GetData(0, ref ghAnal)) {
         GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
+        material.Id = anal;
         if (anal == 0) {
           this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
             + Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }
       } else {
-        material.AnalysisProperty = -1;
+        material.Id = -1;
       }
 
       double poisson = 0.3;
@@ -173,7 +173,7 @@ namespace GsaGH.Components {
          .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
       };
 
-      material.GradeProperty = 0;
+      material.Id = 0;
 
       switch (_mode) {
         case FoldMode.Generic:

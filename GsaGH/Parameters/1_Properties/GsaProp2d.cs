@@ -68,8 +68,8 @@ namespace GsaGH.Parameters {
         }
 
         _prop2d.MaterialType = Materials.ConvertType(_material);
-        _prop2d.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _prop2d.MaterialGradeProperty = _material.GradeProperty;
+        _prop2d.MaterialAnalysisProperty = _material.Id;
+        _prop2d.MaterialGradeProperty = _material.Id;
         IsReferencedById = false;
       }
     }
@@ -79,7 +79,7 @@ namespace GsaGH.Parameters {
         CloneApiObject();
         IsReferencedById = false;
         _prop2d.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _prop2d.MaterialAnalysisProperty;
+        _material.Id = _prop2d.MaterialAnalysisProperty;
       }
     }
     public string Name {

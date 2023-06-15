@@ -43,13 +43,13 @@ namespace GsaGHTests.Parameters {
         ReferenceEdge = 2,
       };
       var mat = new GsaMaterial((int)materialType) {
-        GradeProperty = materialGradeProperty,
+        Id = materialGradeProperty,
       };
       prop.Material = mat;
 
       Assert.Equal(1, prop.AxisProperty);
-      Assert.Equal(4, prop.Material.GradeProperty);
-      Assert.Equal(0, prop.Material.AnalysisProperty);
+      Assert.Equal(4, prop.Material.Id);
+      Assert.Equal(0, prop.Material.Id);
       Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.Name);
@@ -81,7 +81,7 @@ namespace GsaGHTests.Parameters {
         AdditionalOffsetZ = offset
       };
       var mat = new GsaMaterial((int)materialType) {
-        AnalysisProperty = materialAnalysisProperty,
+        Id = materialAnalysisProperty,
       };
       orig.Material = mat;
 
@@ -89,8 +89,8 @@ namespace GsaGHTests.Parameters {
 
       orig.Id = 4;
       orig.AxisProperty = 1;
-      orig.Material.GradeProperty = 4;
-      orig.Material.AnalysisProperty = 42;
+      orig.Material.Id = 4;
+      orig.Material.Id = 42;
       orig.Material.MaterialType = GsaMaterial.MatType.Fabric;
       orig.Name = "kris";
       orig.Description = "less cool property";
@@ -101,8 +101,8 @@ namespace GsaGHTests.Parameters {
       orig.AdditionalOffsetZ = new Length(50.0, LengthUnit.Millimeter);
 
       Assert.Equal(0, dup.AxisProperty);
-      Assert.Equal(0, dup.Material.GradeProperty);
-      Assert.Equal(13, dup.Material.AnalysisProperty);
+      Assert.Equal(0, dup.Material.Id);
+      Assert.Equal(13, dup.Material.Id);
       Assert.Equal(MaterialType.UNDEF.ToString().ToPascalCase(),
         dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
@@ -113,8 +113,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter));
 
       Assert.Equal(1, orig.AxisProperty);
-      Assert.Equal(0, orig.Material.GradeProperty);
-      Assert.Equal(42, orig.Material.AnalysisProperty);
+      Assert.Equal(0, orig.Material.Id);
+      Assert.Equal(42, orig.Material.Id);
       Assert.Equal(MaterialType.FABRIC.ToString().ToPascalCase(),
         orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
