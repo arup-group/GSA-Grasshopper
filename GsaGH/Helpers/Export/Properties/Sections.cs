@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
@@ -10,7 +9,7 @@ namespace GsaGH.Helpers.Export {
     internal static int AddSection(
       GsaSection section, ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       Materials.AddMaterial(ref section, ref apiMaterials);
 
       int outId;
@@ -31,7 +30,7 @@ namespace GsaGH.Helpers.Export {
     internal static int ConvertSection(
       GsaSection section, ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (section == null) {
         return 0;
       }
@@ -46,7 +45,7 @@ namespace GsaGH.Helpers.Export {
     internal static void ConvertSection(
       List<GsaSection> sections, ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (sections == null) {
         return;
       }

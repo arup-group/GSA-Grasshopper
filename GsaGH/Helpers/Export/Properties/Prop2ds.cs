@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
@@ -12,7 +11,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static int AddProp2d(
       GsaProp2d prop, ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes,
+      ref Materials apiMaterials, ref Dictionary<int, Axis> existingAxes,
       LengthUnit unit) {
       Materials.AddMaterial(ref prop, ref apiMaterials);
       if (prop.AxisProperty == -2) {
@@ -51,7 +50,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static int ConvertProp2d(
       GsaProp2d prop2d, ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes,
+      ref Materials apiMaterials, ref Dictionary<int, Axis> existingAxes,
       LengthUnit unit) {
       if (prop2d == null) {
         return 0;
@@ -66,7 +65,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertProp2d(
       List<GsaProp2d> prop2Ds, ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes,
+      ref Materials apiMaterials, ref Dictionary<int, Axis> existingAxes,
       LengthUnit unit) {
       if (prop2Ds == null) {
         return;

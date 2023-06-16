@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Prop3ds {
 
     internal static int AddProp3d(
-      GsaProp3d prop, ref GsaGuidDictionary<Prop3D> apiProp3d,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      GsaProp3d prop, ref GsaGuidDictionary<Prop3D> apiProp3d, ref Materials apiMaterials) {
       Materials.AddMaterial(ref prop, ref apiMaterials);
 
       if (prop.Id <= 0) {
@@ -22,7 +20,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static int ConvertProp3d(
       GsaProp3d prop3d, ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (prop3d == null) {
         return 0;
       }
@@ -36,7 +34,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertProp3d(
       List<GsaProp3d> prop3Ds, ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (prop3Ds == null) {
         return;
       }

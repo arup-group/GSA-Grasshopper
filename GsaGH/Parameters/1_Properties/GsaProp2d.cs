@@ -67,7 +67,7 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _prop2d.MaterialType = Materials.ConvertType(_material);
+        _prop2d.MaterialType = Materials.GetMaterialType(_material);
         _prop2d.MaterialAnalysisProperty = _material.Id;
         _prop2d.MaterialGradeProperty = _material.Id;
         IsReferencedById = false;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
@@ -10,19 +9,18 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Members {
-
     internal static void ConvertMember1D(
       GsaMember1d member1d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       Member apiMember = member1d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
 
       string topo
         = CreateTopology(member1d.Topology, member1d.TopologyType, ref existingNodes, unit);
-      if (topo != string.Empty) {
+      if (topo != "") {
         try {
           apiMember.Topology = string.Copy(topo.Replace("  ", " "));
         } catch (Exception) {
@@ -49,7 +47,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Section> apiSections,
       ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (member1ds == null) {
         return;
       }
@@ -65,7 +63,7 @@ namespace GsaGH.Helpers.Export {
       GsaMember2d member2d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      ref Materials apiMaterials,
       ref Dictionary<int, Axis> existingAxes) {
       Member apiMember = member2d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member2d.MeshSize, unit).Meters;
@@ -111,7 +109,7 @@ namespace GsaGH.Helpers.Export {
       List<GsaMember2d> member2ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop2D> apiProp2ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials,
+      ref Materials apiMaterials,
       ref Dictionary<int, Axis> existingAxes) {
       if (member2ds == null) {
         return;
@@ -128,7 +126,7 @@ namespace GsaGH.Helpers.Export {
       GsaMember3d member3d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       Member apiMember = member3d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member3d.MeshSize, unit).Meters;
 
@@ -156,7 +154,7 @@ namespace GsaGH.Helpers.Export {
       List<GsaMember3d> member3ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref GsaGuidDictionary<Prop3D> apiProp3ds,
-      ref GsaGuidDictionary<AnalysisMaterial> apiMaterials) {
+      ref Materials apiMaterials) {
       if (member3ds == null) {
         return;
       }
@@ -180,7 +178,7 @@ namespace GsaGH.Helpers.Export {
     private static string CreateTopology(
       IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
-      string topo = string.Empty;
+      string topo = "";
       if (topology == null) {
         return topo;
       }
@@ -189,7 +187,7 @@ namespace GsaGH.Helpers.Export {
         if (topoType != null) {
           if (j > 0) {
             string topologyType = topoType[j];
-            if (topologyType == string.Empty | topologyType == " ") {
+            if (topologyType == "" | topologyType == " ") {
               topo += " ";
             } else {
               topo += topologyType.ToLower()

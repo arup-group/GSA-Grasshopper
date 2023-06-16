@@ -20,6 +20,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal("EN 1993-1-1:2005", kvp.Value.SteelDesignCodeName);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.False(kvp.Value.IsCustom);
       }
     }
 
@@ -35,6 +36,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal("EC2-1-1", kvp.Value.ConcreteDesignCodeName);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.False(kvp.Value.IsCustom);
       }
     }
 
@@ -49,6 +51,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal(GsaMaterial.MatType.Frp, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.False(kvp.Value.IsCustom);
       }
     }
 
@@ -63,6 +66,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal(GsaMaterial.MatType.Aluminium, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.False(kvp.Value.IsCustom);
       }
     }
 
@@ -77,6 +81,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal(GsaMaterial.MatType.Timber, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.False(kvp.Value.IsCustom);
       }
     }
 
@@ -91,6 +96,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal(GsaMaterial.MatType.Glass, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.False(kvp.Value.IsCustom);
       }
     }
 
@@ -104,6 +110,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.NotNull(kvp.Value.StandardMaterial);
         Assert.Equal(GsaMaterial.MatType.Fabric, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
+        Assert.False(kvp.Value.IsCustom);
         Assert.Throws<System.Reflection.TargetInvocationException>(
           () => GsaMaterialTest.DuplicateTest(kvp.Value));
       }
@@ -120,6 +127,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Throws<Exception>(() => kvp.Value.StandardMaterial);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.True(kvp.Value.IsCustom);
       }
     }
     

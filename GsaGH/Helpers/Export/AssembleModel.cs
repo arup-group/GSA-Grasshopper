@@ -70,7 +70,7 @@ namespace GsaGH.Helpers.Export {
       GH_Component owner) {
       var gsa = new Model();
       if (model != null) {
-        gsa = model.Model; 
+        gsa = model.Model;
         // delete any existing results unless we are only adding lists, tasks or combinations
         if ((nodes != null && nodes.Count > 0)
           || (elem1ds != null && elem1ds.Count > 0)
@@ -97,9 +97,9 @@ namespace GsaGH.Helpers.Export {
       Nodes.ConvertNodes(nodes, ref apiNodes, ref apiaxes, modelUnit);
 
       // Convert GsaGH Sections & Materials to API Objects
-      GsaGuidDictionary<Section> apiSections = Properties.GetSectionDictionary(model);
-      var apiSectionModifiers = new GsaIntDictionary<SectionModifier>(gsa.SectionModifiers());
-      var apiMaterials = new GsaGuidDictionary<AnalysisMaterial>(gsa.AnalysisMaterials());
+      (GsaGuidDictionary<Section> apiSections, GsaIntDictionary<SectionModifier> apiSectionModifiers)
+        = Properties.GetSectionAndModifierDictionary(model);
+      var apiMaterials = new Materials(model);
       Sections.ConvertSection(sections, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
       GsaGuidDictionary<Prop2D> apiProp2ds = Properties.GetProp2dDictionary(model);
@@ -150,10 +150,69 @@ namespace GsaGH.Helpers.Export {
       gsa.SetSectionModifiers(apiSectionModifiers.ReadOnlyDictionary);
       gsa.SetProp2Ds(apiProp2ds.ReadOnlyDictionary);
       gsa.SetProp3Ds(apiProp3ds.ReadOnlyDictionary);
-      ReadOnlyDictionary<int, AnalysisMaterial> materials = apiMaterials.ReadOnlyDictionary;
-      if (materials.Count > 0) {
-        foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
+
+      ReadOnlyDictionary<int, AnalysisMaterial> customMaterials =
+        apiMaterials.AnalysisMaterials.ReadOnlyDictionary;
+      if (customMaterials.Count > 0) {
+        foreach (KeyValuePair<int, AnalysisMaterial> mat in customMaterials) {
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, AluminiumMaterial> aluminiumMaterials =
+        apiMaterials.AluminiumMaterials.ReadOnlyDictionary;
+      if (aluminiumMaterials.Count > 0) {
+        foreach (KeyValuePair<int, AluminiumMaterial> mat in aluminiumMaterials) {
+          gsa.SetAluminiumMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, ConcreteMaterial> concreteMaterials =
+        apiMaterials.ConcreteMaterials.ReadOnlyDictionary;
+      if (concreteMaterials.Count > 0) {
+        foreach (KeyValuePair<int, ConcreteMaterial> mat in concreteMaterials) {
+          gsa.SetConcreteMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, FabricMaterial> fabricMaterials =
+        apiMaterials.FabricMaterials.ReadOnlyDictionary;
+      if (fabricMaterials.Count > 0) {
+        foreach (KeyValuePair<int, FabricMaterial> mat in fabricMaterials) {
+          gsa.SetFabricMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, FrpMaterial> frpMaterials =
+        apiMaterials.FrpMaterials.ReadOnlyDictionary;
+      if (frpMaterials.Count > 0) {
+        foreach (KeyValuePair<int, FrpMaterial> mat in frpMaterials) {
+          gsa.SetFrpMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, GlassMaterial> glassMaterials =
+        apiMaterials.GlassMaterials.ReadOnlyDictionary;
+      if (glassMaterials.Count > 0) {
+        foreach (KeyValuePair<int, GlassMaterial> mat in glassMaterials) {
+          gsa.SetGlassMaterial(mat.Key, mat.Value);
+        }
+      }
+
+
+      ReadOnlyDictionary<int, SteelMaterial> steelMaterials =
+        apiMaterials.SteelMaterials.ReadOnlyDictionary;
+      if (steelMaterials.Count > 0) {
+        foreach (KeyValuePair<int, SteelMaterial> mat in steelMaterials) {
+          gsa.SetSteelMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      ReadOnlyDictionary<int, TimberMaterial> timberMaterials =
+        apiMaterials.TimberMaterials.ReadOnlyDictionary;
+      if (timberMaterials.Count > 0) {
+        foreach (KeyValuePair<int, TimberMaterial> mat in timberMaterials) {
+          gsa.SetTimberMaterial(mat.Key, mat.Value);
         }
       }
 
@@ -249,7 +308,7 @@ namespace GsaGH.Helpers.Export {
       // Convert rest of GsaGH Lists to API Objects (nodes done prior to collapse coinciding nodes)
       // Convert GsaGH Node lists to API Objects
       var apiLists = new GsaGuidDictionary<EntityList>(gsa.Lists());
-      
+
       // Add lists embedded in loads as they may have ID > 0 set
       if (lists == null && loads != null && loads.Count > 0) {
         lists = Loads.GetLoadLists(loads);

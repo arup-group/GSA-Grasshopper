@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
       Timber,
       Fabric,
     }
-
+    public bool IsCustom { get; private set; } = false;
     public int Id {
       get => _id;
       set {
@@ -34,6 +34,10 @@ namespace GsaGH.Parameters {
     public string SteelDesignCodeName { get; private set; } = string.Empty;
     public string Name {
       get {
+        if (IsCustom) {
+          return _analysisMaterial.Name;
+        }
+
         switch (MaterialType) {
           case MatType.Aluminium:
             return _aluminiumMaterial.Name;
@@ -61,39 +65,43 @@ namespace GsaGH.Parameters {
         }
       }
       set {
-        _gradeName = Name;
-        switch (MaterialType) {
-          case MatType.Aluminium:
-            _aluminiumMaterial.Name = value;
-            break;
+        if (IsCustom) {
+          _analysisMaterial.Name = value;
+        } else {
+          _gradeName = Name;
+          switch (MaterialType) {
+            case MatType.Aluminium:
+              _aluminiumMaterial.Name = value;
+              break;
 
-          case MatType.Concrete:
-            _concreteMaterial.Name = value;
-            break;
+            case MatType.Concrete:
+              _concreteMaterial.Name = value;
+              break;
 
-          case MatType.Frp:
-            _frpMaterial.Name = value;
-            break;
+            case MatType.Frp:
+              _frpMaterial.Name = value;
+              break;
 
-          case MatType.Glass:
-            _glassMaterial.Name = value;
-            break;
+            case MatType.Glass:
+              _glassMaterial.Name = value;
+              break;
 
-          case MatType.Steel:
-            _steelMaterial.Name = value;
-            break;
+            case MatType.Steel:
+              _steelMaterial.Name = value;
+              break;
 
-          case MatType.Timber:
-            _timberMaterial.Name = value;
-            break;
+            case MatType.Timber:
+              _timberMaterial.Name = value;
+              break;
 
-          case MatType.Fabric:
-            _fabricMaterial.Name = value;
-            break;
+            case MatType.Fabric:
+              _fabricMaterial.Name = value;
+              break;
 
-          default:
-            _analysisMaterial.Name = value;
-            break;
+            default:
+              _analysisMaterial.Name = value;
+              break;
+          }
         }
         _guid = Guid.NewGuid();
       }
@@ -103,6 +111,10 @@ namespace GsaGH.Parameters {
     
     internal AnalysisMaterial AnalysisMaterial {
       get {
+        if (IsCustom) {
+          return _analysisMaterial;
+        }
+
         switch (MaterialType) {
           case MatType.Aluminium:
             return _aluminiumMaterial.AnalysisMaterial;
@@ -130,53 +142,58 @@ namespace GsaGH.Parameters {
         }
       }
       set {
-        if (MaterialType != MatType.Generic) {
+        if (IsCustom) {
+          _analysisMaterial = value;
+        } else {
           _gradeName = Name;
-        }
+          switch (MaterialType) {
+            case MatType.Aluminium:
+              _aluminiumMaterial.AnalysisMaterial = value;
+              _aluminiumMaterial.Name = value.Name;
+              break;
 
-        switch (MaterialType) {
-          case MatType.Aluminium:
-            _aluminiumMaterial.AnalysisMaterial = value;
-            _aluminiumMaterial.Name = value.Name;
-            break;
+            case MatType.Concrete:
+              _concreteMaterial.AnalysisMaterial = value;
+              _concreteMaterial.Name = value.Name;
+              break;
 
-          case MatType.Concrete:
-            _concreteMaterial.AnalysisMaterial = value;
-            _concreteMaterial.Name = value.Name;
-            break;
+            case MatType.Frp:
+              _frpMaterial.AnalysisMaterial = value;
+              _frpMaterial.Name = value.Name;
+              break;
 
-          case MatType.Frp:
-            _frpMaterial.AnalysisMaterial = value;
-            _frpMaterial.Name = value.Name;
-            break;
+            case MatType.Glass:
+              _glassMaterial.AnalysisMaterial = value;
+              _glassMaterial.Name = value.Name;
+              break;
 
-          case MatType.Glass:
-            _glassMaterial.AnalysisMaterial = value;
-            _glassMaterial.Name = value.Name;
-            break;
+            case MatType.Steel:
+              _steelMaterial.AnalysisMaterial = value;
+              _steelMaterial.Name = value.Name;
+              break;
 
-          case MatType.Steel:
-            _steelMaterial.AnalysisMaterial = value;
-            _steelMaterial.Name = value.Name;
-            break;
+            case MatType.Timber:
+              _timberMaterial.AnalysisMaterial = value;
+              _timberMaterial.Name = value.Name;
+              break;
 
-          case MatType.Timber:
-            _timberMaterial.AnalysisMaterial = value;
-            _timberMaterial.Name = value.Name;
-            break;
+            case MatType.Fabric:
+              throw new Exception("Fabric material is not isotropic");
 
-          case MatType.Fabric:
-            throw new Exception("Fabric material is not isotropic");
-
-          default:
-            _analysisMaterial = value;
-            break;
+            default:
+              _analysisMaterial = value;
+              break;
+          }
         }
         _guid = Guid.NewGuid();
       }
     }
     internal object StandardMaterial {
       get {
+        if (IsCustom) {
+          throw new Exception("Material is not a standard material.");
+        }
+
         switch (MaterialType) {
           case MatType.Aluminium:
             return _aluminiumMaterial
@@ -221,10 +238,11 @@ namespace GsaGH.Parameters {
 
     public GsaMaterial() { }
 
-    internal GsaMaterial(AnalysisMaterial apiMaterial, int id) {
-      MaterialType = MatType.Generic;
+    internal GsaMaterial(AnalysisMaterial apiMaterial, int id, MatType type = MatType.Generic) {
+      MaterialType = type;
       _analysisMaterial = apiMaterial;
       _id = id;
+      IsCustom = true;
     }
 
     internal GsaMaterial(AluminiumMaterial apiMaterial, int id) {
