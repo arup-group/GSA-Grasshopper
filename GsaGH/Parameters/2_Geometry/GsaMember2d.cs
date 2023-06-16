@@ -166,15 +166,19 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaMember2d(
-      Member member, int id, List<Point3d> topology, List<string> topologyType,
-      List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType,
-      List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,
-      List<Point3d> includePoints, IReadOnlyDictionary<int, Prop2D> properties,
-      IReadOnlyDictionary<int, AnalysisMaterial> materials, IReadOnlyDictionary<int, Axis> axDict,
+      KeyValuePair<int, Member> mem,
+      List<Point3d> topology, 
+      List<string> topologyType,
+      List<List<Point3d>> voidTopology, 
+      List<List<string>> voidTopologyType,
+      List<List<Point3d>> inlcusionLinesTopology, 
+      List<List<string>> inclusionTopologyType,
+      List<Point3d> includePoints, 
+      GsaProp2d prop2d,
       LengthUnit modelUnit) {
-      ApiMember = member;
-      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      _id = id;
+      ApiMember = mem.Value;
+      MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      _id = mem.Key;
 
       if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
       {
@@ -231,10 +235,9 @@ namespace GsaGH.Parameters {
       IncLinesTopologyType = inclusionTopologyType;
       InclusionPoints = includePoints;
 
-      Brep = RhinoConversions.BuildBrep(PolyCurve, _voidCrvs,
-        new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
+      Brep = RhinoConversions.BuildBrep(PolyCurve, _voidCrvs, 0.001);
 
-      Prop2d = new GsaProp2d(properties, ApiMember.Property, materials, axDict, modelUnit);
+      Prop2d = prop2d;
     }
 
     public GsaMember2d Duplicate(bool cloneApiMember = false) {

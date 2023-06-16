@@ -650,7 +650,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        Mesh tempmesh = Elements.ConvertElement3D(element, nodes, lengthUnit);
+        Mesh tempmesh = Elements.GetMeshFromApiElement3d(element, nodes, lengthUnit);
         if (tempmesh == null) {
           return;
         }

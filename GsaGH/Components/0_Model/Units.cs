@@ -92,7 +92,7 @@ namespace GsaGH.Components {
       GsaModel model = null;
       int i = 0;
       if (da.GetData(i++, ref gooModel)) {
-        model = gooModel.Value.Duplicate(true);
+        model = gooModel.Value.Clone();
       }
       GsaAPI.UiUnits units = model.Units;
 

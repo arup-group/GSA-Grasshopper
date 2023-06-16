@@ -183,20 +183,22 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaMember1d(
-      Member member, int id, List<Point3d> topology, List<string> topoType,
-      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
-      ApiMember = member;
-      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      _id = id;
+      KeyValuePair<int, Member> mem,
+      List<Point3d> topology, 
+      List<string> topoType,
+      ReadOnlyCollection<double> localAxis, 
+      GsaSection section,
+      LengthUnit modelUnit) {
+      ApiMember = mem.Value;
+      MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      _id = mem.Key;
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
       Topology = topology;
       TopologyType = topoType;
       _rel1 = new GsaBool6(ApiMember.GetEndRelease(0).Releases);
       _rel2 = new GsaBool6(ApiMember.GetEndRelease(1).Releases);
-      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
-      Section = new GsaSection(sDict, ApiMember.Property, modDict, matDict);
+      LocalAxes = new GsaLocalAxes(localAxis);
+      Section = section;
       UpdatePreview();
     }
 

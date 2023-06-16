@@ -60,7 +60,7 @@ namespace GsaGH.Components {
       GsaModelGoo gooModel = null;
       GsaModel model = null;
       if (da.GetData(0, ref gooModel)) {
-        model = gooModel.Value.Duplicate(true);
+        model = gooModel.Value.Clone();
       }
       GsaAPI.Titles titles = model.Titles;
 

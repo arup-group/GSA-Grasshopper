@@ -1,10 +1,6 @@
-﻿using GsaGH.Parameters;
+﻿using GsaAPI;
 using GsaGH.Helpers.Import;
 using Xunit;
-using System.Collections.Generic;
-using GsaGHTests.Parameters;
-using System;
-using GsaAPI;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]
@@ -65,8 +61,7 @@ namespace GsaGHTests.Helpers.Import {
       Duplicates.AreEqual(materials.GlassMaterials[1], properties.Prop3ds[6].Value.Material);
     }
 
-
-    private static GsaAPI.Model ImportPropertiesMotherModel() {
+    internal static GsaAPI.Model ImportPropertiesMotherModel() {
       GsaAPI.Model model = MaterialsTest.ImportMaterialsMotherModel();
 
       model.AddSection(new Section() {

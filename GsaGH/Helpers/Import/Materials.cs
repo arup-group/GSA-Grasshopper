@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
@@ -38,19 +37,16 @@ namespace GsaGH.Helpers.Import {
       AnalysisMaterials = CreateMaterialsFromAPI(model.AnalysisMaterials());
     }
 
-    internal GsaMaterial GetMaterial(GsaSection section) {
-      Section s = section.ApiSection;
+    internal GsaMaterial GetMaterial(Section s) {
       return GetMaterial(s.MaterialType, s.MaterialAnalysisProperty, s.MaterialGradeProperty);
     }
 
-    internal GsaMaterial GetMaterial(GsaProp2d prop2d) {
-      Prop2D s = prop2d.ApiProp2d;
-      return GetMaterial(s.MaterialType, s.MaterialAnalysisProperty, s.MaterialGradeProperty);
+    internal GsaMaterial GetMaterial(Prop2D p) {
+      return GetMaterial(p.MaterialType, p.MaterialAnalysisProperty, p.MaterialGradeProperty);
     }
 
-    internal GsaMaterial GetMaterial(GsaProp3d prop3d) {
-      Prop3D s = prop3d.ApiProp3d;
-      return GetMaterial(s.MaterialType, s.MaterialAnalysisProperty, s.MaterialGradeProperty);
+    internal GsaMaterial GetMaterial(Prop3D p) {
+      return GetMaterial(p.MaterialType, p.MaterialAnalysisProperty, p.MaterialGradeProperty);
     }
 
     private GsaMaterial GetMaterial(MaterialType type, int analysisProp, int gradeProp) {

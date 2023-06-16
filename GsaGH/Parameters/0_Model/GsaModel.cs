@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers.GsaApi.EnumMappings;
@@ -24,7 +26,7 @@ namespace GsaGH.Parameters {
         return _boundingBox;
       }
     }
-    public LengthUnit ModelUnit { 
+    public LengthUnit ModelUnit {
       get => _lengthUnit;
       set {
         _lengthUnit = value;
@@ -36,34 +38,30 @@ namespace GsaGH.Parameters {
     public Model Model { get; set; } = new Model();
     internal GsaAPI.Titles Titles => Model.Titles();
     internal GsaAPI.UiUnits Units => Model.UiUnits();
-    internal Materials Materials {
-      get {
-        if (_materials == null) {
-          _materials = new Materials(Model);
-        }
-        return _materials;
-      }
-    }
-    internal Helpers.Import.Properties Properties {
-      get {
-        if (_properties == null) {
-          _properties = new Helpers.Import.Properties(Model, Materials);
-        }
-        return _properties;
-      }
-    }
-    private Materials _materials;
-    private Helpers.Import.Properties _properties;
+    internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiElementLocalAxes { get; }
+    internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiMemberLocalAxes { get; }
+    internal ReadOnlyDictionary<int, Node> ApiNodes { get; }
+    internal ReadOnlyDictionary<int, Axis> ApiAxis { get; }
+    internal Materials Materials { get; }
+    internal Helpers.Import.Properties Properties { get; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
 
-    public GsaModel() { 
+    public GsaModel() {
       SetUserDefaultUnits(Model.UiUnits());
     }
 
     internal GsaModel(Model model) {
       Model = model;
+      ApiNodes = Model.Nodes();
+      ApiAxis = Model.Axes();
       _lengthUnit = UnitMapping.GetUnit(model.UiUnits().LengthLarge);
+      Materials = new Materials(Model);
+      Properties = new Helpers.Import.Properties(Model, Materials);
+      ApiMemberLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
+                Model.Members().Keys.ToDictionary(id => id, id => Model.MemberDirectionCosine(id)));
+      ApiElementLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
+            Model.Elements().Keys.ToDictionary(id => id, id => Model.ElementDirectionCosine(id)));
     }
 
     /// <summary>
@@ -71,35 +69,17 @@ namespace GsaGH.Parameters {
     /// </summary>
     /// <returns>Returns a clone of this model with a new GUID</returns>
     public GsaModel Clone() {
-      var clone = new GsaModel {
-        Model = Model.Clone(),
+      var clone = new GsaModel(Model.Clone()) {
         FileNameAndPath = FileNameAndPath,
         ModelUnit = ModelUnit,
         Guid = Guid.NewGuid(),
         _boundingBox = _boundingBox,
-        _materials = _materials,
       };
       return clone;
     }
 
-    public GsaModel Duplicate(bool copy = false) {
-      if (copy) {
-        return Clone();
-      }
-
-      // create shallow copy
-      var dup = new GsaModel {
-        Model = Model,
-      };
-      if (FileNameAndPath != null) {
-        dup.FileNameAndPath = FileNameAndPath;
-      }
-
-      dup.Guid = new Guid(Guid.ToString());
-      dup.ModelUnit = ModelUnit;
-      dup._boundingBox = _boundingBox;
-      dup._materials = _materials;
-      return dup;
+    public GsaModel Duplicate() {
+      return this;
     }
 
     public override string ToString() {
@@ -126,7 +106,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static void SetUserDefaultUnits(UiUnits uiUnits) {
-      uiUnits.Acceleration 
+      uiUnits.Acceleration
         = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.AccelerationUnit);
       uiUnits.Angle
        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.AngleUnit);

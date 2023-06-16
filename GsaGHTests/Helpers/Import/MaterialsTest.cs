@@ -1,10 +1,10 @@
-﻿using GsaGH.Parameters;
-using GsaGH.Helpers.Import;
-using Xunit;
+﻿using System;
 using System.Collections.Generic;
-using GsaGHTests.Parameters;
-using System;
 using GsaAPI.Materials;
+using GsaGH.Parameters;
+using GsaGH.Helpers.Import;
+using GsaGHTests.Parameters;
+using Xunit;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]

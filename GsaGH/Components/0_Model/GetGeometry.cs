@@ -510,27 +510,8 @@ namespace GsaGH.Components {
           }
         }
 
-        Model m = modelGoo.Value.Model.Clone();
-        ReadOnlyDictionary<int, Node> nDict = m.Nodes();
-        ReadOnlyDictionary<int, Axis> axDict = m.Axes();
-        ReadOnlyDictionary<int, Node> allNDict
-          = (nodeList.ToLower() == "all") ? nDict : m.Nodes(nodeList);
-        ReadOnlyDictionary<int, Element> eDict = m.Elements(elemList);
-        ReadOnlyDictionary<int, Member> mDict = m.Members(memList);
-        ReadOnlyDictionary<int, Section> sDict = m.Sections();
-        ReadOnlyDictionary<int, SectionModifier> modDict = m.SectionModifiers();
-        ReadOnlyDictionary<int, Prop2D> pDict = m.Prop2Ds();
-        ReadOnlyDictionary<int, Prop3D> p3Dict = m.Prop3Ds();
-        ReadOnlyDictionary<int, AnalysisMaterial> amDict = m.AnalysisMaterials();
-
-        var elementLocalAxesDict
-          = eDict.Keys.ToDictionary(id => id, id => m.ElementDirectionCosine(id));
-        var memberLocalAxesDict
-          = mDict.Keys.ToDictionary(id => id, id => m.MemberDirectionCosine(id));
-
         tsk = Task.Run(
-          () => Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
-            amDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
+          () => Compute(modelGoo.Value, nodeList, elemList, memList), CancelToken);
 
 
         TaskList.Add(tsk);
@@ -548,28 +529,7 @@ namespace GsaGH.Components {
         string memList = "all";
         data.GetData(3, ref memList);
 
-        Model m = modelGoo.Value.Model.Clone();
-        ReadOnlyDictionary<int, Node> nDict = m.Nodes();
-        ReadOnlyDictionary<int, Axis> axDict = m.Axes();
-        ReadOnlyDictionary<int, Node> allNDict
-          = (nodeList.ToLower() == "all") ? nDict : m.Nodes(nodeList);
-        ReadOnlyDictionary<int, Element> eDict = m.Elements(elemList);
-        ReadOnlyDictionary<int, Member> mDict = m.Members(memList);
-        memberKeys = mDict.Keys.ToList();
-        ReadOnlyDictionary<int, Section> sDict = m.Sections();
-        ReadOnlyDictionary<int, SectionModifier> modDict = m.SectionModifiers();
-        ReadOnlyDictionary<int, Prop2D> pDict = m.Prop2Ds();
-        ReadOnlyDictionary<int, Prop3D> p3Dict = m.Prop3Ds();
-        ReadOnlyDictionary<int, AnalysisMaterial> amDict = m.AnalysisMaterials();
-
-        var elementLocalAxesDict
-          = eDict.Keys.ToDictionary(id => id, id => m.ElementDirectionCosine(id));
-        var memberLocalAxesDict
-          = mDict.Keys.ToDictionary(id => id, id => m.MemberDirectionCosine(id));
-
-        results = Compute(nDict, axDict, allNDict, eDict, mDict, sDict, modDict, pDict, p3Dict,
-          amDict, elementLocalAxesDict, memberLocalAxesDict);
-
+        results = Compute(modelGoo.Value, nodeList, elemList, memList);
       }
 
       if (results is null) {
@@ -730,41 +690,36 @@ namespace GsaGH.Components {
       }
     }
 
-    private SolveResults Compute(
-      ReadOnlyDictionary<int, Node> allnDict, ReadOnlyDictionary<int, Axis> axDict,
-      ReadOnlyDictionary<int, Node> nDict, ReadOnlyDictionary<int, Element> eDict,
-      ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, Prop2D> pDict,
-      ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
-      Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict) {
+    private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) { 
       var results = new SolveResults();
       var steps = new List<int> {
-        0,
-        1,
-        2,
+        0, 1, 2,
       };
 
       try {
         Parallel.ForEach(steps, i => {
           switch (i) {
             case 0:
-              results.Nodes = Nodes.GetNodes(nDict, _lengthUnit, axDict);
+              results.Nodes = Nodes.GetNodes(
+                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList), 
+                model.ModelUnit, 
+                model.ApiAxis);
               results.DisplaySupports
                 = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
               break;
 
             case 1:
-              (results.Elem1ds, results.Elem2ds, results.Elem3ds) = Elements.GetElements(
-                eDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict,
-                axDict, _lengthUnit,
-                false);
+              var elements = new Elements(model, elemList);
+              results.Elem1ds = elements.Element1ds;
+              results.Elem2ds = elements.Element2ds;
+              results.Elem3ds = elements.Element3ds;
               break;
 
             case 2:
-              (results.Mem1ds, results.Mem2ds, results.Mem3ds) = Members.GetMembers(mDict, allnDict,
-                sDict, pDict, p3Dict, matDict, modDict, memberLocalAxesDict, axDict, _lengthUnit,
-                false, this);
+              var members = new Members(model, memList, this);
+              results.Mem1ds = members.Member1ds; 
+              results.Mem2ds = members.Member2ds; 
+              results.Mem3ds = members.Member3ds;
               break;
           }
         });

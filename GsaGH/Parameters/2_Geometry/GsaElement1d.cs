@@ -155,24 +155,25 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaElement1d(
-      IReadOnlyDictionary<int, Element> eDict, int id, IReadOnlyDictionary<int, Node> nDict,
-      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
-      Id = id;
-      ApiElement = eDict[id];
+      KeyValuePair<int, Element> element,
+      IReadOnlyDictionary<int, Node> nodes,
+      GsaSection section,
+      ReadOnlyCollection<double> localAxes,
+      LengthUnit modelUnit) {
+      Id = element.Key;
+      ApiElement = element.Value;
       _rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);
       _rel2 = new GsaBool6(ApiElement.GetEndRelease(1).Releases);
       if (ApiElement.OrientationNode > 0) {
         _orientationNode
-          = new GsaNode(Nodes.Point3dFromNode(nDict[ApiElement.OrientationNode], modelUnit));
+          = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
       }
 
       _line = new LineCurve(new Line(
-        Nodes.Point3dFromNode(nDict[ApiElement.Topology[0]], modelUnit),
-        Nodes.Point3dFromNode(nDict[ApiElement.Topology[1]], modelUnit)));
-      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
-      Section = new GsaSection(sDict, ApiElement.Property, modDict, matDict);
+        Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
+        Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
+      LocalAxes = new GsaLocalAxes(localAxes);
+      Section = section;
       UpdatePreview();
     }
 

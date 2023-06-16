@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
@@ -19,7 +20,31 @@ namespace GsaGH.Helpers.Import {
       Prop3ds = CreateProp3dsFromAPI(model.Prop3Ds(), materials);
     }
 
-    internal static ReadOnlyDictionary<int, GsaSectionGoo> CreateSectionsFromAPI(
+    internal GsaSection GetSection(Element e) {
+      return Sections.TryGetValue(e.Property, out GsaSectionGoo section) ? section.Value : null;
+    }
+
+    internal GsaSection GetSection(Member m) {
+      return Sections.TryGetValue(m.Property, out GsaSectionGoo section) ? section.Value : null;
+    }
+
+    internal GsaProp2d GetProp2d(Element e) {
+      return Prop2ds.TryGetValue(e.Property, out GsaProp2dGoo prop) ? prop.Value : null;
+    }
+
+    internal GsaProp2d GetProp2d(Member m) {
+      return Prop2ds.TryGetValue(m.Property, out GsaProp2dGoo prop) ? prop.Value : null;
+    }
+
+    internal GsaProp3d GetProp3d(Element e) {
+      return Prop3ds.TryGetValue(e.Property, out GsaProp3dGoo prop) ? prop.Value : null;
+    }
+
+    internal GsaProp3d GetProp3d(Member m) {
+      return Prop3ds.TryGetValue(m.Property, out GsaProp3dGoo prop) ? prop.Value : null;
+    }
+
+    private static ReadOnlyDictionary<int, GsaSectionGoo> CreateSectionsFromAPI(
       IReadOnlyDictionary<int, Section> sections,
       Materials materials,
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
@@ -30,7 +55,7 @@ namespace GsaGH.Helpers.Import {
       return new ReadOnlyDictionary<int, GsaSectionGoo>(dict);
     }
 
-    internal static ReadOnlyDictionary<int, GsaProp2dGoo> CreateProp2dsFromAPI(
+    private static ReadOnlyDictionary<int, GsaProp2dGoo> CreateProp2dsFromAPI(
       IReadOnlyDictionary<int, Prop2D> props,
       Materials materials,
       IReadOnlyDictionary<int, Axis> axes = null) {
@@ -41,7 +66,7 @@ namespace GsaGH.Helpers.Import {
       return new ReadOnlyDictionary<int, GsaProp2dGoo>(dict);
     }
 
-    internal static ReadOnlyDictionary<int, GsaProp3dGoo> CreateProp3dsFromAPI(
+    private static ReadOnlyDictionary<int, GsaProp3dGoo> CreateProp3dsFromAPI(
       IReadOnlyDictionary<int, Prop3D> props,
       Materials materials) {
       var dict = new Dictionary<int, GsaProp3dGoo>();
@@ -57,8 +82,8 @@ namespace GsaGH.Helpers.Import {
         IReadOnlyDictionary<int, Axis> axes) {
       var prop = new GsaProp2d(prop2d.Key) {
         ApiProp2d = prop2d.Value,
+        Material = materials.GetMaterial(prop2d.Value),
       };
-      prop.Material = materials.GetMaterial(prop);
 
       // Axis property 0 = Global, -1 = Topological
       if (prop.ApiProp2d.AxisProperty > 0) {
@@ -79,8 +104,8 @@ namespace GsaGH.Helpers.Import {
 
       var prop = new GsaProp3d(prop3d.Key) {
         ApiProp3d = prop3d.Value,
+        Material = materials.GetMaterial(prop3d.Value)
       };
-      prop.Material = materials.GetMaterial(prop);
 
       return new GsaProp3dGoo(prop);
     }
@@ -91,8 +116,8 @@ namespace GsaGH.Helpers.Import {
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
       var sect = new GsaSection(section.Key) {
         ApiSection = section.Value,
+        Material = materials.GetMaterial(section.Value)
       };
-      sect.Material = materials.GetMaterial(sect);
 
       if (sectionModifiers.Keys.Contains(section.Key)) {
         sect.Modifier = new GsaSectionModifier(sectionModifiers[section.Key]);

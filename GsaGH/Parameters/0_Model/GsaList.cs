@@ -443,10 +443,10 @@ namespace GsaGH.Parameters {
           _properties.prop2ds = new List<GsaProp2dGoo>();
           _properties.prop3ds = new List<GsaProp3dGoo>();
 
-          _elements = Elements.GetElements(_model.Model.Elements(Definition), _model.Model.Nodes(),
-            _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
-            _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(), elementLocalAxesDict,
-            _model.Model.Axes(), unit, false);
+          var elements = new Elements(_model, Definition);
+          _elements.e1d = elements.Element1ds;
+          _elements.e2d = elements.Element2ds;
+          _elements.e3d = elements.Element3ds;
           break;
 
         case EntityType.Member:
@@ -460,10 +460,10 @@ namespace GsaGH.Parameters {
           _properties.prop2ds = new List<GsaProp2dGoo>();
           _properties.prop3ds = new List<GsaProp3dGoo>();
 
-          _members = Members.GetMembers(_model.Model.Members(Definition), _model.Model.Nodes(),
-            _model.Model.Sections(), _model.Model.Prop2Ds(), _model.Model.Prop3Ds(),
-            _model.Model.AnalysisMaterials(), _model.Model.SectionModifiers(), memberLocalAxesDict,
-            _model.Model.Axes(), unit, false);
+          var members = new Members(_model, Definition);
+          _members.m1d = members.Member1ds;
+          _members.m2d = members.Member2ds;
+          _members.m3d = members.Member3ds;
           break;
 
         case EntityType.Case:

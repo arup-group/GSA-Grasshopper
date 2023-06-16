@@ -203,21 +203,35 @@ namespace GsaGH.Helpers.GH {
         Type = MemberType.GENERIC_2D,
       };
 
-      Model model = AssembleModel.Assemble(null, null, nodes, elem1ds, null, null, mem1ds,
+      Model model = AssembleModel.Assemble(
+        null,
+        null,
+        nodes,
+        elem1ds,
+        null,
+        null,
+        mem1ds,
         new List<GsaMember2d> {
           mem,
-        }, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        unit,
+        tolerance,
+        true,
+        null);
 
-      ReadOnlyDictionary<int, Element> elementDict = model.Elements();
-      var elementLocalAxesDict
-        = elementDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
+      var tempModel = new GsaModel(model);
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
-      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
-      ConcurrentBag<GsaElement3dGoo> e3d) = Elements.GetElements(elementDict, nodeDict,
-        model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(),
-        model.SectionModifiers(), elementLocalAxesDict, model.Axes(), unit, false);
+      var elements = new Elements(tempModel);
 
-      var elem2dgoo = e2d.OrderBy(item => item.Value.Ids).ToList();
+      var elem2dgoo = elements.Element2ds.OrderBy(item => item.Value.Ids).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;
 
       Surface flat = flattened[0].Surfaces[0];
@@ -254,36 +268,24 @@ namespace GsaGH.Helpers.GH {
         return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
       }
 
-      {
-        outElem1ds = new List<GsaElement1d>();
-        ReadOnlyDictionary<int, Element> elemDict = model.Elements();
-        ReadOnlyDictionary<int, Section> sDict = model.Sections();
-        ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
-        ReadOnlyDictionary<int, AnalysisMaterial> aDict = model.AnalysisMaterials();
-        elementLocalAxesDict
-          = elemDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
-        foreach (KeyValuePair<int, Element> kvp in elemDict) {
-          Element elem = kvp.Value;
-          if (elem.Topology.Count != 2) {
-            continue;
-          }
-
-          Vector3 posS = nodeDict[elem.Topology[0]].Position;
-          var start = new Point3d(posS.X, posS.Y, posS.Z);
-          flat.ClosestPoint(start, out double us, out double vs);
-          Point3d mapPts = orig.PointAt(us, vs);
-          Vector3 posE = nodeDict[elem.Topology[1]].Position;
-          var end = new Point3d(posE.X, posE.Y, posE.Z);
-          flat.ClosestPoint(end, out double ue, out double ve);
-          Point3d mapPte = orig.PointAt(ue, ve);
-          var elem1d = new GsaElement1d(elemDict, kvp.Key, nodeDict, sDict, modDict, aDict,
-            elementLocalAxesDict, unit) {
-            Line = new LineCurve(mapPts, mapPte),
-          };
-          elem1d.Section = elem1d.ApiElement.ParentMember.Member > 0 ?
-            memSections[elem1d.ApiElement.ParentMember.Member] : elemSections[kvp.Key];
-          outElem1ds.Add(elem1d);
+      outElem1ds = new List<GsaElement1d>();
+      var element1ds = elements.Element1ds.ToDictionary(x => x.Value.Id, x => x.Value);
+      foreach (KeyValuePair<int, Element> kvp in model.Elements()) {
+        Element elem = kvp.Value;
+        if (elem.Topology.Count != 2) {
+          continue;
         }
+
+        Vector3 posS = nodeDict[elem.Topology[0]].Position;
+        var start = new Point3d(posS.X, posS.Y, posS.Z);
+        flat.ClosestPoint(start, out double us, out double vs);
+        Point3d mapPts = orig.PointAt(us, vs);
+        Vector3 posE = nodeDict[elem.Topology[1]].Position;
+        var end = new Point3d(posE.X, posE.Y, posE.Z);
+        flat.ClosestPoint(end, out double ue, out double ve);
+        Point3d mapPte = orig.PointAt(ue, ve);
+        element1ds[kvp.Key].Line = new LineCurve(mapPts, mapPte);
+        outElem1ds.Add(element1ds[kvp.Key]);
       }
 
       return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
