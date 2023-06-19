@@ -2,6 +2,8 @@
 using GsaAPI.Materials;
 using GsaGH.Parameters;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGH.Helpers.Export {
@@ -16,14 +18,84 @@ namespace GsaGH.Helpers.Export {
     internal GsaGuidDictionary<AnalysisMaterial> AnalysisMaterials;
 
     internal Materials(GsaModel model) {
-      SteelMaterials = Properties.GetSteelMaterialDictionary(model);
-      ConcreteMaterials = Properties.GetConcreteMaterialDictionary(model);
-      FrpMaterials = Properties.GetFrpMaterialDictionary(model);
-      AluminiumMaterials = Properties.GetAluminiumMaterialDictionary(model);
-      TimberMaterials = Properties.GetTimberMaterialDictionary(model);
-      GlassMaterials = Properties.GetGlassMaterialDictionary(model);
-      FabricMaterials = Properties.GetFabricMaterialDictionary(model);
-      AnalysisMaterials = Properties.GetAnalysisMaterialDictionary(model);
+      SteelMaterials = GetStandardMaterialDictionary<SteelMaterial>(model.Materials.SteelMaterials);
+      ConcreteMaterials = GetStandardMaterialDictionary<ConcreteMaterial>(model.Materials.ConcreteMaterials);
+      FrpMaterials = GetStandardMaterialDictionary<FrpMaterial>(model.Materials.FrpMaterials);
+      AluminiumMaterials = GetStandardMaterialDictionary<AluminiumMaterial>(model.Materials.AluminiumMaterials);
+      TimberMaterials = GetStandardMaterialDictionary<TimberMaterial>(model.Materials.TimberMaterials);
+      GlassMaterials = GetStandardMaterialDictionary<GlassMaterial>(model.Materials.GlassMaterials);
+      FabricMaterials = GetStandardMaterialDictionary<FabricMaterial>(model.Materials.FabricMaterials);
+      AnalysisMaterials = GetCustomMaterialDictionary(model.Materials.AnalysisMaterials);
+    }
+
+    internal void Assemble(ref Model apiModel) {
+      if (AnalysisMaterials.Count > 0) {
+        foreach (KeyValuePair<int, AnalysisMaterial> mat in AnalysisMaterials.ReadOnlyDictionary) {
+          apiModel.SetAnalysisMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (AluminiumMaterials.Count > 0) {
+        foreach (KeyValuePair<int, AluminiumMaterial> mat in AluminiumMaterials.ReadOnlyDictionary) {
+          apiModel.SetAluminiumMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (ConcreteMaterials.Count > 0) {
+        foreach (KeyValuePair<int, ConcreteMaterial> mat in ConcreteMaterials.ReadOnlyDictionary) {
+          apiModel.SetConcreteMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (FabricMaterials.Count > 0) {
+        foreach (KeyValuePair<int, FabricMaterial> mat in FabricMaterials.ReadOnlyDictionary) {
+          apiModel.SetFabricMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (FrpMaterials.Count > 0) {
+        foreach (KeyValuePair<int, FrpMaterial> mat in FrpMaterials.ReadOnlyDictionary) {
+          apiModel.SetFrpMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (GlassMaterials.Count > 0) {
+        foreach (KeyValuePair<int, GlassMaterial> mat in GlassMaterials.ReadOnlyDictionary) {
+          apiModel.SetGlassMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (SteelMaterials.Count > 0) {
+        foreach (KeyValuePair<int, SteelMaterial> mat in SteelMaterials.ReadOnlyDictionary) {
+          apiModel.SetSteelMaterial(mat.Key, mat.Value);
+        }
+      }
+
+      if (TimberMaterials.Count > 0) {
+        foreach (KeyValuePair<int, TimberMaterial> mat in TimberMaterials.ReadOnlyDictionary) {
+          apiModel.SetTimberMaterial(mat.Key, mat.Value);
+        }
+      }
+    }
+
+    internal string GetReferenceDefinition(Guid guid) {
+      if (SteelMaterials.GuidDictionary.TryGetValue(guid, out int steelId)) {
+        return "MS" + steelId;
+      }
+
+      if (ConcreteMaterials.GuidDictionary.TryGetValue(guid, out int concreteId)) {
+        return "MC" + concreteId;
+      }
+
+      if (FrpMaterials.GuidDictionary.TryGetValue(guid, out int frpId)) {
+        return "MP" + frpId;
+      }
+
+      if (AnalysisMaterials.GuidDictionary.TryGetValue(guid, out int customId)) {
+        return "M" + customId;
+      }
+
+      return string.Empty;
     }
 
     internal static void AddMaterial(
@@ -148,6 +220,23 @@ namespace GsaGH.Helpers.Export {
 
       matDict.SetValue(material.Id, material.Guid, material.AnalysisMaterial);
       return material.Id;
+    }
+    private static GsaGuidDictionary<T> GetStandardMaterialDictionary<T>(
+      ReadOnlyDictionary<int, GsaMaterial> existingStandardMaterials) {
+      var materialsDictionary = new GsaGuidDictionary<T>(new Dictionary<int, T>());
+      foreach (KeyValuePair<int, GsaMaterial> mat in existingStandardMaterials) {
+        materialsDictionary.SetValue(mat.Key, mat.Value.Guid, (T)mat.Value.StandardMaterial);
+      }
+      return materialsDictionary;
+    }
+    private static GsaGuidDictionary<AnalysisMaterial> GetCustomMaterialDictionary(
+      ReadOnlyDictionary<int, GsaMaterial> existingAnalysisMaterials) {
+      var materialsDictionary = new GsaGuidDictionary<AnalysisMaterial>(
+        new Dictionary<int, AnalysisMaterial>());
+      foreach (KeyValuePair<int, GsaMaterial> mat in existingAnalysisMaterials) {
+        materialsDictionary.SetValue(mat.Key, mat.Value.Guid, mat.Value.AnalysisMaterial);
+      }
+      return materialsDictionary;
     }
   }
 }

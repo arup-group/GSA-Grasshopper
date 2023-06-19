@@ -1,36 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Sections {
-
-    internal static int AddSection(
-      GsaSection section, ref GsaGuidDictionary<Section> apiSections,
-      ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref Materials apiMaterials) {
-      Materials.AddMaterial(ref section, ref apiMaterials);
-
-      int outId;
-      if (section.Id > 0) {
-        apiSections.SetValue(section.Id, section.Guid, section.ApiSection);
-        outId = section.Id;
-      } else {
-        outId = apiSections.AddValue(section.Guid, section.ApiSection);
+    internal static void ConvertSection(List<GsaSection> sections, ref Properties apiProperties) {
+      if (sections == null) {
+        return;
       }
 
-      if (section.Modifier != null && section.Modifier.IsModified) {
-        apiSectionModifiers.SetValue(outId, section.Modifier._sectionModifier);
+      sections = sections.OrderByDescending(s => s.Id).ToList();
+      foreach (GsaSection section in sections.Where(section => section != null)) {
+        ConvertSection(section, ref apiProperties);
       }
-
-      return outId;
     }
 
     internal static int ConvertSection(
-      GsaSection section, ref GsaGuidDictionary<Section> apiSections,
-      ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref Materials apiMaterials) {
+      GsaSection section, ref Properties apiProperties) {
       if (section == null) {
         return 0;
       }
@@ -39,21 +25,25 @@ namespace GsaGH.Helpers.Export {
         return section.Id;
       }
 
-      return AddSection(section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      return AddSection(section, ref apiProperties);
     }
 
-    internal static void ConvertSection(
-      List<GsaSection> sections, ref GsaGuidDictionary<Section> apiSections,
-      ref GsaIntDictionary<SectionModifier> apiSectionModifiers,
-      ref Materials apiMaterials) {
-      if (sections == null) {
-        return;
+    internal static int AddSection(GsaSection section, ref Properties apiProperties) {
+      Materials.AddMaterial(ref section, ref apiProperties.Materials);
+
+      int outId;
+      if (section.Id > 0) {
+        apiProperties.Sections.SetValue(section.Id, section.Guid, section.ApiSection);
+        outId = section.Id;
+      } else {
+        outId = apiProperties.Sections.AddValue(section.Guid, section.ApiSection);
       }
 
-      sections = sections.OrderByDescending(s => s.Id).ToList();
-      foreach (GsaSection section in sections.Where(section => section != null)) {
-        ConvertSection(section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      if (section.Modifier != null && section.Modifier.IsModified) {
+        apiProperties.SecionModifiers.SetValue(outId, section.Modifier._sectionModifier);
       }
+
+      return outId;
     }
   }
 }

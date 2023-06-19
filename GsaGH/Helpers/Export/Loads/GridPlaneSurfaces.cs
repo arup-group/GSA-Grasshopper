@@ -11,46 +11,22 @@ using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
-  internal partial class Loads {
+  internal class GridPlaneSurfaces {
+    internal GsaGuidDictionary<GridPlane> GridPlanes;
+    internal GsaGuidDictionary<GridSurface> GridSurfaces;
+    internal ModelAssembly Model;
 
-    /// <summary>
-    ///   Method to convert a list of GridPlaneSurfaces and set Axes, GridPlanes and GridSurfaces in ref Dictionaries
-    /// </summary>
-    /// <param name="gridPlaneSurfaces"></param>
-    /// <param name="existingAxes"></param>
-    /// <param name="existingGridPlanes"></param>
-    /// <param name="existingGridSurfaces"></param>
-    /// <param name="gpGuid"></param>
-    /// <param name="gsGuid"></param>
-    /// <param name="unit"></param>
-    /// <param name="memberElementRelationship"></param>
-    /// <param name="model"></param>
-    /// <param name="apiSections"></param>
-    /// <param name="apiProp2ds"></param>
-    /// <param name="apiProp3ds"></param>
-    /// <param name="apiElements"></param>
-    /// <param name="apiMembers"></param>
-    internal static void ConvertGridPlaneSurface(
-      List<GsaGridPlaneSurface> gridPlaneSurfaces, ref Dictionary<int, Axis> existingAxes,
-      ref Dictionary<int, GridPlane> existingGridPlanes,
-      ref Dictionary<int, GridSurface> existingGridSurfaces, ref Dictionary<Guid, int> gpGuid,
-      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model,
-      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
-      GH_Component owner) {
+    internal GridPlaneSurfaces(ref ModelAssembly model) {
+      GridPlanes = new GsaGuidDictionary<GridPlane>(model.Model.GridPlanes());
+      GridSurfaces = new GsaGuidDictionary<GridSurface>(model.Model.GridSurfaces());
+      Model = model;
+    }
+
+    internal void ConvertGridPlaneSurface(
+      List<GsaGridPlaneSurface> gridPlaneSurfaces, GH_Component owner) {
       if (gridPlaneSurfaces == null) {
         return;
       }
-
-      int axisidcounter = existingAxes.Count > 0 ? existingAxes.Keys.Max() + 1 : 1;
-      int gridplaneidcounter = existingGridPlanes.Count > 0 ? existingGridPlanes.Keys.Max() + 1 : 1;
-      int gridsurfaceidcounter
-        = existingGridSurfaces.Count > 0 ? existingGridSurfaces.Keys.Max() + 1 : 1;
-
-      GetGridPlaneSurfaceCounters(gridPlaneSurfaces, ref gridplaneidcounter,
-        ref gridsurfaceidcounter);
 
       foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces) {
         if (gridPlaneSurface == null) {
@@ -60,353 +36,184 @@ namespace GsaGH.Helpers.Export {
         GsaGridPlaneSurface gps = gridPlaneSurface;
 
         if (gps.GridPlane != null) {
-          gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter, unit);
-          gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes,
-            ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
+          gps.GridPlane.AxisProperty = AddAxis(gps);
+          gps.GridSurface.GridPlane = AddGridPlane(gps);
         }
 
-        SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid,
-          ref apiLists, existingGridPlanes, existingAxes, unit, memberElementRelationship, model, apiMaterials,
-          apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+        AddGridSurface(gps, owner);
       }
     }
 
-    /// <summary>
-    ///   Method to loop through a list of GridPlaneSurfaces and return the highest set Id + 1 for gridplane and gridsurface
-    /// </summary>
-    /// <param name="gridPlaneSurfaces"></param>
-    /// <param name="gridplaneidcounter"></param>
-    /// <param name="gridsurfaceidcounter"></param>
-    internal static void GetGridPlaneSurfaceCounters(
-      List<GsaGridPlaneSurface> gridPlaneSurfaces, ref int gridplaneidcounter,
-      ref int gridsurfaceidcounter) {
-      foreach (GsaGridPlaneSurface gps in gridPlaneSurfaces) {
-        if (gps.GridPlaneId > 0) {
-          gridplaneidcounter = Math.Max(gridplaneidcounter, gps.GridPlaneId + 1);
-        }
-
-        if (gps.GridSurfaceId > 0) {
-          gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, gps.GridSurfaceId + 1);
-        }
-      }
-    }
-
-    /// <summary>
-    ///   Method to loop through a list of Loads with GridPlaneSurfaces and return the highest set ID + 1 for gridplan and
-    ///   gridsurface
-    /// </summary>
-    /// <param name="loads"></param>
-    /// <param name="gridplaneidcounter"></param>
-    /// <param name="gridsurfaceidcounter"></param>
-    internal static void GetGridPlaneSurfaceCounters(
-      List<GsaLoad> loads, ref int gridplaneidcounter, ref int gridsurfaceidcounter) {
-      foreach (GsaLoad gsaLoad in loads) {
-        if (gsaLoad != null) {
-          GsaLoad load = gsaLoad;
-
-          switch (load.LoadType) {
-            case GsaLoad.LoadTypes.GridArea:
-              if (load.AreaLoad.GridPlaneSurface.GridPlaneId > 0) {
-                gridplaneidcounter = Math.Max(gridplaneidcounter,
-                  load.AreaLoad.GridPlaneSurface.GridPlaneId + 1);
-              }
-
-              if (load.AreaLoad.GridPlaneSurface.GridSurfaceId > 0) {
-                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter,
-                  load.AreaLoad.GridPlaneSurface.GridSurfaceId + 1);
-              }
-
-              break;
-
-            case GsaLoad.LoadTypes.GridLine:
-              if (load.LineLoad.GridPlaneSurface.GridPlaneId > 0) {
-                gridplaneidcounter = Math.Max(gridplaneidcounter,
-                  load.LineLoad.GridPlaneSurface.GridPlaneId + 1);
-              }
-
-              if (load.LineLoad.GridPlaneSurface.GridSurfaceId > 0) {
-                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter,
-                  load.LineLoad.GridPlaneSurface.GridSurfaceId + 1);
-              }
-
-              break;
-
-            case GsaLoad.LoadTypes.GridPoint:
-              if (load.PointLoad.GridPlaneSurface.GridPlaneId > 0) {
-                gridplaneidcounter = Math.Max(gridplaneidcounter,
-                  load.PointLoad.GridPlaneSurface.GridPlaneId + 1);
-              }
-
-              if (load.PointLoad.GridPlaneSurface.GridSurfaceId > 0) {
-                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter,
-                  load.PointLoad.GridPlaneSurface.GridSurfaceId + 1);
-              }
-
-              break;
-          }
-        }
-      }
-    }
-
-    /// <summary>
-    ///   Method to set a single axis in ref dictionary, looking up existing axes to reference. Returns axis ID set in
-    ///   dictionary or existing axis ID if similar already exist.
-    /// </summary>
-    /// <param name="gridplanesurface"></param>
-    /// <param name="existingAxes"></param>
-    /// <param name="axisidcounter"></param>
-    /// <param name="modelUnit"></param>
-    /// <returns></returns>
-    internal static int SetAxis(
-      ref GsaGridPlaneSurface gridplanesurface, ref Dictionary<int, Axis> existingAxes,
-      ref int axisidcounter, LengthUnit modelUnit) {
+    internal int AddAxis(GsaGridPlaneSurface gridplanesurface) {
       int axisId = gridplanesurface.AxisId;
 
-      Axis axis = gridplanesurface.GetAxis(modelUnit);
+      Axis axis = gridplanesurface.GetAxis(Model.Unit);
 
-      if (axis.Name == string.Empty) {
-        axis.Name = "Axis " + axisidcounter;
-      }
-
-      if (gridplanesurface.AxisId > 0) {
+      if (axisId > 0) {
         gridplanesurface.GridPlane.AxisProperty = axisId;
-        if (existingAxes.ContainsKey(axisId)) {
-          existingAxes[axisId] = axis;
+        if (Model.Axes.ReadOnlyDictionary.ContainsKey(axisId)) {
+          Model.Axes.SetValue(axisId, axis);
         } else {
-          existingAxes.Add(axisId, axis);
+          axisId = Model.Axes.AddValue(axis);
         }
       } else {
-        axisId = Axes.GetExistingAxisId(existingAxes, axis);
-        if (axisId > 0) {
-          gridplanesurface.GridPlane.AxisProperty = axisId; // set the id if axis exist
-        } else {
-          axisId = axisidcounter;
-          gridplanesurface.GridPlane.AxisProperty = axisidcounter;
+        axisId = Export.Axes.TryGetExistingAxisId(ref Model.Axes, axis);
+      }
 
-          existingAxes.Add(gridplanesurface.GridPlane.AxisProperty, axis);
-          axisidcounter++;
-        }
+      if (Model.Axes.ReadOnlyDictionary[axisId].Name == string.Empty) {
+        Model.Axes.ReadOnlyDictionary[axisId].Name = "Axis " + axisId;
       }
 
       return axisId;
     }
 
-    /// <summary>
-    ///   Method to set a single gridplane in ref dictionary, looking up existing axes to reference. Returns the GridPlane Id
-    ///   set in dictionary or existing ID if similar already exist. Maintains the axis dictionary
-    /// </summary>
-    /// <param name="gridplanesurface"></param>
-    /// <param name="existingGridPlanes"></param>
-    /// <param name="gridplaneidcounter"></param>
-    /// <param name="gpGuid"></param>
-    /// <param name="existingAxes"></param>
-    /// <param name="modelUnit"></param>
-    /// <returns></returns>
-    internal static int SetGridPlane(
-      ref GsaGridPlaneSurface gridplanesurface, ref Dictionary<int, GridPlane> existingGridPlanes,
-      ref int gridplaneidcounter, ref Dictionary<Guid, int> gpGuid,
-      Dictionary<int, Axis> existingAxes, LengthUnit modelUnit) {
-      if (existingGridPlanes.Count > 0) {
-        gridplaneidcounter = Math.Max(existingGridPlanes.Keys.Max() + 1, gridplaneidcounter);
-      }
-
-      if (gridplanesurface.GridPlane.Name == string.Empty) {
-        gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
-      }
-
-      if (gridplanesurface.Elevation != "0") {
+    internal int AddGridPlane(GsaGridPlaneSurface grdPlnSrf) {
+      if (grdPlnSrf.Elevation != "0") {
         var elevation = new Length();
         try {
-          elevation = Length.Parse(gridplanesurface.Elevation);
+          elevation = Length.Parse(grdPlnSrf.Elevation);
         } catch (Exception) {
-          if (double.TryParse(gridplanesurface.Elevation, out double elev)) {
-            elevation = new Length(elev, modelUnit);
+          if (double.TryParse(grdPlnSrf.Elevation, out double elev)) {
+            elevation = new Length(elev, Model.Unit);
           }
         }
 
-        gridplanesurface.GridPlane.Elevation = elevation.Meters;
+        grdPlnSrf.GridPlane.Elevation = elevation.Meters;
       }
 
-      if (gridplanesurface.StoreyToleranceAbove != "auto") {
+      if (grdPlnSrf.StoreyToleranceAbove != "auto") {
         var tolerance = new Length();
         try {
-          tolerance = Length.Parse(gridplanesurface.StoreyToleranceAbove);
+          tolerance = Length.Parse(grdPlnSrf.StoreyToleranceAbove);
         } catch (Exception) {
-          if (double.TryParse(gridplanesurface.StoreyToleranceAbove, out double tol)) {
-            tolerance = new Length(tol, modelUnit);
+          if (double.TryParse(grdPlnSrf.StoreyToleranceAbove, out double tol)) {
+            tolerance = new Length(tol, Model.Unit);
           }
         }
 
-        gridplanesurface.GridPlane.ToleranceAbove = tolerance.Meters;
+        grdPlnSrf.GridPlane.ToleranceAbove = tolerance.Meters;
       }
 
-      if (gridplanesurface.StoreyToleranceBelow != "auto") {
+      if (grdPlnSrf.StoreyToleranceBelow != "auto") {
         var tolerance = new Length();
         try {
-          tolerance = Length.Parse(gridplanesurface.StoreyToleranceBelow);
+          tolerance = Length.Parse(grdPlnSrf.StoreyToleranceBelow);
         } catch (Exception) {
-          if (double.TryParse(gridplanesurface.StoreyToleranceBelow, out double tol)) {
-            tolerance = new Length(tol, modelUnit);
+          if (double.TryParse(grdPlnSrf.StoreyToleranceBelow, out double tol)) {
+            tolerance = new Length(tol, Model.Unit);
           }
         }
 
-        gridplanesurface.GridPlane.ToleranceBelow = tolerance.Meters;
+        grdPlnSrf.GridPlane.ToleranceBelow = tolerance.Meters;
       }
 
-      int gpId;
-      if (gridplanesurface.GridPlaneId > 0) {
-        gpId = gridplanesurface.GridPlaneId;
-        existingGridPlanes[gpId] = gridplanesurface.GridPlane;
+      int gridPlaneId = grdPlnSrf.GridPlaneId;
+      if (gridPlaneId > 0) {
+        GridPlanes.SetValue(gridPlaneId, grdPlnSrf.GridPlaneGuid, grdPlnSrf.GridPlane);
       } else {
-        if (gridplanesurface.GridPlaneGuid == new Guid()) {
-          int axisId = Axes.GetExistingAxisId(existingAxes, gridplanesurface.GetAxis(modelUnit));
-
-          if (axisId > 0) {
-            foreach (int key in existingGridPlanes.Keys) {
-              if (existingGridPlanes[key].AxisProperty != axisId) {
-                continue;
-              }
-
-              if (existingGridPlanes[key].Elevation == gridplanesurface.GridPlane.Elevation
-                & existingGridPlanes[key].ToleranceAbove
-                == gridplanesurface.GridPlane.ToleranceAbove
-                & existingGridPlanes[key].ToleranceBelow
-                == gridplanesurface.GridPlane.ToleranceBelow) {
-                return key;
-              }
-            }
-          }
-        } else if (gpGuid.ContainsKey(gridplanesurface.GridPlaneGuid)) {
-          gpGuid.TryGetValue(gridplanesurface.GridPlaneGuid, out int id);
-          return id;
+        if (grdPlnSrf.GridPlaneGuid == new Guid()) {
+          gridPlaneId = TryUseExistingGridPlane(grdPlnSrf);
+        } else {
+          gridPlaneId = GridPlanes.AddValue(grdPlnSrf.GridPlaneGuid, grdPlnSrf.GridPlane);
         }
-
-        existingGridPlanes.Add(gridplaneidcounter, gridplanesurface.GridPlane);
-        gpId = gridplaneidcounter;
-        if (gridplanesurface.GridPlaneGuid != new Guid()) {
-          gpGuid.Add(gridplanesurface.GridPlaneGuid, gridplaneidcounter);
-        }
-
-        gridplaneidcounter++;
       }
 
-      return gpId;
+      if (GridPlanes.ReadOnlyDictionary[gridPlaneId].Name == string.Empty) {
+        GridPlanes.ReadOnlyDictionary[gridPlaneId].Name = "Grid plane " + gridPlaneId;
+      }
+
+      return gridPlaneId;
     }
 
-    /// <summary>
-    ///   Method to set a single gridsurface in ref dictionary, looking up existing axes and gridplanes to reference. Returns
-    ///   the GridSurface ID set in dictionary or existing ID if similar already exist. Maintains the gridplane and axis
-    ///   dictionary
-    /// </summary>
-    /// <param name="gridplanesurface"></param>
-    /// <param name="existingGridSurfaces"></param>
-    /// <param name="gridsurfaceidcounter"></param>
-    /// <param name="gsGuid"></param>
-    /// <param name="existingGridPlanes"></param>
-    /// <param name="existingAxes"></param>
-    /// <param name="modelUnit"></param>
-    /// <param name="memberElementRelationship"></param>
-    /// <param name="model"></param>
-    /// <param name="apiSections"></param>
-    /// <param name="apiProp2ds"></param>
-    /// <param name="apiProp3ds"></param>
-    /// <param name="apiElements"></param>
-    /// <param name="apiMembers"></param>
-    /// <returns></returns>
-    internal static int SetGridSurface(
-      ref GsaGridPlaneSurface gridplanesurface,
-      ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter,
-      ref Dictionary<Guid, int> gsGuid, ref GsaGuidDictionary<EntityList> apiLists,
-      Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes,
-      LengthUnit modelUnit, ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship,
-      Model model, GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers, GH_Component owner) {
-      if (existingGridSurfaces.Count > 0) {
-        gridsurfaceidcounter = Math.Max(existingGridSurfaces.Keys.Max() + 1, gridsurfaceidcounter);
-      }
-
-      int gsId = gridplanesurface.GridSurfaceId;
-
-      if (gridplanesurface.GridSurface.Name == string.Empty) {
-        gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
-      }
-
+    internal int AddGridSurface(GsaGridPlaneSurface grdPlnSrf, GH_Component owner) {
       var tolerance = new Length();
       try {
-        tolerance = Length.Parse(gridplanesurface.Tolerance);
+        tolerance = Length.Parse(grdPlnSrf.Tolerance);
       } catch (Exception) {
-        if (double.TryParse(gridplanesurface.Tolerance, out double tol)) {
-          tolerance = new Length(tol, modelUnit);
+        if (double.TryParse(grdPlnSrf.Tolerance, out double tol)) {
+          tolerance = new Length(tol, Model.Unit);
         }
       }
 
-      gridplanesurface.GridSurface.Tolerance = tolerance.Meters;
+      grdPlnSrf.GridSurface.Tolerance = tolerance.Meters;
 
-      if (model != null && gridplanesurface._referenceType != ReferenceType.None) {
-        if (gridplanesurface._referenceType == ReferenceType.List) {
-          if (gridplanesurface._refList == null
-            || gridplanesurface._refList.EntityType != Parameters.EntityType.Element
-            || gridplanesurface._refList.EntityType != Parameters.EntityType.Member) {
-            owner.AddRuntimeWarning("Invalid List type for GridSurface " + gridplanesurface.ToString()
+      if (grdPlnSrf._referenceType != ReferenceType.None) {
+        if (grdPlnSrf._referenceType == ReferenceType.List) {
+          if (grdPlnSrf._refList == null
+            || grdPlnSrf._refList.EntityType != Parameters.EntityType.Element
+            || grdPlnSrf._refList.EntityType != Parameters.EntityType.Member) {
+            owner.AddRuntimeWarning("Invalid List type for GridSurface " + grdPlnSrf.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          gridplanesurface.GridSurface.Elements +=
-            Lists.GetElementList(gridplanesurface._refList, ref apiLists, apiMaterials, apiSections,
-            apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship, owner);
+          grdPlnSrf.GridSurface.Elements +=
+            Lists.GetElementList(
+              grdPlnSrf._refList,
+              ref Model.Lists,
+              Model.Properties,
+              Model.Elements,
+              Model.Members,
+              Model.MemberElementRelationship,
+              owner);
         } else {
-          gridplanesurface.GridSurface.Elements += ElementListFromReference.GetReferenceElementIdsDefinition(
-            gridplanesurface, apiMaterials, apiSections, apiProp2ds, apiProp3ds, apiElements,
-            apiMembers, memberElementRelationship);
+          grdPlnSrf.GridSurface.Elements +=
+            ElementListFromReference.GetReferenceElementIdsDefinition(
+              grdPlnSrf,
+              Model.Properties,
+              Model.Elements,
+              Model.Members,
+              Model.MemberElementRelationship);
         }
       }
 
-      if (gridplanesurface.GridSurfaceId > 0) {
-        existingGridSurfaces[gsId] = gridplanesurface.GridSurface;
+      int gridSurfaceId = grdPlnSrf.GridSurfaceId;
+      if (gridSurfaceId > 0) {
+        GridSurfaces.SetValue(
+          grdPlnSrf.GridSurfaceId, grdPlnSrf.GridSurfaceGuid, grdPlnSrf.GridSurface);
       } else {
-        if (gridplanesurface.GridSurfaceGuid == new Guid()) {
-          int axisId = Axes.GetExistingAxisId(existingAxes, gridplanesurface.GetAxis(modelUnit));
-
-          if (axisId > 0) {
-            foreach (int keyPln in existingGridPlanes.Keys) {
-              if (existingGridPlanes[keyPln].AxisProperty != axisId) {
-                continue;
-              }
-
-              foreach (int keySrf in existingGridSurfaces.Keys) {
-                if (existingGridSurfaces[keySrf].GridPlane != keyPln) {
-                  continue;
-                }
-
-                if (existingGridSurfaces[keySrf].Direction == gridplanesurface.GridSurface.Direction
-                  & existingGridSurfaces[keySrf].Elements == gridplanesurface.GridSurface.Elements
-                  & existingGridSurfaces[keySrf].ElementType
-                  == gridplanesurface.GridSurface.ElementType
-                  & existingGridSurfaces[keySrf].ExpansionType
-                  == gridplanesurface.GridSurface.ExpansionType
-                  & existingGridSurfaces[keySrf].SpanType == gridplanesurface.GridSurface.SpanType
-                  & existingGridSurfaces[keySrf].Tolerance
-                  == gridplanesurface.GridSurface.Tolerance) {
-                  return keySrf;
-                }
-              }
-            }
-          }
-        } else if (gsGuid.ContainsKey(gridplanesurface.GridSurfaceGuid)) {
-          gsGuid.TryGetValue(gridplanesurface.GridSurfaceGuid, out int id);
-          return id;
+        if (grdPlnSrf.GridSurfaceGuid == new Guid()) {
+          gridSurfaceId = TryUseExistingGridSurface(grdPlnSrf);
+        } else {
+          gridSurfaceId = GridSurfaces.AddValue(grdPlnSrf.GridSurfaceGuid, grdPlnSrf.GridSurface);
         }
-
-        existingGridSurfaces.Add(gridsurfaceidcounter, gridplanesurface.GridSurface);
-        gsId = gridsurfaceidcounter;
-        if (gridplanesurface.GridSurfaceGuid != new Guid()) {
-          gsGuid.Add(gridplanesurface.GridSurfaceGuid, gsId);
-        }
-
-        gridsurfaceidcounter++;
       }
 
-      return gsId;
+      if (GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name == string.Empty) {
+        GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name = "Grid surface " + gridSurfaceId;
+      }
+
+      return gridSurfaceId;
+    }
+
+    private int TryUseExistingGridPlane(GsaGridPlaneSurface grdPlnSrf) {
+      GridPlane newPlane = grdPlnSrf.GridPlane;
+      foreach (KeyValuePair<int, GridPlane> kvp in GridPlanes.ReadOnlyDictionary) {
+        if (kvp.Value.AxisProperty == newPlane.AxisProperty
+          && kvp.Value.Elevation == newPlane.Elevation
+          && kvp.Value.IsStoreyType == newPlane.IsStoreyType
+          && kvp.Value.ToleranceAbove == newPlane.ToleranceAbove
+          && kvp.Value.ToleranceBelow == newPlane.ToleranceBelow
+          && newPlane.Name == string.Empty) {
+          return kvp.Key;
+        }
+      }
+      return GridPlanes.AddValue(Guid.NewGuid(), grdPlnSrf.GridPlane);
+    }
+
+    private int TryUseExistingGridSurface(GsaGridPlaneSurface grdPlnSrf) {
+      GridSurface newSrf = grdPlnSrf.GridSurface;
+      foreach (KeyValuePair<int, GridSurface> kvp in GridSurfaces.ReadOnlyDictionary) {
+        if (kvp.Value.Direction == newSrf.Direction
+          && kvp.Value.Elements == newSrf.Elements
+          && kvp.Value.ElementType == newSrf.ElementType
+          && kvp.Value.ExpansionType == newSrf.ExpansionType
+          && kvp.Value.GridPlane == newSrf.GridPlane
+          && kvp.Value.SpanType == newSrf.SpanType
+          && kvp.Value.Tolerance == newSrf.Tolerance
+          && newSrf.Name == string.Empty) {
+          return kvp.Key;
+        }
+      }
+      return GridSurfaces.AddValue(Guid.NewGuid(), grdPlnSrf.GridSurface);
     }
   }
 }

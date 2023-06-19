@@ -276,22 +276,22 @@ namespace GsaGH.Components {
                 return;
               }
               gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Material;
+              gps._referenceType = ReferenceType.Property;
               break;
             }
           case GsaSectionGoo value: {
               gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Section;
+              gps._referenceType = ReferenceType.Property;
               break;
             }
           case GsaProp2dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Prop2d;
+              gps._referenceType = ReferenceType.Property;
               break;
             }
           case GsaProp3dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Prop3d;
+              gps._referenceType = ReferenceType.Property;
               break;
             }
           default: {

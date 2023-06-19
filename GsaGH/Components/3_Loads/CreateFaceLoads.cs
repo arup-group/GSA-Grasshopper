@@ -291,12 +291,12 @@ namespace GsaGH.Components {
                 return;
               }
               faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Material;
+              faceLoad._referenceType = ReferenceType.Property;
               break;
             }
           case GsaProp2dGoo value: {
               faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Prop2d;
+              faceLoad._referenceType = ReferenceType.Property;
               break;
             }
           default: {

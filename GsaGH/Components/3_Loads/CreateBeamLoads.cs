@@ -294,12 +294,12 @@ namespace GsaGH.Components {
                 return;
               }
               beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Material;
+              beamLoad._referenceType = ReferenceType.Property;
               break;
             }
           case GsaSectionGoo value: {
               beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Section;
+              beamLoad._referenceType = ReferenceType.Property;
               break;
             }
           default: {
