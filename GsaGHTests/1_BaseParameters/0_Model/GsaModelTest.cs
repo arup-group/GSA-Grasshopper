@@ -1,14 +1,12 @@
 ﻿using System;
 using System.IO;
 using GsaAPI;
-using GsaGH.Components;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;

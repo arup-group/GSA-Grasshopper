@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using GsaGH.Parameters;
 using GsaGH.Helpers.Import;
 using Xunit;
 using GsaAPI;
-using System.Collections.ObjectModel;
 using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers.Import {

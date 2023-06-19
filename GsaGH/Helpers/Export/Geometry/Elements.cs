@@ -34,7 +34,7 @@ namespace GsaGH.Helpers.Export {
       AddElement(element1d.Id, element1d.Guid, apiElement, true, ref apiElements);
     }
 
-    internal static void ConvertElement1D(
+    internal static void ConvertElement1ds(
       List<GsaElement1d> element1ds, 
       ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> apiNodes, 
@@ -79,7 +79,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal static void ConvertElement2D(
+    internal static void ConvertElement2ds(
       List<GsaElement2d> element2ds, 
       ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> apiNodes, 
@@ -126,7 +126,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal static void ConvertElement3D(
+    internal static void ConvertElement3ds(
       List<GsaElement3d> element3ds, 
       ref GsaGuidIntListDictionary<Element> apiElements,
       ref GsaIntDictionary<Node> apiNodes, 

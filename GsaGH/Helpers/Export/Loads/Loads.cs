@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Helpers.Export.Loads;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
-using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -23,7 +19,7 @@ namespace GsaGH.Helpers.Export {
     internal List<GridAreaLoad> GridAreas;
     internal GridPlaneSurfaces GridPlaneSurfaces;
 
-    internal Loads() {
+    internal Loads(Model model) {
       Nodes = new Load.NodeLoads();
 
       Gravities = new List<GravityLoad>();
@@ -33,9 +29,11 @@ namespace GsaGH.Helpers.Export {
       GridPoints = new List<GridPointLoad>();
       GridLines = new List<GridLineLoad>();
       GridAreas = new List<GridAreaLoad>();
+
+      GridPlaneSurfaces = new GridPlaneSurfaces(model);
     }
 
-    internal void ConvertLoad(List<GsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
+    internal static void ConvertLoad(List<GsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
       if (loads == null) {
         return;
       }
@@ -45,7 +43,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void ConvertLoad(GsaLoad load, ref ModelAssembly model, GH_Component owner) {
+    internal static void ConvertLoad(GsaLoad load, ref ModelAssembly model, GH_Component owner) {
       switch (load.LoadType) {
         case GsaLoad.LoadTypes.Gravity:
           PostHog.Load(load.LoadType, load.GravityLoad._referenceType);
@@ -80,7 +78,7 @@ namespace GsaGH.Helpers.Export {
             }
           }
 
-          Gravities.Add(load.GravityLoad.GravityLoad);
+          model.Loads.Gravities.Add(load.GravityLoad.GravityLoad);
           break;
 
         case GsaLoad.LoadTypes.Beam:
@@ -117,7 +115,7 @@ namespace GsaGH.Helpers.Export {
             }
           }
 
-          Beams.Add(load.BeamLoad.BeamLoad);
+          model.Loads.Beams.Add(load.BeamLoad.BeamLoad);
           break;
 
         case GsaLoad.LoadTypes.Face:
@@ -154,13 +152,13 @@ namespace GsaGH.Helpers.Export {
             }
           }
 
-          Faces.Add(load.FaceLoad.FaceLoad);
+          model.Loads.Faces.Add(load.FaceLoad.FaceLoad);
           break;
 
         case GsaLoad.LoadTypes.GridPoint:
           PostHog.Load(load.LoadType, ReferenceType.None);
           if (load.PointLoad.GridPlaneSurface == null) {
-            GridPoints.Add(load.PointLoad.GridPointLoad);
+            model.Loads.GridPoints.Add(load.PointLoad.GridPointLoad);
             break;
           }
 
@@ -175,58 +173,36 @@ namespace GsaGH.Helpers.Export {
           GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {
-            // - grid load references a grid surface number
-            // -- grid surface references a grid plane number
-            // --- grid plane references an Axis number
-            // toggle through the members in reverse order, set/add to model in each step
-
-            gridplnsrf.GridPlane.AxisProperty
-              = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter, unit);
-            gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes,
-              ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
-            gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf,
-              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, ref apiLists, existingGridPlanes,
-              existingAxes, unit, memberElementRelationship, model, apiMaterials, apiSections,
-              apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+            gridptref.GridPointLoad.GridSurface 
+              = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
           }
 
-          gridPointLoads.Add(gridptref.GridPointLoad);
+          model.Loads.GridPoints.Add(gridptref.GridPointLoad);
           break;
 
         case GsaLoad.LoadTypes.GridLine:
           PostHog.Load(load.LoadType, ReferenceType.None);
           if (load.LineLoad.GridPlaneSurface == null) {
-            gridLineLoads.Add(load.LineLoad.GridLineLoad);
+            model.Loads.GridLines.Add(load.LineLoad.GridLineLoad);
             break;
           }
 
           GsaGridLineLoad gridlnref = load.LineLoad;
-          if (unit != LengthUnit.Meter
+          if (model.Unit != LengthUnit.Meter
             && gridlnref.GridLineLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
             gridlnref.GridLineLoad.PolyLineDefinition =
               GridLoadHelper.ClearDefinitionForUnit(gridlnref.GridLineLoad.PolyLineDefinition) +
-              $"({Length.GetAbbreviation(unit)})";
+              $"({Length.GetAbbreviation(model.Unit)})";
           }
 
           gridplnsrf = gridlnref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {
-            // - grid load references a grid surface number
-            // -- grid surface references a grid plane number
-            // --- grid plane references an Axis number
-            // toggle through the members in reverse order, set/add to model in each step
-
-            gridplnsrf.GridPlane.AxisProperty
-              = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter, unit);
-            gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes,
-              ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
-            gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf,
-              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, ref apiLists,
-              existingGridPlanes, existingAxes, unit, memberElementRelationship, model, apiMaterials,
-              apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+            gridlnref.GridLineLoad.GridSurface 
+              = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
           }
 
-          gridLineLoads.Add(gridlnref.GridLineLoad);
+          model.Loads.GridLines.Add(gridlnref.GridLineLoad);
           break;
 
         case GsaLoad.LoadTypes.GridArea:
@@ -235,11 +211,11 @@ namespace GsaGH.Helpers.Export {
           if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
             load.AreaLoad.GridAreaLoad.PolyLineDefinition =
             GridLoadHelper.ClearDefinitionForUnit(load.AreaLoad.GridAreaLoad.PolyLineDefinition) +
-            $"({Length.GetAbbreviation(unit)})";
+            $"({Length.GetAbbreviation(model.Unit)})";
           }
 
           if (load.AreaLoad.GridPlaneSurface == null) {
-            gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
+            model.Loads.GridAreas.Add(load.AreaLoad.GridAreaLoad);
             break;
           }
 
@@ -247,26 +223,13 @@ namespace GsaGH.Helpers.Export {
           gridplnsrf = gridarref.GridPlaneSurface;
 
           if (gridplnsrf.GridPlane != null) {
-            // - grid load references a grid surface number
-            // -- grid surface references a grid plane number
-            // --- grid plane references an Axis number
-            // toggle through the members in reverse order, set/add to model in each step
-
-            gridplnsrf.GridPlane.AxisProperty
-              = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter, unit);
-            gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes,
-              ref gridplaneidcounter, ref gpGuid, existingAxes, unit);
-            gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf,
-              ref existingGridSurfaces, ref gridsurfaceidcounter, ref gsGuid, ref apiLists,
-              existingGridPlanes, existingAxes, unit, memberElementRelationship, model, apiMaterials,
-              apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
+            gridarref.GridAreaLoad.GridSurface
+              = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
           }
 
-          gridAreaLoads.Add(gridarref.GridAreaLoad);
+          model.Loads.GridAreas.Add(gridarref.GridAreaLoad);
           break;
       }
     }
-
-    
   }
 }

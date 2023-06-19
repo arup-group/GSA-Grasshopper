@@ -4,7 +4,6 @@ using GsaGH.Helpers.Export;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;

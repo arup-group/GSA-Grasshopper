@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Helpers.Export;
 using GsaGH.Parameters;
 using Rhino.Geometry;
 

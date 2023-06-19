@@ -1,19 +1,24 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using OasysUnits;
-using OasysUnits.Units;
-using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
+    internal static void ConvertList(
+      List<GsaList> lists, List<GsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
+      model.Lists = new GsaGuidDictionary<EntityList>(model.Model.Lists());
 
+      // Add lists embedded in loads as they may have ID > 0 set
+      if (lists == null && loads != null && loads.Count > 0) {
+        lists = Loads.GetLoadLists(loads);
+      } else if (loads != null && loads.Count > 0) {
+        lists.AddRange(Loads.GetLoadLists(loads));
+      }
+
+      Lists.ConvertList(lists, ref model, owner);
+    }
     internal static List<GsaList> GetLoadLists(List<GsaLoad> loads) {
       var loadLists = new List<GsaList>();
       foreach (GsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {

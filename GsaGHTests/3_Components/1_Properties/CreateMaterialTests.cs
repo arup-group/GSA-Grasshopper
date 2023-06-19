@@ -1,5 +1,4 @@
-﻿using GsaAPI.Materials;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;

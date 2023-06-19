@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;

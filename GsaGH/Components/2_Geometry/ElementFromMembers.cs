@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;

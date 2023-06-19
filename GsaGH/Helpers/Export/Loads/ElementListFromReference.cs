@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
@@ -100,7 +99,8 @@ namespace GsaGH.Helpers.Export {
           return GetMemberChildElementsReferenceDefinition(guid, apiMembers, memberElementRelationship);
 
         case ReferenceType.Member:
-          return GetReferenceType(guid, apiMembers);
+          return apiMembers.GuidDictionary.TryGetValue(guid, out int id) 
+            ? id.ToString() : string.Empty;
 
         case ReferenceType.None:
         default:

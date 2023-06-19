@@ -13,7 +13,6 @@ using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;

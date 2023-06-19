@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using GsaAPI;
 using OasysGH.Units;
 
@@ -13,15 +11,17 @@ namespace GsaGH.Helpers.Export {
           continue;
         }
 
-        if (Math.Abs(testAxis.Origin.X - gsaAxis.Origin.X) <= tolerance
-          & Math.Abs(testAxis.Origin.Y - gsaAxis.Origin.Y) <= tolerance
-          & Math.Abs(testAxis.Origin.Z - gsaAxis.Origin.Z) <= tolerance
-          & Math.Abs(testAxis.XVector.X - gsaAxis.XVector.X) <= tolerance
-          & Math.Abs(testAxis.XVector.Y - gsaAxis.XVector.Y) <= tolerance
-          & Math.Abs(testAxis.XVector.Z - gsaAxis.XVector.Z) <= tolerance
-          & Math.Abs(testAxis.XYPlane.X - gsaAxis.XYPlane.X) <= tolerance
-          & Math.Abs(testAxis.XYPlane.Y - gsaAxis.XYPlane.Y) <= tolerance
-          & Math.Abs(testAxis.XYPlane.Z - gsaAxis.XYPlane.Z) <= tolerance) {
+        if (gsaAxis.Name == testAxis.Name
+          && gsaAxis.Type == testAxis.Type
+          && Math.Abs(testAxis.Origin.X - gsaAxis.Origin.X) <= tolerance
+          && Math.Abs(testAxis.Origin.Y - gsaAxis.Origin.Y) <= tolerance
+          && Math.Abs(testAxis.Origin.Z - gsaAxis.Origin.Z) <= tolerance
+          && Math.Abs(testAxis.XVector.X - gsaAxis.XVector.X) <= tolerance
+          && Math.Abs(testAxis.XVector.Y - gsaAxis.XVector.Y) <= tolerance
+          && Math.Abs(testAxis.XVector.Z - gsaAxis.XVector.Z) <= tolerance
+          && Math.Abs(testAxis.XYPlane.X - gsaAxis.XYPlane.X) <= tolerance
+          && Math.Abs(testAxis.XYPlane.Y - gsaAxis.XYPlane.Y) <= tolerance
+          && Math.Abs(testAxis.XYPlane.Z - gsaAxis.XYPlane.Z) <= tolerance) {
           return key;
         }
       }

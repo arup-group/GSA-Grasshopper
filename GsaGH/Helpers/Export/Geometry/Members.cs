@@ -9,7 +9,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Members {
-    internal static void ConvertMember1D(
+    internal static void ConvertMember1ds(
       List<GsaMember1d> member1ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
       ref Properties apiProperties) {
@@ -101,7 +101,7 @@ namespace GsaGH.Helpers.Export {
       AddMember(member2d.Id, member2d.Guid, apiMember, ref apiMembers);
     }
 
-    internal static void ConvertMember2D(
+    internal static void ConvertMember2ds(
       List<GsaMember2d> member2ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
       ref Properties apiProperties,
@@ -143,7 +143,7 @@ namespace GsaGH.Helpers.Export {
       AddMember(member3d.Id, member3d.Guid, apiMember, ref apiMembers);
     }
 
-    internal static void ConvertMember3D(
+    internal static void ConvertMember3ds(
       List<GsaMember3d> member3ds, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
       ref Properties apiProperties) {

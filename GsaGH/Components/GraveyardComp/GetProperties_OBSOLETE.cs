@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;

@@ -5,7 +5,6 @@ using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;

@@ -23,7 +23,7 @@ namespace GsaGH.Helpers.Export.Load {
       apiModel.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(Settlements));
     }
 
-    internal static void ConvertNodeLoad(
+    internal static void ConvertNodeLoads(
       List<GsaLoad> loads, ref NodeLoads nodeloads, ref GsaIntDictionary<Node> apiNodes,
       ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit) {
       if (loads == null) {

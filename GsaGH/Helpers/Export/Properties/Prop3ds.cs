@@ -4,7 +4,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Prop3ds {
-    internal static void ConvertProp3d(List<GsaProp3d> prop3Ds, ref Properties existingProperties) {
+    internal static void ConvertProp3ds(List<GsaProp3d> prop3Ds, ref Properties existingProperties) {
       if (prop3Ds == null) {
         return;
       }

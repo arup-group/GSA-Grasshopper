@@ -8,7 +8,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Prop2ds {
-    internal static void ConvertProp2d(
+    internal static void ConvertProp2ds(
       List<GsaProp2d> prop2Ds,
       ref Properties existingProperties,
       ref GsaIntDictionary<Axis> apiAxes,

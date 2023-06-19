@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -24,7 +21,7 @@ namespace GsaGH.Helpers.Export {
       return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name + "\"";
     }
 
-    internal static void ConvertNodeList(
+    internal static void ConvertNodeLists(
     List<GsaList> lists, ref GsaGuidDictionary<EntityList> apiLists,
     ref GsaIntDictionary<Node> apiNodes, LengthUnit modelUnit) {
       if (lists == null) {

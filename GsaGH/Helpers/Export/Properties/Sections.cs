@@ -4,7 +4,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Sections {
-    internal static void ConvertSection(List<GsaSection> sections, ref Properties apiProperties) {
+    internal static void ConvertSections(List<GsaSection> sections, ref Properties apiProperties) {
       if (sections == null) {
         return;
       }

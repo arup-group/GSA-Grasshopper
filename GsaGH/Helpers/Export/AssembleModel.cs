@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -22,7 +15,8 @@ namespace GsaGH.Helpers.Export {
       List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
       LengthUnit modelUnit, Length toleranceCoincidentNodes, bool createElementsFromMembers,
       GH_Component owner) {
-      var assembledModel = new ModelAssembly(model);
+      var assembledModel = new ModelAssembly(model, modelUnit);
+      assembledModel.ConvertNodes(nodes);
       assembledModel.ConvertProperties(sections, prop2Ds, prop3Ds);
       assembledModel.ConvertElements(elem1ds, elem2ds, elem3ds);
       assembledModel.ConvertMembers(mem1ds, mem2ds, mem3ds);
@@ -34,41 +28,16 @@ namespace GsaGH.Helpers.Export {
         assembledModel.ElementsFromMembers(toleranceCoincidentNodes, owner);
       }
 
-      assembledModel.ConvertList(lists, loads, owner);
-      assembledModel.ConvertLoads(loads, gridPlaneSurfaces);
+      Loads.ConvertList(lists, loads, ref assembledModel, owner);
+      GridPlaneSurfaces.ConvertGridPlaneSurface(gridPlaneSurfaces, ref assembledModel, owner);
+      Loads.ConvertLoad(loads, ref assembledModel, owner);
 
-      
+      assembledModel.AssemblePostMeshing();
+      assembledModel.ConvertAnalysisTasks(analysisTasks);
+      assembledModel.ConvertCombinations(combinations);
 
-      // Set Analysis Tasks in model
-      if (analysisTasks != null) {
-        ReadOnlyDictionary<int, AnalysisTask> existingTasks = gsa.AnalysisTasks();
-        foreach (GsaAnalysisTask task in analysisTasks) {
-          if (!existingTasks.Keys.Contains(task.Id)) {
-            task.Id = gsa.AddAnalysisTask();
-          }
-
-          if (task.Cases == null || task.Cases.Count == 0) {
-            task.CreateDefaultCases(gsa);
-          }
-
-          if (task.Cases == null) {
-            continue;
-          }
-
-          foreach (GsaAnalysisCase ca in task.Cases) {
-            gsa.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
-          }
-        }
-      }
-
-      // Add Combination Cases to model
-      if (combinations != null && combinations.Count > 0) {
-        foreach (GsaCombinationCase co in combinations) {
-          gsa.AddCombinationCase(co.Name, co.Description);
-        }
-      }
-
-      return gsa;
+      assembledModel.DeleteExistingResults();
+      return assembledModel.Model;
     }
   }
 }
