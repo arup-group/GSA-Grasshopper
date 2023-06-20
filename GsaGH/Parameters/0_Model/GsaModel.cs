@@ -15,7 +15,6 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Model class, this class defines the basic properties and methods for any Gsa Model
   /// </summary>
-  [Serializable]
   public class GsaModel {
     public BoundingBox BoundingBox {
       get {
@@ -35,33 +34,33 @@ namespace GsaGH.Parameters {
     }
     public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
-    public Model Model { get; set; } = new Model();
     internal GsaAPI.Titles Titles => Model.Titles();
     internal GsaAPI.UiUnits Units => Model.UiUnits();
-    internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiElementLocalAxes { get; }
-    internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiMemberLocalAxes { get; }
-    internal ReadOnlyDictionary<int, Node> ApiNodes { get; }
-    internal ReadOnlyDictionary<int, Axis> ApiAxis { get; }
-    internal Materials Materials { get; }
-    internal Helpers.Import.Properties Properties { get; }
+    internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiElementLocalAxes { get; private set; }
+    internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiMemberLocalAxes { get; private set; }
+    internal ReadOnlyDictionary<int, Node> ApiNodes { get; private set; }
+    internal ReadOnlyDictionary<int, Axis> ApiAxis { get; private set; }
+    internal Materials Materials { get; private set; }
+    public Model Model {
+      get => _model;
+      set {
+        _model = value;
+        InstantiateApiFields();
+      }
+    } 
+    internal Helpers.Import.Properties Properties { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
+      private Model _model = new Model();
 
     public GsaModel() {
       SetUserDefaultUnits(Model.UiUnits());
+      InstantiateApiFields();
     }
 
     internal GsaModel(Model model) {
       Model = model;
-      ApiNodes = Model.Nodes();
-      ApiAxis = Model.Axes();
-      _lengthUnit = UnitMapping.GetUnit(model.UiUnits().LengthLarge);
-      Materials = new Materials(Model);
-      Properties = new Helpers.Import.Properties(Model, Materials);
-      ApiMemberLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
-                Model.Members().Keys.ToDictionary(id => id, id => Model.MemberDirectionCosine(id)));
-      ApiElementLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
-            Model.Elements().Keys.ToDictionary(id => id, id => Model.ElementDirectionCosine(id)));
+      InstantiateApiFields();
     }
 
     /// <summary>
@@ -75,6 +74,7 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid(),
         _boundingBox = _boundingBox,
       };
+      clone.InstantiateApiFields();
       return clone;
     }
 
@@ -132,6 +132,31 @@ namespace GsaGH.Parameters {
        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.TimeShortUnit);
       uiUnits.Velocity
        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.VelocityUnit);
+    }
+
+    internal static Model CreateModelFromCodes(
+      string concreteDesignCode = "", string steelDesignCode = "") {
+      if (concreteDesignCode == string.Empty) {
+        concreteDesignCode = DesignCode.GetConcreteDesignCodeNames()[8];
+      }
+
+      if (steelDesignCode == string.Empty) {
+        steelDesignCode = DesignCode.GetSteelDesignCodeNames()[8];
+      }
+
+      return new Model(concreteDesignCode, steelDesignCode);
+    }
+
+    private void InstantiateApiFields() {
+      ApiNodes = Model.Nodes();
+      ApiAxis = Model.Axes();
+      _lengthUnit = UnitMapping.GetUnit(Model.UiUnits().LengthLarge);
+      Materials = new Materials(Model);
+      Properties = new Helpers.Import.Properties(Model, Materials);
+      ApiMemberLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
+                Model.Members().Keys.ToDictionary(id => id, id => Model.MemberDirectionCosine(id)));
+      ApiElementLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
+            Model.Elements().Keys.ToDictionary(id => id, id => Model.ElementDirectionCosine(id)));
     }
 
     private BoundingBox GetBoundingBox() {

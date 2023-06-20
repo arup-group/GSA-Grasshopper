@@ -291,7 +291,7 @@ namespace GsaGH.Parameters {
 
     internal GsaMaterial(MatType type, string gradeName,
       string steelDesignCode = "", string concreteDesignCode = "") {
-      Model m = CreateMaterialModel(steelDesignCode, concreteDesignCode);
+      Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       MaterialType = type;
       switch (type) {
         case MatType.Aluminium:
@@ -345,70 +345,81 @@ namespace GsaGH.Parameters {
         dup._gradeName = _gradeName;
       }
 
-      Model m = CreateMaterialModel(SteelDesignCodeName, ConcreteDesignCodeName);
+      dup.Name = Name;
+      dup.MaterialType = MaterialType;
+      dup.ConcreteDesignCodeName = ConcreteDesignCodeName;
+      dup.SteelDesignCodeName = SteelDesignCodeName;
+
+      dup.RecreateForDesignCode();
+
+      dup._guid = new Guid(_guid.ToString());
+      return dup;
+    }
+
+    internal void RecreateForDesignCode(Model m = null) {
+      if (m == null || m.ConcreteDesignCode() == string.Empty || m.SteelDesignCode() == string.Empty) {
+        m = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      }
       switch (MaterialType) {
         case MatType.Aluminium:
-          dup._aluminiumMaterial = m.CreateAluminiumMaterial(_gradeName ?? Name);
+          _aluminiumMaterial = m.CreateAluminiumMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._aluminiumMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-            dup._aluminiumMaterial.Name = Name;
+            _aluminiumMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _aluminiumMaterial.Name = Name;
           }
           break;
 
         case MatType.Concrete:
-          dup._concreteMaterial = m.CreateConcreteMaterial(_gradeName ?? Name);
+          _concreteMaterial = m.CreateConcreteMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._concreteMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-            dup._concreteMaterial.Name = Name;
+            _concreteMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _concreteMaterial.Name = Name;
           }
           break;
 
         case MatType.Fabric:
-          dup._fabricMaterial = m.CreateFabricMaterial(_gradeName ?? Name);
+          _fabricMaterial = m.CreateFabricMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._fabricMaterial.Name = Name;
+            _fabricMaterial.Name = Name;
           }
           break;
 
         case MatType.Frp:
-          dup._frpMaterial = m.CreateFrpMaterial(_gradeName ?? Name);
+          _frpMaterial = m.CreateFrpMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._frpMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-            dup._frpMaterial.Name = Name;
+            _frpMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _frpMaterial.Name = Name;
           }
           break;
 
         case MatType.Glass:
-          dup._glassMaterial = m.CreateGlassMaterial(_gradeName ?? Name);
+          _glassMaterial = m.CreateGlassMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._glassMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-            dup._glassMaterial.Name = Name;
+            _glassMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _glassMaterial.Name = Name;
           }
           break;
 
         case MatType.Steel:
-          dup._steelMaterial = m.CreateSteelMaterial(_gradeName ?? Name);
+          _steelMaterial = m.CreateSteelMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._steelMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-            dup._steelMaterial.Name = Name;
+            _steelMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _steelMaterial.Name = Name;
           }
           break;
 
         case MatType.Timber:
-          dup._timberMaterial = m.CreateTimberMaterial(_gradeName ?? Name);
+          _timberMaterial = m.CreateTimberMaterial(_gradeName ?? Name);
           if (_gradeName != null) {
-            dup._timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-            dup._timberMaterial.Name = Name;
+            _timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _timberMaterial.Name = Name;
           }
           break;
 
         default:
-          dup._analysisMaterial = DuplicateAnalysisMaterial(_analysisMaterial); 
+          _analysisMaterial = DuplicateAnalysisMaterial(_analysisMaterial);
           break;
       }
-
-      dup._guid = new Guid(_guid.ToString());
-      return dup;
     }
 
     public override string ToString() {
@@ -428,7 +439,7 @@ namespace GsaGH.Parameters {
 
     internal static List<string> GetGradeNames(
       MatType type, string steelDesignCode = "", string concreteDesignCode = "") {
-      Model m = CreateMaterialModel(steelDesignCode, concreteDesignCode);
+      Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       switch (type) {
         case MatType.Aluminium:
           return new List<string>(m.GetStandardAluminumMaterialNames());
@@ -456,7 +467,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private AnalysisMaterial DuplicateAnalysisMaterial(AnalysisMaterial original) {
+    private static AnalysisMaterial DuplicateAnalysisMaterial(AnalysisMaterial original) {
       return new AnalysisMaterial() {
         CoefficientOfThermalExpansion = original.CoefficientOfThermalExpansion,
         Density = original.Density,
@@ -464,19 +475,6 @@ namespace GsaGH.Parameters {
         PoissonsRatio = original.PoissonsRatio,
         Name = original.Name,
       };
-    }
-
-    private static Model CreateMaterialModel(
-      string steelDesignCode = "", string concreteDesignCode = "") {
-      if (steelDesignCode == string.Empty) {
-        steelDesignCode = DesignCode.GetSteelDesignCodeNames()[0];
-      }
-
-      if (concreteDesignCode == string.Empty) {
-        concreteDesignCode = DesignCode.GetConcreteDesignCodeNames()[0];
-      }
-
-      return new Model(concreteDesignCode, steelDesignCode);
     }
   }
 }

@@ -1,4 +1,5 @@
 ﻿using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace GsaGH.Helpers.Export {
     internal GsaGuidDictionary<Prop2D> Prop2ds;
     internal GsaGuidDictionary<Prop3D> Prop3ds;
     internal Materials Materials;
-
+    internal int Count => Sections.Count + Prop2ds.Count + Prop3ds.Count;
     internal Properties(GsaModel model) { 
       Materials = new Materials(model);
       (Sections, SecionModifiers) = GetSectionDictionary(model);

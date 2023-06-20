@@ -25,17 +25,19 @@ namespace GsaGH.Helpers.Export {
     internal LengthUnit Unit = LengthUnit.Meter;
     private bool _deleteResults = false;
     private int _initialNodeCount = 0;
+    private bool _isSeedModel = true;
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
       Model = model.Model;
       Unit = unit;
-      Nodes = new GsaIntDictionary<Node>(Model.Nodes());
-      Axes = new GsaIntDictionary<Axis>(Model.Axes());
+      Nodes = new GsaIntDictionary<Node>(model.ApiNodes);
+      Axes = new GsaIntDictionary<Axis>(model.ApiAxis);
       Properties = new Properties(model);
       Elements = new GsaGuidIntListDictionary<Element>(Model.Elements());
       Members = new GsaGuidDictionary<Member>(Model.Members());
       Lists = new GsaGuidDictionary<EntityList>(Model.Lists());
       Loads = new Loads(Model);
+      CheckIfModelIsEmpty();
     }
 
     internal void ConvertNodes(List<GsaNode> nodes) {
@@ -123,11 +125,15 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void AssemblePreMeshing() {
+      if (!_isSeedModel) {
+        CreateModelFromDesignCodes();
+      }
+
       // Set API Nodes, Elements and Members in model
       Model.SetNodes(Nodes.ReadOnlyDictionary);
       Model.SetElements(Elements.ReadOnlyDictionary);
       Model.SetMembers(Members.ReadOnlyDictionary);
-
+      
       // Set API Sections and Materials in model
       Properties.Assemble(ref Model);
 
@@ -256,6 +262,42 @@ namespace GsaGH.Helpers.Export {
           Model.DeleteResults(taskId);
         }
       }
+    }
+
+    private void CheckIfModelIsEmpty() {
+      if (Nodes.Count == 0
+        && Properties.Materials.Count == 0
+        && Properties.Count == 0
+        && Elements.Count == 0
+        && Members.Count == 0
+        && Model.ConcreteDesignCode() == string.Empty
+        && Model.SteelDesignCode() == string.Empty) {
+        _isSeedModel = false;
+      }
+    }
+
+    private void CreateModelFromDesignCodes() {
+      string concreteCode = Properties.Materials.ConcreteDesignCode;
+      if (concreteCode == string.Empty) { 
+        if (Model.ConcreteDesignCode() != string.Empty) {
+          concreteCode = Model.ConcreteDesignCode();
+        } else {
+          concreteCode = DesignCode.GetConcreteDesignCodeNames()[8];
+        }
+      }
+
+      string steelCode = Properties.Materials.SteelDesignCode;
+      if (steelCode == string.Empty) {
+        if (Model.SteelDesignCode() != string.Empty) {
+          steelCode = Model.SteelDesignCode();
+        } else {
+          steelCode = DesignCode.GetSteelDesignCodeNames()[8];
+        }
+      }
+      
+      Model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
+      Properties.Materials.ConcreteDesignCode = concreteCode;
+      Properties.Materials.SteelDesignCode = steelCode;
     }
   }
 }

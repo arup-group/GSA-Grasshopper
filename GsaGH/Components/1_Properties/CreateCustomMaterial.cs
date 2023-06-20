@@ -148,18 +148,8 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
-
-      int id = -1;
-      if (da.GetData(0, ref id)) {
-        material.Id = id;
-        if (id == 0) {
-          this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. "
-            + Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
-          return;
-        }
-      }
-      material.Id = id;
+      int id = 0;
+      da.GetData(0, ref id);
 
       double poisson = 0.3;
       da.GetData(3, ref poisson);
@@ -176,49 +166,49 @@ namespace GsaGH.Components {
           break;
       }
 
-      material.AnalysisMaterial = new AnalysisMaterial() {
+      var analysisMaterial = new AnalysisMaterial() {
         ElasticModulus = Input.UnitNumber(this, da, 2, _stressUnit).As(PressureUnit.Pascal),
         PoissonsRatio = poisson,
         Density = Input.UnitNumber(this, da, 4, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 5, thermalExpansionUnit, true)
-         .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+        .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
       };
 
-      material.Id = 0;
+      GsaMaterial material = null;
 
-      //switch (_mode) {
-      //  case FoldMode.Generic:
-      //    material.MaterialType = GsaMaterial.MatType.Generic;
-      //    break;
+      switch (_mode) {
+        case FoldMode.Generic:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Generic);
+          break;
 
-      //  case FoldMode.Steel:
-      //    material.MaterialType = GsaMaterial.MatType.Steel;
-      //    break;
+        case FoldMode.Steel:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Steel);
+          break;
 
-      //  case FoldMode.Concrete:
-      //    material.MaterialType = GsaMaterial.MatType.Concrete;
-      //    break;
+        case FoldMode.Concrete:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Concrete);
+          break;
 
-      //  case FoldMode.Timber:
-      //    material.MaterialType = GsaMaterial.MatType.Timber;
-      //    break;
+        case FoldMode.Timber:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Timber);
+          break;
 
-      //  case FoldMode.Aluminium:
-      //    material.MaterialType = GsaMaterial.MatType.Aluminium;
-      //    break;
+        case FoldMode.Aluminium:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Aluminium);
+          break;
 
-      //  case FoldMode.Frp:
-      //    material.MaterialType = GsaMaterial.MatType.Frp;
-      //    break;
+        case FoldMode.Frp:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Frp);
+          break;
 
-      //  case FoldMode.Glass:
-      //    material.MaterialType = GsaMaterial.MatType.Glass;
-      //    break;
+        case FoldMode.Glass:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Glass);
+          break;
 
-      //  case FoldMode.Fabric:
-      //    material.MaterialType = GsaMaterial.MatType.Fabric;
-      //    break;
-      //}
+        case FoldMode.Fabric:
+          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Fabric);
+          break;
+      }
 
       string name = "";
       if (da.GetData(1, ref name)) {
