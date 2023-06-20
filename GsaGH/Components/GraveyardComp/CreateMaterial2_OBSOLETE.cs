@@ -66,48 +66,12 @@ namespace GsaGH.Components.GraveyardComp {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}" +
+        $"Please use the new CreateMaterial component that now supports standard materials." +
+        $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
 
-      int grade = 0;
-      if (da.GetData(0, ref grade)) {
-        material.Id = grade;
-      }
-
-      //switch (_selectedItems[0]) {
-      //  case "Steel":
-      //    material.MaterialType = GsaMaterial.MatType.Steel;
-      //    break;
-
-      //  case "Concrete":
-      //    material.MaterialType = GsaMaterial.MatType.Concrete;
-      //    break;
-
-      //  case "Timber":
-      //    material.MaterialType = GsaMaterial.MatType.Timber;
-      //    break;
-
-      //  case "Aluminium":
-      //    material.MaterialType = GsaMaterial.MatType.Aluminium;
-      //    break;
-
-      //  case "FRP":
-      //    material.MaterialType = GsaMaterial.MatType.Frp;
-      //    break;
-
-      //  case "Glass":
-      //    material.MaterialType = GsaMaterial.MatType.Glass;
-      //    break;
-
-      //  case "Fabric":
-      //    material.MaterialType = GsaMaterial.MatType.Fabric;
-      //    break;
-
-      //  default:
-      //    material.MaterialType = GsaMaterial.MatType.Generic;
-      //    break;
-      //}
-
-      da.SetData(0, new GsaMaterialGoo(material));
+      da.SetData(0, new GsaMaterialGoo(null));
     }
   }
 }

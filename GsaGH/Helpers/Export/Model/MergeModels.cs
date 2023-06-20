@@ -37,7 +37,7 @@ namespace GsaGH.Helpers.Export {
         Import.Nodes.GetNodes(appendModel.ApiNodes, LengthUnit.Meter);
       var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
-        c.Id = 0;
+        c.Id = 0; // set node Id of incoming to 0 to append to end and use CollapseCoincidingNodes
         return c;
       }).ToList();
 
@@ -82,24 +82,33 @@ namespace GsaGH.Helpers.Export {
         return c;
       }).ToList();
 
+      var existingSectionIds = mainModel.Properties.Sections.Keys.ToList();
       var sections = appendModel.Properties.Sections.
         Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       sections.Select(c => {
-        c.Id = 0;
+        if (existingSectionIds.Contains(c.Id)) {
+          c.Id = 0; // only set id to 0 if sectionId already exists in model to allow reference
+        }
         return c;
       }).ToList();
-      
+
+      var existingProp2dIds = mainModel.Properties.Prop2ds.Keys.ToList();
       var prop2Ds = appendModel.Properties.Prop2ds.
         Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop2Ds.Select(c => {
-        c.Id = 0;
+        if (existingProp2dIds.Contains(c.Id)) {
+          c.Id = 0;
+        }
         return c;
       }).ToList();
-      
+
+      var existingProp3dIds = mainModel.Properties.Prop3ds.Keys.ToList();
       var prop3Ds = appendModel.Properties.Prop3ds.
         Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop3Ds.Select(c => {
-        c.Id = 0;
+        if (existingProp3dIds.Contains(c.Id)) {
+          c.Id = 0;
+        }
         return c;
       }).ToList();
 

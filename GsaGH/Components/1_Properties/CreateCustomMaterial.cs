@@ -151,6 +151,9 @@ namespace GsaGH.Components {
       int id = 0;
       da.GetData(0, ref id);
 
+      string name = string.Empty;
+      da.GetData(1, ref name);
+
       double poisson = 0.3;
       da.GetData(3, ref poisson);
 
@@ -172,6 +175,7 @@ namespace GsaGH.Components {
         Density = Input.UnitNumber(this, da, 4, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 5, thermalExpansionUnit, true)
         .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+        Name = name,
       };
 
       GsaMaterial material = null;
@@ -210,10 +214,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      string name = "";
-      if (da.GetData(1, ref name)) {
-        material.AnalysisMaterial.Name = name;
-      }
+      
 
       da.SetData(0, new GsaMaterialGoo(material));
     }

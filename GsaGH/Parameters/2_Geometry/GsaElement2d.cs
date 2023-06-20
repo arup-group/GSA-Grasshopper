@@ -178,14 +178,16 @@ namespace GsaGH.Parameters {
         tuple.Item3);
     }
 
-    public GsaElement2d Duplicate(bool cloneApiElements = false) {
+    public GsaElement2d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+      
       var dup = new GsaElement2d {
         ApiElements = ApiElements,
         _guid = new Guid(_guid.ToString()),
       };
-      if (cloneApiElements) {
-        dup.CloneApiElements();
-      }
+      dup.CloneApiElements();
 
       dup.Ids = Ids.ToList();
       dup.Mesh = (Mesh)Mesh.DuplicateShallow();

@@ -215,7 +215,11 @@ namespace GsaGH.Parameters {
       _material = Material.Duplicate();
     }
 
-    public GsaProp2d Duplicate(bool cloneApiElement = false) {
+    public GsaProp2d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+      
       var dup = new GsaProp2d {
         _prop2d = _prop2d,
         _id = _id,
@@ -224,9 +228,7 @@ namespace GsaGH.Parameters {
         _localAxis = new Plane(_localAxis),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       return dup;
     }

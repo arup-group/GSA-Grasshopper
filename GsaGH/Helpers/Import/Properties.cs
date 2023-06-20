@@ -18,27 +18,39 @@ namespace GsaGH.Helpers.Import {
     }
 
     internal GsaSection GetSection(Element e) {
-      return Sections.TryGetValue(e.Property, out GsaSectionGoo section) ? section.Value : null;
+      return Sections.TryGetValue(e.Property, out GsaSectionGoo section) 
+        ? section.Value 
+        : new GsaSection(e.Property);
     }
 
     internal GsaSection GetSection(Member m) {
-      return Sections.TryGetValue(m.Property, out GsaSectionGoo section) ? section.Value : null;
+      return Sections.TryGetValue(m.Property, out GsaSectionGoo section) 
+        ? section.Value 
+        : new GsaSection(m.Property); ;
     }
 
     internal GsaProp2d GetProp2d(Element e) {
-      return Prop2ds.TryGetValue(e.Property, out GsaProp2dGoo prop) ? prop.Value : null;
+      return Prop2ds.TryGetValue(e.Property, out GsaProp2dGoo prop) 
+        ? prop.Value 
+        : new GsaProp2d(e.Property);
     }
 
     internal GsaProp2d GetProp2d(Member m) {
-      return Prop2ds.TryGetValue(m.Property, out GsaProp2dGoo prop) ? prop.Value : null;
+      return Prop2ds.TryGetValue(m.Property, out GsaProp2dGoo prop) 
+        ? prop.Value 
+        : new GsaProp2d(m.Property);
     }
 
     internal GsaProp3d GetProp3d(Element e) {
-      return Prop3ds.TryGetValue(e.Property, out GsaProp3dGoo prop) ? prop.Value : null;
+      return Prop3ds.TryGetValue(e.Property, out GsaProp3dGoo prop) 
+        ? prop.Value 
+        : new GsaProp3d(e.Property);
     }
 
     internal GsaProp3d GetProp3d(Member m) {
-      return Prop3ds.TryGetValue(m.Property, out GsaProp3dGoo prop) ? prop.Value : null;
+      return Prop3ds.TryGetValue(m.Property, out GsaProp3dGoo prop) 
+        ? prop.Value
+        : new GsaProp3d(m.Property);
     }
 
     private static ReadOnlyDictionary<int, GsaSectionGoo> CreateSectionsFromAPI(

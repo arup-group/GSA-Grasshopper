@@ -73,32 +73,17 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     }
 
     [Theory]
-    [InlineData("Undefined", -2)]
-    [InlineData("None", -1)]
-    [InlineData("Generic", 0)]
-    [InlineData("Steel", 1)]
-    [InlineData("Concrete", 2)]
-    [InlineData("Aluminium", 3)]
-    [InlineData("Glass", 4)]
-    [InlineData("FRP", 5)]
-    [InlineData("Rebar", 6)]
-    [InlineData("Timber", 7)]
-    [InlineData("Fabric", 8)]
-    [InlineData("Soil", 9)]
-    [InlineData("Numeric Material", 10)]
-    [InlineData("Compound", 0x100)]
-    [InlineData("Bar", 0x1000)]
-    [InlineData("Tendon", 4352)]
-    [InlineData("FRP Bar", 4608)]
-    [InlineData("CFRP", 4864)]
-    [InlineData("GFRP", 5120)]
-    [InlineData("AFRP", 5376)]
-    [InlineData("ARGFRP", 5632)]
-    [InlineData("Bar Material", 65280)]
-    public void GetMatTypeTest(string input, int expected) {
+    [InlineData("Generic")]
+    [InlineData("Steel")]
+    [InlineData("Concrete")]
+    [InlineData("Aluminium")]
+    [InlineData("Glass")]
+    [InlineData("Frp")]
+    [InlineData("Timber")]
+    [InlineData("Fabric")]
+    public void GetMatTypeTest(string input) {
       MatType actual = Mappings.GetMatType(input);
-
-      Assert.Equal(expected, (int)actual);
+      Assert.Equal(input, actual.ToString());
     }
 
     [Theory]

@@ -74,7 +74,6 @@ namespace GsaGH.Parameters {
         Guid = Guid.NewGuid(),
         _boundingBox = _boundingBox,
       };
-      clone.InstantiateApiFields();
       return clone;
     }
 

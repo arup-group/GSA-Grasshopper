@@ -181,7 +181,11 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaElement3d Duplicate(bool cloneApiElements = false) {
+    public GsaElement3d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaElement3d {
         NgonMesh = (Mesh)NgonMesh.DuplicateShallow(),
         _guid = new Guid(_guid.ToString()),
@@ -190,9 +194,7 @@ namespace GsaGH.Parameters {
         FaceInt = FaceInt,
         ApiElements = ApiElements,
       };
-      if (cloneApiElements) {
-        dup.CloneApiElements();
-      }
+      dup.CloneApiElements();
 
       dup.Ids = Ids.ToList();
       dup.Prop3ds = Prop3ds.ConvertAll(x => x.Duplicate());

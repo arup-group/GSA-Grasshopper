@@ -176,16 +176,18 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaElement1d Duplicate(bool cloneApiElement = false) {
+    public GsaElement1d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaElement1d {
         Id = Id,
         ApiElement = ApiElement,
         LocalAxes = LocalAxes,
         _guid = new Guid(_guid.ToString()),
       };
-      if (cloneApiElement) {
         dup.CloneApiObject();
-      }
 
       dup._line = (LineCurve)_line.DuplicateShallow();
       if (_rel1 != null) {

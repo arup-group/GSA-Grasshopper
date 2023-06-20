@@ -122,7 +122,7 @@ namespace GsaGHTests.Parameters {
     public void TestModelLengthUnit() {
       var m = new GsaModel();
 
-      Assert.Equal(LengthUnit.Undefined, m.ModelUnit);
+      Assert.Equal(LengthUnit.Meter, m.ModelUnit);
 
       m.ModelUnit = LengthUnit.Foot;
       Assert.Equal(LengthUnit.Foot, m.ModelUnit);

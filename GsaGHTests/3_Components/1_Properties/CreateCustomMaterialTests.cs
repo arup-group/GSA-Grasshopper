@@ -36,7 +36,6 @@ namespace GsaGHTests.Components.Properties {
 
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(1, output.Value.Id);
-      Assert.Equal(0, output.Value.Id);
       Assert.Equal("name", output.Value.AnalysisMaterial.Name);
       Assert.Equal(MatType.Timber, output.Value.MaterialType);
       Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal),

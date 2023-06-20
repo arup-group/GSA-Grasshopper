@@ -246,7 +246,7 @@ namespace GsaGH.Components {
 
       GsaSectionModifierGoo modifierGoo = null;
       if (da.GetData(0, ref modifierGoo)) {
-        modifier = modifierGoo.Value.Duplicate();
+        modifier = modifierGoo.Value.Duplicate(true);
       }
 
       if (Params.Input[1].SourceCount > 0) {

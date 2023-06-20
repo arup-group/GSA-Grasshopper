@@ -104,20 +104,19 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaMember3d Duplicate(bool cloneApiMember = false) {
+    public GsaMember3d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
         _mesh = (Mesh)_mesh.DuplicateShallow(),
         _guid = new Guid(_guid.ToString()),
         Prop3d = Prop3d.Duplicate(),
+        Id = Id,
+        ApiMember = GetAPI_MemberClone(),
       };
-      if (cloneApiMember) {
-        dup.ApiMember = GetAPI_MemberClone();
-      } else {
-        dup.ApiMember = ApiMember;
-      }
-
-      dup.Id = Id;
       dup.UpdatePreview();
       return dup;
     }

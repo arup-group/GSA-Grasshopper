@@ -246,13 +246,15 @@ namespace GsaGH.Parameters {
       _sectionModifier = sectionModifier;
     }
 
-    public GsaSectionModifier Duplicate(bool cloneApiObject = false) {
+    public GsaSectionModifier Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+      
       var dup = new GsaSectionModifier {
         _sectionModifier = _sectionModifier,
       };
-      if (cloneApiObject) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       return dup;
     }

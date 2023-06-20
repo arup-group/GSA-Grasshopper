@@ -7,7 +7,7 @@ using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]
-  public class MemberssTest {
+  public class MembersTest {
     [Fact]
     public void ImportMember1dTest() {
       var model = new GsaModel(ImportMembersMotherModel());

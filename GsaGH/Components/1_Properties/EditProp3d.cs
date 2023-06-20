@@ -58,7 +58,7 @@ namespace GsaGH.Components {
 
       GsaProp3dGoo prop3dGoo = null;
       if (da.GetData(0, ref prop3dGoo)) {
-        prop = prop3dGoo.Value.Duplicate();
+        prop = prop3dGoo.Value.Duplicate(true);
       }
 
       int id = 0;

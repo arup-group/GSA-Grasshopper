@@ -146,55 +146,12 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}" +
+        $"Please use the new CreateMaterial component that now supports standard materials." +
+        $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
 
-      var ghAnal = new GH_Integer();
-      if (da.GetData(0, ref ghAnal)) {
-        GH_Convert.ToInt32(ghAnal, out int anal, GH_Conversion.Both);
-        material.Id = anal;
-      }
-
-      var ghGrade = new GH_Integer();
-      if (da.GetData(1, ref ghGrade)) {
-        GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
-        material.Id = grade;
-      }
-
-      //switch (_mode) {
-      //  case FoldMode.Generic:
-      //    material.MaterialType = GsaMaterial.MatType.Generic;
-      //    break;
-
-      //  case FoldMode.Steel:
-      //    material.MaterialType = GsaMaterial.MatType.Steel;
-      //    break;
-
-      //  case FoldMode.Concrete:
-      //    material.MaterialType = GsaMaterial.MatType.Concrete;
-      //    break;
-
-      //  case FoldMode.Timber:
-      //    material.MaterialType = GsaMaterial.MatType.Timber;
-      //    break;
-
-      //  case FoldMode.Aluminium:
-      //    material.MaterialType = GsaMaterial.MatType.Aluminium;
-      //    break;
-
-      //  case FoldMode.Frp:
-      //    material.MaterialType = GsaMaterial.MatType.Frp;
-      //    break;
-
-      //  case FoldMode.Glass:
-      //    material.MaterialType = GsaMaterial.MatType.Glass;
-      //    break;
-
-      //  case FoldMode.Fabric:
-      //    material.MaterialType = GsaMaterial.MatType.Fabric;
-      //    break;
-      //}
-
-      da.SetData(0, new GsaMaterialGoo(material));
+      da.SetData(0, new GsaMaterialGoo(null));
     }
 
     private void Mode1Clicked() {

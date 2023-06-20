@@ -2,18 +2,20 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using static System.Net.WebRequestMethods;
 
 namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Material and ouput the information
   /// </summary>
   public class EditMaterial : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("33d14120-7355-414b-96d9-b85d64290d49");
+    public override Guid ComponentGuid => new Guid("70750300-2ec7-42a1-88ea-9e189e767544");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMaterial;
@@ -28,18 +30,22 @@ namespace GsaGH.Components {
         GsaMaterialGoo.NickName,
         GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new "
         + GsaMaterialGoo.Name, GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Analysis Property", "An",
-        "Set Material Analysis Property Number (0 -> 'from Grade')", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Name", "Na", "Material Name of Custom Material",
+      pManager.AddIntegerParameter("Material ID", "ID",
+        "(Optional) Set Material ID corrosponding to the desired ID in the material type's table " +
+        "(Steel, Concrete, etc).", GH_ParamAccess.item);
+      pManager.AddTextParameter("Material Name", "Na", "(Optional) Set Material Name",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Type", "mT",
-        "Set Material Type" + Environment.NewLine + "Input either text string or integer:"
+      pManager.AddParameter(new GsaMaterialParameter(), "Analysis Material", "AM",
+        GsaMaterialGoo.Description + "(Optional) Input another Material to overwrite the analysis" +
+        " material properties."
+        + GsaMaterialGoo.Name, GH_ParamAccess.item);
+      pManager.AddGenericParameter("Material Type", "mT",
+        "(Optional) Set Material Type for a Custom Material (only)." + Environment.NewLine +
+        "Input either text string or integer:"
         + Environment.NewLine + "Generic : 0" + Environment.NewLine + "Steel : 1"
         + Environment.NewLine + "Concrete : 2" + Environment.NewLine + "Aluminium : 3"
         + Environment.NewLine + "Glass : 4" + Environment.NewLine + "FRP : 5" + Environment.NewLine
         + "Timber : 7" + Environment.NewLine + "Fabric : 8", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Material Grade", "Grd", "Set Material Grade",
-        GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -50,13 +56,13 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
         GsaMaterialGoo.NickName, GsaMaterialGoo.Description + " with applied changes.",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Analysis Property", "An",
-        "Get Material Analysis Property (0 -> 'from Grade')", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Name", "Na", "Material Name of Custom Material",
+      pManager.AddIntegerParameter("Material ID", "ID",
+        "Get the Material's ID in its respective table (Steel, Concrete, etc)", GH_ParamAccess.item);
+      pManager.AddTextParameter("Material Name", "Na", "Get the Material's Name",
         GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter(), "Custom Material", "Mat",
+        "A copy of this material as a Custom material.", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT", "Get Material Type", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Material Grade", "Grd", "Get Material Grade",
-        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -64,7 +70,7 @@ namespace GsaGH.Components {
 
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(0, ref materialGoo)) {
-        material = materialGoo.Value.Duplicate();
+        material = materialGoo.Value.Duplicate(true);
       }
 
       int id = 0;
@@ -74,114 +80,116 @@ namespace GsaGH.Components {
 
       string name = "";
       if (da.GetData(2, ref name)) {
-        if (material.AnalysisMaterial == null) {
-          this.AddRuntimeWarning("Currently only Custom Materials support material names.");
-        } else {
-          material.AnalysisMaterial.Name = name;
-        }
+        material.Name = name;
+      }
+
+      GsaMaterialGoo customMaterialGoo = null;
+      GsaMaterial customMaterial = material.Duplicate();
+      if (da.GetData(3, ref customMaterialGoo)) {
+        customMaterial = customMaterialGoo.Value.Duplicate();
+        material.AnalysisMaterial = customMaterial.AnalysisMaterial;
       }
 
       var ghTyp = new GH_ObjectWrapper();
-      //if (da.GetData(3, ref ghTyp)) {
-      //  switch (ghTyp.Value) {
-      //    case GH_Integer ghInt: {
-      //        switch (ghInt.Value) {
-      //          case 1:
-      //            material.MaterialType = GsaMaterial.MatType.Steel;
-      //            break;
+      if (da.GetData(4, ref ghTyp)) {
+        if (!material.IsCustom) {
+          this.AddRuntimeWarning("MaterialType can only be changed for Custom Materials");
+        }
 
-      //          case 2:
-      //            material.MaterialType = GsaMaterial.MatType.Concrete;
-      //            break;
+        GsaMaterial.MatType type = material.MaterialType;
+        switch (ghTyp.Value) {
+          case GH_Integer ghInt: {
+              switch (ghInt.Value) {
+                case 1:
+                  type = GsaMaterial.MatType.Steel;
+                  break;
 
-      //          case 5:
-      //            material.MaterialType = GsaMaterial.MatType.Frp;
-      //            break;
+                case 2:
+                  type = GsaMaterial.MatType.Concrete;
+                  break;
 
-      //          case 3:
-      //            material.MaterialType = GsaMaterial.MatType.Aluminium;
-      //            break;
+                case 5:
+                  type = GsaMaterial.MatType.Frp;
+                  break;
 
-      //          case 7:
-      //            material.MaterialType = GsaMaterial.MatType.Timber;
-      //            break;
+                case 3:
+                  type = GsaMaterial.MatType.Aluminium;
+                  break;
 
-      //          case 4:
-      //            material.MaterialType = GsaMaterial.MatType.Glass;
-      //            break;
+                case 7:
+                  type = GsaMaterial.MatType.Timber;
+                  break;
 
-      //          case 8:
-      //            material.MaterialType = GsaMaterial.MatType.Fabric;
-      //            break;
+                case 4:
+                  type = GsaMaterial.MatType.Glass;
+                  break;
 
-      //          case 0:
-      //            material.MaterialType = GsaMaterial.MatType.Generic;
-      //            break;
-      //        }
+                case 8:
+                  type = GsaMaterial.MatType.Fabric;
+                  break;
 
-      //        break;
-      //      }
+                case 0:
+                  type = GsaMaterial.MatType.Generic;
+                  break;
+              }
 
-      //    case GH_String ghString: {
-      //        switch (ghString.Value.ToUpper()) {
-      //          case "STEEL":
-      //            material.MaterialType = GsaMaterial.MatType.Steel;
-      //            break;
+              break;
+            }
 
-      //          case "CONCRETE":
-      //            material.MaterialType = GsaMaterial.MatType.Concrete;
-      //            break;
+          case GH_String ghString: {
+              switch (ghString.Value.ToUpper()) {
+                case "STEEL":
+                  type = GsaMaterial.MatType.Steel;
+                  break;
 
-      //          case "FRP":
-      //            material.MaterialType = GsaMaterial.MatType.Frp;
-      //            break;
+                case "CONCRETE":
+                  type = GsaMaterial.MatType.Concrete;
+                  break;
 
-      //          case "ALUMINIUM":
-      //            material.MaterialType = GsaMaterial.MatType.Aluminium;
-      //            break;
+                case "FRP":
+                  type = GsaMaterial.MatType.Frp;
+                  break;
 
-      //          case "TIMBER":
-      //            material.MaterialType = GsaMaterial.MatType.Timber;
-      //            break;
+                case "ALUMINIUM":
+                  type = GsaMaterial.MatType.Aluminium;
+                  break;
 
-      //          case "GLASS":
-      //            material.MaterialType = GsaMaterial.MatType.Glass;
-      //            break;
+                case "TIMBER":
+                  type = GsaMaterial.MatType.Timber;
+                  break;
 
-      //          case "FABRIC":
-      //            material.MaterialType = GsaMaterial.MatType.Fabric;
-      //            break;
+                case "GLASS":
+                  type = GsaMaterial.MatType.Glass;
+                  break;
 
-      //          case "GENERIC":
-      //            material.MaterialType = GsaMaterial.MatType.Generic;
-      //            break;
-      //        }
+                case "FABRIC":
+                  type = GsaMaterial.MatType.Fabric;
+                  break;
 
-      //        break;
-      //      }
+                case "GENERIC":
+                  type = GsaMaterial.MatType.Generic;
+                  break;
+              }
 
-      //    default:
-      //      this.AddRuntimeError("Unable to convert Material Type input");
-      //      return;
-      //  }
-      //}
+              break;
+            }
 
-      int grd = 0;
-      if (da.GetData(4, ref grd)) {
-        material.Id = grd;
+          default:
+            this.AddRuntimeError("Unable to convert Material Type input");
+            return;
+        }
+
+        customMaterial = new GsaMaterial(customMaterial.AnalysisMaterial, id, type);
+        if (type != material.MaterialType) {
+          customMaterial.Name = $"created from {material.MaterialType} {material.Name}";
+        }
       }
 
       da.SetData(0, new GsaMaterialGoo(material));
       da.SetData(1, material.Id);
-      string mate = material.MaterialType.ToString();
-      mate = char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
-      string analysisMaterialName = "";
-      if (material.AnalysisMaterial != null) {
-        analysisMaterialName = material.AnalysisMaterial.Name;
-      }
-      da.SetData(2, analysisMaterialName);
-      da.SetData(3, mate);
-      da.SetData(4, material.Id);
+      da.SetData(2, material.Name);
+      da.SetData(3, new GsaMaterialGoo(customMaterial));
+      da.SetData(4, material.MaterialType.ToString());
     }
   }
 }

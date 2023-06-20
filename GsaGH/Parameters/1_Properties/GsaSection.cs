@@ -216,19 +216,20 @@ namespace GsaGH.Parameters {
       _material = Material.Duplicate();
     }
 
-    public GsaSection Duplicate(bool cloneApiElement = false) {
+    public GsaSection Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+      
       var dup = new GsaSection {
         _section = _section,
         _id = _id,
         _material = _material.Duplicate(),
-        _modifier = _modifier.Duplicate(cloneApiElement),
+        _modifier = _modifier.Duplicate(),
         _guid = new Guid(_guid.ToString()),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement) {
-        dup.CloneApiObject();
-      }
-
+      dup.CloneApiObject();
       return dup;
     }
 

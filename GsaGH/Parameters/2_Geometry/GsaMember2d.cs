@@ -238,16 +238,18 @@ namespace GsaGH.Parameters {
       Prop2d = prop2d;
     }
 
-    public GsaMember2d Duplicate(bool cloneApiMember = false) {
+    public GsaMember2d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaMember2d {
         Id = Id,
         MeshSize = MeshSize,
         _guid = new Guid(_guid.ToString()),
         ApiMember = ApiMember,
       };
-      if (cloneApiMember) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       dup.Prop2d = Prop2d.Duplicate();
 

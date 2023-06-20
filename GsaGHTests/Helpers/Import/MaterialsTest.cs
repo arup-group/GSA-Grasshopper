@@ -124,10 +124,10 @@ namespace GsaGHTests.Helpers.Import {
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AnalysisMaterials) {
         Assert.NotNull(kvp.Value);
         Assert.Equal(GsaMaterial.MatType.Generic, kvp.Value.MaterialType);
-        Assert.Throws<Exception>(() => kvp.Value.StandardMaterial);
-        Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
+        Assert.Equal(i++, kvp.Key);
         Assert.True(kvp.Value.IsCustom);
+        Assert.Throws<Exception>(() => kvp.Value.StandardMaterial);
       }
     }
     

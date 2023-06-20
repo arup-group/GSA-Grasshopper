@@ -201,7 +201,11 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaMember1d Duplicate(bool cloneApiMember = false) {
+    public GsaMember1d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaMember1d {
         Id = Id,
         MeshSize = MeshSize,
@@ -209,9 +213,7 @@ namespace GsaGH.Parameters {
         ApiMember = ApiMember,
         LocalAxes = LocalAxes,
       };
-      if (cloneApiMember) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       dup._crv = (PolyCurve)_crv.DuplicateShallow();
       if (_rel1 != null) {
@@ -226,7 +228,7 @@ namespace GsaGH.Parameters {
       dup.Topology = Topology;
       dup.TopologyType = TopologyType;
       if (_orientationNode != null) {
-        dup._orientationNode = _orientationNode.Duplicate(cloneApiMember);
+        dup._orientationNode = _orientationNode.Duplicate();
       }
 
       dup.UpdatePreview();

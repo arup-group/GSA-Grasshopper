@@ -113,7 +113,11 @@ namespace GsaGH.Parameters {
       _material = Material.Duplicate();
     }
 
-    public GsaProp3d Duplicate(bool cloneApiElement = false) {
+    public GsaProp3d Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaProp3d {
         _prop3d = _prop3d,
         _id = _id,
@@ -121,10 +125,7 @@ namespace GsaGH.Parameters {
         _guid = new Guid(_guid.ToString()),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement) {
-        dup.CloneApiObject();
-      }
-
+      dup.CloneApiObject();
       return dup;
     }
 

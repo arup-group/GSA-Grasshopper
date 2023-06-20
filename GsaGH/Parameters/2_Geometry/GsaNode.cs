@@ -133,16 +133,17 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaNode Duplicate(bool cloneApiNode = false) {
+    public GsaNode Duplicate(bool clone = false) {
+      if (!clone) {
+        return this;
+      }
+
       var dup = new GsaNode {
         Id = Id,
         _node = _node,
+        _plane = _plane,
       };
-      if (cloneApiNode) {
-        dup.CloneApiObject();
-      }
-
-      dup._plane = _plane;
+      dup.CloneApiObject();
       dup.UpdatePreview();
       return dup;
     }
