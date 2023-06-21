@@ -91,8 +91,11 @@ namespace GsaGH.Helpers.Import {
         IReadOnlyDictionary<int, Axis> axes) {
       var prop = new GsaProp2d(prop2d.Key) {
         ApiProp2d = prop2d.Value,
-        Material = materials.GetMaterial(prop2d.Value),
       };
+      GsaMaterial material = materials.GetMaterial(prop2d.Value);
+      if (material != null) {
+        prop.Material = material;
+      }
 
       // Axis property 0 = Global, -1 = Topological
       if (prop.ApiProp2d.AxisProperty > 0) {
@@ -110,11 +113,13 @@ namespace GsaGH.Helpers.Import {
     internal static GsaProp3dGoo CreateProp3dFromApi(
       KeyValuePair<int, Prop3D> prop3d,
       Materials materials) {
-
       var prop = new GsaProp3d(prop3d.Key) {
         ApiProp3d = prop3d.Value,
-        Material = materials.GetMaterial(prop3d.Value)
       };
+      GsaMaterial material = materials.GetMaterial(prop3d.Value);
+      if (material!= null) {
+        prop.Material = material;
+      }
 
       return new GsaProp3dGoo(prop);
     }
@@ -125,8 +130,11 @@ namespace GsaGH.Helpers.Import {
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
       var sect = new GsaSection(section.Key) {
         ApiSection = section.Value,
-        Material = materials.GetMaterial(section.Value)
       };
+      GsaMaterial material = materials.GetMaterial(section.Value);
+      if (material != null) {
+        sect.Material = material;
+      }
 
       if (sectionModifiers.Keys.Contains(section.Key)) {
         sect.Modifier = new GsaSectionModifier(sectionModifiers[section.Key]);
@@ -134,6 +142,5 @@ namespace GsaGH.Helpers.Import {
 
       return new GsaSectionGoo(sect);
     }
-
   }
 }

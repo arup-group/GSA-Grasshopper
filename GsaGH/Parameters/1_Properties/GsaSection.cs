@@ -211,7 +211,7 @@ namespace GsaGH.Parameters {
       if (!clone) {
         return this;
       }
-      
+
       var dup = new GsaSection {
         _section = _section,
         _id = _id,
