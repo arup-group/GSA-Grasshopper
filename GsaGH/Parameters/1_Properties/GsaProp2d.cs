@@ -9,6 +9,7 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Geometry;
+using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -68,8 +69,11 @@ namespace GsaGH.Parameters {
         }
 
         _prop2d.MaterialType = Materials.GetMaterialType(_material);
-        _prop2d.MaterialAnalysisProperty = _material.Id;
-        _prop2d.MaterialGradeProperty = _material.Id;
+        if (_material.IsCustom) {
+          _prop2d.MaterialAnalysisProperty = _material.Id;
+        } else {
+          _prop2d.MaterialGradeProperty = _material.Id;
+        }
         IsReferencedById = false;
       }
     }
@@ -235,9 +239,10 @@ namespace GsaGH.Parameters {
       string referenceEdge
         = Type == Property2D_Type.LOAD && SupportType != SupportType.Auto
         && SupportType != SupportType.AllEdges ? $"RefEdge:{ReferenceEdge}" : string.Empty;
-      return string
+      string joined = string
        .Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(),
-          mat.Trim()).Trim().Replace("  ", " ");
+          mat.Trim()).Trim();
+      return joined.Replace("   ", " ").Replace("  ", " ");
     }
 
     internal static Property2D_Type PropTypeFromString(string type) {

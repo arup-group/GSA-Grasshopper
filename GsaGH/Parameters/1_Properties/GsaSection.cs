@@ -101,8 +101,11 @@ namespace GsaGH.Parameters {
         }
 
         _section.MaterialType = Materials.GetMaterialType(_material);
-        _section.MaterialAnalysisProperty = _material.Id;
-        _section.MaterialGradeProperty = _material.Id;
+        if (_material.IsCustom) {
+          _section.MaterialAnalysisProperty = _material.Id;
+        } else {
+          _section.MaterialGradeProperty = _material.Id;
+        }
         IsReferencedById = false;
       }
     }

@@ -137,7 +137,7 @@ namespace GsaGH.Helpers.Export {
       Model.SetNodes(Nodes.ReadOnlyDictionary);
       Model.SetElements(Elements.ReadOnlyDictionary);
       Model.SetMembers(Members.ReadOnlyDictionary);
-      
+
       // Set API Sections and Materials in model
       Properties.Assemble(ref Model);
 

@@ -227,7 +227,8 @@ namespace GsaGH.Components {
               "Model contains no loads and has not been analysed, but has been assembled.");
           } else {
             this.AddRuntimeRemark(
-              "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
+              "Model contained no Analysis Tasks. Default Task has been created containing " +
+              "all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases) {
               model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
             }

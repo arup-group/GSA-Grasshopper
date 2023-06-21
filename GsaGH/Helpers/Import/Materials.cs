@@ -72,7 +72,7 @@ namespace GsaGH.Helpers.Import {
         case MaterialType.GLASS:
           return GlassMaterials.TryGetValue(id, out GsaMaterial glass) ? glass : null;
 
-        case MaterialType.STEEL:
+        case MaterialType.FIRST:
           return SteelMaterials.TryGetValue(id, out GsaMaterial steel) ? steel : null;
 
         case MaterialType.TIMBER:

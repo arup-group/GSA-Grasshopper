@@ -38,9 +38,9 @@ namespace GsaGH.Components {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
 
-      da.SetDataList(0, modelGoo.Value.Properties.Sections);
-      da.SetDataList(1, modelGoo.Value.Properties.Prop2ds);
-      da.SetDataList(2, modelGoo.Value.Properties.Prop3ds);
+      da.SetDataList(0, modelGoo.Value.Properties.Sections.Values);
+      da.SetDataList(1, modelGoo.Value.Properties.Prop2ds.Values);
+      da.SetDataList(2, modelGoo.Value.Properties.Prop3ds.Values);
     }
   }
 }

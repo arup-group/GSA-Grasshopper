@@ -47,8 +47,11 @@ namespace GsaGH.Parameters {
         }
 
         _prop3d.MaterialType = Materials.GetMaterialType(_material);
-        _prop3d.MaterialAnalysisProperty = _material.Id;
-        _prop3d.MaterialGradeProperty = _material.Id;
+        if (_material.IsCustom) {
+          _prop3d.MaterialAnalysisProperty = _material.Id;
+        } else {
+          _prop3d.MaterialGradeProperty = _material.Id;
+        }
         IsReferencedById = false;
       }
     }
