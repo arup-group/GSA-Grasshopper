@@ -49,7 +49,7 @@ namespace GsaGH.Components {
       } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
         member = new GsaMember3d(mesh);
       } else {
-        this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
+        this.AddRuntimeError($"Unable to convert Geometry input ({ghTyp.GetTypeName()}) to a 3D Member");
         return;
       }
 

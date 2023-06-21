@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>0.9.49-beta</Version>
+    <Version>0.9.50-beta</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Official Oasys GSA Grasshopper Plugin
@@ -38,14 +38,17 @@ Copyright © Oasys 1985 - 2022</Description>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>GsaGHTests</_Parameter1>
     </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>OasysGHTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
-    <PackageReference Include="OasysGH" Version="0.6.7-beta" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
+    <PackageReference Include="OasysGH" Version="0.6.8-beta" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>

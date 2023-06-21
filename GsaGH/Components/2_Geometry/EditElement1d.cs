@@ -155,11 +155,7 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
           elem.Type = (ElementType)typeInt;
         } else {
-          try {
-            elem.Type = Mappings.GetElementType(ghString.Value);
-          } catch (ArgumentException) {
-            this.AddRuntimeError("Unable to change Element Type");
-          }
+          elem.Type = Mappings.GetElementType(ghString.Value);
         }
       }
 
@@ -218,11 +214,7 @@ namespace GsaGH.Components {
       da.SetData(12, elem.Colour);
       da.SetData(13, elem.IsDummy);
 
-      try {
-        da.SetData(14, elem.ParentMember);
-      } catch (Exception) {
-        // ignored
-      }
+      da.SetData(14, elem.ParentMember);
 
       var topo = new DataTree<int>();
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
