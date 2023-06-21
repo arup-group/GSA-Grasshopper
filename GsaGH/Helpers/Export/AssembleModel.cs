@@ -24,9 +24,7 @@ namespace GsaGH.Helpers.Export {
       assembledModel.ConvertNodeLoads(loads);
       assembledModel.AssemblePreMeshing();
 
-      if (createElementsFromMembers) {
-        assembledModel.ElementsFromMembers(toleranceCoincidentNodes, owner);
-      }
+      assembledModel.ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
 
       Loads.ConvertList(lists, loads, ref assembledModel, owner);
       GridPlaneSurfaces.ConvertGridPlaneSurface(gridPlaneSurfaces, ref assembledModel, owner);

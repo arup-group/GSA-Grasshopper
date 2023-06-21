@@ -32,7 +32,7 @@ namespace GsaGH.Helpers.Export {
         model = new GsaModel();
       }
 
-      Model =  model.Model;
+      Model = model.Model;
       Unit = unit;
       Nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       Axes = new GsaIntDictionary<Axis>(model.ApiAxis);
@@ -148,14 +148,12 @@ namespace GsaGH.Helpers.Export {
       Model.SetLists(Lists.ReadOnlyDictionary);
     }
 
-    internal void ElementsFromMembers(Length toleranceCoincidentNodes, GH_Component owner) {
-      if (Members.Count == 0) {
-        return;
-      }
-
+    internal void ElementsFromMembers(bool createElementsFromMembers, Length toleranceCoincidentNodes, GH_Component owner) {
       _initialNodeCount += Nodes.Count;
 
-      Model.CreateElementsFromMembers();
+      if (createElementsFromMembers && Members.Count != 0) {
+        Model.CreateElementsFromMembers();
+      }
 
       // Sense-checking model after Elements from Members
       if (toleranceCoincidentNodes.Value > 0) {
@@ -282,7 +280,7 @@ namespace GsaGH.Helpers.Export {
 
     private void CreateModelFromDesignCodes() {
       string concreteCode = Properties.Materials.ConcreteDesignCode;
-      if (concreteCode == string.Empty) { 
+      if (concreteCode == string.Empty) {
         if (Model.ConcreteDesignCode() != string.Empty) {
           concreteCode = Model.ConcreteDesignCode();
         } else {
@@ -298,7 +296,7 @@ namespace GsaGH.Helpers.Export {
           steelCode = DesignCode.GetSteelDesignCodeNames()[8];
         }
       }
-      
+
       Model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
       Properties.Materials.ConcreteDesignCode = concreteCode;
       Properties.Materials.SteelDesignCode = steelCode;
