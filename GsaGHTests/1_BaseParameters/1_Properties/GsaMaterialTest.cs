@@ -65,7 +65,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal("customName", material.Name);
         var apiMaterial = (FabricMaterial)material.StandardMaterial;
         Assert.Equal("customName", apiMaterial.Name);
-        Assert.Throws<System.Reflection.TargetInvocationException>(() => DuplicateTest(material));
+        Assert.Throws<System.Exception>(() => DuplicateTest(material));
       }
     }
 
@@ -174,7 +174,7 @@ namespace GsaGHTests.Parameters {
       DuplicateTest(material);
     }
 
-    private static AnalysisMaterial TestAnalysisMaterial() {
+    internal static AnalysisMaterial TestAnalysisMaterial() {
       return new AnalysisMaterial() {
         CoefficientOfThermalExpansion = 0.05,
         Density = 7800,

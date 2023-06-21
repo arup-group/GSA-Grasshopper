@@ -28,7 +28,11 @@ namespace GsaGH.Helpers.Export {
     private bool _isSeedModel = true;
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
-      Model = model.Model;
+      if (model == null) {
+        model = new GsaModel();
+      }
+
+      Model =  model.Model;
       Unit = unit;
       Nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       Axes = new GsaIntDictionary<Axis>(model.ApiAxis);

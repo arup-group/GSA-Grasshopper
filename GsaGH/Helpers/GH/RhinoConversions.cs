@@ -465,7 +465,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(
-      Mesh mesh, int prop = 1, bool createQuadraticElements = false) {
+      Mesh mesh, int prop = 0, bool createQuadraticElements = false) {
       var elems = new List<Element>();
       var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();

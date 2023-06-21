@@ -177,7 +177,7 @@ namespace GsaGH.Parameters {
       _crv = convertCrv.Item1;
       Topology = convertCrv.Item2;
       TopologyType = convertCrv.Item3;
-
+      Section = new GsaSection(prop);
       UpdatePreview();
     }
 
@@ -209,7 +209,6 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember1d {
         Id = Id,
         MeshSize = MeshSize,
-        _guid = new Guid(_guid.ToString()),
         ApiMember = ApiMember,
         LocalAxes = LocalAxes,
       };

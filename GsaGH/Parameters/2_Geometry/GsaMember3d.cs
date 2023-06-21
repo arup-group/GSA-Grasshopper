@@ -84,6 +84,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
+      Prop3d = new GsaProp3d(0);
       UpdatePreview();
     }
 
@@ -92,6 +93,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
+      Prop3d = new GsaProp3d(0);
       UpdatePreview();
     }
 
@@ -112,11 +114,12 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
         _mesh = (Mesh)_mesh.DuplicateShallow(),
-        _guid = new Guid(_guid.ToString()),
         Prop3d = Prop3d.Duplicate(),
         Id = Id,
         ApiMember = GetAPI_MemberClone(),
+        _guid = Guid.NewGuid()
       };
+
       dup.UpdatePreview();
       return dup;
     }

@@ -342,22 +342,19 @@ namespace GsaGH.Parameters {
         IsCustom = IsCustom,
       };
 
-      if (_gradeName != null) {
-        dup._gradeName = _gradeName;
-        dup.Name = Name;
-      }
-
-      if (_analysisMaterial != null) {
+      if (IsCustom) {
         dup._analysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
-      }
-
-      if (!IsCustom) {
+      } else {
         dup.RecreateForDesignCode(_gradeName ?? Name);
+        
+        if (_gradeName != null) {
+          dup.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+          dup.Name = Name;
+          dup._gradeName = _gradeName;
+        }
       }
 
-      dup.MaterialType = MaterialType;
-
-      dup._guid = new Guid(_guid.ToString());
+      dup._guid = Guid.NewGuid();
       return dup;
     }
 

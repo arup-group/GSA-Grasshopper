@@ -40,7 +40,7 @@ namespace GsaGHTests.Parameters {
       var original = new GsaSectionModifier {
         StressOption = GsaSectionModifier.StressOptionType.NoCalculation,
       };
-      GsaSectionModifier duplicate = original.Duplicate();
+      GsaSectionModifier duplicate = original.Duplicate(true);
 
       Duplicates.AreEqual(original, duplicate);
       Assert.NotEqual(original, duplicate);

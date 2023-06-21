@@ -128,7 +128,7 @@ namespace GsaGH.Parameters {
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       Ids = new List<int>(new int[Mesh.Faces.Count]);
-      var singleProp = new GsaProp2d();
+      var singleProp = new GsaProp2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
@@ -146,6 +146,10 @@ namespace GsaGH.Parameters {
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       Ids = new List<int>(new int[Mesh.Faces.Count]);
+      var singleProp = new GsaProp2d(prop);
+      for (int i = 0; i < Mesh.Faces.Count; i++) {
+        Prop2ds.Add(singleProp.Duplicate());
+      }
     }
 
     internal GsaElement2d(
@@ -185,7 +189,6 @@ namespace GsaGH.Parameters {
       
       var dup = new GsaElement2d {
         ApiElements = ApiElements,
-        _guid = new Guid(_guid.ToString()),
       };
       dup.CloneApiElements();
 

@@ -106,15 +106,6 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public int MaterialId {
-      get => _section.MaterialAnalysisProperty;
-      set {
-        CloneApiObject();
-        _section.MaterialAnalysisProperty = value;
-        _material.Id = _section.MaterialAnalysisProperty;
-        IsReferencedById = false;
-      }
-    }
     public GsaSectionModifier Modifier {
       get => _modifier;
       set {

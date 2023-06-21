@@ -73,15 +73,6 @@ namespace GsaGH.Parameters {
         IsReferencedById = false;
       }
     }
-    public int MaterialId {
-      get => _prop2d.MaterialAnalysisProperty;
-      set {
-        CloneApiObject();
-        IsReferencedById = false;
-        _prop2d.MaterialAnalysisProperty = value;
-        _material.Id = _prop2d.MaterialAnalysisProperty;
-      }
-    }
     public string Name {
       get => _prop2d.Name;
       set {
@@ -224,7 +215,6 @@ namespace GsaGH.Parameters {
         _prop2d = _prop2d,
         _id = _id,
         _material = _material.Duplicate(),
-        _guid = new Guid(_guid.ToString()),
         _localAxis = new Plane(_localAxis),
         IsReferencedById = IsReferencedById,
       };

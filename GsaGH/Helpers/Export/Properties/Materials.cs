@@ -221,22 +221,34 @@ namespace GsaGH.Helpers.Export {
 
     private static int AddOrSetStandardMaterial<T>(
       GsaMaterial material, ref GsaGuidDictionary<T> matDict) {
-      if (material.Id <= 0) {
-        return matDict.AddValue(material.Guid, (T)material.StandardMaterial);
+      var standardMaterial = (T)material.StandardMaterial;
+
+      if (standardMaterial == null) {
+        return 0;
       }
 
-      matDict.SetValue(material.Id, material.Guid, (T)material.StandardMaterial);
-      return material.Id;
+      return AddOrSetMaterial(material.Id, material.Guid, standardMaterial, ref matDict);
     }
 
     private static int AddOrSetCustomMaterial(GsaMaterial material,
       ref GsaGuidDictionary<AnalysisMaterial> matDict) {
-      if (material.Id <= 0) {
-        return matDict.AddValue(material.Guid, material.AnalysisMaterial);
+
+      AnalysisMaterial analysisMaterial = material.AnalysisMaterial;
+      if (analysisMaterial == null) {
+        return 0;
       }
 
-      matDict.SetValue(material.Id, material.Guid, material.AnalysisMaterial);
-      return material.Id;
+      return AddOrSetMaterial(material.Id, material.Guid, analysisMaterial, ref matDict);
+    }
+
+    private static int AddOrSetMaterial<T>(
+      int id, Guid guid, T material, ref GsaGuidDictionary<T> matDict) {
+      if (id <= 0) {
+        return matDict.AddValue(guid, material);
+      }
+
+      matDict.SetValue(id, guid, material);
+      return id;
     }
 
     private static GsaGuidDictionary<T> GetStandardMaterialDictionary<T>(

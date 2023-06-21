@@ -7,13 +7,18 @@ using Xunit;
 
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
-  public class GhOasysGooTest {
-
+  public class GhOasysGeometricGooTest {
     [Theory]
-    [InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
+    [InlineData(typeof(GsaElement1dGoo), typeof(GsaElement1d))]
+    [InlineData(typeof(GsaElement2dGoo), typeof(GsaElement2d))]
+    [InlineData(typeof(GsaElement3dGoo), typeof(GsaElement3d))]
+    [InlineData(typeof(GsaMember1dGoo), typeof(GsaMember1d))]
+    [InlineData(typeof(GsaMember2dGoo), typeof(GsaMember2d))]
+    [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
+    [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
+    [InlineData(typeof(GsaGridPlaneSurfaceGoo), typeof(GsaGridPlaneSurface))]
     [InlineData(typeof(GsaListGoo), typeof(GsaList))]
     [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
-    [InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
     [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
     [InlineData(typeof(GsaProp2dGoo), typeof(GsaProp2d))]
     [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
@@ -23,7 +28,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
-    public void GenericGH_OasysGooTest(Type gooType, Type wrapType) {
+    public void GenericGH_OasysGeometricGooTest(Type gooType, Type wrapType) {
       object value = Activator.CreateInstance(wrapType);
       object[] parameters = {
         value,
@@ -33,8 +38,7 @@ namespace GsaGHTests.GooWrappers {
       gooType = objectGoo.GetType();
 
       IGH_Goo duplicate = ((IGH_Goo)objectGoo).Duplicate();
-      Duplicates.AreEqual(duplicate, objectGoo);
-      Assert.NotEqual(duplicate, objectGoo);
+      Duplicates.AreEqual(objectGoo, duplicate);
 
       bool hasValue = false;
       bool hasToString = false;
@@ -48,7 +52,24 @@ namespace GsaGHTests.GooWrappers {
         if (gooProperty.Name == "Value") {
           object gooValue = gooProperty.GetValue(objectGoo, null);
           Duplicates.AreEqual(value, gooValue);
-          Assert.NotEqual(value, gooValue);
+
+          MethodInfo methodInfo = gooValue.GetType().GetMethod("Duplicate");
+          Assert.NotNull(methodInfo);
+          ParameterInfo[] duplicateMethodParameters = methodInfo.GetParameters();
+          if (duplicateMethodParameters.Length == 0) {
+            object duplicateValue = methodInfo.Invoke(gooValue, null); // .Duplicate();
+            Assert.NotSame(gooValue, duplicateValue);
+          } else {
+            // .Duplicate(false);
+            object[] parametersArray = new object[] { false };
+            object duplicateValue = methodInfo.Invoke(gooValue, parametersArray); 
+            Assert.Same(gooValue, duplicateValue);
+            // .Duplicate(true);
+            parametersArray = new object[] { true };
+            duplicateValue = methodInfo.Invoke(gooValue, parametersArray); 
+            Assert.NotSame(gooValue, duplicateValue);
+            Duplicates.AreEqual(gooValue, duplicateValue);
+          }
 
           hasValue = true;
         }

@@ -136,7 +136,7 @@ namespace GsaGH.Parameters {
       };
       _line = line;
       Id = Id;
-      Section.Id = prop;
+      Section = new GsaSection(prop);
       _orientationNode = orientationNode;
       UpdatePreview();
     }
@@ -185,9 +185,8 @@ namespace GsaGH.Parameters {
         Id = Id,
         ApiElement = ApiElement,
         LocalAxes = LocalAxes,
-        _guid = new Guid(_guid.ToString()),
       };
-        dup.CloneApiObject();
+      dup.CloneApiObject();
 
       dup._line = (LineCurve)_line.DuplicateShallow();
       if (_rel1 != null) {

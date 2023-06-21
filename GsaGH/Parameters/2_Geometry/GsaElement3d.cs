@@ -142,7 +142,7 @@ namespace GsaGH.Parameters {
 
       Prop3ds = new List<GsaProp3d>();
       for (int i = 0; i < NgonMesh.Faces.Count; i++) {
-        Prop3ds.Add(new GsaProp3d());
+        Prop3ds.Add(new GsaProp3d(0));
       }
 
       UpdatePreview();
@@ -188,7 +188,6 @@ namespace GsaGH.Parameters {
 
       var dup = new GsaElement3d {
         NgonMesh = (Mesh)NgonMesh.DuplicateShallow(),
-        _guid = new Guid(_guid.ToString()),
         Topology = Topology,
         TopoInt = TopoInt,
         FaceInt = FaceInt,

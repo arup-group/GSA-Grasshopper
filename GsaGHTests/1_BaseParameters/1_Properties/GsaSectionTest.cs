@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters {
         Name = "Name",
       };
 
-      GsaSection duplicate = original.Duplicate();
+      GsaSection duplicate = original.Duplicate(true);
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -40,20 +40,20 @@ namespace GsaGHTests.Parameters {
       var areaExpected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       var sect = new GsaSection(profile);
+      var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
+      sect.Material = material;
 
       Assert.Equal(areaExpected.Value, sect.Area.SquareMillimeters, 10);
 
       sect.Material.Id = 2;
-      //sect.Material.MaterialType = GsaMaterial.MatType.Concrete;
       sect.Name = "mariam";
       sect.Pool = 4;
       sect.BasicOffset = BasicOffset.TopRight;
       sect.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
       sect.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
 
-      Assert.Equal(0, sect.Material.Id);
       Assert.Equal(2, sect.Material.Id);
-      Assert.Equal(MaterialType.CONCRETE.ToString().ToPascalCase(),
+      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         sect.Material.MaterialType.ToString());
       Assert.Equal("mariam", sect.Name);
       Assert.Equal(4, sect.Pool);
@@ -78,7 +78,7 @@ namespace GsaGHTests.Parameters {
     public void TestDuplicateEmptySection() {
       var section = new GsaSection();
 
-      GsaSection dup = section.Duplicate();
+      GsaSection dup = section.Duplicate(true);
       Assert.NotNull(dup);
     }
 
@@ -87,26 +87,22 @@ namespace GsaGHTests.Parameters {
       string profile = "CAT HE HE200.B";
       double myarea1 = 7808.121;
       var orig = new GsaSection(profile) {
-        MaterialId = 1,
-        //Material = {
-        //  Id = 2,
-        //  MaterialType = GsaMaterial.MatType.Steel,
-        //},
         Name = "mariam",
         Pool = 12,
         BasicOffset = BasicOffset.BottomLeft,
         AdditionalOffsetY = new Length(-1, LengthUnit.Foot),
         AdditionalOffsetZ = new Length(-2, LengthUnit.Foot)
       };
+      var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
+      orig.Material = material;
 
-      GsaSection dup = orig.Duplicate();
+      GsaSection dup = orig.Duplicate(true);
 
       string profile2 = "STD%R%15%20";
       double myarea2 = 15 * 20;
       var areaExpected = new Area(myarea2, AreaUnit.SquareMillimeter);
       orig.Profile = profile2;
       orig.Material.Id = 4;
-      //orig.Material.MaterialType = GsaMaterial.MatType.Timber;
       orig.Name = "kris";
       orig.Pool = 99;
       orig.BasicOffset = BasicOffset.TopLeft;
@@ -119,9 +115,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(profile, dup.Profile.Substring(0, profile.Length));
       Assert.Equal(myarea1, dup.Area.SquareMillimeters, 5);
 
-      Assert.Equal(0, dup.Material.Id);
-      Assert.Equal(2, dup.Material.Id);
-      Assert.Equal(MaterialType.STEEL.ToString().ToPascalCase(),
+      Assert.Equal(4, dup.Material.Id);
+      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
       Assert.Equal(12, dup.Pool);
@@ -130,8 +125,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(new Length(-2, LengthUnit.Foot), dup.AdditionalOffsetZ);
 
       Assert.Equal(4, orig.Material.Id);
-      Assert.Equal(0, orig.Material.Id);
-      Assert.Equal(MaterialType.TIMBER.ToString().ToPascalCase(),
+      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal(99, orig.Pool);

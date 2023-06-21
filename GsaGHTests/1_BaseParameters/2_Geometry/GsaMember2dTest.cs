@@ -94,7 +94,7 @@ namespace GsaGHTests.Parameters {
         Type = MemberType.GENERIC_2D,
       };
 
-      GsaMember2d dup = original.Duplicate();
+      GsaMember2d dup = original.Duplicate(true);
 
       Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
       Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y);
@@ -161,7 +161,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("ehbaba", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.33, dup.Offset.X1.Meters);
-      Assert.Equal(3, dup.Prop2d.Id);
+      Assert.Equal(44, dup.Prop2d.Id);
       Assert.Equal(AnalysisOrder.RIGID_DIAPHRAGM, dup.Type2D);
       Assert.Equal(MemberType.GENERIC_2D, dup.Type);
 

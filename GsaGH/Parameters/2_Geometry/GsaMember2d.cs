@@ -161,6 +161,7 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
+      Prop2d = new GsaProp2d(prop);
     }
 
     internal GsaMember2d(
@@ -246,7 +247,6 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember2d {
         Id = Id,
         MeshSize = MeshSize,
-        _guid = new Guid(_guid.ToString()),
         ApiMember = ApiMember,
       };
       dup.CloneApiObject();
