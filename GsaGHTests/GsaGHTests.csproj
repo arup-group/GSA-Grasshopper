@@ -35,11 +35,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="3_Components\GraveyardComp\" />
-    <Folder Include="Helpers\Graphics\ResultDiagrams\" />
-  </ItemGroup>
-
   <Import Project="PreBuild.targets" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
