@@ -1,5 +1,4 @@
-﻿using GsaAPI;
-using OasysUnits;
+﻿using OasysUnits;
 
 namespace GsaGH.Parameters {
   public class GsaProp2dModifier {
@@ -52,30 +51,30 @@ namespace GsaGH.Parameters {
       Volume = volume;
     }
 
-    public GsaProp2dModifier(Prop2DModifier apiModifier) {
-      if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
-        InPlane = new Ratio(-1 * apiModifier.InPlane.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-      } else {
-        InPlane = new Length(apiModifier.InPlane.Value, OasysUnits.Units.LengthUnit.Meter);
-      }
-      if (apiModifier.Bending.Option == Prop2DModifierOptionType.BY) {
-        Bending = new Ratio(-1 * apiModifier.Bending.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-      } else {
-        Bending = new Volume(apiModifier.Bending.Value, OasysUnits.Units.VolumeUnit.CubicMeter);
-      }
-      if (apiModifier.Shear.Option == Prop2DModifierOptionType.BY) {
-        Shear = new Ratio(-1 * apiModifier.Shear.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-      } else {
-        Shear = new Length(apiModifier.Shear.Value, OasysUnits.Units.LengthUnit.Meter);
-      }
-      if (apiModifier.Volume.Option == Prop2DModifierOptionType.BY) {
-        Volume = new Ratio(-1 * apiModifier.Volume.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-      } else {
-        Volume = new Length(apiModifier.Volume.Value, OasysUnits.Units.LengthUnit.Meter);
-      }
-      AdditionalMass = new Density(apiModifier.AdditionalMass,
-        OasysUnits.Units.DensityUnit.KilogramPerCubicMeter);
-    }
+    //public GsaProp2dModifier(Prop2DModifier apiModifier) {
+    //  if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
+    //    InPlane = new Ratio(-1 * apiModifier.InPlane.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+    //  } else {
+    //    InPlane = new Length(apiModifier.InPlane.Value, OasysUnits.Units.LengthUnit.Meter);
+    //  }
+    //  if (apiModifier.Bending.Option == Prop2DModifierOptionType.BY) {
+    //    Bending = new Ratio(-1 * apiModifier.Bending.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+    //  } else {
+    //    Bending = new Volume(apiModifier.Bending.Value, OasysUnits.Units.VolumeUnit.CubicMeter);
+    //  }
+    //  if (apiModifier.Shear.Option == Prop2DModifierOptionType.BY) {
+    //    Shear = new Ratio(-1 * apiModifier.Shear.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+    //  } else {
+    //    Shear = new Length(apiModifier.Shear.Value, OasysUnits.Units.LengthUnit.Meter);
+    //  }
+    //  if (apiModifier.Volume.Option == Prop2DModifierOptionType.BY) {
+    //    Volume = new Ratio(-1 * apiModifier.Volume.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+    //  } else {
+    //    Volume = new Length(apiModifier.Volume.Value, OasysUnits.Units.LengthUnit.Meter);
+    //  }
+    //  AdditionalMass = new Density(apiModifier.AdditionalMass,
+    //    OasysUnits.Units.DensityUnit.KilogramPerCubicMeter);
+    //}
 
     public override string ToString() {
       string inPlane = "In-plane:";
@@ -84,8 +83,8 @@ namespace GsaGH.Parameters {
       string volume = "Volume:";
       string mass = "Add.Mass:";
 
-      if (InPlane is Area) {
-        inPlane += InPlane.ToString().Replace(" ", string.Empty);
+      if (InPlane is Length inPlaneQuantity) {
+        inPlane += InPlane.ToString().Replace(" ", string.Empty) + "\u00B2" + "/" + Length.GetAbbreviation(inPlaneQuantity.Unit);
       } else if (InPlane is Ratio ratio) {
         if (ratio.DecimalFractions != 1) {
           inPlane += InPlane.ToString().Replace(" ", string.Empty);
@@ -94,8 +93,11 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Bending is Volume) {
+      if (Bending is Volume bendingQuantity) {
         bending += Bending.ToString().Replace(" ", string.Empty);
+        bending = bending.Remove(bending.Length - 1, 1);
+        bending += "\u2074" + "/" + OasysUnits.Volume.GetAbbreviation(bendingQuantity.Unit);
+        bending = bending.Remove(bending.Length - 1, 1);
       } else if (Bending is Ratio ratio) {
         if (ratio.DecimalFractions != 1) {
           bending += ratio.ToString("f0").Replace(" ", string.Empty);
@@ -104,8 +106,8 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Shear is Length) {
-        shear += Shear.ToString().Replace(" ", string.Empty);
+      if (Shear is Length shearQuantity) {
+        shear += Shear.ToString().Replace(" ", string.Empty) + "\u00B2" + "/" + Length.GetAbbreviation(shearQuantity.Unit);
       } else if (Shear is Ratio ratio) {
         if (ratio.DecimalFractions != 1) {
           shear += ratio.ToString("f0").Replace(" ", string.Empty);
@@ -114,8 +116,8 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Volume is Length) {
-        volume += Volume.ToString().Replace(" ", string.Empty);
+      if (Volume is Length volumeQuantity) {
+        volume += Volume.ToString().Replace(" ", string.Empty) + "\u00B3" + "/" + Length.GetAbbreviation(volumeQuantity.Unit) + "\u00B2";
       } else if (Volume is Ratio ratio) {
         if (ratio.DecimalFractions != 1) {
           volume += ratio.ToString("f0").Replace(" ", string.Empty);

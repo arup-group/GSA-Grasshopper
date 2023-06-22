@@ -170,8 +170,7 @@ namespace GsaGH.Components {
       var modifier = new GsaProp2dModifier();
       if (_toMode) {
         AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
-        AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
-        VolumePerLengthUnit volumeUnit = UnitsHelper.GetVolumePerLengthUnit(_lengthUnit);
+        VolumeUnit volumeUnit = UnitsHelper.GetVolumeUnit(_lengthUnit);
 
         if (Params.Input[0].SourceCount > 0) {
           modifier.InPlane = Input.UnitNumber(this, da, 0, _lengthUnit, true);
@@ -182,11 +181,11 @@ namespace GsaGH.Components {
         }
 
         if (Params.Input[2].SourceCount > 0) {
-          modifier.Shear = Input.UnitNumber(this, da, 2, inertiaUnit, true);
+          modifier.Shear = Input.UnitNumber(this, da, 2, _lengthUnit, true);
         }
 
         if (Params.Input[3].SourceCount > 0) {
-          modifier.Volume = Input.UnitNumber(this, da, 3, inertiaUnit, true);
+          modifier.Volume = Input.UnitNumber(this, da, 3, _lengthUnit, true);
         }
 
       } else {
@@ -196,7 +195,7 @@ namespace GsaGH.Components {
         modifier.Volume = Input.RatioInDecimalFractionToPercentage(this, da, 3);
       }
 
-      modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, da, 7, _densityUnit, true);
+      modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, da, 4, _densityUnit, true);
 
       da.SetData(0, new GsaProp2dModifierGoo(modifier));
     }
