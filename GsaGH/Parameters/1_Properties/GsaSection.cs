@@ -9,6 +9,7 @@ using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
