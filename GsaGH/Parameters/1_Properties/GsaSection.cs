@@ -317,7 +317,7 @@ namespace GsaGH.Parameters {
       var test = new Section {
         Profile = profile,
       };
-      return test.Area != 0;
+      return test.Properties().Area != 0;
     }
 
     private void CloneApiObject() {
