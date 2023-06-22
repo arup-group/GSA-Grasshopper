@@ -1,4 +1,5 @@
-﻿using OasysUnits;
+﻿using GsaAPI;
+using OasysUnits;
 
 namespace GsaGH.Parameters {
   public class GsaProp2dModifier {
@@ -51,30 +52,41 @@ namespace GsaGH.Parameters {
       Volume = volume;
     }
 
-    //public GsaProp2dModifier(Prop2DModifier apiModifier) {
-    //  if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
-    //    InPlane = new Ratio(-1 * apiModifier.InPlane.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-    //  } else {
-    //    InPlane = new Length(apiModifier.InPlane.Value, OasysUnits.Units.LengthUnit.Meter);
-    //  }
-    //  if (apiModifier.Bending.Option == Prop2DModifierOptionType.BY) {
-    //    Bending = new Ratio(-1 * apiModifier.Bending.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-    //  } else {
-    //    Bending = new Volume(apiModifier.Bending.Value, OasysUnits.Units.VolumeUnit.CubicMeter);
-    //  }
-    //  if (apiModifier.Shear.Option == Prop2DModifierOptionType.BY) {
-    //    Shear = new Ratio(-1 * apiModifier.Shear.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-    //  } else {
-    //    Shear = new Length(apiModifier.Shear.Value, OasysUnits.Units.LengthUnit.Meter);
-    //  }
-    //  if (apiModifier.Volume.Option == Prop2DModifierOptionType.BY) {
-    //    Volume = new Ratio(-1 * apiModifier.Volume.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
-    //  } else {
-    //    Volume = new Length(apiModifier.Volume.Value, OasysUnits.Units.LengthUnit.Meter);
-    //  }
-    //  AdditionalMass = new Density(apiModifier.AdditionalMass,
-    //    OasysUnits.Units.DensityUnit.KilogramPerCubicMeter);
-    //}
+    internal GsaProp2dModifier(Prop2DModifier apiModifier) {
+      if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
+        InPlane = new Ratio(-1 * apiModifier.InPlane.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+      } else {
+        InPlane = new Length(apiModifier.InPlane.Value, OasysUnits.Units.LengthUnit.Meter);
+      }
+      if (apiModifier.Bending.Option == Prop2DModifierOptionType.BY) {
+        Bending = new Ratio(-1 * apiModifier.Bending.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+      } else {
+        Bending = new Volume(apiModifier.Bending.Value, OasysUnits.Units.VolumeUnit.CubicMeter);
+      }
+      if (apiModifier.Shear.Option == Prop2DModifierOptionType.BY) {
+        Shear = new Ratio(-1 * apiModifier.Shear.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+      } else {
+        Shear = new Length(apiModifier.Shear.Value, OasysUnits.Units.LengthUnit.Meter);
+      }
+      if (apiModifier.Volume.Option == Prop2DModifierOptionType.BY) {
+        Volume = new Ratio(-1 * apiModifier.Volume.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+      } else {
+        Volume = new Length(apiModifier.Volume.Value, OasysUnits.Units.LengthUnit.Meter);
+      }
+      AdditionalMass = new Density(apiModifier.AdditionalMass,
+        OasysUnits.Units.DensityUnit.KilogramPerCubicMeter);
+    }
+
+    public GsaProp2dModifier Duplicate() {
+      var dup = new GsaProp2dModifier {
+        InPlane = InPlane,
+        Bending = Bending,
+        Shear = Shear,
+        Volume = Volume,
+        AdditionalMass = AdditionalMass,
+      };
+      return dup;
+    }
 
     public override string ToString() {
       string inPlane = "In-plane:";

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -25,15 +26,15 @@ namespace GsaGH.Parameters {
       GsaSectionModifierGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
-    //protected override GsaProp2dModifierGoo PreferredCast(object data) {
-    //  if (data is GsaProp2dGoo goo) {
-    //    Prop2DModifier apiModifier = goo.Value.ApiProp2d.PropertyModifier;
-    //    var modifier = new GsaProp2dModifier(apiModifier);
-    //    return new GsaProp2dModifierGoo(modifier);
-    //  }
+    protected override GsaProp2dModifierGoo PreferredCast(object data) {
+      if (data is GsaProp2dGoo goo) {
+        Prop2DModifier apiModifier = goo.Value.ApiProp2d.PropertyModifier;
+        var modifier = new GsaProp2dModifier(apiModifier);
+        return new GsaProp2dModifierGoo(modifier);
+      }
 
-    //  this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2dModifier");
-    //  return new GsaProp2dModifierGoo(null);
-    //}
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2dModifier");
+      return new GsaProp2dModifierGoo(null);
+    }
   }
 }
