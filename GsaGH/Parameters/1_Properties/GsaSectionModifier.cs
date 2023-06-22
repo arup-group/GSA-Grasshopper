@@ -5,9 +5,6 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
-  /// <summary>
-  ///   Section Modifier class, this class defines the basic properties and methods for any Gsa Offset
-  /// </summary>
   public class GsaSectionModifier {
     public enum StressOptionType {
       NoCalculation,
@@ -161,7 +158,7 @@ namespace GsaGH.Parameters {
           new SectionModifierAttribute(SectionModifierOptionType.BY,
             value.As(RatioUnit
              .DecimalFraction)) : // assume that percentage unit is modify BY option
-          // assume that all other than percentage unit is modify TO option
+                                  // assume that all other than percentage unit is modify TO option
           new SectionModifierAttribute(SectionModifierOptionType.TO,
             value.As(RatioUnit.DecimalFraction));
       }
@@ -178,7 +175,7 @@ namespace GsaGH.Parameters {
           new SectionModifierAttribute(SectionModifierOptionType.BY,
             value.As(RatioUnit
              .DecimalFraction)) : // assume that percentage unit is modify BY option
-          // assume that all other than percentage unit is modify TO option
+                                  // assume that all other than percentage unit is modify TO option
           new SectionModifierAttribute(SectionModifierOptionType.TO,
             value.As(RatioUnit.DecimalFraction));
       }
