@@ -146,7 +146,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+      this.AddRuntimeError(
         $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}" +
         $"Please use the new CreateMaterial component that now supports standard materials." +
         $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
