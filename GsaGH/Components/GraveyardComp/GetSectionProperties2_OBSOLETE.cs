@@ -19,15 +19,14 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get geometric properties of a section
   /// </summary>
-  // ReSharper disable once InconsistentNaming
-  public class GetSectionProperties_OBSOLETE : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("6504a99f-a4e2-4e30-8251-de31ea83e8cb");
+  public class GetSectionProperties2_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("fc59d2f7-496e-4862-8f66-31f1068fcab7");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SectionProperties;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public GetSectionProperties_OBSOLETE() : base("Section Properties", "SectProp",
+    public GetSectionProperties2_OBSOLETE() : base("Section Properties", "SectProp",
       "Get GSA Section Properties", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -56,17 +55,41 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    public override bool Read(GH_IReader reader) {
-      if (reader.ItemExists("LengthUnit")) // = v0.9.33 => saved as IGH_Variableblabla
-      {
-        _lengthUnit
-          = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-        bool flag = base.Read(reader);
-        return flag & Params.ReadAllParameterData(reader);
-      }
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
 
-      _lengthUnit = DefaultUnits.LengthUnitSection;
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _lengthUnit
+        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
+      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
+
+      Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
+      Params.Output[1].Name = "Moment of Inertia y-y ["
+        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[2].Name = "Moment of Inertia z-z ["
+        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[3].Name = "Moment of Inertia y-z ["
+        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[4].Name
+        = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -112,18 +135,23 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaSection section;
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
       }
 
+      GsaSection section;
       if (ghTyp.Value is GsaSectionGoo sectionGoo) {
         section = sectionGoo.Value;
       } else {
         string profile = string.Empty;
         ghTyp.CastTo(ref profile);
-        section = new GsaSection(profile);
+        if (GsaSection.ValidProfile(profile)) {
+          section = new GsaSection(profile);
+        } else {
+          this.AddRuntimeWarning("Invalid profile syntax: " + profile);
+          return;
+        }
       }
 
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
@@ -145,8 +173,9 @@ namespace GsaGH.Components {
     }
 
     private void Update(string unit) {
-      _lengthUnit = Length.ParseUnit(unit);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
   }
