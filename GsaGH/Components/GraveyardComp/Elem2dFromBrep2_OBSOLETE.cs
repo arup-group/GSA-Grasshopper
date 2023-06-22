@@ -151,7 +151,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           var pt = new Point3d();
           if (objectWrapper.Value is GsaNodeGoo nodeGoo) {
-            nodes.Add(nodeGoo.Value.Duplicate(true));
+            nodes.Add(nodeGoo.Value.Clone());
           } else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {
@@ -171,7 +171,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           Curve crv = null;
           if (objectWrapper.Value is GsaMember1dGoo member1dGoo) {
-            member1ds.Add(member1dGoo.Value.Duplicate(true));
+            member1ds.Add(member1dGoo.Value.Clone());
           } else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both)) {
             curves.Add(crv.DuplicateCurve());
           } else {

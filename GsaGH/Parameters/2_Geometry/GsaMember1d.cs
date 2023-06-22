@@ -183,9 +183,9 @@ namespace GsaGH.Parameters {
 
     internal GsaMember1d(
       KeyValuePair<int, Member> mem,
-      List<Point3d> topology, 
+      List<Point3d> topology,
       List<string> topoType,
-      ReadOnlyCollection<double> localAxis, 
+      ReadOnlyCollection<double> localAxis,
       GsaSection section,
       LengthUnit modelUnit) {
       ApiMember = mem.Value;
@@ -201,11 +201,7 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaMember1d Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaMember1d Clone() {
       var dup = new GsaMember1d {
         Id = Id,
         MeshSize = MeshSize,
@@ -234,8 +230,12 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaMember1d Duplicate() {
+      return this;
+    }
+
     public GsaMember1d Morph(SpaceMorph xmorph) {
-      GsaMember1d dup = Duplicate(true);
+      GsaMember1d dup = Clone();
       dup.Id = 0;
       dup.LocalAxes = null;
 
@@ -264,7 +264,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaMember1d Transform(Transform xform) {
-      GsaMember1d dup = Duplicate(true);
+      GsaMember1d dup = Clone();
       dup.Id = 0;
       dup.LocalAxes = null;
 

@@ -138,7 +138,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value.Duplicate(true);
+        section = sectionGoo.Value.Clone();
       }
 
       int id = 0;

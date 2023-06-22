@@ -70,7 +70,7 @@ namespace GsaGH.Components {
 
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(0, ref materialGoo)) {
-        material = materialGoo.Value.Duplicate(true);
+        material = materialGoo.Value.Clone();
       }
 
       int id = 0;

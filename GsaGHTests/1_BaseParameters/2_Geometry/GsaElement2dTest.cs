@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters {
       origi.Names = nms;
       origi.Offsets = off;
 
-      GsaElement2d dup = origi.Duplicate(true);
+      GsaElement2d dup = origi.Clone();
 
       for (int i = 0; i < dup.Topology.Count; i++) {
         Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X);

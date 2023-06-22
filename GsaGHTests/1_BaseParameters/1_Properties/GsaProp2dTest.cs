@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters {
         ReferenceSurface = ReferenceSurface.Top
       };
 
-      GsaProp2d duplicate = original.Duplicate(true);
+      GsaProp2d duplicate = original.Clone();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -75,7 +75,7 @@ namespace GsaGHTests.Parameters {
       var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       orig.Material = material;
 
-      GsaProp2d dup = orig.Duplicate(true);
+      GsaProp2d dup = orig.Clone();
 
       orig.Id = 4;
       orig.AxisProperty = 1;

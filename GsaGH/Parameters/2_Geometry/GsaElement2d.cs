@@ -69,8 +69,8 @@ namespace GsaGH.Parameters {
     public List<GsaOffset> Offsets {
       get
         => (from element in ApiElements where element != null
-          select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
-            element.Offset.Z)).ToList();
+            select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
+              element.Offset.Z)).ToList();
       set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
     }
     public List<Angle> OrientationAngles {
@@ -182,11 +182,7 @@ namespace GsaGH.Parameters {
         tuple.Item3);
     }
 
-    public GsaElement2d Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-      
+    public GsaElement2d Clone() {
       var dup = new GsaElement2d {
         ApiElements = ApiElements,
       };
@@ -200,12 +196,16 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaElement2d Duplicate() {
+      return this;
+    }
+
     public GsaElement2d Morph(SpaceMorph xmorph) {
       if (Mesh == null) {
         return null;
       }
 
-      GsaElement2d dup = Duplicate(true);
+      GsaElement2d dup = Clone();
       dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count]);
 
       Mesh xMs = dup.Mesh.DuplicateMesh();
@@ -230,7 +230,7 @@ namespace GsaGH.Parameters {
         return null;
       }
 
-      GsaElement2d dup = Duplicate(true);
+      GsaElement2d dup = Clone();
       dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count]);
 
       Mesh xMs = dup.Mesh.DuplicateMesh();
@@ -244,7 +244,7 @@ namespace GsaGH.Parameters {
         return null; // the logic below assumes the number of elements is equal to number of faces
       }
 
-      GsaElement2d dup = Duplicate(true);
+      GsaElement2d dup = Clone();
       Mesh = newMesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, 0);

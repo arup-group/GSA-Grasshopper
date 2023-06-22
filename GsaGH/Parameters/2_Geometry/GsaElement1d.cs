@@ -176,11 +176,7 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaElement1d Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaElement1d Clone() {
       var dup = new GsaElement1d {
         Id = Id,
         ApiElement = ApiElement,
@@ -206,8 +202,12 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaElement1d Duplicate() {
+      return this;
+    }
+
     public GsaElement1d Morph(SpaceMorph xmorph) {
-      GsaElement1d elem = Duplicate(true);
+      GsaElement1d elem = Clone();
       elem.Id = 0;
       elem.LocalAxes = null;
 
@@ -226,7 +226,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaElement1d Transform(Transform xform) {
-      GsaElement1d elem = Duplicate(true);
+      GsaElement1d elem = Clone();
       elem.Id = 0;
       elem.LocalAxes = null;
 

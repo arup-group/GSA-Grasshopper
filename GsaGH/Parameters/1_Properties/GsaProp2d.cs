@@ -210,11 +210,7 @@ namespace GsaGH.Parameters {
       _material = Material.Duplicate();
     }
 
-    public GsaProp2d Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-      
+    public GsaProp2d Clone() {
       var dup = new GsaProp2d {
         _prop2d = _prop2d,
         _id = _id,
@@ -225,6 +221,10 @@ namespace GsaGH.Parameters {
       dup.CloneApiObject();
 
       return dup;
+    }
+
+    public GsaProp2d Duplicate() {
+      return this;
     }
 
     public override string ToString() {

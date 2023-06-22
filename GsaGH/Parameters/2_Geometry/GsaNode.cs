@@ -133,11 +133,7 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaNode Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaNode Clone() {
       var dup = new GsaNode {
         Id = Id,
         _node = _node,
@@ -148,12 +144,16 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaNode Duplicate() {
+      return this;
+    }
+
     public GsaNode Morph(SpaceMorph xmorph) {
       if (Point == null) {
         return null;
       }
 
-      GsaNode node = Duplicate();
+      GsaNode node = Clone();
       node.Id = 0;
 
       var pt = new Point3d(node.Point);
@@ -205,7 +205,7 @@ namespace GsaGH.Parameters {
         return null;
       }
 
-      GsaNode node = Duplicate(true);
+      GsaNode node = Clone();
       node.Id = 0;
       var pt = new Point3d(node.Point);
       pt.Transform(xform);

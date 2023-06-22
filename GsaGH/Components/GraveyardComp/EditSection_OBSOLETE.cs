@@ -64,7 +64,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value.Duplicate();
+        section = sectionGoo.Value.Clone();
       }
 
       var ghId = new GH_Integer();

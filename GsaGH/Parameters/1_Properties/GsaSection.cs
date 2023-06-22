@@ -210,11 +210,7 @@ namespace GsaGH.Parameters {
       _material = Material.Duplicate();
     }
 
-    public GsaSection Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaSection Clone() {
       var dup = new GsaSection {
         _section = _section,
         _id = _id,
@@ -225,6 +221,10 @@ namespace GsaGH.Parameters {
       };
       dup.CloneApiObject();
       return dup;
+    }
+
+    public GsaSection Duplicate() {
+      return this;
     }
 
     public override string ToString() {

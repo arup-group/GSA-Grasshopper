@@ -112,7 +112,7 @@ namespace GsaGHTests.Parameters {
       orig.Offset = offset;
       orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
-      GsaElement1d dup = orig.Duplicate(true);
+      GsaElement1d dup = orig.Clone();
 
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
       orig.Id = 5;

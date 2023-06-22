@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters {
         Name = "Name",
       };
 
-      GsaSection duplicate = original.Duplicate(true);
+      GsaSection duplicate = original.Clone();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -78,7 +78,7 @@ namespace GsaGHTests.Parameters {
     public void TestDuplicateEmptySection() {
       var section = new GsaSection();
 
-      GsaSection dup = section.Duplicate(true);
+      GsaSection dup = section.Clone();
       Assert.NotNull(dup);
     }
 
@@ -96,7 +96,7 @@ namespace GsaGHTests.Parameters {
       var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       orig.Material = material;
 
-      GsaSection dup = orig.Duplicate(true);
+      GsaSection dup = orig.Clone();
 
       string profile2 = "STD%R%15%20";
       double myarea2 = 15 * 20;

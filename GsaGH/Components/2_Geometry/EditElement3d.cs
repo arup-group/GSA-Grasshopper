@@ -82,7 +82,7 @@ namespace GsaGH.Components {
 
       GsaElement3dGoo element3dGoo = null;
       if (da.GetData(0, ref element3dGoo)) {
-        elem = element3dGoo.Value.Duplicate(true);
+        elem = element3dGoo.Value.Clone();
       }
 
       // 1 ID

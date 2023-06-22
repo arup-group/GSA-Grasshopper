@@ -106,11 +106,7 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaMember3d Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaMember3d Clone() {
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
         _mesh = (Mesh)_mesh.DuplicateShallow(),
@@ -124,12 +120,16 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaMember3d Duplicate() {
+      return this;
+    }
+
     public GsaMember3d Morph(SpaceMorph xmorph) {
       if (SolidMesh == null) {
         return null;
       }
 
-      GsaMember3d dup = Duplicate(true);
+      GsaMember3d dup = Clone();
       dup.Id = 0;
       xmorph.Morph(dup.SolidMesh.Duplicate());
 
@@ -147,7 +147,7 @@ namespace GsaGH.Parameters {
         return null;
       }
 
-      GsaMember3d dup = Duplicate(true);
+      GsaMember3d dup = Clone();
       dup.Id = 0;
       dup.SolidMesh.Transform(xform);
 
@@ -155,14 +155,14 @@ namespace GsaGH.Parameters {
     }
 
     public GsaMember3d UpdateGeometry(Brep brep) {
-      GsaMember3d dup = Duplicate();
+      GsaMember3d dup = Clone();
       dup._mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaMember3d UpdateGeometry(Mesh mesh) {
-      GsaMember3d dup = Duplicate();
+      GsaMember3d dup = Clone();
       dup._mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       dup.UpdatePreview();
       return dup;

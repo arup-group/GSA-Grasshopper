@@ -177,7 +177,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
           var pt = new Point3d();
           if (ghObjectWrapper.Value is GsaNodeGoo nodeGoo) {
-            nodes.Add(nodeGoo.Value.Duplicate(true));
+            nodes.Add(nodeGoo.Value.Clone());
           } else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {
@@ -199,11 +199,11 @@ namespace GsaGH.Components {
           Curve crv = null;
           switch (ghType.Value) {
             case GsaElement1dGoo element1DGoo: {
-              elem1ds.Add(element1DGoo.Value.Duplicate(true));
+              elem1ds.Add(element1DGoo.Value.Clone());
               break;
             }
             case GsaMember1dGoo member1DGoo: {
-              mem1ds.Add(member1DGoo.Value.Duplicate(true));
+              mem1ds.Add(member1DGoo.Value.Clone());
               break;
             }
             default: {

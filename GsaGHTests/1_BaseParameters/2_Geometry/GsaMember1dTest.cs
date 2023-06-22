@@ -98,7 +98,7 @@ namespace GsaGHTests.Parameters {
         Type = MemberType.COLUMN,
       };
 
-      GsaMember1d dup = orig.Duplicate(true);
+      GsaMember1d dup = orig.Clone();
 
       Assert.Equal(Color.FromArgb(255, 0, 128, 0), dup.Colour);
       Assert.Equal(2, dup.Id);

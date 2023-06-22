@@ -177,7 +177,7 @@ namespace GsaGH.Components {
 
       GsaProp2dGoo prop2dGoo = null;
       if (da.GetData(0, ref prop2dGoo)) {
-        prop = prop2dGoo.Value.Duplicate(true);
+        prop = prop2dGoo.Value.Clone();
       }
 
       int id = 0;

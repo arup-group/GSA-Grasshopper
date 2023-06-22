@@ -94,7 +94,7 @@ namespace GsaGHTests.Parameters {
         Type = MemberType.GENERIC_2D,
       };
 
-      GsaMember2d dup = original.Duplicate(true);
+      GsaMember2d dup = original.Clone();
 
       Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
       Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y);

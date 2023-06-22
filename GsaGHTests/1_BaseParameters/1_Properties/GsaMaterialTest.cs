@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters {
     }
 
     internal static void DuplicateTest(GsaMaterial original) {
-      GsaMaterial duplicate = original.Duplicate(true);
+      GsaMaterial duplicate = original.Clone();
       Assert.NotSame(duplicate, original);
       Duplicates.AreEqual(original, duplicate);
     }

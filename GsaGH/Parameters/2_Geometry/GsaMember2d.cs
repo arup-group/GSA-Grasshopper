@@ -166,13 +166,13 @@ namespace GsaGH.Parameters {
 
     internal GsaMember2d(
       KeyValuePair<int, Member> mem,
-      List<Point3d> topology, 
+      List<Point3d> topology,
       List<string> topologyType,
-      List<List<Point3d>> voidTopology, 
+      List<List<Point3d>> voidTopology,
       List<List<string>> voidTopologyType,
-      List<List<Point3d>> inlcusionLinesTopology, 
+      List<List<Point3d>> inlcusionLinesTopology,
       List<List<string>> inclusionTopologyType,
-      List<Point3d> includePoints, 
+      List<Point3d> includePoints,
       GsaProp2d prop2d,
       LengthUnit modelUnit) {
       ApiMember = mem.Value;
@@ -239,11 +239,7 @@ namespace GsaGH.Parameters {
       Prop2d = prop2d;
     }
 
-    public GsaMember2d Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaMember2d Clone() {
       var dup = new GsaMember2d {
         Id = Id,
         MeshSize = MeshSize,
@@ -278,8 +274,12 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaMember2d Duplicate() {
+      return this;
+    }
+
     public GsaMember2d Morph(SpaceMorph xmorph) {
-      GsaMember2d dup = Duplicate(true);
+      GsaMember2d dup = Clone();
       dup.Id = 0;
 
       if (dup.Brep != null) {
@@ -345,7 +345,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaMember2d Transform(Transform xform) {
-      GsaMember2d dup = Duplicate(true);
+      GsaMember2d dup = Clone();
       dup.Id = 0;
 
       dup.Brep?.Transform(xform);
@@ -421,8 +421,5 @@ namespace GsaGH.Parameters {
 
       return mem;
     }
-
-    // list of polyline curve type (arch or line) for void /member2d
-    //slist of points for inclusion /member2d
   }
 }

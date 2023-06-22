@@ -329,11 +329,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public GsaMaterial Duplicate(bool clone = false) {
-      if (!clone) {
-        return this;
-      }
-
+    public GsaMaterial Clone() {
       var dup = new GsaMaterial {
         MaterialType = MaterialType,
         _id = _id,
@@ -346,7 +342,7 @@ namespace GsaGH.Parameters {
         dup._analysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
       } else {
         dup.RecreateForDesignCode(_gradeName ?? Name);
-        
+
         if (_gradeName != null) {
           dup.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
           dup.Name = Name;
@@ -356,6 +352,10 @@ namespace GsaGH.Parameters {
 
       dup._guid = Guid.NewGuid();
       return dup;
+    }
+
+    public GsaMaterial Duplicate() {
+      return this;
     }
 
     internal void RecreateForDesignCode(Model m) {
