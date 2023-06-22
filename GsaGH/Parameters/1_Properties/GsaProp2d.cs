@@ -285,6 +285,7 @@ namespace GsaGH.Parameters {
           prop.ReferenceEdge = _prop2d.ReferenceEdge;
         }
       }
+
       prop.PropertyModifier.AdditionalMass = _prop2d.PropertyModifier.AdditionalMass;
       prop.PropertyModifier.Bending = _prop2d.PropertyModifier.Bending;
       prop.PropertyModifier.InPlane = _prop2d.PropertyModifier.InPlane;
