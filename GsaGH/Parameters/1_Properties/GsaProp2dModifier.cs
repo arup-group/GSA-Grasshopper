@@ -1,5 +1,9 @@
 ﻿using GsaAPI;
 using OasysUnits;
+using OasysUnits.Units;
+using LengthUnit = OasysUnits.Units.LengthUnit;
+using RatioUnit = OasysUnits.Units.RatioUnit;
+using VolumeUnit = OasysUnits.Units.VolumeUnit;
 
 namespace GsaGH.Parameters {
   public class GsaProp2dModifier {
@@ -28,13 +32,13 @@ namespace GsaGH.Parameters {
     //    }
     //  }
     //  set {
-    //    if (value.QuantityInfo.UnitType != typeof(OasysUnits.Units.LengthUnit) &
+    //    if (value.QuantityInfo.UnitType != typeof( LengthUnit) &
     //      value.QuantityInfo.UnitType != typeof(RatioUnit)) {
     //      throw new ArgumentException("In-plane modifier must be either Area per Length or Ratio");
     //    }
     //    CloneApiObject();
-    //    _propertyModifier.InPlane = value.QuantityInfo.UnitType == typeof(OasysUnits.Units.LengthUnit) ?
-    //      new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, value.As(OasysUnits.Units.LengthUnit.Meter)) :
+    //    _propertyModifier.InPlane = value.QuantityInfo.UnitType == typeof( LengthUnit) ?
+    //      new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, value.As( LengthUnit.Meter)) :
     //      new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
     //  }
     //}
@@ -54,27 +58,26 @@ namespace GsaGH.Parameters {
 
     internal GsaProp2dModifier(Prop2DModifier apiModifier) {
       if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
-        InPlane = new Ratio(-1 * apiModifier.InPlane.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+        InPlane = new Ratio(-1 * apiModifier.InPlane.Value, RatioUnit.DecimalFraction);
       } else {
-        InPlane = new Length(apiModifier.InPlane.Value, OasysUnits.Units.LengthUnit.Meter);
+        InPlane = new Length(apiModifier.InPlane.Value, LengthUnit.Meter);
       }
       if (apiModifier.Bending.Option == Prop2DModifierOptionType.BY) {
-        Bending = new Ratio(-1 * apiModifier.Bending.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+        Bending = new Ratio(-1 * apiModifier.Bending.Value, RatioUnit.DecimalFraction);
       } else {
-        Bending = new Volume(apiModifier.Bending.Value, OasysUnits.Units.VolumeUnit.CubicMeter);
+        Bending = new Volume(apiModifier.Bending.Value, VolumeUnit.CubicMeter);
       }
       if (apiModifier.Shear.Option == Prop2DModifierOptionType.BY) {
-        Shear = new Ratio(-1 * apiModifier.Shear.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+        Shear = new Ratio(-1 * apiModifier.Shear.Value, RatioUnit.DecimalFraction);
       } else {
-        Shear = new Length(apiModifier.Shear.Value, OasysUnits.Units.LengthUnit.Meter);
+        Shear = new Length(apiModifier.Shear.Value, LengthUnit.Meter);
       }
       if (apiModifier.Volume.Option == Prop2DModifierOptionType.BY) {
-        Volume = new Ratio(-1 * apiModifier.Volume.Value, OasysUnits.Units.RatioUnit.DecimalFraction);
+        Volume = new Ratio(-1 * apiModifier.Volume.Value, RatioUnit.DecimalFraction);
       } else {
-        Volume = new Length(apiModifier.Volume.Value, OasysUnits.Units.LengthUnit.Meter);
+        Volume = new Length(apiModifier.Volume.Value, LengthUnit.Meter);
       }
-      AdditionalMass = new Density(apiModifier.AdditionalMass,
-        OasysUnits.Units.DensityUnit.KilogramPerCubicMeter);
+      AdditionalMass = new LinearDensity(apiModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter); // we need to create a new OasysUnit here!
     }
 
     public GsaProp2dModifier Duplicate() {
