@@ -22,7 +22,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("7399c0a4-7395-4e25-a615-be6c5803ecb7");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp2d;
+    protected override Bitmap Icon => Resources.CreateProp2dModifier;
     private readonly List<string> _optionTypes = new List<string>(new[] {
       "Modify by",
       "Modify to",
@@ -94,13 +94,10 @@ namespace GsaGH.Components {
 
         Params.Input[0].Name = "In-plane Modifier [" + areaUnitAbbreviation + "/" + lengthUnitAbbreviation + "]";
         Params.Input[0].Description = "[Optional] Modify the effective in-plane stiffness TO this value";
-
         Params.Input[1].Name = "Bending Modifier [" + inertiaUnitAbbreviation + "/" + lengthUnitAbbreviation + "]";
         Params.Input[1].Description = "[Optional] Modify the effective bending stiffness TO this value";
-
         Params.Input[2].Name = "Shear Modifier [" + areaUnitAbbreviation + "/" + lengthUnitAbbreviation + "]";
         Params.Input[2].Description = "[Optional] Modify the effective shear stiffness TO this value"; // shear stiffness?
-
         Params.Input[3].Name = "Volume Modifier [" + volumeUnitAbbreviation + "/" + areaUnitAbbreviation + "]";
         Params.Input[3].Description = "[Optional] Modify the effective volume this value";
       } else {

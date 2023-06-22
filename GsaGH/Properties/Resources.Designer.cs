@@ -383,10 +383,10 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon CreateProp2dModifier {
+        internal static System.Drawing.Bitmap CreateProp2dModifier {
             get {
                 object obj = ResourceManager.GetObject("CreateProp2dModifier", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -633,10 +633,10 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon EditProp2dModifier {
+        internal static System.Drawing.Bitmap EditProp2dModifier {
             get {
                 object obj = ResourceManager.GetObject("EditProp2dModifier", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
