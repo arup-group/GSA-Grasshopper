@@ -16,9 +16,9 @@ namespace GsaGH.Parameters {
     //}
 
 
-    public IQuantity AdditionalMass { get; set; }
-    public IQuantity Bending { get; set; }
-    public IQuantity InPlane { get; set; }
+    public IQuantity AdditionalMass { get; set; } = new LinearDensity();
+    public IQuantity Bending { get; set; } = new Ratio(100, RatioUnit.Percent);
+    public IQuantity InPlane { get; set; } = new Ratio(100, RatioUnit.Percent);
     //public IQuantity InPlaneModifier {
     //  get {
     //    if (_propertyModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
@@ -43,8 +43,8 @@ namespace GsaGH.Parameters {
     //  }
     //}
 
-    public IQuantity Shear { get; set; }
-    public IQuantity Volume { get; set; }
+    public IQuantity Shear { get; set; } = new Ratio(100, RatioUnit.Percent);
+    public IQuantity Volume { get; set; } = new Ratio(100, RatioUnit.Percent);
 
     public GsaProp2dModifier() { }
 
