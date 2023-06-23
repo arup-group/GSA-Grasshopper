@@ -109,12 +109,27 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Prop2d Number", "ID",
         "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
-        "Set Property Thickness", GH_ParamAccess.item);
+      pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
       pManager.AddGenericParameter("Axis", "Ax",
         "Input a Plane to set a custom Axis or input an integer (Global (0) or Topological (-1)) to reference a predefined Axis in the model",
         GH_ParamAccess.item);
+      pManager.AddTextParameter("Type", "Ty",
+        "Set 2D Property Type." + Environment.NewLine + "Input either text string or integer:"
+        + Environment.NewLine + "Plane Stress : 1" + Environment.NewLine + "Plane Strain : 2"
+        + Environment.NewLine + "Axis Symmetric : 3" + Environment.NewLine + "Fabric : 4"
+        + Environment.NewLine + "Plate : 5" + Environment.NewLine + "Shell : 6"
+        + Environment.NewLine + "Curved Shell : 7" + Environment.NewLine + "Torsion : 8"
+        + Environment.NewLine + "Wall : 9" + Environment.NewLine + "Load : 10",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
+        "Set Property Thickness", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Reference Surface", "RS",
+        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp2dModifierParameter());
       pManager.AddGenericParameter("Support Type", "ST",
         "Set Load Panel Support Type." + Environment.NewLine
         + "Input either text string or integer:" + Environment.NewLine + "Auto : 1"
@@ -126,49 +141,32 @@ namespace GsaGH.Components {
         "Reference Edge for Load Panels with support type other than Auto and All Edges",
         GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "Ty",
-        "Set 2D Property Type." + Environment.NewLine + "Input either text string or integer:"
-        + Environment.NewLine + "Plane Stress : 1" + Environment.NewLine + "Plane Strain : 2"
-        + Environment.NewLine + "Axis Symmetric : 3" + Environment.NewLine + "Fabric : 4"
-        + Environment.NewLine + "Plate : 5" + Environment.NewLine + "Shell : 6"
-        + Environment.NewLine + "Curved Shell : 7" + Environment.NewLine + "Torsion : 8"
-        + Environment.NewLine + "Wall : 9" + Environment.NewLine + "Load : 10",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
-        GH_ParamAccess.item);
-
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
       }
-      // pManager.HideParameter(6);//hide reference edge
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaProp2dParameter(), GsaProp2dGoo.Name, GsaProp2dGoo.NickName,
         GsaProp2dGoo.Description + " with applied changes.", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number",
-        GH_ParamAccess.item);
-      pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
-        "Get Property Thickness", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number", GH_ParamAccess.item);
+      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddGenericParameter("Axis", "Ax",
         "Get Local Axis either as Plane for custom or an integer (Global (0) or Topological (1)) for referenced Axis.",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Support Type", "ST", "Support Type", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Reference Edge", "RE",
-        "Reference Edge for Load Panels with support type other than Auto and All Edges",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
+        "Get Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
         "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
+        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp2dModifierParameter());
+      pManager.AddGenericParameter("Support Type", "ST", "Support Type", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Reference Edge", "RE",
+        "Reference Edge for Load Panels with support type other than Auto and All Edges",
         GH_ParamAccess.item);
     }
 
@@ -185,13 +183,14 @@ namespace GsaGH.Components {
         prop.Id = id;
       }
 
-      GsaMaterialGoo materialGoo = null;
-      if (da.GetData(2, ref materialGoo)) {
-        prop.Material = materialGoo.Value;
+      string name = string.Empty;
+      if (da.GetData(2, ref name)) {
+        prop.Name = name;
       }
 
-      if (Params.Input[3].SourceCount > 0) {
-        prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
+      Color colour = Color.Empty;
+      if (da.GetData(3, ref colour)) {
+        prop.Colour = colour;
       }
 
       var ghPlaneOrInt = new GH_ObjectWrapper();
@@ -210,7 +209,7 @@ namespace GsaGH.Components {
       // we can set support Type and then if not load support type
       // we can set reference egde
       GH_ObjectWrapper ghType = null;
-      if (da.GetData(9, ref ghType)) {
+      if (da.GetData(5, ref ghType)) {
         if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both)) {
           prop.Type = (Property2D_Type)number;
         } else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
@@ -218,35 +217,13 @@ namespace GsaGH.Components {
         }
       }
 
-      GH_ObjectWrapper ghSupportType = null;
-      if (da.GetData(5, ref ghSupportType)) {
-        if (ghSupportType.Value is GH_Integer supportTypeIndex) {
-          prop.SupportType = (SupportType)supportTypeIndex.Value;
-        } else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName,
-          GH_Conversion.Both)) {
-          supportTypeName = supportTypeName.Replace(" ", string.Empty).Replace("1", "One")
-           .Replace("2", "Two").Replace("3", "Three");
-          supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
-           .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
-          prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
-        } else {
-          this.AddRuntimeError("Cannot convert support type to 'int' or 'string'");
-        }
+      GsaMaterialGoo materialGoo = null;
+      if (da.GetData(6, ref materialGoo)) {
+        prop.Material = materialGoo.Value;
       }
 
-      int refEdge = 0;
-      if (da.GetData(6, ref refEdge)) {
-        prop.ReferenceEdge = refEdge;
-      }
-
-      string name = string.Empty;
-      if (da.GetData(7, ref name)) {
-        prop.Name = name;
-      }
-
-      Color colour = Color.Empty;
-      if (da.GetData(8, ref colour)) {
-        prop.Colour = colour;
+      if (Params.Input[7].SourceCount > 0) {
+        prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
       }
 
       var ghReferenceSurface = new GH_ObjectWrapper();
@@ -264,10 +241,37 @@ namespace GsaGH.Components {
       }
 
       var ghOffset = new GH_Number();
-      if (da.GetData(11, ref ghOffset)) {
+      if (da.GetData(9, ref ghOffset)) {
         if (GH_Convert.ToDouble(ghOffset, out double offset, GH_Conversion.Both)) {
           prop.AdditionalOffsetZ = new Length(offset, _lengthUnit);
         }
+      }
+
+      GsaProp2dModifierGoo modifierGoo = null;
+      if (da.GetData(10, ref modifierGoo)) {
+        //prop.ApiProp2d.PropertyModifier.InPlane = modifierGoo.Value.InPlane;
+
+      }
+
+      GH_ObjectWrapper ghSupportType = null;
+      if (da.GetData(11, ref ghSupportType)) {
+        if (ghSupportType.Value is GH_Integer supportTypeIndex) {
+          prop.SupportType = (SupportType)supportTypeIndex.Value;
+        } else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName,
+          GH_Conversion.Both)) {
+          supportTypeName = supportTypeName.Replace(" ", string.Empty).Replace("1", "One")
+           .Replace("2", "Two").Replace("3", "Three");
+          supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
+           .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
+          prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
+        } else {
+          this.AddRuntimeError("Cannot convert support type to 'int' or 'string'");
+        }
+      }
+
+      int refEdge = 0;
+      if (da.GetData(12, ref refEdge)) {
+        prop.ReferenceEdge = refEdge;
       }
 
       int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
@@ -275,23 +279,23 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaProp2dGoo(prop));
       da.SetData(1, prop.Id);
-      da.SetData(2, new GsaMaterialGoo(prop.Material));
-      da.SetData(3,
-        prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
-          new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
+      da.SetData(2, nm);
+      da.SetData(3, prop.ApiProp2d?.Colour);
       if (prop.AxisProperty == -2) {
         da.SetData(4, new GH_Plane(prop.LocalAxis));
       } else {
         da.SetData(4, ax);
       }
-
-      da.SetData(5, prop.SupportType);
-      da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
-      da.SetData(7, nm);
-      da.SetData(8, prop.ApiProp2d?.Colour);
-      da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
-      da.SetData(10, prop.ReferenceSurface);
-      da.SetData(11, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
+      da.SetData(5, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
+      da.SetData(6, new GsaMaterialGoo(prop.Material));
+      da.SetData(7,
+        prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
+          new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
+      da.SetData(8, prop.ReferenceSurface);
+      da.SetData(9, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
+      da.SetData(10, prop.SupportType);
+      da.SetData(11, prop.SupportType);
+      da.SetData(12, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
     }
 
     private void Update(string unit) {

@@ -7,7 +7,6 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using Xunit;
@@ -30,17 +29,19 @@ namespace GsaGHTests.Properties {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, new GsaProp2dGoo(prop2d), 0);
 
-      int i = 0;
-      var prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, i++);
-      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
-      var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, i++);
-      var thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
-      var axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
-      var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, i++);
-      var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
-      var name = (GH_String)ComponentTestHelper.GetOutput(comp, i++);
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, i++);
-      var type = (GH_String)ComponentTestHelper.GetOutput(comp, i);
+      var prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
+      var name = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
+      var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 3);
+      var axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
+      var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 6);
+      var thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
+      var referenceSurface = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
+      var offset = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
+      var modifier = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
+      var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
+      var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
       Duplicates.AreEqual(prop2d, prop2dGoo.Value);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
