@@ -113,7 +113,7 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend)) {
+      if (!((_legendValues != null) & _showLegend)) {
         return;
       }
 
@@ -475,7 +475,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        if (dmin == 0 & dmax == 0) {
+        if ((dmin == 0) & (dmax == 0)) {
           return;
         }
 
@@ -567,7 +567,7 @@ namespace GsaGH.Components {
 
         double tnorm = (2 * (t.Value - dmin) / (dmax - dmin)) - 1;
         Color valcol = ghGradient.ColourAt(tnorm);
-        float size = (t.Value >= 0 && dmax != 0) ? Math.Max(2, (float)(t.Value / dmax * scale)) :
+        float size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t.Value / dmax * scale)) :
           Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
 
         pointResultGoos[nodeId] = new PointResultGoo(def, t, valcol, size, nodeId);

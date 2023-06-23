@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -158,8 +157,7 @@ namespace GsaGH.Components {
         PoissonsRatio = poisson,
         Density = Input.UnitNumber(this, da, 3, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 4, thermalExpansionUnit, true)
-        .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
-      };
+         .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius), };
 
       GsaMaterial material = null;
 

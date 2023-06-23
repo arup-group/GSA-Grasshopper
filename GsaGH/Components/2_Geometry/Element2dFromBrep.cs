@@ -39,7 +39,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
@@ -282,7 +282,8 @@ namespace GsaGH.Components {
         try {
           var newTolerance = Length.Parse(_toleranceTxt);
           _tolerance = newTolerance;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }

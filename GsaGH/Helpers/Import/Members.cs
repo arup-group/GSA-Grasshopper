@@ -29,10 +29,9 @@ namespace GsaGH.Helpers.Import {
 
         if (item.Value.Type != MemberType.GENERIC_3D) {
           (Tuple<List<int>, List<string>> item1,
-            Tuple<List<List<int>>, List<List<string>>> voidTuple,
-            Tuple<List<List<int>>, List<List<string>>> lineTuple,
-            List<int> inclpts)
-              = Topology.Topology_detangler(toporg);
+              Tuple<List<List<int>>, List<List<string>>> voidTuple,
+              Tuple<List<List<int>>, List<List<string>>> lineTuple, List<int> inclpts)
+            = Topology.Topology_detangler(toporg);
           (List<int> topoInt, List<string> topoType) = item1;
 
           var topopts = new List<Point3d>();
@@ -40,7 +39,8 @@ namespace GsaGH.Helpers.Import {
             if (model.ApiNodes.TryGetValue(t, out Node node)) {
               topopts.Add(Nodes.Point3dFromNode(node, model.ModelUnit));
             } else {
-              return; ; // if node cannot be found continue with next key
+              return;
+              ; // if node cannot be found continue with next key
             }
           }
 
@@ -60,12 +60,12 @@ namespace GsaGH.Helpers.Import {
               }
 
               GsaSection section = model.Properties.GetSection(item.Value);
-              var mem1d = new GsaMember1d(
-                item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], section, model.ModelUnit);
+              var mem1d = new GsaMember1d(item, topopts, topoType,
+                model.ApiMemberLocalAxes[item.Key], section, model.ModelUnit);
               Member1ds.Add(new GsaMember1dGoo(mem1d));
               break;
 
-            default: 
+            default:
               // ### Member 2d ###
               if (topopts.Count < 2) {
                 string error = " Invalid topology Mem2D ID: " + item.Key + ".";

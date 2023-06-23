@@ -9,7 +9,6 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class DiagramLineGoo : GH_GeometricGoo<Line>, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.BoundingBox;
-    public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA diagram line type.";
     public override string TypeName => "Diagram Line";
     public Color Color { get; private set; }
@@ -17,6 +16,14 @@ namespace GsaGH.Parameters {
     public DiagramLineGoo(Point3d startPoint, Point3d endPoint, Color color) {
       Value = new Line(startPoint, endPoint);
       Color = color;
+    }
+
+    public BoundingBox ClippingBox => Boundingbox;
+
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      args.Pipeline.DrawLine(Value, Color);
     }
 
     public override bool CastFrom(object source) {
@@ -41,12 +48,6 @@ namespace GsaGH.Parameters {
 
       target = default;
       return false;
-    }
-
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public void DrawViewportWires(GH_PreviewWireArgs args) {
-      args.Pipeline.DrawLine(Value, Color);
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {

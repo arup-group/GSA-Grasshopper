@@ -10,6 +10,12 @@ using Xunit;
 
 namespace GsaGHTests {
   public class GrasshopperFixture : IDisposable {
+    private const string LinkFileName = "GsaGhTests.ghlink";
+    public static string InstallPath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+    private static readonly string linkFilePath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+      "Libraries");
     public RhinoCore Core {
       get {
         if (null == _core) {
@@ -28,15 +34,9 @@ namespace GsaGHTests {
         return _ghPlugin as GH_RhinoScriptInterface;
       }
     }
-    public static string InstallPath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
     private object Doc { get; set; }
     private object DocIo { get; set; }
-    private const string LinkFileName = "GsaGhTests.ghlink";
-    private static readonly string linkFilePath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
-      "Libraries");
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
@@ -60,17 +60,17 @@ namespace GsaGHTests {
       Utility.SetupUnitsDuringLoad(true);
     }
 
+    public void Dispose() {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+      File.Delete(Path.Combine(linkFilePath, LinkFileName));
+    }
+
     public void AddPluginToGh() {
       Directory.CreateDirectory(linkFilePath);
       StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, LinkFileName));
       writer.Write(Environment.CurrentDirectory);
       writer.Close();
-    }
-
-    public void Dispose() {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-      File.Delete(Path.Combine(linkFilePath, LinkFileName));
     }
 
     public void LoadRefs() {

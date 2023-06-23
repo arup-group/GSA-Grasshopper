@@ -27,11 +27,9 @@ namespace GsaGH.Parameters {
 
     protected override GsaProp2dGoo PreferredCast(object data) {
       switch (data) {
-        case GsaElement2dGoo elem2d:
-          return new GsaProp2dGoo(elem2d.Value.Prop2ds[0]);
+        case GsaElement2dGoo elem2d: return new GsaProp2dGoo(elem2d.Value.Prop2ds[0]);
 
-        case GsaMember2dGoo mem2d:
-          return new GsaProp2dGoo(mem2d.Value.Prop2d);
+        case GsaMember2dGoo mem2d: return new GsaProp2dGoo(mem2d.Value.Prop2d);
       }
 
       if (data.GetType() != typeof(GH_Number) && // assume GH_Number is double and we do that below
@@ -44,7 +42,8 @@ namespace GsaGH.Parameters {
 
       if (GH_Convert.ToDouble(data, out double val1, GH_Conversion.Both)) {
         if (Quantity.TryFrom(val1, DefaultUnits.LengthUnitSection, out IQuantity length1)) {
-         this.AddRuntimeWarning($"Number converted to thickness in {DefaultUnits.LengthUnitSection}");
+          this.AddRuntimeWarning(
+            $"Number converted to thickness in {DefaultUnits.LengthUnitSection}");
           return new GsaProp2dGoo(new GsaProp2d((Length)length1));
         }
       }

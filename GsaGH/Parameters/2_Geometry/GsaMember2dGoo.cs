@@ -25,32 +25,6 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
-        if (Value != null) {
-          target = (TQ)(object)new GH_Brep(Value.Brep.DuplicateBrep());
-          return true;
-        }
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
-        if (Value != null) {
-          target = (TQ)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
-          return true;
-        }
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value != null) {
-          target = (TQ)(object)new GH_Integer(Value.Id);
-          return true;
-        }
-      }
-
-      target = default;
-      return false;
-    }
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       if (Value == null || Value.Brep == null) {
         return;
@@ -93,7 +67,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.PolyCurve != null & Value.Brep == null) {
+      if ((Value.PolyCurve != null) & (Value.Brep == null)) {
         if (args.Color
           == Color.FromArgb(255, 150, 0,
             0)) // this is a workaround to change colour between selected and not
@@ -135,7 +109,7 @@ namespace GsaGH.Parameters {
             == Color.FromArgb(255, 150, 0,
               0)) // this is a workaround to change colour between selected and not
           {
-            if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
+            if ((Value.Brep == null) & ((i == 0) | (i == pts.Count - 1))) // draw first point bigger
             {
               args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 3,
                 Value.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
@@ -144,7 +118,7 @@ namespace GsaGH.Parameters {
                 Value.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
             }
           } else {
-            if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
+            if ((Value.Brep == null) & ((i == 0) | (i == pts.Count - 1))) // draw first point bigger
             {
               args.Pipeline.DrawPoint(pts[i], PointStyle.RoundControlPoint, 3,
                 Colours.Member1dNodeSelected);
@@ -166,6 +140,32 @@ namespace GsaGH.Parameters {
             Value.IsDummy ? Colours.Dummy1D : Colours.Member2dInclPt);
         }
       }
+    }
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Brep(Value.Brep.DuplicateBrep());
+          return true;
+        }
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
+          return true;
+        }
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
+        }
+      }
+
+      target = default;
+      return false;
     }
 
     public override IGH_GeometricGoo Duplicate() {

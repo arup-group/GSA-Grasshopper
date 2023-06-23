@@ -23,9 +23,10 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null, null, null, null, null, null, 
-        new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, 
-        LengthUnit.Meter, Length.Zero, false, null),
+        Model = AssembleModel.Assemble(null, null, null, null, null, null, new List<GsaMember1d>() {
+            m1d,
+          }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero,
+          false, null),
       };
 
       Member assembledMem1d = assembled.Model.Members()[1];

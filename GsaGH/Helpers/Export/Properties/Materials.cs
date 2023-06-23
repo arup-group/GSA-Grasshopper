@@ -1,36 +1,41 @@
-﻿using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Parameters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using GsaAPI;
+using GsaAPI.Materials;
+using GsaGH.Parameters;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGH.Helpers.Export {
   internal class Materials {
-    internal GsaGuidDictionary<SteelMaterial> SteelMaterials;
-    internal GsaGuidDictionary<ConcreteMaterial> ConcreteMaterials;
-    internal GsaGuidDictionary<FrpMaterial> FrpMaterials;
+    internal int Count
+      => SteelMaterials.Count + ConcreteMaterials.Count + FrpMaterials.Count
+        + AluminiumMaterials.Count + TimberMaterials.Count + GlassMaterials.Count
+        + FabricMaterials.Count + AnalysisMaterials.Count;
+    private Dictionary<Guid, GsaMaterial> _materials;
     internal GsaGuidDictionary<AluminiumMaterial> AluminiumMaterials;
-    internal GsaGuidDictionary<TimberMaterial> TimberMaterials;
-    internal GsaGuidDictionary<GlassMaterial> GlassMaterials;
-    internal GsaGuidDictionary<FabricMaterial> FabricMaterials;
     internal GsaGuidDictionary<AnalysisMaterial> AnalysisMaterials;
     internal string ConcreteDesignCode = string.Empty;
+    internal GsaGuidDictionary<ConcreteMaterial> ConcreteMaterials;
+    internal GsaGuidDictionary<FabricMaterial> FabricMaterials;
+    internal GsaGuidDictionary<FrpMaterial> FrpMaterials;
+    internal GsaGuidDictionary<GlassMaterial> GlassMaterials;
     internal string SteelDesignCode = string.Empty;
-    internal int Count => SteelMaterials.Count + ConcreteMaterials.Count + FrpMaterials.Count
-      + AluminiumMaterials.Count + TimberMaterials.Count + GlassMaterials.Count
-      + FabricMaterials.Count + AnalysisMaterials.Count;
-    private Dictionary<Guid, GsaMaterial> _materials;
+    internal GsaGuidDictionary<SteelMaterial> SteelMaterials;
+    internal GsaGuidDictionary<TimberMaterial> TimberMaterials;
 
     internal Materials(GsaModel model) {
       SteelMaterials = GetStandardMaterialDictionary<SteelMaterial>(model.Materials.SteelMaterials);
-      ConcreteMaterials = GetStandardMaterialDictionary<ConcreteMaterial>(model.Materials.ConcreteMaterials);
+      ConcreteMaterials
+        = GetStandardMaterialDictionary<ConcreteMaterial>(model.Materials.ConcreteMaterials);
       FrpMaterials = GetStandardMaterialDictionary<FrpMaterial>(model.Materials.FrpMaterials);
-      AluminiumMaterials = GetStandardMaterialDictionary<AluminiumMaterial>(model.Materials.AluminiumMaterials);
-      TimberMaterials = GetStandardMaterialDictionary<TimberMaterial>(model.Materials.TimberMaterials);
+      AluminiumMaterials
+        = GetStandardMaterialDictionary<AluminiumMaterial>(model.Materials.AluminiumMaterials);
+      TimberMaterials
+        = GetStandardMaterialDictionary<TimberMaterial>(model.Materials.TimberMaterials);
       GlassMaterials = GetStandardMaterialDictionary<GlassMaterial>(model.Materials.GlassMaterials);
-      FabricMaterials = GetStandardMaterialDictionary<FabricMaterial>(model.Materials.FabricMaterials);
+      FabricMaterials
+        = GetStandardMaterialDictionary<FabricMaterial>(model.Materials.FabricMaterials);
       AnalysisMaterials = GetCustomMaterialDictionary(model.Materials.AnalysisMaterials);
       ConcreteDesignCode = model.Model.ConcreteDesignCode();
       SteelDesignCode = model.Model.SteelDesignCode();
@@ -47,7 +52,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (AluminiumMaterials.Count > 0) {
-        foreach (KeyValuePair<int, AluminiumMaterial> mat in AluminiumMaterials.ReadOnlyDictionary) {
+        foreach (KeyValuePair<int, AluminiumMaterial> mat in
+          AluminiumMaterials.ReadOnlyDictionary) {
           apiModel.SetAluminiumMaterial(mat.Key, mat.Value);
         }
       }
@@ -109,8 +115,7 @@ namespace GsaGH.Helpers.Export {
       return string.Empty;
     }
 
-    internal static void AddMaterial(
-      ref GsaSection section, ref Materials apiMaterials) {
+    internal static void AddMaterial(ref GsaSection section, ref Materials apiMaterials) {
       if (section.Material != null) {
         // set material type in API prop
         section.ApiSection.MaterialType = GetMaterialType(section.Material);
@@ -129,8 +134,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal static void AddMaterial(
-      ref GsaProp2d prop2d, ref Materials apiMaterials) {
+    internal static void AddMaterial(ref GsaProp2d prop2d, ref Materials apiMaterials) {
       if (prop2d.Material != null) {
         // set material type in API prop
         prop2d.ApiProp2d.MaterialType = GetMaterialType(prop2d.Material);
@@ -149,8 +153,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal static void AddMaterial(
-      ref GsaProp3d prop3d, ref Materials apiMaterials) {
+    internal static void AddMaterial(ref GsaProp3d prop3d, ref Materials apiMaterials) {
       if (prop3d.Material != null) {
         // set material type in API prop
         prop3d.ApiProp3d.MaterialType = GetMaterialType(prop3d.Material);
@@ -170,22 +173,18 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static MaterialType GetMaterialType(GsaMaterial material) {
-      return (MaterialType)Enum.Parse(typeof(MaterialType),
-           material.MaterialType.ToString(), true);
+      return (MaterialType)Enum.Parse(typeof(MaterialType), material.MaterialType.ToString(), true);
     }
 
-    private static int ConvertMaterial(
-      GsaMaterial material, ref Materials apiMaterials) {
+    private static int ConvertMaterial(GsaMaterial material, ref Materials apiMaterials) {
       return material == null ? 0 : AddMaterial(material, ref apiMaterials);
     }
 
-
-
-    private static int AddMaterial(
-      GsaMaterial material, ref Materials apiMaterials) {
+    private static int AddMaterial(GsaMaterial material, ref Materials apiMaterials) {
       if (!apiMaterials._materials.ContainsKey(material.Guid)) {
         apiMaterials._materials.Add(material.Guid, material);
       }
+
       if (material.IsCustom) {
         return AddOrSetCustomMaterial(material, ref apiMaterials.AnalysisMaterials);
       }
@@ -201,8 +200,7 @@ namespace GsaGH.Helpers.Export {
         case MatType.Fabric:
           return AddOrSetStandardMaterial(material, ref apiMaterials.FabricMaterials);
 
-        case MatType.Frp:
-          return AddOrSetStandardMaterial(material, ref apiMaterials.FrpMaterials);
+        case MatType.Frp: return AddOrSetStandardMaterial(material, ref apiMaterials.FrpMaterials);
 
         case MatType.Glass:
           return AddOrSetStandardMaterial(material, ref apiMaterials.GlassMaterials);
@@ -214,8 +212,7 @@ namespace GsaGH.Helpers.Export {
         case MatType.Timber:
           return AddOrSetStandardMaterial(material, ref apiMaterials.TimberMaterials);
 
-        default:
-          return AddOrSetCustomMaterial(material, ref apiMaterials.AnalysisMaterials);
+        default: return AddOrSetCustomMaterial(material, ref apiMaterials.AnalysisMaterials);
       }
     }
 
@@ -230,9 +227,8 @@ namespace GsaGH.Helpers.Export {
       return AddOrSetMaterial(material.Id, material.Guid, standardMaterial, ref matDict);
     }
 
-    private static int AddOrSetCustomMaterial(GsaMaterial material,
-      ref GsaGuidDictionary<AnalysisMaterial> matDict) {
-
+    private static int AddOrSetCustomMaterial(
+      GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> matDict) {
       AnalysisMaterial analysisMaterial = material.AnalysisMaterial;
       if (analysisMaterial == null) {
         return 0;
@@ -257,6 +253,7 @@ namespace GsaGH.Helpers.Export {
       foreach (KeyValuePair<int, GsaMaterial> mat in existingStandardMaterials) {
         materialsDictionary.SetValue(mat.Key, mat.Value.Guid, (T)mat.Value.StandardMaterial);
       }
+
       return materialsDictionary;
     }
 
@@ -267,6 +264,7 @@ namespace GsaGH.Helpers.Export {
       foreach (KeyValuePair<int, GsaMaterial> mat in existingAnalysisMaterials) {
         materialsDictionary.SetValue(mat.Key, mat.Value.Guid, mat.Value.AnalysisMaterial);
       }
+
       return materialsDictionary;
     }
 
@@ -275,24 +273,31 @@ namespace GsaGH.Helpers.Export {
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.SteelMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.ConcreteMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.FrpMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.AluminiumMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.TimberMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.GlassMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.FabricMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
+
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.AnalysisMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);
       }
@@ -301,12 +306,13 @@ namespace GsaGH.Helpers.Export {
     private void RebuildOtherMaterialsToDesignCodes(Model apiModel) {
       FrpMaterials = RebuildApiMaterials<FrpMaterial>(apiModel, FrpMaterials.GuidDictionary);
       AluminiumMaterials = RebuildApiMaterials<AluminiumMaterial>(
-        apiModel, AluminiumMaterials.GuidDictionary); ;
-      TimberMaterials = RebuildApiMaterials<TimberMaterial>(
-        apiModel, TimberMaterials.GuidDictionary);
+        apiModel, AluminiumMaterials.GuidDictionary);
+      ;
+      TimberMaterials
+        = RebuildApiMaterials<TimberMaterial>(apiModel, TimberMaterials.GuidDictionary);
       GlassMaterials = RebuildApiMaterials<GlassMaterial>(apiModel, GlassMaterials.GuidDictionary);
-      FabricMaterials = RebuildApiMaterials<FabricMaterial>(
-        apiModel, FabricMaterials.GuidDictionary);
+      FabricMaterials
+        = RebuildApiMaterials<FabricMaterial>(apiModel, FabricMaterials.GuidDictionary);
     }
 
     private GsaGuidDictionary<T> RebuildApiMaterials<T>(
@@ -318,6 +324,7 @@ namespace GsaGH.Helpers.Export {
           newMaterials.SetValue(item.Value, item.Key, (T)material.StandardMaterial);
         }
       }
+
       return newMaterials;
     }
 
@@ -325,8 +332,8 @@ namespace GsaGH.Helpers.Export {
       if (apiMaterials.ConcreteDesignCode == string.Empty) {
         apiMaterials.ConcreteDesignCode = material.ConcreteDesignCodeName;
       } else if (apiMaterials.ConcreteDesignCode != material.ConcreteDesignCodeName) {
-        throw new Exception($"Concrete material with {material.ConcreteDesignCodeName} Design Code" +
-          $" cannot be added to a model with {apiMaterials.ConcreteDesignCode} Design Code.");
+        throw new Exception($"Concrete material with {material.ConcreteDesignCodeName} Design Code"
+          + $" cannot be added to a model with {apiMaterials.ConcreteDesignCode} Design Code.");
       }
     }
 
@@ -334,8 +341,8 @@ namespace GsaGH.Helpers.Export {
       if (apiMaterials.SteelDesignCode == string.Empty) {
         apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
       } else if (apiMaterials.SteelDesignCode != material.SteelDesignCodeName) {
-        throw new Exception($"Concrete material with {material.SteelDesignCodeName} Design Code" +
-          $" cannot be added to a model with {apiMaterials.SteelDesignCode} Design Code.");
+        throw new Exception($"Concrete material with {material.SteelDesignCodeName} Design Code"
+          + $" cannot be added to a model with {apiMaterials.SteelDesignCode} Design Code.");
       }
     }
   }

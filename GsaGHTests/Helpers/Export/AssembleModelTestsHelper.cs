@@ -98,18 +98,18 @@ namespace GsaGHTests.Helpers.Export {
           Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
         }
 
-        int group = (i > expected.Groups.Count - 1) ? expected.Groups.Last() : expected.Groups[i];
+        int group = i > expected.Groups.Count - 1 ? expected.Groups.Last() : expected.Groups[i];
         Assert.Equal(group, api.Group);
-        bool dummy = (i > expected.IsDummies.Count - 1) ? expected.IsDummies.Last() :
+        bool dummy = i > expected.IsDummies.Count - 1 ? expected.IsDummies.Last() :
           expected.IsDummies[i];
         Assert.Equal(dummy, api.IsDummy);
-        string name = (i > expected.Names.Count - 1) ? expected.Names.Last() : expected.Names[i];
+        string name = i > expected.Names.Count - 1 ? expected.Names.Last() : expected.Names[i];
         Assert.Equal(name, api.Name);
-        GsaOffset offset = (i > expected.Offsets.Count - 1) ? expected.Offsets.Last() :
+        GsaOffset offset = i > expected.Offsets.Count - 1 ? expected.Offsets.Last() :
           expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
-        GsaProp2d prop = (i > expected.Prop2ds.Count - 1) ? expected.Prop2ds.Last() :
+        GsaProp2d prop = i > expected.Prop2ds.Count - 1 ? expected.Prop2ds.Last() :
           expected.Prop2ds[i];
         TestProp2d(prop, api.Property, actualModel);
       }

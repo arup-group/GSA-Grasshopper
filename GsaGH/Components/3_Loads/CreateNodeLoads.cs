@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -14,7 +15,10 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 using EntityType = GsaGH.Parameters.EntityType;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   public class CreateNodeLoad : GH_OasysDropDownComponent {
@@ -225,7 +229,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      GsaAPI.Direction direc = GsaAPI.Direction.Z;
+      Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(3, ref ghDir)) {
@@ -235,23 +239,23 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = GsaAPI.Direction.X;
+          direc = Direction.X;
           break;
 
         case "Y":
-          direc = GsaAPI.Direction.Y;
+          direc = Direction.Y;
           break;
 
         case "XX":
-          direc = GsaAPI.Direction.XX;
+          direc = Direction.XX;
           break;
 
         case "YY":
-          direc = GsaAPI.Direction.YY;
+          direc = Direction.YY;
           break;
 
         case "ZZ":
-          direc = GsaAPI.Direction.ZZ;
+          direc = Direction.ZZ;
           break;
       }
 

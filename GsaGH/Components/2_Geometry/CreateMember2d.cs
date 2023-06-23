@@ -74,7 +74,7 @@ namespace GsaGH.Components {
 
       GsaProp2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
-          mem.Prop2d = prop2dGoo.Value;
+        mem.Prop2d = prop2dGoo.Value;
       }
 
       double meshSize = 0;

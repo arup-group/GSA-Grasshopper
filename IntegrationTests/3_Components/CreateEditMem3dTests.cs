@@ -10,6 +10,7 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class CreateEditMem3dTests {
+    private static GH_Document document = null;
     public static GH_Document Document {
       get {
         if (document == null) {
@@ -19,7 +20,6 @@ namespace IntegrationTests.Components {
         return document;
       }
     }
-    private static GH_Document document = null;
 
     [Fact]
     public void CreateMember3dComponentTest() {
@@ -29,7 +29,7 @@ namespace IntegrationTests.Components {
       var output1 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0, 0, 0);
       var output2 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0, 0, 1);
       var output3 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0, 0, 2);
-      
+
       Assert.Null(output1);
       Assert.NotNull(output2.Value);
       Assert.NotNull(output3.Value);

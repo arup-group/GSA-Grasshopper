@@ -7,7 +7,6 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using Rhino.Display;
 using Rhino.Geometry;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -23,23 +22,6 @@ namespace GsaGH.Parameters {
 
     internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null) {
       Value = duplicate ? item.Duplicate() : item;
-    }
-
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
-        target = Value == null ? default : (TQ)(object)new GH_Point(Value.Point);
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value != null) {
-          target = (TQ)(object)new GH_Integer(Value.Id);
-          return true;
-        }
-      }
-
-      target = default;
-      return false;
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
@@ -83,6 +65,23 @@ namespace GsaGH.Parameters {
         args.Pipeline.DrawLine(Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
         args.Pipeline.DrawLine(Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
       }
+    }
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
+        target = Value == null ? default : (TQ)(object)new GH_Point(Value.Point);
+        return true;
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
+        }
+      }
+
+      target = default;
+      return false;
     }
 
     public override IGH_GeometricGoo Duplicate() {

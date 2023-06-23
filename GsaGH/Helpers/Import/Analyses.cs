@@ -39,7 +39,8 @@ namespace GsaGH.Helpers.Import {
         {
           nodeLoads = model.NodeLoads(typ);
           caseIDs.AddRange(nodeLoads.Select(x => x.Case));
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // ignored
         }
       }

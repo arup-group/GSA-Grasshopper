@@ -1,9 +1,9 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Drawing;
+using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using System;
-using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -24,11 +24,12 @@ namespace GsaGH.Parameters {
 
     protected override GsaResultGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaModelGoo)) {
-        this.AddRuntimeError($"Use 'SelectResults' component to pick results case." +
-          $"{Environment.NewLine}Data conversion failed from {data.GetTypeName()} to Result");
+        this.AddRuntimeError($"Use 'SelectResults' component to pick results case."
+          + $"{Environment.NewLine}Data conversion failed from {data.GetTypeName()} to Result");
       } else {
         this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Result");
       }
+
       return new GsaResultGoo(null);
     }
   }

@@ -6,40 +6,44 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Lists {
-    internal static string GetNodeList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
-      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
+    internal static string GetNodeList(
+      GsaList list, ref GsaGuidDictionary<EntityList> apiLists, ref GsaIntDictionary<Node> apiNodes,
+      LengthUnit unit) {
       if (apiLists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
-        return "\"" + apiLists.ReadOnlyDictionary[id].Name + "\"";
+        return $"\"{apiLists.ReadOnlyDictionary[id].Name}\"";
       }
 
       AddNodeList(list, ref apiLists, ref apiNodes, unit);
 
-      return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name + "\"";
+      return $"\"{apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name}\"";
     }
 
     internal static void ConvertNodeLists(
-    List<GsaList> lists, ref GsaGuidDictionary<EntityList> apiLists,
-    ref GsaIntDictionary<Node> apiNodes, LengthUnit modelUnit) {
+      List<GsaList> lists, ref GsaGuidDictionary<EntityList> apiLists,
+      ref GsaIntDictionary<Node> apiNodes, LengthUnit modelUnit) {
       if (lists == null) {
         return;
       }
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null
-      && list.EntityType == Parameters.EntityType.Node)) {
+        && list.EntityType == EntityType.Node)) {
         AddNodeList(list, ref apiLists, ref apiNodes, modelUnit);
       }
     }
 
-    private static void AddNodeList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
-      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
+    private static void AddNodeList(
+      GsaList list, ref GsaGuidDictionary<EntityList> apiLists, ref GsaIntDictionary<Node> apiNodes,
+      LengthUnit unit) {
       if (list._nodes == null || list._nodes.Count == 0) {
         AddList(list, ref apiLists);
       }
+
       GsaList copyList = list.Duplicate();
       var ids = new Collection<int>();
 
@@ -52,24 +56,25 @@ namespace GsaGH.Helpers.Export {
       AddList(copyList, ref apiLists);
     }
 
-    internal static string GetElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
-      if (list.EntityType == Parameters.EntityType.Element 
+    internal static string GetElementList(
+      GsaList list, ref ModelAssembly model, GH_Component owner) {
+      if (list.EntityType == EntityType.Element
         && model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
-        return "\"" + model.Lists.ReadOnlyDictionary[id].Name + "\"";
+        return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
       }
 
-      if (list.EntityType == Parameters.EntityType.Member) {
+      if (list.EntityType == EntityType.Member) {
         AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
         string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
-        list._name = "Children of '" + name + "'";
-        list.EntityType = Parameters.EntityType.Element;
+        list._name = $"Children of '{name}'";
+        list.EntityType = EntityType.Element;
       }
 
       GsaList copyList = AddPropertiesList(list, model.Properties, owner);
       AddElementList(copyList, ref model, owner);
 
-      return "\"" + model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]]
-        .Name + "\"";
+      return
+        $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
     }
 
     internal static void ConvertList(
@@ -80,8 +85,7 @@ namespace GsaGH.Helpers.Export {
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null)) {
-        ConvertList(
-          list, ref model, owner);
+        ConvertList(list, ref model, owner);
       }
     }
 
@@ -89,19 +93,20 @@ namespace GsaGH.Helpers.Export {
       if (list == null) {
         return;
       }
+
       GsaList copyList;
       switch (list.EntityType) {
-        case Parameters.EntityType.Element:
+        case EntityType.Element:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddElementList(copyList, ref model, owner);
           break;
 
-        case Parameters.EntityType.Member:
+        case EntityType.Member:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddMemberList(copyList, ref model.Lists, model.Members, owner);
           break;
 
-        case Parameters.EntityType.Case:
+        case EntityType.Case:
           copyList = list.Duplicate();
           list._definition += string.Join(" ", list._cases);
           AddList(list, ref model.Lists);
@@ -112,57 +117,57 @@ namespace GsaGH.Helpers.Export {
     private static GsaList AddPropertiesList(
       GsaList list, Properties apiProperties, GH_Component owner) {
       GsaList copyList = list.Duplicate();
-      if (copyList._properties == (null, null, null, null) || (copyList._properties.materials.Count == 0
-        && copyList._properties.sections.Count == 0 && copyList._properties.prop2ds.Count == 0
-        && copyList._properties.prop3ds.Count == 0)) {
+      if (copyList._properties == (null, null, null, null)
+        || (copyList._properties.materials.Count == 0 && copyList._properties.sections.Count == 0
+          && copyList._properties.prop2ds.Count == 0 && copyList._properties.prop3ds.Count == 0)) {
         return copyList;
       }
 
       var ids = new Collection<string>();
 
-      foreach (GsaMaterialGoo material in copyList._properties.materials
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaMaterialGoo material in copyList._properties.materials.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(material.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + System.Environment.NewLine
-            + "Material " + material.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning(
+            $"Issue adding List {copyList.Name} to Model:{Environment.NewLine}Material {material.Value.ToString()} not found in Model");
         }
 
         ids.Add(id);
       }
 
-      foreach (GsaSectionGoo section in copyList._properties.sections
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaSectionGoo section in copyList._properties.sections.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(section.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-            + section.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+            + Environment.NewLine + section.Value.ToString() + " not found in Model");
         }
 
         ids.Add(id);
       }
 
-      foreach (GsaProp2dGoo prop2d in copyList._properties.prop2ds
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaProp2dGoo prop2d in copyList._properties.prop2ds.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(prop2d.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-            + prop2d.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+            + Environment.NewLine + prop2d.Value.ToString() + " not found in Model");
         }
 
         ids.Add(id);
       }
 
-      foreach (GsaProp3dGoo prop3d in copyList._properties.prop3ds
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaProp3dGoo prop3d in copyList._properties.prop3ds.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(prop3d.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-            + prop3d.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+            + Environment.NewLine + prop3d.Value.ToString() + " not found in Model");
         }
 
         ids.Add(id);
@@ -178,8 +183,8 @@ namespace GsaGH.Helpers.Export {
       var ids = new Collection<string>();
 
       if (copyList._elements != (null, null, null)) {
-        foreach (GsaElement1dGoo element1d in copyList._elements.e1d
-          .Where(x => x != null && x.Value != null)) {
+        foreach (GsaElement1dGoo element1d in copyList._elements.e1d.Where(x
+          => x != null && x.Value != null)) {
           string id = ElementListFromReference.GetReferenceDefinition(element1d.Value.Guid,
             ReferenceType.Element, null, model.Elements, null, null);
           if (id == string.Empty && element1d.Value.Id != 0) {
@@ -187,15 +192,15 @@ namespace GsaGH.Helpers.Export {
           }
 
           if (id == string.Empty) {
-            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-              + element1d.Value.ToString() + " not found in Model");
+            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+              + Environment.NewLine + element1d.Value.ToString() + " not found in Model");
           }
 
           ids.Add(id);
         }
 
-        foreach (GsaElement2dGoo element2d in copyList._elements.e2d
-          .Where(x => x != null && x.Value != null)) {
+        foreach (GsaElement2dGoo element2d in copyList._elements.e2d.Where(x
+          => x != null && x.Value != null)) {
           string id = ElementListFromReference.GetReferenceDefinition(element2d.Value.Guid,
             ReferenceType.Element, null, model.Elements, null, null);
           if (id == string.Empty && element2d.Value.Ids.Count != 0) {
@@ -203,15 +208,15 @@ namespace GsaGH.Helpers.Export {
           }
 
           if (id == string.Empty) {
-            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-              + element2d.Value.ToString() + " not found in Model");
+            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+              + Environment.NewLine + element2d.Value.ToString() + " not found in Model");
           }
 
           ids.Add(id);
         }
 
-        foreach (GsaElement3dGoo element3d in copyList._elements.e3d
-          .Where(x => x != null && x.Value != null)) {
+        foreach (GsaElement3dGoo element3d in copyList._elements.e3d.Where(x
+          => x != null && x.Value != null)) {
           string id = ElementListFromReference.GetReferenceDefinition(element3d.Value.Guid,
             ReferenceType.Element, null, model.Elements, null, null);
           if (id == string.Empty && element3d.Value.Ids.Count != 0) {
@@ -219,8 +224,8 @@ namespace GsaGH.Helpers.Export {
           }
 
           if (id == string.Empty) {
-            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-              + element3d.Value.ToString() + " not found in Model");
+            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+              + Environment.NewLine + element3d.Value.ToString() + " not found in Model");
           }
 
           ids.Add(id);
@@ -228,14 +233,10 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (copyList._members != (null, null, null)) {
-        foreach (GsaMember1dGoo member1d in copyList._members.m1d
-          .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReferenceDefinition(
-            member1d.Value.Guid,
-            ReferenceType.MemberChildElements, 
-            null, 
-            null, 
-            model.Members,
+        foreach (GsaMember1dGoo member1d in copyList._members.m1d.Where(x
+          => x != null && x.Value != null)) {
+          string id = ElementListFromReference.GetReferenceDefinition(member1d.Value.Guid,
+            ReferenceType.MemberChildElements, null, null, model.Members,
             model.MemberElementRelationship);
           if (id == string.Empty && member1d.Value.Id != 0) {
             id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(
@@ -243,21 +244,17 @@ namespace GsaGH.Helpers.Export {
           }
 
           if (id == string.Empty) {
-            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-              + member1d.Value.ToString() + " not found in Model");
+            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+              + Environment.NewLine + member1d.Value.ToString() + " not found in Model");
           }
 
           ids.Add(id);
         }
 
-        foreach (GsaMember2dGoo member2d in copyList._members.m2d
-          .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReferenceDefinition(
-            member2d.Value.Guid,
-            ReferenceType.MemberChildElements, 
-            null, 
-            null, 
-            model.Members,
+        foreach (GsaMember2dGoo member2d in copyList._members.m2d.Where(x
+          => x != null && x.Value != null)) {
+          string id = ElementListFromReference.GetReferenceDefinition(member2d.Value.Guid,
+            ReferenceType.MemberChildElements, null, null, model.Members,
             model.MemberElementRelationship);
           if (id == string.Empty && member2d.Value.Id != 0) {
             id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(
@@ -265,21 +262,17 @@ namespace GsaGH.Helpers.Export {
           }
 
           if (id == string.Empty) {
-            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-              + member2d.Value.ToString() + " not found in Model");
+            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+              + Environment.NewLine + member2d.Value.ToString() + " not found in Model");
           }
 
           ids.Add(id);
         }
 
-        foreach (GsaMember3dGoo member3d in copyList._members.m3d
-          .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReferenceDefinition(
-            member3d.Value.Guid,
-            ReferenceType.MemberChildElements, 
-            null, 
-            null, 
-            model.Members,
+        foreach (GsaMember3dGoo member3d in copyList._members.m3d.Where(x
+          => x != null && x.Value != null)) {
+          string id = ElementListFromReference.GetReferenceDefinition(member3d.Value.Guid,
+            ReferenceType.MemberChildElements, null, null, model.Members,
             model.MemberElementRelationship);
           if (id == string.Empty && member3d.Value.Id != 0) {
             id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(
@@ -287,8 +280,8 @@ namespace GsaGH.Helpers.Export {
           }
 
           if (id == string.Empty) {
-            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-              + member3d.Value.ToString() + " not found in Model");
+            owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+              + Environment.NewLine + member3d.Value.ToString() + " not found in Model");
           }
 
           ids.Add(id);
@@ -300,7 +293,8 @@ namespace GsaGH.Helpers.Export {
       AddList(copyList, ref model.Lists);
     }
 
-    private static void AddMemberList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
+    private static void AddMemberList(
+      GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
       GsaGuidDictionary<Member> apiMembers, GH_Component owner) {
       GsaList copyList = list.Duplicate();
 
@@ -308,9 +302,10 @@ namespace GsaGH.Helpers.Export {
         || copyList._members.m2d.Count == 0 || copyList._members.m3d.Count == 0)) {
         AddList(copyList, ref apiLists);
       }
+
       var ids = new Collection<string>();
-      foreach (GsaMember1dGoo member1d in copyList._members.m1d
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaMember1dGoo member1d in copyList._members.m1d.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(member1d.Value.Guid,
           ReferenceType.Member, null, null, apiMembers, null);
         if (id == string.Empty && member1d.Value.Id != 0) {
@@ -318,15 +313,15 @@ namespace GsaGH.Helpers.Export {
         }
 
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-            + member1d.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+            + Environment.NewLine + member1d.Value.ToString() + " not found in Model");
         }
 
         ids.Add(id);
       }
 
-      foreach (GsaMember2dGoo member2d in copyList._members.m2d
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaMember2dGoo member2d in copyList._members.m2d.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(member2d.Value.Guid,
           ReferenceType.Member, null, null, apiMembers, null);
         if (id == string.Empty && member2d.Value.Id != 0) {
@@ -334,15 +329,15 @@ namespace GsaGH.Helpers.Export {
         }
 
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-            + member2d.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+            + Environment.NewLine + member2d.Value.ToString() + " not found in Model");
         }
 
         ids.Add(id);
       }
 
-      foreach (GsaMember3dGoo member3d in copyList._members.m3d
-        .Where(x => x != null && x.Value != null)) {
+      foreach (GsaMember3dGoo member3d in copyList._members.m3d.Where(x
+        => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(member3d.Value.Guid,
           ReferenceType.Member, null, null, apiMembers, null);
         if (id == string.Empty && member3d.Value.Id != 0) {
@@ -350,8 +345,8 @@ namespace GsaGH.Helpers.Export {
         }
 
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
-            + member3d.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:"
+            + Environment.NewLine + member3d.Value.ToString() + " not found in Model");
         }
 
         ids.Add(id);
@@ -367,11 +362,13 @@ namespace GsaGH.Helpers.Export {
         if (list.Name == null || list.Name.Length == 0) {
           list._name = list.EntityType.ToString() + " List [" + list.Id + "]";
         }
+
         apiLists.SetValue(list.Id, list.Guid, list.GetApiList());
       } else {
         if (list.Name == null || list.Name.Length == 0) {
           list._name = list.EntityType.ToString() + " List [" + (apiLists.Count + 1) + "]";
         }
+
         apiLists.AddValue(list.Guid, list.GetApiList());
       }
     }

@@ -1,9 +1,9 @@
-﻿using GsaAPI;
+﻿using System.Collections.Generic;
+using System.Linq;
+using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
-using System.Collections.Generic;
-using System.Linq;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -41,19 +41,16 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void ConvertNode(
-      GsaNode node, ref GsaIntDictionary<Node> apiNodes,
-      ref GsaIntDictionary<Axis> apiAxes, LengthUnit unit) {
+      GsaNode node, ref GsaIntDictionary<Node> apiNodes, ref GsaIntDictionary<Axis> apiAxes,
+      LengthUnit unit) {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
       if (!node.IsGlobalAxis()) {
         var ax = new Axis();
         Plane pln = node.LocalAxis;
-        ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX :
-          new Length(pln.OriginX, unit).Meters;
-        ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY :
-          new Length(pln.OriginY, unit).Meters;
-        ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ :
-          new Length(pln.OriginZ, unit).Meters;
+        ax.Origin.X = unit == LengthUnit.Meter ? pln.OriginX : new Length(pln.OriginX, unit).Meters;
+        ax.Origin.Y = unit == LengthUnit.Meter ? pln.OriginY : new Length(pln.OriginY, unit).Meters;
+        ax.Origin.Z = unit == LengthUnit.Meter ? pln.OriginZ : new Length(pln.OriginZ, unit).Meters;
 
         ax.XVector.X = pln.XAxis.X;
         ax.XVector.Y = pln.XAxis.Y;
@@ -67,8 +64,7 @@ namespace GsaGH.Helpers.Export {
 
       if (
         // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
-        node.Id > 0) 
-      {
+        node.Id > 0) {
         apiNodes.SetValue(node.Id, apiNode);
       } else {
         AddNode(ref apiNodes, apiNode);

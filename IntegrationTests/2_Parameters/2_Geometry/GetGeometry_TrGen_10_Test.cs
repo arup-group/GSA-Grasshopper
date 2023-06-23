@@ -8,8 +8,8 @@ namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class GetGeometry_TrGen_10_Test {
-    public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
 
     [Fact]
     public void NoRuntimeErrorTest() {

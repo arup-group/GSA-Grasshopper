@@ -77,80 +77,80 @@ namespace GsaGH.Components {
         GsaMaterial.MatType type = material.MaterialType;
         switch (ghTyp.Value) {
           case GH_Integer ghInt: {
-              switch (ghInt.Value) {
-                case 1:
-                  type = GsaMaterial.MatType.Steel;
-                  break;
+            switch (ghInt.Value) {
+              case 1:
+                type = GsaMaterial.MatType.Steel;
+                break;
 
-                case 2:
-                  type = GsaMaterial.MatType.Concrete;
-                  break;
+              case 2:
+                type = GsaMaterial.MatType.Concrete;
+                break;
 
-                case 5:
-                  type = GsaMaterial.MatType.Frp;
-                  break;
+              case 5:
+                type = GsaMaterial.MatType.Frp;
+                break;
 
-                case 3:
-                  type = GsaMaterial.MatType.Aluminium;
-                  break;
+              case 3:
+                type = GsaMaterial.MatType.Aluminium;
+                break;
 
-                case 7:
-                  type = GsaMaterial.MatType.Timber;
-                  break;
+              case 7:
+                type = GsaMaterial.MatType.Timber;
+                break;
 
-                case 4:
-                  type = GsaMaterial.MatType.Glass;
-                  break;
+              case 4:
+                type = GsaMaterial.MatType.Glass;
+                break;
 
-                case 8:
-                  type = GsaMaterial.MatType.Fabric;
-                  break;
+              case 8:
+                type = GsaMaterial.MatType.Fabric;
+                break;
 
-                case 0:
-                  type = GsaMaterial.MatType.Generic;
-                  break;
-              }
-
-              break;
+              case 0:
+                type = GsaMaterial.MatType.Generic;
+                break;
             }
+
+            break;
+          }
 
           case GH_String ghString: {
-              switch (ghString.Value.ToUpper()) {
-                case "STEEL":
-                  type = GsaMaterial.MatType.Steel;
-                  break;
+            switch (ghString.Value.ToUpper()) {
+              case "STEEL":
+                type = GsaMaterial.MatType.Steel;
+                break;
 
-                case "CONCRETE":
-                  type = GsaMaterial.MatType.Concrete;
-                  break;
+              case "CONCRETE":
+                type = GsaMaterial.MatType.Concrete;
+                break;
 
-                case "FRP":
-                  type = GsaMaterial.MatType.Frp;
-                  break;
+              case "FRP":
+                type = GsaMaterial.MatType.Frp;
+                break;
 
-                case "ALUMINIUM":
-                  type = GsaMaterial.MatType.Aluminium;
-                  break;
+              case "ALUMINIUM":
+                type = GsaMaterial.MatType.Aluminium;
+                break;
 
-                case "TIMBER":
-                  type = GsaMaterial.MatType.Timber;
-                  break;
+              case "TIMBER":
+                type = GsaMaterial.MatType.Timber;
+                break;
 
-                case "GLASS":
-                  type = GsaMaterial.MatType.Glass;
-                  break;
+              case "GLASS":
+                type = GsaMaterial.MatType.Glass;
+                break;
 
-                case "FABRIC":
-                  type = GsaMaterial.MatType.Fabric;
-                  break;
+              case "FABRIC":
+                type = GsaMaterial.MatType.Fabric;
+                break;
 
-                case "GENERIC":
-                  type = GsaMaterial.MatType.Generic;
-                  break;
-              }
-
-              break;
+              case "GENERIC":
+                type = GsaMaterial.MatType.Generic;
+                break;
             }
+
+            break;
+          }
 
           default:
             this.AddRuntimeError("Unable to convert Material Type input");

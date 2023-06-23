@@ -61,7 +61,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(0.1, k22Out.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(0.8, volOut.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(5, addMassOut.Value.As(LinearDensityUnit.KilogramPerMeter), 6);
-      Assert.True(isBendingOut.Value); 
+      Assert.True(isBendingOut.Value);
       Assert.False(isRefPtOut.Value);
       Assert.Equal(1, stressOptOut.Value);
       Assert.True(modifierdGoo.Value.IsModified);

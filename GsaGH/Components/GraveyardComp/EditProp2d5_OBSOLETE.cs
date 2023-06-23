@@ -38,6 +38,27 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      Params.Input[3].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Output[3].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -62,33 +83,12 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       _supportTypeIndex = reader.GetInt32("SupportType");
       _referenceEdge = reader.GetInt32("ReferenceEdge");
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      Params.Input[3].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
-      Params.Output[3].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -251,15 +251,15 @@ namespace GsaGH.Components {
           }
         }
 
-        int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-        string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+        int ax = prop.ApiProp2d == null ? 0 : prop.AxisProperty;
+        string nm = prop.ApiProp2d == null ? "--" : prop.Name;
         ValueType colour = prop.ApiProp2d?.Colour;
 
         da.SetData(0, new GsaProp2dGoo(prop));
         da.SetData(1, prop.Id);
         da.SetData(2, new GsaMaterialGoo(prop.Material));
         da.SetData(3,
-          prop.ApiProp2d.Description == "" ? new GH_UnitNumber(Length.Zero) :
+          prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
             new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
         if (prop.AxisProperty == -2) {
           da.SetData(4, new GH_Plane(prop.LocalAxis));

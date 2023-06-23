@@ -17,13 +17,31 @@ using Utility = OasysGH.Utility;
 
 namespace GsaGH {
   public class GsaGhInfo : GH_AssemblyInfo {
+    internal const string Company = "Oasys";
+    internal const string Contact = "https://www.oasys-software.com/";
+    internal const string Copyright = "Copyright © Oasys 1985 - 2023";
+    internal const string PluginName = "GsaGH";
+    internal const string ProductName = "GSA";
+    internal const string TermsConditions
+      = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
+    internal const string Vers = "0.9.50";
+    internal static int MinGsaVersion = 66;
+    internal static string disclaimer
+      = $"{PluginName} is pre-release and under active development, "
+      + $"including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. "
+      + $"Future versions may contain breaking changes. Any files, results, or other types of output information created using "
+      + $"{PluginName} should not be relied upon without thorough and independent checking. "
+      + $"{PluginName} {Vers} requires {ProductName} 10.1.{MinGsaVersion} or higher installed.";
+    internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
+    internal static bool isBeta = true;
     public override string AuthorContact => Contact;
     public override string AuthorName => Company;
     public override string Description
       =>
         //Return a short string describing the purpose of this GHA library.
-        "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine + (isBeta ? disclaimer : string.Empty)
-        + Environment.NewLine + "A licensed version of GSA 10.1.65 or later installed in "
+        "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine
+        + (isBeta ? disclaimer : string.Empty) + Environment.NewLine
+        + "A licensed version of GSA 10.1.65 or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin." + Environment.NewLine
         + "Contact oasys@arup.com to request a free trial version." + Environment.NewLine
         + TermsConditions + Environment.NewLine + Copyright;
@@ -31,28 +49,12 @@ namespace GsaGH {
     public override Guid Id => guid;
     public override string Name => ProductName;
     public override string Version => isBeta ? Vers + "-beta" : Vers;
-    internal const string Company = "Oasys";
-    internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Copyright = "Copyright © Oasys 1985 - 2023";
-    internal const string PluginName = "GsaGH";
-    internal const string ProductName = "GSA";
-    internal static int MinGsaVersion = 66;
-    internal const string TermsConditions
-      = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
-    internal const string Vers = "0.9.50";
-    internal static string disclaimer = $"{PluginName} is pre-release and under active development, " +
-      $"including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. " +
-      $"Future versions may contain breaking changes. Any files, results, or other types of output information created using " +
-      $"{PluginName} should not be relied upon without thorough and independent checking. " +
-      $"{PluginName} {Vers} requires {ProductName} 10.1.{MinGsaVersion} or higher installed.";
-    internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
-    internal static bool isBeta = true;
   }
-  
+
   public class AddReferencePriority : GH_AssemblyPriority {
-    public static string PluginPath => pluginPath ?? (pluginPath = TryFindPluginPath("GSA.gha"));
     public static string InstallPath = InstallationFolder.GetPath;
     private static string pluginPath;
+    public static string PluginPath => pluginPath ?? (pluginPath = TryFindPluginPath("GSA.gha"));
 
     public override GH_LoadingInstruction PriorityLoad() {
       if (TryFindPluginPath("GSA.gha") == string.Empty) {
@@ -85,14 +87,16 @@ namespace GsaGH {
           + gsaVers.FileBuildPart;
         if (gsaVers.FileBuildPart < GsaGhInfo.MinGsaVersion) {
           var exception = new Exception("Version " + GsaGhInfo.Vers
-            + " of GSA-Grasshopper requires GSA 10.1." + GsaGhInfo.MinGsaVersion + " installed. Please upgrade GSA.");
+            + " of GSA-Grasshopper requires GSA 10.1." + GsaGhInfo.MinGsaVersion
+            + " installed. Please upgrade GSA.");
           var ghLoadingException
             = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
           PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
           return GH_LoadingInstruction.Abort;
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         ReadOnlyCollection<GH_AssemblyInfo> plugins = Instances.ComponentServer.Libraries;
         string loadedPlugins = plugins.Where(plugin => !plugin.IsCoreLibrary)
          .Where(plugin => !plugin.Name.StartsWith("Kangaroo")).Aggregate(string.Empty,
@@ -172,10 +176,10 @@ namespace GsaGH {
   }
 
   internal sealed class PluginInfo {
-    public static OasysPluginInfo Instance => lazy.Value;
     private static readonly Lazy<OasysPluginInfo> lazy = new Lazy<OasysPluginInfo>(()
       => new OasysPluginInfo(GsaGhInfo.ProductName, GsaGhInfo.PluginName, GsaGhInfo.Vers,
         GsaGhInfo.isBeta, "phc_alOp3OccDM3D18xJTWDoW44Y1cJvbEScm5LJSX8qnhs"));
+    public static OasysPluginInfo Instance => lazy.Value;
 
     private PluginInfo() { }
   }

@@ -53,7 +53,7 @@ namespace GsaGH.Components {
         GsaMaterialGoo materialGoo = null;
         if (da.GetData(1, ref materialGoo)) {
           gsaSection.Material = materialGoo.Value;
-        } 
+        }
       }
 
       da.SetData(0, new GsaSectionGoo(gsaSection));

@@ -1,11 +1,11 @@
 ﻿using GsaGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Helpers.GsaApi.Grahics {
   internal class GraphicsScalar {
     /// <summary>
-    /// For 3D visualisation stuff without results
+    ///   For 3D visualisation stuff without results
     /// </summary>
     /// <param name="model"></param>
     /// <param name="userLengthUnitIfModelUndefined"></param>
@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.GsaApi.Grahics {
     }
 
     /// <summary>
-    /// For diagrams of results or loads
+    ///   For diagrams of results or loads
     /// </summary>
     /// <param name="model"></param>
     /// <param name="userScaleFactor"></param>
@@ -23,13 +23,13 @@ namespace GsaGH.Helpers.GsaApi.Grahics {
     /// <param name="autoScale"></param>
     /// <param name="unitScaleFactor"></param>
     /// <returns></returns>
-    internal static double ComputeScale(GsaModel model, double userScaleFactor,
-      LengthUnit userLengthUnitIfModelUndefined, bool autoScale, double unitScaleFactor) {
+    internal static double ComputeScale(
+      GsaModel model, double userScaleFactor, LengthUnit userLengthUnitIfModelUndefined,
+      bool autoScale, double unitScaleFactor) {
       double lengthScaleFactor = 1;
       if (!autoScale) {
-        LengthUnit lengthUnit = model.ModelUnit == LengthUnit.Undefined
-        ? userLengthUnitIfModelUndefined
-        : model.ModelUnit;
+        LengthUnit lengthUnit = model.ModelUnit == LengthUnit.Undefined ?
+          userLengthUnitIfModelUndefined : model.ModelUnit;
 
         lengthScaleFactor = UnitConverter.Convert(1, lengthUnit, Length.BaseUnit);
       }

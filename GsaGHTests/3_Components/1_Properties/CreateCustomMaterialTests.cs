@@ -41,9 +41,11 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal),
         output.Value.AnalysisMaterial.ElasticModulus);
       Assert.Equal(2, output.Value.AnalysisMaterial.PoissonsRatio);
-      Assert.Equal(new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter),
+      Assert.Equal(
+        new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter),
         output.Value.AnalysisMaterial.Density);
-      Assert.Equal(new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(
+      Assert.Equal(
+        new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(
           CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
         output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
     }

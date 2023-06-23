@@ -81,7 +81,7 @@ namespace GsaGH.Components {
           }
         }
 
-        string profile = "";
+        string profile = string.Empty;
         if (da.GetData(2, ref profile)) {
           section.Profile = profile;
         }
@@ -115,9 +115,9 @@ namespace GsaGH.Components {
           }
         }
 
-        string prof = (section.ApiSection == null) ? "--" : section.Profile;
-        int poo = (section.ApiSection == null) ? 0 : section.Pool;
-        string nm = (section.ApiSection == null) ? "--" : section.Name;
+        string prof = section.ApiSection == null ? "--" : section.Profile;
+        int poo = section.ApiSection == null ? 0 : section.Pool;
+        string nm = section.ApiSection == null ? "--" : section.Name;
         ValueType colour = section.ApiSection?.Colour;
 
         da.SetData(0, new GsaSectionGoo(section));

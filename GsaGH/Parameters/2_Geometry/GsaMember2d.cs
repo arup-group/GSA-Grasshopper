@@ -161,20 +161,15 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
+
       Prop2d = new GsaProp2d(prop);
     }
 
     internal GsaMember2d(
-      KeyValuePair<int, Member> mem,
-      List<Point3d> topology,
-      List<string> topologyType,
-      List<List<Point3d>> voidTopology,
-      List<List<string>> voidTopologyType,
-      List<List<Point3d>> inlcusionLinesTopology,
-      List<List<string>> inclusionTopologyType,
-      List<Point3d> includePoints,
-      GsaProp2d prop2d,
-      LengthUnit modelUnit) {
+      KeyValuePair<int, Member> mem, List<Point3d> topology, List<string> topologyType,
+      List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType,
+      List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,
+      List<Point3d> includePoints, GsaProp2d prop2d, LengthUnit modelUnit) {
       ApiMember = mem.Value;
       MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = mem.Key;

@@ -48,11 +48,6 @@ namespace GsaGH.Components {
       return false;
     }
 
-    public override bool Read(GH_IReader reader) {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      return base.Read(reader);
-    }
-
     public void VariableParameterMaintenance() {
       if (_mode != FoldMode.GetConnected) {
         return;
@@ -67,6 +62,11 @@ namespace GsaGH.Components {
       Params.Output[9].Name = "Connected Members";
       Params.Output[9].Description = "Connected Member IDs in Model that Node once belonged to";
       Params.Output[9].Access = GH_ParamAccess.list;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      return base.Read(reader);
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -200,13 +200,15 @@ namespace GsaGH.Components {
 
       try {
         da.SetDataList(7, node.ApiNode?.ConnectedElements);
-      } catch (Exception) {
+      }
+      catch (Exception) {
         // ignored
       }
 
       try {
         da.SetDataList(8, node.ApiNode?.ConnectedMembers);
-      } catch (Exception) {
+      }
+      catch (Exception) {
         // ignored
       }
     }

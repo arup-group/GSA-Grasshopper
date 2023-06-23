@@ -13,9 +13,6 @@ namespace GsaGH.Components.GraveyardComp {
   ///   Component to create a new Material
   /// </summary>
   public class CreateMaterial2_OBSOLETE : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public static List<string> MaterialTypes = new List<string>() {
       "Generic",
       "Steel",
@@ -26,10 +23,14 @@ namespace GsaGH.Components.GraveyardComp {
       "Glass",
       "Fabric",
     };
+    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     protected override Bitmap Icon => Resources.CreateMaterial;
 
-    public CreateMaterial2_OBSOLETE() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
+    public CreateMaterial2_OBSOLETE() : base(
+      "Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
       GsaMaterialGoo.Name.Replace(" ", string.Empty),
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       CategoryName.Name(), SubCategoryName.Cat1()) {
@@ -67,9 +68,9 @@ namespace GsaGH.Components.GraveyardComp {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       this.AddRuntimeError(
-        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}" +
-        $"Please use the new CreateMaterial component that now supports standard materials." +
-        $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
+        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}"
+        + $"Please use the new CreateMaterial component that now supports standard materials."
+        + $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
 
       da.SetData(0, new GsaMaterialGoo(null));
     }

@@ -7,8 +7,8 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class FootfallResultsTests {
-    private static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
+    private static GH_Document Document => document ?? (document = OpenDocument());
 
     [Theory]
     [InlineData("MaxLegend2d", (double)9)]

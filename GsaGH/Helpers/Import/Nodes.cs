@@ -126,7 +126,7 @@ namespace GsaGH.Helpers.Import {
     }
 
     internal static Point3d Point3dFromNode(Node node, LengthUnit unit) {
-      return (unit == LengthUnit.Meter) ?
+      return unit == LengthUnit.Meter ?
         new Point3d(node.Position.X, node.Position.Y,
           node.Position.Z) : // skip unitsnet conversion, gsa api node always in meters
         new Point3d(new Length(node.Position.X, LengthUnit.Meter).As(unit),
@@ -135,7 +135,7 @@ namespace GsaGH.Helpers.Import {
     }
 
     internal static Point3d Point3dFromXyzUnit(double x, double y, double z, LengthUnit modelUnit) {
-      return (modelUnit == LengthUnit.Meter) ?
+      return modelUnit == LengthUnit.Meter ?
         new Point3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
         new Point3d(new Length(x, LengthUnit.Meter).As(modelUnit),
           new Length(y, LengthUnit.Meter).As(modelUnit),
@@ -144,7 +144,7 @@ namespace GsaGH.Helpers.Import {
 
     internal static Vector3d Vector3dFromXyzUnit(
       double x, double y, double z, LengthUnit modelUnit) {
-      return (modelUnit == LengthUnit.Meter) ?
+      return modelUnit == LengthUnit.Meter ?
         new Vector3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
         new Vector3d(new Length(x, LengthUnit.Meter).As(modelUnit),
           new Length(y, LengthUnit.Meter).As(modelUnit),

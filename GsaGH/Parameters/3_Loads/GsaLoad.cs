@@ -193,6 +193,7 @@ namespace GsaGH.Parameters {
     public GsaGridAreaLoad() {
       GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
     }
+
     public GsaGridAreaLoad Duplicate() {
       var dup = new GsaGridAreaLoad {
         GridAreaLoad = {
@@ -222,6 +223,7 @@ namespace GsaGH.Parameters {
     public GsaGridLineLoad() {
       GridLineLoad.PolyLineReference = 0;
     }
+
     public GsaGridLineLoad Duplicate() {
       var dup = new GsaGridLineLoad {
         GridLineLoad = {
@@ -268,15 +270,15 @@ namespace GsaGH.Parameters {
 
     internal Point3d GetPoint(LengthUnit unit) {
       LengthUnit m = LengthUnit.Meter;
-      return new Point3d(
-              new Length(GridPointLoad.X, m).As(unit),
-              new Length(GridPointLoad.Y, m).As(unit),
-              new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
+      return new Point3d(new Length(GridPointLoad.X, m).As(unit),
+        new Length(GridPointLoad.Y, m).As(unit),
+        new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
     }
   }
 
   internal static class GridLoadHelper {
-    internal static (List<Point3d>, string) CreateDefinition(List<Point3d> controlPoints, Plane plane) {
+    internal static (List<Point3d>, string) CreateDefinition(
+      List<Point3d> controlPoints, Plane plane) {
       string desc = string.Empty;
       var points = new List<Point3d>();
       for (int i = 0; i < controlPoints.Count; i++) {
@@ -297,7 +299,8 @@ namespace GsaGH.Parameters {
       return ClearDefGetUnit(definition).def;
     }
 
-    internal static List<Point3d> ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
+    internal static List<Point3d> ConvertPoints(
+      string definition, LengthUnit desiredUnit, Plane localPlane) {
       (LengthUnit lengthUnit, string def) = ClearDefGetUnit(definition);
       var points = new List<Point3d>();
       string[] pts = def.Split(')');
@@ -312,6 +315,7 @@ namespace GsaGH.Parameters {
           points.Add(point);
         }
       }
+
       return points;
     }
 
@@ -321,22 +325,27 @@ namespace GsaGH.Parameters {
         lengthUnit = LengthUnit.Millimeter;
         definition = definition.Replace("(mm)", string.Empty);
       }
+
       if (definition.EndsWith("(cm)")) {
         lengthUnit = LengthUnit.Centimeter;
         definition = definition.Replace("(cm)", string.Empty);
       }
+
       if (definition.EndsWith("(ft)")) {
         lengthUnit = LengthUnit.Foot;
         definition = definition.Replace("(ft)", string.Empty);
       }
+
       if (definition.EndsWith("(in)")) {
         lengthUnit = LengthUnit.Inch;
         definition = definition.Replace("(in)", string.Empty);
       }
+
       definition = definition.Replace("(m)", string.Empty);
       return (lengthUnit, definition);
     }
   }
+
   internal enum ReferenceType {
     None,
     Property,
@@ -345,14 +354,14 @@ namespace GsaGH.Parameters {
     Member,
     List,
   }
+
   /// <summary>
   ///   GsaLoad class holding all load types
   /// </summary>
   public class GsaLoad {
     /// <summary>
-    /// When referencing load by GsaGH object through Guid, use this to set the type of object
+    ///   When referencing load by GsaGH object through Guid, use this to set the type of object
     /// </summary>
-    
     public enum LoadTypes {
       Gravity,
       Node,
@@ -370,27 +379,20 @@ namespace GsaGH.Parameters {
     public GsaGridLineLoad LineLoad { get; set; }
     public GsaNodeLoad NodeLoad { get; set; }
     public GsaGridPointLoad PointLoad { get; set; }
-    public LoadTypes LoadType = LoadTypes.Gravity;
     internal int CaseId {
       get {
         switch (LoadType) {
-          case LoadTypes.Node:
-            return NodeLoad.NodeLoad.Case;
+          case LoadTypes.Node: return NodeLoad.NodeLoad.Case;
 
-          case LoadTypes.Beam:
-            return BeamLoad.BeamLoad.Case;
+          case LoadTypes.Beam: return BeamLoad.BeamLoad.Case;
 
-          case LoadTypes.Face:
-            return FaceLoad.FaceLoad.Case;
+          case LoadTypes.Face: return FaceLoad.FaceLoad.Case;
 
-          case LoadTypes.GridPoint:
-            return PointLoad.GridPointLoad.Case;
+          case LoadTypes.GridPoint: return PointLoad.GridPointLoad.Case;
 
-          case LoadTypes.GridLine:
-            return LineLoad.GridLineLoad.Case;
+          case LoadTypes.GridLine: return LineLoad.GridLineLoad.Case;
 
-          case LoadTypes.GridArea:
-            return AreaLoad.GridAreaLoad.Case;
+          case LoadTypes.GridArea: return AreaLoad.GridAreaLoad.Case;
 
           case LoadTypes.Gravity:
           default:
@@ -398,6 +400,7 @@ namespace GsaGH.Parameters {
         }
       }
     }
+    public LoadTypes LoadType = LoadTypes.Gravity;
 
     public GsaLoad() {
       GravityLoad = new GsaGravityLoad();
@@ -537,9 +540,9 @@ namespace GsaGH.Parameters {
     }
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
-    public NodeLoadTypes Type;
     internal GsaList _refList;
     internal Point3d _refPoint = Point3d.Unset;
+    public NodeLoadTypes Type;
 
     public GsaNodeLoad() {
       Type = NodeLoadTypes.NodeLoad;

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using GsaGH.Parameters;
-using GsaGH.Helpers.Import;
-using Xunit;
-using GsaAPI;
 using System.Collections.ObjectModel;
+using System.Linq;
+using GsaAPI;
+using GsaGH.Helpers.Import;
+using GsaGH.Parameters;
 using Rhino.Geometry;
+using Xunit;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]
@@ -70,88 +70,100 @@ namespace GsaGHTests.Helpers.Import {
 
       model.AddNode(new Node() {
         Position = new Vector3() {
-          X = 0, 
-          Y = 0, 
-          Z = 0 }
+          X = 0,
+          Y = 0,
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 0,
-          Z = 0
-        }
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 4.5,
-          Z = 0
-        }
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 0,
           Y = 4.5,
-          Z = 0
-        }
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 0,
           Y = 0,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 0,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 4.5,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 0,
           Y = 4.5,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddElement(new Element() {
         Topology = new ReadOnlyCollection<int>(new List<int>() {
-          1, 3,
-          }),
+          1,
+          3,
+        }),
         Property = 1,
-        Type = ElementType.BEAM
+        Type = ElementType.BEAM,
       });
 
       model.AddElement(new Element() {
         Type = ElementType.QUAD4,
         Topology = new ReadOnlyCollection<int>(new List<int>() {
-          1, 2, 3, 4
-          }),
+          1,
+          2,
+          3,
+          4,
+        }),
         Property = 2,
       });
 
       model.AddElement(new Element() {
         Type = ElementType.BRICK8,
         Topology = new ReadOnlyCollection<int>(new List<int>() {
-          1, 2, 3, 4, 5, 6, 7, 8,
-          }),
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+        }),
         Property = 5,
       });
 

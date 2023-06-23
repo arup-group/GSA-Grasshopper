@@ -22,7 +22,7 @@ namespace GsaGHTests.Components.Properties {
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(MatType.Concrete, output.Value.MaterialType);
 
-      var expected = new GsaMaterial(MatType.Concrete, "C30/37", "", "EC2-1-1");
+      var expected = new GsaMaterial(MatType.Concrete, "C30/37", string.Empty, "EC2-1-1");
 
       Duplicates.AreEqual(expected, output.Value);
     }

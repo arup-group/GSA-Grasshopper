@@ -74,8 +74,8 @@ namespace GsaGH.Components {
           break;
 
         case 1: {
-          int newId = int.Parse(
-            string.Join("", _selectedItems[i].ToCharArray().Where(char.IsDigit)));
+          int newId = int.Parse(string.Join(string.Empty,
+            _selectedItems[i].ToCharArray().Where(char.IsDigit)));
           if (newId != _caseId) {
             _caseId = newId;
             if (_resultType == GsaResult.CaseType.Combination) {
@@ -87,8 +87,8 @@ namespace GsaGH.Components {
         }
         case 2 when _selectedItems[i].ToLower() != "all":
           _permutationIDs = new List<int>() {
-            int.Parse(string.Join("", _selectedItems[i].ToCharArray().Where(char.IsDigit))),
-          };
+            int.Parse(
+              string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit))), };
           break;
 
         case 2:
@@ -225,7 +225,7 @@ namespace GsaGH.Components {
           if (analCase < 1) {
             _selectedItems[1] = "All";
           } else {
-            _selectedItems[1] = (_resultType == GsaResult.CaseType.AnalysisCase) ? "A" + analCase :
+            _selectedItems[1] = _resultType == GsaResult.CaseType.AnalysisCase ? "A" + analCase :
               "C" + analCase;
           }
         }
@@ -329,7 +329,8 @@ namespace GsaGH.Components {
       if (_selectedItems[1].ToLower() == "all") {
         _caseId = -1;
       } else {
-        int newId = int.Parse(string.Join("", _selectedItems[1].ToCharArray().Where(char.IsDigit)));
+        int newId = int.Parse(string.Join(string.Empty,
+          _selectedItems[1].ToCharArray().Where(char.IsDigit)));
         if (newId != _caseId) {
           _caseId = newId;
         }
@@ -339,7 +340,7 @@ namespace GsaGH.Components {
         _permutationIDs = _selectedItems[2].ToLower() == "all" ? new List<int>() {
           -1,
         } : new List<int>() {
-          int.Parse(string.Join("", _selectedItems[2].ToCharArray().Where(char.IsDigit))),
+          int.Parse(string.Join(string.Empty, _selectedItems[2].ToCharArray().Where(char.IsDigit))),
         };
       }
 
@@ -354,7 +355,7 @@ namespace GsaGH.Components {
 
       Tuple<List<string>, List<int>, DataTree<int?>> modelResults
         = ResultHelper.GetAvalailableResults(_gsaModel);
-      string type = (_resultType == GsaResult.CaseType.AnalysisCase) ? "Analysis" : "Combination";
+      string type = _resultType == GsaResult.CaseType.AnalysisCase ? "Analysis" : "Combination";
 
       var cases = new List<string>();
       for (int i = 0; i < modelResults.Item1.Count; i++) {
@@ -420,7 +421,7 @@ namespace GsaGH.Components {
         "All",
       };
       if (_selectedItems.Count < 3) {
-        _selectedItems.Add("");
+        _selectedItems.Add(string.Empty);
       }
 
       _selectedItems[2] = "All";

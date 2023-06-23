@@ -86,8 +86,8 @@ namespace GsaGH.Components {
         prop.Colour = colour;
       }
 
-      int ax = (prop.ApiProp3d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.ApiProp3d == null) ? "--" : prop.Name;
+      int ax = prop.ApiProp3d == null ? 0 : prop.AxisProperty;
+      string nm = prop.ApiProp3d == null ? "--" : prop.Name;
 
       da.SetData(0, new GsaProp3dGoo(prop));
       da.SetData(1, prop.Id);

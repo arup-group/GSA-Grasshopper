@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -60,7 +61,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal("STD CH(ft) 1 2 3 4", output0.Value.Section.Profile);
       Assert.Equal(0, output1.Value);
       Assert.Equal(0, output2.Value.PointAtStart.X, 6);
-      Assert.Equal(-1, output2.Value.PointAtStart.Y, 6  );
+      Assert.Equal(-1, output2.Value.PointAtStart.Y, 6);
       Assert.Equal(0, output2.Value.PointAtStart.Z, 6);
       Assert.Equal(7, output2.Value.PointAtEnd.X, 6);
       Assert.Equal(3, output2.Value.PointAtEnd.Y, 6);
@@ -94,12 +95,12 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Null(output18.Value.MomentAmplificationFactorStrongAxis);
       Assert.Null(output18.Value.MomentAmplificationFactorWeakAxis);
       Assert.Null(output18.Value.EquivalentUniformMomentFactor);
-      Assert.Equal("", output19.Value);
+      Assert.Equal(string.Empty, output19.Value);
       Assert.Equal(0, output20.Value.R);
       Assert.Equal(0, output20.Value.G);
       Assert.Equal(0, output20.Value.B);
       Assert.False(output21.Value);
-      Assert.Equal("", output22.Value);
+      Assert.Equal(string.Empty, output22.Value);
     }
 
     [Fact]
@@ -204,7 +205,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, output20.Value.G);
       Assert.Equal(255, output20.Value.B);
       Assert.True(output21.Value);
-      Assert.Equal("", output22.Value);
+      Assert.Equal(string.Empty, output22.Value);
     }
 
     [Fact]
@@ -214,11 +215,11 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 0.0, 14);
 
       var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
 
       ComponentTestHelper.SetInput(comp, 1.0, 14);
       output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
     }
   }
 }

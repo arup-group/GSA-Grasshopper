@@ -7,6 +7,7 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class NodeLocalAxisReactionForceDiagramTests {
+    private static GH_Document document = null;
     public static GH_Document Document {
       get {
         if (document == null) {
@@ -16,7 +17,6 @@ namespace IntegrationTests.Components {
         return document;
       }
     }
-    private static GH_Document document = null;
 
     [Fact]
     public void NoRuntimeErrorTest() {

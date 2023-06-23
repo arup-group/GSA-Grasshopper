@@ -85,12 +85,12 @@ namespace GsaGH.Helpers.GH {
 
                 default:
                   owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                      + " input (index: " + i + ") input parameter of type "
-                      + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
-                      + Environment.NewLine
-                      + " to Element, Member child, Material, or Property and has been ignored");
+                    + " input (index: " + i + ") input parameter of type "
+                    + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
+                    + " to Element, Member child, Material, or Property and has been ignored");
                   continue;
               }
+
               break;
 
             case EntityType.Member:
@@ -125,11 +125,12 @@ namespace GsaGH.Helpers.GH {
 
                 default:
                   owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                      + " input (index: " + i + ") input parameter of type "
-                      + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
-                      + Environment.NewLine + " to Member or Property and has been ignored");
+                    + " input (index: " + i + ") input parameter of type "
+                    + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
+                    + " to Member or Property and has been ignored");
                   continue;
               }
+
               break;
 
             case EntityType.Case:
@@ -153,25 +154,23 @@ namespace GsaGH.Helpers.GH {
 
     internal static string GetElementListNameForesults(
       GH_Component owner, IGH_DataAccess da, int inputid) {
-      
       string elementlist = "All";
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(inputid, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
           if (listGoo.Value.EntityType != EntityType.Element
             && listGoo.Value.EntityType != EntityType.Member) {
-            owner.AddRuntimeWarning(
-            "List must be of type Element to apply to element filter");
+            owner.AddRuntimeWarning("List must be of type Element to apply to element filter");
             return string.Empty;
           }
+
           if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
-            owner.AddRuntimeWarning(
-            "List must have a name - please give your list a name!");
+            owner.AddRuntimeWarning("List must have a name - please give your list a name!");
             return string.Empty;
           }
-          elementlist = listGoo.Value.EntityType == EntityType.Member
-            ? "\"" + "Children of '" + listGoo.Value.Name + "'\""
-            : "\"" + listGoo.Value.Name + "\"";
+
+          elementlist = listGoo.Value.EntityType == EntityType.Member ?
+            $"\"Children of '{listGoo.Value.Name}'\"" : $"\"{listGoo.Value.Name}\"";
         } else {
           GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
         }
@@ -186,21 +185,20 @@ namespace GsaGH.Helpers.GH {
 
     internal static string GetNodeListNameForesults(
       GH_Component owner, IGH_DataAccess da, int inputid) {
-
       string nodeList = "All";
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(inputid, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
           if (listGoo.Value.EntityType != EntityType.Node) {
-            owner.AddRuntimeWarning(
-            "List must be of type Node to apply to node filter");
+            owner.AddRuntimeWarning("List must be of type Node to apply to node filter");
           }
+
           if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
-            owner.AddRuntimeWarning(
-            "List must have a name - please give your list a name!");
+            owner.AddRuntimeWarning("List must have a name - please give your list a name!");
             return string.Empty;
           }
-          nodeList = "\"" + listGoo.Value.Name + "\"";
+
+          nodeList = $"\"{listGoo.Value.Name}\"";
         } else {
           GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
         }

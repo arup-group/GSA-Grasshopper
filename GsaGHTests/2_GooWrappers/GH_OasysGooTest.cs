@@ -61,12 +61,16 @@ namespace GsaGHTests.GooWrappers {
             Assert.NotSame(gooValue, duplicateValue);
           } else {
             // .Duplicate(false);
-            object[] parametersArray = new object[] { false };
-            object duplicateValue = methodInfo.Invoke(gooValue, parametersArray); 
+            object[] parametersArray = new object[] {
+              false,
+            };
+            object duplicateValue = methodInfo.Invoke(gooValue, parametersArray);
             Assert.Same(gooValue, duplicateValue);
             // .Duplicate(true);
-            parametersArray = new object[] { true };
-            duplicateValue = methodInfo.Invoke(gooValue, parametersArray); 
+            parametersArray = new object[] {
+              true,
+            };
+            duplicateValue = methodInfo.Invoke(gooValue, parametersArray);
             Assert.NotSame(gooValue, duplicateValue);
             Duplicates.AreEqual(gooValue, duplicateValue);
           }

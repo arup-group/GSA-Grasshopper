@@ -49,6 +49,7 @@ namespace GsaGHTests.Helpers.Export {
       ComponentTestHelper.SetInput(comp, section, 1);
       return (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp);
     }
+
     public static GsaElement1dGoo Element1d(GH_Line line, int sectionId) {
       var comp = new CreateElement1d();
       comp.CreateAttributes();

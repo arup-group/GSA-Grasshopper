@@ -142,6 +142,7 @@ namespace GsaGH.Parameters {
         } else {
           _section.MaterialGradeProperty = _material.Id;
         }
+
         IsReferencedById = false;
       }
     }

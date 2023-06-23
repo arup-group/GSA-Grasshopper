@@ -130,15 +130,58 @@ namespace IntegrationTests.Components {
     }
 
     [Theory]
-    [InlineData("AutoScale", new bool[] { true, true })]
-    [InlineData("FxScale", new bool[] { true, true, true, true })]
-    [InlineData("FyScale", new bool[] { true, true, true, true })]
-    [InlineData("FzScale", new bool[] { true, true, true, true })]
-    [InlineData("ResFScale", new bool[] { true, true, true, true })]
-    [InlineData("MxxScale", new bool[] { true, true, true, true })]
-    [InlineData("MyyScale", new bool[] { true, true, true, true })]
-    [InlineData("MzzScale", new bool[] { true, true, true, true })]
-    [InlineData("ResMScale", new bool[] { true, true, true, true })]
+    [InlineData("AutoScale", new bool[] {
+      true,
+      true,
+    })]
+    [InlineData("FxScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("FyScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("FzScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("ResFScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("MxxScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("MyyScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("MzzScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
+    [InlineData("ResMScale", new bool[] {
+      true,
+      true,
+      true,
+      true,
+    })]
     public void ScalingTests(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

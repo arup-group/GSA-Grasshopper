@@ -90,7 +90,8 @@ namespace GsaGH.Components {
       var mem = new GsaMember2d();
       try {
         mem = new GsaMember2d(brep, crvs, points);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
       }
 

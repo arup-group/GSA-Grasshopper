@@ -63,21 +63,59 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Theory]
-    [InlineData(new bool[] { true, true, true, false, false, false })]
-    [InlineData(new bool[] { false, false, false, true, true, true })]
-    [InlineData(new bool[] { true, false, true, false, true, false })]
-    [InlineData(new bool[] { false, true, false, true, false, true })]
-    [InlineData(new bool[] { false, false, false, false, false, false })]
-    [InlineData(new bool[] { true, true, true, true, true, true })]
+    [InlineData(new bool[] {
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    })]
+    [InlineData(new bool[] {
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+    })]
+    [InlineData(new bool[] {
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+    })]
+    [InlineData(new bool[] {
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+    })]
+    [InlineData(new bool[] {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    })]
+    [InlineData(new bool[] {
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+    })]
     public void CanToggleRestraints(bool[] releases) {
       var comp = (CreateSupport)ComponentMother();
       int i = 0;
-      comp.SetRestraints(releases[i++],
-          releases[i++],
-          releases[i++],
-          releases[i++],
-          releases[i++],
-          releases[i++]);
+      comp.SetRestraints(releases[i++], releases[i++], releases[i++], releases[i++], releases[i++],
+        releases[i++]);
 
       var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
       i = 0;

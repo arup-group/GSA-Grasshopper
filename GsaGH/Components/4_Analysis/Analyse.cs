@@ -180,7 +180,8 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       // Collect inputs
-      (List<GsaModel> models, List<GsaList> lists) = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
+      (List<GsaModel> models, List<GsaList> lists)
+        = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
       (List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds)
         = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
@@ -191,8 +192,8 @@ namespace GsaGH.Components {
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & nodes is null & elem1ds is null & elem2ds is null 
-        & mem1ds is null & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null 
+      if (models is null & lists is null & nodes is null & elem1ds is null & elem2ds is null
+        & mem1ds is null & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null
         & loads is null & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
@@ -203,15 +204,14 @@ namespace GsaGH.Components {
       model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
       if (models != null) {
         if (models.Count > 0) {
-          model = models.Count > 1
-            ? MergeModels.MergeModel(models, this, _tolerance) :
+          model = models.Count > 1 ? MergeModels.MergeModel(models, this, _tolerance) :
             models[0].Clone();
         }
       }
 
       // Assemble model
-      model.Model = AssembleModel.Assemble(model, lists, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds,
-        mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks,
+      model.Model = AssembleModel.Assemble(model, lists, nodes, elem1ds, elem2ds, elem3ds, mem1ds,
+        mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks,
         combinationCases, _lengthUnit, _tolerance, _reMesh, this);
 
       // Run analysis
@@ -227,8 +227,8 @@ namespace GsaGH.Components {
               "Model contains no loads and has not been analysed, but has been assembled.");
           } else {
             this.AddRuntimeRemark(
-              "Model contained no Analysis Tasks. Default Task has been created containing " +
-              "all cases found in model");
+              "Model contained no Analysis Tasks. Default Task has been created containing "
+              + "all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases) {
               model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
             }
@@ -275,7 +275,8 @@ namespace GsaGH.Components {
               if (!model.Model.Results().ContainsKey(task.Key)) {
                 this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
               }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
             }
           }
@@ -303,7 +304,8 @@ namespace GsaGH.Components {
       if (_toleranceTxt != string.Empty) {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }

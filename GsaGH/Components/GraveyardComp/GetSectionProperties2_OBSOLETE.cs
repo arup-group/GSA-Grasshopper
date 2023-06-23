@@ -31,6 +31,37 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
+      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
+
+      Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
+      Params.Output[1].Name = "Moment of Inertia y-y ["
+        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[2].Name = "Moment of Inertia z-z ["
+        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[3].Name = "Moment of Inertia y-z ["
+        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[4].Name
+        = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -55,41 +86,10 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
-      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
-
-      Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
-      Params.Output[1].Name = "Moment of Inertia y-y ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[2].Name = "Moment of Inertia z-z ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[3].Name = "Moment of Inertia y-z ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[4].Name
-        = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {

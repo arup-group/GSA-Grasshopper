@@ -15,9 +15,9 @@ namespace GsaGH.Helpers.GsaApi {
   /// </summary>
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class MicrosoftSQLiteReader : MarshalByRefObject {
-    public static MicrosoftSQLiteReader Instance => lazy.Value;
     private static readonly Lazy<MicrosoftSQLiteReader> lazy
       = new Lazy<MicrosoftSQLiteReader>(Initialize);
+    public static MicrosoftSQLiteReader Instance => lazy.Value;
 
     public MicrosoftSQLiteReader() { }
 
@@ -44,7 +44,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       // this is a temporary fix for TDA
       // needs more investigation!
-      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
+      if (Assembly.GetEntryAssembly() != null
+        && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
         Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
       }
 
@@ -135,7 +136,9 @@ namespace GsaGH.Helpers.GsaApi {
 
         NumberFormatInfo noComma = CultureInfo.InvariantCulture.NumberFormat;
 
-        values.AddRange(from val in vals where val != string.Empty select Convert.ToDouble(val, noComma));
+        values.AddRange(from val in vals
+          where val != string.Empty
+          select Convert.ToDouble(val, noComma));
       }
 
       return values;
@@ -308,7 +311,7 @@ namespace GsaGH.Helpers.GsaApi {
       var ex = e.ExceptionObject as Exception;
 
       string assemblies = AppDomain.CurrentDomain.GetAssemblies()
-       .Aggregate("", (current, ass) => current + ass + "; ");
+       .Aggregate(string.Empty, (current, ass) => current + ass + "; ");
 
       PostHog.Debug(new Dictionary<string, object>() {
         {

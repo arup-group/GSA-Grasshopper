@@ -113,8 +113,8 @@ namespace GsaGH.Components {
         }
       }
 
-      int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+      int ax = prop.ApiProp2d == null ? 0 : prop.AxisProperty;
+      string nm = prop.ApiProp2d == null ? "--" : prop.Name;
       ValueType colour = prop.ApiProp2d?.Colour;
 
       da.SetData(0, new GsaProp2dGoo(prop));
@@ -127,7 +127,7 @@ namespace GsaGH.Components {
       da.SetData(5, nm);
       da.SetData(6, colour);
 
-      string str = (prop.ApiProp2d == null) ? "--" : prop.Type.ToString();
+      string str = prop.ApiProp2d == null ? "--" : prop.Type.ToString();
       if (prop.ApiProp2d == null) {
         str = char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
       }

@@ -224,7 +224,8 @@ namespace GsaGH.Components {
 
       try {
         da.SetData(14, elem.ParentMember);
-      } catch (Exception) {
+      }
+      catch (Exception) {
         // ignored
       }
 

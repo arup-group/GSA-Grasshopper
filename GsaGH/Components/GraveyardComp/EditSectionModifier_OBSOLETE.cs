@@ -41,7 +41,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Length") {
@@ -276,7 +276,8 @@ namespace GsaGH.Components {
             try {
               modifier.AreaModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -294,7 +295,8 @@ namespace GsaGH.Components {
             try {
               modifier.I11Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 2, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -312,7 +314,8 @@ namespace GsaGH.Components {
             try {
               modifier.I22Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 3, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -330,7 +333,8 @@ namespace GsaGH.Components {
             try {
               modifier.JModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 4, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -356,7 +360,8 @@ namespace GsaGH.Components {
             try {
               modifier.VolumeModifier = Input
                .UnitNumberOrDoubleAsRatioToPercentage(this, da, 7, true).Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }

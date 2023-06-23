@@ -81,8 +81,8 @@ namespace GsaGH.Components {
     }
 
     protected override void InitialiseDropdowns() {
-      if (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot
-        | DefaultUnits.LengthUnitGeometry == LengthUnit.Inch) {
+      if ((DefaultUnits.LengthUnitGeometry == LengthUnit.Foot)
+        | (DefaultUnits.LengthUnitGeometry == LengthUnit.Inch)) {
         _inertiaUnit = AreaMomentOfInertiaUnit.FootToTheFourth;
         _forcePerLengthUnit = ForcePerLengthUnit.KilopoundForcePerFoot;
       }

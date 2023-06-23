@@ -27,11 +27,36 @@ namespace GsaGH.Components {
       "GridPlaneSurfaceProp", "Get GSA Grid Plane Surface Properties", CategoryName.Name(),
       SubCategoryName.Cat3()) { }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      string unit = Length.GetAbbreviation(_lengthUnit);
+
+      Params.Output[6].Name = "Elevation [" + unit + "]";
+      Params.Output[7].Name = "Grid Plane Tolerance Above [" + unit + "]";
+      Params.Output[8].Name = "Grid Plane Tolerance Below [" + unit + "]";
+      Params.Output[13].Name = "Grid Surface Tolerance [" + unit + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
@@ -52,22 +77,6 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       if (reader.ItemExists("LengthUnit")) {
         _lengthUnit
@@ -77,15 +86,6 @@ namespace GsaGH.Components {
       }
 
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      string unit = Length.GetAbbreviation(_lengthUnit);
-
-      Params.Output[6].Name = "Elevation [" + unit + "]";
-      Params.Output[7].Name = "Grid Plane Tolerance Above [" + unit + "]";
-      Params.Output[8].Name = "Grid Plane Tolerance Below [" + unit + "]";
-      Params.Output[13].Name = "Grid Surface Tolerance [" + unit + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -156,7 +156,8 @@ namespace GsaGH.Components {
           var elevation = new Length();
           try {
             elevation = Length.Parse(gridPlaneSurface.Elevation);
-          } catch (Exception) {
+          }
+          catch (Exception) {
             if (double.TryParse(gridPlaneSurface.Elevation, out double elev)) {
               elevation = new Length(elev, _lengthUnit);
             }

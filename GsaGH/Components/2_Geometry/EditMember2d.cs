@@ -208,7 +208,8 @@ namespace GsaGH.Components {
         } else {
           try {
             mem.Type = Mappings.GetMemberType(ghstring.Value);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Member Type");
           }
         }
@@ -221,7 +222,8 @@ namespace GsaGH.Components {
         } else {
           try {
             mem.Type2D = Mappings.GetAnalysisOrder(ghstring.Value);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Analysis Element Type");
           }
         }

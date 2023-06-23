@@ -6,7 +6,8 @@ using System.Linq;
 namespace GsaGH.Helpers.Export {
   internal class GsaGuidDictionary<T> {
     internal int Count => _dictionary.Count;
-    internal ReadOnlyDictionary<int, T> ReadOnlyDictionary => new ReadOnlyDictionary<int, T>(_dictionary);
+    internal ReadOnlyDictionary<int, T> ReadOnlyDictionary
+      => new ReadOnlyDictionary<int, T>(_dictionary);
     internal ReadOnlyDictionary<Guid, int> GuidDictionary
       => new ReadOnlyDictionary<Guid, int>(_guidDictionary);
     private readonly IDictionary<int, T> _dictionary;
@@ -43,7 +44,8 @@ namespace GsaGH.Helpers.Export {
 
   internal class GsaGuidIntListDictionary<T> {
     internal int Count => _dictionary.Count;
-    internal ReadOnlyDictionary<int, T> ReadOnlyDictionary => new ReadOnlyDictionary<int, T>(_dictionary);
+    internal ReadOnlyDictionary<int, T> ReadOnlyDictionary
+      => new ReadOnlyDictionary<int, T>(_dictionary);
     internal ReadOnlyDictionary<Guid, Collection<int>> GuidDictionary
       => new ReadOnlyDictionary<Guid, Collection<int>>(_guidDictionary);
     private readonly IDictionary<int, T> _dictionary;
@@ -92,7 +94,8 @@ namespace GsaGH.Helpers.Export {
 
   internal class GsaIntDictionary<T> {
     internal int Count => _dictionary.Count;
-    internal ReadOnlyDictionary<int, T> ReadOnlyDictionary => new ReadOnlyDictionary<int, T>(_dictionary);
+    internal ReadOnlyDictionary<int, T> ReadOnlyDictionary
+      => new ReadOnlyDictionary<int, T>(_dictionary);
     private readonly IDictionary<int, T> _dictionary;
     private int _firstEmptyKey = 1;
 

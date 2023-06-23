@@ -118,7 +118,8 @@ namespace GsaGHTests.Helpers {
           } else {
             AreEqual(objPropertyValueA, objPropertyValueB, excludeGuid);
           }
-        } catch (TargetParameterCountException) { }
+        }
+        catch (TargetParameterCountException) { }
       }
 
       return true;

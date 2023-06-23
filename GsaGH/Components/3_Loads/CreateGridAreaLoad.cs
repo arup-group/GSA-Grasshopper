@@ -44,7 +44,8 @@ namespace GsaGH.Components {
       try {
         _expansionType = reader.TryGetEnum("Mode", typeof(ExpansionType), out int value) ?
           (ExpansionType)value : (ExpansionType)reader.GetInt32("Mode");
-      } catch {
+      }
+      catch {
         this.AddRuntimeError("Can't parse Mode field to the ExpansionType enum.");
       }
 
@@ -219,7 +220,8 @@ namespace GsaGH.Components {
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
           ctrlPts = polyline.ToList();
-          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(ctrlPts, plane);
+          (List<Point3d> points, string definition)
+            = GridLoadHelper.CreateDefinition(ctrlPts, plane);
           gridareaload.Points = points;
 
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;

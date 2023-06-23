@@ -16,7 +16,7 @@ namespace GsaGHTests.Parameters {
         Name = "Name",
         Thickness = new Length(200, LengthUnit.Millimeter),
         AdditionalOffsetZ = new Length(1, LengthUnit.Centimeter),
-        ReferenceSurface = ReferenceSurface.Top
+        ReferenceSurface = ReferenceSurface.Top,
       };
 
       GsaProp2d duplicate = original.Clone();
@@ -48,7 +48,7 @@ namespace GsaGHTests.Parameters {
         prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.Name);
       Assert.Equal("awesome property", prop.Description);
-      Assert.Equal(Property2D_Type.LOAD.ToString().ToPascalCase(), 
+      Assert.Equal(Property2D_Type.LOAD.ToString().ToPascalCase(),
         prop.Type.ToString().ToPascalCase());
       Assert.Equal(SupportType.ThreeEdges, prop.SupportType);
       Assert.Equal(2, prop.ReferenceEdge);
@@ -70,7 +70,7 @@ namespace GsaGHTests.Parameters {
         Description = description,
         Type = type,
         ReferenceSurface = referenceSurface,
-        AdditionalOffsetZ = offset
+        AdditionalOffsetZ = offset,
       };
       var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       orig.Material = material;

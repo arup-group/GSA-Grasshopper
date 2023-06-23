@@ -278,7 +278,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(11, ref ghTyp)) {
         if (ghTyp.Value is GsaNodeGoo nodeGoo) {
-          mem.OrientationNode = nodeGoo.Value.Duplicate(); ;
+          mem.OrientationNode = nodeGoo.Value.Duplicate();
+          ;
         } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }

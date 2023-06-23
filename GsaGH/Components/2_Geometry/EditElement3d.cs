@@ -89,10 +89,11 @@ namespace GsaGH.Components {
       var ghIds = new List<GH_Integer>();
       if (da.GetDataList(1, ghIds)) {
         if (ghIds.Count != elem.ApiElements.Count) {
-          this.AddRuntimeError("ID input must be a list matching the number of elements " +
-            $"({elem.ApiElements.Count})");
+          this.AddRuntimeError("ID input must be a list matching the number of elements "
+            + $"({elem.ApiElements.Count})");
           return;
         }
+
         elem.Ids = ghIds.Select(x => x.Value).ToList();
       }
 
@@ -106,9 +107,10 @@ namespace GsaGH.Components {
           }
         } else {
           if (prop3dGoos.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("PA input must either be a single Prop2d or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning("PA input must either be a single Prop2d or a"
+              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+
           elem.Prop3ds = prop3dGoos.Select(x => x.Value).ToList();
         }
       }
@@ -117,14 +119,15 @@ namespace GsaGH.Components {
       var ghGrps = new List<GH_Integer>();
       if (da.GetDataList(3, ghGrps)) {
         if (ghGrps.Count == 1) {
-          elem.Groups = new List<int>() { 
-            ghGrps[0].Value
+          elem.Groups = new List<int>() {
+            ghGrps[0].Value,
           };
         } else {
           if (ghGrps.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Gr input must either be a single Group ID or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning("Gr input must either be a single Group ID or a"
+              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+
           elem.Groups = ghGrps.Select(x => x.Value).ToList();
         }
       }
@@ -134,13 +137,14 @@ namespace GsaGH.Components {
       if (da.GetDataList(4, ghnm)) {
         if (ghnm.Count == 1) {
           elem.Names = new List<string>() {
-            ghnm[0].Value
+            ghnm[0].Value,
           };
         } else {
           if (ghnm.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Nm input must either be a single Text string or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning("Nm input must either be a single Text string or a"
+              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+
           elem.Names = ghnm.Select(x => x.Value).ToList();
         }
       }
@@ -150,13 +154,14 @@ namespace GsaGH.Components {
       if (da.GetDataList(5, ghcols)) {
         if (ghcols.Count == 1) {
           elem.Colours = new List<Color>() {
-            ghcols[0].Value
+            ghcols[0].Value,
           };
         } else {
           if (ghcols.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Co input must either be a single Colour or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning("Co input must either be a single Colour or a"
+              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+
           elem.Colours = ghcols.Select(x => x.Value).ToList();
         }
       }
@@ -166,13 +171,14 @@ namespace GsaGH.Components {
       if (da.GetDataList(6, ghdummies)) {
         if (ghdummies.Count == 1) {
           elem.IsDummies = new List<bool>() {
-            ghdummies[0].Value
+            ghdummies[0].Value,
           };
         } else {
           if (ghdummies.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dm input must either be a single Boolean or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning("Dm input must either be a single Boolean or a"
+              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
+
           elem.IsDummies = ghdummies.Select(x => x.Value).ToList();
         }
       }
@@ -180,8 +186,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaElement3dGoo(elem));
       da.SetDataList(1, elem.Ids);
       da.SetDataList(2, elem.DisplayMesh.ExplodeAtUnweldedEdges());
-      da.SetDataList(3,
-        new List<GsaProp3dGoo>(elem.Prop3ds.Select(x => new GsaProp3dGoo(x))));
+      da.SetDataList(3, new List<GsaProp3dGoo>(elem.Prop3ds.Select(x => new GsaProp3dGoo(x))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6, elem.Names);

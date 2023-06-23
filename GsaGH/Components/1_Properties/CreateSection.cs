@@ -72,7 +72,7 @@ namespace GsaGH.Components {
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(1, ref materialGoo)) {
         gsaSection.Material = materialGoo.Value;
-      } 
+      }
 
       gsaSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);
 

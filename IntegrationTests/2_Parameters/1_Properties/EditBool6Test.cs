@@ -7,8 +7,8 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class EditBool6Test {
-    public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
 
     [Fact]
     public void NoRuntimeErrorTest() {

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using GsaGH.Parameters;
-using GsaGH.Helpers.Import;
-using Xunit;
 using GsaAPI;
+using GsaGH.Helpers.Import;
+using GsaGH.Parameters;
 using Rhino.Geometry;
+using Xunit;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]
@@ -68,79 +68,80 @@ namespace GsaGHTests.Helpers.Import {
 
       model.AddNode(new Node() {
         Position = new Vector3() {
-          X = 0, 
-          Y = 0, 
-          Z = 0 }
+          X = 0,
+          Y = 0,
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 0,
-          Z = 0
-        }
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 4.5,
-          Z = 0
-        }
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 0,
           Y = 4.5,
-          Z = 0
-        }
+          Z = 0,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 0,
           Y = 0,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 0,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 4.5,
           Y = 4.5,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddNode(new Node() {
         Position = new Vector3() {
           X = 0,
           Y = 4.5,
-          Z = 5
-        }
+          Z = 5,
+        },
       });
 
       model.AddMember(new Member() {
         Topology = "1 3",
         Property = 1,
         Type = MemberType.GENERIC_1D,
-        Type1D = ElementType.BEAM
+        Type1D = ElementType.BEAM,
       });
 
       model.AddMember(new Member() {
         Topology = "1 2 3 4",
         Property = 2,
         Type = MemberType.GENERIC_2D,
-        Type2D = AnalysisOrder.LINEAR
+        Type2D = AnalysisOrder.LINEAR,
       });
 
       model.AddMember(new Member() {

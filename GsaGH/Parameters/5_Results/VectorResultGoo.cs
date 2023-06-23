@@ -16,7 +16,6 @@ namespace GsaGH.Parameters {
         _reactionForceLine.From,
         _reactionForceLine.To,
       });
-    public BoundingBox ClippingBox => Boundingbox;
     public Vector3d Direction { get; private set; }
     public override string TypeDescription => "A GSA result vector type.";
     public override string TypeName => "Result Vector";
@@ -42,6 +41,31 @@ namespace GsaGH.Parameters {
       Value = GetGhVector();
     }
 
+    public BoundingBox ClippingBox => Boundingbox;
+
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
+
+      args.Pipeline.DrawArrow(_reactionForceLine, _color);
+      if (_drawArrowHead) {
+        const int arrowHeadScreenSize = 20;
+        Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
+        args.Pipeline.DrawArrowHead(point, Direction, _color, arrowHeadScreenSize, 0);
+      }
+
+      if (!_showText) {
+        return;
+      }
+
+      const int offset = 30;
+      Point3d endOffsetPoint = CalculateExtraEndOffsetPoint(pixelsPerUnit, offset);
+      Point2d positionOnTheScreen = args.Pipeline.Viewport.WorldToClient(endOffsetPoint);
+
+      args.Pipeline.Draw2dText(ForceValue.ToString(), _color, positionOnTheScreen, true);
+    }
+
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
         target = (TQ)(object)new GH_Vector(Value);
@@ -65,29 +89,6 @@ namespace GsaGH.Parameters {
     public VectorResultGoo DrawArrowHead(bool drawArrow) {
       _drawArrowHead = drawArrow;
       return this;
-    }
-
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public void DrawViewportWires(GH_PreviewWireArgs args) {
-      args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
-
-      args.Pipeline.DrawArrow(_reactionForceLine, _color);
-      if (_drawArrowHead) {
-        const int arrowHeadScreenSize = 20;
-        Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
-        args.Pipeline.DrawArrowHead(point, Direction, _color, arrowHeadScreenSize, 0);
-      }
-
-      if (!_showText) {
-        return;
-      }
-
-      const int offset = 30;
-      Point3d endOffsetPoint = CalculateExtraEndOffsetPoint(pixelsPerUnit, offset);
-      Point2d positionOnTheScreen = args.Pipeline.Viewport.WorldToClient(endOffsetPoint);
-
-      args.Pipeline.Draw2dText(ForceValue.ToString(), _color, positionOnTheScreen, true);
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {

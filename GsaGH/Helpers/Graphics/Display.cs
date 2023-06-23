@@ -18,7 +18,7 @@ namespace GsaGH.Helpers.Graphics {
       var greenLines20 = new List<Line>();
       var redLines10 = new List<Line>();
 
-      if (start == null | end == null) {
+      if ((start == null) | (end == null)) {
         return null;
       }
 

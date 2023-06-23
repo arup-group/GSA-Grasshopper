@@ -13,19 +13,18 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.BoundingBox;
-    public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA result line type.";
     public override string TypeName => "Result Line";
+    private readonly Color _color1;
+    private readonly Color _color2;
+    private readonly float _size1;
+    private readonly float _size2;
     public readonly int ElementId;
     public readonly IQuantity Result1;
     public readonly IQuantity Result2;
     internal List<Color> _previewResultColours;
     internal List<int> _previewResultThk;
     internal List<Line> _resultLineSegments;
-    private readonly Color _color1;
-    private readonly Color _color2;
-    private readonly float _size1;
-    private readonly float _size2;
 
     public LineResultGoo(
       Line line, IQuantity result1, IQuantity result2, Color color1, Color color2, float size1,
@@ -54,6 +53,17 @@ namespace GsaGH.Parameters {
       _resultLineSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
+    public BoundingBox ClippingBox => Boundingbox;
+
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      for (int i = 0; i < _resultLineSegments.Count; i++) {
+        args.Pipeline.DrawLine(_resultLineSegments[i], _previewResultColours[i],
+          _previewResultThk[i]);
+      }
+    }
+
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
         target = (TQ)(object)new GH_Line(Value);
@@ -72,15 +82,6 @@ namespace GsaGH.Parameters {
 
       target = default;
       return false;
-    }
-
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public void DrawViewportWires(GH_PreviewWireArgs args) {
-      for (int i = 0; i < _resultLineSegments.Count; i++) {
-        args.Pipeline.DrawLine(_resultLineSegments[i], _previewResultColours[i],
-          _previewResultThk[i]);
-      }
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {

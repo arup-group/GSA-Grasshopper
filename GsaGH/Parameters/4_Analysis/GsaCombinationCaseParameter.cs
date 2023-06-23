@@ -1,9 +1,9 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Drawing;
+using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using System;
-using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -26,8 +26,8 @@ namespace GsaGH.Parameters {
 
     protected override GsaCombinationCaseGoo PreferredCast(object data) {
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        return new GsaCombinationCaseGoo(
-          new GsaCombinationCase(id, "Combination Case " + id, string.Empty));
+        return new GsaCombinationCaseGoo(new GsaCombinationCase(id, "Combination Case " + id,
+          string.Empty));
       }
 
       if (GH_Convert.ToString(data, out string name, GH_Conversion.Both)) {

@@ -169,7 +169,8 @@ namespace GsaGH.Components {
         } else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           try {
             elem.Type = Mappings.GetElementType(typestring);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Element Type");
           }
         }
@@ -240,7 +241,8 @@ namespace GsaGH.Components {
 
       try {
         da.SetData(14, elem.ParentMember);
-      } catch (Exception) {
+      }
+      catch (Exception) {
         // ignored
       }
 

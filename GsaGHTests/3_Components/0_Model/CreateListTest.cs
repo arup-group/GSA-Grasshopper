@@ -22,11 +22,11 @@ namespace GsaGHTests.Model {
     [InlineData(3)] // case
     public void TestErrorMessages(int i) {
       GH_OasysDropDownComponent comp = ComponentMother();
-      
+
       // Act
       comp.SetSelected(0, i); // change dropdown
       // set (invalid) definition input
-      ComponentTestHelper.SetInput(comp, "-5", 2); 
+      ComponentTestHelper.SetInput(comp, "-5", 2);
       var output = (GsaListGoo)ComponentTestHelper.GetOutput(comp);
 
       Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Blank));

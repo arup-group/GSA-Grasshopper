@@ -18,38 +18,17 @@ namespace GsaGHTests.Components.Properties {
     }
 
     [Theory]
-    [InlineData("STD I 1000 500 15 25",
-      0.03925,
-      0.00701443,
-      521.101E-6,
-      0.0,
-      0.00701443,
-      521.101E-6,
-      0.0,
-      0.530786,
-      0.357855,
-      0.530786,
-      0.357855,
-      6.10239E-6,
-      244.096E-6,
-      0.0140289,
-      0.00208440,
-      0.0155719,
-      0.00317844,
-      0.0,
-      0.0,
-      0.422743,
-      0.115223,
-      3.97000,
-      0.03925,
+    [InlineData("STD I 1000 500 15 25", 0.03925, 0.00701443, 521.101E-6, 0.0, 0.00701443,
+      521.101E-6, 0.0, 0.530786, 0.357855, 0.530786, 0.357855, 6.10239E-6, 244.096E-6, 0.0140289,
+      0.00208440, 0.0155719, 0.00317844, 0.0, 0.0, 0.422743, 0.115223, 3.97000, 0.03925,
       LengthUnit.Meter)]
-    public void CreateComponent(string profile, double expectedArea, double expectedIyy,
-      double expectedIzz, double expectedIyz, double expectedIuu, double expectedIvv,
-      double expectedAngle, double expectedKyy, double expectedKzz, double expectedKuu,
-      double expectedKvv, double expectedJ, double expectedC, double expectedZy,
-      double expectedZz, double expectedZpy, double expectedZpz, double expectedCy,
-      double expectedCz, double expectedRy, double expectedRz, double expectedSperL,
-      double expectedVperL, LengthUnit lengthUnit) {
+    public void CreateComponent(
+      string profile, double expectedArea, double expectedIyy, double expectedIzz,
+      double expectedIyz, double expectedIuu, double expectedIvv, double expectedAngle,
+      double expectedKyy, double expectedKzz, double expectedKuu, double expectedKvv,
+      double expectedJ, double expectedC, double expectedZy, double expectedZz, double expectedZpy,
+      double expectedZpz, double expectedCy, double expectedCz, double expectedRy,
+      double expectedRz, double expectedSperL, double expectedVperL, LengthUnit lengthUnit) {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, profile);
 

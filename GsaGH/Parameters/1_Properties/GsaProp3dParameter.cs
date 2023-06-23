@@ -24,11 +24,9 @@ namespace GsaGH.Parameters {
 
     protected override GsaProp3dGoo PreferredCast(object data) {
       switch (data) {
-        case GsaElement3dGoo elem3d:
-          return new GsaProp3dGoo(elem3d.Value.Prop3ds[0]);
+        case GsaElement3dGoo elem3d: return new GsaProp3dGoo(elem3d.Value.Prop3ds[0]);
 
-        case GsaMember3dGoo mem3d:
-          return new GsaProp3dGoo(mem3d.Value.Prop3d);
+        case GsaMember3dGoo mem3d: return new GsaProp3dGoo(mem3d.Value.Prop3d);
       }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {

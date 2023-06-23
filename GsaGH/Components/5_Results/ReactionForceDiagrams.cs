@@ -24,6 +24,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using EntityType = GsaGH.Parameters.EntityType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -232,11 +233,11 @@ namespace GsaGH.Components {
       var ghType = new GH_ObjectWrapper();
       if (dataAccess.GetData(1, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-            this.AddRuntimeWarning(
-            "List must be of type Node to apply to node filter");
+          if (listGoo.Value.EntityType != EntityType.Node) {
+            this.AddRuntimeWarning("List must be of type Node to apply to node filter");
           }
-          nodeList = "\"" + listGoo.Value.Name + "\"";
+
+          nodeList = $"\"{listGoo.Value.Name}\"";
         } else {
           GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
         }
@@ -253,47 +254,41 @@ namespace GsaGH.Components {
       double maxValue = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-          maxValue = Math.Max(
-            forceValues.DmaxX.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxX.As(_forceUnit),
             Math.Abs(forceValues.DminX.As(_forceUnit)));
           break;
         case DisplayValue.Y:
-          maxValue = Math.Max(
-            forceValues.DmaxY.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxY.As(_forceUnit),
             Math.Abs(forceValues.DminY.As(_forceUnit)));
           break;
         case DisplayValue.Z:
-          maxValue = Math.Max(
-            forceValues.DmaxZ.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxZ.As(_forceUnit),
             Math.Abs(forceValues.DminZ.As(_forceUnit)));
           break;
         case DisplayValue.ResXyz:
-          maxValue = Math.Max(
-            forceValues.DmaxXyz.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxXyz.As(_forceUnit),
             Math.Abs(forceValues.DminXyz.As(_forceUnit)));
           break;
 
         case DisplayValue.Xx:
-          maxValue = Math.Max(
-            forceValues.DmaxXx.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXx.As(_momentUnit),
             Math.Abs(forceValues.DminXx.As(_momentUnit)));
           break;
         case DisplayValue.Yy:
-          maxValue = Math.Max(
-            forceValues.DmaxYy.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxYy.As(_momentUnit),
             Math.Abs(forceValues.DminYy.As(_momentUnit)));
           break;
         case DisplayValue.Zz:
-          maxValue = Math.Max(
-            forceValues.DmaxZz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxZz.As(_momentUnit),
             Math.Abs(forceValues.DminZz.As(_momentUnit)));
           break;
         case DisplayValue.ResXxyyzz:
-          maxValue = Math.Max(
-            forceValues.DmaxXxyyzz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXxyyzz.As(_momentUnit),
             Math.Abs(forceValues.DminXxyyzz.As(_momentUnit)));
           break;
-      };
+      }
+
+      ;
 
       double factor = 0.1; // maxVector = 10% of bbox diagonal
       return bbox.Diagonal.Length * factor / maxValue;

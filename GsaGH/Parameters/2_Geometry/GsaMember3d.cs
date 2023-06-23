@@ -68,12 +68,12 @@ namespace GsaGH.Parameters {
       }
     }
     internal Member ApiMember { get; set; } = new Member();
-    internal List<Line> _previewEdgeLines;
-    internal List<Polyline> _previewHiddenLines;
-    internal List<Point3d> _previewPts;
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
     private Mesh _mesh = new Mesh();
+    internal List<Line> _previewEdgeLines;
+    internal List<Polyline> _previewHiddenLines;
+    internal List<Point3d> _previewPts;
 
     public GsaMember3d() {
       ApiMember.Type = MemberType.GENERIC_3D;
@@ -113,7 +113,7 @@ namespace GsaGH.Parameters {
         Prop3d = Prop3d.Duplicate(),
         Id = Id,
         ApiMember = GetAPI_MemberClone(),
-        _guid = Guid.NewGuid()
+        _guid = Guid.NewGuid(),
       };
 
       dup.UpdatePreview();

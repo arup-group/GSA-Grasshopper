@@ -24,32 +24,23 @@ namespace GsaGH.Parameters {
 
     protected override GsaMaterialGoo PreferredCast(object data) {
       switch (data) {
-        case GsaSectionGoo section: 
-            return new GsaMaterialGoo(section.Value.Material);
+        case GsaSectionGoo section: return new GsaMaterialGoo(section.Value.Material);
 
-        case GsaProp2dGoo prop2d:
-          return new GsaMaterialGoo(prop2d.Value.Material);
+        case GsaProp2dGoo prop2d: return new GsaMaterialGoo(prop2d.Value.Material);
 
-        case GsaProp3dGoo prop3d:
-          return new GsaMaterialGoo(prop3d.Value.Material);
+        case GsaProp3dGoo prop3d: return new GsaMaterialGoo(prop3d.Value.Material);
 
-        case GsaElement1dGoo elem1d:
-          return new GsaMaterialGoo(elem1d.Value.Section.Material);
+        case GsaElement1dGoo elem1d: return new GsaMaterialGoo(elem1d.Value.Section.Material);
 
-        case GsaElement2dGoo elem2d:
-          return new GsaMaterialGoo(elem2d.Value.Prop2ds[0].Material);
+        case GsaElement2dGoo elem2d: return new GsaMaterialGoo(elem2d.Value.Prop2ds[0].Material);
 
-        case GsaElement3dGoo elem3d:
-          return new GsaMaterialGoo(elem3d.Value.Prop3ds[0].Material);
+        case GsaElement3dGoo elem3d: return new GsaMaterialGoo(elem3d.Value.Prop3ds[0].Material);
 
-        case GsaMember1dGoo mem1d:
-          return new GsaMaterialGoo(mem1d.Value.Section.Material);
+        case GsaMember1dGoo mem1d: return new GsaMaterialGoo(mem1d.Value.Section.Material);
 
-        case GsaMember2dGoo mem2d:
-          return new GsaMaterialGoo(mem2d.Value.Prop2d.Material);
+        case GsaMember2dGoo mem2d: return new GsaMaterialGoo(mem2d.Value.Prop2d.Material);
 
-        case GsaMember3dGoo mem3d:
-          return new GsaMaterialGoo(mem3d.Value.Prop3d.Material);
+        case GsaMember3dGoo mem3d: return new GsaMaterialGoo(mem3d.Value.Prop3d.Material);
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Material");

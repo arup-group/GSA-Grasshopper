@@ -68,91 +68,91 @@ namespace GsaGHTests.Helpers.Import {
         MaterialType = MaterialType.STEEL, // 1
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Profile = "STD R 800 400"
+        Profile = "STD R 800 400",
       });
 
       model.AddSection(new Section() {
         MaterialType = MaterialType.CONCRETE, // 2
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Profile = "STD R 800 400"
+        Profile = "STD R 800 400",
       });
 
       model.AddSection(new Section() {
         MaterialType = MaterialType.FRP, // 3
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Profile = "STD R 800 400"
+        Profile = "STD R 800 400",
       });
 
       model.AddSection(new Section() {
         MaterialType = MaterialType.ALUMINIUM, // 4
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Profile = "STD R 800 400"
+        Profile = "STD R 800 400",
       });
 
       model.AddSection(new Section() {
         MaterialType = MaterialType.TIMBER, // 5
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Profile = "STD R 800 400"
+        Profile = "STD R 800 400",
       });
 
       model.AddSection(new Section() {
         MaterialType = MaterialType.GLASS, // 6
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Profile = "STD R 800 400"
+        Profile = "STD R 800 400",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.STEEL, // 1
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.CONCRETE, // 2
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.FRP, // 3
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.ALUMINIUM, // 4
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.TIMBER, // 5
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.GLASS, // 6
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp2D(new Prop2D() {
         MaterialType = MaterialType.FABRIC, // 7
         MaterialGradeProperty = 1,
         MaterialAnalysisProperty = 0,
-        Description = "200(mm)"
+        Description = "200(mm)",
       });
 
       model.AddProp3D(new Prop3D() {

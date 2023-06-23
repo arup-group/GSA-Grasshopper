@@ -35,11 +35,39 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      string unit = Length.GetAbbreviation(_lengthUnit);
+      string volUnit
+        = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit));
+      Params.Output[1].Name = "Area Modifier [" + unit + "\u00B2]";
+      Params.Output[2].Name = "I11 Modifier [" + unit + "\u2074]";
+      Params.Output[3].Name = "I22 Modifier [" + unit + "\u2074]";
+      Params.Output[7].Name = "Volume Modifier [" + volUnit + "]";
+      string unitAbbreviation = LinearDensity.GetAbbreviation(_linearDensityUnit);
+      Params.Output[8].Name = "Additional Mass [" + unitAbbreviation + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Length") {
@@ -77,40 +105,12 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       _linearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit),
         reader.GetString("DensityUnit"));
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      string unit = Length.GetAbbreviation(_lengthUnit);
-      string volUnit
-        = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit));
-      Params.Output[1].Name = "Area Modifier [" + unit + "\u00B2]";
-      Params.Output[2].Name = "I11 Modifier [" + unit + "\u2074]";
-      Params.Output[3].Name = "I22 Modifier [" + unit + "\u2074]";
-      Params.Output[7].Name = "Volume Modifier [" + volUnit + "]";
-      string unitAbbreviation = LinearDensity.GetAbbreviation(_linearDensityUnit);
-      Params.Output[8].Name = "Additional Mass [" + unitAbbreviation + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -257,9 +257,10 @@ namespace GsaGH.Components {
             modifier.AreaModifier = res;
           } else {
             try {
-              modifier.AreaModifier 
+              modifier.AreaModifier
                 = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true).Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -277,7 +278,8 @@ namespace GsaGH.Components {
             try {
               modifier.I11Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 2, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -295,7 +297,8 @@ namespace GsaGH.Components {
             try {
               modifier.I22Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 3, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -313,7 +316,8 @@ namespace GsaGH.Components {
             try {
               modifier.JModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 4, true)
                .Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }
@@ -339,7 +343,8 @@ namespace GsaGH.Components {
             try {
               modifier.VolumeModifier = Input
                .UnitNumberOrDoubleAsRatioToPercentage(this, da, 7, true).Value;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               this.AddRuntimeError(e.Message);
               return;
             }

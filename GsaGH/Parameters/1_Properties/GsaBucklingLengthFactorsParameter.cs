@@ -26,7 +26,8 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaBucklingLengthFactorsGoo PreferredCast(object data) {
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
+      this.AddRuntimeError(
+        $"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
       return new GsaBucklingLengthFactorsGoo(null);
     }
   }

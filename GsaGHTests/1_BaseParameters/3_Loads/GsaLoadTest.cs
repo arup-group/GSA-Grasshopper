@@ -53,8 +53,8 @@ namespace GsaGHTests.Parameters {
       duplicate.BeamLoad.BeamLoad.AxisProperty = 1;
       duplicate.BeamLoad.BeamLoad.Case = 1;
       duplicate.BeamLoad.BeamLoad.Direction = Direction.XX;
-      duplicate.BeamLoad.BeamLoad.Elements = "";
-      duplicate.BeamLoad.BeamLoad.Name = "";
+      duplicate.BeamLoad.BeamLoad.Elements = string.Empty;
+      duplicate.BeamLoad.BeamLoad.Name = string.Empty;
       duplicate.BeamLoad.BeamLoad.IsProjected = false;
       duplicate.BeamLoad.BeamLoad.SetPosition(0, 99);
       duplicate.BeamLoad.BeamLoad.SetValue(0, 99);
@@ -128,8 +128,8 @@ namespace GsaGHTests.Parameters {
         Z = 1,
       };
       duplicate.GravityLoad.GravityLoad.Case = 3;
-      duplicate.GravityLoad.GravityLoad.Elements = "";
-      duplicate.GravityLoad.GravityLoad.Nodes = "";
+      duplicate.GravityLoad.GravityLoad.Elements = string.Empty;
+      duplicate.GravityLoad.GravityLoad.Nodes = string.Empty;
 
       Assert.Equal(LoadTypes.Gravity, original.LoadType);
       Assert.Equal(0, original.GravityLoad.GravityLoad.Factor.X);
@@ -178,8 +178,8 @@ namespace GsaGHTests.Parameters {
       duplicate.FaceLoad.FaceLoad.AxisProperty = 1;
       duplicate.FaceLoad.FaceLoad.Case = 1;
       duplicate.FaceLoad.FaceLoad.Direction = Direction.XX;
-      duplicate.FaceLoad.FaceLoad.Elements = "";
-      duplicate.FaceLoad.FaceLoad.Name = "";
+      duplicate.FaceLoad.FaceLoad.Elements = string.Empty;
+      duplicate.FaceLoad.FaceLoad.Name = string.Empty;
       duplicate.FaceLoad.FaceLoad.IsProjected = true;
       duplicate.FaceLoad.FaceLoad.SetValue(0, 99);
       duplicate.FaceLoad.FaceLoad.SetValue(1, 99);
@@ -250,9 +250,9 @@ namespace GsaGHTests.Parameters {
         Z = 1,
       };
       duplicate.GravityLoad.GravityLoad.Case = 3;
-      duplicate.GravityLoad.GravityLoad.Elements = "";
-      duplicate.GravityLoad.GravityLoad.Nodes = "";
-      duplicate.GravityLoad.GravityLoad.Name = "";
+      duplicate.GravityLoad.GravityLoad.Elements = string.Empty;
+      duplicate.GravityLoad.GravityLoad.Nodes = string.Empty;
+      duplicate.GravityLoad.GravityLoad.Name = string.Empty;
 
       Assert.Equal(LoadTypes.Gravity, original.LoadType);
       Assert.Equal(0, original.GravityLoad.GravityLoad.Factor.X);
@@ -289,7 +289,7 @@ namespace GsaGHTests.Parameters {
           GridSurface = 7,
           IsProjected = true,
           Name = "name",
-          PolyLineDefinition = "",
+          PolyLineDefinition = string.Empty,
           PolyLineReference = 1,
           Type = type,
           Value = 10,
@@ -308,8 +308,8 @@ namespace GsaGHTests.Parameters {
       duplicate.AreaLoad.GridAreaLoad.Direction = Direction.XX;
       duplicate.AreaLoad.GridAreaLoad.GridSurface = 1;
       duplicate.AreaLoad.GridAreaLoad.IsProjected = false;
-      duplicate.AreaLoad.GridAreaLoad.Name = "";
-      duplicate.AreaLoad.GridAreaLoad.PolyLineDefinition = "";
+      duplicate.AreaLoad.GridAreaLoad.Name = string.Empty;
+      duplicate.AreaLoad.GridAreaLoad.PolyLineDefinition = string.Empty;
       duplicate.AreaLoad.GridAreaLoad.PolyLineReference = 0;
       duplicate.AreaLoad.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
       duplicate.AreaLoad.GridAreaLoad.Value = 0;
@@ -322,7 +322,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(7, original.AreaLoad.GridAreaLoad.GridSurface);
       Assert.True(original.AreaLoad.GridAreaLoad.IsProjected);
       Assert.Equal("name", original.AreaLoad.GridAreaLoad.Name);
-      Assert.Equal("", original.AreaLoad.GridAreaLoad.PolyLineDefinition);
+      Assert.Equal(string.Empty, original.AreaLoad.GridAreaLoad.PolyLineDefinition);
       Assert.Equal(1, original.AreaLoad.GridAreaLoad.PolyLineReference);
       Assert.Equal(type, original.AreaLoad.GridAreaLoad.Type);
       Assert.Equal(10, original.AreaLoad.GridAreaLoad.Value);
@@ -352,7 +352,7 @@ namespace GsaGHTests.Parameters {
           GridSurface = 7,
           IsProjected = true,
           Name = "name",
-          PolyLineDefinition = "",
+          PolyLineDefinition = string.Empty,
           PolyLineReference = 1,
           Type = type,
           ValueAtStart = 10,
@@ -370,8 +370,8 @@ namespace GsaGHTests.Parameters {
       duplicate.LineLoad.GridLineLoad.Direction = Direction.XX;
       duplicate.LineLoad.GridLineLoad.GridSurface = 1;
       duplicate.LineLoad.GridLineLoad.IsProjected = false;
-      duplicate.LineLoad.GridLineLoad.Name = "";
-      duplicate.LineLoad.GridLineLoad.PolyLineDefinition = "";
+      duplicate.LineLoad.GridLineLoad.Name = string.Empty;
+      duplicate.LineLoad.GridLineLoad.PolyLineDefinition = string.Empty;
       duplicate.LineLoad.GridLineLoad.PolyLineReference = 0;
       duplicate.LineLoad.GridLineLoad.Type = PolyLineType.EXPLICIT_POLYLINE;
       duplicate.LineLoad.GridLineLoad.ValueAtStart = 0;
@@ -384,7 +384,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(7, original.LineLoad.GridLineLoad.GridSurface);
       Assert.True(original.LineLoad.GridLineLoad.IsProjected);
       Assert.Equal("name", original.LineLoad.GridLineLoad.Name);
-      Assert.Equal("", original.LineLoad.GridLineLoad.PolyLineDefinition);
+      Assert.Equal(string.Empty, original.LineLoad.GridLineLoad.PolyLineDefinition);
       Assert.Equal(1, original.LineLoad.GridLineLoad.PolyLineReference);
       Assert.Equal(type, original.LineLoad.GridLineLoad.Type);
       Assert.Equal(10, original.LineLoad.GridLineLoad.ValueAtStart);
@@ -423,7 +423,7 @@ namespace GsaGHTests.Parameters {
       duplicate.PointLoad.GridPointLoad.Case = 1;
       duplicate.PointLoad.GridPointLoad.Direction = Direction.XX;
       duplicate.PointLoad.GridPointLoad.GridSurface = 1;
-      duplicate.PointLoad.GridPointLoad.Name = "";
+      duplicate.PointLoad.GridPointLoad.Name = string.Empty;
       duplicate.PointLoad.GridPointLoad.X = 0;
       duplicate.PointLoad.GridPointLoad.Y = 0;
       duplicate.PointLoad.GridPointLoad.Value = 0;
@@ -487,8 +487,8 @@ namespace GsaGHTests.Parameters {
       duplicate.NodeLoad.NodeLoad.AxisProperty = 3;
       duplicate.NodeLoad.NodeLoad.Case = 99;
       duplicate.NodeLoad.NodeLoad.Direction = Direction.YY;
-      duplicate.NodeLoad.NodeLoad.Nodes = "";
-      duplicate.NodeLoad.NodeLoad.Name = "";
+      duplicate.NodeLoad.NodeLoad.Nodes = string.Empty;
+      duplicate.NodeLoad.NodeLoad.Name = string.Empty;
       duplicate.NodeLoad.NodeLoad.Value = -3.3;
 
       Assert.Equal(LoadTypes.Node, original.LoadType);

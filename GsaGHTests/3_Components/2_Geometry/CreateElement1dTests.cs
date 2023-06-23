@@ -13,8 +13,8 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateElement1d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(
-        comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)), 0);
+      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)),
+        0);
       ComponentTestHelper.SetInput(comp, "STD CH(ft) 1 2 3 4", 1);
 
       return comp;

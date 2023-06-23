@@ -41,14 +41,14 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void InclusionLineTest() {
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(
-        comp, new LineCurve(new Point3d(1, 1, 0), new Point3d(9, 9, 0)), 2);
+      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(1, 1, 0), new Point3d(9, 9, 0)),
+        2);
 
       var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Single(output.Value.InclusionLines);
 
-      ComponentTestHelper.SetInput(
-        comp, new LineCurve(new Point3d(9, 9, 0), new Point3d(1, 1, 0)), 2);
+      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(9, 9, 0), new Point3d(1, 1, 0)),
+        2);
       output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(2, output.Value.InclusionLines.Count);
     }

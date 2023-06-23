@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -252,63 +253,69 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-              if (value.Value.EntityType == EntityType.Element
-                || value.Value.EntityType == EntityType.Member) {
-                beamLoad._refList = value.Value;
-                beamLoad._referenceType = ReferenceType.List;
-              } else {
-                this.AddRuntimeWarning(
-                  "List must be of type Element or Member to apply to beam loading");
-              }
+            if (value.Value.EntityType == EntityType.Element
+              || value.Value.EntityType == EntityType.Member) {
+              beamLoad._refList = value.Value;
+              beamLoad._referenceType = ReferenceType.List;
+            } else {
+              this.AddRuntimeWarning(
+                "List must be of type Element or Member to apply to beam loading");
+            }
 
             if (value.Value.EntityType == EntityType.Member) {
               this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+                + Environment.NewLine
+                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
-              break;
-            }
+            break;
+          }
 
           case GsaElement1dGoo value: {
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Element;
-              break;
-            }
+            beamLoad._refObjectGuid = value.Value.Guid;
+            beamLoad._referenceType = ReferenceType.Element;
+            break;
+          }
           case GsaMember1dGoo value: {
             beamLoad._refObjectGuid = value.Value.Guid;
             beamLoad._referenceType = ReferenceType.MemberChildElements;
             if (_mode != FoldMode.Uniform) {
               this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+                "Member loading will not automatically redistribute non-linear loading to child elements."
+                + Environment.NewLine
+                + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
             } else {
               this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+                + Environment.NewLine
+                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
             break;
           }
           case GsaMaterialGoo value: {
-              if (value.Value.Id != 0) {
-                this.AddRuntimeWarning(
-                "Reference Material must be a Custom Material");
-                return;
-              }
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Property;
-              break;
+            if (value.Value.Id != 0) {
+              this.AddRuntimeWarning("Reference Material must be a Custom Material");
+              return;
             }
-          case GsaSectionGoo value: {
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Property;
-              break;
-            }
-          default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
-                beamLoad.BeamLoad.Elements = beamList;
-              }
 
-              break;
+            beamLoad._refObjectGuid = value.Value.Guid;
+            beamLoad._referenceType = ReferenceType.Property;
+            break;
+          }
+          case GsaSectionGoo value: {
+            beamLoad._refObjectGuid = value.Value.Guid;
+            beamLoad._referenceType = ReferenceType.Property;
+            break;
+          }
+          default: {
+            if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
+              beamLoad.BeamLoad.Elements = beamList;
             }
+
+            break;
+          }
         }
       }
 
@@ -330,7 +337,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      GsaAPI.Direction direc = GsaAPI.Direction.Z;
+      Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -340,23 +347,23 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = GsaAPI.Direction.X;
+          direc = Direction.X;
           break;
 
         case "Y":
-          direc = GsaAPI.Direction.Y;
+          direc = Direction.Y;
           break;
 
         case "XX":
-          direc = GsaAPI.Direction.XX;
+          direc = Direction.XX;
           break;
 
         case "YY":
-          direc = GsaAPI.Direction.YY;
+          direc = Direction.YY;
           break;
 
         case "ZZ":
-          direc = GsaAPI.Direction.ZZ;
+          direc = Direction.ZZ;
           break;
       }
 
@@ -375,7 +382,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.POINT;
+            beamLoad.BeamLoad.Type = BeamLoadType.POINT;
             double pos = 0;
             if (da.GetData(7, ref pos)) {
               pos *= -1;
@@ -389,7 +396,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.UNIFORM;
+            beamLoad.BeamLoad.Type = BeamLoadType.UNIFORM;
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
           }
 
@@ -397,7 +404,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Linear:
           if (_mode == FoldMode.Linear) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.LINEAR;
+            beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
             var load2 = (ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit);
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
@@ -407,7 +414,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Patch:
           if (_mode == FoldMode.Patch) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.PATCH;
+            beamLoad.BeamLoad.Type = BeamLoadType.PATCH;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;
@@ -429,7 +436,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Trilinear:
           if (_mode == FoldMode.Trilinear) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.TRILINEAR;
+            beamLoad.BeamLoad.Type = BeamLoadType.TRILINEAR;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;

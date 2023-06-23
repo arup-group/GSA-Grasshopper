@@ -187,7 +187,7 @@ namespace GsaGH.Components {
         }
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
+          if ((vals[perm - 1].XyzResults.Count == 0) & (vals[perm - 1].XxyyzzResults.Count == 0)) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
             continue;

@@ -14,13 +14,12 @@ namespace GsaGH.Parameters {
         return box;
       }
     }
-    public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA result point type.";
     public override string TypeName => "Result Point";
-    public readonly int NodeId;
-    public readonly IQuantity Result;
     private readonly Color _color;
     private readonly float _size;
+    public readonly int NodeId;
+    public readonly IQuantity Result;
 
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size, int id)
       : base(point) {
@@ -28,6 +27,14 @@ namespace GsaGH.Parameters {
       _size = size;
       _color = color;
       NodeId = id;
+    }
+
+    public BoundingBox ClippingBox => Boundingbox;
+
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, _size, _color);
     }
 
     public override bool CastTo<TQ>(out TQ target) {
@@ -53,12 +60,6 @@ namespace GsaGH.Parameters {
 
       target = default;
       return false;
-    }
-
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public void DrawViewportWires(GH_PreviewWireArgs args) {
-      args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, _size, _color);
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {

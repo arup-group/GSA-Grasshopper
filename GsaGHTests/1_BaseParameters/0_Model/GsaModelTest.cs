@@ -6,6 +6,7 @@ using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+using OasysGH.Units;
 using OasysUnits;
 using Rhino.Geometry;
 using Xunit;
@@ -29,8 +30,8 @@ namespace GsaGHTests.Parameters {
       original.Model.Open(GsaFile.SteelDesignSimple);
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null), };
+        Model = AssembleModel.Assemble(original, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null), };
 
       Duplicates.AreEqual(original, assembled, true);
     }
@@ -77,44 +78,30 @@ namespace GsaGHTests.Parameters {
       var m = new GsaModel();
       UiUnits uiUnits = m.Units;
 
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.AccelerationUnit.ToString(),
+      Assert.Equal(DefaultUnits.AccelerationUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.Acceleration).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.AngleUnit.ToString(),
+      Assert.Equal(DefaultUnits.AngleUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.Angle).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.EnergyUnit.ToString(),
+      Assert.Equal(DefaultUnits.EnergyUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.Energy).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.ForceUnit.ToString(),
+      Assert.Equal(DefaultUnits.ForceUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.Force).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.LengthUnitGeometry.ToString(),
+      Assert.Equal(DefaultUnits.LengthUnitGeometry.ToString(),
         UnitMapping.GetUnit(uiUnits.LengthLarge).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.LengthUnitSection.ToString(),
+      Assert.Equal(DefaultUnits.LengthUnitSection.ToString(),
         UnitMapping.GetUnit(uiUnits.LengthSections).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.LengthUnitResult.ToString(),
+      Assert.Equal(DefaultUnits.LengthUnitResult.ToString(),
         UnitMapping.GetUnit(uiUnits.LengthSmall).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.MassUnit.ToString(),
-        UnitMapping.GetUnit(uiUnits.Mass).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.StressUnitResult.ToString(),
+      Assert.Equal(DefaultUnits.MassUnit.ToString(), UnitMapping.GetUnit(uiUnits.Mass).ToString());
+      Assert.Equal(DefaultUnits.StressUnitResult.ToString(),
         UnitMapping.GetUnit(uiUnits.Stress).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.TimeLongUnit.ToString(),
+      Assert.Equal(DefaultUnits.TimeLongUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.TimeLong).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.TimeMediumUnit.ToString(),
+      Assert.Equal(DefaultUnits.TimeMediumUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.TimeMedium).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.TimeShortUnit.ToString(),
+      Assert.Equal(DefaultUnits.TimeShortUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.TimeShort).ToString());
-      Assert.Equal(
-        OasysGH.Units.DefaultUnits.VelocityUnit.ToString(),
+      Assert.Equal(DefaultUnits.VelocityUnit.ToString(),
         UnitMapping.GetUnit(uiUnits.Velocity).ToString());
     }
 

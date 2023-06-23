@@ -102,13 +102,12 @@ namespace GsaGH.Helpers.Import {
         var myload = new GsaGridAreaLoad {
           GridAreaLoad = gridAreaLoad,
           GridPlaneSurface
-            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit)
-        };
+            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit), };
 
-        if (gridAreaLoad.PolyLineDefinition != string.Empty &&
-          gridAreaLoad.PolyLineDefinition.Contains('(')) {
-          myload.Points = GridLoadHelper.ConvertPoints(
-            gridAreaLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
+        if (gridAreaLoad.PolyLineDefinition != string.Empty
+          && gridAreaLoad.PolyLineDefinition.Contains('(')) {
+          myload.Points = GridLoadHelper.ConvertPoints(gridAreaLoad.PolyLineDefinition.ToString(),
+            unit, myload.GridPlaneSurface.Plane);
         }
 
         loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
@@ -139,13 +138,12 @@ namespace GsaGH.Helpers.Import {
         var myload = new GsaGridLineLoad {
           GridLineLoad = gridLineLoad,
           GridPlaneSurface
-            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit)
-        };
+            = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit), };
 
-        if (gridLineLoad.PolyLineDefinition != string.Empty &&
-          gridLineLoad.PolyLineDefinition.Contains('(')) {
-          myload.Points = GridLoadHelper.ConvertPoints(
-          gridLineLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
+        if (gridLineLoad.PolyLineDefinition != string.Empty
+          && gridLineLoad.PolyLineDefinition.Contains('(')) {
+          myload.Points = GridLoadHelper.ConvertPoints(gridLineLoad.PolyLineDefinition.ToString(),
+            unit, myload.GridPlaneSurface.Plane);
         }
 
         loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
@@ -298,7 +296,8 @@ namespace GsaGH.Helpers.Import {
             };
             loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
           }
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // ignored
         }
       }

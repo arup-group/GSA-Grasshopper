@@ -153,7 +153,8 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref alignment)) {
         try {
           alignmentType = Mappings.GetAlignmentType(alignment);
-        } catch (ArgumentException) {
+        }
+        catch (ArgumentException) {
           this.AddRuntimeError("Could not convert input Al to recognisable Alignment. Input is "
             + alignment);
           return;
@@ -466,7 +467,8 @@ namespace GsaGH.Components {
             return;
           }
         }
-      } catch (Exception) {
+      }
+      catch (Exception) {
         this.AddRuntimeError("Invalid profile");
         return;
       }

@@ -45,7 +45,7 @@ namespace GsaGHTests.Components.Properties {
         Colour = Color.Red,
         BasicOffset = BasicOffset.Top,
         AdditionalOffsetY = new Length(10.0, LengthUnit.Millimeter),
-        AdditionalOffsetZ = new Length(-23.0, LengthUnit.Millimeter)
+        AdditionalOffsetZ = new Length(-23.0, LengthUnit.Millimeter),
       };
 
       ComponentTestHelper.SetInput(comp, section, 0);

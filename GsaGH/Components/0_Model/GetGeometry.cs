@@ -24,9 +24,9 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Serialization.JsonNet;
+using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -50,32 +50,33 @@ namespace GsaGH.Components {
       List,
     }
 
+    private static readonly OasysUnitsIQuantityJsonConverter converter
+      = new OasysUnitsIQuantityJsonConverter();
+
     public override BoundingBox ClippingBox => _boundingBox;
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public List<List<string>> _dropDownItems;
-    public bool _isInitialised;
-    public List<string> _selectedItems;
-    public List<string> _spacerDescriptions;
-    public bool AlwaysExpireDownStream;
-    public Dictionary<int, List<string>> ExistingOutputsSerialized
-      = new Dictionary<int, List<string>>();
     protected override Bitmap Icon => Resources.GetGeometry;
-    private static readonly OasysUnitsIQuantityJsonConverter converter
-      = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;
     private Mesh _cachedDisplayMeshWithoutParent;
     private Mesh _cachedDisplayMeshWithParent;
     private Mesh _cachedDisplayNgonMeshWithoutParent;
     private Mesh _cachedDisplayNgonMeshWithParent;
+    public List<List<string>> _dropDownItems;
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
     private ConcurrentBag<GsaElement3dGoo> _element3ds;
+    public bool _isInitialised;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
     private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
     private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
+    public List<string> _selectedItems;
+    public List<string> _spacerDescriptions;
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
+    public bool AlwaysExpireDownStream;
+    public Dictionary<int, List<string>> ExistingOutputsSerialized
+      = new Dictionary<int, List<string>>();
 
     public GetGeometry() : base("Get Model Geometry", "GetGeo",
       "Get nodes, elements and members from GSA model", CategoryName.Name(),
@@ -89,6 +90,33 @@ namespace GsaGH.Components {
       return false;
     }
 
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+
+      int i = 0;
+      Params.Output[i++].Name = "Nodes [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "1D Elements [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "2D Elements [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "3D Elements [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "1D Members [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = "2D Members [" + unitAbbreviation + "]";
+      Params.Output[i].Name = "3D Members [" + unitAbbreviation + "]";
+
+      i = 1;
+      for (int j = 1; j < 7; j++) {
+        Params.Output[i].Access
+          = _mode == FoldMode.List ? GH_ParamAccess.list : GH_ParamAccess.tree;
+      }
+    }
+
     public override void CreateAttributes() {
       if (!_isInitialised) {
         InitialiseDropdowns();
@@ -96,14 +124,6 @@ namespace GsaGH.Components {
 
       m_attributes = new DropDownComponentAttributes(this, SetSelected, _dropDownItems,
         _selectedItems, _spacerDescriptions);
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
@@ -231,7 +251,8 @@ namespace GsaGH.Components {
         object value = data.ScriptVariable();
         try {
           text = JsonConvert.SerializeObject(value);
-        } catch (Exception) {
+        }
+        catch (Exception) {
           text = data.GetHashCode().ToString();
         }
       }
@@ -273,25 +294,6 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       CreateAttributes();
       UpdateUi();
-    }
-
-    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
-      int i = 0;
-      Params.Output[i++].Name = "Nodes [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "1D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "2D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "3D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "1D Members [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Output[i].Name = "3D Members [" + unitAbbreviation + "]";
-
-      i = 1;
-      for (int j = 1; j < 7; j++) {
-        Params.Output[i].Access
-          = _mode == FoldMode.List ? GH_ParamAccess.list : GH_ParamAccess.tree;
-      }
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -415,21 +417,22 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
       pManager.AddGenericParameter("Node filter list", "No",
-        "Filter import by list. (by default 'all')" + Environment.NewLine + "Node list should take the form:"
-        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
+        "Filter import by list. (by default 'all')" + Environment.NewLine
+        + "Node list should take the form:" + Environment.NewLine
+        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Element filter list", "El",
-        "Filter import by list (by default 'all')." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
+        "Filter import by list (by default 'all')." + Environment.NewLine
+        + "Element list should take the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
         + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Member filter list", "Me",
-        "Filter import by list (by default 'all')." + Environment.NewLine + "Member list should take the form:"
-        + Environment.NewLine + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)"
-        + Environment.NewLine
+        "Filter import by list (by default 'all')." + Environment.NewLine
+        + "Member list should take the form:" + Environment.NewLine
+        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
@@ -473,43 +476,43 @@ namespace GsaGH.Components {
         string nodeList = "all";
         if (data.GetData(1, ref ghTyp)) {
           if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-              this.AddRuntimeWarning(
-              "List must be of type Node to apply to node filter");
+            if (listGoo.Value.EntityType != EntityType.Node) {
+              this.AddRuntimeWarning("List must be of type Node to apply to node filter");
             }
-            nodeList = "\"" + listGoo.Value.Name + "\"";
+
+            nodeList = $"\"{listGoo.Value.Name}\"";
           } else {
             GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
           }
         }
+
         string elemList = "all";
         if (data.GetData(2, ref ghTyp)) {
           if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
-              this.AddRuntimeWarning(
-              "List must be of type Element to apply to element filter");
+            if (listGoo.Value.EntityType != EntityType.Element) {
+              this.AddRuntimeWarning("List must be of type Element to apply to element filter");
             }
-            elemList = "\"" + listGoo.Value.Name + "\"";
+
+            elemList = $"\"{listGoo.Value.Name}\"";
           } else {
             GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
           }
         }
+
         string memList = "all";
         if (data.GetData(3, ref ghTyp)) {
           if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Member) {
-              this.AddRuntimeWarning(
-              "List must be of type Member to apply to member filter");
+            if (listGoo.Value.EntityType != EntityType.Member) {
+              this.AddRuntimeWarning("List must be of type Member to apply to member filter");
             }
-            memList = "\"" + listGoo.Value.Name + "\"";
+
+            memList = $"\"{listGoo.Value.Name}\"";
           } else {
             GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
           }
         }
 
-        tsk = Task.Run(
-          () => Compute(modelGoo.Value, nodeList, elemList, memList), CancelToken);
-
+        tsk = Task.Run(() => Compute(modelGoo.Value, nodeList, elemList, memList), CancelToken);
 
         TaskList.Add(tsk);
         return;
@@ -582,7 +585,8 @@ namespace GsaGH.Components {
             } else {
               element2dsNotShaded.Add(elem);
             }
-          } catch (Exception) {
+          }
+          catch (Exception) {
             element2dsNotShaded.Add(elem);
           }
         });
@@ -615,7 +619,8 @@ namespace GsaGH.Components {
             } else {
               element3dsNotShaded.Add(elem);
             }
-          } catch (Exception) {
+          }
+          catch (Exception) {
             element3dsNotShaded.Add(elem);
           }
         });
@@ -667,6 +672,7 @@ namespace GsaGH.Components {
       if (results.Mem3ds is null) {
         return;
       }
+
       {
         var invalid3dMem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid3dMem.Count > 0) {
@@ -687,10 +693,12 @@ namespace GsaGH.Components {
       }
     }
 
-    private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) { 
+    private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) {
       var results = new SolveResults();
       var steps = new List<int> {
-        0, 1, 2,
+        0,
+        1,
+        2,
       };
 
       try {
@@ -698,9 +706,8 @@ namespace GsaGH.Components {
           switch (i) {
             case 0:
               results.Nodes = Nodes.GetNodes(
-                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList), 
-                model.ModelUnit, 
-                model.ApiAxis);
+                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList),
+                model.ModelUnit, model.ApiAxis);
               results.DisplaySupports
                 = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
               break;
@@ -714,13 +721,14 @@ namespace GsaGH.Components {
 
             case 2:
               var members = new Members(model, memList, this);
-              results.Mem1ds = members.Member1ds; 
-              results.Mem2ds = members.Member2ds; 
+              results.Mem1ds = members.Member1ds;
+              results.Mem2ds = members.Member2ds;
               results.Mem3ds = members.Member3ds;
               break;
           }
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         this.AddRuntimeWarning(e.InnerException?.Message);
       }
 

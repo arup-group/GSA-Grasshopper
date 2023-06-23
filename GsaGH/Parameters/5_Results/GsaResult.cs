@@ -1165,14 +1165,16 @@ namespace GsaGH.Parameters {
         try {
           DmaxZ = XyzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // shear does not set this value
         }
 
         try {
           DmaxXyz = XyzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Xyz).Max()).Max();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // resultant may not always be computed
         }
 
@@ -1183,14 +1185,16 @@ namespace GsaGH.Parameters {
         try {
           DminZ = XyzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // shear does not set this value
         }
 
         try {
           DminXyz = XyzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Xyz).Min()).Min();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // resultant may not always be computed
         }
       }
@@ -1207,14 +1211,16 @@ namespace GsaGH.Parameters {
            .Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
           DmaxZz = XxyyzzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // some cases doesnt compute xxyyzz results at all
         }
 
         try {
           DmaxXxyyzz = XxyyzzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Xyz).Max()).Max();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // resultant may not always be computed
         }
 
@@ -1225,14 +1231,16 @@ namespace GsaGH.Parameters {
            .Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
           DminZz = XxyyzzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // some cases doesnt compute xxyyzz results at all
         }
 
         try {
           DminXxyyzz = XxyyzzResults.AsParallel()
            .Select(list => list.Value.Values.Select(res => res.Xyz).Min()).Min();
-        } catch (Exception) {
+        }
+        catch (Exception) {
           // resultant may not always be computed
         }
       }

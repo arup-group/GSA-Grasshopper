@@ -22,9 +22,9 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using DiagramType = GsaGH.Parameters.Enums.DiagramType;
-using Line = GsaAPI.Line;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = GsaAPI.Line;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Elem1dDiagram;
 
-    private string _case = "";
+    private string _case = string.Empty;
     private DiagramType _displayedDiagramType = DiagramType.AxialForceFx;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;

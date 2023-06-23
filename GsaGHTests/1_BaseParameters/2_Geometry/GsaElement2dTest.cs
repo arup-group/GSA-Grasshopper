@@ -48,6 +48,7 @@ namespace GsaGHTests.Parameters {
         nms.Add("Shahin");
         off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
       }
+
       elem.Prop2ds[0].Id = secid;
 
       elem.Groups = grps;
@@ -207,6 +208,7 @@ namespace GsaGHTests.Parameters {
         nms2.Add("Mani");
         off2.Add(new GsaOffset(0, 0, 0, -0.17));
       }
+
       origi.Prop2ds[0].Id = secid;
 
       origi.Groups = grps2;

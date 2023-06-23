@@ -16,15 +16,14 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Titles;
 
-    public Titles() : base("Model Titles", "Titles",
-      "Get or set the titles in a GSA Model", CategoryName.Name(), SubCategoryName.Cat0()) {
+    public Titles() : base("Model Titles", "Titles", "Get or set the titles in a GSA Model",
+      CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
-        "Existing GSA model to get or set titles for.",
-        GH_ParamAccess.item);
+        "Existing GSA model to get or set titles for.", GH_ParamAccess.item);
       pManager.AddTextParameter("Job Number", "JN", "Set Job Number for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Initials", "Ini", "Set Initials for this GSA Model",
@@ -62,6 +61,7 @@ namespace GsaGH.Components {
       if (da.GetData(0, ref gooModel)) {
         model = gooModel.Value.Clone();
       }
+
       GsaAPI.Titles titles = model.Titles;
 
       var ghString = new GH_String();

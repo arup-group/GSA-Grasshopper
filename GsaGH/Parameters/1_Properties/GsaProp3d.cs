@@ -52,6 +52,7 @@ namespace GsaGH.Parameters {
         } else {
           _prop3d.MaterialGradeProperty = _material.Id;
         }
+
         IsReferencedById = false;
       }
     }
@@ -125,7 +126,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string type = Mappings.materialTypeMapping
        .FirstOrDefault(x => x.Value == Material.MaterialType).Key;
-      string pa = (Id > 0) ? "PV" + Id + " " : string.Empty;
+      string pa = Id > 0 ? "PV" + Id + " " : string.Empty;
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 

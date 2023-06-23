@@ -188,8 +188,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Surface", "GPS",
+        "GSA Grid Surface", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -200,7 +200,7 @@ namespace GsaGH.Components {
       GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo = null;
       if (da.GetData(0, ref gridPlaneSurfaceGoo)) {
         gsaGridPlaneSurface = gridPlaneSurfaceGoo.Value;
-        if (gsaGridPlaneSurface.GridPlane == null 
+        if (gsaGridPlaneSurface.GridPlane == null
           && gsaGridPlaneSurface.GridSurface.GridPlane != 0) {
           idSet = true;
         }

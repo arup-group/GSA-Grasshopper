@@ -24,7 +24,7 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static List<double> SmartRounder(double max, double min) {
       var roundedvals = new List<double>();
-      if (max == 0 & min == 0) {
+      if ((max == 0) & (min == 0)) {
         roundedvals.Add(max);
         roundedvals.Add(min);
         roundedvals.Add(0);
@@ -50,8 +50,8 @@ namespace GsaGH.Helpers.GsaApi {
         factor = Math.Pow(10, digits + 1);
         max *= factor;
         min *= factor;
-        max = (signMax > 0) ? Math.Ceiling(max) : Math.Floor(max);
-        min = (signMin > 0) ? Math.Floor(min) : Math.Ceiling(min);
+        max = signMax > 0 ? Math.Ceiling(max) : Math.Floor(max);
+        min = signMin > 0 ? Math.Floor(min) : Math.Ceiling(min);
         max /= factor;
         min /= factor;
         numberOfDigitsOut = digits + significantNumbers;
@@ -66,8 +66,8 @@ namespace GsaGH.Helpers.GsaApi {
         factor = Math.Pow(power, digits - 1);
         max /= factor;
         min /= factor;
-        max = (signMax > 0) ? Math.Ceiling(max) : Math.Floor(max);
-        min = (signMin > 0) ? Math.Floor(min) : Math.Ceiling(min);
+        max = signMax > 0 ? Math.Ceiling(max) : Math.Floor(max);
+        min = signMin > 0 ? Math.Floor(min) : Math.Ceiling(min);
         max *= factor;
         min *= factor;
         numberOfDigitsOut = significantNumbers;

@@ -26,8 +26,8 @@ namespace GsaGHTests.Parameters {
       Duplicates.AreEqual(original, duplicate);
 
       duplicate.Id = 0;
-      duplicate.Name = "";
-      duplicate.Description = "";
+      duplicate.Name = string.Empty;
+      duplicate.Description = string.Empty;
 
       Assert.Equal(1, original.Id);
       Assert.Equal("name", original.Name);

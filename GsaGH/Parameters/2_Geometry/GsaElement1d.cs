@@ -119,12 +119,12 @@ namespace GsaGH.Parameters {
     }
     internal Element ApiElement { get; set; } = new Element();
     internal GsaLocalAxes LocalAxes { get; set; } = null;
-    internal List<Line> _previewGreenLines;
-    internal List<Line> _previewRedLines;
     private Guid _guid = Guid.NewGuid();
     private int _id;
     private LineCurve _line = new LineCurve();
     private GsaNode _orientationNode;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
 
@@ -154,11 +154,8 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaElement1d(
-      KeyValuePair<int, Element> element,
-      IReadOnlyDictionary<int, Node> nodes,
-      GsaSection section,
-      ReadOnlyCollection<double> localAxes,
-      LengthUnit modelUnit) {
+      KeyValuePair<int, Element> element, IReadOnlyDictionary<int, Node> nodes, GsaSection section,
+      ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;
       ApiElement = element.Value;
       _rel1 = new GsaBool6(ApiElement.GetEndRelease(0).Releases);

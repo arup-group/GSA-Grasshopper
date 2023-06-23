@@ -140,8 +140,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Plane", "GP", "GSA Grid Plane",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Plane", "GP",
+        "GSA Grid Plane", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

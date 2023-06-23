@@ -9,7 +9,6 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Geometry;
-using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -74,6 +73,7 @@ namespace GsaGH.Parameters {
         } else {
           _prop2d.MaterialGradeProperty = _material.Id;
         }
+
         IsReferencedById = false;
       }
     }
@@ -234,21 +234,21 @@ namespace GsaGH.Parameters {
       string mat = Type != Property2D_Type.LOAD ?
         Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key
         + " " : string.Empty;
-      string pa = (Id > 0) ? "PA" + Id + " " : string.Empty;
+      string pa = Id > 0 ? "PA" + Id + " " : string.Empty;
       string supportType = Type == Property2D_Type.LOAD ? $"{SupportType}" : string.Empty;
       string referenceEdge
         = Type == Property2D_Type.LOAD && SupportType != SupportType.Auto
         && SupportType != SupportType.AllEdges ? $"RefEdge:{ReferenceEdge}" : string.Empty;
-      string joined = string
-       .Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(),
-          mat.Trim()).Trim();
+      string joined = string.Join(" ", pa.Trim(), type.Trim(), supportType.Trim(),
+        referenceEdge.Trim(), desc.Trim(), mat.Trim()).Trim();
       return joined.Replace("   ", " ").Replace("  ", " ");
     }
 
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
         return Mappings.GetProperty2D_Type(type);
-      } catch (ArgumentException) {
+      }
+      catch (ArgumentException) {
         type = type.Trim().Replace(" ", "_").ToUpper();
         type = type.Replace("PLANE", "PL");
         type = type.Replace("NUMBER", "NUM");

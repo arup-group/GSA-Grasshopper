@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using Xunit;
+using EntityType = GsaAPI.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {
@@ -16,13 +18,15 @@ namespace GsaGHTests.Parameters {
       var apilist = new EntityList {
         Name = "undef List",
         Definition = "1 to 5 not 3",
-        Type = GsaAPI.EntityType.Undefined
+        Type = EntityType.Undefined,
       };
       // Act
       m.AddList(apilist);
 
-      var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      var model = new GsaModel() {
+        Model = m,
+      };
+      GsaList list = Lists.GetLists(model)[0];
 
       Assert.Equal(1, list.Id);
       Assert.Equal("undef List", list.Name);
@@ -34,9 +38,27 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestNodeList() {
       // Arrange
-      var n1 = new Node() { Position = new Vector3() { X = 0, Y = 0, Z = 0 } };
-      var n2 = new Node() { Position = new Vector3() { X = 10, Y = 10, Z = 0 } };
-      var n3 = new Node() { Position = new Vector3() { X = 0, Y = 0, Z = 3.5 } };
+      var n1 = new Node() {
+        Position = new Vector3() {
+          X = 0,
+          Y = 0,
+          Z = 0,
+        },
+      };
+      var n2 = new Node() {
+        Position = new Vector3() {
+          X = 10,
+          Y = 10,
+          Z = 0,
+        },
+      };
+      var n3 = new Node() {
+        Position = new Vector3() {
+          X = 0,
+          Y = 0,
+          Z = 3.5,
+        },
+      };
       var m = new GsaAPI.Model();
       m.AddNode(n1);
       m.AddNode(n2);
@@ -44,13 +66,15 @@ namespace GsaGHTests.Parameters {
       var apilist = new EntityList {
         Name = "node List",
         Definition = "All NOT 2",
-        Type = GsaAPI.EntityType.Node
+        Type = EntityType.Node,
       };
 
       // Act
       m.AddList(apilist);
-      var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      var model = new GsaModel() {
+        Model = m,
+      };
+      GsaList list = Lists.GetLists(model)[0];
 
       // Assert
       Assert.Equal(1, list.Id);
@@ -67,14 +91,64 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestElementList() {
       // Arrange
-      var n1 = new Node() { Position = new Vector3() { X = 0, Y = 0, Z = 0 } };
-      var n2 = new Node() { Position = new Vector3() { X = 10, Y = 0, Z = 0 } };
-      var n3 = new Node() { Position = new Vector3() { X = 10, Y = 10, Z = 3.5 } };
-      var n4 = new Node() { Position = new Vector3() { X = 0, Y = 10, Z = 3.5 } };
-      var e1 = new Element() { Type = ElementType.BEAM, Topology = new ReadOnlyCollection<int>(new List<int>() { 1, 2 }) };
-      var e2 = new Element() { Type = ElementType.BEAM, Topology = new ReadOnlyCollection<int>(new List<int>() { 2, 3 }) };
-      var e3 = new Element() { Type = ElementType.BEAM, Topology = new ReadOnlyCollection<int>(new List<int>() { 3, 4 }) };
-      var e4 = new Element() { Type = ElementType.QUAD4, Topology = new ReadOnlyCollection<int>(new List<int>() { 1, 2, 3, 4 }) };
+      var n1 = new Node() {
+        Position = new Vector3() {
+          X = 0,
+          Y = 0,
+          Z = 0,
+        },
+      };
+      var n2 = new Node() {
+        Position = new Vector3() {
+          X = 10,
+          Y = 0,
+          Z = 0,
+        },
+      };
+      var n3 = new Node() {
+        Position = new Vector3() {
+          X = 10,
+          Y = 10,
+          Z = 3.5,
+        },
+      };
+      var n4 = new Node() {
+        Position = new Vector3() {
+          X = 0,
+          Y = 10,
+          Z = 3.5,
+        },
+      };
+      var e1 = new Element() {
+        Type = ElementType.BEAM,
+        Topology = new ReadOnlyCollection<int>(new List<int>() {
+          1,
+          2,
+        }),
+      };
+      var e2 = new Element() {
+        Type = ElementType.BEAM,
+        Topology = new ReadOnlyCollection<int>(new List<int>() {
+          2,
+          3,
+        }),
+      };
+      var e3 = new Element() {
+        Type = ElementType.BEAM,
+        Topology = new ReadOnlyCollection<int>(new List<int>() {
+          3,
+          4,
+        }),
+      };
+      var e4 = new Element() {
+        Type = ElementType.QUAD4,
+        Topology = new ReadOnlyCollection<int>(new List<int>() {
+          1,
+          2,
+          3,
+          4,
+        }),
+      };
       var m = new GsaAPI.Model();
       m.AddNode(n1);
       m.AddNode(n2);
@@ -88,13 +162,15 @@ namespace GsaGHTests.Parameters {
       var apilist = new EntityList {
         Name = "elem List",
         Definition = "1 2 4",
-        Type = GsaAPI.EntityType.Element
+        Type = EntityType.Element,
       };
 
       // Act
       m.AddList(apilist);
-      var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      var model = new GsaModel() {
+        Model = m,
+      };
+      GsaList list = Lists.GetLists(model)[0];
 
       // Assert
       Assert.Equal(1, list.Id);
@@ -112,13 +188,46 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestMemberList() {
       // Arrange
-      var n1 = new Node() { Position = new Vector3() { X = 0, Y = 0, Z = 0 } };
-      var n2 = new Node() { Position = new Vector3() { X = 10, Y = 0, Z = 0 } };
-      var n3 = new Node() { Position = new Vector3() { X = 10, Y = 10, Z = 3.5 } };
-      var n4 = new Node() { Position = new Vector3() { X = 0, Y = 10, Z = 3.5 } };
-      var m1 = new Member() { Type = MemberType.GENERIC_1D, Topology = "1 2" };
-      var m2 = new Member() { Type = MemberType.GENERIC_2D, Topology = "1 2 3 4" };
-      var m3 = new Member() { Type = MemberType.GENERIC_1D, Topology = "2 3" };
+      var n1 = new Node() {
+        Position = new Vector3() {
+          X = 0,
+          Y = 0,
+          Z = 0,
+        },
+      };
+      var n2 = new Node() {
+        Position = new Vector3() {
+          X = 10,
+          Y = 0,
+          Z = 0,
+        },
+      };
+      var n3 = new Node() {
+        Position = new Vector3() {
+          X = 10,
+          Y = 10,
+          Z = 3.5,
+        },
+      };
+      var n4 = new Node() {
+        Position = new Vector3() {
+          X = 0,
+          Y = 10,
+          Z = 3.5,
+        },
+      };
+      var m1 = new Member() {
+        Type = MemberType.GENERIC_1D,
+        Topology = "1 2",
+      };
+      var m2 = new Member() {
+        Type = MemberType.GENERIC_2D,
+        Topology = "1 2 3 4",
+      };
+      var m3 = new Member() {
+        Type = MemberType.GENERIC_1D,
+        Topology = "2 3",
+      };
       var m = new GsaAPI.Model();
       m.AddNode(n1);
       m.AddNode(n2);
@@ -131,13 +240,15 @@ namespace GsaGHTests.Parameters {
       var apilist = new EntityList {
         Name = "mem List",
         Definition = "all not 1",
-        Type = GsaAPI.EntityType.Member
+        Type = EntityType.Member,
       };
 
       // Act
       m.AddList(apilist);
-      var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      var model = new GsaModel() {
+        Model = m,
+      };
+      GsaList list = Lists.GetLists(model)[0];
 
       // Assert
       Assert.Equal(1, list.Id);

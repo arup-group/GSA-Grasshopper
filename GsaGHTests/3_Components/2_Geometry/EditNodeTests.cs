@@ -63,7 +63,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(0, output0.Value.SpringProperty);
       Assert.Equal(0, output7.Value);
 
-      Assert.Equal("", output8.Value);
+      Assert.Equal(string.Empty, output8.Value);
       Assert.Equal(0, output9.Value.R);
       Assert.Equal(0, output9.Value.G);
       Assert.Equal(0, output9.Value.B);

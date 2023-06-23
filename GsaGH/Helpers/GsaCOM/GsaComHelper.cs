@@ -5,8 +5,8 @@ using Interop.Gsa_10_1;
 
 namespace GsaGH.Helpers {
   public sealed class GsaComObject {
-    public static ComAuto Instance => lazy.Value;
     private static readonly Lazy<ComAuto> lazy = new Lazy<ComAuto>(() => new ComAuto());
+    public static ComAuto Instance => lazy.Value;
 
     private GsaComObject() { }
   }

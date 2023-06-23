@@ -5,27 +5,28 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaGH.Parameters;
+using GsaGH.Helpers.Export.Load;
 using GsaGH.Helpers.GH;
-using OasysUnits.Units;
+using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class ModelAssembly {
-    internal Model Model;
-    internal GsaIntDictionary<Node> Nodes;
-    internal GsaIntDictionary<Axis> Axes;
-    internal Properties Properties;
-    internal GsaGuidIntListDictionary<Element> Elements;
-    internal GsaGuidDictionary<Member> Members;
-    internal GsaGuidDictionary<EntityList> Lists;
-    internal Loads Loads;
-    internal ConcurrentDictionary<int, ConcurrentBag<int>> MemberElementRelationship;
-    internal LengthUnit Unit = LengthUnit.Meter;
     private bool _deleteResults = false;
     private int _initialNodeCount = 0;
     private bool _isSeedModel = true;
+    internal GsaIntDictionary<Axis> Axes;
+    internal GsaGuidIntListDictionary<Element> Elements;
+    internal GsaGuidDictionary<EntityList> Lists;
+    internal Loads Loads;
+    internal ConcurrentDictionary<int, ConcurrentBag<int>> MemberElementRelationship;
+    internal GsaGuidDictionary<Member> Members;
+    internal Model Model;
+    internal GsaIntDictionary<Node> Nodes;
+    internal Properties Properties;
+    internal LengthUnit Unit = LengthUnit.Meter;
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
       if (model == null) {
@@ -48,11 +49,9 @@ namespace GsaGH.Helpers.Export {
       Export.Nodes.ConvertNodes(nodes, ref Nodes, ref Axes, Unit);
     }
 
-    internal void ConvertProperties(List<GsaSection> sections,
-      List<GsaProp2d> prop2Ds,
-      List<GsaProp3d> prop3Ds) {
-      if ((sections != null && sections.Count > 0)
-        || (prop2Ds != null && prop2Ds.Count > 0)
+    internal void ConvertProperties(
+      List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds) {
+      if ((sections != null && sections.Count > 0) || (prop2Ds != null && prop2Ds.Count > 0)
         || (prop3Ds != null && prop3Ds.Count > 0)) {
         _deleteResults = true;
       }
@@ -63,9 +62,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertElements(
-      List<GsaElement1d> element1ds,
-      List<GsaElement2d> element2ds,
-      List<GsaElement3d> element3ds) {
+      List<GsaElement1d> element1ds, List<GsaElement2d> element2ds, List<GsaElement3d> element3ds) {
       if ((element1ds != null && element1ds.Count > 0)
         || (element2ds != null && element2ds.Count > 0)
         || (element3ds != null && element3ds.Count > 0)) {
@@ -73,8 +70,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       Export.Elements.ConvertElement1ds(element1ds, ref Elements, ref Nodes, Unit, ref Properties);
-      Export.Elements.ConvertElement2ds(
-        element2ds, ref Elements, ref Nodes, Unit, ref Properties, ref Axes);
+      Export.Elements.ConvertElement2ds(element2ds, ref Elements, ref Nodes, Unit, ref Properties,
+        ref Axes);
       Export.Elements.ConvertElement3ds(element3ds, ref Elements, ref Nodes, Unit, ref Properties);
 
       if (element2ds != null && element2ds.Count > 0) {
@@ -97,18 +94,15 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertMembers(
-      List<GsaMember1d> member1ds,
-      List<GsaMember2d> member2ds,
-      List<GsaMember3d> member3ds) {
-      if ((member1ds != null && member1ds.Count > 0)
-        || (member2ds != null && member2ds.Count > 0)
+      List<GsaMember1d> member1ds, List<GsaMember2d> member2ds, List<GsaMember3d> member3ds) {
+      if ((member1ds != null && member1ds.Count > 0) || (member2ds != null && member2ds.Count > 0)
         || (member3ds != null && member3ds.Count > 0)) {
         _deleteResults = true;
       }
 
       Export.Members.ConvertMember1ds(member1ds, ref Members, ref Nodes, Unit, ref Properties);
-      Export.Members.ConvertMember2ds(
-        member2ds, ref Members, ref Nodes, Unit, ref Properties, ref Axes);
+      Export.Members.ConvertMember2ds(member2ds, ref Members, ref Nodes, Unit, ref Properties,
+        ref Axes);
       Export.Members.ConvertMember3ds(member3ds, ref Members, ref Nodes, Unit, ref Properties);
     }
 
@@ -125,7 +119,7 @@ namespace GsaGH.Helpers.Export {
         _deleteResults = true;
       }
 
-      Load.NodeLoads.ConvertNodeLoads(loads, ref Loads.Nodes, ref Nodes, ref Lists, Unit);
+      NodeLoads.ConvertNodeLoads(loads, ref Loads.Nodes, ref Nodes, ref Lists, Unit);
     }
 
     internal void AssemblePreMeshing() {
@@ -148,7 +142,8 @@ namespace GsaGH.Helpers.Export {
       Model.SetLists(Lists.ReadOnlyDictionary);
     }
 
-    internal void ElementsFromMembers(bool createElementsFromMembers, Length toleranceCoincidentNodes, GH_Component owner) {
+    internal void ElementsFromMembers(
+      bool createElementsFromMembers, Length toleranceCoincidentNodes, GH_Component owner) {
       _initialNodeCount += Nodes.Count;
 
       if (createElementsFromMembers && Members.Count != 0) {
@@ -168,7 +163,8 @@ namespace GsaGH.Helpers.Export {
                 + Environment.NewLine + "This is likely to produce an undisarable mesh."
                 + Environment.NewLine + "Right-click the component to change the tolerance.");
             }
-          } catch (InvalidOperationException) {
+          }
+          catch (InvalidOperationException) {
             // if linq .Where returns an empty list (all mesh sizes are zero)
           }
 
@@ -249,6 +245,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
     }
+
     internal void ConvertCombinations(List<GsaCombinationCase> combinations) {
       // Add Combination Cases to model
       if (combinations != null && combinations.Count > 0) {
@@ -267,12 +264,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     private void CheckIfModelIsEmpty() {
-      if (Nodes.Count == 0
-        && Properties.Materials.Count == 0
-        && Properties.Count == 0
-        && Elements.Count == 0
-        && Members.Count == 0
-        && Model.ConcreteDesignCode() == string.Empty
+      if (Nodes.Count == 0 && Properties.Materials.Count == 0 && Properties.Count == 0
+        && Elements.Count == 0 && Members.Count == 0 && Model.ConcreteDesignCode() == string.Empty
         && Model.SteelDesignCode() == string.Empty) {
         _isSeedModel = false;
       }

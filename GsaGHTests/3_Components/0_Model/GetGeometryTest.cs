@@ -1,14 +1,14 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.IO;
+using Grasshopper.Kernel;
 using GsaGH.Components;
 using GsaGHTests.Helpers;
-using System.IO;
-using System;
 using Xunit;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class GetGeometryTest {
-    
+
     [Fact]
     public void CreateGetGeometryTest() {
       var comp = new GetGeometry();

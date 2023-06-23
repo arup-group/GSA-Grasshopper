@@ -127,8 +127,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Plane", "GP", "GSA Grid Plane",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Plane", "GP",
+        "GSA Grid Plane", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -156,7 +156,8 @@ namespace GsaGH.Components {
             var newElevation = Length.Parse(elevationIn);
             gps.Elevation = elevationIn;
             elevation = newElevation.Value;
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             if (double.TryParse(elevationIn, out elevation)) {
               gps.Elevation = elevationIn;
             } else {
@@ -196,7 +197,8 @@ namespace GsaGH.Components {
             try {
               Length.Parse(tolIn);
               gps.StoreyToleranceAbove = tolIn;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               if (double.TryParse(tolIn, out double _)) {
                 gps.StoreyToleranceAbove = tolIn;
               } else {
@@ -213,7 +215,8 @@ namespace GsaGH.Components {
             try {
               var newTolerance = Length.Parse(tolIn);
               gps.StoreyToleranceBelow = tolIn;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               if (double.TryParse(tolIn, out double _)) {
                 gps.StoreyToleranceBelow = tolIn;
               } else {

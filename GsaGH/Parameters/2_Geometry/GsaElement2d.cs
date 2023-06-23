@@ -68,14 +68,16 @@ namespace GsaGH.Parameters {
     }
     public List<GsaOffset> Offsets {
       get
-        => (from element in ApiElements where element != null
-            select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
-              element.Offset.Z)).ToList();
+        => (from element in ApiElements
+          where element != null
+          select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
+            element.Offset.Z)).ToList();
       set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
     }
     public List<Angle> OrientationAngles {
       get
-        => (from element in ApiElements where element != null
+        => (from element in ApiElements
+            where element != null
             select new Angle(element.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian))
          .ToList();
       set => CloneApiElements(ApiObjectMember.OrientationAngle, null, null, null, value);
@@ -86,7 +88,8 @@ namespace GsaGH.Parameters {
         foreach (Element element in ApiElements) {
           try {
             pMems.Add(element.ParentMember.Member);
-          } catch (Exception) {
+          }
+          catch (Exception) {
             pMems.Add(0);
           }
         }

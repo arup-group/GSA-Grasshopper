@@ -4,6 +4,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Model;
+using OasysGH.Components;
 using OasysUnits;
 using Rhino.Geometry;
 using Xunit;
@@ -52,8 +53,8 @@ namespace GsaGHTests.Helpers.Export {
       var crv2 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(0, 9, 0)).ToNurbsCurve());
       GsaMember1dGoo mem1d2 = Member1d(crv2, section2.Value.Id);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp =
-        CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() {
+      GH_OasysDropDownComponent comp = CreateModelTest.CreateModelFromGeometry(null, null, null,
+        new List<GsaMember1dGoo>() {
           mem1d1,
           mem1d2,
         }, null, null, ModelUnit.Cm);
@@ -76,8 +77,8 @@ namespace GsaGHTests.Helpers.Export {
       GsaSectionGoo section2 = Section(profile2, true);
       section2.Value.Id = 2;
 
-      OasysGH.Components.GH_OasysDropDownComponent comp1 =
-        CreateModelTest.CreateModelFromProperties(new List<GsaSectionGoo>() {
+      GH_OasysDropDownComponent comp1 = CreateModelTest.CreateModelFromProperties(
+        new List<GsaSectionGoo>() {
           section1,
           section2,
         }, null, null);
@@ -88,14 +89,14 @@ namespace GsaGHTests.Helpers.Export {
       var crv2 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(0, 9, 0)).ToNurbsCurve());
       GsaMember1dGoo mem1d2 = Member1d(crv2, section2.Value.Id);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp2 =
-        CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() {
+      GH_OasysDropDownComponent comp2 = CreateModelTest.CreateModelFromGeometry(null, null, null,
+        new List<GsaMember1dGoo>() {
           mem1d1,
           mem1d2,
         }, null, null, ModelUnit.Cm);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp =
-        CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
+      GH_OasysDropDownComponent comp = CreateModelTest.CreateModelFromModels(
+        new List<GsaModelGoo>() {
           (GsaModelGoo)ComponentTestHelper.GetOutput(comp1),
           (GsaModelGoo)ComponentTestHelper.GetOutput(comp2),
         });
@@ -175,8 +176,8 @@ namespace GsaGHTests.Helpers.Export {
         new Point3d(10, 5, -5), new Point3d(10, 5, 5), new Point3d(0, 5, 5), 1));
       GsaMember2dGoo mem2d2 = Member2d(brep2, prop2.Value.Id);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp =
-        CreateModelTest.CreateModelFromGeometry(null, null, null, null, new List<GsaMember2dGoo>() {
+      GH_OasysDropDownComponent comp = CreateModelTest.CreateModelFromGeometry(null, null, null,
+        null, new List<GsaMember2dGoo>() {
           mem2d1,
           mem2d2,
         }, null, ModelUnit.Ft);

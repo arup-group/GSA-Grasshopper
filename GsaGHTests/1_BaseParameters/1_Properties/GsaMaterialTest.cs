@@ -1,9 +1,9 @@
-﻿using GsaAPI;
+﻿using System;
+using System.Collections.Generic;
+using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -34,12 +34,13 @@ namespace GsaGHTests.Parameters {
     public void CreateConcreteStandardMaterialsTest() {
       foreach (string codeName in DesignCode.GetConcreteDesignCodeNames()) {
         List<string> gradeNames = GsaMaterial.GetGradeNames(
-          GsaMaterial.MatType.Concrete, "", codeName);
+          GsaMaterial.MatType.Concrete, string.Empty, codeName);
 
         Assert.NotEmpty(gradeNames);
 
         foreach (string grade in gradeNames) {
-          var material = new GsaMaterial(GsaMaterial.MatType.Concrete, grade, "", codeName);
+          var material
+            = new GsaMaterial(GsaMaterial.MatType.Concrete, grade, string.Empty, codeName);
           Assert.NotNull(material);
           Assert.Equal(GsaMaterial.MatType.Concrete, material.MaterialType);
           DuplicateTest(material);
@@ -65,7 +66,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal("customName", material.Name);
         var apiMaterial = (FabricMaterial)material.StandardMaterial;
         Assert.Equal("customName", apiMaterial.Name);
-        Assert.Throws<System.Exception>(() => DuplicateTest(material));
+        Assert.Throws<Exception>(() => DuplicateTest(material));
       }
     }
 

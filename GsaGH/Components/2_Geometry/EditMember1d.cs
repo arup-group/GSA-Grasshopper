@@ -35,6 +35,24 @@ namespace GsaGH.Components {
     public EditMember1d() : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public void VariableParameterMaintenance() { }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -59,29 +77,11 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
-
-    public void VariableParameterMaintenance() { }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetString("LengthUnit", _lengthUnit.ToString());
@@ -250,7 +250,8 @@ namespace GsaGH.Components {
         } else {
           try {
             mem.Type = Mappings.GetMemberType(ghstring.Value);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Member Type");
           }
         }
@@ -263,7 +264,8 @@ namespace GsaGH.Components {
         } else {
           try {
             mem.Type1D = Mappings.GetElementType(ghstring.Value);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Element Type");
           }
         }
@@ -317,12 +319,9 @@ namespace GsaGH.Components {
       GsaBucklingLengthFactorsGoo blfGoo = null;
       if (da.GetData(16, ref blfGoo)) {
         GsaBucklingLengthFactors blf = blfGoo.Value;
-        mem.ApiMember.MomentAmplificationFactorStrongAxis
-          = blf.MomentAmplificationFactorStrongAxis;
-        mem.ApiMember.MomentAmplificationFactorWeakAxis
-          = blf.MomentAmplificationFactorWeakAxis;
-        mem.ApiMember.EquivalentUniformMomentFactor
-          = blf.EquivalentUniformMomentFactor;
+        mem.ApiMember.MomentAmplificationFactorStrongAxis = blf.MomentAmplificationFactorStrongAxis;
+        mem.ApiMember.MomentAmplificationFactorWeakAxis = blf.MomentAmplificationFactorWeakAxis;
+        mem.ApiMember.EquivalentUniformMomentFactor = blf.EquivalentUniformMomentFactor;
       }
 
       string name = string.Empty;
@@ -342,8 +341,8 @@ namespace GsaGH.Components {
 
       if ((mem.Type1D == ElementType.BAR || mem.Type1D == ElementType.TIE
         || mem.Type1D == ElementType.STRUT) && mem.MeshSize != 0) {
-        this.AddRuntimeWarning($"Element type is {mem.Type1D} and mesh size is not zero. " +
-          Environment.NewLine + $"This may cause model instabilities.");
+        this.AddRuntimeWarning($"Element type is {mem.Type1D} and mesh size is not zero. "
+          + Environment.NewLine + $"This may cause model instabilities.");
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

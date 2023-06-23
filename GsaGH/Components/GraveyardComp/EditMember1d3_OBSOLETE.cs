@@ -35,6 +35,24 @@ namespace GsaGH.Components.GraveyardComp {
     public EditMember1d3_OBSOLETE() : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public void VariableParameterMaintenance() { }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -59,29 +77,11 @@ namespace GsaGH.Components.GraveyardComp {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
-
-    public void VariableParameterMaintenance() { }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetString("LengthUnit", _lengthUnit.ToString());
@@ -242,7 +242,8 @@ namespace GsaGH.Components.GraveyardComp {
         } else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both)) {
           try {
             mem.Type = Mappings.GetMemberType(typestring);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Member Type");
           }
         }
@@ -255,7 +256,8 @@ namespace GsaGH.Components.GraveyardComp {
         } else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both)) {
           try {
             mem.Type1D = Mappings.GetElementType(typestring);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Element Type");
           }
         }
@@ -311,11 +313,11 @@ namespace GsaGH.Components.GraveyardComp {
         var bucklingLengthFactors = new GsaBucklingLengthFactors();
         if (ghTyp.Value is GsaBucklingLengthFactorsGoo blfGoo) {
           bucklingLengthFactors = blfGoo.Value.Duplicate();
-          mem.ApiMember.MomentAmplificationFactorStrongAxis 
+          mem.ApiMember.MomentAmplificationFactorStrongAxis
             = bucklingLengthFactors.MomentAmplificationFactorStrongAxis;
-          mem.ApiMember.MomentAmplificationFactorWeakAxis 
+          mem.ApiMember.MomentAmplificationFactorWeakAxis
             = bucklingLengthFactors.MomentAmplificationFactorWeakAxis;
-          mem.ApiMember.EquivalentUniformMomentFactor 
+          mem.ApiMember.EquivalentUniformMomentFactor
             = bucklingLengthFactors.EquivalentUniformMomentFactor;
         } else {
           this.AddRuntimeWarning("Unable to change buckling length factors");

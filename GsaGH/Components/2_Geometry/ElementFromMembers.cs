@@ -44,7 +44,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
@@ -186,12 +186,12 @@ namespace GsaGH.Components {
 
       pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No",
         "Nodes to be included in meshing", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]", "M1D",
-        "1D Members to create 1D Elements from", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]", "M2D",
-        "2D Members to create 2D Elements from", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaMember3dParameter(), "3D Members [" + unitAbbreviation + "]", "M3D",
-        "3D Members to create 3D Elements from", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]",
+        "M1D", "1D Members to create 1D Elements from", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]",
+        "M2D", "2D Members to create 2D Elements from", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMember3dParameter(), "3D Members [" + unitAbbreviation + "]",
+        "M3D", "3D Members to create 3D Elements from", GH_ParamAccess.list);
 
       pManager[0].Optional = true;
       pManager[1].Optional = true;
@@ -205,13 +205,17 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaNodeParameter(), "Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes", "No", "GSA Nodes",
+        GH_ParamAccess.list);
       pManager.HideParameter(0);
-      pManager.AddParameter(new GsaElement1dParameter(), "1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElement3dParameter(), "3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA Model with Elements and Members",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElement1dParameter(), "1D Elements", "E1D", "GSA 1D Elements",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement3dParameter(), "3D Elements", "E3D", "GSA 3D Elements",
+        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
+        "GSA Model with Elements and Members", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -310,7 +314,7 @@ namespace GsaGH.Components {
         Model = gsa,
         ModelUnit = _lengthUnit,
       };
-      
+
       ConcurrentBag<GsaNodeGoo> nodes = Nodes.GetNodes(outModel.ApiNodes, outModel.ModelUnit);
       var elements = new Elements(outModel);
 
@@ -334,7 +338,8 @@ namespace GsaGH.Components {
       if (_toleranceTxt != string.Empty) {
         try {
           _tolerance = Length.Parse(_toleranceTxt);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }

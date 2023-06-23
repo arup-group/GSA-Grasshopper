@@ -18,6 +18,7 @@ namespace GsaGH.Parameters {
       Timber,
       Fabric,
     }
+
     public bool IsCustom { get; private set; } = false;
     public int Id {
       get => _id;
@@ -39,29 +40,21 @@ namespace GsaGH.Parameters {
         }
 
         switch (MaterialType) {
-          case MatType.Aluminium:
-            return _aluminiumMaterial.Name;
+          case MatType.Aluminium: return _aluminiumMaterial.Name;
 
-          case MatType.Concrete:
-            return _concreteMaterial.Name;
+          case MatType.Concrete: return _concreteMaterial.Name;
 
-          case MatType.Frp:
-            return _frpMaterial.Name;
+          case MatType.Frp: return _frpMaterial.Name;
 
-          case MatType.Glass:
-            return _glassMaterial.Name;
+          case MatType.Glass: return _glassMaterial.Name;
 
-          case MatType.Steel:
-            return _steelMaterial.Name;
+          case MatType.Steel: return _steelMaterial.Name;
 
-          case MatType.Timber:
-            return _timberMaterial.Name;
+          case MatType.Timber: return _timberMaterial.Name;
 
-          case MatType.Fabric:
-            return _fabricMaterial.Name;
+          case MatType.Fabric: return _fabricMaterial.Name;
 
-          default:
-            return string.Empty;
+          default: return string.Empty;
         }
       }
       set {
@@ -103,6 +96,7 @@ namespace GsaGH.Parameters {
               break;
           }
         }
+
         _guid = Guid.NewGuid();
       }
     }
@@ -116,29 +110,21 @@ namespace GsaGH.Parameters {
         }
 
         switch (MaterialType) {
-          case MatType.Aluminium:
-            return _aluminiumMaterial.AnalysisMaterial;
+          case MatType.Aluminium: return _aluminiumMaterial.AnalysisMaterial;
 
-          case MatType.Concrete:
-            return _concreteMaterial.AnalysisMaterial;
+          case MatType.Concrete: return _concreteMaterial.AnalysisMaterial;
 
-          case MatType.Frp:
-            return _frpMaterial.AnalysisMaterial;
+          case MatType.Frp: return _frpMaterial.AnalysisMaterial;
 
-          case MatType.Glass:
-            return _glassMaterial.AnalysisMaterial;
+          case MatType.Glass: return _glassMaterial.AnalysisMaterial;
 
-          case MatType.Steel:
-            return _steelMaterial.AnalysisMaterial;
+          case MatType.Steel: return _steelMaterial.AnalysisMaterial;
 
-          case MatType.Timber:
-            return _timberMaterial.AnalysisMaterial;
+          case MatType.Timber: return _timberMaterial.AnalysisMaterial;
 
-          case MatType.Fabric:
-            throw new Exception("Cannot edit Analysis material for Fabric");
+          case MatType.Fabric: throw new Exception("Cannot edit Analysis material for Fabric");
 
-          default:
-            return _analysisMaterial;
+          default: return _analysisMaterial;
         }
       }
       set {
@@ -177,14 +163,14 @@ namespace GsaGH.Parameters {
               _timberMaterial.Name = value.Name;
               break;
 
-            case MatType.Fabric:
-              throw new Exception("Fabric material is not isotropic");
+            case MatType.Fabric: throw new Exception("Fabric material is not isotropic");
 
             default:
               _analysisMaterial = value;
               break;
           }
         }
+
         _guid = Guid.NewGuid();
       }
     }
@@ -200,8 +186,7 @@ namespace GsaGH.Parameters {
               ?? throw new Exception("Material is not a standard material.");
 
           case MatType.Concrete:
-            return _concreteMaterial
-              ?? throw new Exception("Material is not a standard material.");
+            return _concreteMaterial ?? throw new Exception("Material is not a standard material.");
 
           case MatType.Fabric:
             return _fabricMaterial ?? throw new Exception("Material is not a standard material.");
@@ -218,21 +203,20 @@ namespace GsaGH.Parameters {
           case MatType.Timber:
             return _timberMaterial ?? throw new Exception("Material is not a standard material.");
 
-          default:
-            throw new Exception("Material is not a standard material.");
+          default: throw new Exception("Material is not a standard material.");
         }
       }
     }
-
-    private int _id = 0;
-    private string _gradeName;
-    private AnalysisMaterial _analysisMaterial;
-    private Guid _guid = Guid.NewGuid();
     private AluminiumMaterial _aluminiumMaterial;
+    private AnalysisMaterial _analysisMaterial;
     private ConcreteMaterial _concreteMaterial;
     private FabricMaterial _fabricMaterial;
     private FrpMaterial _frpMaterial;
     private GlassMaterial _glassMaterial;
+    private string _gradeName;
+    private Guid _guid = Guid.NewGuid();
+
+    private int _id = 0;
     private SteelMaterial _steelMaterial;
     private TimberMaterial _timberMaterial;
 
@@ -289,8 +273,8 @@ namespace GsaGH.Parameters {
       _id = id;
     }
 
-    internal GsaMaterial(MatType type, string gradeName,
-      string steelDesignCode = "", string concreteDesignCode = "") {
+    internal GsaMaterial(
+      MatType type, string gradeName, string steelDesignCode = "", string concreteDesignCode = "") {
       Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       MaterialType = type;
       switch (type) {
@@ -324,8 +308,7 @@ namespace GsaGH.Parameters {
           _timberMaterial = m.CreateTimberMaterial(gradeName);
           return;
 
-        default:
-          throw new Exception($"Material type {type} does not have standard materials");
+        default: throw new Exception($"Material type {type} does not have standard materials");
       }
     }
 
@@ -375,6 +358,7 @@ namespace GsaGH.Parameters {
             _aluminiumMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _aluminiumMaterial.Name = Name;
           }
+
           break;
 
         case MatType.Concrete:
@@ -383,6 +367,7 @@ namespace GsaGH.Parameters {
             _concreteMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _concreteMaterial.Name = Name;
           }
+
           break;
 
         case MatType.Fabric:
@@ -390,6 +375,7 @@ namespace GsaGH.Parameters {
           if (_gradeName != null) {
             _fabricMaterial.Name = Name;
           }
+
           break;
 
         case MatType.Frp:
@@ -398,6 +384,7 @@ namespace GsaGH.Parameters {
             _frpMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _frpMaterial.Name = Name;
           }
+
           break;
 
         case MatType.Glass:
@@ -406,6 +393,7 @@ namespace GsaGH.Parameters {
             _glassMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _glassMaterial.Name = Name;
           }
+
           break;
 
         case MatType.Steel:
@@ -414,6 +402,7 @@ namespace GsaGH.Parameters {
             _steelMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _steelMaterial.Name = Name;
           }
+
           break;
 
         case MatType.Timber:
@@ -422,6 +411,7 @@ namespace GsaGH.Parameters {
             _timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _timberMaterial.Name = Name;
           }
+
           break;
 
         default:
@@ -453,29 +443,21 @@ namespace GsaGH.Parameters {
       MatType type, string steelDesignCode = "", string concreteDesignCode = "") {
       Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       switch (type) {
-        case MatType.Aluminium:
-          return new List<string>(m.GetStandardAluminumMaterialNames());
+        case MatType.Aluminium: return new List<string>(m.GetStandardAluminumMaterialNames());
 
-        case MatType.Concrete:
-          return new List<string>(m.GetStandardConcreteMaterialNames());
+        case MatType.Concrete: return new List<string>(m.GetStandardConcreteMaterialNames());
 
-        case MatType.Fabric:
-          return new List<string>(m.GetStandardFabricMaterialNames());
+        case MatType.Fabric: return new List<string>(m.GetStandardFabricMaterialNames());
 
-        case MatType.Frp:
-          return new List<string>(m.GetStandardFrpMaterialNames());
+        case MatType.Frp: return new List<string>(m.GetStandardFrpMaterialNames());
 
-        case MatType.Glass:
-          return new List<string>(m.GetStandardGlassMaterialNames());
+        case MatType.Glass: return new List<string>(m.GetStandardGlassMaterialNames());
 
-        case MatType.Steel:
-          return new List<string>(m.GetStandardSteelMaterialNames());
+        case MatType.Steel: return new List<string>(m.GetStandardSteelMaterialNames());
 
-        case MatType.Timber:
-          return new List<string>(m.GetStandardTimberMaterialNames());
+        case MatType.Timber: return new List<string>(m.GetStandardTimberMaterialNames());
 
-        default:
-          throw new Exception($"Material type {type} does not have standard materials");
+        default: throw new Exception($"Material type {type} does not have standard materials");
       }
     }
 

@@ -33,10 +33,6 @@ namespace GsaGH.Components {
       Other,
     }
 
-    public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProfile;
     private static readonly List<string> easterCat = new List<string>() {
       "▌─────────────────────────▐█─────▐" + Environment.NewLine
       + "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine
@@ -115,6 +111,11 @@ namespace GsaGH.Components {
           "T Section", "ITSectionProfile"
         },
       };
+
+    public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateProfile;
     private readonly Tuple<List<string>, List<int>> _cataloguedata;
     private int _catalogueIndex = -1;
     private List<string> _catalogueNames = new List<string>();

@@ -102,14 +102,14 @@ namespace GsaGH.Parameters {
         UpdatePreview();
       }
     }
+    private int _id = 0;
+    private Node _node = new Node();
+    private Plane _plane;
     internal Brep _previewSupportSymbol;
     internal Text3d _previewText;
     internal Line _previewXaxis;
     internal Line _previewYaxis;
     internal Line _previewZaxis;
-    private int _id = 0;
-    private Node _node = new Node();
-    private Plane _plane;
 
     public GsaNode() { }
 
@@ -272,11 +272,11 @@ namespace GsaGH.Parameters {
         },
         SpringProperty = _node.SpringProperty,
         Position = new Vector3 {
-          X = (unit == LengthUnit.Meter) ? _node.Position.X :
+          X = unit == LengthUnit.Meter ? _node.Position.X :
             new Length(_node.Position.X, unit).Meters,
-          Y = (unit == LengthUnit.Meter) ? _node.Position.Y :
+          Y = unit == LengthUnit.Meter ? _node.Position.Y :
             new Length(_node.Position.Y, unit).Meters,
-          Z = (unit == LengthUnit.Meter) ? _node.Position.Z :
+          Z = unit == LengthUnit.Meter ? _node.Position.Z :
             new Length(_node.Position.Z, unit).Meters, },
       };
 
@@ -331,7 +331,7 @@ namespace GsaGH.Parameters {
         _previewText = null;
       }
 
-      if (_plane == null || !(_plane != Plane.WorldXY & _plane != new Plane())) {
+      if (_plane == null || !((_plane != Plane.WorldXY) & (_plane != new Plane()))) {
         return;
       }
 

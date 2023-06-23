@@ -91,7 +91,7 @@ namespace GsaGHTests.Parameters {
         Pool = 12,
         BasicOffset = BasicOffset.BottomLeft,
         AdditionalOffsetY = new Length(-1, LengthUnit.Foot),
-        AdditionalOffsetZ = new Length(-2, LengthUnit.Foot)
+        AdditionalOffsetZ = new Length(-2, LengthUnit.Foot),
       };
       var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       orig.Material = material;

@@ -13,6 +13,7 @@ namespace GsaGH.Helpers.Import {
       foreach (KeyValuePair<int, EntityList> apiList in model.Model.Lists()) {
         lists.Add(new GsaList(apiList.Key, apiList.Value, model));
       }
+
       return lists;
     }
   }

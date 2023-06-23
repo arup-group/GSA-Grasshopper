@@ -1,9 +1,10 @@
-﻿using GsaGH.Components;
+﻿using System.Collections.Generic;
+using Grasshopper.Kernel;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -14,8 +15,8 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateMember1d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(
-        comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)), 0);
+      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)),
+        0);
       ComponentTestHelper.SetInput(comp, "STD CH(ft) 1 2 3 4", 1);
       ComponentTestHelper.SetInput(comp, 0.5, 2);
 
@@ -39,17 +40,89 @@ namespace GsaGHTests.Components.Geometry {
 
     [Theory]
     [InlineData(new bool[] {
-      true, true, true, false, false, false, true, true, true, false, false, false})]
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    })]
     [InlineData(new bool[] {
-      false, false, false, true, true, true, false, false, false, true, true, true})]
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+    })]
     [InlineData(new bool[] {
-      false, false, false, false, false, false, false, false, false, true, true, true})]
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+    })]
     [InlineData(new bool[] {
-      true, true, true, false, false, false, false, false, false, false, false, false})]
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    })]
     [InlineData(new bool[] {
-      true, false, true, false, true, false, true, false, true, false, true, false})]
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+    })]
     [InlineData(new bool[] {
-      false, true, false, true, false, true, false, true, false, true, false, true})]
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+    })]
     public void CanToggleReleases(bool[] releases) {
       var comp = (CreateMember1d)ComponentMother();
       int i = 0;
@@ -69,7 +142,7 @@ namespace GsaGHTests.Components.Geometry {
           releases[i++],
           releases[i++],
           releases[i++],
-        }
+        },
       };
       comp.SetReleases(restraints);
 
@@ -94,11 +167,11 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateMember1d();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(
-        comp, new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 0.001)), 0);
+      ComponentTestHelper.SetInput(comp,
+        new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 0.001)), 0);
 
       var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
   }
 }

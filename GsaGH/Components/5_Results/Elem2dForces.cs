@@ -1,4 +1,10 @@
-﻿using Grasshopper;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
@@ -14,12 +20,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -218,7 +218,7 @@ namespace GsaGH.Components {
         }
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
+          if ((vals[perm - 1].XyzResults.Count == 0) & (vals[perm - 1].XxyyzzResults.Count == 0)) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
             this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
             continue;
@@ -228,72 +228,72 @@ namespace GsaGH.Components {
           {
             switch (thread) {
               case 0: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                    vals[perm - 1].XyzResults) {
-                    int elementId = kvp.Key;
-                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                    if (res.Count == 0) {
-                      continue;
-                    }
-
-                    var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                    outX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))),
-                      path); // use ToUnit to capture changes in dropdown
-                    outY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))),
-                      path);
-                    outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))),
-                      path);
-                    // Wood-Armer moment M*x is stored in .XYZ
-                    outWaxx.AddRange(
-                      res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                  vals[perm - 1].XyzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) {
+                    continue;
                   }
 
-                  break;
+                  var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                  outX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))),
+                    path); // use ToUnit to capture changes in dropdown
+                  outY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))),
+                    path);
+                  outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))),
+                    path);
+                  // Wood-Armer moment M*x is stored in .XYZ
+                  outWaxx.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
                 }
+
+                break;
+              }
               case 1: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                    vals[perm - 1].XxyyzzResults) {
-                    int elementId = kvp.Key;
-                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                    if (res.Count == 0) {
-                      continue;
-                    }
-
-                    var path = new GH_Path(result.CaseId,
-                       result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                    outXx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))),
-                      path); // always use [rad] units
-                    outYy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))),
-                      path);
-                    outXxyy.AddRange(
-                      res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
-                    // Wood-Armer moment M*y
-                    outWayy.AddRange(
-                      res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                  vals[perm - 1].XxyyzzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) {
+                    continue;
                   }
 
-                  break;
+                  var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
+
+                  outXx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))),
+                    path); // always use [rad] units
+                  outYy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))),
+                    path);
+                  outXxyy.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
+                  // Wood-Armer moment M*y
+                  outWayy.AddRange(
+                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_momentUnit))), path);
                 }
+
+                break;
+              }
               case 2: {
-                  foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                    valsShear[perm - 1].XyzResults) {
-                    int elementId = kvp.Key;
-                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+                  valsShear[perm - 1].XyzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                    var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : perm, elementId);
+                  var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
 
-                    outQx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))),
-                      path); // always use [rad] units
-                    outQy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))),
-                      path);
-                  }
-
-                  break;
+                  outQx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))),
+                    path); // always use [rad] units
+                  outQy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))),
+                    path);
                 }
+
+                break;
+              }
             }
           });
         }

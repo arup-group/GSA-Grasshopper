@@ -21,10 +21,10 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.LocalAxes;
     internal Line _previewXaxis;
     internal Line _previewYaxis;
     internal Line _previewZaxis;
-    protected override Bitmap Icon => Resources.LocalAxes;
 
     public LocalAxes() : base("Local Axis", "Axis", "Get Element1D or Member1D local axes",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -81,9 +81,9 @@ namespace GsaGH.Components {
           axes = member.LocalAxes;
           if (axes == null) {
             var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null, null, null, null, 
-              new List<GsaMember1d>() { 
-                member 
+            model.Model = AssembleModel.Assemble(model, null, null, null, null, null,
+              new List<GsaMember1d>() {
+                member,
               }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
               Length.Zero, false, null);
 
@@ -106,8 +106,7 @@ namespace GsaGH.Components {
           axes = element.LocalAxes;
           if (axes == null) {
             var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null,
-              new List<GsaElement1d>() {
+            model.Model = AssembleModel.Assemble(model, null, null, new List<GsaElement1d>() {
                 element,
               }, null, null, null, null, null, null, null, null, null, null, null, null,
               LengthUnit.Meter, Length.Zero, false, null);

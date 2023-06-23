@@ -36,7 +36,7 @@ namespace GsaGH.Components {
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(0, ref materialGoo)) {
         prop.Material = materialGoo.Value;
-      } 
+      }
 
       prop.AxisProperty = 0;
 

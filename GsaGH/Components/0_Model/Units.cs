@@ -17,15 +17,14 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Units;
 
     public Units() : base("Model Units", "Units",
-      "Get or set the units used by GSA when opening this Model", 
-      CategoryName.Name(), SubCategoryName.Cat0()) {
+      "Get or set the units used by GSA when opening this Model", CategoryName.Name(),
+      SubCategoryName.Cat0()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
-        "Existing GSA model to get or set units for.",
-        GH_ParamAccess.item);
+        "Existing GSA model to get or set units for.", GH_ParamAccess.item);
       pManager.AddTextParameter("Acceleration", "Acc", "Set Acceleration Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Angle", "Ang", "Set Angle Unit for this GSA Model",
@@ -34,11 +33,13 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddTextParameter("Force", "F", "Set Force Unit for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Geometry", "LL", "Set 'Length - large' Unit used for Node Geometry for this GSA Model",
+      pManager.AddTextParameter("Geometry", "LL",
+        "Set 'Length - large' Unit used for Node Geometry for this GSA Model", GH_ParamAccess.item);
+      pManager.AddTextParameter("Property Dimension", "LP",
+        "Set 'Length - sections' Unit used for Property Dimensions for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Property Dimension", "LP", "Set 'Length - sections' Unit used for Property Dimensions for this GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Displacement", "LS", "Set 'Length - small' Unit used for Displacement Results for this GSA Model",
+      pManager.AddTextParameter("Displacement", "LS",
+        "Set 'Length - small' Unit used for Displacement Results for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Mass", "M", "Set Mass Unit for this GSA Model",
         GH_ParamAccess.item);
@@ -69,10 +70,10 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddTextParameter("Geometry", "LL", "Get 'Length - large' Unit for this GSA Model",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Property Dimension", "LP", "Get 'Length - sections' Unit for this GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Displacement", "LS", "Get 'Length - small' Unit for this GSA Model",
-        GH_ParamAccess.item);
+      pManager.AddTextParameter("Property Dimension", "LP",
+        "Get 'Length - sections' Unit for this GSA Model", GH_ParamAccess.item);
+      pManager.AddTextParameter("Displacement", "LS",
+        "Get 'Length - small' Unit for this GSA Model", GH_ParamAccess.item);
       pManager.AddTextParameter("Mass", "M", "Get Mass Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Stress", "S", "Get Stress Unit for this GSA Model",
@@ -94,94 +95,64 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref gooModel)) {
         model = gooModel.Value.Clone();
       }
-      GsaAPI.UiUnits units = model.Units;
+
+      UiUnits units = model.Units;
 
       var ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
             units.Acceleration = (AccelerationUnit)Enum.Parse(typeof(AccelerationUnit), txt, true);
-          } catch (ArgumentException) {
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(AngleUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Acceleration Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Acceleration Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
+          }
         }
-      }
       }
 
       ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.Angle = (AngleUnit)Enum.Parse(typeof(AngleUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.Angle = (AngleUnit)Enum.Parse(typeof(AngleUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(AngleUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Angle Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Angle Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
+          }
         }
-      }
       }
 
       ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.Energy = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.Energy = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(EnergyUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Energy Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Energy Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
+          }
         }
-      }
       }
 
       ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.Force = (ForceUnit)Enum.Parse(typeof(ForceUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.Force = (ForceUnit)Enum.Parse(typeof(ForceUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(ForceUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Force Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
-        }
-      }
-      }
-
-      ghString = new GH_String();
-      if (da.GetData(i++, ref ghString)) {
-        if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
-          try {
-            units.LengthLarge = (LengthUnit)Enum.Parse(typeof(LengthUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
-            string[] names = Enum.GetNames(typeof(LengthUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
-        }
-      }
-      }
-
-      ghString = new GH_String();
-      if (da.GetData(i++, ref ghString)) {
-        if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
-          try {
-            units.LengthSections = (LengthUnit)Enum.Parse(typeof(LengthUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
-            string[] names = Enum.GetNames(typeof(LengthUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
-        }
-      }
-      }
-
-      ghString = new GH_String();
-      if (da.GetData(i++, ref ghString)) {
-        if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
-          try {
-            units.LengthSmall = (LengthUnit)Enum.Parse(typeof(LengthUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
-            string[] names = Enum.GetNames(typeof(LengthUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Force Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
@@ -191,10 +162,57 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.Mass = (MassUnit)Enum.Parse(typeof(MassUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.LengthLarge = (LengthUnit)Enum.Parse(typeof(LengthUnit), txt, true);
+          }
+          catch (ArgumentException) {
+            string[] names = Enum.GetNames(typeof(LengthUnit));
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
+              + Environment.NewLine + string.Join(Environment.NewLine, names));
+          }
+        }
+      }
+
+      ghString = new GH_String();
+      if (da.GetData(i++, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
+          try {
+            units.LengthSections = (LengthUnit)Enum.Parse(typeof(LengthUnit), txt, true);
+          }
+          catch (ArgumentException) {
+            string[] names = Enum.GetNames(typeof(LengthUnit));
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
+              + Environment.NewLine + string.Join(Environment.NewLine, names));
+          }
+        }
+      }
+
+      ghString = new GH_String();
+      if (da.GetData(i++, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
+          try {
+            units.LengthSmall = (LengthUnit)Enum.Parse(typeof(LengthUnit), txt, true);
+          }
+          catch (ArgumentException) {
+            string[] names = Enum.GetNames(typeof(LengthUnit));
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
+              + Environment.NewLine + string.Join(Environment.NewLine, names));
+          }
+        }
+      }
+
+      ghString = new GH_String();
+      if (da.GetData(i++, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
+          try {
+            units.Mass = (MassUnit)Enum.Parse(typeof(MassUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(MassUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Mass Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Mass Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
@@ -204,10 +222,12 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.Stress = (StressUnit)Enum.Parse(typeof(StressUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.Stress = (StressUnit)Enum.Parse(typeof(StressUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(StressUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Stress Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Stress Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
@@ -217,10 +237,12 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.TimeLong = (TimeUnit)Enum.Parse(typeof(TimeUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.TimeLong = (TimeUnit)Enum.Parse(typeof(TimeUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(TimeUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
@@ -230,10 +252,12 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.TimeMedium = (TimeUnit)Enum.Parse(typeof(TimeUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.TimeMedium = (TimeUnit)Enum.Parse(typeof(TimeUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(TimeUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
@@ -243,30 +267,34 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.TimeShort = (TimeUnit)Enum.Parse(typeof(TimeUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.TimeShort = (TimeUnit)Enum.Parse(typeof(TimeUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(TimeUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
       }
- 
+
       ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string txt, GH_Conversion.Both)) {
           try {
-            units.Velocity = (VelocityUnit)Enum.Parse(typeof(VelocityUnit), txt, ignoreCase: true);
-          } catch (ArgumentException) {
+            units.Velocity = (VelocityUnit)Enum.Parse(typeof(VelocityUnit), txt, true);
+          }
+          catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(VelocityUnit));
-            this.AddRuntimeError($"Unable to convert '{txt}' to a known Velocity Unit. Accepted inputs are:"
+            this.AddRuntimeError(
+              $"Unable to convert '{txt}' to a known Velocity Unit. Accepted inputs are:"
               + Environment.NewLine + string.Join(Environment.NewLine, names));
           }
         }
       }
 
       i = 0;
-      
+
       da.SetData(i++, new GsaModelGoo(new GsaModel(model.Model)));
       da.SetData(i++, units.Acceleration.ToString());
       da.SetData(i++, units.Angle.ToString());
@@ -283,8 +311,9 @@ namespace GsaGH.Components {
       da.SetData(i++, units.Velocity.ToString());
 
       this.AddRuntimeRemark(
-        "This component can be used to set the default units when the model is saved and opening in GSA. " +
-        Environment.NewLine + "To change the default units used inside Grasshopper go to the Oasys menu -> Oasys Units.");
+        "This component can be used to set the default units when the model is saved and opening in GSA. "
+        + Environment.NewLine
+        + "To change the default units used inside Grasshopper go to the Oasys menu -> Oasys Units.");
     }
   }
 }

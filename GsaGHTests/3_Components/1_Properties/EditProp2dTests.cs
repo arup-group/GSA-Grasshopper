@@ -50,7 +50,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(-1, axis.Value);
       Assert.Equal(SupportType.Undefined, supportType.Value);
       Assert.Equal(1, referenceEdge.Value);
-      Assert.Equal("", name.Value);
+      Assert.Equal(string.Empty, name.Value);
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal("Shell", type.Value);
     }
@@ -90,7 +90,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(-1, axis.Value);
       Assert.Equal(SupportType.Undefined, supportType.Value);
       Assert.Equal(1, referenceEdge.Value);
-      Assert.Equal("", name.Value);
+      Assert.Equal(string.Empty, name.Value);
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal("Shell", type.Value);
 

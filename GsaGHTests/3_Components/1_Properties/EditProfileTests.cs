@@ -18,14 +18,11 @@ namespace GsaGHTests.Components.Properties {
     [Theory]
     [InlineData("STD A(cm) 25 30 4.5 6.7", 33.33, false, false,
       "STD A(cm) 25 30 4.5 6.7 [R(33.33)]")]
-    [InlineData("STD CH 100 200 10 15", 15, true, true,
-      "STD CH 100 200 10 15 [R(15)HV]")]
+    [InlineData("STD CH 100 200 10 15", 15, true, true, "STD CH 100 200 10 15 [R(15)HV]")]
     // test that transformation is not set if angle is zero
-    [InlineData("STD I 100 200 10 15", 0, null, null,
-      "STD I 100 200 10 15")]
+    [InlineData("STD I 100 200 10 15", 0, null, null, "STD I 100 200 10 15")]
     // test that existing transformation is removed
-    [InlineData("STD I 100 200 10 15 [R(15)HV]", 10, null, null,
-      "STD I 100 200 10 15 [R(10)]")]
+    [InlineData("STD I 100 200 10 15 [R(15)HV]", 10, null, null, "STD I 100 200 10 15 [R(10)]")]
     public void CreateComponent(
       string profile, double rotation, bool? horizontal, bool? vertical, string expectedString) {
       GH_OasysComponent comp = ComponentMother();

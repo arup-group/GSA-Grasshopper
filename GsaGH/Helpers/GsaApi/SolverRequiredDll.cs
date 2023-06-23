@@ -2,9 +2,9 @@
 
 namespace GsaGH.Helpers.GsaApi {
   public static class SolverRequiredDll {
-    internal static string LoadedFromPath { get; private set; }
     private static bool canAnalyse;
     private static bool loaded;
+    internal static string LoadedFromPath { get; private set; }
 
     public static bool IsCorrectVersionLoaded() {
       if (!loaded || !canAnalyse) {

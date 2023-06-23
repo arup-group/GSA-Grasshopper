@@ -9,10 +9,8 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Helpers.Export {
   internal class Prop2ds {
     internal static void ConvertProp2ds(
-      List<GsaProp2d> prop2Ds,
-      ref Properties existingProperties,
-      ref GsaIntDictionary<Axis> apiAxes,
-      LengthUnit unit) {
+      List<GsaProp2d> prop2Ds, ref Properties existingProperties,
+      ref GsaIntDictionary<Axis> apiAxes, LengthUnit unit) {
       if (prop2Ds == null) {
         return;
       }
@@ -24,9 +22,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int ConvertProp2d(
-      GsaProp2d prop2d,
-      ref Properties existingProperties,
-      ref GsaIntDictionary<Axis> apiAxes,
+      GsaProp2d prop2d, ref Properties existingProperties, ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {
       if (prop2d == null) {
         return 0;
@@ -40,9 +36,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int AddProp2d(
-      GsaProp2d prop, 
-      ref Properties existingProperties, 
-      ref GsaIntDictionary<Axis> apiAxes,
+      GsaProp2d prop, ref Properties existingProperties, ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {
       Materials.AddMaterial(ref prop, ref existingProperties.Materials);
       if (prop.AxisProperty == -2) {
@@ -50,11 +44,11 @@ namespace GsaGH.Helpers.Export {
           if (prop.LocalAxis != Plane.WorldXY) {
             var ax = new Axis();
             Plane pln = prop.LocalAxis;
-            ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX :
+            ax.Origin.X = unit == LengthUnit.Meter ? pln.OriginX :
               new Length(pln.OriginX, unit).Meters;
-            ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY :
+            ax.Origin.Y = unit == LengthUnit.Meter ? pln.OriginY :
               new Length(pln.OriginY, unit).Meters;
-            ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ :
+            ax.Origin.Z = unit == LengthUnit.Meter ? pln.OriginZ :
               new Length(pln.OriginZ, unit).Meters;
 
             ax.XVector.X = pln.XAxis.X;

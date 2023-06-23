@@ -77,6 +77,7 @@ namespace IntegrationTests.ExampleFiles {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }
+
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }

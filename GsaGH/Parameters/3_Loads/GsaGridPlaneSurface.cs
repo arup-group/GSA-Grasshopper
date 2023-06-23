@@ -75,9 +75,6 @@ namespace GsaGH.Parameters {
     ///   or in the format of a OasysUnits.Length ('5 m')
     /// </summary>
     public string Tolerance { get; set; } = "10 mm";
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
     private int _axisId;
     private GridPlane _gridPln = new GridPlane();
     private Guid _gridPlnGuid = Guid.NewGuid();
@@ -86,6 +83,9 @@ namespace GsaGH.Parameters {
     private Guid _gridSrfGuid = Guid.NewGuid();
     private int _gridSrfId;
     private Plane _pln = Plane.WorldXY;
+    internal ReferenceType _referenceType = ReferenceType.None;
+    internal GsaList _refList;
+    internal Guid _refObjectGuid;
 
     public GsaGridPlaneSurface() { }
 
@@ -107,7 +107,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridPlaneSurface Duplicate() {
       var dup = new GsaGridPlaneSurface {
-        Plane = (_gridPln == null) ? Plane.WorldXY : _pln.Clone(),
+        Plane = _gridPln == null ? Plane.WorldXY : _pln.Clone(),
         GridPlane = _gridPln == null ? null : new GridPlane {
           AxisProperty = _gridPln.AxisProperty,
           IsStoreyType = _gridPln.IsStoreyType,
@@ -155,7 +155,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string ax = (AxisId == 0) ? string.Empty : "Ax:" + AxisId.ToString() + " ";
+      string ax = AxisId == 0 ? string.Empty : "Ax:" + AxisId.ToString() + " ";
       bool global = false;
       if (Plane.Origin.X == 0 && Plane.Origin.Y == 0 && Plane.Origin.Z == 0) {
         if (Plane.XAxis.X == 1 && Plane.XAxis.Y == 0 && Plane.XAxis.Z == 0) {
@@ -165,7 +165,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      string gp = (GridPlaneId == 0) ? string.Empty : "GPln:" + GridPlaneId.ToString() + " ";
+      string gp = GridPlaneId == 0 ? string.Empty : "GPln:" + GridPlaneId.ToString() + " ";
       string gpName = GridPlane == null ? string.Empty : GridPlane.Name;
       gp += gpName == string.Empty ? string.Empty : "'" + gpName + "' ";
 
@@ -183,7 +183,7 @@ namespace GsaGH.Parameters {
         gp += "Storey ";
       }
 
-      string gs = (GridSurfaceId == 0) ? string.Empty : "GSrf:" + GridSurfaceId.ToString() + " ";
+      string gs = GridSurfaceId == 0 ? string.Empty : "GSrf:" + GridSurfaceId.ToString() + " ";
       string gsName = GridSurface == null ? string.Empty : GridSurface.Name;
       gs += gsName == string.Empty ? string.Empty : "'" + gsName + "' ";
       if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
@@ -220,7 +220,8 @@ namespace GsaGH.Parameters {
         var elevation = new Length();
         try {
           elevation = Length.Parse(Elevation);
-        } catch (Exception) {
+        }
+        catch (Exception) {
           if (double.TryParse(Elevation, out double elev)) {
             elevation = new Length(elev, modelUnit);
           }

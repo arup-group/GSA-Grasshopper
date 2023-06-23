@@ -33,8 +33,8 @@ namespace GsaGH.Parameters {
         }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+        if ((value.QuantityInfo.UnitType != typeof(AreaUnit))
+          & (value.QuantityInfo.UnitType != typeof(RatioUnit))) {
           throw new ArgumentException("AreaModifier must be either Area or Ratio");
         }
 
@@ -58,8 +58,8 @@ namespace GsaGH.Parameters {
         }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+        if ((value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit))
+          & (value.QuantityInfo.UnitType != typeof(RatioUnit))) {
           throw new ArgumentException("I11Modifier must be either AreaMomentOfInertia or Ratio");
         }
 
@@ -84,8 +84,8 @@ namespace GsaGH.Parameters {
          .ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+        if ((value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit))
+          & (value.QuantityInfo.UnitType != typeof(RatioUnit))) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         }
 
@@ -134,8 +134,8 @@ namespace GsaGH.Parameters {
         }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+        if ((value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit))
+          & (value.QuantityInfo.UnitType != typeof(RatioUnit))) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         } else {
           CloneApiObject();
@@ -224,8 +224,8 @@ namespace GsaGH.Parameters {
         }
       }
       set {
-        if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+        if ((value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit))
+          & (value.QuantityInfo.UnitType != typeof(RatioUnit))) {
           throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
         }
 
@@ -250,7 +250,7 @@ namespace GsaGH.Parameters {
       if (!clone) {
         return this;
       }
-      
+
       var dup = new GsaSectionModifier {
         _sectionModifier = _sectionModifier,
       };
@@ -404,27 +404,20 @@ namespace GsaGH.Parameters {
 
     private void CloneApiObject() {
       var dup = new SectionModifier {
-        AreaModifier
-          = new SectionModifierAttribute(_sectionModifier.AreaModifier.Option,
-            _sectionModifier.AreaModifier.Value),
-        I11Modifier
-          = new SectionModifierAttribute(_sectionModifier.I11Modifier.Option,
-            _sectionModifier.I11Modifier.Value),
-        I22Modifier
-          = new SectionModifierAttribute(_sectionModifier.I22Modifier.Option,
-            _sectionModifier.I22Modifier.Value),
-        JModifier
-          = new SectionModifierAttribute(_sectionModifier.JModifier.Option,
-            _sectionModifier.JModifier.Value),
-        K11Modifier
-          = new SectionModifierAttribute(_sectionModifier.K11Modifier.Option,
-            _sectionModifier.K11Modifier.Value),
-        K22Modifier
-          = new SectionModifierAttribute(_sectionModifier.K22Modifier.Option,
-            _sectionModifier.K22Modifier.Value),
-        VolumeModifier
-          = new SectionModifierAttribute(_sectionModifier.VolumeModifier.Option,
-            _sectionModifier.VolumeModifier.Value),
+        AreaModifier = new SectionModifierAttribute(_sectionModifier.AreaModifier.Option,
+          _sectionModifier.AreaModifier.Value),
+        I11Modifier = new SectionModifierAttribute(_sectionModifier.I11Modifier.Option,
+          _sectionModifier.I11Modifier.Value),
+        I22Modifier = new SectionModifierAttribute(_sectionModifier.I22Modifier.Option,
+          _sectionModifier.I22Modifier.Value),
+        JModifier = new SectionModifierAttribute(_sectionModifier.JModifier.Option,
+          _sectionModifier.JModifier.Value),
+        K11Modifier = new SectionModifierAttribute(_sectionModifier.K11Modifier.Option,
+          _sectionModifier.K11Modifier.Value),
+        K22Modifier = new SectionModifierAttribute(_sectionModifier.K22Modifier.Option,
+          _sectionModifier.K22Modifier.Value),
+        VolumeModifier = new SectionModifierAttribute(_sectionModifier.VolumeModifier.Option,
+          _sectionModifier.VolumeModifier.Value),
         AdditionalMass = _sectionModifier.AdditionalMass,
         StressOption = _sectionModifier.StressOption,
         IsBendingAxesPrincipal = _sectionModifier.IsBendingAxesPrincipal,

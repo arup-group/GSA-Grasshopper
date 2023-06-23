@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -250,62 +251,68 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-              if (value.Value.EntityType == EntityType.Element
-                || value.Value.EntityType == EntityType.Member) {
-                faceLoad._refList = value.Value;
-                faceLoad._referenceType = ReferenceType.List;
-              } else {
-                this.AddRuntimeWarning(
-                  "List must be of type Element or Member to apply to face loading");
-              }
+            if (value.Value.EntityType == EntityType.Element
+              || value.Value.EntityType == EntityType.Member) {
+              faceLoad._refList = value.Value;
+              faceLoad._referenceType = ReferenceType.List;
+            } else {
+              this.AddRuntimeWarning(
+                "List must be of type Element or Member to apply to face loading");
+            }
 
             if (value.Value.EntityType == EntityType.Member) {
               this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+                + Environment.NewLine
+                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
-              break;
-            }
+            break;
+          }
           case GsaElement2dGoo value: {
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Element;
-              break;
-            }
+            faceLoad._refObjectGuid = value.Value.Guid;
+            faceLoad._referenceType = ReferenceType.Element;
+            break;
+          }
           case GsaMember2dGoo value: {
             faceLoad._refObjectGuid = value.Value.Guid;
             faceLoad._referenceType = ReferenceType.MemberChildElements;
             if (_mode != FoldMode.Uniform) {
               this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+                "Member loading will not automatically redistribute non-linear loading to child elements."
+                + Environment.NewLine
+                + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
             } else {
               this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+                + Environment.NewLine
+                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
             break;
           }
           case GsaMaterialGoo value: {
-              if (value.Value.Id != 0) {
-                this.AddRuntimeWarning(
-                "Reference Material must be a Custom Material");
-                return;
-              }
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Property;
-              break;
+            if (value.Value.Id != 0) {
+              this.AddRuntimeWarning("Reference Material must be a Custom Material");
+              return;
             }
-          case GsaProp2dGoo value: {
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Property;
-              break;
-            }
-          default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                faceLoad.FaceLoad.Elements = elemList;
-              }
 
-              break;
+            faceLoad._refObjectGuid = value.Value.Guid;
+            faceLoad._referenceType = ReferenceType.Property;
+            break;
+          }
+          case GsaProp2dGoo value: {
+            faceLoad._refObjectGuid = value.Value.Guid;
+            faceLoad._referenceType = ReferenceType.Property;
+            break;
+          }
+          default: {
+            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
+              faceLoad.FaceLoad.Elements = elemList;
             }
+
+            break;
+          }
         }
       }
 
@@ -327,7 +334,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      GsaAPI.Direction direc = GsaAPI.Direction.Z;
+      Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -337,11 +344,11 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = GsaAPI.Direction.X;
+          direc = Direction.X;
           break;
 
         case "Y":
-          direc = GsaAPI.Direction.Y;
+          direc = Direction.Y;
           break;
       }
 
@@ -350,7 +357,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.CONSTANT;
+            faceLoad.FaceLoad.Type = FaceLoadType.CONSTANT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -368,7 +375,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Variable:
           if (_mode == FoldMode.Variable) {
-            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.GENERAL;
+            faceLoad.FaceLoad.Type = FaceLoadType.GENERAL;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -395,7 +402,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.POINT;
+            faceLoad.FaceLoad.Type = FaceLoadType.POINT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();

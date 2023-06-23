@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
@@ -70,7 +71,7 @@ namespace GsaGHTests.Model {
 
       // test that items have been set into API model
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      GsaAPI.UiUnits units = output.Value.Model.UiUnits();
+      UiUnits units = output.Value.Model.UiUnits();
       Assert.Equal("CentimeterPerSecondSquared", units.Acceleration.ToString());
       Assert.Equal("Degree", units.Angle.ToString());
       Assert.Equal("Megajoule", units.Energy.ToString());
@@ -134,7 +135,7 @@ namespace GsaGHTests.Model {
 
       // test that items have been set into API model
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      
+
       Assert.Equal(GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));

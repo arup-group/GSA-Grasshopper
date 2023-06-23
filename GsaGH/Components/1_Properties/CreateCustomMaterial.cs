@@ -29,6 +29,7 @@ namespace GsaGH.Components {
       Glass,
       Fabric,
     }
+
     public static List<string> MaterialTypes = new List<string>() {
       "Generic",
       "Steel",
@@ -49,9 +50,7 @@ namespace GsaGH.Components {
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
 
     public CreateCustomMaterial() : base("Custom Material", "Material",
-                                         "Create a Custom GSA Analysis Material",
-                                         CategoryName.Name(),
-                                         SubCategoryName.Cat1()) {
+      "Create a Custom GSA Analysis Material", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -174,7 +173,7 @@ namespace GsaGH.Components {
         PoissonsRatio = poisson,
         Density = Input.UnitNumber(this, da, 4, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 5, thermalExpansionUnit, true)
-        .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+         .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
         Name = name,
       };
 
@@ -213,8 +212,6 @@ namespace GsaGH.Components {
           material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Fabric);
           break;
       }
-
-      
 
       da.SetData(0, new GsaMaterialGoo(material));
     }

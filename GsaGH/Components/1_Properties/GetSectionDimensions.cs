@@ -34,6 +34,36 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      string abb = Length.GetAbbreviation(_lengthUnit);
+
+      Params.Output[0].Name = "Depth [" + abb + "]";
+      Params.Output[1].Name = "Width [" + abb + "]";
+      Params.Output[2].Name = "Width Top [" + abb + "]";
+      Params.Output[3].Name = "Width Bottom [" + abb + "]";
+      Params.Output[4].Name = "Flange Thk Top [" + abb + "]";
+      Params.Output[5].Name = "Flange Thk Bottom [" + abb + "]";
+      Params.Output[6].Name = "Web Thk [" + abb + "]";
+      Params.Output[7].Name = "Radius [" + abb + "]";
+      Params.Output[8].Name = "Spacing [" + abb + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -58,40 +88,10 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      string abb = Length.GetAbbreviation(_lengthUnit);
-
-      Params.Output[0].Name = "Depth [" + abb + "]";
-      Params.Output[1].Name = "Width [" + abb + "]";
-      Params.Output[2].Name = "Width Top [" + abb + "]";
-      Params.Output[3].Name = "Width Bottom [" + abb + "]";
-      Params.Output[4].Name = "Flange Thk Top [" + abb + "]";
-      Params.Output[5].Name = "Flange Thk Bottom [" + abb + "]";
-      Params.Output[6].Name = "Web Thk [" + abb + "]";
-      Params.Output[7].Name = "Radius [" + abb + "]";
-      Params.Output[8].Name = "Spacing [" + abb + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -472,8 +472,7 @@ namespace GsaGH.Components {
           da.SetData(i++, null); //Flange Thk Top
           da.SetData(i++, null); //Flange Thk Bottom
           da.SetData(i++,
-            new GH_UnitNumber(
-              new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
+            new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
           da.SetData(i++, null); //root radius
           da.SetData(i++, null); //Spacing
         } else {
@@ -486,20 +485,18 @@ namespace GsaGH.Components {
           da.SetData(i++,
             new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Bottom
           da.SetData(i++,
-            new GH_UnitNumber(
-              new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Top
+            new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Top
           da.SetData(i++,
             new GH_UnitNumber(
               new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Bottom
           da.SetData(i++,
-            new GH_UnitNumber(
-              new Length(sqlValues[2], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
+            new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
           da.SetData(i++,
             sqlValues.Count > 4 ?
               new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(_lengthUnit)) :
               new GH_UnitNumber(
                 Length.Zero.ToUnit(_lengthUnit))); // welded section don´t have a root radius
-                                                   //Root radius
+          //Root radius
           da.SetData(i++, null); //Spacing
         }
 

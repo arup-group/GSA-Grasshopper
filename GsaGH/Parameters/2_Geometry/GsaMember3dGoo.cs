@@ -23,31 +23,6 @@ namespace GsaGH.Parameters {
       Value = duplicate ? item.Duplicate() : item;
     }
 
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        if (Value == null) {
-          target = default;
-        } else {
-          target = (TQ)(object)new GH_Mesh(Value.SolidMesh);
-          if (Value.SolidMesh == null) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value != null) {
-          target = (TQ)(object)new GH_Integer(Value.Id);
-          return true;
-        }
-      }
-
-      target = default;
-      return false;
-    }
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       if (Value?.SolidMesh == null) {
         return;
@@ -111,6 +86,31 @@ namespace GsaGH.Parameters {
             Colours.Member1dNodeSelected);
         }
       }
+    }
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
+        if (Value == null) {
+          target = default;
+        } else {
+          target = (TQ)(object)new GH_Mesh(Value.SolidMesh);
+          if (Value.SolidMesh == null) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
+        if (Value != null) {
+          target = (TQ)(object)new GH_Integer(Value.Id);
+          return true;
+        }
+      }
+
+      target = default;
+      return false;
     }
 
     public override IGH_GeometricGoo Duplicate() {

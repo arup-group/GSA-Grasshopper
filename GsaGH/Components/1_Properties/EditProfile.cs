@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using Grasshopper.Kernel.Parameters;
 using Rhino;
 
 namespace GsaGH.Components {
@@ -18,11 +18,13 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProfile;
     private bool _useDegrees = false;
+
     public EditProfile() : base("Edit Profile", "EditProfile",
-      "Transform a Profile by rotation or reflection.",
-      CategoryName.Name(), SubCategoryName.Cat1()) {
+      "Transform a Profile by rotation or reflection.", CategoryName.Name(),
+      SubCategoryName.Cat1()) {
       Hidden = true;
     }
+
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       _useDegrees = false;
@@ -30,6 +32,7 @@ namespace GsaGH.Components {
         _useDegrees = angleParameter.UseDegrees;
       }
     }
+
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile", "Pf", "Profile to edit", GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle", "⭮A",
@@ -42,8 +45,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddTextParameter("Profile", "Pf",
-        "Edited Profile with applied transformations", GH_ParamAccess.item);
+      pManager.AddTextParameter("Profile", "Pf", "Edited Profile with applied transformations",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -67,6 +70,7 @@ namespace GsaGH.Components {
           transformation += "H";
         }
       }
+
       bool ghVertical = false;
       if (da.GetData(3, ref ghVertical)) {
         if (ghVertical) {

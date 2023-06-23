@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using GsaAPI.Materials;
-using GsaGH.Parameters;
 using GsaGH.Helpers.Import;
+using GsaGH.Parameters;
 using GsaGHTests.Parameters;
 using Xunit;
 
@@ -111,8 +112,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Equal(GsaMaterial.MatType.Fabric, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         Assert.False(kvp.Value.IsCustom);
-        Assert.Throws<System.Reflection.TargetInvocationException>(
-          () => GsaMaterialTest.DuplicateTest(kvp.Value));
+        Assert.Throws<TargetInvocationException>(() => GsaMaterialTest.DuplicateTest(kvp.Value));
       }
     }
 
@@ -130,31 +130,38 @@ namespace GsaGHTests.Helpers.Import {
         Assert.Throws<Exception>(() => kvp.Value.StandardMaterial);
       }
     }
-    
+
     internal static GsaAPI.Model ImportMaterialsMotherModel() {
       string steelCodeName = "EN 1993-1-1:2005";
       string concreteCodeName = "EC2-1-1";
       var model = new GsaAPI.Model(concreteCodeName, steelCodeName);
 
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, steelCodeName)) {
+      foreach (string grade in
+        GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, steelCodeName)) {
         model.AddSteelMaterial(model.CreateSteelMaterial(grade));
       }
-      foreach (string grade in
-        GsaMaterial.GetGradeNames(GsaMaterial.MatType.Concrete, "", concreteCodeName)) {
+
+      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Concrete, string.Empty,
+        concreteCodeName)) {
         model.AddConcreteMaterial(model.CreateConcreteMaterial(grade));
       }
+
       foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Frp)) {
         model.AddFrpMaterial(model.CreateFrpMaterial(grade));
       }
+
       foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Aluminium)) {
         model.AddAluminiumMaterial(model.CreateAluminiumMaterial(grade));
       }
+
       foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Timber)) {
         model.AddTimberMaterial(model.CreateTimberMaterial(grade));
       }
+
       foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Glass)) {
         model.AddGlassMaterial(model.CreateGlassMaterial(grade));
       }
+
       foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Fabric)) {
         model.AddFabricMaterial(model.CreateFabricMaterial(grade));
       }

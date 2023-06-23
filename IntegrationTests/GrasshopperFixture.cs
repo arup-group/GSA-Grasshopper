@@ -12,6 +12,12 @@ using Xunit;
 
 namespace IntegrationTests {
   public class GrasshopperFixture : IDisposable {
+    public static string InstallPath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+    private static readonly string linkFileName = "IntegrationTests.ghlink";
+    private static readonly string linkFilePath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+      "Libraries");
     public RhinoCore Core {
       get {
         if (null == _core) {
@@ -30,15 +36,9 @@ namespace IntegrationTests {
         return _ghPlugin as GH_RhinoScriptInterface;
       }
     }
-    public static string InstallPath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
 
     private object Doc { get; set; }
     private object DocIo { get; set; }
-    private static readonly string linkFileName = "IntegrationTests.ghlink";
-    private static readonly string linkFilePath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
-      "Libraries");
     private object _core = null;
     private object _ghPlugin = null;
     private bool _isDisposed;
@@ -64,6 +64,13 @@ namespace IntegrationTests {
       Utility.SetupUnitsDuringLoad(true);
     }
 
+    public void Dispose() {
+      // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+      Dispose(true);
+      GC.SuppressFinalize(this);
+      File.Delete(Path.Combine(linkFilePath, linkFileName));
+    }
+
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
     // ~GrasshopperFixture()
     // {
@@ -81,13 +88,6 @@ namespace IntegrationTests {
       StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, linkFileName));
       writer.Write(Environment.CurrentDirectory);
       writer.Close();
-    }
-
-    public void Dispose() {
-      // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-      Dispose(true);
-      GC.SuppressFinalize(this);
-      File.Delete(Path.Combine(linkFilePath, linkFileName));
     }
 
     public void LoadRefs() {

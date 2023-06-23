@@ -7,6 +7,7 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class CreateEdit3dPropElemAndMemTests {
+    private static GH_Document document = null;
     public static GH_Document Document {
       get {
         if (document == null) {
@@ -16,11 +17,11 @@ namespace IntegrationTests.Components {
         return document;
       }
     }
-    private static GH_Document document = null;
 
     [Fact]
     public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error, "ExpectedError");
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error,
+        "ExpectedError");
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
 

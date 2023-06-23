@@ -77,7 +77,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.False(relEnd.Value.Zz);
       Assert.Equal(0, angle.Value, 6);
       Assert.Null(orientation.Value);
-      Assert.Equal("", name.Value);
+      Assert.Equal(string.Empty, name.Value);
       Assert.Equal(0, colour.Value.R);
       Assert.Equal(0, colour.Value.G);
       Assert.Equal(0, colour.Value.B);
@@ -165,8 +165,6 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, colour.Value.B);
       Assert.True(dummy.Value);
       Assert.Equal(0, parentMem.Value);
-
-      
     }
 
     [Fact]

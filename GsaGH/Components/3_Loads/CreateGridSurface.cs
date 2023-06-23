@@ -5,14 +5,15 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
@@ -169,8 +170,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Surface", "GPS", "GSA Grid Surface",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter(), "Grid Surface", "GPS",
+        "GSA Grid Surface", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -206,7 +207,7 @@ namespace GsaGH.Components {
       }
 
       bool changeGs = false;
-      var gs = new GsaAPI.GridSurface();
+      var gs = new GridSurface();
       if (idSet) {
         gs.GridPlane = gps.GridSurface.GridPlane;
       }
@@ -227,80 +228,88 @@ namespace GsaGH.Components {
 
         switch (ghTyp.Value) {
           case GsaListGoo value: {
-              if (value.Value.EntityType == EntityType.Element
-                || value.Value.EntityType == EntityType.Member) {
-                gps._refList = value.Value;
-                gps._referenceType = ReferenceType.List;
-              } else {
-                this.AddRuntimeWarning(
-                  "List must be of type Element or Member to apply to beam loading");
-              }
+            if (value.Value.EntityType == EntityType.Element
+              || value.Value.EntityType == EntityType.Member) {
+              gps._refList = value.Value;
+              gps._referenceType = ReferenceType.List;
+            } else {
+              this.AddRuntimeWarning(
+                "List must be of type Element or Member to apply to beam loading");
+            }
 
             if (value.Value.EntityType == EntityType.Member) {
               this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+                + Environment.NewLine
+                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
-              break;
-            }
+            break;
+          }
           case GsaElement2dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Element;
-              break;
-            }
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Element;
+            break;
+          }
           case GsaMember1dGoo value: {
             gps._refObjectGuid = value.Value.Guid;
             gps._referenceType = ReferenceType.MemberChildElements;
             this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+              + Environment.NewLine
+              + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             break;
           }
           case GsaMember2dGoo value: {
             gps._refObjectGuid = value.Value.Guid;
             gps._referenceType = ReferenceType.MemberChildElements;
             this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+              + Environment.NewLine
+              + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             break;
           }
           case GsaMember3dGoo value: {
             gps._refObjectGuid = value.Value.Guid;
             gps._referenceType = ReferenceType.MemberChildElements;
             this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
+              + Environment.NewLine
+              + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             break;
           }
           case GsaMaterialGoo value: {
-              if (value.Value.Id != 0) {
-                this.AddRuntimeWarning(
-                "Reference Material must be a Custom Material");
-                return;
-              }
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Property;
-              break;
+            if (value.Value.Id != 0) {
+              this.AddRuntimeWarning("Reference Material must be a Custom Material");
+              return;
             }
-          case GsaSectionGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Property;
-              break;
-            }
-          case GsaProp2dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Property;
-              break;
-            }
-          case GsaProp3dGoo value: {
-              gps._refObjectGuid = value.Value.Guid;
-              gps._referenceType = ReferenceType.Property;
-              break;
-            }
-          default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                gps.GridSurface.Elements = elemList;
-              }
 
-              break;
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Property;
+            break;
+          }
+          case GsaSectionGoo value: {
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Property;
+            break;
+          }
+          case GsaProp2dGoo value: {
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Property;
+            break;
+          }
+          case GsaProp3dGoo value: {
+            gps._refObjectGuid = value.Value.Guid;
+            gps._referenceType = ReferenceType.Property;
+            break;
+          }
+          default: {
+            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
+              gps.GridSurface.Elements = elemList;
             }
+
+            break;
+          }
         }
       } else {
         gps.GridSurface.Elements = "All";
@@ -322,7 +331,8 @@ namespace GsaGH.Components {
           try {
             Length.Parse(tolIn);
             gps.Tolerance = tolIn;
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             if (double.TryParse(tolIn, out double _)) {
               gps.Tolerance = tolIn;
             } else {
@@ -334,8 +344,8 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.OneDimensionalOneWay:
-          gs.ElementType = GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
-          gs.SpanType = GsaAPI.GridSurface.Span_Type.ONE_WAY;
+          gs.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+          gs.SpanType = GridSurface.Span_Type.ONE_WAY;
 
           double dir = 0.0;
           if (da.GetData(5, ref dir)) {
@@ -355,7 +365,7 @@ namespace GsaGH.Components {
 
         case FoldMode.OneDimensionalTwoWay:
           changeGs = true;
-          gs.ElementType = GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
+          gs.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
 
           int exp = 0;
           var ghexp = new GH_Integer();
@@ -363,18 +373,18 @@ namespace GsaGH.Components {
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
           }
 
-          gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_CORNER;
+          gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
           switch (exp) {
             case 1:
-              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_SMOOTH;
+              gs.ExpansionType = GridSurfaceExpansionType.PLANE_SMOOTH;
               break;
 
             case 2:
-              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_ASPECT;
+              gs.ExpansionType = GridSurfaceExpansionType.PLANE_ASPECT;
               break;
 
             case 3:
-              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.LEGACY;
+              gs.ExpansionType = GridSurfaceExpansionType.LEGACY;
               break;
           }
 
@@ -384,13 +394,13 @@ namespace GsaGH.Components {
             GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
           }
 
-          gs.SpanType = simple ? GsaAPI.GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS :
-            GsaAPI.GridSurface.Span_Type.TWO_WAY;
+          gs.SpanType = simple ? GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS :
+            GridSurface.Span_Type.TWO_WAY;
           break;
 
         case FoldMode.TwoDimensional:
           changeGs = true;
-          gs.ElementType = GsaAPI.GridSurface.Element_Type.TWO_DIMENSIONAL;
+          gs.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
           break;
       }
 

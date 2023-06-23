@@ -21,26 +21,26 @@ namespace GsaGH.Parameters {
         if (Value != null) {
           switch (Value.LoadType) {
             case GsaLoad.LoadTypes.GridArea: {
-                var ghpln = new GH_Plane();
-                GH_Convert.ToGHPlane(Value.AreaLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
-                  ref ghpln);
-                target = (TQ)(object)ghpln;
-                return true;
-              }
+              var ghpln = new GH_Plane();
+              GH_Convert.ToGHPlane(Value.AreaLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
+                ref ghpln);
+              target = (TQ)(object)ghpln;
+              return true;
+            }
             case GsaLoad.LoadTypes.GridLine: {
-                var ghpln = new GH_Plane();
-                GH_Convert.ToGHPlane(Value.LineLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
-                  ref ghpln);
-                target = (TQ)(object)ghpln;
-                return true;
-              }
+              var ghpln = new GH_Plane();
+              GH_Convert.ToGHPlane(Value.LineLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
+                ref ghpln);
+              target = (TQ)(object)ghpln;
+              return true;
+            }
             case GsaLoad.LoadTypes.GridPoint: {
-                var ghpln = new GH_Plane();
-                GH_Convert.ToGHPlane(Value.PointLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
-                  ref ghpln);
-                target = (TQ)(object)ghpln;
-                return true;
-              }
+              var ghpln = new GH_Plane();
+              GH_Convert.ToGHPlane(Value.PointLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
+                ref ghpln);
+              target = (TQ)(object)ghpln;
+              return true;
+            }
           }
         }
       }
@@ -69,8 +69,7 @@ namespace GsaGH.Parameters {
         if (Value == null) {
           target = default;
         } else {
-          if (Value.LoadType == GsaLoad.LoadTypes.GridLine
-            && Value.LineLoad.Points.Count > 0) {
+          if (Value.LoadType == GsaLoad.LoadTypes.GridLine && Value.LineLoad.Points.Count > 0) {
             var crv = new Polyline(Value.LineLoad.Points);
             target = (TQ)(object)new GH_Curve(crv.ToPolylineCurve());
             return true;

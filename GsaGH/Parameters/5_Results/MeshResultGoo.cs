@@ -11,7 +11,6 @@ using Rhino.Geometry;
 namespace GsaGH.Parameters {
   public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
-    public BoundingBox ClippingBox => Boundingbox;
     public override string TypeDescription => "A GSA result mesh type.";
     public override string TypeName => "Result Mesh";
     public Mesh ValidMesh {
@@ -52,34 +51,7 @@ namespace GsaGH.Parameters {
       ElementIds = ids;
     }
 
-    public void Add(Mesh tempMesh, List<IQuantity> results, List<Point3d> vertices, int id) {
-      _tempMeshes.Add(tempMesh);
-      ResultValues.Add(results);
-      Vertices.Add(vertices);
-      ElementIds.Add(id);
-      _finalised = false;
-    }
-
-    public void Add(
-      List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices,
-      List<int> ids) {
-      _tempMeshes.AddRange(tempMesh);
-      ResultValues.AddRange(results);
-      Vertices.AddRange(vertices);
-      ElementIds.AddRange(ids);
-      Finalise();
-    }
-
-    public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        target = Value.IsValid ? (TQ)(object)new GH_Mesh(Value) :
-          (TQ)(object)new GH_Mesh(ValidMesh);
-        return true;
-      }
-
-      target = default;
-      return false;
-    }
+    public BoundingBox ClippingBox => Boundingbox;
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       args.Pipeline.DrawMeshFalseColors(Value);
@@ -107,6 +79,35 @@ namespace GsaGH.Parameters {
       }
 
       args.Pipeline.DrawMeshWires(Value, color, 1);
+    }
+
+    public void Add(Mesh tempMesh, List<IQuantity> results, List<Point3d> vertices, int id) {
+      _tempMeshes.Add(tempMesh);
+      ResultValues.Add(results);
+      Vertices.Add(vertices);
+      ElementIds.Add(id);
+      _finalised = false;
+    }
+
+    public void Add(
+      List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices,
+      List<int> ids) {
+      _tempMeshes.AddRange(tempMesh);
+      ResultValues.AddRange(results);
+      Vertices.AddRange(vertices);
+      ElementIds.AddRange(ids);
+      Finalise();
+    }
+
+    public override bool CastTo<TQ>(out TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
+        target = Value.IsValid ? (TQ)(object)new GH_Mesh(Value) :
+          (TQ)(object)new GH_Mesh(ValidMesh);
+        return true;
+      }
+
+      target = default;
+      return false;
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {

@@ -127,7 +127,7 @@ namespace GsaGH.Components {
             if (status == 0) {
               var gsaModel = new GsaModel(model) {
                 FileNameAndPath = _fileName,
-                ModelUnit = UnitMapping.GetUnit(model)
+                ModelUnit = UnitMapping.GetUnit(model),
               };
 
               UpdateMessage();
@@ -153,7 +153,7 @@ namespace GsaGH.Components {
         if (status == 0) {
           var gsaModel = new GsaModel(model) {
             FileNameAndPath = _fileName,
-            ModelUnit = UnitMapping.GetUnit(model)
+            ModelUnit = UnitMapping.GetUnit(model),
           };
 
           UpdateMessage();

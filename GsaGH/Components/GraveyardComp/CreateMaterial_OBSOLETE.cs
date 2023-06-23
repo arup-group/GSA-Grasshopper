@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -60,6 +59,16 @@ namespace GsaGH.Components {
       return false;
     }
 
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    void IGH_VariableParameterComponent.VariableParameterMaintenance() { }
+
     public override void CreateAttributes() {
       if (_first) {
         _selecteditem = _mode.ToString();
@@ -72,14 +81,6 @@ namespace GsaGH.Components {
       }, new List<string>() {
         "Material Type",
       });
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
     }
 
     public override bool Read(GH_IReader reader) {
@@ -126,8 +127,6 @@ namespace GsaGH.Components {
       }
     }
 
-    void IGH_VariableParameterComponent.VariableParameterMaintenance() { }
-
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetString("select", _selecteditem);
@@ -147,9 +146,9 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       this.AddRuntimeError(
-        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}" +
-        $"Please use the new CreateMaterial component that now supports standard materials." +
-        $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
+        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}"
+        + $"Please use the new CreateMaterial component that now supports standard materials."
+        + $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
 
       da.SetData(0, new GsaMaterialGoo(null));
     }

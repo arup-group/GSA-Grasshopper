@@ -65,12 +65,12 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(0.5, output11.Value);
       Assert.True(output12.Value);
       Assert.Equal(0.0, output13.Value);
-      Assert.Equal("", output14.Value);
+      Assert.Equal(string.Empty, output14.Value);
       Assert.Equal(0, output15.Value.R);
       Assert.Equal(0, output15.Value.G);
       Assert.Equal(0, output15.Value.B);
       Assert.False(output16.Value);
-      Assert.Equal("", output17.Value);
+      Assert.Equal(string.Empty, output17.Value);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, output15.Value.G);
       Assert.Equal(255, output15.Value.B);
       Assert.True(output16.Value);
-      Assert.Equal("", output17.Value);
+      Assert.Equal(string.Empty, output17.Value);
     }
 
     [Fact]

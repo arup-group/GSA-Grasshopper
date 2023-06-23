@@ -32,6 +32,34 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+      Params.Input[1].Name = "Offset X1 [" + unitAbbreviation + "]";
+      Params.Input[2].Name = "Offset X2 [" + unitAbbreviation + "]";
+      Params.Input[3].Name = "Offset Y [" + unitAbbreviation + "]";
+      Params.Input[4].Name = "Offset Z [" + unitAbbreviation + "]";
+      Params.Output[1].Name = "Offset X1 [" + unitAbbreviation + "]";
+      Params.Output[2].Name = "Offset X2 [" + unitAbbreviation + "]";
+      Params.Output[3].Name = "Offset Y [" + unitAbbreviation + "]";
+      Params.Output[4].Name = "Offset Z [" + unitAbbreviation + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -56,38 +84,10 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      Params.Input[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      Params.Input[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      Params.Input[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      Params.Input[4].Name = "Offset Z [" + unitAbbreviation + "]";
-      Params.Output[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      Params.Output[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      Params.Output[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      Params.Output[4].Name = "Offset Z [" + unitAbbreviation + "]";
     }
 
     public override bool Write(GH_IWriter writer) {

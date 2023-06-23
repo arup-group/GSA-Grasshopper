@@ -69,6 +69,56 @@ namespace GsaGH.Components {
       return false;
     }
 
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
+      if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
+        IQuantity length = new Length(0, _lengthUnit);
+        _unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+        int i = 0;
+        Params.Input[i].NickName = "Mat";
+        Params.Input[i].Name = "Material";
+        Params.Input[i].Description
+          = "GsaMaterial or Number referring to a Material already in Existing GSA Model."
+          + Environment.NewLine + "Accepted inputs are: " + Environment.NewLine + "0 : Generic"
+          + Environment.NewLine + "1 : Steel" + Environment.NewLine + "2 : Concrete (default)"
+          + Environment.NewLine + "3 : Aluminium" + Environment.NewLine + "4 : Glass"
+          + Environment.NewLine + "5 : FRP" + Environment.NewLine + "7 : Timber"
+          + Environment.NewLine + "8 : Fabric";
+
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
+
+        i++;
+        Params.Input[i].NickName = "Thk";
+        Params.Input[i].Name = "Thickness [" + _unitAbbreviation + "]";
+        Params.Input[i].Description = "Section thickness";
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
+      }
+
+      if (_mode != FoldMode.Fabric) {
+        return;
+      }
+
+      {
+        const int i = 0;
+        Params.Input[i].NickName = "Mat";
+        Params.Input[i].Name = "Material";
+        Params.Input[i].Description
+          = "GsaMaterial or Reference ID for Material Property in Existing GSA Model";
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
+      }
+    }
+
     public override void CreateAttributes() {
       if (_first) {
         _dropDownItems = new List<List<string>>();
@@ -90,14 +140,6 @@ namespace GsaGH.Components {
         _selectedItems, _spacerDescriptions);
     }
 
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       try // if users has an old version of this component then dropdown menu wont read
       {
@@ -106,7 +148,8 @@ namespace GsaGH.Components {
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode),
           _selectedItems[0].Replace(" ", string.Empty));
         _lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), _selectedItems[1]);
-      } catch (Exception) {
+      }
+      catch (Exception) {
         _dropDownItems = new List<List<string>>();
         _selectedItems = new List<string>();
         _dropDownItems.Add(_dropdownTopList);
@@ -188,48 +231,6 @@ namespace GsaGH.Components {
       ExpireSolution(true);
       Params.OnParametersChanged();
       OnDisplayExpired(true);
-    }
-
-    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
-      if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric) {
-        IQuantity length = new Length(0, _lengthUnit);
-        _unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
-        int i = 0;
-        Params.Input[i].NickName = "Mat";
-        Params.Input[i].Name = "Material";
-        Params.Input[i].Description
-          = "GsaMaterial or Number referring to a Material already in Existing GSA Model."
-          + Environment.NewLine + "Accepted inputs are: " + Environment.NewLine + "0 : Generic"
-          + Environment.NewLine + "1 : Steel" + Environment.NewLine + "2 : Concrete (default)"
-          + Environment.NewLine + "3 : Aluminium" + Environment.NewLine + "4 : Glass"
-          + Environment.NewLine + "5 : FRP" + Environment.NewLine + "7 : Timber"
-          + Environment.NewLine + "8 : Fabric";
-
-        Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
-
-        i++;
-        Params.Input[i].NickName = "Thk";
-        Params.Input[i].Name = "Thickness [" + _unitAbbreviation + "]";
-        Params.Input[i].Description = "Section thickness";
-        Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
-      }
-
-      if (_mode != FoldMode.Fabric) {
-        return;
-      }
-
-      {
-        const int i = 0;
-        Params.Input[i].NickName = "Mat";
-        Params.Input[i].Name = "Material";
-        Params.Input[i].Description
-          = "GsaMaterial or Reference ID for Material Property in Existing GSA Model";
-        Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
-      }
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -375,10 +376,10 @@ namespace GsaGH.Components {
           GsaMaterialGoo materialGoo = null;
           if (da.GetData(0, ref materialGoo)) {
             prop.Material = materialGoo.Value;
-          } 
+          }
 
           prop.Thickness = (Length)Input.UnitNumber(this, da, 1, _lengthUnit);
-        } 
+        }
       }
 
       da.SetData(0, new GsaProp2dGoo(prop));

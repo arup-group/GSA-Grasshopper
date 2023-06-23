@@ -20,20 +20,6 @@ namespace GsaGH.Parameters {
 
     public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
 
-    public override bool CastTo<TQ>(ref TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
-        if (Value != null) {
-          var pln = new GH_Plane();
-          GH_Convert.ToGHPlane(Value.Plane, GH_Conversion.Both, ref pln);
-          target = (TQ)(object)pln;
-          return true;
-        }
-      }
-
-      target = default;
-      return false;
-    }
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
@@ -53,6 +39,20 @@ namespace GsaGH.Parameters {
         args.Pipeline.DrawPoint(Value.Plane.Origin, PointStyle.RoundControlPoint, 3,
           Colours.NodeSelected);
       }
+    }
+
+    public override bool CastTo<TQ>(ref TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
+        if (Value != null) {
+          var pln = new GH_Plane();
+          GH_Convert.ToGHPlane(Value.Plane, GH_Conversion.Both, ref pln);
+          target = (TQ)(object)pln;
+          return true;
+        }
+      }
+
+      target = default;
+      return false;
     }
 
     public override IGH_GeometricGoo Duplicate() {

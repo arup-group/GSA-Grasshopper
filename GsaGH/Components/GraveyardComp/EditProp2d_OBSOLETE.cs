@@ -40,7 +40,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
@@ -178,8 +178,8 @@ namespace GsaGH.Components {
           }
         }
 
-        int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-        string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+        int ax = prop.ApiProp2d == null ? 0 : prop.AxisProperty;
+        string nm = prop.ApiProp2d == null ? "--" : prop.Name;
         ValueType colour = prop.ApiProp2d?.Colour;
 
         da.SetData(0, new GsaProp2dGoo(prop));

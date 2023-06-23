@@ -11,8 +11,7 @@ namespace GsaGH.Helpers.Export {
   internal class Members {
     internal static void ConvertMember1ds(
       List<GsaMember1d> member1ds, ref GsaGuidDictionary<Member> apiMembers,
-      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
-      ref Properties apiProperties) {
+      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit, ref Properties apiProperties) {
       if (member1ds == null) {
         return;
       }
@@ -24,20 +23,17 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void ConvertMember1D(
-      GsaMember1d member1d, 
-      ref GsaGuidDictionary<Member> apiMembers,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties) {
+      GsaMember1d member1d, ref GsaGuidDictionary<Member> apiMembers,
+      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit, ref Properties apiProperties) {
       Member apiMember = member1d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
 
-      string topo
-        = CreateTopology(member1d.Topology, member1d.TopologyType, ref apiNodes, unit);
-      if (topo != "") {
+      string topo = CreateTopology(member1d.Topology, member1d.TopologyType, ref apiNodes, unit);
+      if (!string.IsNullOrEmpty(topo)) {
         try {
           apiMember.Topology = string.Copy(topo.Replace("  ", " "));
-        } catch (Exception) {
+        }
+        catch (Exception) {
           var errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
           string error = string.Join(", ", errors);
           throw new Exception(" Invalid topology for Member1d: " + topo + " with original points: "
@@ -56,17 +52,13 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void ConvertMember2D(
-      GsaMember2d member2d, 
-      ref GsaGuidDictionary<Member> apiMembers,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties,
+      GsaMember2d member2d, ref GsaGuidDictionary<Member> apiMembers,
+      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit, ref Properties apiProperties,
       ref GsaIntDictionary<Axis> apiAxes) {
       Member apiMember = member2d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member2d.MeshSize, unit).Meters;
 
-      string topo
-        = CreateTopology(member2d.Topology, member2d.TopologyType, ref apiNodes, unit);
+      string topo = CreateTopology(member2d.Topology, member2d.TopologyType, ref apiNodes, unit);
 
       if (member2d.VoidTopology != null) {
         for (int i = 0; i < member2d.VoidTopology.Count; i++) {
@@ -83,28 +75,28 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (member2d.InclusionPoints != null) {
-        topo += " P(" + CreateTopology(member2d.InclusionPoints, null, ref apiNodes, unit)
-          + ")";
+        topo += " P(" + CreateTopology(member2d.InclusionPoints, null, ref apiNodes, unit) + ")";
       }
 
       try {
         apiMember.Topology = string.Copy(topo.Replace("( ", "(").Replace("  ", " "));
-      } catch (Exception) {
+      }
+      catch (Exception) {
         var errors = member2d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
         string error = string.Join(", ", errors);
         throw new Exception(" Invalid topology for Member2d: " + topo + " with original points: "
           + error);
       }
 
-      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Prop2d, ref apiProperties, ref apiAxes, unit);
+      apiMember.Property
+        = Prop2ds.ConvertProp2d(member2d.Prop2d, ref apiProperties, ref apiAxes, unit);
 
       AddMember(member2d.Id, member2d.Guid, apiMember, ref apiMembers);
     }
 
     internal static void ConvertMember2ds(
       List<GsaMember2d> member2ds, ref GsaGuidDictionary<Member> apiMembers,
-      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
-      ref Properties apiProperties,
+      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit, ref Properties apiProperties,
       ref GsaIntDictionary<Axis> apiAxes) {
       if (member2ds == null) {
         return;
@@ -112,14 +104,14 @@ namespace GsaGH.Helpers.Export {
 
       member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
       foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null)) {
-        ConvertMember2D(member2d, ref apiMembers, ref apiNodes, unit, ref apiProperties, ref apiAxes);
+        ConvertMember2D(member2d, ref apiMembers, ref apiNodes, unit, ref apiProperties,
+          ref apiAxes);
       }
     }
 
     internal static void ConvertMember3D(
       GsaMember3d member3d, ref GsaGuidDictionary<Member> apiMembers,
-      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
-      ref Properties apiProperties) {
+      ref GsaIntDictionary<Node> apiNodes, LengthUnit unit, ref Properties apiProperties) {
       Member apiMember = member3d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member3d.MeshSize, unit).Meters;
 
@@ -145,8 +137,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertMember3ds(
       List<GsaMember3d> member3ds, ref GsaGuidDictionary<Member> apiMembers,
-      ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
-      ref Properties apiProperties) {
+      ref GsaIntDictionary<Node> existingNodes, LengthUnit unit, ref Properties apiProperties) {
       if (member3ds == null) {
         return;
       }
@@ -169,7 +160,7 @@ namespace GsaGH.Helpers.Export {
     private static string CreateTopology(
       IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
-      string topo = "";
+      string topo = string.Empty;
       if (topology == null) {
         return topo;
       }
@@ -178,7 +169,7 @@ namespace GsaGH.Helpers.Export {
         if (topoType != null) {
           if (j > 0) {
             string topologyType = topoType[j];
-            if (topologyType == "" | topologyType == " ") {
+            if (string.IsNullOrEmpty(topologyType.Trim())) {
               topo += " ";
             } else {
               topo += topologyType.ToLower()

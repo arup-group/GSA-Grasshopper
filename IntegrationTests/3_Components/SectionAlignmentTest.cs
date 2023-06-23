@@ -8,8 +8,8 @@ using Xunit;
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class SectionAlignmentTest {
-    private static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
+    private static GH_Document Document => document ?? (document = OpenDocument());
 
     [Fact]
     public void CalculatedOffsetsTest() {

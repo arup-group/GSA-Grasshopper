@@ -535,8 +535,8 @@ namespace GsaGH.Helpers.GsaApi {
           Double6 values = result.Reaction;
 
           if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeId)) {
-            if (values.X == 0 & values.Y == 0 & values.Z == 0 & values.XX == 0 & values.YY == 0
-              & values.ZZ == 0) {
+            if ((values.X == 0) & (values.Y == 0) & (values.Z == 0) & (values.XX == 0)
+              & (values.YY == 0) & (values.ZZ == 0)) {
               return;
             }
           }
@@ -637,8 +637,8 @@ namespace GsaGH.Helpers.GsaApi {
           Double6 values = result.SpringForce;
 
           if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeId)) {
-            if (values.X == 0 & values.Y == 0 & values.Z == 0 & values.XX == 0 & values.YY == 0
-              & values.ZZ == 0) {
+            if ((values.X == 0) & (values.Y == 0) & (values.Z == 0) & (values.XX == 0)
+              & (values.YY == 0) & (values.ZZ == 0)) {
               return;
             }
           }

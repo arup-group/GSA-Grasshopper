@@ -9,7 +9,7 @@ using AccelerationUnit = OasysUnits.Units.AccelerationUnit;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
+using LengthUnit = GsaAPI.LengthUnit;
 using MassUnit = OasysUnits.Units.MassUnit;
 
 namespace GsaGHTests.Helpers.GsaAPITests {
@@ -128,13 +128,11 @@ namespace GsaGHTests.Helpers.GsaAPITests {
 
     [Fact]
     public void LengthUnitMappingTest() {
-      foreach (GsaAPI.LengthUnit apiLengthUnit in
-        (GsaAPI.LengthUnit[])Enum.GetValues(typeof(GsaAPI.LengthUnit))) {
-
-        LengthUnit lengthUnit = UnitMapping.GetUnit(apiLengthUnit);
+      foreach (LengthUnit apiLengthUnit in (LengthUnit[])Enum.GetValues(typeof(LengthUnit))) {
+        OasysUnits.Units.LengthUnit lengthUnit = UnitMapping.GetUnit(apiLengthUnit);
         Assert.Equal(lengthUnit.ToString(), apiLengthUnit.ToString());
 
-        GsaAPI.LengthUnit apiLengthUnitFromOasysUnit = UnitMapping.GetApiUnit(lengthUnit);
+        LengthUnit apiLengthUnitFromOasysUnit = UnitMapping.GetApiUnit(lengthUnit);
         Assert.Equal(lengthUnit.ToString(), apiLengthUnitFromOasysUnit.ToString());
       }
     }
@@ -148,9 +146,11 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("FootPerSecondSquared", "FootPerSecondSquared")]
     [InlineData("Gravity", "StandardGravity")]
     [InlineData("Milligravity", "MillistandardGravity")]
-    public void AccelerationUnitMappingTest(string gsaUnit, string oasysUnit, bool castBack = true) {
+    public void AccelerationUnitMappingTest(
+      string gsaUnit, string oasysUnit, bool castBack = true) {
       var expectedUnit = (AccelerationUnit)Enum.Parse(typeof(AccelerationUnit), oasysUnit, true);
-      var expectedApiUnit = (GsaAPI.AccelerationUnit)Enum.Parse(typeof(GsaAPI.AccelerationUnit), gsaUnit, true);
+      var expectedApiUnit
+        = (GsaAPI.AccelerationUnit)Enum.Parse(typeof(GsaAPI.AccelerationUnit), gsaUnit, true);
 
       AccelerationUnit unit = UnitMapping.GetUnit(expectedApiUnit);
       Assert.Equal(expectedUnit.ToString(), unit.ToString());
@@ -255,13 +255,13 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("PoundForcePerSquareInch", "PoundForcePerSquareInch")]
     public void StressUnitMappingTest(string gsaUnit, string oasysUnit, bool castBack = true) {
       var expectedUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), oasysUnit, true);
-      var expectedApiUnit = (GsaAPI.StressUnit)Enum.Parse(typeof(GsaAPI.StressUnit), gsaUnit, true);
+      var expectedApiUnit = (StressUnit)Enum.Parse(typeof(StressUnit), gsaUnit, true);
 
       PressureUnit unit = UnitMapping.GetUnit(expectedApiUnit);
       Assert.Equal(expectedUnit.ToString(), unit.ToString());
 
       if (castBack) {
-        GsaAPI.StressUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
+        StressUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
         Assert.Equal(expectedApiUnit.ToString(), apiUnit.ToString());
       }
     }
@@ -274,13 +274,13 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("Second", "Second")]
     public void TimeUnitMappingTest(string gsaUnit, string oasysUnit, bool castBack = true) {
       var expectedUnit = (DurationUnit)Enum.Parse(typeof(DurationUnit), oasysUnit, true);
-      var expectedApiUnit = (GsaAPI.TimeUnit)Enum.Parse(typeof(GsaAPI.TimeUnit), gsaUnit, true);
+      var expectedApiUnit = (TimeUnit)Enum.Parse(typeof(TimeUnit), gsaUnit, true);
 
       DurationUnit unit = UnitMapping.GetUnit(expectedApiUnit);
       Assert.Equal(expectedUnit.ToString(), unit.ToString());
 
       if (castBack) {
-        GsaAPI.TimeUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
+        TimeUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
         Assert.Equal(expectedApiUnit.ToString(), apiUnit.ToString());
       }
     }
@@ -295,13 +295,13 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("MillimeterPerSecond", "MillimeterPerSecond")]
     public void VelocityUnitMappingTest(string gsaUnit, string oasysUnit, bool castBack = true) {
       var expectedUnit = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), oasysUnit, true);
-      var expectedApiUnit = (GsaAPI.VelocityUnit)Enum.Parse(typeof(GsaAPI.VelocityUnit), gsaUnit, true);
+      var expectedApiUnit = (VelocityUnit)Enum.Parse(typeof(VelocityUnit), gsaUnit, true);
 
       SpeedUnit unit = UnitMapping.GetUnit(expectedApiUnit);
       Assert.Equal(expectedUnit.ToString(), unit.ToString());
 
       if (castBack) {
-        GsaAPI.VelocityUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
+        VelocityUnit apiUnit = UnitMapping.GetApiUnit(expectedUnit);
         Assert.Equal(expectedApiUnit.ToString(), apiUnit.ToString());
       }
     }

@@ -1,23 +1,24 @@
-﻿using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Parameters;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class Properties {
-    internal GsaGuidDictionary<Section> Sections;
-    internal GsaIntDictionary<SectionModifier> SecionModifiers;
+    internal int Count => Sections.Count + Prop2ds.Count + Prop3ds.Count;
+    internal Materials Materials;
     internal GsaGuidDictionary<Prop2D> Prop2ds;
     internal GsaGuidDictionary<Prop3D> Prop3ds;
-    internal Materials Materials;
-    internal int Count => Sections.Count + Prop2ds.Count + Prop3ds.Count;
-    internal Properties(GsaModel model) { 
+    internal GsaIntDictionary<SectionModifier> SecionModifiers;
+    internal GsaGuidDictionary<Section> Sections;
+
+    internal Properties(GsaModel model) {
       Materials = new Materials(model);
       (Sections, SecionModifiers) = GetSectionDictionary(model);
       Prop2ds = GetProp2dDictionary(model);
       Prop3ds = GetProp3dDictionary(model);
     }
+
     internal void Assemble(ref Model apiModel) {
       apiModel.SetSections(Sections.ReadOnlyDictionary);
       apiModel.SetSectionModifiers(SecionModifiers.ReadOnlyDictionary);
@@ -61,6 +62,7 @@ namespace GsaGH.Helpers.Export {
       foreach (KeyValuePair<int, GsaProp2dGoo> prop in model.Properties.Prop2ds) {
         properties.SetValue(prop.Key, prop.Value.Value.Guid, prop.Value.Value.ApiProp2d);
       }
+
       return properties;
     }
 
@@ -69,6 +71,7 @@ namespace GsaGH.Helpers.Export {
       foreach (KeyValuePair<int, GsaProp3dGoo> prop in model.Properties.Prop3ds) {
         properties.SetValue(prop.Key, prop.Value.Value.Guid, prop.Value.Value.ApiProp3d);
       }
+
       return properties;
     }
   }

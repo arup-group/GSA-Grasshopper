@@ -15,8 +15,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal static int ConvertSection(
-      GsaSection section, ref Properties apiProperties) {
+    internal static int ConvertSection(GsaSection section, ref Properties apiProperties) {
       if (section == null) {
         return 0;
       }

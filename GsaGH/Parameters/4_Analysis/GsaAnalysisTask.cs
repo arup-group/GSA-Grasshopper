@@ -68,8 +68,9 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return (Id > 0 ? "ID:" + Id : string.Empty + " '" + Name + "' " + Type.ToString().Replace("_", " "))
-       .Trim().Replace("  ", " ");
+      return (Id > 0 ? "ID:" + Id :
+          string.Empty + " '" + Name + "' " + Type.ToString().Replace("_", " ")).Trim()
+       .Replace("  ", " ");
     }
 
     internal void CreateDeafultCases(GsaModel gsaModel) {

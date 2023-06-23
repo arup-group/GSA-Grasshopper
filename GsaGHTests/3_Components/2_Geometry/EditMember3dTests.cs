@@ -44,13 +44,13 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
       Assert.Equal(0.5, output4.Value);
       Assert.True(output5.Value);
-      Assert.Equal("", output6.Value);
+      Assert.Equal(string.Empty, output6.Value);
       Assert.Equal(0, output7.Value);
       Assert.Equal(0, output8.Value.R);
       Assert.Equal(0, output8.Value.G);
       Assert.Equal(0, output8.Value.B);
       Assert.False(output9.Value);
-      Assert.Equal("", output10.Value);
+      Assert.Equal(string.Empty, output10.Value);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, output8.Value.G);
       Assert.Equal(255, output8.Value.B);
       Assert.True(output9.Value);
-      Assert.Equal("", output10.Value);
+      Assert.Equal(string.Empty, output10.Value);
     }
   }
 }

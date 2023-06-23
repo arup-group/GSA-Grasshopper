@@ -7,8 +7,8 @@ using Xunit;
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GridPlaneSurfaceTest {
-    public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
 
     [Theory]
     [InlineData("DefaultGpElevation", "0cm")]

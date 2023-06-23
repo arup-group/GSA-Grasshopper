@@ -8,9 +8,10 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export.Load {
   internal class NodeLoads {
-    internal List<NodeLoad> Nodes;
     internal List<NodeLoad> Displacements;
-    internal List<NodeLoad> Settlements; 
+    internal List<NodeLoad> Nodes;
+    internal List<NodeLoad> Settlements;
+
     public NodeLoads() {
       Nodes = new List<NodeLoad>();
       Displacements = new List<NodeLoad>();
@@ -18,7 +19,8 @@ namespace GsaGH.Helpers.Export.Load {
     }
 
     internal void Assemble(ref Model apiModel) {
-      apiModel.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(Displacements));
+      apiModel.AddNodeLoads(NodeLoadType.APPL_DISP,
+        new ReadOnlyCollection<NodeLoad>(Displacements));
       apiModel.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(Nodes));
       apiModel.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(Settlements));
     }
@@ -37,11 +39,8 @@ namespace GsaGH.Helpers.Export.Load {
     }
 
     internal static void ConvertNodeLoad(
-      GsaLoad load, 
-      ref NodeLoads loads, 
-      ref GsaIntDictionary<Node> apiNodes,
-      ref GsaGuidDictionary<EntityList> apiLists, 
-      LengthUnit unit) {
+      GsaLoad load, ref NodeLoads loads, ref GsaIntDictionary<Node> apiNodes,
+      ref GsaGuidDictionary<EntityList> apiLists, LengthUnit unit) {
       if (load.NodeLoad._refPoint != Point3d.Unset) {
         load.NodeLoad.NodeLoad.Nodes
           = Export.Nodes.AddNode(ref apiNodes, load.NodeLoad._refPoint, unit).ToString();

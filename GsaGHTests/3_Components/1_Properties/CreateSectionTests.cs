@@ -15,7 +15,8 @@ namespace GsaGHTests.Components.Properties {
       comp.CreateAttributes();
 
       var material
-        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(), 0);
+        = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(),
+          0);
 
       ComponentTestHelper.SetInput(comp, profile, 0);
       ComponentTestHelper.SetInput(comp, material, 1);

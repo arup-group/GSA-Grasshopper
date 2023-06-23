@@ -126,7 +126,7 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend)) {
+      if (!((_legendValues != null) & _showLegend)) {
         return;
       }
 
@@ -246,12 +246,12 @@ namespace GsaGH.Components {
           bool redraw = false;
           _selectedItems[1] = _dropDownItems[1][selectedidd];
           if (_mode == FoldMode.Displacement) {
-            if ((int)_disp > 3 & selectedidd < 4) {
+            if (((int)_disp > 3) & (selectedidd < 4)) {
               redraw = true;
               _slider = true;
             }
 
-            if ((int)_disp < 4 & selectedidd > 3) {
+            if (((int)_disp < 4) & (selectedidd > 3)) {
               redraw = true;
               _slider = false;
             }
@@ -261,7 +261,7 @@ namespace GsaGH.Components {
           if (_dropDownItems[1] != _displacement) {
             _isShear = false;
             if (_mode == FoldMode.Force) {
-              if (selectedidd == 3 | selectedidd == 4) {
+              if ((selectedidd == 3) | (selectedidd == 4)) {
                 _disp = (DisplayValue)selectedidd - 3;
                 _isShear = true;
               } else if (selectedidd > 4) {
@@ -321,7 +321,7 @@ namespace GsaGH.Components {
           Params.Output[2].Name = "Values [rad]";
           break;
 
-        case FoldMode.Force when (int)_disp < 4 | _isShear:
+        case FoldMode.Force when ((int)_disp < 4) | _isShear:
           Params.Output[2].Name = "Legend Values ["
             + ForcePerLength.GetAbbreviation(DefaultUnits.ForcePerLengthUnit) + "/"
             + lengthunitAbbreviation + "]";
@@ -515,11 +515,11 @@ namespace GsaGH.Components {
       double dmaxX = _isShear ? resShear.DmaxX.As(xyzunit) : res.DmaxX.As(xyzunit);
       double dmaxY = _isShear ? resShear.DmaxY.As(xyzunit) : res.DmaxY.As(xyzunit);
       double dmaxZ = res.DmaxZ.As(xyzunit);
-      double dmaxXyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
+      double dmaxXyz = _mode == FoldMode.Displacement ? res.DmaxXyz.As(xyzunit) : 0;
       double dminX = _isShear ? resShear.DminX.As(xyzunit) : res.DminX.As(xyzunit);
       double dminY = _isShear ? resShear.DminY.As(xyzunit) : res.DminY.As(xyzunit);
       double dminZ = res.DminZ.As(xyzunit);
-      double dminXyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
+      double dminXyz = _mode == FoldMode.Displacement ? res.DminXyz.As(xyzunit) : 0;
       double dmaxXx = _isShear ? 0 : res.DmaxXx.As(xxyyzzunit);
       double dmaxYy = _isShear ? 0 : res.DmaxYy.As(xxyyzzunit);
       double dmaxZz = _isShear ? 0 : res.DmaxZz.As(xxyyzzunit);
@@ -539,9 +539,9 @@ namespace GsaGH.Components {
           dmin = dminX;
           if (_mode == FoldMode.Displacement) {
             _resType = "Translation, Ux";
-          } else if (_mode == FoldMode.Force & !_isShear) {
+          } else if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Force, Nx";
-          } else if (_mode == FoldMode.Force & _isShear) {
+          } else if ((_mode == FoldMode.Force) & _isShear) {
             _resType = "2D Shear, Qx";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, xx";
@@ -554,9 +554,9 @@ namespace GsaGH.Components {
           dmin = dminY;
           if (_mode == FoldMode.Displacement) {
             _resType = "Translation, Uy";
-          } else if (_mode == FoldMode.Force & !_isShear) {
+          } else if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Force, Ny";
-          } else if (_mode == FoldMode.Force & _isShear) {
+          } else if ((_mode == FoldMode.Force) & _isShear) {
             _resType = "2D Shear, Qy";
           } else if (_mode == FoldMode.Stress) {
             _resType = "2D Stress, yy";
@@ -569,7 +569,7 @@ namespace GsaGH.Components {
           dmin = dminZ;
           if (_mode == FoldMode.Displacement) {
             _resType = "Translation, Uz";
-          } else if (_mode == FoldMode.Force & !_isShear) {
+          } else if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Force, Nxy";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, zz";
@@ -589,7 +589,7 @@ namespace GsaGH.Components {
         case DisplayValue.Xx:
           dmax = dmaxXx;
           dmin = dminXx;
-          if (_mode == FoldMode.Force & !_isShear) {
+          if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Moment, Mx";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, xy";
@@ -600,7 +600,7 @@ namespace GsaGH.Components {
         case DisplayValue.Yy:
           dmax = dmaxYy;
           dmin = dminYy;
-          if (_mode == FoldMode.Force & !_isShear) {
+          if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Moment, My";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, yz";
@@ -611,7 +611,7 @@ namespace GsaGH.Components {
         case DisplayValue.Zz:
           dmax = dmaxZz;
           dmin = dminZz;
-          if (_mode == FoldMode.Force & !_isShear) {
+          if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Moment, Mxy";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, zy";
@@ -802,7 +802,7 @@ namespace GsaGH.Components {
             ts.Add(new GH_UnitNumber(rotation));
             break;
           }
-          case FoldMode.Force when (int)_disp < 4 | _isShear: {
+          case FoldMode.Force when ((int)_disp < 4) | _isShear: {
             var forcePerLength = new ForcePerLength(t, DefaultUnits.ForcePerLengthUnit);
             _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(forcePerLength));

@@ -32,9 +32,8 @@ namespace GsaGH.Helpers.Export {
 
     public static GsaModel MergeModel(
       GsaModel mainModel, GsaModel appendModel, GH_Component owner, Length tolerance) {
-      
-      ConcurrentBag<GsaNodeGoo> goonodes = 
-        Import.Nodes.GetNodes(appendModel.ApiNodes, LengthUnit.Meter);
+      ConcurrentBag<GsaNodeGoo> goonodes
+        = Import.Nodes.GetNodes(appendModel.ApiNodes, LengthUnit.Meter);
       var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
         c.Id = 0; // set node Id of incoming to 0 to append to end and use CollapseCoincidingNodes
@@ -42,22 +41,22 @@ namespace GsaGH.Helpers.Export {
       }).ToList();
 
       var elements = new Import.Elements(appendModel);
-      var elem1ds = elements.Element1ds.Select(n => n.Value).
-        OrderByDescending(x => x.Id).ToList();
+      var elem1ds = elements.Element1ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       elem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var elem2ds = elements.Element2ds.Select(n => n.Value).
-        OrderByDescending(x => x.Ids.First()).ToList();
+      var elem2ds = elements.Element2ds.Select(n => n.Value).OrderByDescending(x => x.Ids.First())
+       .ToList();
       foreach (GsaElement2d elem2d in elem2ds) {
         elem2d.Ids.Select(c => {
           c = 0;
           return c;
         }).ToList();
       }
-      var elem3ds = elements.Element3ds.Select(n => n.Value).
-        OrderByDescending(x => x.Ids.First()).ToList();
+
+      var elem3ds = elements.Element3ds.Select(n => n.Value).OrderByDescending(x => x.Ids.First())
+       .ToList();
       foreach (GsaElement3d elem3d in elem3ds) {
         elem3d.Ids.Select(c => {
           c = 0;
@@ -83,32 +82,35 @@ namespace GsaGH.Helpers.Export {
       }).ToList();
 
       var existingSectionIds = mainModel.Properties.Sections.Keys.ToList();
-      var sections = appendModel.Properties.Sections.
-        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
+      var sections = appendModel.Properties.Sections.Select(n => n.Value.Value)
+       .OrderByDescending(x => x.Id).ToList();
       sections.Select(c => {
         if (existingSectionIds.Contains(c.Id)) {
           c.Id = 0; // only set id to 0 if sectionId already exists in model to allow reference
         }
+
         return c;
       }).ToList();
 
       var existingProp2dIds = mainModel.Properties.Prop2ds.Keys.ToList();
-      var prop2Ds = appendModel.Properties.Prop2ds.
-        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
+      var prop2Ds = appendModel.Properties.Prop2ds.Select(n => n.Value.Value)
+       .OrderByDescending(x => x.Id).ToList();
       prop2Ds.Select(c => {
         if (existingProp2dIds.Contains(c.Id)) {
           c.Id = 0;
         }
+
         return c;
       }).ToList();
 
       var existingProp3dIds = mainModel.Properties.Prop3ds.Keys.ToList();
-      var prop3Ds = appendModel.Properties.Prop3ds.
-        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
+      var prop3Ds = appendModel.Properties.Prop3ds.Select(n => n.Value.Value)
+       .OrderByDescending(x => x.Id).ToList();
       prop3Ds.Select(c => {
         if (existingProp3dIds.Contains(c.Id)) {
           c.Id = 0;
         }
+
         return c;
       }).ToList();
 
@@ -121,23 +123,23 @@ namespace GsaGH.Helpers.Export {
       IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.Model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.Model.GridPlanes();
 
-      gooloads.AddRange(Import.Loads.GetGridPointLoads(
-        appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
-      gooloads.AddRange(Import.Loads.GetGridLineLoads(
-        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
-      gooloads.AddRange(Import.Loads.GetGridAreaLoads(
-        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+      gooloads.AddRange(Import.Loads.GetGridPointLoads(appendModel.Model.GridPointLoads(), srfDict,
+        plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+      gooloads.AddRange(Import.Loads.GetGridLineLoads(appendModel.Model.GridLineLoads(), srfDict,
+        plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+      gooloads.AddRange(Import.Loads.GetGridAreaLoads(appendModel.Model.GridAreaLoads(), srfDict,
+        plnDict, appendModel.ApiAxis, LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
       var gpsgoo = srfDict.Keys.Select(key => new GsaGridPlaneSurfaceGoo(
-            Import.Loads.GetGridPlaneSurface(
-              srfDict, plnDict, appendModel.ApiAxis, key, LengthUnit.Meter))).ToList();
+        Import.Loads.GetGridPlaneSurface(srfDict, plnDict, appendModel.ApiAxis, key,
+          LengthUnit.Meter))).ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();
 
       List<GsaList> lists = Import.Lists.GetLists(appendModel);
 
       mainModel.Model = AssembleModel.Assemble(mainModel, lists, nodes, elem1ds, elem2ds, elem3ds,
-        mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gps, null, null, 
+        mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gps, null, null,
         LengthUnit.Meter, tolerance, false, owner);
       return mainModel;
     }

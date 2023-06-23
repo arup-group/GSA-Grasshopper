@@ -6,10 +6,9 @@ using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-
   public class ParametersCast_Test {
-    public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
+    public static GH_Document Document => document ?? (document = OpenDocument());
 
     [Theory]
     [InlineData("List")]
@@ -41,10 +40,10 @@ namespace IntegrationTests.Parameters {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }
-      
+
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
-      
+
       if (checkError) {
         TestCastError(groupIdentifier + "Error");
       }
@@ -55,6 +54,7 @@ namespace IntegrationTests.Parameters {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.False(data.IsValid);
       }
+
       Assert.NotEmpty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
@@ -66,6 +66,7 @@ namespace IntegrationTests.Parameters {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }
+
       Assert.Single(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
@@ -103,6 +104,7 @@ namespace IntegrationTests.Parameters {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }
+
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }

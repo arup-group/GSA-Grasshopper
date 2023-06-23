@@ -155,13 +155,13 @@ namespace GsaGH.Parameters {
     }
     internal Member ApiMember { get; set; } = new Member();
     internal GsaLocalAxes LocalAxes { get; set; } = null;
-    internal List<Line> _previewGreenLines;
-    internal List<Line> _previewRedLines;
     private PolyCurve _crv = new PolyCurve();
     // Polyline for visualisation /member1d/member2d
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
     private GsaNode _orientationNode;
+    internal List<Line> _previewGreenLines;
+    internal List<Line> _previewRedLines;
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
 
@@ -182,12 +182,8 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaMember1d(
-      KeyValuePair<int, Member> mem,
-      List<Point3d> topology,
-      List<string> topoType,
-      ReadOnlyCollection<double> localAxis,
-      GsaSection section,
-      LengthUnit modelUnit) {
+      KeyValuePair<int, Member> mem, List<Point3d> topology, List<string> topoType,
+      ReadOnlyCollection<double> localAxis, GsaSection section, LengthUnit modelUnit) {
       ApiMember = mem.Value;
       MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
       _id = mem.Key;

@@ -33,6 +33,31 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public virtual void VariableParameterMaintenance() {
+      Params.Output[0].Name = "Elastic Modulus [" + Pressure.GetAbbreviation(_stressUnit) + "]";
+      Params.Output[2].Name = "Density [" + Density.GetAbbreviation(_densityUnit) + "]";
+      CoefficientOfThermalExpansionUnit temp
+        = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
+      Params.Output[3].Name = "Thermal Expansion ["
+        + CoefficientOfThermalExpansion.GetAbbreviation(temp) + "]";
+    }
+
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -87,22 +112,6 @@ namespace GsaGH.Components {
       Menu_AppendSeparator(menu);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
     public override bool Read(GH_IReader reader) {
       try {
         _stressUnit
@@ -111,22 +120,14 @@ namespace GsaGH.Components {
           = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), reader.GetString("DensityUnit"));
         _temperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit),
           reader.GetString("TemperatureUnit"));
-      } catch (Exception) {
+      }
+      catch (Exception) {
         _stressUnit = DefaultUnits.StressUnitResult;
         _densityUnit = DefaultUnits.DensityUnit;
         _temperatureUnit = DefaultUnits.TemperatureUnit;
       }
 
       return base.Read(reader);
-    }
-
-    public virtual void VariableParameterMaintenance() {
-      Params.Output[0].Name = "Elastic Modulus [" + Pressure.GetAbbreviation(_stressUnit) + "]";
-      Params.Output[2].Name = "Density [" + Density.GetAbbreviation(_densityUnit) + "]";
-      CoefficientOfThermalExpansionUnit temp
-        = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
-      Params.Output[3].Name = "Thermal Expansion ["
-        + CoefficientOfThermalExpansion.GetAbbreviation(temp) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
