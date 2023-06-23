@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using static GsaGH.Parameters.GsaMaterial;
 using static GsaGH.Parameters.GsaOffset;
+using Diagram = GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.GsaApi {
   internal class Mappings {
+
     internal static readonly Dictionary<string, AlignmentType> alignmentTypeMapping
       = new Dictionary<string, AlignmentType>() {
         {
@@ -219,6 +222,41 @@ namespace GsaGH.Helpers.GsaApi {
           "Num Type", Property2D_Type.NUM_TYPE
         },
       };
+
+    internal static readonly IList<DiagramTypeMapping> diagramTypeMapping
+      = new List<DiagramTypeMapping>() {
+        new DiagramTypeMapping("Axial Force Fx", DiagramType.AxialForceFx,
+          Diagram.DiagramType.AxialForceFx),
+        new DiagramTypeMapping("Shear Force Fy", DiagramType.ShearForceFy,
+          Diagram.DiagramType.ShearForceFy),
+        new DiagramTypeMapping("Shear Force Fz", DiagramType.ShearForceFz,
+          Diagram.DiagramType.ShearForceFz),
+        new DiagramTypeMapping("Torsion Mxx", DiagramType.TorsionMxx,
+          Diagram.DiagramType.TorsionMxx),
+        new DiagramTypeMapping("Moment Myy", DiagramType.MomentMyy, Diagram.DiagramType.MomentMyy),
+        new DiagramTypeMapping("Moment Mzz", DiagramType.MomentMzz, Diagram.DiagramType.MomentMzz),
+        new DiagramTypeMapping("Resolved Shear Fyz", DiagramType.ResolvedShearFyz,
+          Diagram.DiagramType.ResolvedShearFyz),
+        new DiagramTypeMapping("Resolved Moment Myz", DiagramType.ResolvedMomentMyz,
+          Diagram.DiagramType.ResolvedMomentMyz),
+        new DiagramTypeMapping("Axial Stress A", DiagramType.AxialStressA,
+          Diagram.DiagramType.AxialStressA),
+        new DiagramTypeMapping("Shear Stress Sy", DiagramType.ShearStressSy,
+          Diagram.DiagramType.ShearStressSy),
+        new DiagramTypeMapping("Shear Stress Sz", DiagramType.ShearStressSz,
+          Diagram.DiagramType.ShearStressSz),
+        new DiagramTypeMapping("Bending Stress By Positive Z", DiagramType.BendingStressByPositiveZ,
+          Diagram.DiagramType.BendingStressByPositiveZ),
+        new DiagramTypeMapping("Bending Stress By Negative Z", DiagramType.BendingStressByNegativeZ,
+          Diagram.DiagramType.BendingStressByNegativeZ),
+        new DiagramTypeMapping("Bending Stress Bz Positive Y", DiagramType.BendingStressBzPositiveY,
+          Diagram.DiagramType.BendingStressBzPositiveY),
+        new DiagramTypeMapping("Bending Stress Bz Negative Y", DiagramType.BendingStressBzNegativeY,
+          Diagram.DiagramType.BendingStressBzNegativeY),
+        new DiagramTypeMapping("Combined Stress C1", DiagramType.CombinedStressC1,
+          Diagram.DiagramType.CombinedStressC1),
+        new DiagramTypeMapping("Combined Stress C2", DiagramType.CombinedStressC2,
+          Diagram.DiagramType.CombinedStressC2), };
 
     internal static AlignmentType GetAlignmentType(string typestring) {
       return (AlignmentType)GetValue(typestring, typeof(AlignmentType));

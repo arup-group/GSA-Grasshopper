@@ -5,7 +5,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
 using OasysGH.Units;
-using OasysUnits;
 
 namespace GsaGH.Parameters {
   /// <summary>

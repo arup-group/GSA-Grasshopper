@@ -3,9 +3,9 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {

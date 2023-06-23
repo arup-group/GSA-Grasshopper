@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {

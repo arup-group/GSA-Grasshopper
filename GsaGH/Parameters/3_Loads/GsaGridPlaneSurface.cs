@@ -1,8 +1,9 @@
 ﻿using System;
 using GsaAPI;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>

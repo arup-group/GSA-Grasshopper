@@ -3,6 +3,11 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using EnergyUnit = OasysUnits.Units.EnergyUnit;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
+using MassUnit = OasysUnits.Units.MassUnit;
 
 namespace GsaGH.Helpers.GsaApi {
   internal partial class ResultHelper {

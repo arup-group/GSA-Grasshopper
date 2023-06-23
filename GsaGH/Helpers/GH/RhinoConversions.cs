@@ -5,19 +5,18 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.Export;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino;
 using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Collections;
 using Elements = GsaGH.Helpers.Import.Elements;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Helpers.GH {

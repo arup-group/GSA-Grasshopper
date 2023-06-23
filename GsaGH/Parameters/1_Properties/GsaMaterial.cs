@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
@@ -41,8 +42,8 @@ namespace GsaGH.Parameters {
           return;
         }
 
-        _guid = Guid.NewGuid();
         _grade = 0;
+        _guid = Guid.NewGuid();
       }
     }
     public int GradeProperty {
@@ -146,12 +147,13 @@ namespace GsaGH.Parameters {
         _grade = _grade,
         _analProp = _analProp,
       };
-      if (_analProp != 0 && _analysisMaterial != null) {
+      if (_analysisMaterial != null) {
         dup.AnalysisMaterial = new AnalysisMaterial() {
           CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
           Density = AnalysisMaterial.Density,
           ElasticModulus = AnalysisMaterial.ElasticModulus,
           PoissonsRatio = AnalysisMaterial.PoissonsRatio,
+          Name = AnalysisMaterial.Name,
         };
       }
 
@@ -160,13 +162,24 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
-      if (_analProp != 0) {
-        return "ID:" + _analProp + " Custom " + type.Trim() + " Material";
+      string name = "";
+      if (AnalysisMaterial == null || string.IsNullOrEmpty(AnalysisMaterial.Name)) {
+        if (_analProp != 0) {
+          name += "Custom ";
+        }
+
+        string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
+        name += type.Trim() + " Material";
+      } else {
+        name = AnalysisMaterial.Name;
       }
 
-      string id = GradeProperty == 0 ? string.Empty : "Grd:" + GradeProperty + " ";
-      return (id + type).Trim();
+      if (_analProp != 0) {
+        return "ID:" + _analProp + " " + name;
+      }
+
+      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
+      return (id + name).Trim();
     }
 
     private static MatType GetType(MaterialType materialType) {
@@ -225,6 +238,7 @@ namespace GsaGH.Parameters {
         Density = analysisMaterial.Density,
         ElasticModulus = analysisMaterial.ElasticModulus,
         PoissonsRatio = analysisMaterial.PoissonsRatio,
+        Name = analysisMaterial.Name,
       };
     }
   }

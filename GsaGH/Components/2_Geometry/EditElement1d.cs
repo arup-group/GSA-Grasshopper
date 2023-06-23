@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -15,9 +14,8 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
-using Line = Rhino.Geometry.Line;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 
 namespace GsaGH.Components {
   /// <summary>

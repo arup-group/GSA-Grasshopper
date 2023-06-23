@@ -5,6 +5,7 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using static GsaAPI.GridSurface;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]

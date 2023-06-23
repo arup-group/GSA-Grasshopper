@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {

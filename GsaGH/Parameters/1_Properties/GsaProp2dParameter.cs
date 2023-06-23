@@ -4,7 +4,6 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
-using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;

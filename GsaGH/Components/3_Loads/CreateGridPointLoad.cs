@@ -13,8 +13,8 @@ using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
+using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Components {
   public class CreateGridPointLoad : GH_OasysDropDownComponent {

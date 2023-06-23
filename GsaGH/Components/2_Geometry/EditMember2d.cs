@@ -13,9 +13,9 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 
 namespace GsaGH.Components {
   /// <summary>
