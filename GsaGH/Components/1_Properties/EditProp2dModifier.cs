@@ -257,7 +257,7 @@ namespace GsaGH.Components {
 
       if (Params.Input[5].SourceCount > 0) {
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghTyp)) {
+        if (da.GetData(5, ref ghTyp)) {
           if (ghTyp.Value is GH_UnitNumber unitNumber) {
             if (unitNumber.Value.QuantityInfo.UnitType != typeof(LinearDensityUnit)) {
               this.AddRuntimeError("Error in " + Params.Input[8].NickName + " input: Wrong unit type"
