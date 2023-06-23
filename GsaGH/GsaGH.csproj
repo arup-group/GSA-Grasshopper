@@ -112,4 +112,8 @@ Copyright © Oasys 1985 - 2022</Description>
     </EmbeddedResource>
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  
 </Project>
