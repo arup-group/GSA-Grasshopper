@@ -27,7 +27,6 @@ namespace GsaGH.Components {
       "Modify by",
       "Modify to",
     });
-    private LinearDensityUnit _densityUnit = DefaultUnits.LinearDensityUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private bool _toMode = false;
 
@@ -65,18 +64,8 @@ namespace GsaGH.Components {
             _toMode = true;
             break;
           }
-        case 1 when !_toMode:
-          _densityUnit
-            = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[i]);
-          break;
-
         case 1:
           _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-          break;
-
-        case 2:
-          _densityUnit
-            = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[i]);
           break;
       }
 
@@ -115,7 +104,7 @@ namespace GsaGH.Components {
           " fraction value (Default = 1.0 -> 100%)";
       }
 
-      Params.Input[4].Name = "Additional Mass [" + LinearDensity.GetAbbreviation(_densityUnit) + "]";
+      Params.Input[4].Name = "Additional Mass [" + AreaDensity.GetAbbreviation(AreaDensityUnit.KilogramPerSquareMeter) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -136,7 +125,7 @@ namespace GsaGH.Components {
       _selectedItems.Add(_optionTypes[0]);
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.LinearDensity));
-      _selectedItems.Add(LinearDensity.GetAbbreviation(_densityUnit));
+      _selectedItems.Add(AreaDensity.GetAbbreviation(AreaDensityUnit.KilogramPerSquareMeter));
 
       _isInitialised = true;
     }
@@ -150,9 +139,9 @@ namespace GsaGH.Components {
         " stiffness BY this decimal fraction value (Default = 1.0 -> 100%)", GH_ParamAccess.item);
       pManager.AddGenericParameter("Volume Modifier", "V", "[Optional] Modify the effective volume" +
         " stiffness BY this decimal fraction value (Default = 1.0 -> 100%)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Additional Mass [" + LinearDensity.GetAbbreviation(_densityUnit) + "]",
-        "+kg", "[Optional] Additional mass per unit length (Default = 0 -> no additional mass)",
-        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Additional Mass [" +
+        AreaDensity.GetAbbreviation(AreaDensityUnit.KilogramPerSquareMeter) + "]", "+kg",
+        "[Optional] Additional mass per unit length (Default = 0 -> no additional mass)", GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -192,7 +181,7 @@ namespace GsaGH.Components {
         modifier.Volume = Input.RatioInDecimalFractionToPercentage(this, da, 3);
       }
 
-      modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, da, 4, _densityUnit, true);
+      modifier.AdditionalMass = (AreaDensity)Input.UnitNumber(this, da, 4, AreaDensityUnit.KilogramPerSquareMeter, true);
 
       da.SetData(0, new GsaProp2dModifierGoo(modifier));
     }
@@ -200,9 +189,6 @@ namespace GsaGH.Components {
     protected override void UpdateUIFromSelectedItems() {
       if (_toMode) {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
-        _densityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[2]);
-      } else {
-        _densityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[1]);
       }
 
       base.UpdateUIFromSelectedItems();

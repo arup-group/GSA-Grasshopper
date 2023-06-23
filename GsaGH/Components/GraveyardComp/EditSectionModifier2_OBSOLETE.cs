@@ -22,7 +22,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a Material and ouput the information
   /// </summary>
-  public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent {
+  public class EditSectionModifier2_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
 
-    public EditSectionModifier() : base("Edit Section Modifier", "ModifierEdit",
+    public EditSectionModifier2_OBSOLETE() : base("Edit Section Modifier", "ModifierEdit",
       "Modify GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -39,7 +39,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Length") {
@@ -257,7 +257,7 @@ namespace GsaGH.Components {
             modifier.AreaModifier = res;
           } else {
             try {
-              modifier.AreaModifier 
+              modifier.AreaModifier
                 = Input.UnitNumberOrDoubleAsRatioToPercentage(this, da, 1, true).Value;
             } catch (Exception e) {
               this.AddRuntimeError(e.Message);

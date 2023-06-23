@@ -7,42 +7,9 @@ using VolumeUnit = OasysUnits.Units.VolumeUnit;
 
 namespace GsaGH.Parameters {
   public class GsaProp2dModifier {
-    //public LinearDensity AdditionalMass {
-    //  get => new LinearDensity(_propertyModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
-    //  set {
-    //    CloneApiObject();
-    //    _propertyModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
-    //  }
-    //}
-
-
-    public IQuantity AdditionalMass { get; set; } = new LinearDensity();
+    public IQuantity AdditionalMass { get; set; } = new AreaDensity();
     public IQuantity Bending { get; set; } = new Ratio(100, RatioUnit.Percent);
     public IQuantity InPlane { get; set; } = new Ratio(100, RatioUnit.Percent);
-    //public IQuantity InPlaneModifier {
-    //  get {
-    //    if (_propertyModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
-    //      return new Ratio(_propertyModifier.InPlane.Value,
-    //        RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
-    //    } else {
-    //      Area area = new Area(_propertyModifier.InPlane.Value,
-    //        AreaUnit.SquareMeter).ToUnit(DefaultUnits.SectionAreaUnit);
-    //      var length = new Length(1, UnitSystem.SI);
-    //      return area / length;
-    //    }
-    //  }
-    //  set {
-    //    if (value.QuantityInfo.UnitType != typeof( LengthUnit) &
-    //      value.QuantityInfo.UnitType != typeof(RatioUnit)) {
-    //      throw new ArgumentException("In-plane modifier must be either Area per Length or Ratio");
-    //    }
-    //    CloneApiObject();
-    //    _propertyModifier.InPlane = value.QuantityInfo.UnitType == typeof( LengthUnit) ?
-    //      new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, value.As( LengthUnit.Meter)) :
-    //      new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
-    //  }
-    //}
-
     public IQuantity Shear { get; set; } = new Ratio(100, RatioUnit.Percent);
     public IQuantity Volume { get; set; } = new Ratio(100, RatioUnit.Percent);
 
@@ -77,7 +44,7 @@ namespace GsaGH.Parameters {
       } else {
         Volume = new Length(apiModifier.Volume.Value, LengthUnit.Meter);
       }
-      AdditionalMass = new LinearDensity(apiModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter); // we need to create a new OasysUnit here!
+      AdditionalMass = new AreaDensity(apiModifier.AdditionalMass, AreaDensityUnit.KilogramPerSquareMeter);
     }
 
     public GsaProp2dModifier Duplicate() {

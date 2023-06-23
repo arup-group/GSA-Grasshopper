@@ -14,7 +14,6 @@ namespace GsaGHTests.Components.Properties {
       comp.CreateAttributes();
 
       comp.SetSelected(0, 0); // set modify type to "Modify by"
-      comp.SetSelected(1, 1); // set density unit to "g/cm"
 
       ComponentTestHelper.SetInput(comp, 0.1, 0);
       ComponentTestHelper.SetInput(comp, 0.2, 1);
@@ -34,7 +33,7 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(0.2, output.Value.Bending.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.3, output.Value.Shear.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.4, output.Value.Volume.As(RatioUnit.DecimalFraction));
-      Assert.Equal(5, output.Value.AdditionalMass.As(LinearDensityUnit.GramPerCentimeter));
+      Assert.Equal(5, output.Value.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter));
     }
   }
 }
