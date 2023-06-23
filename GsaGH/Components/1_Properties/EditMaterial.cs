@@ -78,7 +78,7 @@ namespace GsaGH.Components {
         material.Id = id;
       }
 
-      string name = "";
+      string name = string.Empty;
       if (da.GetData(2, ref name)) {
         material.Name = name;
       }

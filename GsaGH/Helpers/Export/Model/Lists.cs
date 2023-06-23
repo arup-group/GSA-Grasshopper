@@ -13,15 +13,15 @@ namespace GsaGH.Helpers.Export {
     internal static string GetNodeList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
       ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
       if (apiLists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
-        return "\"" + apiLists.ReadOnlyDictionary[id].Name + "\"";
+        return $"\"{apiLists.ReadOnlyDictionary[id].Name}\"";
       }
 
       AddNodeList(list, ref apiLists, ref apiNodes, unit);
 
-      return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name + "\"";
+      return $"\"{apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name}\"";
     }
 
-    internal static void ConvertNodeLists(
+    internal static void ConvertNodeLists( 
     List<GsaList> lists, ref GsaGuidDictionary<EntityList> apiLists,
     ref GsaIntDictionary<Node> apiNodes, LengthUnit modelUnit) {
       if (lists == null) {
@@ -55,21 +55,20 @@ namespace GsaGH.Helpers.Export {
     internal static string GetElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
       if (list.EntityType == Parameters.EntityType.Element 
         && model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
-        return "\"" + model.Lists.ReadOnlyDictionary[id].Name + "\"";
+        return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
       }
 
       if (list.EntityType == Parameters.EntityType.Member) {
         AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
         string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
-        list._name = "Children of '" + name + "'";
+        list._name = $"Children of '{name}'";
         list.EntityType = Parameters.EntityType.Element;
       }
 
       GsaList copyList = AddPropertiesList(list, model.Properties, owner);
       AddElementList(copyList, ref model, owner);
 
-      return "\"" + model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]]
-        .Name + "\"";
+      return $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
     }
 
     internal static void ConvertList(
@@ -125,8 +124,7 @@ namespace GsaGH.Helpers.Export {
         string id = ElementListFromReference.GetReferenceDefinition(material.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + System.Environment.NewLine
-            + "Material " + material.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning($"Issue adding List {copyList.Name} to Model:{System.Environment.NewLine}Material {material.Value.ToString()} not found in Model");
         }
 
         ids.Add(id);

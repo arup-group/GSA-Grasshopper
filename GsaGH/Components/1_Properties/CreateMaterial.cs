@@ -74,7 +74,7 @@ namespace GsaGH.Components {
       _selectedItems.Add(_concreteCode); // EC2-1-1
 
       _dropDownItems.Add(GsaMaterial.GetGradeNames(
-        GsaMaterial.MatType.Concrete, "", _concreteCode));
+        GsaMaterial.MatType.Concrete, string.Empty, _concreteCode));
       _selectedItems.Add(_dropDownItems[2][4]); // C30/37
 
       _isInitialised = true;
