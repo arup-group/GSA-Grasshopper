@@ -233,7 +233,7 @@ namespace GsaGH.Components {
             + Environment.NewLine + string.Join(Environment.NewLine, names));
         }
       }
-      return Tuple.Create<bool, Enum>(true, null);
+      return Tuple.Create<bool, Enum>(false, null);
     }
   }
 }
