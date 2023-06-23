@@ -26,18 +26,18 @@ namespace GsaGHTests.Parameters {
 
       var gps = new GsaGridPlaneSurface(plane);
 
-      Assert.Equal(originX, gps.Plane.OriginX);
-      Assert.Equal(originY, gps.Plane.OriginY);
-      Assert.Equal(originZ, gps.Plane.OriginZ);
-      Assert.Equal(xAxisX, gps.Plane.XAxis.X);
-      Assert.Equal(xAxisY, gps.Plane.XAxis.Y);
-      Assert.Equal(xAxisZ, gps.Plane.XAxis.Z);
-      Assert.Equal(yAxisX, gps.Plane.YAxis.X);
-      Assert.Equal(yAxisY, gps.Plane.YAxis.Y);
-      Assert.Equal(yAxisZ, gps.Plane.YAxis.Z);
-      Assert.Equal(zAxisX, gps.Plane.ZAxis.X);
-      Assert.Equal(zAxisY, gps.Plane.ZAxis.Y);
-      Assert.Equal(zAxisZ, gps.Plane.ZAxis.Z);
+      Assert.Equal(originX, gps.Axis.OriginX);
+      Assert.Equal(originY, gps.Axis.OriginY);
+      Assert.Equal(originZ, gps.Axis.OriginZ);
+      Assert.Equal(xAxisX, gps.Axis.XAxis.X);
+      Assert.Equal(xAxisY, gps.Axis.XAxis.Y);
+      Assert.Equal(xAxisZ, gps.Axis.XAxis.Z);
+      Assert.Equal(yAxisX, gps.Axis.YAxis.X);
+      Assert.Equal(yAxisY, gps.Axis.YAxis.Y);
+      Assert.Equal(yAxisZ, gps.Axis.YAxis.Z);
+      Assert.Equal(zAxisX, gps.Axis.ZAxis.X);
+      Assert.Equal(zAxisY, gps.Axis.ZAxis.Y);
+      Assert.Equal(zAxisZ, gps.Axis.ZAxis.Z);
       Assert.Equal(0, gps.GridPlane.AxisProperty);
       Assert.Equal(0, gps.GridPlane.Elevation);
       Assert.False(gps.GridPlane.IsStoreyType);
@@ -73,7 +73,7 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.Plane = Plane.WorldYZ;
+      duplicate.Axis = Plane.WorldYZ;
       duplicate.GridPlane.AxisProperty = 1;
       duplicate.GridPlane.Elevation = 1;
       duplicate.GridPlane.IsStoreyType = true;
@@ -90,7 +90,7 @@ namespace GsaGHTests.Parameters {
       duplicate.GridSurfaceId = 1;
       duplicate.GridPlaneId = 1;
 
-      Assert.Equal(Plane.WorldXY, original.Plane);
+      Assert.Equal(Plane.WorldXY, original.Axis);
       Assert.Equal(0, original.GridPlane.AxisProperty);
       Assert.Equal(0, original.GridPlane.Elevation);
       Assert.False(original.GridPlane.IsStoreyType);
@@ -112,7 +112,7 @@ namespace GsaGHTests.Parameters {
     public void EmptyConstructorTest() {
       var gps = new GsaGridPlaneSurface();
 
-      Assert.Equal(Plane.WorldXY, gps.Plane);
+      Assert.Equal(Plane.WorldXY, gps.Axis);
       Assert.Equal(0, gps.GridPlane.AxisProperty);
       Assert.Equal(0, gps.GridPlane.Elevation);
       Assert.False(gps.GridPlane.IsStoreyType);

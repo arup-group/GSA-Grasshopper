@@ -11,7 +11,7 @@ namespace GsaGH.Helpers.Export {
           continue;
         }
 
-        if (gsaAxis.Name == testAxis.Name
+        if (testAxis.Name == string.Empty
           && gsaAxis.Type == testAxis.Type
           && Math.Abs(testAxis.Origin.X - gsaAxis.Origin.X) <= tolerance
           && Math.Abs(testAxis.Origin.Y - gsaAxis.Origin.Y) <= tolerance

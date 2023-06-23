@@ -22,7 +22,8 @@ namespace GsaGH.Parameters {
     ///   String either in the format of a double (will be converted into Model Units)
     ///   or in the format of a OasysUnits.Length ('5 m')
     /// </summary>
-    public string Elevation { get; set; } = "0";
+    public string Elevation { get; private set; } = "0";
+    
     public GridPlane GridPlane {
       get => _gridPln;
       set {
@@ -53,13 +54,18 @@ namespace GsaGH.Parameters {
         _gridSrfId = value;
       }
     }
-    public Plane Plane {
+    public Plane Axis {
       get => _pln;
       set {
         _gridPlnGuid = Guid.NewGuid();
+        double elevation = _pln.Origin.DistanceTo(PreviewPlane.Origin);
         _pln = value;
+        UpdatePreviewPlane(elevation);
       }
     }
+
+    internal Plane PreviewPlane = Plane.WorldXY;
+
     /// <summary>
     ///   String either in the format of a double (will be converted into Model Units)
     ///   or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
@@ -107,7 +113,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridPlaneSurface Duplicate() {
       var dup = new GsaGridPlaneSurface {
-        Plane = (_gridPln == null) ? Plane.WorldXY : _pln.Clone(),
+        Axis = (_gridPln == null) ? Plane.WorldXY : _pln.Clone(),
         GridPlane = _gridPln == null ? null : new GridPlane {
           AxisProperty = _gridPln.AxisProperty,
           IsStoreyType = _gridPln.IsStoreyType,
@@ -134,6 +140,7 @@ namespace GsaGH.Parameters {
         GridSurfaceId = _gridSrfId,
         _gridSrfGuid = new Guid(_gridSrfGuid.ToString()),
         _gridPlnGuid = new Guid(_gridPlnGuid.ToString()),
+        PreviewPlane = new Plane(PreviewPlane),
       };
       if (_referenceType == ReferenceType.None) {
         return dup;
@@ -157,9 +164,9 @@ namespace GsaGH.Parameters {
 
       string ax = (AxisId == 0) ? string.Empty : "Ax:" + AxisId.ToString() + " ";
       bool global = false;
-      if (Plane.Origin.X == 0 && Plane.Origin.Y == 0 && Plane.Origin.Z == 0) {
-        if (Plane.XAxis.X == 1 && Plane.XAxis.Y == 0 && Plane.XAxis.Z == 0) {
-          if (Plane.YAxis.X == 0 && Plane.YAxis.Y == 1 && Plane.YAxis.Z == 0) {
+      if (Axis.Origin.X == 0 && Axis.Origin.Y == 0 && Axis.Origin.Z == 0) {
+        if (Axis.XAxis.X == 1 && Axis.XAxis.Y == 0 && Axis.XAxis.Z == 0) {
+          if (Axis.YAxis.X == 0 && Axis.YAxis.Y == 1 && Axis.YAxis.Z == 0) {
             global = true;
           }
         }
@@ -213,30 +220,40 @@ namespace GsaGH.Parameters {
 
     internal Axis GetAxis(LengthUnit modelUnit) {
       var axis = new Axis();
-      axis.Origin.X = new Length(Plane.Origin.X, modelUnit).Meters;
-      axis.Origin.Y = new Length(Plane.Origin.Y, modelUnit).Meters;
-      axis.Origin.Z = new Length(Plane.Origin.Z, modelUnit).Meters;
-      if (Elevation != "0") {
-        var elevation = new Length();
-        try {
-          elevation = Length.Parse(Elevation);
-        } catch (Exception) {
-          if (double.TryParse(Elevation, out double elev)) {
-            elevation = new Length(elev, modelUnit);
-          }
-        }
+      axis.Origin.X = new Length(Axis.Origin.X, modelUnit).Meters;
+      axis.Origin.Y = new Length(Axis.Origin.Y, modelUnit).Meters;
+      axis.Origin.Z = new Length(Axis.Origin.Z, modelUnit).Meters;
 
-        axis.Origin.Z -= elevation.As(modelUnit);
-      }
-
-      axis.XVector.X = Plane.XAxis.X;
-      axis.XVector.Y = Plane.XAxis.Y;
-      axis.XVector.Z = Plane.XAxis.Z;
-      axis.XYPlane.X = Plane.YAxis.X;
-      axis.XYPlane.Y = Plane.YAxis.Y;
-      axis.XYPlane.Z = Plane.YAxis.Z;
+      axis.XVector.X = Axis.XAxis.X;
+      axis.XVector.Y = Axis.XAxis.Y;
+      axis.XVector.Z = Axis.XAxis.Z;
+      axis.XYPlane.X = Axis.YAxis.X;
+      axis.XYPlane.Y = Axis.YAxis.Y;
+      axis.XYPlane.Z = Axis.YAxis.Z;
 
       return axis;
+    }
+
+    internal void SetElevation(double elevation) {
+      Elevation = elevation.ToString();
+      UpdatePreviewPlane(elevation);
+    }
+    internal void SetElevation(Length elevation) {
+      Elevation = elevation.ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
+      UpdatePreviewPlane(elevation.Value);
+    }
+
+    private void UpdatePreviewPlane(double elevation) {
+      // if elevation is set we want to move the plane in it's normal direction
+      Vector3d vec = _pln.Normal;
+      vec.Unitize();
+      vec.X *= elevation;
+      vec.Y *= elevation;
+      vec.Z *= elevation;
+      var xform = Transform.Translation(vec);
+      var pln = new Plane(_pln);
+      pln.Transform(xform);
+      PreviewPlane = pln;
     }
   }
 }

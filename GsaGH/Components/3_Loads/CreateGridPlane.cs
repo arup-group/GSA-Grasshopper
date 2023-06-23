@@ -112,7 +112,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Plane ID", "ID",
         "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model",
-        GH_ParamAccess.item, 0);
+        GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Elevation in model units", "Ev",
         "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.",
         GH_ParamAccess.item);
@@ -139,7 +139,7 @@ namespace GsaGH.Components {
         GH_Convert.ToPlane(ghPlane, ref pln, GH_Conversion.Both);
       }
 
-      var gps = new GsaGridPlaneSurface(pln);
+      var gps = new GsaGridPlaneSurface(pln, Params.Input[0].SourceCount == 0);
 
       var ghInteger = new GH_Integer();
       if (da.GetData(1, ref ghInteger)) {
@@ -152,29 +152,14 @@ namespace GsaGH.Components {
         string elevationIn = ghTyp.Value.ToString();
         double elevation = 0;
         if (elevationIn != string.Empty && elevationIn.ToLower() != "0") {
-          try {
-            var newElevation = Length.Parse(elevationIn);
-            gps.Elevation = elevationIn;
-            elevation = newElevation.Value;
-          } catch (Exception e) {
-            if (double.TryParse(elevationIn, out elevation)) {
-              gps.Elevation = elevationIn;
-            } else {
-              this.AddRuntimeWarning(e.Message);
-            }
+          if (Length.TryParse(elevationIn, out Length newElevation)) {
+            gps.SetElevation(newElevation);
+          } else if (double.TryParse(elevationIn, out elevation)) {
+            gps.SetElevation(elevation);
+          } else {
+            this.AddRuntimeError("Unable to parse elevation input to Length or number");
+            return;
           }
-        }
-
-        if (elevation != 0) {
-          // if elevation is set we want to move the plane in it's normal direction
-          Vector3d vec = pln.Normal;
-          vec.Unitize();
-          vec.X *= elevation;
-          vec.Y *= elevation;
-          vec.Z *= elevation;
-          var xform = Transform.Translation(vec);
-          pln.Transform(xform);
-          gps.Plane = pln;
         }
       }
 

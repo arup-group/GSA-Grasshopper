@@ -24,7 +24,7 @@ namespace GsaGH.Parameters {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Plane))) {
         if (Value != null) {
           var pln = new GH_Plane();
-          GH_Convert.ToGHPlane(Value.Plane, GH_Conversion.Both, ref pln);
+          GH_Convert.ToGHPlane(Value.Axis, GH_Conversion.Both, ref pln);
           target = (TQ)(object)pln;
           return true;
         }
@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null || !Value.Plane.IsValid) {
+      if (Value == null || !Value.Axis.IsValid) {
         return;
       }
 
@@ -45,12 +45,12 @@ namespace GsaGH.Parameters {
         == Color.FromArgb(255, 150, 0,
           0)) // this is a workaround to change colour between selected and not
       {
-        GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, Color.Gray, Color.Red, Color.Green);
-        args.Pipeline.DrawPoint(Value.Plane.Origin, PointStyle.RoundSimple, 3, Colours.Node);
+        GH_Plane.DrawPlane(args.Pipeline, Value.PreviewPlane, 16, 16, Color.Gray, Color.Red, Color.Green);
+        args.Pipeline.DrawPoint(Value.PreviewPlane.Origin, PointStyle.RoundSimple, 3, Colours.Node);
       } else {
-        GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, Color.LightGray, Color.Red,
+        GH_Plane.DrawPlane(args.Pipeline, Value.PreviewPlane, 16, 16, Color.LightGray, Color.Red,
           Color.Green);
-        args.Pipeline.DrawPoint(Value.Plane.Origin, PointStyle.RoundControlPoint, 3,
+        args.Pipeline.DrawPoint(Value.PreviewPlane.Origin, PointStyle.RoundControlPoint, 3,
           Colours.NodeSelected);
       }
     }
@@ -60,37 +60,37 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      if (Value?.Plane.Origin == null) {
+      if (Value?.Axis.Origin == null) {
         return null;
       }
 
-      Point3d pt1 = Value.Plane.Origin;
+      Point3d pt1 = Value.Axis.Origin;
       pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
-      Point3d pt2 = Value.Plane.Origin;
+      Point3d pt2 = Value.Axis.Origin;
       pt2.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / -2;
       var ln = new Line(pt1, pt2);
       return new LineCurve(ln);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      if (Value?.Plane == null) {
+      if (Value?.Axis == null) {
         return null;
       }
 
       GsaGridPlaneSurface dup = Value.Duplicate();
-      Plane pln = dup.Plane;
+      Plane pln = dup.Axis;
       xmorph.Morph(ref pln);
       var gridplane = new GsaGridPlaneSurface(pln);
       return new GsaGridPlaneSurfaceGoo(gridplane);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      if (Value?.Plane == null) {
+      if (Value?.Axis == null) {
         return null;
       }
 
       GsaGridPlaneSurface dup = Value.Duplicate();
-      Plane pln = dup.Plane;
+      Plane pln = dup.Axis;
       pln.Transform(xform);
       var gridplane = new GsaGridPlaneSurface(pln);
       return new GsaGridPlaneSurfaceGoo(gridplane);

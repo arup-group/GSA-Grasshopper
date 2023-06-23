@@ -271,7 +271,7 @@ namespace GsaGH.Parameters {
       return new Point3d(
               new Length(GridPointLoad.X, m).As(unit),
               new Length(GridPointLoad.Y, m).As(unit),
-              new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
+              new Length(GridPlaneSurface.Axis.OriginZ, m).As(unit));
     }
   }
 

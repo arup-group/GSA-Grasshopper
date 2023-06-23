@@ -117,7 +117,7 @@ namespace GsaGH.Components {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
               gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-              plane = gridPlaneSurface.Plane;
+              plane = gridPlaneSurface.Axis;
               planeSet = true;
               break;
             }
