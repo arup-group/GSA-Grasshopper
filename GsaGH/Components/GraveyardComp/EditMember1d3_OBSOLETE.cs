@@ -200,7 +200,7 @@ namespace GsaGH.Components.GraveyardComp {
 
       GsaMember1dGoo member1dGoo = null;
       if (da.GetData(0, ref member1dGoo)) {
-        mem = member1dGoo.Value.Duplicate(true);
+        mem = member1dGoo.Value.Clone();
       }
 
       var ghId = new GH_Integer();

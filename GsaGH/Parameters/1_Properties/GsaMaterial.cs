@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using GsaAPI;
 using GsaAPI.Materials;
-using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -10,235 +9,483 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaMaterial {
     public enum MatType {
-      Undef = -2,
-      None = -1,
-      Generic = 0,
-      Steel = 1,
-      Concrete = 2,
-      Aluminium = 3,
-      Glass = 4,
-      Frp = 5,
-      Rebar = 6,
-      Timber = 7,
-      Fabric = 8,
-      Soil = 9,
-      NumMt = 10,
-      Compound = 0x100,
-      Bar = 0x1000,
-      Tendon = 4352,
-      Frpbar = 4608,
-      Cfrp = 4864,
-      Gfrp = 5120,
-      Afrp = 5376,
-      Argfrp = 5632,
-      Barmat = 65280,
+      Generic,
+      Steel,
+      Concrete,
+      Aluminium,
+      Glass,
+      Frp,
+      Timber,
+      Fabric,
     }
-
-    public int AnalysisProperty {
-      get => _analProp;
+    public bool IsCustom { get; private set; } = false;
+    public int Id {
+      get => _id;
       set {
-        _analProp = value;
-        if (_analProp == 0) {
+        _id = value;
+        if (_id == 0) {
           return;
         }
 
-        _grade = 0;
         _guid = Guid.NewGuid();
       }
     }
-    public int GradeProperty {
-      get => _grade;
-      set {
-        _grade = value;
-        if (_grade > 0) {
-          _analProp = 0;
+    public string ConcreteDesignCodeName { get; private set; } = string.Empty;
+    public string SteelDesignCodeName { get; private set; } = string.Empty;
+    public string Name {
+      get {
+        if (IsCustom) {
+          return _analysisMaterial.Name;
         }
 
+        switch (MaterialType) {
+          case MatType.Aluminium:
+            return _aluminiumMaterial.Name;
+
+          case MatType.Concrete:
+            return _concreteMaterial.Name;
+
+          case MatType.Frp:
+            return _frpMaterial.Name;
+
+          case MatType.Glass:
+            return _glassMaterial.Name;
+
+          case MatType.Steel:
+            return _steelMaterial.Name;
+
+          case MatType.Timber:
+            return _timberMaterial.Name;
+
+          case MatType.Fabric:
+            return _fabricMaterial.Name;
+
+          default:
+            return string.Empty;
+        }
+      }
+      set {
+        if (IsCustom) {
+          _analysisMaterial.Name = value;
+        } else {
+          _gradeName = Name;
+          switch (MaterialType) {
+            case MatType.Aluminium:
+              _aluminiumMaterial.Name = value;
+              break;
+
+            case MatType.Concrete:
+              _concreteMaterial.Name = value;
+              break;
+
+            case MatType.Frp:
+              _frpMaterial.Name = value;
+              break;
+
+            case MatType.Glass:
+              _glassMaterial.Name = value;
+              break;
+
+            case MatType.Steel:
+              _steelMaterial.Name = value;
+              break;
+
+            case MatType.Timber:
+              _timberMaterial.Name = value;
+              break;
+
+            case MatType.Fabric:
+              _fabricMaterial.Name = value;
+              break;
+
+            default:
+              _analysisMaterial.Name = value;
+              break;
+          }
+        }
         _guid = Guid.NewGuid();
       }
     }
     public Guid Guid => _guid;
-    public MatType MaterialType { get; set; } = MatType.Concrete;
+    public MatType MaterialType { get; private set; } = MatType.Generic;
+
     internal AnalysisMaterial AnalysisMaterial {
-      get => _analysisMaterial;
+      get {
+        if (IsCustom) {
+          return _analysisMaterial;
+        }
+
+        switch (MaterialType) {
+          case MatType.Aluminium:
+            return _aluminiumMaterial.AnalysisMaterial;
+
+          case MatType.Concrete:
+            return _concreteMaterial.AnalysisMaterial;
+
+          case MatType.Frp:
+            return _frpMaterial.AnalysisMaterial;
+
+          case MatType.Glass:
+            return _glassMaterial.AnalysisMaterial;
+
+          case MatType.Steel:
+            return _steelMaterial.AnalysisMaterial;
+
+          case MatType.Timber:
+            return _timberMaterial.AnalysisMaterial;
+
+          case MatType.Fabric:
+            throw new Exception("Cannot edit Analysis material for Fabric");
+
+          default:
+            return _analysisMaterial;
+        }
+      }
       set {
-        _analysisMaterial = value;
+        if (IsCustom) {
+          _analysisMaterial = DuplicateAnalysisMaterial(value);
+        } else {
+          _gradeName = Name;
+          switch (MaterialType) {
+            case MatType.Aluminium:
+              _aluminiumMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(value);
+              _aluminiumMaterial.Name = value.Name;
+              break;
+
+            case MatType.Concrete:
+              _concreteMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(value);
+              _concreteMaterial.Name = value.Name;
+              break;
+
+            case MatType.Frp:
+              _frpMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(value);
+              _frpMaterial.Name = value.Name;
+              break;
+
+            case MatType.Glass:
+              _glassMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(value);
+              _glassMaterial.Name = value.Name;
+              break;
+
+            case MatType.Steel:
+              _steelMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(value);
+              _steelMaterial.Name = value.Name;
+              break;
+
+            case MatType.Timber:
+              _timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(value);
+              _timberMaterial.Name = value.Name;
+              break;
+
+            case MatType.Fabric:
+              throw new Exception("Fabric material is not isotropic");
+
+            default:
+              _analysisMaterial = value;
+              break;
+          }
+        }
         _guid = Guid.NewGuid();
       }
     }
-    private int _analProp = 0;
+    internal object StandardMaterial {
+      get {
+        if (IsCustom) {
+          throw new Exception("Material is not a standard material.");
+        }
+
+        switch (MaterialType) {
+          case MatType.Aluminium:
+            return _aluminiumMaterial
+              ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Concrete:
+            return _concreteMaterial
+              ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Fabric:
+            return _fabricMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Frp:
+            return _frpMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Glass:
+            return _glassMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Steel:
+            return _steelMaterial ?? throw new Exception("Material is not a standard material.");
+
+          case MatType.Timber:
+            return _timberMaterial ?? throw new Exception("Material is not a standard material.");
+
+          default:
+            throw new Exception("Material is not a standard material.");
+        }
+      }
+    }
+
+    private int _id = 0;
+    private string _gradeName;
     private AnalysisMaterial _analysisMaterial;
-    private int _grade = 1;
     private Guid _guid = Guid.NewGuid();
+    private AluminiumMaterial _aluminiumMaterial;
+    private ConcreteMaterial _concreteMaterial;
+    private FabricMaterial _fabricMaterial;
+    private FrpMaterial _frpMaterial;
+    private GlassMaterial _glassMaterial;
+    private SteelMaterial _steelMaterial;
+    private TimberMaterial _timberMaterial;
 
     public GsaMaterial() { }
 
-    /// <summary>
-    ///   0 : Generic<br></br>
-    ///   1 : Steel<br></br>
-    ///   2 : Concrete<br></br>
-    ///   3 : Aluminium<br></br>
-    ///   4 : Glass<br></br>
-    ///   5 : FRP<br></br>
-    ///   7 : Timber<br></br>
-    ///   8 : Fabric<br></br>
-    /// </summary>
-    /// <param name="typeId"></param>
-    public GsaMaterial(int typeId) {
-      MaterialType = (MatType)typeId;
+    internal GsaMaterial(AnalysisMaterial apiMaterial, int id, MatType type = MatType.Generic) {
+      MaterialType = type;
+      _analysisMaterial = apiMaterial;
+      _id = id;
+      IsCustom = true;
     }
 
-    internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null) {
-      if (section?.ApiSection == null) {
-        return;
-      }
-
-      if (section.Material != null) {
-        if (analysisMaterial == null && section.Material.AnalysisMaterial != null) {
-          analysisMaterial = section.Material.AnalysisMaterial;
-        } else if (section.ApiSection.MaterialAnalysisProperty > 0 && section.Material != null
-          && analysisMaterial == null) {
-          analysisMaterial = section.Material.AnalysisMaterial;
-        }
-      }
-
-      CreateFromApiObject(section.ApiSection.MaterialType,
-        section.ApiSection.MaterialAnalysisProperty, section.ApiSection.MaterialGradeProperty,
-        analysisMaterial);
+    internal GsaMaterial(AluminiumMaterial apiMaterial, int id) {
+      MaterialType = MatType.Aluminium;
+      _aluminiumMaterial = apiMaterial;
+      _id = id;
     }
 
-    internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null) {
-      if (prop?.ApiProp2d == null) {
-        return;
-      }
-
-      if (prop.Material != null) {
-        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null) {
-          analysisMaterial = prop.Material.AnalysisMaterial;
-        } else if (prop.ApiProp2d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
-          analysisMaterial = prop.Material.AnalysisMaterial;
-        }
-      }
-
-      CreateFromApiObject(prop.ApiProp2d.MaterialType, prop.ApiProp2d.MaterialAnalysisProperty,
-        prop.ApiProp2d.MaterialGradeProperty, analysisMaterial);
+    internal GsaMaterial(ConcreteMaterial apiMaterial, int id, string codeName) {
+      MaterialType = MatType.Concrete;
+      _concreteMaterial = apiMaterial;
+      _id = id;
+      ConcreteDesignCodeName = codeName;
     }
 
-    internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null) {
-      if (prop?.ApiProp3d == null) {
-        return;
-      }
-
-      if (prop.Material != null) {
-        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null) {
-          analysisMaterial = prop.Material.AnalysisMaterial;
-        } else if (prop.ApiProp3d.MaterialAnalysisProperty > 0 && analysisMaterial == null) {
-          analysisMaterial = prop.Material.AnalysisMaterial;
-        }
-      }
-
-      CreateFromApiObject(prop.ApiProp3d.MaterialType, prop.ApiProp3d.MaterialAnalysisProperty,
-        prop.ApiProp3d.MaterialGradeProperty, analysisMaterial);
+    internal GsaMaterial(FabricMaterial apiMaterial, int id) {
+      MaterialType = MatType.Fabric;
+      _fabricMaterial = apiMaterial;
+      _id = id;
     }
 
-    public GsaMaterial Duplicate() {
+    internal GsaMaterial(FrpMaterial apiMaterial, int id) {
+      MaterialType = MatType.Frp;
+      _frpMaterial = apiMaterial;
+      _id = id;
+    }
+
+    internal GsaMaterial(GlassMaterial apiMaterial, int id) {
+      MaterialType = MatType.Glass;
+      _glassMaterial = apiMaterial;
+      _id = id;
+    }
+
+    internal GsaMaterial(SteelMaterial apiMaterial, int id, string codeName) {
+      MaterialType = MatType.Steel;
+      _steelMaterial = apiMaterial;
+      _id = id;
+      SteelDesignCodeName = codeName;
+    }
+
+    internal GsaMaterial(TimberMaterial apiMaterial, int id) {
+      MaterialType = MatType.Timber;
+      _timberMaterial = apiMaterial;
+      _id = id;
+    }
+
+    internal GsaMaterial(MatType type, string gradeName,
+      string steelDesignCode = "", string concreteDesignCode = "") {
+      Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
+      MaterialType = type;
+      switch (type) {
+        case MatType.Aluminium:
+          _aluminiumMaterial = m.CreateAluminiumMaterial(gradeName);
+          return;
+
+        case MatType.Concrete:
+          _concreteMaterial = m.CreateConcreteMaterial(gradeName);
+          ConcreteDesignCodeName = concreteDesignCode;
+          return;
+
+        case MatType.Fabric:
+          _fabricMaterial = m.CreateFabricMaterial(gradeName);
+          return;
+
+        case MatType.Frp:
+          _frpMaterial = m.CreateFrpMaterial(gradeName);
+          return;
+
+        case MatType.Glass:
+          _glassMaterial = m.CreateGlassMaterial(gradeName);
+          return;
+
+        case MatType.Steel:
+          _steelMaterial = m.CreateSteelMaterial(gradeName);
+          SteelDesignCodeName = steelDesignCode;
+          return;
+
+        case MatType.Timber:
+          _timberMaterial = m.CreateTimberMaterial(gradeName);
+          return;
+
+        default:
+          throw new Exception($"Material type {type} does not have standard materials");
+      }
+    }
+
+    public GsaMaterial Clone() {
       var dup = new GsaMaterial {
         MaterialType = MaterialType,
-        _grade = _grade,
-        _analProp = _analProp,
+        _id = _id,
+        ConcreteDesignCodeName = ConcreteDesignCodeName,
+        SteelDesignCodeName = SteelDesignCodeName,
+        IsCustom = IsCustom,
       };
-      if (_analysisMaterial != null) {
-        dup.AnalysisMaterial = new AnalysisMaterial() {
-          CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
-          Density = AnalysisMaterial.Density,
-          ElasticModulus = AnalysisMaterial.ElasticModulus,
-          PoissonsRatio = AnalysisMaterial.PoissonsRatio,
-          Name = AnalysisMaterial.Name,
-        };
+
+      if (IsCustom) {
+        dup._analysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+      } else {
+        dup.RecreateForDesignCode(_gradeName ?? Name);
+
+        if (_gradeName != null) {
+          dup.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+          dup.Name = Name;
+          dup._gradeName = _gradeName;
+        }
       }
 
-      dup._guid = new Guid(_guid.ToString());
+      dup._guid = Guid.NewGuid();
       return dup;
     }
 
+    public GsaMaterial Duplicate() {
+      return this;
+    }
+
+    internal void RecreateForDesignCode(Model m) {
+      RecreateForDesignCode(m, _gradeName ?? Name);
+    }
+
+    internal void RecreateForDesignCode(string gradeName) {
+      Model m = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      RecreateForDesignCode(m, gradeName);
+    }
+
+    private void RecreateForDesignCode(Model m, string gradeName) {
+      switch (MaterialType) {
+        case MatType.Aluminium:
+          _aluminiumMaterial = m.CreateAluminiumMaterial(gradeName);
+          if (_gradeName != null) {
+            _aluminiumMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _aluminiumMaterial.Name = Name;
+          }
+          break;
+
+        case MatType.Concrete:
+          _concreteMaterial = m.CreateConcreteMaterial(gradeName);
+          if (_gradeName != null) {
+            _concreteMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _concreteMaterial.Name = Name;
+          }
+          break;
+
+        case MatType.Fabric:
+          _fabricMaterial = m.CreateFabricMaterial(gradeName);
+          if (_gradeName != null) {
+            _fabricMaterial.Name = Name;
+          }
+          break;
+
+        case MatType.Frp:
+          _frpMaterial = m.CreateFrpMaterial(gradeName);
+          if (_gradeName != null) {
+            _frpMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _frpMaterial.Name = Name;
+          }
+          break;
+
+        case MatType.Glass:
+          _glassMaterial = m.CreateGlassMaterial(gradeName);
+          if (_gradeName != null) {
+            _glassMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _glassMaterial.Name = Name;
+          }
+          break;
+
+        case MatType.Steel:
+          _steelMaterial = m.CreateSteelMaterial(gradeName);
+          if (_gradeName != null) {
+            _steelMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _steelMaterial.Name = Name;
+          }
+          break;
+
+        case MatType.Timber:
+          _timberMaterial = m.CreateTimberMaterial(gradeName);
+          if (_gradeName != null) {
+            _timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+            _timberMaterial.Name = Name;
+          }
+          break;
+
+        default:
+          _analysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
+          break;
+      }
+    }
+
     public override string ToString() {
-      string name = "";
-      if (AnalysisMaterial == null || string.IsNullOrEmpty(AnalysisMaterial.Name)) {
-        if (_analProp != 0) {
-          name += "Custom ";
-        }
+      string code = string.Empty;
 
-        string type = Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == MaterialType).Key;
-        name += type.Trim() + " Material";
-      } else {
-        name = AnalysisMaterial.Name;
+      if (MaterialType == MatType.Concrete && _gradeName == null) {
+        code = ConcreteDesignCodeName;
       }
 
-      if (_analProp != 0) {
-        return "ID:" + _analProp + " " + name;
+      if (MaterialType == MatType.Steel && _gradeName == null) {
+        code = SteelDesignCodeName;
       }
 
-      string id = GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
-      return (id + name).Trim();
+      if (IsCustom) {
+        code = "Custom";
+      }
+
+      string id = Id == 0 ? string.Empty : " Grd:" + Id;
+      return (code + " " + MaterialType + id + " " + (Name ?? string.Empty)).Trim();
     }
 
-    private static MatType GetType(MaterialType materialType) {
-      MatType mType = MatType.Undef;
+    internal static List<string> GetGradeNames(
+      MatType type, string steelDesignCode = "", string concreteDesignCode = "") {
+      Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
+      switch (type) {
+        case MatType.Aluminium:
+          return new List<string>(m.GetStandardAluminumMaterialNames());
 
-      switch (materialType) {
-        case GsaAPI.MaterialType.GENERIC:
-          mType = MatType.Generic;
-          break;
+        case MatType.Concrete:
+          return new List<string>(m.GetStandardConcreteMaterialNames());
 
-        case GsaAPI.MaterialType.STEEL:
-          mType = MatType.Steel;
-          break;
+        case MatType.Fabric:
+          return new List<string>(m.GetStandardFabricMaterialNames());
 
-        case GsaAPI.MaterialType.CONCRETE:
-          mType = MatType.Concrete;
-          break;
+        case MatType.Frp:
+          return new List<string>(m.GetStandardFrpMaterialNames());
 
-        case GsaAPI.MaterialType.TIMBER:
-          mType = MatType.Timber;
-          break;
+        case MatType.Glass:
+          return new List<string>(m.GetStandardGlassMaterialNames());
 
-        case GsaAPI.MaterialType.ALUMINIUM:
-          mType = MatType.Aluminium;
-          break;
+        case MatType.Steel:
+          return new List<string>(m.GetStandardSteelMaterialNames());
 
-        case GsaAPI.MaterialType.FRP:
-          mType = MatType.Frp;
-          break;
+        case MatType.Timber:
+          return new List<string>(m.GetStandardTimberMaterialNames());
 
-        case GsaAPI.MaterialType.GLASS:
-          mType = MatType.Glass;
-          break;
-
-        case GsaAPI.MaterialType.FABRIC:
-          mType = MatType.Fabric;
-          break;
+        default:
+          throw new Exception($"Material type {type} does not have standard materials");
       }
-
-      return mType;
     }
 
-    private void CreateFromApiObject(
-      MaterialType materialType, int analysisProp, int gradeProp,
-      AnalysisMaterial analysisMaterial) {
-      MaterialType = GetType(materialType);
-      GradeProperty = gradeProp;
-      AnalysisProperty = analysisProp;
-      if (!((AnalysisProperty != 0) & (analysisMaterial != null))) {
-        return;
-      }
-
-      _guid = Guid.NewGuid();
-      _analysisMaterial = new AnalysisMaterial() {
-        CoefficientOfThermalExpansion = analysisMaterial.CoefficientOfThermalExpansion,
-        Density = analysisMaterial.Density,
-        ElasticModulus = analysisMaterial.ElasticModulus,
-        PoissonsRatio = analysisMaterial.PoissonsRatio,
-        Name = analysisMaterial.Name,
+    private static AnalysisMaterial DuplicateAnalysisMaterial(AnalysisMaterial original) {
+      return new AnalysisMaterial() {
+        CoefficientOfThermalExpansion = original.CoefficientOfThermalExpansion,
+        Density = original.Density,
+        ElasticModulus = original.ElasticModulus,
+        PoissonsRatio = original.PoissonsRatio,
+        Name = original.Name,
       };
     }
   }

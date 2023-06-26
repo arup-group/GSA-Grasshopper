@@ -4,7 +4,6 @@ using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

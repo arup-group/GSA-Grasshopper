@@ -212,7 +212,7 @@ namespace GsaGH.Components {
 
       GsaMember1dGoo member1dGoo = null;
       if (da.GetData(0, ref member1dGoo)) {
-        mem = member1dGoo.Value.Duplicate(true);
+        mem = member1dGoo.Value.Clone();
       }
 
       int id = 0;

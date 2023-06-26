@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
@@ -178,39 +177,38 @@ namespace GsaGH.Parameters {
       _crv = convertCrv.Item1;
       Topology = convertCrv.Item2;
       TopologyType = convertCrv.Item3;
-
+      Section = new GsaSection(prop);
       UpdatePreview();
     }
 
     internal GsaMember1d(
-      Member member, int id, List<Point3d> topology, List<string> topoType,
-      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict,
-      IReadOnlyDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit) {
-      ApiMember = member;
-      MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      _id = id;
+      KeyValuePair<int, Member> mem,
+      List<Point3d> topology,
+      List<string> topoType,
+      ReadOnlyCollection<double> localAxis,
+      GsaSection section,
+      LengthUnit modelUnit) {
+      ApiMember = mem.Value;
+      MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      _id = mem.Key;
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
       Topology = topology;
       TopologyType = topoType;
       _rel1 = new GsaBool6(ApiMember.GetEndRelease(0).Releases);
       _rel2 = new GsaBool6(ApiMember.GetEndRelease(1).Releases);
-      LocalAxes = new GsaLocalAxes(localAxesDict[id]);
-      Section = new GsaSection(sDict, ApiMember.Property, modDict, matDict);
+      LocalAxes = new GsaLocalAxes(localAxis);
+      Section = section;
       UpdatePreview();
     }
 
-    public GsaMember1d Duplicate(bool cloneApiMember = false) {
+    public GsaMember1d Clone() {
       var dup = new GsaMember1d {
         Id = Id,
         MeshSize = MeshSize,
-        _guid = new Guid(_guid.ToString()),
         ApiMember = ApiMember,
         LocalAxes = LocalAxes,
       };
-      if (cloneApiMember) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       dup._crv = (PolyCurve)_crv.DuplicateShallow();
       if (_rel1 != null) {
@@ -225,15 +223,19 @@ namespace GsaGH.Parameters {
       dup.Topology = Topology;
       dup.TopologyType = TopologyType;
       if (_orientationNode != null) {
-        dup._orientationNode = _orientationNode.Duplicate(cloneApiMember);
+        dup._orientationNode = _orientationNode.Duplicate();
       }
 
       dup.UpdatePreview();
       return dup;
     }
 
+    public GsaMember1d Duplicate() {
+      return this;
+    }
+
     public GsaMember1d Morph(SpaceMorph xmorph) {
-      GsaMember1d dup = Duplicate(true);
+      GsaMember1d dup = Clone();
       dup.Id = 0;
       dup.LocalAxes = null;
 
@@ -262,7 +264,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaMember1d Transform(Transform xform) {
-      GsaMember1d dup = Duplicate(true);
+      GsaMember1d dup = Clone();
       dup.Id = 0;
       dup.LocalAxes = null;
 

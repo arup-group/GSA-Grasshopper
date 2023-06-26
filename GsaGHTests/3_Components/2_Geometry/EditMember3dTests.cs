@@ -37,11 +37,11 @@ namespace GsaGHTests.Components.Geometry {
       var output9 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 9);
       var output10 = (GH_String)ComponentTestHelper.GetOutput(comp, 10);
 
-      Assert.Equal(MatType.Timber, output0.Value.Prop3d.Material.MaterialType);
+      Assert.Equal(MatType.Concrete, output0.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output0.Value.MeshSize);
       Assert.Equal(0, output1.Value);
       Assert.NotNull(output2.Value);
-      Assert.Equal(MatType.Timber, output3.Value.Material.MaterialType);
+      Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
       Assert.Equal(0.5, output4.Value);
       Assert.True(output5.Value);
       Assert.Equal("", output6.Value);
@@ -76,11 +76,11 @@ namespace GsaGHTests.Components.Geometry {
       var output9 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 9);
       var output10 = (GH_String)ComponentTestHelper.GetOutput(comp, 10);
 
-      Assert.Equal(MatType.Timber, output0.Value.Prop3d.Material.MaterialType);
+      Assert.Equal(MatType.Concrete, output0.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.7, output0.Value.MeshSize);
       Assert.Equal(7, output1.Value);
       Assert.NotNull(output2.Value);
-      Assert.Equal(MatType.Timber, output3.Value.Material.MaterialType);
+      Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
       Assert.Equal(0.7, output4.Value);
       Assert.False(output5.Value);
       Assert.Equal("name", output6.Value);

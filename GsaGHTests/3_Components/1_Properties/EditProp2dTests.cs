@@ -7,7 +7,6 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using Xunit;
@@ -97,7 +96,7 @@ namespace GsaGHTests.Properties {
 
       i = 1;
       ComponentTestHelper.SetInput(comp, new GH_Integer(49), i++);
-      expectedMat = new GsaMaterial(8);
+      //expectedMat = new GsaMaterial(8);
       ComponentTestHelper.SetInput(comp, new GsaMaterialGoo(expectedMat), i++);
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)),
         i++);

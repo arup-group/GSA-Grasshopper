@@ -99,7 +99,7 @@ namespace GsaGH.Components {
 
       GsaElement2dGoo element2dGoo = null;
       if (da.GetData(0, ref element2dGoo)) {
-        elem = element2dGoo.Value.Duplicate(true);
+        elem = element2dGoo.Value.Clone();
       }
 
       // #### inputs ####

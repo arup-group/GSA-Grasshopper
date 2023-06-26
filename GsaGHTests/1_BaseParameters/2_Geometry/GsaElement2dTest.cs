@@ -3,7 +3,6 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -44,12 +43,12 @@ namespace GsaGHTests.Parameters {
       var off = new List<GsaOffset>();
       for (int i = 0; i < elem.Count; i++) {
         elem.Ids[i] = elid++;
-        elem.Prop2ds[i].Id = secid++;
         grps.Add(22);
         dum.Add(true);
         nms.Add("Shahin");
         off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
       }
+      elem.Prop2ds[0].Id = secid;
 
       elem.Groups = grps;
       elem.IsDummies = dum;
@@ -100,7 +99,7 @@ namespace GsaGHTests.Parameters {
         }
 
         Assert.Equal(chelid++, elem.Ids[i]);
-        Assert.Equal(chsecid++, elem.Prop2ds[i].Id);
+        Assert.Equal(chsecid, elem.Prop2ds[i].Id);
         Assert.Equal(22, elem.Groups[i]);
         Assert.True(elem.IsDummies[i]);
         Assert.Equal("Shahin", elem.Names[i]);
@@ -144,7 +143,7 @@ namespace GsaGHTests.Parameters {
       origi.Names = nms;
       origi.Offsets = off;
 
-      GsaElement2d dup = origi.Duplicate();
+      GsaElement2d dup = origi.Clone();
 
       for (int i = 0; i < dup.Topology.Count; i++) {
         Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X);
@@ -199,7 +198,6 @@ namespace GsaGHTests.Parameters {
       var off2 = new List<GsaOffset>();
       for (int i = 0; i < origi.Count; i++) {
         origi.Ids[i] = elid++;
-        origi.Prop2ds[i].Id = secid++;
         origi.Groups[i] = 4;
         origi.IsDummies[i] = true;
         origi.Names[i] = "Mani";
@@ -209,6 +207,7 @@ namespace GsaGHTests.Parameters {
         nms2.Add("Mani");
         off2.Add(new GsaOffset(0, 0, 0, -0.17));
       }
+      origi.Prop2ds[0].Id = secid;
 
       origi.Groups = grps2;
       origi.IsDummies = dum2;
@@ -217,10 +216,9 @@ namespace GsaGHTests.Parameters {
 
       // check that duplicate maintains values
       int chelid = 3;
-      int chsecid = 4;
       for (int i = 0; i < dup.Count; i++) {
         Assert.Equal(chelid++, dup.Ids[i]);
-        Assert.Equal(chsecid++, dup.Prop2ds[i].Id);
+        Assert.Equal(16, dup.Prop2ds[i].Id);
         Assert.Equal(2, dup.Groups[i]);
         Assert.False(dup.IsDummies[i]);
         Assert.Equal("Esmaeil", dup.Names[i]);
@@ -229,11 +227,10 @@ namespace GsaGHTests.Parameters {
 
       // check that values in original are changed
       chelid = 15;
-      chsecid = 16;
       for (int i = 0; i < origi.Count; i++) {
         // check other members are valid
         Assert.Equal(chelid++, origi.Ids[i]);
-        Assert.Equal(chsecid++, origi.Prop2ds[i].Id);
+        Assert.Equal(16, origi.Prop2ds[i].Id);
         Assert.Equal(4, origi.Groups[i]);
         Assert.True(origi.IsDummies[i]);
         Assert.Equal("Mani", origi.Names[i]);

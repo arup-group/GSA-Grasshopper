@@ -6,7 +6,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

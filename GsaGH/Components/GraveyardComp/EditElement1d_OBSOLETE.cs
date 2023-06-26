@@ -10,7 +10,6 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using Line = Rhino.Geometry.Line;
@@ -118,7 +117,7 @@ namespace GsaGH.Components {
 
       GsaElement1dGoo element1dGoo = null;
       if (da.GetData(0, ref element1dGoo)) {
-        elem = element1dGoo.Value.Duplicate(true);
+        elem = element1dGoo.Value.Clone();
       }
 
       var ghId = new GH_Integer();

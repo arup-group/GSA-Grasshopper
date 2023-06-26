@@ -288,18 +288,18 @@ namespace GsaGH.Components {
             break;
           }
           case GsaMaterialGoo value: {
-              if (value.Value.GradeProperty != 0) {
+              if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(
                 "Reference Material must be a Custom Material");
                 return;
               }
               beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Material;
+              beamLoad._referenceType = ReferenceType.Property;
               break;
             }
           case GsaSectionGoo value: {
               beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Section;
+              beamLoad._referenceType = ReferenceType.Property;
               break;
             }
           default: {

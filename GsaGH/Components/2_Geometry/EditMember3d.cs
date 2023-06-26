@@ -100,7 +100,7 @@ namespace GsaGH.Components {
 
       GsaMember3dGoo member3dGoo = null;
       if (da.GetData(0, ref member3dGoo)) {
-        mem = member3dGoo.Value.Duplicate(true);
+        mem = member3dGoo.Value.Clone();
       }
 
       int id = 0;

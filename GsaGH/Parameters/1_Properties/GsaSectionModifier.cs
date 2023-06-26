@@ -161,7 +161,7 @@ namespace GsaGH.Parameters {
           new SectionModifierAttribute(SectionModifierOptionType.BY,
             value.As(RatioUnit
              .DecimalFraction)) : // assume that percentage unit is modify BY option
-          // assume that all other than percentage unit is modify TO option
+                                  // assume that all other than percentage unit is modify TO option
           new SectionModifierAttribute(SectionModifierOptionType.TO,
             value.As(RatioUnit.DecimalFraction));
       }
@@ -178,7 +178,7 @@ namespace GsaGH.Parameters {
           new SectionModifierAttribute(SectionModifierOptionType.BY,
             value.As(RatioUnit
              .DecimalFraction)) : // assume that percentage unit is modify BY option
-          // assume that all other than percentage unit is modify TO option
+                                  // assume that all other than percentage unit is modify TO option
           new SectionModifierAttribute(SectionModifierOptionType.TO,
             value.As(RatioUnit.DecimalFraction));
       }
@@ -246,15 +246,16 @@ namespace GsaGH.Parameters {
       _sectionModifier = sectionModifier;
     }
 
-    public GsaSectionModifier Duplicate(bool cloneApiObject = false) {
+    public GsaSectionModifier Clone() {
       var dup = new GsaSectionModifier {
         _sectionModifier = _sectionModifier,
       };
-      if (cloneApiObject) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       return dup;
+    }
+    public GsaSectionModifier Duplicate() {
+      return this;
     }
 
     public override string ToString() {

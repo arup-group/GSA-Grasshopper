@@ -98,7 +98,7 @@ namespace GsaGHTests.Parameters {
         Type = MemberType.COLUMN,
       };
 
-      GsaMember1d dup = orig.Duplicate();
+      GsaMember1d dup = orig.Clone();
 
       Assert.Equal(Color.FromArgb(255, 0, 128, 0), dup.Colour);
       Assert.Equal(2, dup.Id);
@@ -125,7 +125,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("Sally", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
-      Assert.Equal(4, dup.Section.Id);
+      Assert.Equal(1, dup.Section.Id);
       Assert.Equal(99, dup.Group);
       Assert.Equal(ElementType.BAR, dup.Type1D);
       Assert.Equal(MemberType.COLUMN, dup.Type);

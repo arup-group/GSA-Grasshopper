@@ -3,7 +3,6 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -113,7 +112,7 @@ namespace GsaGHTests.Parameters {
       orig.Offset = offset;
       orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
-      GsaElement1d dup = orig.Duplicate();
+      GsaElement1d dup = orig.Clone();
 
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
       orig.Id = 5;
@@ -134,7 +133,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-1, dup.Line.PointAtEnd.Y, 1E-9);
       Assert.Equal(4, dup.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(3, dup.Id);
-      Assert.Equal(7, dup.Section.Id);
+      Assert.Equal(9, dup.Section.Id);
       Assert.Equal(Color.FromArgb(255, 0, 255, 255), dup.Colour);
       Assert.Equal(1, dup.Group);
       Assert.False(dup.IsDummy);

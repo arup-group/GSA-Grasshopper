@@ -46,18 +46,12 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _prop3d.MaterialType = Materials.ConvertType(_material);
-        _prop3d.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _prop3d.MaterialGradeProperty = _material.GradeProperty;
-        IsReferencedById = false;
-      }
-    }
-    public int MaterialId {
-      get => _prop3d.MaterialAnalysisProperty;
-      set {
-        CloneApiObject();
-        _prop3d.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _prop3d.MaterialAnalysisProperty;
+        _prop3d.MaterialType = Materials.GetMaterialType(_material);
+        if (_material.IsCustom) {
+          _prop3d.MaterialAnalysisProperty = _material.Id;
+        } else {
+          _prop3d.MaterialGradeProperty = _material.Id;
+        }
         IsReferencedById = false;
       }
     }
@@ -74,7 +68,7 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _prop3d = value;
-        _material = new GsaMaterial(this);
+        _material = Material.Duplicate();
         IsReferencedById = false;
       }
     }
@@ -110,22 +104,22 @@ namespace GsaGH.Parameters {
         _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
       }
 
-      _material = new GsaMaterial(this);
+      _material = Material.Duplicate();
     }
 
-    public GsaProp3d Duplicate(bool cloneApiElement = false) {
+    public GsaProp3d Clone() {
       var dup = new GsaProp3d {
         _prop3d = _prop3d,
         _id = _id,
         _material = _material.Duplicate(),
-        _guid = new Guid(_guid.ToString()),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement) {
-        dup.CloneApiObject();
-      }
-
+      dup.CloneApiObject();
       return dup;
+    }
+
+    public GsaProp3d Duplicate() {
+      return this;
     }
 
     public override string ToString() {

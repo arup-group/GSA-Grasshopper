@@ -70,7 +70,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value.Duplicate();
+        section = sectionGoo.Value.Clone();
       }
 
       if (section != null) {
@@ -81,7 +81,7 @@ namespace GsaGH.Components {
           }
         }
 
-        string profile = "";
+        string profile = string.Empty;
         if (da.GetData(2, ref profile)) {
           section.Profile = profile;
         }
@@ -123,7 +123,7 @@ namespace GsaGH.Components {
         da.SetData(0, new GsaSectionGoo(section));
         da.SetData(1, section.Id);
         da.SetData(2, prof);
-        da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
+        da.SetData(3, new GsaMaterialGoo(section.Material));
         da.SetData(4, new GsaSectionModifierGoo(section.Modifier));
         da.SetData(5, poo);
         da.SetData(6, nm);

@@ -110,28 +110,28 @@ namespace GsaGH.Components {
             break;
           }
           case GsaMaterialGoo value: {
-              if (value.Value.GradeProperty != 0) {
+              if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(
                 "Reference Material must be a Custom Material");
                 return;
               }
               gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Material;
+              gravityLoad._referenceType = ReferenceType.Property;
               break;
             }
           case GsaSectionGoo value: {
               gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Section;
+              gravityLoad._referenceType = ReferenceType.Property;
               break;
             }
           case GsaProp2dGoo value: {
               gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Prop2d;
+              gravityLoad._referenceType = ReferenceType.Property;
               break;
             }
           case GsaProp3dGoo value: {
               gravityLoad._refObjectGuid = value.Value.Guid;
-              gravityLoad._referenceType = ReferenceType.Prop3d;
+              gravityLoad._referenceType = ReferenceType.Property;
               break;
             }
           default: {

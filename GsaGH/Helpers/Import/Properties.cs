@@ -2,136 +2,145 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
-  /// <summary>
-  ///   Class containing functions to import various object types from GSA
-  /// </summary>
   internal class Properties {
-    internal static (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
-      List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) GetProperties(Model model) {
-      
-      // TO-DO: GSA-6773: add way to get properties/materials by list
+    internal ReadOnlyDictionary<int, GsaSectionGoo> Sections { get; private set; }
+    internal ReadOnlyDictionary<int, GsaProp2dGoo> Prop2ds { get; private set; }
+    internal ReadOnlyDictionary<int, GsaProp3dGoo> Prop3ds { get; private set; }
 
-      List<GsaMaterialGoo> customMaterials
-        = Materials.GetCustomMaterials(model.AnalysisMaterials());
-      List<GsaSectionGoo> sections = GetSections(model.Sections(),
-        model.AnalysisMaterials(), model.SectionModifiers());
-      List<GsaProp2dGoo> prop2ds = GetProp2ds(model.Prop2Ds(),
-        model.AnalysisMaterials(), model.Axes());
-      List<GsaProp3dGoo> prop3ds
-        = GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
-      return (customMaterials, sections, prop2ds, prop3ds);
+    internal Properties(Model model, Materials materials) {
+      Sections = CreateSectionsFromAPI(model.Sections(), materials, model.SectionModifiers());
+      Prop2ds = CreateProp2dsFromAPI(model.Prop2Ds(), materials, model.Axes());
+      Prop3ds = CreateProp3dsFromAPI(model.Prop3Ds(), materials);
     }
 
-    /// <summary>
-    ///   Method to import Prop2ds from a GSA model.
-    ///   Will output a list of GsaProp2dGoo.
-    /// </summary>
-    /// <param name="pDict">Dictionary of pre-filtered 2D Properties to import</param>
-    /// <param name="analysisMaterials"></param>
-    /// <param name="axDict"></param>
-    /// <returns></returns>
-    internal static List<GsaProp2dGoo> GetProp2ds(
-      IReadOnlyDictionary<int, Prop2D> pDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials,
-      ReadOnlyDictionary<int, Axis> axDict = null) {
-      var prop2ds = new List<GsaProp2dGoo>();
-
-      foreach (int key in pDict.Keys) {
-        if (!pDict.TryGetValue(key, out Prop2D apisection)) {
-          continue;
-        }
-
-        var prop = new GsaProp2d(key) {
-          ApiProp2d = apisection,
-        };
-        if (prop.ApiProp2d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.ApiProp2d.MaterialAnalysisProperty)) {
-            prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-          }
-        }
-
-        // Axis property 0 = Global, -1 = Topological
-        if (prop.ApiProp2d.AxisProperty > 0) {
-          if (axDict != null && axDict.ContainsKey(prop.ApiProp2d.AxisProperty)) {
-            Axis ax = axDict[prop.ApiProp2d.AxisProperty];
-            prop.LocalAxis = new Plane(new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
-              new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
-              new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
-          }
-        }
-
-        prop2ds.Add(new GsaProp2dGoo(prop));
-      }
-
-      return prop2ds;
+    internal GsaSection GetSection(Element e) {
+      return Sections.TryGetValue(e.Property, out GsaSectionGoo section) 
+        ? section.Value 
+        : new GsaSection(e.Property);
     }
 
-    internal static List<GsaProp3dGoo> GetProp3ds(
-      IReadOnlyDictionary<int, Prop3D> pDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials) {
-      var prop2ds = new List<GsaProp3dGoo>();
-
-      foreach (int key in pDict.Keys) {
-        if (!pDict.TryGetValue(key, out Prop3D apisection)) {
-          continue;
-        }
-
-        var prop = new GsaProp3d(key) {
-          ApiProp3d = apisection,
-        };
-        if (prop.ApiProp3d.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(prop.ApiProp3d.MaterialAnalysisProperty)) {
-            prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-          }
-        }
-
-        prop2ds.Add(new GsaProp3dGoo(prop));
-      }
-
-      return prop2ds;
+    internal GsaSection GetSection(Member m) {
+      return Sections.TryGetValue(m.Property, out GsaSectionGoo section) 
+        ? section.Value 
+        : new GsaSection(m.Property); ;
     }
 
-    /// <summary>
-    ///   Method to import Sections from a GSA model.
-    ///   Will output a list of GsaSectionsGoo.
-    /// </summary>
-    /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
-    /// <param name="analysisMaterials"></param>
-    /// <param name="modDict"></param>
-    /// <returns></returns>
-    internal static List<GsaSectionGoo> GetSections(
-      IReadOnlyDictionary<int, Section> sDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials,
-      IReadOnlyDictionary<int, SectionModifier> modDict) {
-      var sections = new List<GsaSectionGoo>();
+    internal GsaProp2d GetProp2d(Element e) {
+      return Prop2ds.TryGetValue(e.Property, out GsaProp2dGoo prop) 
+        ? prop.Value 
+        : new GsaProp2d(e.Property);
+    }
 
-      foreach (int key in sDict.Keys) {
-        if (!sDict.TryGetValue(key, out Section apisection)) {
-          continue;
-        }
+    internal GsaProp2d GetProp2d(Member m) {
+      return Prop2ds.TryGetValue(m.Property, out GsaProp2dGoo prop) 
+        ? prop.Value 
+        : new GsaProp2d(m.Property);
+    }
 
-        var sect = new GsaSection(key) {
-          ApiSection = apisection,
-        };
-        if (sect.ApiSection.MaterialAnalysisProperty != 0) {
-          if (analysisMaterials.ContainsKey(sect.ApiSection.MaterialAnalysisProperty)) {
-            sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
-          }
-        }
+    internal GsaProp3d GetProp3d(Element e) {
+      return Prop3ds.TryGetValue(e.Property, out GsaProp3dGoo prop) 
+        ? prop.Value 
+        : new GsaProp3d(e.Property);
+    }
 
-        if (modDict.Keys.Contains(key)) {
-          sect.Modifier = new GsaSectionModifier(modDict[key]);
-        }
+    internal GsaProp3d GetProp3d(Member m) {
+      return Prop3ds.TryGetValue(m.Property, out GsaProp3dGoo prop) 
+        ? prop.Value
+        : new GsaProp3d(m.Property);
+    }
 
-        sections.Add(new GsaSectionGoo(sect));
+    private static ReadOnlyDictionary<int, GsaSectionGoo> CreateSectionsFromAPI(
+      IReadOnlyDictionary<int, Section> sections,
+      Materials materials,
+      IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
+      var dict = new Dictionary<int, GsaSectionGoo>();
+      foreach (KeyValuePair<int, Section> sec in sections) {
+        dict.Add(sec.Key, CreateSectionFromApi(sec, materials, sectionModifiers));
+      }
+      return new ReadOnlyDictionary<int, GsaSectionGoo>(dict);
+    }
+
+    private static ReadOnlyDictionary<int, GsaProp2dGoo> CreateProp2dsFromAPI(
+      IReadOnlyDictionary<int, Prop2D> props,
+      Materials materials,
+      IReadOnlyDictionary<int, Axis> axes = null) {
+      var dict = new Dictionary<int, GsaProp2dGoo>();
+      foreach (KeyValuePair<int, Prop2D> prop in props) {
+        dict.Add(prop.Key, CreateProp2dFromApi(prop, materials, axes));
+      }
+      return new ReadOnlyDictionary<int, GsaProp2dGoo>(dict);
+    }
+
+    private static ReadOnlyDictionary<int, GsaProp3dGoo> CreateProp3dsFromAPI(
+      IReadOnlyDictionary<int, Prop3D> props,
+      Materials materials) {
+      var dict = new Dictionary<int, GsaProp3dGoo>();
+      foreach (KeyValuePair<int, Prop3D> prop in props) {
+        dict.Add(prop.Key, CreateProp3dFromApi(prop, materials));
+      }
+      return new ReadOnlyDictionary<int, GsaProp3dGoo>(dict);
+    }
+
+    private static GsaProp2dGoo CreateProp2dFromApi(
+        KeyValuePair<int, Prop2D> prop2d,
+        Materials materials,
+        IReadOnlyDictionary<int, Axis> axes) {
+      var prop = new GsaProp2d(prop2d.Key) {
+        ApiProp2d = prop2d.Value,
+      };
+      GsaMaterial material = materials.GetMaterial(prop2d.Value);
+      if (material != null) {
+        prop.Material = material;
       }
 
-      return sections;
+      // Axis property 0 = Global, -1 = Topological
+      if (prop.ApiProp2d.AxisProperty > 0) {
+        if (axes != null && axes.ContainsKey(prop.ApiProp2d.AxisProperty)) {
+          Axis ax = axes[prop.ApiProp2d.AxisProperty];
+          prop.LocalAxis = new Plane(new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
+            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+        }
+      }
+
+      return new GsaProp2dGoo(prop);
+    }
+
+    internal static GsaProp3dGoo CreateProp3dFromApi(
+      KeyValuePair<int, Prop3D> prop3d,
+      Materials materials) {
+      var prop = new GsaProp3d(prop3d.Key) {
+        ApiProp3d = prop3d.Value,
+      };
+      GsaMaterial material = materials.GetMaterial(prop3d.Value);
+      if (material!= null) {
+        prop.Material = material;
+      }
+
+      return new GsaProp3dGoo(prop);
+    }
+
+    private static GsaSectionGoo CreateSectionFromApi(
+      KeyValuePair<int, Section> section,
+      Materials materials,
+      IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
+      var sect = new GsaSection(section.Key) {
+        ApiSection = section.Value,
+      };
+      GsaMaterial material = materials.GetMaterial(section.Value);
+      if (material != null) {
+        sect.Material = material;
+      }
+
+      if (sectionModifiers.Keys.Contains(section.Key)) {
+        sect.Modifier = new GsaSectionModifier(sectionModifiers[section.Key]);
+      }
+
+      return new GsaSectionGoo(sect);
     }
   }
 }

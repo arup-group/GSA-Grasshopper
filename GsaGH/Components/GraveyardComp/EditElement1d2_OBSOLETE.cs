@@ -131,7 +131,7 @@ namespace GsaGH.Components {
 
       GsaElement1dGoo element1dGoo = null;
       if (da.GetData(0, ref element1dGoo)) {
-        elem = element1dGoo.Value.Duplicate(true);
+        elem = element1dGoo.Value.Clone();
       }
 
       var ghId = new GH_Integer();

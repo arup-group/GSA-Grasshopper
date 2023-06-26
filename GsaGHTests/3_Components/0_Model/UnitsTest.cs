@@ -1,13 +1,10 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using System;
 using Xunit;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
