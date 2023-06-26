@@ -462,7 +462,7 @@ namespace IntegrationTests.Components {
 
     private static GH_Document OpenDocument() {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
-      string fileName = thisClass.Name + ".gh";
+      string fileName = $"{thisClass.Name}.gh";
       fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent

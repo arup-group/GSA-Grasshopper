@@ -132,7 +132,7 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+      string fileName = $"{MethodBase.GetCurrentMethod().DeclaringType}.gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("Test", string.Empty);
 

@@ -55,7 +55,7 @@ namespace IntegrationTests {
       AddPluginToGh();
 
       LoadRefs();
-      Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      Assembly.LoadFile($"{InstallPath}\\GsaAPI.dll");
       TryGsaCom();
 
       InitializeCore();
@@ -93,7 +93,7 @@ namespace IntegrationTests {
     public void LoadRefs() {
       const string name = "PATH";
       string pathvar = Environment.GetEnvironmentVariable(name);
-      string value = pathvar + ";" + InstallPath + "\\";
+      string value = $"{pathvar};{InstallPath}\\";
       EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
       Environment.SetEnvironmentVariable(name, value, target);
     }

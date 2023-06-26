@@ -45,7 +45,7 @@ namespace IntegrationTests.Parameters {
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
 
       if (checkError) {
-        TestCastError(groupIdentifier + "Error");
+        TestCastError($"{groupIdentifier}Error");
       }
     }
 
@@ -110,7 +110,7 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+      string fileName = $"{MethodBase.GetCurrentMethod().DeclaringType}.gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("_Test", string.Empty);
 

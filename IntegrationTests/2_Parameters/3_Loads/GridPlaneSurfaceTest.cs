@@ -51,7 +51,7 @@ namespace IntegrationTests.Parameters {
     }
 
     private static GH_Document OpenDocument() {
-      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+      string fileName = $"{MethodBase.GetCurrentMethod().DeclaringType}.gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty)
        .Replace("Test", string.Empty);
 
@@ -76,15 +76,15 @@ namespace IntegrationTests.Parameters {
           p.CollectData();
           p.ComputeData();
           foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error)) {
-            Console.WriteLine("Parameter " + p.NickName + ", Error: " + message);
+            Console.WriteLine($"Parameter {p.NickName}, Error: {message}");
           }
 
           foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning)) {
-            Console.WriteLine("Parameter " + p.NickName + ", Warning: " + message);
+            Console.WriteLine($"Parameter {p.NickName}, Warning: {message}");
           }
 
           foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark)) {
-            Console.WriteLine("Parameter " + p.NickName + ", Remark: " + message);
+            Console.WriteLine($"Parameter {p.NickName}, Remark: {message}");
           }
         }
       }
@@ -92,15 +92,15 @@ namespace IntegrationTests.Parameters {
       foreach (IGH_DocumentObject obj in io.Document.Objects) {
         if (obj is IGH_Component comp) {
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error)) {
-            Console.WriteLine("Component " + comp.NickName + ", Error: " + message);
+            Console.WriteLine($"Component {comp.NickName}, Error: {message}");
           }
 
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning)) {
-            Console.WriteLine("Component \" + comp.NickName + \", Warning: " + message);
+            Console.WriteLine($"Component \" + comp.NickName + \", Warning: {message}");
           }
 
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)) {
-            Console.WriteLine("Component \" + comp.NickName + \", Remark: " + message);
+            Console.WriteLine($"Component \" + comp.NickName + \", Remark: {message}");
           }
         }
       }
