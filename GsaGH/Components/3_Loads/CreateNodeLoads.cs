@@ -101,16 +101,16 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case FoldMode.NodeForce:
-          Params.Input[4].Name = "Value [" + Force.GetAbbreviation(_forceUnit) + "]";
+          Params.Input[4].Name = $"Value [{Force.GetAbbreviation(_forceUnit)}]";
           break;
 
         case FoldMode.NodeMoment:
-          Params.Input[4].Name = "Value [" + Moment.GetAbbreviation(_momentUnit) + "]";
+          Params.Input[4].Name = $"Value [{Moment.GetAbbreviation(_momentUnit)}]";
           break;
 
         case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          Params.Input[4].Name = "Value [" + Length.GetAbbreviation(_lengthUnit) + "]";
+          Params.Input[4].Name = $"Value [{Length.GetAbbreviation(_lengthUnit)}]";
           break;
       }
     }
@@ -137,34 +137,29 @@ namespace GsaGH.Components {
       string funit = " ";
       switch (_mode) {
         case FoldMode.NodeForce:
-          funit = "Value [" + Force.GetAbbreviation(_forceUnit) + "]";
+          funit = $"Value [{Force.GetAbbreviation(_forceUnit)}]";
           break;
 
         case FoldMode.NodeMoment:
-          funit = "Value [" + Moment.GetAbbreviation(_momentUnit) + "]";
+          funit = $"Value [{Moment.GetAbbreviation(_momentUnit)}]";
           break;
 
         case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          funit = "Value [" + Length.GetAbbreviation(_lengthUnit) + "]";
+          funit = $"Value [{Length.GetAbbreviation(_lengthUnit)}]";
           break;
       }
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Node list", "Pt",
-        "Node or Point to apply load to; either input Node, Point, or a text string."
-        + Environment.NewLine + "Text string with Node list should take the form:"
-        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Node or Point to apply load to; either input Node, Point, or a text string.{Environment.NewLine}Text string with Node list should take the form:{Environment.NewLine} 1 11 to 72 step 2 not (XY3 31 to 45){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
-        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z"
-        + Environment.NewLine + "xx" + Environment.NewLine + "yy" + Environment.NewLine + "zz",
+        $"Load direction (default z).{Environment.NewLine}Accepted inputs are:{Environment.NewLine}x{Environment.NewLine}y{Environment.NewLine}z{Environment.NewLine}xx{Environment.NewLine}yy{Environment.NewLine}zz",
         GH_ParamAccess.item, "z");
-      pManager.AddGenericParameter("Value [" + funit + "]", "V", "Load Value", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Value [{funit}]", "V", "Load Value", GH_ParamAccess.item);
       pManager[0].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;

@@ -86,7 +86,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Point:
           Params.Input[6].NickName = "V";
-          Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+          Params.Input[6].Name = $"Value [{unitAbbreviation}]";
           Params.Input[6].Description = "Load Value";
           Params.Input[6].Access = GH_ParamAccess.item;
           Params.Input[6].Optional = false;
@@ -100,7 +100,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Uniform:
           Params.Input[6].NickName = "V";
-          Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+          Params.Input[6].Name = $"Value [{unitAbbreviation}]";
           Params.Input[6].Description = "Load Value";
           Params.Input[6].Access = GH_ParamAccess.item;
           Params.Input[6].Optional = false;
@@ -108,13 +108,13 @@ namespace GsaGH.Components {
 
         case FoldMode.Linear:
           Params.Input[6].NickName = "V1";
-          Params.Input[6].Name = "Value Start [" + unitAbbreviation + "]";
+          Params.Input[6].Name = $"Value Start [{unitAbbreviation}]";
           Params.Input[6].Description = "Load Value at Beam Start";
           Params.Input[6].Access = GH_ParamAccess.item;
           Params.Input[6].Optional = true;
 
           Params.Input[7].NickName = "V2";
-          Params.Input[7].Name = "Value End [" + unitAbbreviation + "]";
+          Params.Input[7].Name = $"Value End [{unitAbbreviation}]";
           Params.Input[7].Description = "Load Value at Beam End";
           Params.Input[7].Access = GH_ParamAccess.item;
           Params.Input[7].Optional = true;
@@ -122,7 +122,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Patch:
           Params.Input[6].NickName = "V1";
-          Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
+          Params.Input[6].Name = $"Load t1 [{unitAbbreviation}]";
           Params.Input[6].Description = "Load Value at Position 1";
           Params.Input[6].Access = GH_ParamAccess.item;
           Params.Input[6].Optional = true;
@@ -135,7 +135,7 @@ namespace GsaGH.Components {
           Params.Input[7].Optional = true;
 
           Params.Input[8].NickName = "V2";
-          Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
+          Params.Input[8].Name = $"Load t2 [{unitAbbreviation}]";
           Params.Input[8].Description = "Load Value at Position 2";
           Params.Input[8].Access = GH_ParamAccess.item;
           Params.Input[8].Optional = true;
@@ -150,7 +150,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Trilinear:
           Params.Input[6].NickName = "V1";
-          Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
+          Params.Input[6].Name = $"Load t1 [{unitAbbreviation}]";
           Params.Input[6].Description = "Load Value at Position 1";
           Params.Input[6].Access = GH_ParamAccess.item;
           Params.Input[6].Optional = true;
@@ -163,7 +163,7 @@ namespace GsaGH.Components {
           Params.Input[7].Optional = true;
 
           Params.Input[8].NickName = "V2";
-          Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
+          Params.Input[8].Name = $"Load t2 [{unitAbbreviation}]";
           Params.Input[8].Description = "Load Value at Position 2";
           Params.Input[8].Access = GH_ParamAccess.item;
           Params.Input[8].Optional = true;
@@ -202,26 +202,18 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "G1D",
-        "List, Custom Material, Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string."
-        + Environment.NewLine + "Text string with Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"List, Custom Material, Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string.{Environment.NewLine}Text string with Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Axis", "Ax",
-        "Load axis (default Global). " + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "0 : Global" + Environment.NewLine + "-1 : Local",
+        $"Load axis (default Global). {Environment.NewLine}Accepted inputs are:{Environment.NewLine}0 : Global{Environment.NewLine}-1 : Local",
         GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Direction", "Di",
-        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z"
-        + Environment.NewLine + "xx" + Environment.NewLine + "yy" + Environment.NewLine + "zz",
+        $"Load direction (default z).{Environment.NewLine}Accepted inputs are:{Environment.NewLine}x{Environment.NewLine}y{Environment.NewLine}z{Environment.NewLine}xx{Environment.NewLine}yy{Environment.NewLine}zz",
         GH_ParamAccess.item, "z");
       pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)",
         GH_ParamAccess.item, false);
-      pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value",
+      pManager.AddNumberParameter($"Value [{unitAbbreviation}]", "V", "Load Value",
         GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -264,9 +256,7 @@ namespace GsaGH.Components {
 
             if (value.Value.EntityType == EntityType.Member) {
               this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
-                + Environment.NewLine
-                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                $"Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements.{Environment.NewLine}If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
             break;
@@ -282,14 +272,10 @@ namespace GsaGH.Components {
             beamLoad._referenceType = ReferenceType.MemberChildElements;
             if (_mode != FoldMode.Uniform) {
               this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements."
-                + Environment.NewLine
-                + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+                $"Member loading will not automatically redistribute non-linear loading to child elements.{Environment.NewLine}Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
             } else {
               this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements."
-                + Environment.NewLine
-                + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                $"Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements.{Environment.NewLine}If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
             }
 
             break;

@@ -60,7 +60,7 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
-      Params.Input[7].Name = "Value [" + unitAbbreviation + "]";
+      Params.Input[7].Name = $"Value [{unitAbbreviation}]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -113,17 +113,15 @@ namespace GsaGH.Components {
         "Grid Plane Surface or Plane (optional). If no input here then the brep's best-fit plane will be used",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
-        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z",
+        $"Load direction (default z).{Environment.NewLine}Accepted inputs are:{Environment.NewLine}x{Environment.NewLine}y{Environment.NewLine}z",
         GH_ParamAccess.item, "z");
       pManager.AddIntegerParameter("Axis", "Ax",
-        "Load axis (default Global). " + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "0 : Global" + Environment.NewLine + "-1 : Local",
+        $"Load axis (default Global). {Environment.NewLine}Accepted inputs are:{Environment.NewLine}0 : Global{Environment.NewLine}-1 : Local",
         GH_ParamAccess.item, 0);
       pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)",
         GH_ParamAccess.item, false);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value",
+      pManager.AddNumberParameter($"Value [{unitAbbreviation}]", "V", "Load Value",
         GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -177,9 +175,7 @@ namespace GsaGH.Components {
               gridareaload.GridPlaneSurface = null;
             } else {
               this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the brep's best-fit plane will be used");
+                $"Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. {Environment.NewLine}If no input here then the brep's best-fit plane will be used");
               return;
             }
 
@@ -208,9 +204,7 @@ namespace GsaGH.Components {
               && _expansionType == ExpansionType.UseGpsSettings) {
               _expansionType = ExpansionType.To1D;
               this.AddRuntimeRemark(
-                "Input Brep has automatically been converted to a GridPlaneSurface."
-                + Environment.NewLine + "The default expansion type is set to be onto 1D Elements."
-                + Environment.NewLine + "You can change this by right-clicking the component.");
+                $"Input Brep has automatically been converted to a GridPlaneSurface.{Environment.NewLine}The default expansion type is set to be onto 1D Elements.{Environment.NewLine}You can change this by right-clicking the component.");
               UpdateMessage();
             }
 
@@ -325,7 +319,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      Message = "Expansion: " + _expansionType.ToString().Replace("_", " ");
+      Message = $"Expansion: {_expansionType.ToString().Replace("_", " ")}";
     }
   }
 }

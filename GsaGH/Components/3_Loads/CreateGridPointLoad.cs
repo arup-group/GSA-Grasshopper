@@ -37,7 +37,7 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Force.GetAbbreviation(_forceUnit);
-      Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+      Params.Input[6].Name = $"Value [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -66,15 +66,13 @@ namespace GsaGH.Components {
         "Grid Plane Surface or Plane (optional). If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
-        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z",
+        $"Load direction (default z).{Environment.NewLine}Accepted inputs are:{Environment.NewLine}x{Environment.NewLine}y{Environment.NewLine}z",
         GH_ParamAccess.item, "z");
       pManager.AddIntegerParameter("Axis", "Ax",
-        "Load axis (default Global). " + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "0 : Global" + Environment.NewLine + "-1 : Local",
+        $"Load axis (default Global). {Environment.NewLine}Accepted inputs are:{Environment.NewLine}0 : Global{Environment.NewLine}-1 : Local",
         GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Value [" + unitAbbreviation + "]", "V", "Load Value",
+      pManager.AddGenericParameter($"Value [{unitAbbreviation}]", "V", "Load Value",
         GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -130,9 +128,7 @@ namespace GsaGH.Components {
               gsaGridPointLoad.GridPlaneSurface = null;
             } else {
               this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+                $"Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. {Environment.NewLine}If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
               return;
             }
 

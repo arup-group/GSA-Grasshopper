@@ -46,10 +46,10 @@ namespace GsaGH.Components {
     public virtual void VariableParameterMaintenance() {
       string unit = Length.GetAbbreviation(_lengthUnit);
 
-      Params.Output[6].Name = "Elevation [" + unit + "]";
-      Params.Output[7].Name = "Grid Plane Tolerance Above [" + unit + "]";
-      Params.Output[8].Name = "Grid Plane Tolerance Below [" + unit + "]";
-      Params.Output[13].Name = "Grid Surface Tolerance [" + unit + "]";
+      Params.Output[6].Name = $"Elevation [{unit}]";
+      Params.Output[7].Name = $"Grid Plane Tolerance Above [{unit}]";
+      Params.Output[8].Name = $"Grid Plane Tolerance Below [{unit}]";
+      Params.Output[13].Name = $"Grid Surface Tolerance [{unit}]";
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {

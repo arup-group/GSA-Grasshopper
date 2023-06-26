@@ -39,8 +39,8 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
-      Params.Input[7].Name = "Value Start [" + unitAbbreviation + "]";
-      Params.Input[8].Name = "Value End [" + unitAbbreviation + "]";
+      Params.Input[7].Name = $"Value Start [{unitAbbreviation}]";
+      Params.Input[8].Name = $"Value End [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -69,19 +69,17 @@ namespace GsaGH.Components {
         "Grid Plane Surface or Plane (optional). If no input here then the line's best-fit plane will be used",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
-        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z",
+        $"Load direction (default z).{Environment.NewLine}Accepted inputs are:{Environment.NewLine}x{Environment.NewLine}y{Environment.NewLine}z",
         GH_ParamAccess.item, "z");
       pManager.AddIntegerParameter("Axis", "Ax",
-        "Load axis (default Global). " + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "0 : Global" + Environment.NewLine + "-1 : Local",
+        $"Load axis (default Global). {Environment.NewLine}Accepted inputs are:{Environment.NewLine}0 : Global{Environment.NewLine}-1 : Local",
         GH_ParamAccess.item, 0);
       pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)",
         GH_ParamAccess.item, false);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Value Start [" + unitAbbreviation + "]", "V1",
+      pManager.AddGenericParameter($"Value Start [{unitAbbreviation}]", "V1",
         "Load Value at Start of Line", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Value End [" + unitAbbreviation + "]", "V2",
+      pManager.AddGenericParameter($"Value End [{unitAbbreviation}]", "V2",
         "Load Value at End of Line (default : Start Value)", GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -133,9 +131,7 @@ namespace GsaGH.Components {
               gridlineload.GridPlaneSurface = null;
             } else {
               this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the line's best-fit plane will be used");
+                $"Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. {Environment.NewLine}If no input here then the line's best-fit plane will be used");
               return;
             }
 
