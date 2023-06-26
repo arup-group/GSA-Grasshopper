@@ -31,6 +31,8 @@ namespace GsaGH.Parameters {
         Prop2DModifier apiModifier = goo.Value.ApiProp2d.PropertyModifier;
         var modifier = new GsaProp2dModifier(apiModifier);
         return new GsaProp2dModifierGoo(modifier);
+      } else if (data is GsaProp2dModifier modifier) {
+        return new GsaProp2dModifierGoo(modifier);
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2dModifier");

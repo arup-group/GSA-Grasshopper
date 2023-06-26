@@ -25,22 +25,22 @@ namespace GsaGH.Parameters {
 
     internal GsaProp2dModifier(Prop2DModifier apiModifier) {
       if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
-        InPlane = new Ratio(-1 * apiModifier.InPlane.Value, RatioUnit.DecimalFraction);
+        InPlane = new Ratio(100 * apiModifier.InPlane.Value, RatioUnit.Percent);
       } else {
         InPlane = new Length(apiModifier.InPlane.Value, LengthUnit.Meter);
       }
       if (apiModifier.Bending.Option == Prop2DModifierOptionType.BY) {
-        Bending = new Ratio(-1 * apiModifier.Bending.Value, RatioUnit.DecimalFraction);
+        Bending = new Ratio(100 * apiModifier.Bending.Value, RatioUnit.Percent);
       } else {
         Bending = new Volume(apiModifier.Bending.Value, VolumeUnit.CubicMeter);
       }
       if (apiModifier.Shear.Option == Prop2DModifierOptionType.BY) {
-        Shear = new Ratio(-1 * apiModifier.Shear.Value, RatioUnit.DecimalFraction);
+        Shear = new Ratio(100 * apiModifier.Shear.Value, RatioUnit.Percent);
       } else {
         Shear = new Length(apiModifier.Shear.Value, LengthUnit.Meter);
       }
       if (apiModifier.Volume.Option == Prop2DModifierOptionType.BY) {
-        Volume = new Ratio(-1 * apiModifier.Volume.Value, RatioUnit.DecimalFraction);
+        Volume = new Ratio(100 * apiModifier.Volume.Value, RatioUnit.Percent);
       } else {
         Volume = new Length(apiModifier.Volume.Value, LengthUnit.Meter);
       }

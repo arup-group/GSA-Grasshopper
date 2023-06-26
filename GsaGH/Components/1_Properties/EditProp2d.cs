@@ -17,6 +17,7 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -223,7 +224,7 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[7].SourceCount > 0) {
-        prop.Thickness = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
+        prop.Thickness = (Length)Input.UnitNumber(this, da, 7, _lengthUnit, true);
       }
 
       var ghReferenceSurface = new GH_ObjectWrapper();
@@ -240,17 +241,43 @@ namespace GsaGH.Components {
         }
       }
 
-      var ghOffset = new GH_Number();
-      if (da.GetData(9, ref ghOffset)) {
-        if (GH_Convert.ToDouble(ghOffset, out double offset, GH_Conversion.Both)) {
-          prop.AdditionalOffsetZ = new Length(offset, _lengthUnit);
-        }
+      if (Params.Input[9].SourceCount > 0) {
+        prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 9, _lengthUnit, true);
       }
 
       GsaProp2dModifierGoo modifierGoo = null;
       if (da.GetData(10, ref modifierGoo)) {
-        //prop.ApiProp2d.PropertyModifier.InPlane = modifierGoo.Value.InPlane;
+        if (modifierGoo.Value.InPlane is Length inPlaneQuantity) {
+          prop.ApiProp2d.PropertyModifier.InPlane = new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, inPlaneQuantity.As(LengthUnit.Meter));
+        } else if (modifierGoo.Value.InPlane is Ratio ratio) {
+          prop.ApiProp2d.PropertyModifier.InPlane = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, ratio.As(RatioUnit.DecimalFraction));
+        }
 
+        if (modifierGoo.Value.Bending is Volume bendingQuantity) {
+          prop.ApiProp2d.PropertyModifier.Bending = new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, bendingQuantity.As(VolumeUnit.CubicMeter));
+        } else if (modifierGoo.Value.Bending is Ratio ratio) {
+          prop.ApiProp2d.PropertyModifier.Bending = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, ratio.As(RatioUnit.DecimalFraction));
+        }
+
+        if (modifierGoo.Value.Shear is Length shearQuantity) {
+          prop.ApiProp2d.PropertyModifier.Shear = new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, shearQuantity.As(LengthUnit.Meter));
+        } else if (modifierGoo.Value.Shear is Ratio ratio) {
+          prop.ApiProp2d.PropertyModifier.Shear = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, ratio.As(RatioUnit.DecimalFraction));
+        }
+
+        if (modifierGoo.Value.Volume is Length volumeQuantity) {
+          prop.ApiProp2d.PropertyModifier.Volume = new Prop2DModifierAttribute(Prop2DModifierOptionType.TO, volumeQuantity.As(LengthUnit.Meter));
+        } else if (modifierGoo.Value.Volume is Ratio ratio) {
+          prop.ApiProp2d.PropertyModifier.Volume = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, ratio.As(RatioUnit.DecimalFraction));
+        }
+
+        prop.ApiProp2d.PropertyModifier.AdditionalMass = modifierGoo.Value.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter);
+      } else {
+        prop.ApiProp2d.PropertyModifier.InPlane = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, 1);
+        prop.ApiProp2d.PropertyModifier.Bending = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, 1);
+        prop.ApiProp2d.PropertyModifier.Shear = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, 1);
+        prop.ApiProp2d.PropertyModifier.Volume = new Prop2DModifierAttribute(Prop2DModifierOptionType.BY, 1);
+        prop.ApiProp2d.PropertyModifier.AdditionalMass = 0;
       }
 
       GH_ObjectWrapper ghSupportType = null;
@@ -293,7 +320,7 @@ namespace GsaGH.Components {
           new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
       da.SetData(8, prop.ReferenceSurface);
       da.SetData(9, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
-      da.SetData(10, prop.SupportType);
+      da.SetData(10, new GsaProp2dModifier(prop.ApiProp2d.PropertyModifier));
       da.SetData(11, prop.SupportType);
       da.SetData(12, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
     }
