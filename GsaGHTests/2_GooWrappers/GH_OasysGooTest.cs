@@ -53,23 +53,17 @@ namespace GsaGHTests.GooWrappers {
           object gooValue = gooProperty.GetValue(objectGoo, null);
           Duplicates.AreEqual(value, gooValue);
 
-          MethodInfo methodInfo = gooValue.GetType().GetMethod("Duplicate");
-          Assert.NotNull(methodInfo);
-          ParameterInfo[] duplicateMethodParameters = methodInfo.GetParameters();
-          if (duplicateMethodParameters.Length == 0) {
-            object duplicateValue = methodInfo.Invoke(gooValue, null); // .Duplicate();
-            Assert.NotSame(gooValue, duplicateValue);
-          } else {
-            // .Duplicate(false);
-            object[] parametersArray = new object[] { false };
-            object duplicateValue = methodInfo.Invoke(gooValue, parametersArray); 
-            Assert.Same(gooValue, duplicateValue);
-            // .Duplicate(true);
-            parametersArray = new object[] { true };
-            duplicateValue = methodInfo.Invoke(gooValue, parametersArray); 
-            Assert.NotSame(gooValue, duplicateValue);
-            Duplicates.AreEqual(gooValue, duplicateValue);
+          MethodInfo methodInfo = gooValue.GetType().GetMethod("Clone");
+          if (methodInfo != null) {
+            object cloneValue = methodInfo.Invoke(gooValue, null);
+            cloneValue = methodInfo.Invoke(gooValue, null);
+            Assert.NotSame(gooValue, cloneValue);
+            Duplicates.AreEqual(gooValue, cloneValue);
           }
+
+          methodInfo = gooValue.GetType().GetMethod("Duplicate");
+          object duplicateValue = methodInfo.Invoke(gooValue, null); // .Duplicate();
+          Duplicates.AreEqual(gooValue, duplicateValue);
 
           hasValue = true;
         }

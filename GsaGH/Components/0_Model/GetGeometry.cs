@@ -477,7 +477,7 @@ namespace GsaGH.Components {
               this.AddRuntimeWarning(
               "List must be of type Node to apply to node filter");
             }
-            nodeList = "\"" + listGoo.Value.Name + "\"";
+            nodeList = $"\"{listGoo.Value.Name}\"";
           } else {
             GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
           }
@@ -489,7 +489,7 @@ namespace GsaGH.Components {
               this.AddRuntimeWarning(
               "List must be of type Element to apply to element filter");
             }
-            elemList = "\"" + listGoo.Value.Name + "\"";
+            elemList = $"\"{listGoo.Value.Name}\"";
           } else {
             GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
           }
@@ -501,7 +501,7 @@ namespace GsaGH.Components {
               this.AddRuntimeWarning(
               "List must be of type Member to apply to member filter");
             }
-            memList = "\"" + listGoo.Value.Name + "\"";
+            memList = $"\"{listGoo.Value.Name}\"";
           } else {
             GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
           }

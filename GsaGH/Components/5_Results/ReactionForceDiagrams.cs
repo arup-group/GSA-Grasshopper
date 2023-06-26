@@ -236,7 +236,7 @@ namespace GsaGH.Components {
             this.AddRuntimeWarning(
             "List must be of type Node to apply to node filter");
           }
-          nodeList = "\"" + listGoo.Value.Name + "\"";
+          nodeList = $"\"{listGoo.Value.Name}\"";
         } else {
           GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
         }

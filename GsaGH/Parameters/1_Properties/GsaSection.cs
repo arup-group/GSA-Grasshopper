@@ -342,7 +342,7 @@ namespace GsaGH.Parameters {
       }
 
       _section = sec;
-      _modifier = Modifier.Duplicate(true);
+      _modifier = Modifier.Clone();
       _guid = Guid.NewGuid();
     }
   }
