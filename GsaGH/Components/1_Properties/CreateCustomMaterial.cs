@@ -85,12 +85,12 @@ namespace GsaGH.Components {
       string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
 
       int i = 1;
-      Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
+      Params.Input[i].Name = $"Elastic Modulus [{stressUnitAbbreviation}]";
       i++;
       i++;
-      Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
+      Params.Input[i].Name = $"Density [{densityUnitAbbreviation}]";
       i++;
-      Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
+      Params.Input[i].Name = $"Thermal Expansion [/{temperatureUnitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -128,13 +128,13 @@ namespace GsaGH.Components {
         "Analysis Property Number (do not use 0 -> 'from Grade')", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Name", "Na", "Material Name of Custom Material",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E",
+      pManager.AddGenericParameter($"Elastic Modulus [{stressUnitAbbreviation}]", "E",
         "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
       pManager.AddNumberParameter("Poisson's Ratio", "ν",
         "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Density [" + densityUnitAbbreviation + "]", "ρ",
+      pManager.AddGenericParameter($"Density [{densityUnitAbbreviation}]", "ρ",
         "Density of the elastic isotropic material", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]", "α",
+      pManager.AddGenericParameter($"Thermal Expansion [/{temperatureUnitAbbreviation}]", "α",
         "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
       pManager[0].Optional = true;
       pManager[1].Optional = true;

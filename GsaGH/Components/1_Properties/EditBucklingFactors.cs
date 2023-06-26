@@ -17,7 +17,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBucklingLengthFactors;
 
-    public EditBucklingFactors() : base("Edit " + GsaBucklingLengthFactorsGoo.Name,
+    public EditBucklingFactors() : base($"Edit {GsaBucklingLengthFactorsGoo.Name}",
       "BucklingFactorsEdit", "Modify GSA Buckling Length Factors", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;

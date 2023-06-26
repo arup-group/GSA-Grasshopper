@@ -125,26 +125,25 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[7].Name
-        = "Additional Mass [" + LinearDensity.GetAbbreviation(_densityUnit) + "]";
+      Params.Input[7].Name = $"Additional Mass [{LinearDensity.GetAbbreviation(_densityUnit)}]";
       if (_toMode) {
         string unit = Length.GetAbbreviation(_lengthUnit);
         string volUnit
           = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit));
 
-        Params.Input[0].Name = "Area Modifier [" + unit + "\u00B2]";
+        Params.Input[0].Name = $"Area Modifier [{unit}\u00b2]";
         Params.Input[0].Description = "[Optional] Modify the effective Area TO this value";
-        Params.Input[1].Name = "I11 Modifier [" + unit + "\u2074]";
+        Params.Input[1].Name = $"I11 Modifier [{unit}\u2074]";
         Params.Input[1].Description = "[Optional] Modify the effective Iyy/Iuu TO this value";
-        Params.Input[2].Name = "I22 Modifier [" + unit + "\u2074]";
+        Params.Input[2].Name = $"I22 Modifier [{unit}\u2074]";
         Params.Input[2].Description = "[Optional] Modify the effective Izz/Ivv TO this value";
-        Params.Input[3].Name = "J Modifier [" + unit + "\u2074]";
+        Params.Input[3].Name = $"J Modifier [{unit}\u2074]";
         Params.Input[3].Description = "[Optional] Modify the effective J TO this value";
         Params.Input[4].Name = "K11 Modifier [-]";
         Params.Input[4].Description = "[Optional] Modify the effective Kyy/Kuu TO this value";
         Params.Input[5].Name = "K22 Modifier [-]";
         Params.Input[5].Description = "[Optional] Modify the effective Kzz/Kvv TO this value";
-        Params.Input[6].Name = "Volume Modifier [" + volUnit + "]";
+        Params.Input[6].Name = $"Volume Modifier [{volUnit}]";
         Params.Input[6].Description = "[Optional] Modify the effective Volume/Length TO this value";
       } else {
         Params.Input[0].Name = "Area Modifier";
@@ -222,7 +221,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Volume Modifier", "V",
         "[Optional] Modify the effective Volume/Length BY this decimal fraction value (Default = 1.0 -> 100%)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Additional Mass [" + unitAbbreviation + "]", "+kg",
+      pManager.AddGenericParameter($"Additional Mass [{unitAbbreviation}]", "+kg",
         "[Optional] Additional mass per unit length (Default = 0 -> no additional mass)",
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Principal Bending Axis", "Ax",

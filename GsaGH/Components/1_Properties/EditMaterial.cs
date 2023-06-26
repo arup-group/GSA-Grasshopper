@@ -26,23 +26,19 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
         GsaMaterialGoo.NickName,
-        GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaMaterialGoo.Name, GH_ParamAccess.item);
+        $"{GsaMaterialGoo.Description} to get or set information for. Leave blank to create a new {GsaMaterialGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Material ID", "ID",
         "(Optional) Set Material ID corrosponding to the desired ID in the material type's table "
         + "(Steel, Concrete, etc).", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Name", "Na", "(Optional) Set Material Name",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), "Analysis Material", "AM",
-        GsaMaterialGoo.Description + "(Optional) Input another Material to overwrite the analysis"
-        + " material properties." + GsaMaterialGoo.Name, GH_ParamAccess.item);
+        $"{GsaMaterialGoo.Description}(Optional) Input another Material to overwrite the analysis material properties.{GsaMaterialGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddGenericParameter("Material Type", "mT",
-        "(Optional) Set Material Type for a Custom Material (only)." + Environment.NewLine
-        + "Input either text string or integer:" + Environment.NewLine + "Generic : 0"
-        + Environment.NewLine + "Steel : 1" + Environment.NewLine + "Concrete : 2"
-        + Environment.NewLine + "Aluminium : 3" + Environment.NewLine + "Glass : 4"
-        + Environment.NewLine + "FRP : 5" + Environment.NewLine + "Timber : 7" + Environment.NewLine
-        + "Fabric : 8", GH_ParamAccess.item);
+        $"(Optional) Set Material Type for a Custom Material (only).{Environment.NewLine}Input either text string or integer:{Environment.NewLine}Generic : 0{Environment.NewLine}Steel : 1{Environment.NewLine}Concrete : 2{Environment.NewLine}Aluminium : 3{Environment.NewLine}Glass : 4{Environment.NewLine}FRP : 5{Environment.NewLine}Timber : 7{Environment.NewLine}Fabric : 8",
+        GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -51,7 +47,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
-        GsaMaterialGoo.NickName, GsaMaterialGoo.Description + " with applied changes.",
+        GsaMaterialGoo.NickName, $"{GsaMaterialGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Material ID", "ID",
         "Get the Material's ID in its respective table (Steel, Concrete, etc)",

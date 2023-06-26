@@ -24,8 +24,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaProp3dParameter(), GsaProp3dGoo.Name, GsaProp3dGoo.NickName,
-        GsaProp3dGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaProp3dGoo.Name, GH_ParamAccess.item);
+        $"{GsaProp3dGoo.Description} to get or set information for. Leave blank to create a new {GsaProp3dGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop3d Number", "ID",
         "Set 3D Property Number. If ID is set it will replace any existing 3D Property in the model",
         GH_ParamAccess.item);
@@ -43,7 +43,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaProp3dParameter(), GsaProp3dGoo.Name, GsaProp3dGoo.NickName,
-        GsaProp3dGoo.Description + " with applied changes.", GH_ParamAccess.item);
+        $"{GsaProp3dGoo.Description} with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID", "3D Property Number",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());

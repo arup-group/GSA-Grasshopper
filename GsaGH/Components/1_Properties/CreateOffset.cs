@@ -39,10 +39,10 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      Params.Input[0].Name = "Offset X1 [" + unitAbbreviation + "]";
-      Params.Input[1].Name = "Offset X2 [" + unitAbbreviation + "]";
-      Params.Input[2].Name = "Offset Y [" + unitAbbreviation + "]";
-      Params.Input[3].Name = "Offset Z [" + unitAbbreviation + "]";
+      Params.Input[0].Name = $"Offset X1 [{unitAbbreviation}]";
+      Params.Input[1].Name = $"Offset X2 [{unitAbbreviation}]";
+      Params.Input[2].Name = $"Offset Y [{unitAbbreviation}]";
+      Params.Input[3].Name = $"Offset Z [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -62,13 +62,13 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]", "X1",
+      pManager.AddGenericParameter($"Offset X1 [{unitAbbreviation}]", "X1",
         "X1 - Start axial offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]", "X2",
-        "X2 - End axial offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]", "Y", "Y Offset",
+      pManager.AddGenericParameter($"Offset X2 [{unitAbbreviation}]", "X2", "X2 - End axial offset",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]", "Z", "Z Offset",
+      pManager.AddGenericParameter($"Offset Y [{unitAbbreviation}]", "Y", "Y Offset",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset Z [{unitAbbreviation}]", "Z", "Z Offset",
         GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {

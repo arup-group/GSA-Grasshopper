@@ -64,14 +64,14 @@ namespace GsaGH.Components {
             }
           }
 
-          string taper = startParts[0] + " " + startParts[1];
+          string taper = $"{startParts[0]} {startParts[1]}";
           for (int i = 2; i < startParts.Length; i++) {
-            taper = taper + " " + startParts[i];
+            taper = $"{taper} {startParts[i]}";
           }
 
           taper += " :";
           for (int i = 2; i < endParts.Length; i++) {
-            taper = taper + " " + endParts[i];
+            taper = $"{taper} {endParts[i]}";
           }
 
           da.SetData(0, taper);

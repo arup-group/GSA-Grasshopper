@@ -26,8 +26,8 @@ namespace GsaGH.Components {
     private bool _z;
     private bool _zz;
 
-    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
-      GsaBool6Goo.NickName.Replace(" ", string.Empty), "Create a " + GsaBool6Goo.Description,
+    public CreateBool6() : base($"Create {GsaBool6Goo.Name.Replace(" ", string.Empty)}",
+      GsaBool6Goo.NickName.Replace(" ", string.Empty), $"Create a {GsaBool6Goo.Description}",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

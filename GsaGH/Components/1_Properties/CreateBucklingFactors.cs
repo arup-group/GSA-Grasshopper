@@ -18,9 +18,9 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateBucklingLengthFactors;
 
     public CreateBucklingFactors() : base(
-      "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
+      $"Create {GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty)}",
       GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBucklingLengthFactorsGoo.Description, CategoryName.Name(),
+      $"Create a {GsaBucklingLengthFactorsGoo.Description}", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
     }

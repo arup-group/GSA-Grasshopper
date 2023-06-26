@@ -53,15 +53,15 @@ namespace GsaGH.Components {
     public virtual void VariableParameterMaintenance() {
       string abb = Length.GetAbbreviation(_lengthUnit);
 
-      Params.Output[0].Name = "Depth [" + abb + "]";
-      Params.Output[1].Name = "Width [" + abb + "]";
-      Params.Output[2].Name = "Width Top [" + abb + "]";
-      Params.Output[3].Name = "Width Bottom [" + abb + "]";
-      Params.Output[4].Name = "Flange Thk Top [" + abb + "]";
-      Params.Output[5].Name = "Flange Thk Bottom [" + abb + "]";
-      Params.Output[6].Name = "Web Thk [" + abb + "]";
-      Params.Output[7].Name = "Radius [" + abb + "]";
-      Params.Output[8].Name = "Spacing [" + abb + "]";
+      Params.Output[0].Name = $"Depth [{abb}]";
+      Params.Output[1].Name = $"Width [{abb}]";
+      Params.Output[2].Name = $"Width Top [{abb}]";
+      Params.Output[3].Name = $"Width Bottom [{abb}]";
+      Params.Output[4].Name = $"Flange Thk Top [{abb}]";
+      Params.Output[5].Name = $"Flange Thk Bottom [{abb}]";
+      Params.Output[6].Name = $"Web Thk [{abb}]";
+      Params.Output[7].Name = $"Radius [{abb}]";
+      Params.Output[8].Name = $"Spacing [{abb}]";
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
@@ -105,32 +105,30 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName,
-        GsaSectionGoo.Description + " to get a bit more info out of.", GH_ParamAccess.item);
+        $"{GsaSectionGoo.Description} to get a bit more info out of.", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string abb = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Depth [" + abb + "]", "D", "Section Depth or Diameter)",
+      pManager.AddGenericParameter($"Depth [{abb}]", "D", "Section Depth or Diameter)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Width [" + abb + "]", "W", "Section Width",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Width Top [" + abb + "]", "Wt",
+      pManager.AddGenericParameter($"Width [{abb}]", "W", "Section Width", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Width Top [{abb}]", "Wt",
         "Section Width Top (will be equal to width if profile is symmetric)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Width Bottom [" + abb + "]", "Wb",
+      pManager.AddGenericParameter($"Width Bottom [{abb}]", "Wb",
         "Section Width Bottom (will be equal to width if profile is symmetric)",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Flange Thk Top [" + abb + "]", "Ftt",
-        "Section Top Flange Thickness", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Flange Thk Bottom [" + abb + "]", "Ftb",
-        "Section Bottom Flange Thickness", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Web Thk [" + abb + "]", "Wt", "Section Web Thickness",
+      pManager.AddGenericParameter($"Flange Thk Top [{abb}]", "Ftt", "Section Top Flange Thickness",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Radius [" + abb + "]", "r",
+      pManager.AddGenericParameter($"Flange Thk Bottom [{abb}]", "Ftb",
+        "Section Bottom Flange Thickness", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Web Thk [{abb}]", "Wt", "Section Web Thickness",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Radius [{abb}]", "r",
         "Section Root Radius (only applicable to catalogue profiles) or hole size for cellular/castellated beams",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Spacing [" + abb + "]", "s", "Spacing/pitch",
-        GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Spacing [{abb}]", "s", "Spacing/pitch", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "typ", "Profile type description", GH_ParamAccess.item);
     }
 
@@ -500,9 +498,9 @@ namespace GsaGH.Components {
           da.SetData(i++, null); //Spacing
         }
 
-        da.SetData(i, "CAT " + profile.Split(' ')[1]);
+        da.SetData(i, $"CAT {profile.Split(' ')[1]}");
       } else {
-        this.AddRuntimeError("Unable to get dimensions for type " + type[0]);
+        this.AddRuntimeError($"Unable to get dimensions for type {type[0]}");
       }
     }
 

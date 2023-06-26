@@ -25,8 +25,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName,
-        GsaBool6Goo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaBool6Goo.Name, GH_ParamAccess.item);
+        $"{GsaBool6Goo.Description} to get or set information for. Leave blank to create a new {GsaBool6Goo.Name}",
+        GH_ParamAccess.item);
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
@@ -40,7 +40,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName,
-        GsaBool6Goo.Description + " with applied changes.", GH_ParamAccess.item);
+        $"{GsaBool6Goo.Description} with applied changes.", GH_ParamAccess.item);
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);

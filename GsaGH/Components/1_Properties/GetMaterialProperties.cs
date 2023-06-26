@@ -50,12 +50,12 @@ namespace GsaGH.Components {
     }
 
     public virtual void VariableParameterMaintenance() {
-      Params.Output[0].Name = "Elastic Modulus [" + Pressure.GetAbbreviation(_stressUnit) + "]";
-      Params.Output[2].Name = "Density [" + Density.GetAbbreviation(_densityUnit) + "]";
+      Params.Output[0].Name = $"Elastic Modulus [{Pressure.GetAbbreviation(_stressUnit)}]";
+      Params.Output[2].Name = $"Density [{Density.GetAbbreviation(_densityUnit)}]";
       CoefficientOfThermalExpansionUnit temp
         = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
-      Params.Output[3].Name = "Thermal Expansion ["
-        + CoefficientOfThermalExpansion.GetAbbreviation(temp) + "]";
+      Params.Output[3].Name
+        = $"Thermal Expansion [{CoefficientOfThermalExpansion.GetAbbreviation(temp)}]";
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
@@ -147,17 +147,16 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter(
-        "Elastic Modulus [" + Pressure.GetAbbreviation(_stressUnit) + "]", "E",
-        "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Elastic Modulus [{Pressure.GetAbbreviation(_stressUnit)}]",
+        "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
       pManager.AddNumberParameter("Poisson's Ratio", "ν",
         "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Density [" + Density.GetAbbreviation(_densityUnit) + "]", "ρ",
+      pManager.AddGenericParameter($"Density [{Density.GetAbbreviation(_densityUnit)}]", "ρ",
         "Density of the elastic isotropic material", GH_ParamAccess.item);
       CoefficientOfThermalExpansionUnit temp
         = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
       pManager.AddGenericParameter(
-        "Thermal Expansion [" + CoefficientOfThermalExpansion.GetAbbreviation(temp) + "]", "α",
+        $"Thermal Expansion [{CoefficientOfThermalExpansion.GetAbbreviation(temp)}]", "α",
         "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
     }
 
@@ -208,8 +207,8 @@ namespace GsaGH.Components {
     private void UpdateMessage() {
       CoefficientOfThermalExpansionUnit temp
         = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
-      Message = Pressure.GetAbbreviation(_stressUnit) + ", " + Density.GetAbbreviation(_densityUnit)
-        + ", " + CoefficientOfThermalExpansion.GetAbbreviation(temp);
+      Message
+        = $"{Pressure.GetAbbreviation(_stressUnit)}, {Density.GetAbbreviation(_densityUnit)}, {CoefficientOfThermalExpansion.GetAbbreviation(temp)}";
     }
 
     private void UpdateStress(string unit) {

@@ -81,8 +81,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName,
-        GsaSectionGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaSectionGoo.Name, GH_ParamAccess.item);
+        $"{GsaSectionGoo.Description} to get or set information for. Leave blank to create a new {GsaSectionGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Number", "ID",
         "Set Section Number. If ID is set it will replace any existing 2D Property in the model",
         GH_ParamAccess.item);
@@ -90,7 +90,7 @@ namespace GsaGH.Components {
         "Profile name following GSA naming convention (eg 'STD I 1000 500 15 25')",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
-        GsaMaterialGoo.NickName, "Set " + GsaMaterialGoo.Name, GH_ParamAccess.item);
+        GsaMaterialGoo.NickName, $"Set {GsaMaterialGoo.Name}", GH_ParamAccess.item);
       pManager.AddGenericParameter("Basic Offset", "BO",
         "Set Basic Offset Centroid = 0 (default), Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8",
         GH_ParamAccess.item);
@@ -99,7 +99,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter($"Add. Offset Z [{Length.GetAbbreviation(_lengthUnit)}]", "AOZ",
         "Set Additional Offset Z", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
-        GsaSectionModifierGoo.NickName, "Set " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
+        GsaSectionModifierGoo.NickName, $"Set {GsaSectionModifierGoo.Name}", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
       pManager.AddColourParameter("Section Colour", "Co", "Set Section colour",
@@ -112,21 +112,21 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName,
-        GsaSectionGoo.Description + " with applied changes.", GH_ParamAccess.item);
+        $"{GsaSectionGoo.Description} with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Number", "ID",
         "Original Section number (ID) if the Section ever belonged to a GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Section Profile", "Pf", "Profile description",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
-        GsaMaterialGoo.NickName, "Get " + GsaMaterialGoo.Name, GH_ParamAccess.item);
+        GsaMaterialGoo.NickName, $"Get {GsaMaterialGoo.Name}", GH_ParamAccess.item);
       pManager.AddGenericParameter("Basic Offset", "BO", "Get Basic Offset", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Add. Offset Y [{Length.GetAbbreviation(_lengthUnit)}]", "AOY",
         "Get Additional Offset Y", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Add. Offset Z [{Length.GetAbbreviation(_lengthUnit)}]", "AOZ",
         "Get Additional Offset Z", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
-        GsaSectionModifierGoo.NickName, "Get " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
+        GsaSectionModifierGoo.NickName, $"Get {GsaSectionModifierGoo.Name}", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Get Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Get Section name", GH_ParamAccess.item);
       pManager.AddColourParameter("Section Colour", "Co", "Get Section colour",
@@ -151,7 +151,7 @@ namespace GsaGH.Components {
         if (GsaSection.ValidProfile(profile)) {
           section.Profile = profile;
         } else {
-          this.AddRuntimeError("Invalid profile syntax: " + profile);
+          this.AddRuntimeError($"Invalid profile syntax: {profile}");
           return;
         }
       }
@@ -171,8 +171,8 @@ namespace GsaGH.Components {
           }
         }
         catch {
-          this.AddRuntimeError("Unable to convert input " + ghBasicOffset.Value
-            + " to a Basic Offset (Centroid = 0, Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8)");
+          this.AddRuntimeError(
+            $"Unable to convert input {ghBasicOffset.Value} to a Basic Offset (Centroid = 0, Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8)");
           return;
         }
       }
