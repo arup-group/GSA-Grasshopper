@@ -9,6 +9,7 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Geometry;
+using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -67,19 +68,13 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _prop2d.MaterialType = Materials.ConvertType(_material);
-        _prop2d.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _prop2d.MaterialGradeProperty = _material.GradeProperty;
+        _prop2d.MaterialType = Materials.GetMaterialType(_material);
+        if (_material.IsCustom) {
+          _prop2d.MaterialAnalysisProperty = _material.Id;
+        } else {
+          _prop2d.MaterialGradeProperty = _material.Id;
+        }
         IsReferencedById = false;
-      }
-    }
-    public int MaterialId {
-      get => _prop2d.MaterialAnalysisProperty;
-      set {
-        CloneApiObject();
-        IsReferencedById = false;
-        _prop2d.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _prop2d.MaterialAnalysisProperty;
       }
     }
     public string Name {
@@ -161,7 +156,7 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _prop2d = value;
-        _material = new GsaMaterial(this);
+        _material = Material.Duplicate();
         IsReferencedById = false;
       }
     }
@@ -212,23 +207,24 @@ namespace GsaGH.Parameters {
         }
       }
 
-      _material = new GsaMaterial(this);
+      _material = Material.Duplicate();
     }
 
-    public GsaProp2d Duplicate(bool cloneApiElement = false) {
+    public GsaProp2d Clone() {
       var dup = new GsaProp2d {
         _prop2d = _prop2d,
         _id = _id,
         _material = _material.Duplicate(),
-        _guid = new Guid(_guid.ToString()),
         _localAxis = new Plane(_localAxis),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       return dup;
+    }
+
+    public GsaProp2d Duplicate() {
+      return this;
     }
 
     public override string ToString() {
@@ -243,9 +239,10 @@ namespace GsaGH.Parameters {
       string referenceEdge
         = Type == Property2D_Type.LOAD && SupportType != SupportType.Auto
         && SupportType != SupportType.AllEdges ? $"RefEdge:{ReferenceEdge}" : string.Empty;
-      return string
+      string joined = string
        .Join(" ", pa.Trim(), type.Trim(), supportType.Trim(), referenceEdge.Trim(), desc.Trim(),
-          mat.Trim()).Trim().Replace("  ", " ");
+          mat.Trim()).Trim();
+      return joined.Replace("   ", " ").Replace("  ", " ");
     }
 
     internal static Property2D_Type PropTypeFromString(string type) {

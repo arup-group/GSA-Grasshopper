@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -16,15 +13,15 @@ namespace GsaGH.Helpers.Export {
     internal static string GetNodeList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
       ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
       if (apiLists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
-        return "\"" + apiLists.ReadOnlyDictionary[id].Name + "\"";
+        return $"\"{apiLists.ReadOnlyDictionary[id].Name}\"";
       }
 
       AddNodeList(list, ref apiLists, ref apiNodes, unit);
 
-      return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name + "\"";
+      return $"\"{apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name}\"";
     }
 
-    internal static void ConvertNodeList(
+    internal static void ConvertNodeLists( 
     List<GsaList> lists, ref GsaGuidDictionary<EntityList> apiLists,
     ref GsaIntDictionary<Node> apiNodes, LengthUnit modelUnit) {
       if (lists == null) {
@@ -55,78 +52,64 @@ namespace GsaGH.Helpers.Export {
       AddList(copyList, ref apiLists);
     }
 
-    internal static string GetElementList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
-      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, GH_Component owner) {
+    internal static string GetElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
       if (list.EntityType == Parameters.EntityType.Element 
-        && apiLists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
-        return "\"" + apiLists.ReadOnlyDictionary[id].Name + "\"";
+        && model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
+        return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
       }
 
       if (list.EntityType == Parameters.EntityType.Member) {
-        AddMemberList(list.Duplicate(), ref apiLists, apiMembers, owner);
-        string name = apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[list.Guid]].Name;
-        list._name = "Children of '" + name + "'";
+        AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
+        string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
+        list._name = $"Children of '{name}'";
         list.EntityType = Parameters.EntityType.Element;
       }
 
-      GsaList copyList = AddPropertiesList(list, apiMaterials, apiSections, apiProp2ds, apiProp3ds, owner);
-      AddElementList(copyList, ref apiLists, apiElements, apiMembers, memberElementRelationship, owner);
+      GsaList copyList = AddPropertiesList(list, model.Properties, owner);
+      AddElementList(copyList, ref model, owner);
 
-      return "\"" + apiLists.ReadOnlyDictionary[apiLists.GuidDictionary[copyList.Guid]].Name + "\"";
+      return $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
     }
 
     internal static void ConvertList(
-      List<GsaList> lists, ref GsaGuidDictionary<EntityList> apiLists,
-      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, GH_Component owner) {
+      List<GsaList> lists, ref ModelAssembly model, GH_Component owner) {
       if (lists == null) {
         return;
       }
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null)) {
-        ConvertList(list, ref apiLists, apiMaterials, apiSections, apiProp2ds, apiProp3ds,
-          apiElements, apiMembers, memberElementRelationship, owner);
+        ConvertList(
+          list, ref model, owner);
       }
     }
 
-    internal static void ConvertList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
-      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, GH_Component owner) {
+    internal static void ConvertList(GsaList list, ref ModelAssembly model, GH_Component owner) {
       if (list == null) {
         return;
       }
       GsaList copyList;
       switch (list.EntityType) {
         case Parameters.EntityType.Element:
-          copyList = AddPropertiesList(list, apiMaterials, apiSections, apiProp2ds, apiProp3ds, owner);
-          AddElementList(copyList, ref apiLists, apiElements, apiMembers, memberElementRelationship, owner);
+          copyList = AddPropertiesList(list, model.Properties, owner);
+          AddElementList(copyList, ref model, owner);
           break;
 
         case Parameters.EntityType.Member:
-          copyList = AddPropertiesList(list, apiMaterials, apiSections, apiProp2ds, apiProp3ds, owner);
-          AddMemberList(copyList, ref apiLists, apiMembers, owner);
+          copyList = AddPropertiesList(list, model.Properties, owner);
+          AddMemberList(copyList, ref model.Lists, model.Members, owner);
           break;
 
         case Parameters.EntityType.Case:
           copyList = list.Duplicate();
           list._definition += string.Join(" ", list._cases);
-          AddList(list, ref apiLists);
+          AddList(list, ref model.Lists);
           break;
       }
     }
 
-    private static GsaList AddPropertiesList(GsaList list,
-      GsaGuidDictionary<AnalysisMaterial> apiMaterials, GsaGuidDictionary<Section> apiSections,
-      GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds,
-      GH_Component owner) {
+    private static GsaList AddPropertiesList(
+      GsaList list, Properties apiProperties, GH_Component owner) {
       GsaList copyList = list.Duplicate();
       if (copyList._properties == (null, null, null, null) || (copyList._properties.materials.Count == 0
         && copyList._properties.sections.Count == 0 && copyList._properties.prop2ds.Count == 0
@@ -139,10 +122,9 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMaterialGoo material in copyList._properties.materials
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(material.Value.Guid,
-          ReferenceType.Material, apiMaterials, null, null, null, null, null, null);
+          ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + System.Environment.NewLine
-            + "Material " + material.Value.ToString() + " not found in Model");
+          owner.AddRuntimeWarning($"Issue adding List {copyList.Name} to Model:{System.Environment.NewLine}Material {material.Value.ToString()} not found in Model");
         }
 
         ids.Add(id);
@@ -151,7 +133,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaSectionGoo section in copyList._properties.sections
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(section.Value.Guid,
-          ReferenceType.Section, null, apiSections, null, null, null, null, null);
+          ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
             + section.Value.ToString() + " not found in Model");
@@ -163,7 +145,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaProp2dGoo prop2d in copyList._properties.prop2ds
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(prop2d.Value.Guid,
-          ReferenceType.Prop2d, null, null, apiProp2ds, null, null, null, null);
+          ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
             + prop2d.Value.ToString() + " not found in Model");
@@ -175,7 +157,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaProp3dGoo prop3d in copyList._properties.prop3ds
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(prop3d.Value.Guid,
-          ReferenceType.Prop3d, null, null, null, apiProp3ds, null, null, null);
+          ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
           owner.AddRuntimeWarning("Issue adding List " + copyList.Name + " to Model:" + Environment.NewLine
             + prop3d.Value.ToString() + " not found in Model");
@@ -188,9 +170,7 @@ namespace GsaGH.Helpers.Export {
       return copyList;
     }
 
-    private static void AddElementList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
-      GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, GH_Component owner) {
+    private static void AddElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
       GsaList copyList = list.Duplicate();
 
       var ids = new Collection<string>();
@@ -199,7 +179,7 @@ namespace GsaGH.Helpers.Export {
         foreach (GsaElement1dGoo element1d in copyList._elements.e1d
           .Where(x => x != null && x.Value != null)) {
           string id = ElementListFromReference.GetReferenceDefinition(element1d.Value.Guid,
-            ReferenceType.Element, null, null, null, null, apiElements, null, null);
+            ReferenceType.Element, null, model.Elements, null, null);
           if (id == string.Empty && element1d.Value.Id != 0) {
             id = element1d.Value.Id.ToString();
           }
@@ -215,7 +195,7 @@ namespace GsaGH.Helpers.Export {
         foreach (GsaElement2dGoo element2d in copyList._elements.e2d
           .Where(x => x != null && x.Value != null)) {
           string id = ElementListFromReference.GetReferenceDefinition(element2d.Value.Guid,
-            ReferenceType.Element, null, null, null, null, apiElements, null, null);
+            ReferenceType.Element, null, model.Elements, null, null);
           if (id == string.Empty && element2d.Value.Ids.Count != 0) {
             id = string.Join(" ", element2d.Value.Ids.Where(x => x != 0));
           }
@@ -231,7 +211,7 @@ namespace GsaGH.Helpers.Export {
         foreach (GsaElement3dGoo element3d in copyList._elements.e3d
           .Where(x => x != null && x.Value != null)) {
           string id = ElementListFromReference.GetReferenceDefinition(element3d.Value.Guid,
-            ReferenceType.Element, null, null, null, null, apiElements, null, null);
+            ReferenceType.Element, null, model.Elements, null, null);
           if (id == string.Empty && element3d.Value.Ids.Count != 0) {
             id = string.Join(" ", element3d.Value.Ids.Where(x => x != 0));
           }
@@ -248,11 +228,16 @@ namespace GsaGH.Helpers.Export {
       if (copyList._members != (null, null, null)) {
         foreach (GsaMember1dGoo member1d in copyList._members.m1d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReferenceDefinition(member1d.Value.Guid,
-            ReferenceType.MemberChildElements, null, null, null, null, null, apiMembers,
-            memberElementRelationship);
+          string id = ElementListFromReference.GetReferenceDefinition(
+            member1d.Value.Guid,
+            ReferenceType.MemberChildElements, 
+            null, 
+            null, 
+            model.Members,
+            model.MemberElementRelationship);
           if (id == string.Empty && member1d.Value.Id != 0) {
-            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(member1d.Value.Id, memberElementRelationship);
+            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(
+              member1d.Value.Id, model.MemberElementRelationship);
           }
 
           if (id == string.Empty) {
@@ -265,11 +250,16 @@ namespace GsaGH.Helpers.Export {
 
         foreach (GsaMember2dGoo member2d in copyList._members.m2d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReferenceDefinition(member2d.Value.Guid,
-            ReferenceType.MemberChildElements, null, null, null, null, null, apiMembers,
-            memberElementRelationship);
+          string id = ElementListFromReference.GetReferenceDefinition(
+            member2d.Value.Guid,
+            ReferenceType.MemberChildElements, 
+            null, 
+            null, 
+            model.Members,
+            model.MemberElementRelationship);
           if (id == string.Empty && member2d.Value.Id != 0) {
-            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(member2d.Value.Id, memberElementRelationship);
+            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(
+              member2d.Value.Id, model.MemberElementRelationship);
           }
 
           if (id == string.Empty) {
@@ -282,11 +272,16 @@ namespace GsaGH.Helpers.Export {
 
         foreach (GsaMember3dGoo member3d in copyList._members.m3d
           .Where(x => x != null && x.Value != null)) {
-          string id = ElementListFromReference.GetReferenceDefinition(member3d.Value.Guid,
-            ReferenceType.MemberChildElements, null, null, null, null, null, apiMembers,
-            memberElementRelationship);
+          string id = ElementListFromReference.GetReferenceDefinition(
+            member3d.Value.Guid,
+            ReferenceType.MemberChildElements, 
+            null, 
+            null, 
+            model.Members,
+            model.MemberElementRelationship);
           if (id == string.Empty && member3d.Value.Id != 0) {
-            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(member3d.Value.Id, memberElementRelationship);
+            id = ElementListFromReference.GetMemberChildElementReferenceIdsDefinition(
+              member3d.Value.Id, model.MemberElementRelationship);
           }
 
           if (id == string.Empty) {
@@ -300,7 +295,7 @@ namespace GsaGH.Helpers.Export {
 
       copyList._definition += string.Join(" ", ids);
 
-      AddList(copyList, ref apiLists);
+      AddList(copyList, ref model.Lists);
     }
 
     private static void AddMemberList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists,
@@ -315,7 +310,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMember1dGoo member1d in copyList._members.m1d
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(member1d.Value.Guid,
-          ReferenceType.Member, null, null, null, null, null, apiMembers, null);
+          ReferenceType.Member, null, null, apiMembers, null);
         if (id == string.Empty && member1d.Value.Id != 0) {
           id = member1d.Value.Id.ToString();
         }
@@ -331,7 +326,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMember2dGoo member2d in copyList._members.m2d
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(member2d.Value.Guid,
-          ReferenceType.Member, null, null, null, null, null, apiMembers, null);
+          ReferenceType.Member, null, null, apiMembers, null);
         if (id == string.Empty && member2d.Value.Id != 0) {
           id = member2d.Value.Id.ToString();
         }
@@ -347,7 +342,7 @@ namespace GsaGH.Helpers.Export {
       foreach (GsaMember3dGoo member3d in copyList._members.m3d
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(member3d.Value.Guid,
-          ReferenceType.Member, null, null, null, null, null, apiMembers, null);
+          ReferenceType.Member, null, null, apiMembers, null);
         if (id == string.Empty && member3d.Value.Id != 0) {
           id = member3d.Value.Id.ToString();
         }

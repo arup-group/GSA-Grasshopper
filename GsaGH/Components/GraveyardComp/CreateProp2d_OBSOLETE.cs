@@ -375,14 +375,10 @@ namespace GsaGH.Components {
           GsaMaterialGoo materialGoo = null;
           if (da.GetData(0, ref materialGoo)) {
             prop.Material = materialGoo.Value;
-          } else {
-            prop.Material = new GsaMaterial(2);
-          }
+          } 
 
           prop.Thickness = (Length)Input.UnitNumber(this, da, 1, _lengthUnit);
-        } else {
-          prop.Material = new GsaMaterial(8);
-        }
+        } 
       }
 
       da.SetData(0, new GsaProp2dGoo(prop));

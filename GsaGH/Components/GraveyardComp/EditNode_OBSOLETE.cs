@@ -135,7 +135,7 @@ namespace GsaGH.Components {
 
       GsaNodeGoo nodeGoo = null;
       if (da.GetData(0, ref nodeGoo)) {
-        node = nodeGoo.Value;
+        node = nodeGoo.Value.Clone();
       } else {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0) {

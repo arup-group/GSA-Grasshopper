@@ -107,7 +107,7 @@ namespace GsaGHTests.Parameters {
         Name = "Mariam",
       };
 
-      GsaNode duplicate = node.Duplicate();
+      GsaNode duplicate = node.Clone();
 
       Assert.Equal(node.Point.X, duplicate.Point.X);
       Assert.Equal(node.Point.Y, duplicate.Point.Y);

@@ -76,8 +76,8 @@ namespace GsaGH.Parameters {
     public List<GsaOffset> Offsets {
       get
         => (from element in ApiElements where element != null
-          select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
-            element.Offset.Z)).ToList();
+            select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
+              element.Offset.Z)).ToList();
       set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
     }
     public List<double> OrientationAngles {
@@ -142,7 +142,7 @@ namespace GsaGH.Parameters {
 
       Prop3ds = new List<GsaProp3d>();
       for (int i = 0; i < NgonMesh.Faces.Count; i++) {
-        Prop3ds.Add(new GsaProp3d());
+        Prop3ds.Add(new GsaProp3d(0));
       }
 
       UpdatePreview();
@@ -181,18 +181,15 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaElement3d Duplicate(bool cloneApiElements = false) {
+    public GsaElement3d Clone() {
       var dup = new GsaElement3d {
         NgonMesh = (Mesh)NgonMesh.DuplicateShallow(),
-        _guid = new Guid(_guid.ToString()),
         Topology = Topology,
         TopoInt = TopoInt,
         FaceInt = FaceInt,
         ApiElements = ApiElements,
       };
-      if (cloneApiElements) {
-        dup.CloneApiElements();
-      }
+      dup.CloneApiElements();
 
       dup.Ids = Ids.ToList();
       dup.Prop3ds = Prop3ds.ConvertAll(x => x.Duplicate());
@@ -200,12 +197,16 @@ namespace GsaGH.Parameters {
       return dup;
     }
 
+    public GsaElement3d Duplicate() {
+      return this;
+    }
+
     public GsaElement3d Morph(SpaceMorph xmorph) {
       if (NgonMesh == null) {
         return null;
       }
 
-      GsaElement3d dup = Duplicate(true);
+      GsaElement3d dup = Clone();
       dup.Ids = new List<int>(new int[dup.NgonMesh.Faces.Count]);
 
       Mesh xMs = dup.NgonMesh.DuplicateMesh();
@@ -231,7 +232,7 @@ namespace GsaGH.Parameters {
         return null;
       }
 
-      GsaElement3d dup = Duplicate(true);
+      GsaElement3d dup = Clone();
       dup.Ids = new List<int>(new int[dup.NgonMesh.Faces.Count]);
 
       Mesh xMs = dup.NgonMesh.DuplicateMesh();
@@ -246,7 +247,7 @@ namespace GsaGH.Parameters {
     /// <param name="updatedMesh"></param>
     /// <returns></returns>
     public GsaElement3d UpdateGeometry(Mesh updatedMesh) {
-      GsaElement3d dup = Duplicate(true);
+      GsaElement3d dup = Clone();
       NgonMesh = updatedMesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(NgonMesh, 0);

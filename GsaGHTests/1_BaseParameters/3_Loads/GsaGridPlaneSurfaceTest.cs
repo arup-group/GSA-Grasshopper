@@ -1,7 +1,6 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using static GsaAPI.GridSurface;

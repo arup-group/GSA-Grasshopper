@@ -337,10 +337,22 @@ namespace GsaGH.Parameters {
       return (lengthUnit, definition);
     }
   }
+  internal enum ReferenceType {
+    None,
+    Property,
+    Element,
+    MemberChildElements,
+    Member,
+    List,
+  }
   /// <summary>
   ///   GsaLoad class holding all load types
   /// </summary>
   public class GsaLoad {
+    /// <summary>
+    /// When referencing load by GsaGH object through Guid, use this to set the type of object
+    /// </summary>
+    
     public enum LoadTypes {
       Gravity,
       Node,
@@ -556,21 +568,4 @@ namespace GsaGH.Parameters {
       return dup;
     }
   }
-
-  /// <summary>
-  /// When referencing load by GsaGH object through Guid, use this to set the type of object
-  /// </summary>
-  internal enum ReferenceType {
-    None,
-    Material,
-    Section,
-    Prop2d,
-    Prop3d,
-    Element,
-    MemberChildElements,
-    Member,
-    List,
-  }
-
-
 }

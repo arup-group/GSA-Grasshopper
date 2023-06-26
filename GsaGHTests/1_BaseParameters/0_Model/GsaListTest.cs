@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits.Units;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

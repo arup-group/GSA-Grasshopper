@@ -19,7 +19,10 @@ namespace GsaGHTests.Model {
       List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
+      comp.Params.Input[0].DataMapping = GH_DataMapping.Flatten;
+      comp.Params.Input[1].DataMapping = GH_DataMapping.Flatten;
       comp.Params.Input[2].DataMapping = GH_DataMapping.Flatten;
+      comp.Params.Input[3].DataMapping = GH_DataMapping.Flatten;
       comp.SetSelected(0, (int)unit);
       if (models != null) {
         foreach (GsaModel input in models) {
@@ -147,7 +150,7 @@ namespace GsaGHTests.Model {
       List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = GH_DataMapping.Flatten;
+      comp.Params.Input[3].DataMapping = GH_DataMapping.Flatten;
       if (loads != null) {
         foreach (GsaLoad input in loads) {
           ComponentTestHelper.SetInput(comp, input, 3);
@@ -166,7 +169,7 @@ namespace GsaGHTests.Model {
     public static GH_OasysDropDownComponent CreateModelFromModels(List<GsaModelGoo> models) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = GH_DataMapping.Flatten;
+      comp.Params.Input[0].DataMapping = GH_DataMapping.Flatten;
       if (models == null) {
         return comp;
       }
@@ -182,7 +185,7 @@ namespace GsaGHTests.Model {
       List<GsaSectionGoo> sections, List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) {
       var comp = new CreateModel();
       comp.CreateAttributes();
-      comp.Params.Input[2].DataMapping = GH_DataMapping.Flatten;
+      comp.Params.Input[1].DataMapping = GH_DataMapping.Flatten;
       if (sections != null) {
         foreach (GsaSectionGoo input in sections) {
           ComponentTestHelper.SetInput(comp, input, 1);

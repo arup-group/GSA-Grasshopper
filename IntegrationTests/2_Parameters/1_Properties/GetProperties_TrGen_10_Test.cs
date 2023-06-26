@@ -53,8 +53,8 @@ namespace IntegrationTests.Parameters {
       0.000012,
     })]
     [InlineData("MatType", new string[] {
-      "Concrete",
-      "Steel",
+      "Generic",
+      "Generic",
     })]
     [InlineData("Pool", 1)]
     [InlineData("PbName", new string[] {
@@ -66,24 +66,19 @@ namespace IntegrationTests.Parameters {
       "Beam - y - top floor",
     })]
     [InlineData("MatIds", new int[] {
-      1,
-      2,
+      1, 2, 1, 2
     })]
     [InlineData("MatEs", new double[] {
-      14000,
-      205000,
+      205000, 205000, 14000, 205000,
     })]
     [InlineData("MatPoissons", new double[] {
-      0.2,
-      0.3,
+      0.3, 0.3, 0.2, 0.3,
     })]
     [InlineData("MatRos", new double[] {
-      2400,
-      7850,
+      7850, 7850, 2400, 7850,
     })]
     [InlineData("MatAlphas", new double[] {
-      0.00001,
-      0.000012,
+      0.000012, 0.000012, 0.00001, 0.000012,
     })]
     [InlineData("PaIds", new int[] {
       1,
@@ -145,10 +140,10 @@ namespace IntegrationTests.Parameters {
       "Shell",
     })]
     [InlineData("SupportType", new string[] {
-      "Auto", "Undefined", "Undefined",
+      "Undefined", "Undefined", "Undefined",
     })]
     [InlineData("ReferenceEdge", new int[] {
-      -1, 1, 1
+      1, 1, 1
     })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);

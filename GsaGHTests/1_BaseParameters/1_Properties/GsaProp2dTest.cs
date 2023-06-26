@@ -3,7 +3,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -20,7 +19,7 @@ namespace GsaGHTests.Parameters {
         ReferenceSurface = ReferenceSurface.Top
       };
 
-      GsaProp2d duplicate = original.Duplicate();
+      GsaProp2d duplicate = original.Clone();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -28,8 +27,6 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestCreateProp2d() {
       int axisProperty = 1;
-      int materialGradeProperty = 4;
-      MaterialType materialType = MaterialType.GENERIC;
       string name = "mariam";
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.LOAD;
@@ -42,14 +39,11 @@ namespace GsaGHTests.Parameters {
         SupportType = SupportType.ThreeEdges,
         ReferenceEdge = 2,
       };
-      var mat = new GsaMaterial((int)materialType) {
-        GradeProperty = materialGradeProperty,
-      };
-      prop.Material = mat;
+      var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 99);
+      prop.Material = material;
 
       Assert.Equal(1, prop.AxisProperty);
-      Assert.Equal(4, prop.Material.GradeProperty);
-      Assert.Equal(0, prop.Material.AnalysisProperty);
+      Assert.Equal(99, prop.Material.Id);
       Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.Name);
@@ -64,8 +58,6 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestDuplicateProp2d() {
       int axisProperty = 0;
-      int materialAnalysisProperty = 13;
-      MaterialType materialType = MaterialType.UNDEF;
       string name = "mariam";
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.SHELL;
@@ -80,18 +72,14 @@ namespace GsaGHTests.Parameters {
         ReferenceSurface = referenceSurface,
         AdditionalOffsetZ = offset
       };
-      var mat = new GsaMaterial((int)materialType) {
-        AnalysisProperty = materialAnalysisProperty,
-      };
-      orig.Material = mat;
+      var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
+      orig.Material = material;
 
-      GsaProp2d dup = orig.Duplicate();
+      GsaProp2d dup = orig.Clone();
 
       orig.Id = 4;
       orig.AxisProperty = 1;
-      orig.Material.GradeProperty = 4;
-      orig.Material.AnalysisProperty = 42;
-      orig.Material.MaterialType = GsaMaterial.MatType.Fabric;
+      orig.Material.Id = 99;
       orig.Name = "kris";
       orig.Description = "less cool property";
       orig.Type = Property2D_Type.LOAD;
@@ -101,9 +89,8 @@ namespace GsaGHTests.Parameters {
       orig.AdditionalOffsetZ = new Length(50.0, LengthUnit.Millimeter);
 
       Assert.Equal(0, dup.AxisProperty);
-      Assert.Equal(0, dup.Material.GradeProperty);
-      Assert.Equal(13, dup.Material.AnalysisProperty);
-      Assert.Equal(MaterialType.UNDEF.ToString().ToPascalCase(),
+      Assert.Equal(99, dup.Material.Id);
+      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         dup.Material.MaterialType.ToString());
       Assert.Equal("mariam", dup.Name);
       Assert.Equal("awesome property", dup.Description);
@@ -113,9 +100,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter));
 
       Assert.Equal(1, orig.AxisProperty);
-      Assert.Equal(0, orig.Material.GradeProperty);
-      Assert.Equal(42, orig.Material.AnalysisProperty);
-      Assert.Equal(MaterialType.FABRIC.ToString().ToPascalCase(),
+      Assert.Equal(99, orig.Material.Id);
+      Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);
       Assert.Equal("less cool property", orig.Description);

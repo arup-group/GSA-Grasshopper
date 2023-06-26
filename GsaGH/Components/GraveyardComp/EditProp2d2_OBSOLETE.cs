@@ -72,7 +72,7 @@ namespace GsaGH.Components {
 
       GsaProp2dGoo prop2dGoo = null;
       if (da.GetData(0, ref prop2dGoo)) {
-        prop = prop2dGoo.Value.Duplicate();
+        prop = prop2dGoo.Value.Clone();
       }
 
       var ghId = new GH_Integer();
@@ -119,7 +119,7 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaProp2dGoo(prop));
       da.SetData(1, prop.Id);
-      da.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
+      da.SetData(2, new GsaMaterialGoo(prop.Material));
       da.SetData(3,
         prop.ApiProp2d?.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
           new GH_UnitNumber(prop.Thickness));

@@ -138,7 +138,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value.Duplicate();
+        section = sectionGoo.Value.Clone();
       }
 
       int id = 0;
@@ -205,7 +205,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaSectionGoo(section));
       da.SetData(1, section.Id);
       da.SetData(2, prof);
-      da.SetData(3, new GsaMaterialGoo(new GsaMaterial(section)));
+      da.SetData(3, new GsaMaterialGoo(section.Material));
       da.SetData(4, section.BasicOffset);
       da.SetData(5, section.AdditionalOffsetY.ToUnit(_lengthUnit));
       da.SetData(6, section.AdditionalOffsetZ.ToUnit(_lengthUnit));

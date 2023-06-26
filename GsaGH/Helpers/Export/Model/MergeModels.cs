@@ -1,13 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -35,43 +32,32 @@ namespace GsaGH.Helpers.Export {
 
     public static GsaModel MergeModel(
       GsaModel mainModel, GsaModel appendModel, GH_Component owner, Length tolerance) {
-      Model model = appendModel.Model;
-      ReadOnlyDictionary<int, Node> nDict = model.Nodes();
-      ReadOnlyDictionary<int, Element> eDict = model.Elements();
-      ReadOnlyDictionary<int, Member> mDict = model.Members();
-      ReadOnlyDictionary<int, Section> sDict = model.Sections();
-      ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
-      ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
-      ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
-      ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
-      ReadOnlyDictionary<int, Axis> axDict = model.Axes();
-      var localElemAxesDict
-        = eDict.Keys.ToDictionary(id => id, id => model.ElementDirectionCosine(id));
-      var localMemAxesDict
-        = mDict.Keys.ToDictionary(id => id, id => model.MemberDirectionCosine(id));
-      ConcurrentBag<GsaNodeGoo> goonodes = Import.Nodes.GetNodes(nDict, LengthUnit.Meter);
+      
+      ConcurrentBag<GsaNodeGoo> goonodes = 
+        Import.Nodes.GetNodes(appendModel.ApiNodes, LengthUnit.Meter);
       var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
-        c.Id = 0;
+        c.Id = 0; // set node Id of incoming to 0 to append to end and use CollapseCoincidingNodes
         return c;
       }).ToList();
 
-      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
-      ConcurrentBag<GsaElement3dGoo> e3d) = Import.Elements.GetElements(eDict, nDict,
-        sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, axDict, LengthUnit.Meter, true);
-      var elem1ds = e1d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      var elements = new Import.Elements(appendModel);
+      var elem1ds = elements.Element1ds.Select(n => n.Value).
+        OrderByDescending(x => x.Id).ToList();
       elem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var elem2ds = e2d.Select(n => n.Value).OrderByDescending(x => x.Ids.First()).ToList();
+      var elem2ds = elements.Element2ds.Select(n => n.Value).
+        OrderByDescending(x => x.Ids.First()).ToList();
       foreach (GsaElement2d elem2d in elem2ds) {
         elem2d.Ids.Select(c => {
           c = 0;
           return c;
         }).ToList();
       }
-      var elem3ds = e3d.Select(n => n.Value).OrderByDescending(x => x.Ids.First()).ToList();
+      var elem3ds = elements.Element3ds.Select(n => n.Value).
+        OrderByDescending(x => x.Ids.First()).ToList();
       foreach (GsaElement3d elem3d in elem3ds) {
         elem3d.Ids.Select(c => {
           c = 0;
@@ -79,68 +65,73 @@ namespace GsaGH.Helpers.Export {
         }).ToList();
       }
 
-      (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
-      ConcurrentBag<GsaMember3dGoo> m3d) = Import.Members.GetMembers(mDict, nDict, sDict,
-        pDict, p3Dict, amDict, modDict, localMemAxesDict, axDict, LengthUnit.Meter, true);
-      var mem1ds = m1d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      var members = new Import.Members(appendModel);
+      var mem1ds = members.Member1ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       mem1ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var mem2ds = m2d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      var mem2ds = members.Member2ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       mem2ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
-      var mem3ds = m3d.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
-      mem2ds.Select(c => {
+      var mem3ds = members.Member3ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      mem3ds.Select(c => {
         c.Id = 0;
         return c;
       }).ToList();
 
-      List<GsaSectionGoo> goosections = Import.Properties.GetSections(sDict,
-        model.AnalysisMaterials(), model.SectionModifiers());
-      var sections = goosections.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      var existingSectionIds = mainModel.Properties.Sections.Keys.ToList();
+      var sections = appendModel.Properties.Sections.
+        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       sections.Select(c => {
-        c.Id = 0;
+        if (existingSectionIds.Contains(c.Id)) {
+          c.Id = 0; // only set id to 0 if sectionId already exists in model to allow reference
+        }
         return c;
       }).ToList();
-      List<GsaProp2dGoo> gooprop2Ds
-        = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials(), axDict);
-      var prop2Ds = gooprop2Ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+
+      var existingProp2dIds = mainModel.Properties.Prop2ds.Keys.ToList();
+      var prop2Ds = appendModel.Properties.Prop2ds.
+        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop2Ds.Select(c => {
-        c.Id = 0;
+        if (existingProp2dIds.Contains(c.Id)) {
+          c.Id = 0;
+        }
         return c;
       }).ToList();
-      List<GsaProp3dGoo> gooprop3Ds
-        = Import.Properties.GetProp3ds(p3Dict, model.AnalysisMaterials());
-      var prop3Ds = gooprop3Ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+
+      var existingProp3dIds = mainModel.Properties.Prop3ds.Keys.ToList();
+      var prop3Ds = appendModel.Properties.Prop3ds.
+        Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop3Ds.Select(c => {
-        c.Id = 0;
+        if (existingProp3dIds.Contains(c.Id)) {
+          c.Id = 0;
+        }
         return c;
       }).ToList();
 
       var gooloads = new List<GsaLoadGoo>();
-      gooloads.AddRange(Import.Loads.GetGravityLoads(model.GravityLoads()));
-      gooloads.AddRange(Import.Loads.GetNodeLoads(model));
-      gooloads.AddRange(Import.Loads.GetBeamLoads(model.BeamLoads()));
-      gooloads.AddRange(Import.Loads.GetFaceLoads(model.FaceLoads()));
+      gooloads.AddRange(Import.Loads.GetGravityLoads(appendModel.Model.GravityLoads()));
+      gooloads.AddRange(Import.Loads.GetNodeLoads(appendModel.Model));
+      gooloads.AddRange(Import.Loads.GetBeamLoads(appendModel.Model.BeamLoads()));
+      gooloads.AddRange(Import.Loads.GetFaceLoads(appendModel.Model.FaceLoads()));
 
-      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
-      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+      IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.Model.GridSurfaces();
+      IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.Model.GridPlanes();
 
-      gooloads.AddRange(Import.Loads.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict,
-        axDict, LengthUnit.Meter));
-      gooloads.AddRange(Import.Loads.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict,
-        axDict, LengthUnit.Meter));
-      gooloads.AddRange(Import.Loads.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict,
-        axDict, LengthUnit.Meter));
+      gooloads.AddRange(Import.Loads.GetGridPointLoads(
+        appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+      gooloads.AddRange(Import.Loads.GetGridLineLoads(
+        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+      gooloads.AddRange(Import.Loads.GetGridAreaLoads(
+        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
-      var gpsgoo = srfDict.Keys.Select(key
-          => new GsaGridPlaneSurfaceGoo(
-            Import.Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key, LengthUnit.Meter)))
-       .ToList();
+      var gpsgoo = srfDict.Keys.Select(key => new GsaGridPlaneSurfaceGoo(
+            Import.Loads.GetGridPlaneSurface(
+              srfDict, plnDict, appendModel.ApiAxis, key, LengthUnit.Meter))).ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();
 
       List<GsaList> lists = Import.Lists.GetLists(appendModel);

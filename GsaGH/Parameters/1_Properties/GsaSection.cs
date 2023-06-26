@@ -136,18 +136,12 @@ namespace GsaGH.Parameters {
           CloneApiObject();
         }
 
-        _section.MaterialType = Materials.ConvertType(_material);
-        _section.MaterialAnalysisProperty = _material.AnalysisProperty;
-        _section.MaterialGradeProperty = _material.GradeProperty;
-        IsReferencedById = false;
-      }
-    }
-    public int MaterialId {
-      get => _section.MaterialAnalysisProperty;
-      set {
-        CloneApiObject();
-        _section.MaterialAnalysisProperty = value;
-        _material.AnalysisProperty = _section.MaterialAnalysisProperty;
+        _section.MaterialType = Materials.GetMaterialType(_material);
+        if (_material.IsCustom) {
+          _section.MaterialAnalysisProperty = _material.Id;
+        } else {
+          _section.MaterialGradeProperty = _material.Id;
+        }
         IsReferencedById = false;
       }
     }
@@ -238,7 +232,7 @@ namespace GsaGH.Parameters {
       set {
         _guid = Guid.NewGuid();
         _section = value;
-        _material = new GsaMaterial(this);
+        _material = Material.Duplicate();
         IsReferencedById = false;
       }
     }
@@ -284,23 +278,24 @@ namespace GsaGH.Parameters {
         _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
       }
 
-      _material = new GsaMaterial(this);
+      _material = Material.Duplicate();
     }
 
-    public GsaSection Duplicate(bool cloneApiElement = false) {
+    public GsaSection Clone() {
       var dup = new GsaSection {
         _section = _section,
         _id = _id,
         _material = _material.Duplicate(),
-        _modifier = _modifier.Duplicate(cloneApiElement),
+        _modifier = _modifier.Duplicate(),
         _guid = new Guid(_guid.ToString()),
         IsReferencedById = IsReferencedById,
       };
-      if (cloneApiElement) {
-        dup.CloneApiObject();
-      }
-
+      dup.CloneApiObject();
       return dup;
+    }
+
+    public GsaSection Duplicate() {
+      return this;
     }
 
     public override string ToString() {
@@ -347,7 +342,7 @@ namespace GsaGH.Parameters {
       }
 
       _section = sec;
-      _modifier = Modifier.Duplicate(true);
+      _modifier = Modifier.Clone();
       _guid = Guid.NewGuid();
     }
   }

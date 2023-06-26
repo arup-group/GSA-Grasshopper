@@ -243,15 +243,16 @@ namespace GsaGH.Parameters {
       _sectionModifier = sectionModifier;
     }
 
-    public GsaSectionModifier Duplicate(bool cloneApiObject = false) {
+    public GsaSectionModifier Clone() {
       var dup = new GsaSectionModifier {
         _sectionModifier = _sectionModifier,
       };
-      if (cloneApiObject) {
-        dup.CloneApiObject();
-      }
+      dup.CloneApiObject();
 
       return dup;
+    }
+    public GsaSectionModifier Duplicate() {
+      return this;
     }
 
     public override string ToString() {

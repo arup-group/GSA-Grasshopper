@@ -84,6 +84,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
+      Prop3d = new GsaProp3d(0);
       UpdatePreview();
     }
 
@@ -92,6 +93,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
+      Prop3d = new GsaProp3d(0);
       UpdatePreview();
     }
 
@@ -104,22 +106,22 @@ namespace GsaGH.Parameters {
       UpdatePreview();
     }
 
-    public GsaMember3d Duplicate(bool cloneApiMember = false) {
+    public GsaMember3d Clone() {
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
         _mesh = (Mesh)_mesh.DuplicateShallow(),
-        _guid = new Guid(_guid.ToString()),
         Prop3d = Prop3d.Duplicate(),
+        Id = Id,
+        ApiMember = GetAPI_MemberClone(),
+        _guid = Guid.NewGuid()
       };
-      if (cloneApiMember) {
-        dup.ApiMember = GetAPI_MemberClone();
-      } else {
-        dup.ApiMember = ApiMember;
-      }
 
-      dup.Id = Id;
       dup.UpdatePreview();
       return dup;
+    }
+
+    public GsaMember3d Duplicate() {
+      return this;
     }
 
     public GsaMember3d Morph(SpaceMorph xmorph) {
@@ -127,7 +129,7 @@ namespace GsaGH.Parameters {
         return null;
       }
 
-      GsaMember3d dup = Duplicate(true);
+      GsaMember3d dup = Clone();
       dup.Id = 0;
       xmorph.Morph(dup.SolidMesh.Duplicate());
 
@@ -145,7 +147,7 @@ namespace GsaGH.Parameters {
         return null;
       }
 
-      GsaMember3d dup = Duplicate(true);
+      GsaMember3d dup = Clone();
       dup.Id = 0;
       dup.SolidMesh.Transform(xform);
 
@@ -153,14 +155,14 @@ namespace GsaGH.Parameters {
     }
 
     public GsaMember3d UpdateGeometry(Brep brep) {
-      GsaMember3d dup = Duplicate();
+      GsaMember3d dup = Clone();
       dup._mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaMember3d UpdateGeometry(Mesh mesh) {
-      GsaMember3d dup = Duplicate();
+      GsaMember3d dup = Clone();
       dup._mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       dup.UpdatePreview();
       return dup;

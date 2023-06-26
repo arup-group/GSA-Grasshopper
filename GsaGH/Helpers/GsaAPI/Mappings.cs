@@ -116,10 +116,6 @@ namespace GsaGH.Helpers.GsaApi {
     internal static readonly Dictionary<string, MatType> materialTypeMapping
       = new Dictionary<string, MatType>() {
         {
-          "Undefined", MatType.Undef
-        }, {
-          "None", MatType.None
-        }, {
           "Generic", MatType.Generic
         }, {
           "Steel", MatType.Steel
@@ -132,33 +128,9 @@ namespace GsaGH.Helpers.GsaApi {
         }, {
           "FRP", MatType.Frp
         }, {
-          "Rebar", MatType.Rebar
-        }, {
           "Timber", MatType.Timber
         }, {
           "Fabric", MatType.Fabric
-        }, {
-          "Soil", MatType.Soil
-        }, {
-          "Numeric Material", MatType.NumMt
-        }, {
-          "Compound", MatType.Compound
-        }, {
-          "Bar", MatType.Bar
-        }, {
-          "Tendon", MatType.Tendon
-        }, {
-          "FRP Bar", MatType.Frpbar
-        }, {
-          "CFRP", MatType.Cfrp
-        }, {
-          "GFRP", MatType.Gfrp
-        }, {
-          "AFRP", MatType.Afrp
-        }, {
-          "ARGFRP", MatType.Argfrp
-        }, {
-          "Bar Material", MatType.Barmat
         },
       };
 

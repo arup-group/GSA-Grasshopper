@@ -125,8 +125,7 @@ namespace GsaGH.Components {
             ReturnValue status = model.Open(_fileName);
 
             if (status == 0) {
-              var gsaModel = new GsaModel {
-                Model = model,
+              var gsaModel = new GsaModel(model) {
                 FileNameAndPath = _fileName,
                 ModelUnit = UnitMapping.GetUnit(model)
               };
@@ -152,8 +151,7 @@ namespace GsaGH.Components {
         ReturnValue status = model.Open(_fileName);
 
         if (status == 0) {
-          var gsaModel = new GsaModel {
-            Model = model,
+          var gsaModel = new GsaModel(model) {
             FileNameAndPath = _fileName,
             ModelUnit = UnitMapping.GetUnit(model)
           };

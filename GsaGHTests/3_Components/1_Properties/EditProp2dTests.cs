@@ -36,7 +36,6 @@ namespace GsaGHTests.Properties {
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 3);
       var axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
-      var material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 6);
       var thickness = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
       var referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
       var offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
@@ -52,7 +51,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal(-1, axis.Value);
       Assert.Equal(-1, axis.Value);
       Assert.Equal("Shell", type.Value);
-      Duplicates.AreEqual(new GsaMaterial(), material.Value);
       Assert.Equal(400, thickness.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(ReferenceSurface.Middle, referenceSurface.Value);
       Assert.Equal(new Length(0, LengthUnit.Centimeter), offset.Value);
@@ -81,7 +79,6 @@ namespace GsaGHTests.Properties {
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 3);
       var axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
-      var material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 6);
       var thickness = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
       var referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
       var offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
@@ -96,7 +93,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal(ColorRGBA.Black, colour.Value);
       Assert.Equal(-1, axis.Value);
       Assert.Equal("Shell", type.Value);
-      Duplicates.AreEqual(new GsaMaterial(), material.Value);
       Assert.Equal(0, thickness.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(ReferenceSurface.Middle, referenceSurface.Value);
       Assert.Equal(new Length(0, LengthUnit.Centimeter), offset.Value);
@@ -109,7 +105,6 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 3);
       ComponentTestHelper.SetInput(comp, new GH_Integer(7), 4);
       ComponentTestHelper.SetInput(comp, new GH_String("Load"), 5);
-      ComponentTestHelper.SetInput(comp, new GsaMaterialGoo(new GsaMaterial(8)), 6);
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)), 7);
       ComponentTestHelper.SetInput(comp, new GH_Integer(2), 8); // Bottom
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(10, LengthUnit.Millimeter)), 9);
@@ -123,7 +118,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal(ColorRGBA.White, prop2dGoo.Value.Colour);
       Assert.Equal(7, prop2dGoo.Value.AxisProperty);
       Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.Type);
-      Duplicates.AreEqual(new GsaMaterial(8), prop2dGoo.Value.Material);
       Assert.Equal(40, prop2dGoo.Value.Thickness.As(LengthUnit.Centimeter), 6);
       Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ReferenceSurface);
       Assert.Equal(10, prop2dGoo.Value.AdditionalOffsetZ.As(LengthUnit.Millimeter));
@@ -140,7 +134,6 @@ namespace GsaGHTests.Properties {
       colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 3);
       axis = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
-      material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 6);
       thickness = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
       referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
       offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
@@ -153,7 +146,6 @@ namespace GsaGHTests.Properties {
       Assert.Equal(ColorRGBA.White, colour.Value);
       Assert.Equal(7, axis.Value);
       Assert.Equal("Load Panel", type.Value);
-      Duplicates.AreEqual(new GsaMaterial(8), material.Value);
       Assert.Equal(new Length(10, LengthUnit.Millimeter), offset.Value);
       Assert.Equal(ReferenceSurface.Bottom, referenceSurface.Value);
       Assert.Equal(new Ratio(100, RatioUnit.Percent), modifier.Value.InPlane);

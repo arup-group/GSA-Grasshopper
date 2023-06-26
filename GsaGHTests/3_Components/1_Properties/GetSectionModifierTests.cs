@@ -52,7 +52,6 @@ namespace GsaGHTests.Properties {
       var stressOptOut = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
 
       Duplicates.AreEqual(modifier, modifierdGoo.Value);
-      Assert.NotEqual(modifier, modifierdGoo.Value);
       Assert.Equal(1.2, areaOut.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(1.3, i11Out.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(1.4, i22Out.Value.As(RatioUnit.DecimalFraction), 6);

@@ -5,7 +5,6 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Model;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using AngleUnit = OasysUnits.Units.AngleUnit;

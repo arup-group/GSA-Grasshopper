@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -217,8 +215,6 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      #region inputs
-
       var ghTyp = new GH_ObjectWrapper();
       var ghTypes = new List<GH_ObjectWrapper>();
 
@@ -307,35 +303,25 @@ namespace GsaGH.Components {
         return;
       }
 
-      #endregion
       Model gsa = AssembleModel.Assemble(null, null, inNodes, null, null, null, inMem1ds, inMem2ds,
         inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
-
-      UpdateMessage();
-
-      ConcurrentBag<GsaNodeGoo> nodes = Nodes.GetNodes(gsa.Nodes(), _lengthUnit);
-
-      ReadOnlyDictionary<int, Element> elementDict = gsa.Elements();
-      var elementLocalAxesDict
-        = elementDict.Keys.ToDictionary(id => id, id => gsa.ElementDirectionCosine(id));
-
-      (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
-      ConcurrentBag<GsaElement3dGoo> e3d) = Elements.GetElements(elementDict,
-        gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(),
-        gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
       var outModel = new GsaModel {
         Model = gsa,
         ModelUnit = _lengthUnit,
       };
+      
+      ConcurrentBag<GsaNodeGoo> nodes = Nodes.GetNodes(outModel.ApiNodes, outModel.ModelUnit);
+      var elements = new Elements(outModel);
 
       da.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
-      da.SetDataList(1, e1d.OrderBy(item => item.Value.Id));
-      da.SetDataList(2, e2d.OrderBy(item => item.Value.Ids.First()));
-      da.SetDataList(3, e3d.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(1, elements.Element1ds.OrderBy(item => item.Value.Id));
+      da.SetDataList(2, elements.Element2ds.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(3, elements.Element3ds.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
-      _element2ds = e2d;
+      UpdateMessage();
+      _element2ds = elements.Element2ds;
     }
 
     private void MaintainText(ToolStripTextBox tolerance) {
