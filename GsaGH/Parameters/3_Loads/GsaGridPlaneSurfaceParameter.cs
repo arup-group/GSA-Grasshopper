@@ -15,7 +15,7 @@ namespace GsaGH.Parameters {
     public override Guid ComponentGuid => new Guid("161e2439-83b6-4fda-abb9-2ed938612530");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override string InstanceDescription
-      => m_data.DataCount == 0 ? "Empty " + GsaGridPlaneSurfaceGoo.Name + " parameter" :
+      => m_data.DataCount == 0 ? $"Empty {GsaGridPlaneSurfaceGoo.Name} parameter" :
         base.InstanceDescription;
     public override string TypeName
       => SourceCount == 0 ? GsaGridPlaneSurfaceGoo.Name : base.TypeName;
@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridPlaneSurfaceParameter() : base(new GH_InstanceDescription(
       GsaGridPlaneSurfaceGoo.Name, GsaGridPlaneSurfaceGoo.NickName,
-      GsaGridPlaneSurfaceGoo.Description + " parameter", CategoryName.Name(),
+      $"{GsaGridPlaneSurfaceGoo.Description} parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) {

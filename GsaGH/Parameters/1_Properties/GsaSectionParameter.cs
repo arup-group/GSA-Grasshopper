@@ -13,13 +13,12 @@ namespace GsaGH.Parameters {
     public override Guid ComponentGuid => new Guid("8500f335-fad7-46a0-b1be-bdad22ab1474");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override string InstanceDescription
-      => m_data.DataCount == 0 ? "Empty " + GsaSectionGoo.Name + " parameter" :
-        base.InstanceDescription;
+      => m_data.DataCount == 0 ? $"Empty {GsaSectionGoo.Name} parameter" : base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaSectionGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.SectionParam;
 
     public GsaSectionParameter() : base(new GH_InstanceDescription(GsaSectionGoo.Name,
-      GsaSectionGoo.NickName, GsaSectionGoo.Description + " parameter", CategoryName.Name(),
+      GsaSectionGoo.NickName, $"{GsaSectionGoo.Description} parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionGoo PreferredCast(object data) {
@@ -37,8 +36,8 @@ namespace GsaGH.Parameters {
       GH_Convert.ToString(data, out string profile, GH_Conversion.Both);
 
       if (!GsaSection.ValidProfile(profile)) {
-        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section."
-          + $"{Environment.NewLine}Invalid profile syntax: {profile}");
+        this.AddRuntimeError(
+          $"Data conversion failed from {data.GetTypeName()} to Section.{Environment.NewLine}Invalid profile syntax: {profile}");
         return new GsaSectionGoo(null);
       } else {
         var section = new GsaSection(profile);

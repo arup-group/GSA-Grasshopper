@@ -29,11 +29,11 @@
 
     public override string ToString() {
       string y = MomentAmplificationFactorStrongAxis == null ? string.Empty :
-        "fLsy:" + MomentAmplificationFactorStrongAxis;
+        $"fLsy:{MomentAmplificationFactorStrongAxis}";
       string z = MomentAmplificationFactorWeakAxis == null ? string.Empty :
-        "fLsz:" + MomentAmplificationFactorWeakAxis;
+        $"fLsz:{MomentAmplificationFactorWeakAxis}";
       string lt = EquivalentUniformMomentFactor == null ? string.Empty :
-        "fLtb:" + EquivalentUniformMomentFactor;
+        $"fLtb:{EquivalentUniformMomentFactor}";
       string output = string.Join(" ", y, z, lt).Trim();
       return output == string.Empty ? "Automatic" : output;
     }

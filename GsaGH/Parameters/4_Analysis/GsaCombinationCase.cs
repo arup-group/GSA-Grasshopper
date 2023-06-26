@@ -24,14 +24,14 @@
     public override string ToString() {
       string s = string.Empty;
       if (Name != null) {
-        s += " '" + Name.ToString() + "'";
+        s += $" '{Name.ToString()}'";
       }
 
       if (Description != null) {
-        s += " " + Description.ToString();
+        s += $" {Description.ToString()}";
       }
 
-      return string.Join(" ", (Id > 0 ? "ID:" + Id : string.Empty).Trim(), s.Trim()).Trim()
+      return string.Join(" ", (Id > 0 ? $"ID:{Id}" : string.Empty).Trim(), s.Trim()).Trim()
        .Replace("  ", " ");
     }
   }

@@ -320,7 +320,7 @@ namespace GsaGH.Parameters {
       string incl = string.Empty;
       if (_inclCrvs != null) {
         if (_inclCrvs.Count > 0) {
-          incl = " Incl.Crv:" + _inclCrvs.Count;
+          incl = $" Incl.Crv:{_inclCrvs.Count}";
         }
       }
 
@@ -330,12 +330,12 @@ namespace GsaGH.Parameters {
         }
 
         if (InclusionPoints.Count > 0) {
-          incl += " Incl.Pt:" + InclusionPoints.Count;
+          incl += $" Incl.Pt:{InclusionPoints.Count}";
         }
       }
 
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
+      string idd = Id == 0 ? string.Empty : $"ID:{Id} ";
+      string type = $"{Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key} ";
       return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
 

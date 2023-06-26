@@ -366,14 +366,14 @@ namespace GsaGH.Parameters {
       string txt = string.Empty;
       switch (Type) {
         case CaseType.AnalysisCase:
-          txt = "A" + CaseId;
+          txt = $"A{CaseId}";
           break;
 
         case CaseType.Combination: {
-          txt = "C" + CaseId;
+          txt = $"C{CaseId}";
           if (SelectedPermutationIds.Count > 0) {
-            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
-              txt + " p" + SelectedPermutationIds[0];
+            txt = SelectedPermutationIds.Count > 1 ? $"{txt} P:{SelectedPermutationIds.Count}" :
+              $"{txt} p{SelectedPermutationIds[0]}";
           }
 
           break;

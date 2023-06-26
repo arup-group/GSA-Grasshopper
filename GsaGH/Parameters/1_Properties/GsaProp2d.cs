@@ -139,7 +139,7 @@ namespace GsaGH.Parameters {
         CloneApiObject();
         IQuantity length = new Length(0, value.Unit);
         string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-        _prop2d.Description = value.Value + "(" + unitAbbreviation + ")";
+        _prop2d.Description = $"{value.Value}({unitAbbreviation})";
         IsReferencedById = false;
       }
     }
@@ -228,13 +228,13 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string type = Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == _prop2d.Type).Key
-        + " ";
-      string desc = Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
+      string type
+        = $"{Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == _prop2d.Type).Key} ";
+      string desc = $"{Description.Replace("(", string.Empty).Replace(")", string.Empty)} ";
       string mat = Type != Property2D_Type.LOAD ?
-        Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key
-        + " " : string.Empty;
-      string pa = Id > 0 ? "PA" + Id + " " : string.Empty;
+        $"{Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key} " :
+        string.Empty;
+      string pa = Id > 0 ? $"PA{Id} " : string.Empty;
       string supportType = Type == Property2D_Type.LOAD ? $"{SupportType}" : string.Empty;
       string referenceEdge
         = Type == Property2D_Type.LOAD && SupportType != SupportType.Auto

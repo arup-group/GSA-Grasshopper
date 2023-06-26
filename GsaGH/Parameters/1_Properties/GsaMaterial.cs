@@ -435,7 +435,7 @@ namespace GsaGH.Parameters {
         code = "Custom";
       }
 
-      string id = Id == 0 ? string.Empty : " Grd:" + Id;
+      string id = Id == 0 ? string.Empty : $" Grd:{Id}";
       return (code + " " + MaterialType + id + " " + (Name ?? string.Empty)).Trim();
     }
 

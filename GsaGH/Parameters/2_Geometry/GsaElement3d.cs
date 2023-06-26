@@ -225,7 +225,7 @@ namespace GsaGH.Parameters {
       var types = Types.Select(t => Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == t)
        .Key).ToList();
       string type = string.Join("/", types.Distinct());
-      string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;
+      string info = $"N:{NgonMesh.Vertices.Count} E:{ApiElements.Count}";
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
 

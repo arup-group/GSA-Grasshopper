@@ -22,14 +22,14 @@
     }
 
     public override string ToString() {
-      string id = Id == 0 ? string.Empty : "ID:" + Id + " ";
+      string id = Id == 0 ? string.Empty : $"ID:{Id} ";
       string s = string.Empty;
       if (Name != null) {
-        s += " '" + Name + "'";
+        s += $" '{Name}'";
       }
 
       if (Description != null) {
-        s += " " + Description;
+        s += $" {Description}";
       }
 
       return string.Join(" ", id.Trim(), s.Trim()).Trim().Replace("  ", " ");

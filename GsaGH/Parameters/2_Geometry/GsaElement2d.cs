@@ -222,9 +222,9 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Types.First()).Key
-        + " ";
-      string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
+      string type
+        = $"{Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Types.First()).Key} ";
+      string info = $"N:{Mesh.Vertices.Count} E:{ApiElements.Count}";
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
 

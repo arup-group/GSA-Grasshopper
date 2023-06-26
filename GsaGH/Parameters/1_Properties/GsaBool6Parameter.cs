@@ -13,13 +13,12 @@ namespace GsaGH.Parameters {
     public override Guid ComponentGuid => new Guid("9bf01532-2035-4105-9c56-5e88b87f5220");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override string InstanceDescription
-      => m_data.DataCount == 0 ? "Empty " + GsaBool6Goo.Name + " parameter" :
-        base.InstanceDescription;
+      => m_data.DataCount == 0 ? $"Empty {GsaBool6Goo.Name} parameter" : base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaBool6Goo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Bool6Param;
 
     public GsaBool6Parameter() : base(new GH_InstanceDescription(GsaBool6Goo.Name,
-      GsaBool6Goo.NickName, GsaBool6Goo.Description + " parameter", CategoryName.Name(),
+      GsaBool6Goo.NickName, $"{GsaBool6Goo.Description} parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaBool6Goo PreferredCast(object data) {

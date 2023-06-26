@@ -155,7 +155,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string ax = AxisId == 0 ? string.Empty : "Ax:" + AxisId.ToString() + " ";
+      string ax = AxisId == 0 ? string.Empty : $"Ax:{AxisId.ToString()} ";
       bool global = false;
       if (Plane.Origin.X == 0 && Plane.Origin.Y == 0 && Plane.Origin.Z == 0) {
         if (Plane.XAxis.X == 1 && Plane.XAxis.Y == 0 && Plane.XAxis.Z == 0) {
@@ -165,9 +165,9 @@ namespace GsaGH.Parameters {
         }
       }
 
-      string gp = GridPlaneId == 0 ? string.Empty : "GPln:" + GridPlaneId.ToString() + " ";
+      string gp = GridPlaneId == 0 ? string.Empty : $"GPln:{GridPlaneId.ToString()} ";
       string gpName = GridPlane == null ? string.Empty : GridPlane.Name;
-      gp += gpName == string.Empty ? string.Empty : "'" + gpName + "' ";
+      gp += gpName == string.Empty ? string.Empty : $"'{gpName}' ";
 
       if (global) {
         gp += "Global grid ";
@@ -176,16 +176,16 @@ namespace GsaGH.Parameters {
       }
 
       if (Elevation != "0") {
-        gp += " E:" + Elevation.Replace(" ", string.Empty).Replace(",", string.Empty) + " ";
+        gp += $" E:{Elevation.Replace(" ", string.Empty).Replace(",", string.Empty)} ";
       }
 
       if (GridPlane.IsStoreyType) {
         gp += "Storey ";
       }
 
-      string gs = GridSurfaceId == 0 ? string.Empty : "GSrf:" + GridSurfaceId.ToString() + " ";
+      string gs = GridSurfaceId == 0 ? string.Empty : $"GSrf:{GridSurfaceId.ToString()} ";
       string gsName = GridSurface == null ? string.Empty : GridSurface.Name;
-      gs += gsName == string.Empty ? string.Empty : "'" + gsName + "' ";
+      gs += gsName == string.Empty ? string.Empty : $"'{gsName}' ";
       if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
         if (GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY) {
           gs += "1D, One-way ";
@@ -201,8 +201,8 @@ namespace GsaGH.Parameters {
       }
 
       if (GridSurface.Direction != 0) {
-        gs += new Angle(GridSurface.Direction, AngleUnit.Degree).ToString("g")
-         .Replace(" ", string.Empty) + " ";
+        gs
+          += $"{new Angle(GridSurface.Direction, AngleUnit.Degree).ToString("g").Replace(" ", string.Empty)} ";
       }
 
       gs += GridSurface.Elements == "all" ? string.Empty : GridSurface.Elements;

@@ -169,7 +169,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
+      string idd = Id == 0 ? string.Empty : $"ID:{Id} ";
 
       string sptTxt = ApiNode.Restraint.X == false && ApiNode.Restraint.Y == false
         && ApiNode.Restraint.Z == false && ApiNode.Restraint.XX == false
@@ -181,18 +181,13 @@ namespace GsaGH.Parameters {
             ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z & ApiNode.Restraint.XX
             & ApiNode.Restraint.YY & ApiNode.Restraint.ZZ ?
               " Fix" :
-              " " + "X:" + (ApiNode.Restraint.X ? "\u2713" : "\u2610") + " Y:"
-              + (ApiNode.Restraint.Y ? "\u2713" : "\u2610") + " Z:"
-              + (ApiNode.Restraint.Z ? "\u2713" : "\u2610") + " XX:"
-              + (ApiNode.Restraint.XX ? "\u2713" : "\u2610") + " YY:"
-              + (ApiNode.Restraint.YY ? "\u2713" : "\u2610") + " ZZ:"
-              + (ApiNode.Restraint.ZZ ? "\u2713" : "\u2610");
+              $" X:{(ApiNode.Restraint.X ? "\u2713" : "\u2610")} Y:{(ApiNode.Restraint.Y ? "\u2713" : "\u2610")} Z:{(ApiNode.Restraint.Z ? "\u2713" : "\u2610")} XX:{(ApiNode.Restraint.XX ? "\u2713" : "\u2610")} YY:{(ApiNode.Restraint.YY ? "\u2713" : "\u2610")} ZZ:{(ApiNode.Restraint.ZZ ? "\u2713" : "\u2610")}";
 
       string localTxt = string.Empty;
 
       if (!IsGlobalAxis()) {
         var ghPlane = new GH_Plane(LocalAxis);
-        localTxt = " Axis:{" + ghPlane.ToString() + "}";
+        localTxt = $" Axis:{{{ghPlane.ToString()}}}";
       }
 
       return string.Join(" ",

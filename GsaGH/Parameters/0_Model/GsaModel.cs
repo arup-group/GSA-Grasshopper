@@ -99,13 +99,13 @@ namespace GsaGH.Parameters {
           if (s == string.Empty || s == "Invalid") {
             s = Titles.Title;
           } else {
-            s += " {" + Titles.Title + "}";
+            s += $" {{{Titles.Title}}}";
           }
         }
       }
 
       if (ModelUnit != LengthUnit.Undefined) {
-        s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
+        s += $" [{Length.GetAbbreviation(ModelUnit)}]";
       }
 
       return s;

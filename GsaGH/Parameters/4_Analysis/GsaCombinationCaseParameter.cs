@@ -13,7 +13,7 @@ namespace GsaGH.Parameters {
     public override Guid ComponentGuid => new Guid("f8d0651f-b235-473f-ba71-30c97b9497cd");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override string InstanceDescription
-      => m_data.DataCount == 0 ? "Empty " + GsaCombinationCaseGoo.Name + " parameter" :
+      => m_data.DataCount == 0 ? $"Empty {GsaCombinationCaseGoo.Name} parameter" :
         base.InstanceDescription;
     public override string TypeName
       => SourceCount == 0 ? GsaCombinationCaseGoo.Name : base.TypeName;
@@ -21,12 +21,12 @@ namespace GsaGH.Parameters {
 
     public GsaCombinationCaseParameter() : base(new GH_InstanceDescription(
       GsaCombinationCaseGoo.Name, GsaCombinationCaseGoo.NickName,
-      GsaCombinationCaseGoo.Description + " parameter", CategoryName.Name(),
+      $"{GsaCombinationCaseGoo.Description} parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaCombinationCaseGoo PreferredCast(object data) {
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        return new GsaCombinationCaseGoo(new GsaCombinationCase(id, "Combination Case " + id,
+        return new GsaCombinationCaseGoo(new GsaCombinationCase(id, $"Combination Case {id}",
           string.Empty));
       }
 

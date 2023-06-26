@@ -150,20 +150,19 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string s = Id > 0 ? "ID:" + Id + " " : string.Empty;
+      string s = Id > 0 ? $"ID:{Id} " : string.Empty;
       if (Name != null) {
-        s += Name + " ";
+        s += $"{Name} ";
       } else {
-        s += EntityType.ToString() + " List ";
+        s += $"{EntityType.ToString()} List ";
       }
 
       switch (EntityType) {
         case EntityType.Node:
           if (_nodes != null && _nodes.Count != 0) {
-            s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
+            s += $"containing {_nodes.Count} {EntityType.ToString()}s";
           } else {
-            s += EntityType.ToString() + "s"
-              + (Definition != null ? " (" + Definition.Trim() + ")" : string.Empty);
+            s += $"{EntityType.ToString()}s{(Definition != null ? $" ({Definition.Trim()})" : string.Empty)}";
           }
 
           break;
@@ -171,11 +170,9 @@ namespace GsaGH.Parameters {
         case EntityType.Element:
           if (_elements != (null, null, null)
             && _elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count != 0) {
-            s += "containing " + (_elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count)
-              + " " + EntityType.ToString() + "s";
+            s += $"containing {_elements.e1d.Count + _elements.e2d.Count + _elements.e3d.Count} {EntityType.ToString()}s";
           } else {
-            s += EntityType.ToString() + "s"
-              + (Definition != null ? " (" + Definition.Trim() + ")" : string.Empty);
+            s += $"{EntityType.ToString()}s{(Definition != null ? $" ({Definition.Trim()})" : string.Empty)}";
           }
 
           break;
@@ -183,28 +180,24 @@ namespace GsaGH.Parameters {
         case EntityType.Member:
           if (_members != (null, null, null)
             && _members.m1d.Count + _members.m2d.Count + _members.m3d.Count != 0) {
-            s += "containing " + (_members.m1d.Count + _members.m2d.Count + _members.m3d.Count)
-              + " " + EntityType.ToString() + "s";
+            s += $"containing {_members.m1d.Count + _members.m2d.Count + _members.m3d.Count} {EntityType.ToString()}s";
           } else {
-            s += EntityType.ToString() + "s"
-              + (Definition != null ? " (" + Definition.Trim() + ")" : string.Empty);
+            s += $"{EntityType.ToString()}s{(Definition != null ? $" ({Definition.Trim()})" : string.Empty)}";
           }
 
           break;
 
         case EntityType.Case:
           if (_cases != null && _cases.Count != 0) {
-            s += "containing " + _cases.Count + " " + EntityType.ToString() + "s";
+            s += $"containing {_cases.Count} {EntityType.ToString()}s";
           } else {
-            s += EntityType.ToString() + "s"
-              + (Definition != null ? " (" + Definition.Trim() + ")" : string.Empty);
+            s += $"{EntityType.ToString()}s{(Definition != null ? $" ({Definition.Trim()})" : string.Empty)}";
           }
 
           break;
 
         case EntityType.Undefined:
-          s += EntityType.ToString() + "s"
-            + (Definition != null ? " (" + Definition.Trim() + ")" : string.Empty);
+          s += $"{EntityType.ToString()}s{(Definition != null ? $" ({Definition.Trim()})" : string.Empty)}";
           break;
       }
 

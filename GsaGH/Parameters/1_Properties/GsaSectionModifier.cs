@@ -325,7 +325,7 @@ namespace GsaGH.Parameters {
       }
 
       if (_sectionModifier.K11Modifier.Option == SectionModifierOptionType.TO) {
-        k11 += _sectionModifier.K11Modifier.Value.ToString("f3") + "[-]";
+        k11 += $"{_sectionModifier.K11Modifier.Value:f3}[-]";
       } else {
         Ratio val = K11Modifier;
         if (val.DecimalFractions != 1) {
@@ -336,7 +336,7 @@ namespace GsaGH.Parameters {
       }
 
       if (_sectionModifier.K22Modifier.Option == SectionModifierOptionType.TO) {
-        k22 += _sectionModifier.K22Modifier.Value.ToString("f3") + "[-]";
+        k22 += $"{_sectionModifier.K22Modifier.Value:f3}[-]";
       } else {
         Ratio val = K22Modifier;
         if (val.DecimalFractions != 1) {

@@ -300,10 +300,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string pb = Id > 0 ? "PB" + Id + " " : string.Empty;
-      string prof = _section.Profile.Replace("%", " ") + " ";
-      string mat = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+      string pb = Id > 0 ? $"PB{Id} " : string.Empty;
+      string prof = $"{_section.Profile.Replace("%", " ")} ";
+      string mat
+        = $"{Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key} ";
       string mod = _modifier.IsModified ? " modified" : string.Empty;
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim()
        .Replace("  ", " ");
