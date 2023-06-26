@@ -54,7 +54,7 @@ namespace GsaGH.Parameters {
         _gridSrfId = value;
       }
     }
-    public Plane Axis {
+    public Plane Plane {
       get => _pln;
       set {
         _gridPlnGuid = Guid.NewGuid();
@@ -113,7 +113,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridPlaneSurface Duplicate() {
       var dup = new GsaGridPlaneSurface {
-        Axis = (_gridPln == null) ? Plane.WorldXY : _pln.Clone(),
+        Plane = (_gridPln == null) ? Plane.WorldXY : _pln.Clone(),
         GridPlane = _gridPln == null ? null : new GridPlane {
           AxisProperty = _gridPln.AxisProperty,
           IsStoreyType = _gridPln.IsStoreyType,
@@ -164,9 +164,9 @@ namespace GsaGH.Parameters {
 
       string ax = (AxisId == 0) ? string.Empty : "Ax:" + AxisId.ToString() + " ";
       bool global = false;
-      if (Axis.Origin.X == 0 && Axis.Origin.Y == 0 && Axis.Origin.Z == 0) {
-        if (Axis.XAxis.X == 1 && Axis.XAxis.Y == 0 && Axis.XAxis.Z == 0) {
-          if (Axis.YAxis.X == 0 && Axis.YAxis.Y == 1 && Axis.YAxis.Z == 0) {
+      if (Plane.Origin.X == 0 && Plane.Origin.Y == 0 && Plane.Origin.Z == 0) {
+        if (Plane.XAxis.X == 1 && Plane.XAxis.Y == 0 && Plane.XAxis.Z == 0) {
+          if (Plane.YAxis.X == 0 && Plane.YAxis.Y == 1 && Plane.YAxis.Z == 0) {
             global = true;
           }
         }
@@ -220,16 +220,16 @@ namespace GsaGH.Parameters {
 
     internal Axis GetAxis(LengthUnit modelUnit) {
       var axis = new Axis();
-      axis.Origin.X = new Length(Axis.Origin.X, modelUnit).Meters;
-      axis.Origin.Y = new Length(Axis.Origin.Y, modelUnit).Meters;
-      axis.Origin.Z = new Length(Axis.Origin.Z, modelUnit).Meters;
+      axis.Origin.X = new Length(Plane.Origin.X, modelUnit).Meters;
+      axis.Origin.Y = new Length(Plane.Origin.Y, modelUnit).Meters;
+      axis.Origin.Z = new Length(Plane.Origin.Z, modelUnit).Meters;
 
-      axis.XVector.X = Axis.XAxis.X;
-      axis.XVector.Y = Axis.XAxis.Y;
-      axis.XVector.Z = Axis.XAxis.Z;
-      axis.XYPlane.X = Axis.YAxis.X;
-      axis.XYPlane.Y = Axis.YAxis.Y;
-      axis.XYPlane.Z = Axis.YAxis.Z;
+      axis.XVector.X = Plane.XAxis.X;
+      axis.XVector.Y = Plane.XAxis.Y;
+      axis.XVector.Z = Plane.XAxis.Z;
+      axis.XYPlane.X = Plane.YAxis.X;
+      axis.XYPlane.Y = Plane.YAxis.Y;
+      axis.XYPlane.Z = Plane.YAxis.Z;
 
       return axis;
     }

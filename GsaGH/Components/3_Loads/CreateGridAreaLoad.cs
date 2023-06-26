@@ -158,7 +158,7 @@ namespace GsaGH.Components {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
             gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-            plane = gridPlaneSurface.Axis;
+            plane = gridPlaneSurface.Plane;
             planeSet = true;
             _expansionType = ExpansionType.UseGpsSettings;
             UpdateMessage();
@@ -219,10 +219,10 @@ namespace GsaGH.Components {
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
           ctrlPts = polyline.ToList();
-          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(ctrlPts, plane);
-          gridareaload.Points = points;
+          gridareaload.Points = ctrlPts;
 
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
+          string definition = GridLoadHelper.CreateDefinition(ctrlPts, plane);
           gridareaload.GridAreaLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Brep edge to Polyline");

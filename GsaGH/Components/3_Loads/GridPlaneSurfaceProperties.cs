@@ -145,13 +145,13 @@ namespace GsaGH.Components {
       da.GetData(0, ref gridPlaneSurfaceGoo);
       GsaGridPlaneSurface gridPlaneSurface = gridPlaneSurfaceGoo.Value;
 
-      da.SetData(0, gridPlaneSurface == null ? Plane.Unset : gridPlaneSurface.Axis);
+      da.SetData(0, gridPlaneSurface == null ? Plane.Unset : gridPlaneSurface.Plane);
       da.SetData(1, gridPlaneSurface.GridPlane == null ? 0 : gridPlaneSurface.GridPlaneId);
       da.SetData(2, gridPlaneSurface.GridPlane?.Name);
       da.SetData(3, gridPlaneSurface.GridPlane?.IsStoreyType ?? false);
       var axis = new Plane();
       if (gridPlaneSurface.GridPlane != null) {
-        axis = new Plane(gridPlaneSurface.Axis);
+        axis = new Plane(gridPlaneSurface.Plane);
         if (gridPlaneSurface.Elevation != "0") {
           var elevation = new Length();
           try {

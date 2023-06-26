@@ -170,7 +170,7 @@ namespace GsaGH.Components {
         vec.Z *= elev;
         var xform = Transform.Translation(vec);
         plane.Transform(xform);
-        gsaGridPlaneSurface.Axis = plane;
+        gsaGridPlaneSurface.Plane = plane;
       }
 
       var ghtxt = new GH_String();

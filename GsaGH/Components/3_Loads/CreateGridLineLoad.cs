@@ -117,7 +117,7 @@ namespace GsaGH.Components {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
               gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-              plane = gridPlaneSurface.Axis;
+              plane = gridPlaneSurface.Plane;
               planeSet = true;
               break;
             }
@@ -165,10 +165,10 @@ namespace GsaGH.Components {
             controlPoints = ln.ToList();
           }
 
-          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(controlPoints, plane);
-          gridlineload.Points = points;
-          gridlineload.GridLineLoad.PolyLineDefinition = definition;
+          gridlineload.Points = controlPoints;
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
+          string definition = GridLoadHelper.CreateDefinition(controlPoints, plane);
+          gridlineload.GridLineLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Curve to Polyline");
         }

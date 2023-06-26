@@ -108,7 +108,7 @@ namespace GsaGH.Helpers.Import {
         if (gridAreaLoad.PolyLineDefinition != string.Empty &&
           gridAreaLoad.PolyLineDefinition.Contains('(')) {
           myload.Points = GridLoadHelper.ConvertPoints(
-            gridAreaLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Axis);
+            gridAreaLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
         }
 
         loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
@@ -145,7 +145,7 @@ namespace GsaGH.Helpers.Import {
         if (gridLineLoad.PolyLineDefinition != string.Empty &&
           gridLineLoad.PolyLineDefinition.Contains('(')) {
           myload.Points = GridLoadHelper.ConvertPoints(
-          gridLineLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Axis);
+          gridLineLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
         }
 
         loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
@@ -207,7 +207,7 @@ namespace GsaGH.Helpers.Import {
           plane.OriginZ = new Length(gp.Elevation, LengthUnit.Meter).As(unit);
         }
 
-        gps.Axis = plane;
+        gps.Plane = plane;
       } else {
         return null;
       }

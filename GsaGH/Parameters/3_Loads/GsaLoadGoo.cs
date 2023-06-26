@@ -22,21 +22,21 @@ namespace GsaGH.Parameters {
           switch (Value.LoadType) {
             case GsaLoad.LoadTypes.GridArea: {
                 var ghpln = new GH_Plane();
-                GH_Convert.ToGHPlane(Value.AreaLoad.GridPlaneSurface.Axis, GH_Conversion.Both,
+                GH_Convert.ToGHPlane(Value.AreaLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
                   ref ghpln);
                 target = (TQ)(object)ghpln;
                 return true;
               }
             case GsaLoad.LoadTypes.GridLine: {
                 var ghpln = new GH_Plane();
-                GH_Convert.ToGHPlane(Value.LineLoad.GridPlaneSurface.Axis, GH_Conversion.Both,
+                GH_Convert.ToGHPlane(Value.LineLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
                   ref ghpln);
                 target = (TQ)(object)ghpln;
                 return true;
               }
             case GsaLoad.LoadTypes.GridPoint: {
                 var ghpln = new GH_Plane();
-                GH_Convert.ToGHPlane(Value.PointLoad.GridPlaneSurface.Axis, GH_Conversion.Both,
+                GH_Convert.ToGHPlane(Value.PointLoad.GridPlaneSurface.Plane, GH_Conversion.Both,
                   ref ghpln);
                 target = (TQ)(object)ghpln;
                 return true;
@@ -56,7 +56,7 @@ namespace GsaGH.Parameters {
           var point = new Point3d {
             X = Value.PointLoad.GridPointLoad.X,
             Y = Value.PointLoad.GridPointLoad.Y,
-            Z = Value.PointLoad.GridPlaneSurface.Axis.OriginZ,
+            Z = Value.PointLoad.GridPlaneSurface.Plane.OriginZ,
           };
           var ghpt = new GH_Point();
           GH_Convert.ToGHPoint(point, GH_Conversion.Both, ref ghpt);
