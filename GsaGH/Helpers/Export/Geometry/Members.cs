@@ -34,10 +34,10 @@ namespace GsaGH.Helpers.Export {
           apiMember.Topology = string.Copy(topo.Replace("  ", " "));
         }
         catch (Exception) {
-          var errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
+          var errors = member1d.Topology.Select(t => $"{{{t.ToString()}}}").ToList();
           string error = string.Join(", ", errors);
-          throw new Exception(" Invalid topology for Member1d: " + topo + " with original points: "
-            + error);
+          throw new Exception(
+            $" Invalid topology for Member1d: {topo} with original points: {error}");
         }
       }
 
@@ -62,30 +62,30 @@ namespace GsaGH.Helpers.Export {
 
       if (member2d.VoidTopology != null) {
         for (int i = 0; i < member2d.VoidTopology.Count; i++) {
-          topo += " V(" + CreateTopology(member2d.VoidTopology[i], member2d.VoidTopologyType[i],
-            ref apiNodes, unit) + ")";
+          topo
+            += $" V({CreateTopology(member2d.VoidTopology[i], member2d.VoidTopologyType[i], ref apiNodes, unit)})";
         }
       }
 
       if (member2d.IncLinesTopology != null) {
         for (int i = 0; i < member2d.IncLinesTopology.Count; i++) {
-          topo += " L(" + CreateTopology(member2d.IncLinesTopology[i],
-            member2d.IncLinesTopologyType[i], ref apiNodes, unit) + ")";
+          topo
+            += $" L({CreateTopology(member2d.IncLinesTopology[i], member2d.IncLinesTopologyType[i], ref apiNodes, unit)})";
         }
       }
 
       if (member2d.InclusionPoints != null) {
-        topo += " P(" + CreateTopology(member2d.InclusionPoints, null, ref apiNodes, unit) + ")";
+        topo += $" P({CreateTopology(member2d.InclusionPoints, null, ref apiNodes, unit)})";
       }
 
       try {
         apiMember.Topology = string.Copy(topo.Replace("( ", "(").Replace("  ", " "));
       }
       catch (Exception) {
-        var errors = member2d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
+        var errors = member2d.Topology.Select(t => $"{{{t.ToString()}}}").ToList();
         string error = string.Join(", ", errors);
-        throw new Exception(" Invalid topology for Member2d: " + topo + " with original points: "
-          + error);
+        throw new Exception(
+          $" Invalid topology for Member2d: {topo} with original points: {error}");
       }
 
       apiMember.Property
@@ -172,13 +172,12 @@ namespace GsaGH.Helpers.Export {
             if (string.IsNullOrEmpty(topologyType.Trim())) {
               topo += " ";
             } else {
-              topo += topologyType.ToLower()
-                + " "; // add topology type (nothing or "a") in front of node id
+              topo += $"{topologyType.ToLower()} "; // add topology type (nothing or "a") in front of node id
             }
           }
         }
 
-        topo += Nodes.AddNode(ref existingNodes, topology[j], unit) + " ";
+        topo += $"{Nodes.AddNode(ref existingNodes, topology[j], unit)} ";
       }
 
       return topo.Trim();

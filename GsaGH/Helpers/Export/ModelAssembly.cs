@@ -158,10 +158,8 @@ namespace GsaGH.Helpers.Export {
             double minMeshSize = Members.ReadOnlyDictionary.Values.Where(x => x.MeshSize != 0)
              .Select(x => x.MeshSize).Min();
             if (minMeshSize < toleranceCoincidentNodes.Meters) {
-              owner.AddRuntimeWarning("The smallest mesh size (" + minMeshSize
-                + ") is smaller than the set tolerance (" + toleranceCoincidentNodes.Meters + ")."
-                + Environment.NewLine + "This is likely to produce an undisarable mesh."
-                + Environment.NewLine + "Right-click the component to change the tolerance.");
+              owner.AddRuntimeWarning(
+                $"The smallest mesh size ({minMeshSize}) is smaller than the set tolerance ({toleranceCoincidentNodes.Meters}).{Environment.NewLine}This is likely to produce an undisarable mesh.{Environment.NewLine}Right-click the component to change the tolerance.");
             }
           }
           catch (InvalidOperationException) {
@@ -179,26 +177,14 @@ namespace GsaGH.Helpers.Export {
           double remarkSurvivalRate = elemCount > memCount ? 0.2 : 0.33;
 
           if (newNodeCount == 1) {
-            owner.AddRuntimeWarning("After collapsing coincident nodes only one node remained."
-              + Environment.NewLine
-              + "This indicates that you have set a tolerance that is too low."
-              + Environment.NewLine + "Right-click the component to change the tolerance.");
+            owner.AddRuntimeWarning(
+              $"After collapsing coincident nodes only one node remained.{Environment.NewLine}This indicates that you have set a tolerance that is too low.{Environment.NewLine}Right-click the component to change the tolerance.");
           } else if (nodeSurvivalRate < warningSurvivalRate) {
             owner.AddRuntimeWarning(
-              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
-               .ToString("g0").Replace(" ", string.Empty)
-              + " of the nodes were removed after collapsing coincident nodes."
-              + Environment.NewLine
-              + "This indicates that you have set a tolerance that is too low."
-              + Environment.NewLine + "Right-click the component to change the tolerance.");
+              $"{new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)} of the nodes were removed after collapsing coincident nodes.{Environment.NewLine}This indicates that you have set a tolerance that is too low.{Environment.NewLine}Right-click the component to change the tolerance.");
           } else if (nodeSurvivalRate < remarkSurvivalRate) {
             owner.AddRuntimeRemark(
-              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
-               .ToString("g0").Replace(" ", string.Empty)
-              + " of the nodes were removed after collapsing coincident nodes."
-              + Environment.NewLine
-              + "This indicates that you have set a tolerance that is too low."
-              + Environment.NewLine + "Right-click the component to change the tolerance.");
+              $"{new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)} of the nodes were removed after collapsing coincident nodes.{Environment.NewLine}This indicates that you have set a tolerance that is too low.{Environment.NewLine}Right-click the component to change the tolerance.");
           }
         }
       }

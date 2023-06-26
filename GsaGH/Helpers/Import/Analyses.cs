@@ -65,12 +65,12 @@ namespace GsaGH.Helpers.Import {
       foreach (int caseId in caseIDs) {
         string caseName = model.AnalysisCaseName(caseId);
         if (caseName == string.Empty) {
-          caseName = "Case " + caseId;
+          caseName = $"Case {caseId}";
         }
 
         string caseDescription = model.AnalysisCaseDescription(caseId);
         if (caseDescription == string.Empty) {
-          caseDescription = "L" + caseId;
+          caseDescription = $"L{caseId}";
         }
 
         caseList.Add(

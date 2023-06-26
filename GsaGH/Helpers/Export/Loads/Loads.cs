@@ -57,8 +57,8 @@ namespace GsaGH.Helpers.Export {
               if (load.GravityLoad._refList == null
                 && (load.GravityLoad._refList.EntityType != EntityType.Element
                   || load.GravityLoad._refList.EntityType != EntityType.Member)) {
-                owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
-                  + Environment.NewLine + "Element list has not been set");
+                owner.AddRuntimeWarning(
+                  $"Invalid List type for GravityLoad {load.ToString()}{Environment.NewLine}Element list has not been set");
               }
 
               objectElemList += Lists.GetElementList(load.GravityLoad._refList, ref model, owner);
@@ -71,10 +71,8 @@ namespace GsaGH.Helpers.Export {
             if (objectElemList.Trim() != string.Empty) {
               load.GravityLoad.GravityLoad.Elements = objectElemList;
             } else {
-              string warning = "One or more GravityLoads with reference to a "
-                + load.GravityLoad._referenceType
-                + " could not be added to the model. Ensure the reference "
-                + load.GravityLoad._referenceType + " has been added to the model.";
+              string warning
+                = $"One or more GravityLoads with reference to a {load.GravityLoad._referenceType} could not be added to the model. Ensure the reference {load.GravityLoad._referenceType} has been added to the model.";
               if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
                 owner.AddRuntimeWarning(warning);
               }
@@ -95,8 +93,8 @@ namespace GsaGH.Helpers.Export {
               if (load.BeamLoad._refList == null
                 && (load.BeamLoad._refList.EntityType != EntityType.Element
                   || load.BeamLoad._refList.EntityType != EntityType.Member)) {
-                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-                  + Environment.NewLine + "Element list has not been set");
+                owner.AddRuntimeWarning(
+                  $"Invalid List type for BeamLoad {load.ToString()}{Environment.NewLine}Element list has not been set");
               }
 
               objectElemList += Lists.GetElementList(load.BeamLoad._refList, ref model, owner);
@@ -108,10 +106,8 @@ namespace GsaGH.Helpers.Export {
             if (objectElemList.Trim() != string.Empty) {
               load.BeamLoad.BeamLoad.Elements = objectElemList;
             } else {
-              string warning = "One or more BeamLoads with reference to a "
-                + load.BeamLoad._referenceType
-                + " could not be added to the model. Ensure the reference "
-                + load.BeamLoad._referenceType + " has been added to the model.";
+              string warning
+                = $"One or more BeamLoads with reference to a {load.BeamLoad._referenceType} could not be added to the model. Ensure the reference {load.BeamLoad._referenceType} has been added to the model.";
               if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
                 owner.AddRuntimeWarning(warning);
               }
@@ -132,8 +128,8 @@ namespace GsaGH.Helpers.Export {
               if (load.FaceLoad._refList == null
                 && (load.FaceLoad._refList.EntityType != EntityType.Element
                   || load.FaceLoad._refList.EntityType != EntityType.Member)) {
-                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-                  + Environment.NewLine + "Element list has not been set");
+                owner.AddRuntimeWarning(
+                  $"Invalid List type for BeamLoad {load.ToString()}{Environment.NewLine}Element list has not been set");
               }
 
               objectElemList += Lists.GetElementList(load.FaceLoad._refList, ref model, owner);
@@ -145,10 +141,8 @@ namespace GsaGH.Helpers.Export {
             if (objectElemList.Trim() != string.Empty) {
               load.FaceLoad.FaceLoad.Elements = objectElemList;
             } else {
-              string warning = "One or more FaceLoads with reference to a "
-                + load.FaceLoad._referenceType
-                + " could not be added to the model. Ensure the reference "
-                + load.FaceLoad._referenceType + " has been added to the model.";
+              string warning
+                = $"One or more FaceLoads with reference to a {load.FaceLoad._referenceType} could not be added to the model. Ensure the reference {load.FaceLoad._referenceType} has been added to the model.";
               if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
                 owner.AddRuntimeWarning(warning);
               }
@@ -196,8 +190,7 @@ namespace GsaGH.Helpers.Export {
           if (model.Unit != LengthUnit.Meter && gridlnref.GridLineLoad.Type
             == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
             gridlnref.GridLineLoad.PolyLineDefinition
-              = GridLoadHelper.ClearDefinitionForUnit(gridlnref.GridLineLoad.PolyLineDefinition)
-              + $"({Length.GetAbbreviation(model.Unit)})";
+              = $"{GridLoadHelper.ClearDefinitionForUnit(gridlnref.GridLineLoad.PolyLineDefinition)}({Length.GetAbbreviation(model.Unit)})";
           }
 
           gridplnsrf = gridlnref.GridPlaneSurface;
@@ -215,8 +208,7 @@ namespace GsaGH.Helpers.Export {
             load.AreaLoad.GridAreaLoad.Type.ToString());
           if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
             load.AreaLoad.GridAreaLoad.PolyLineDefinition
-              = GridLoadHelper.ClearDefinitionForUnit(load.AreaLoad.GridAreaLoad.PolyLineDefinition)
-              + $"({Length.GetAbbreviation(model.Unit)})";
+              = $"{GridLoadHelper.ClearDefinitionForUnit(load.AreaLoad.GridAreaLoad.PolyLineDefinition)}({Length.GetAbbreviation(model.Unit)})";
           }
 
           if (load.AreaLoad.GridPlaneSurface == null) {

@@ -17,8 +17,7 @@ namespace GsaGH.Helpers.Export {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            owner.AddRuntimeWarning(
-              "Analysis input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Analysis input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -35,8 +34,8 @@ namespace GsaGH.Helpers.Export {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
-                + " to Analysis Task or Combination Case");
+              owner.AddRuntimeError(
+                $"Unable to convert Analysis input parameter of type {type} to Analysis Task or Combination Case");
               return null;
             }
           }
@@ -54,8 +53,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
+        owner.AddRuntimeWarning(
+          $"Input parameter {owner.Params.Input[inputid].NickName} failed to collect data!");
       }
 
       return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(null, null);
@@ -77,8 +76,7 @@ namespace GsaGH.Helpers.Export {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            owner.AddRuntimeWarning(
-              "Geometry input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Geometry input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -115,9 +113,8 @@ namespace GsaGH.Helpers.Export {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
-                + Environment.NewLine
-                + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
+              owner.AddRuntimeError(
+                $"Unable to convert Geometry input parameter of type {type}{Environment.NewLine} to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
               return null;
             }
           }
@@ -158,8 +155,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
+        owner.AddRuntimeWarning(
+          $"Input parameter {owner.Params.Input[inputid].NickName} failed to collect data!");
       }
 
       return new
@@ -177,7 +174,7 @@ namespace GsaGH.Helpers.Export {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            owner.AddRuntimeWarning("Load input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Load input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -194,8 +191,8 @@ namespace GsaGH.Helpers.Export {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
-                + " to Load or GridPlaneSurface");
+              owner.AddRuntimeError(
+                $"Unable to convert Load input parameter of type {type} to Load or GridPlaneSurface");
               return null;
             }
           }
@@ -211,8 +208,8 @@ namespace GsaGH.Helpers.Export {
 
         return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(inLoads, inGps);
       } else if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
+        owner.AddRuntimeWarning(
+          $"Input parameter {owner.Params.Input[inputid].NickName} failed to collect data!");
       }
 
       return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(null, null);
@@ -228,8 +225,7 @@ namespace GsaGH.Helpers.Export {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            owner.AddRuntimeWarning(
-              "Geometry input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Geometry input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -250,9 +246,8 @@ namespace GsaGH.Helpers.Export {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
-                + Environment.NewLine
-                + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
+              owner.AddRuntimeError(
+                $"Unable to convert Geometry input parameter of type {type}{Environment.NewLine} to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
               return null;
             }
           }
@@ -275,8 +270,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
+        owner.AddRuntimeWarning(
+          $"Input parameter {owner.Params.Input[inputid].NickName} failed to collect data!");
       }
 
       return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null);
@@ -291,7 +286,7 @@ namespace GsaGH.Helpers.Export {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            owner.AddRuntimeWarning("Model input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Model input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -308,8 +303,8 @@ namespace GsaGH.Helpers.Export {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert GSA input parameter of type " + type
-                + " to GsaModel or GsaList");
+              owner.AddRuntimeError(
+                $"Unable to convert GSA input parameter of type {type} to GsaModel or GsaList");
               return (null, null);
           }
         }
@@ -318,8 +313,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
+        owner.AddRuntimeWarning(
+          $"Input parameter {owner.Params.Input[inputid].NickName} failed to collect data!");
       }
 
       return (null, null);
@@ -335,8 +330,7 @@ namespace GsaGH.Helpers.Export {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            owner.AddRuntimeWarning(
-              "Property input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Property input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -357,8 +351,8 @@ namespace GsaGH.Helpers.Export {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
-                + " to GsaSection or GsaProp2d");
+              owner.AddRuntimeError(
+                $"Unable to convert Prop input parameter of type {type} to GsaSection or GsaProp2d");
               return null;
             }
           }
@@ -381,8 +375,8 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
+        owner.AddRuntimeWarning(
+          $"Input parameter {owner.Params.Input[inputid].NickName} failed to collect data!");
       }
 
       return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(null, null, null);

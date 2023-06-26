@@ -63,7 +63,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (model.Axes.ReadOnlyDictionary[axisId].Name == string.Empty) {
-        model.Axes.ReadOnlyDictionary[axisId].Name = "Axis " + axisId;
+        model.Axes.ReadOnlyDictionary[axisId].Name = $"Axis {axisId}";
       }
 
       return axisId;
@@ -128,7 +128,7 @@ namespace GsaGH.Helpers.Export {
       if (model.Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary[gridPlaneId].Name
         == string.Empty) {
         model.Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary[gridPlaneId].Name
-          = "Grid plane " + gridPlaneId;
+          = $"Grid plane {gridPlaneId}";
       }
 
       return gridPlaneId;
@@ -152,8 +152,8 @@ namespace GsaGH.Helpers.Export {
         if (grdPlnSrf._referenceType == ReferenceType.List) {
           if (grdPlnSrf._refList == null || grdPlnSrf._refList.EntityType != EntityType.Element
             || grdPlnSrf._refList.EntityType != EntityType.Member) {
-            owner.AddRuntimeWarning("Invalid List type for GridSurface " + grdPlnSrf.ToString()
-              + Environment.NewLine + "Element list has not been set");
+            owner.AddRuntimeWarning(
+              $"Invalid List type for GridSurface {grdPlnSrf.ToString()}{Environment.NewLine}Element list has not been set");
           }
 
           grdPlnSrf.GridSurface.Elements
@@ -180,7 +180,7 @@ namespace GsaGH.Helpers.Export {
       if (model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name
         == string.Empty) {
         model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name
-          = "Grid surface " + gridSurfaceId;
+          = $"Grid surface {gridSurfaceId}";
       }
 
       return gridSurfaceId;

@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.GH {
         for (int i = 0; i < gh_types.Count; i++) {
           GH_ObjectWrapper gh_typ = gh_types[i];
           if (gh_typ == null) {
-            owner.AddRuntimeWarning("Input (index: " + i + ") is null and has been ignored");
+            owner.AddRuntimeWarning($"Input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -32,10 +32,8 @@ namespace GsaGH.Helpers.GH {
                 var node = new GsaNode(ghPoint.Value);
                 list.Add(new GsaNodeGoo(node));
               } else {
-                owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                  + "  input (index: " + i + ") input parameter of type "
-                  + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
-                  + " to Node and has been ignored");
+                owner.AddRuntimeError(
+                  $"Unable to convert {owner.Params.Input[inputid].NickName}  input (index: {i}) input parameter of type {gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)}{Environment.NewLine} to Node and has been ignored");
                 continue;
               }
 
@@ -84,10 +82,8 @@ namespace GsaGH.Helpers.GH {
                   break;
 
                 default:
-                  owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                    + " input (index: " + i + ") input parameter of type "
-                    + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
-                    + " to Element, Member child, Material, or Property and has been ignored");
+                  owner.AddRuntimeError(
+                    $"Unable to convert {owner.Params.Input[inputid].NickName} input (index: {i}) input parameter of type {gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)}{Environment.NewLine} to Element, Member child, Material, or Property and has been ignored");
                   continue;
               }
 
@@ -124,10 +120,8 @@ namespace GsaGH.Helpers.GH {
                   break;
 
                 default:
-                  owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                    + " input (index: " + i + ") input parameter of type "
-                    + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
-                    + " to Member or Property and has been ignored");
+                  owner.AddRuntimeError(
+                    $"Unable to convert {owner.Params.Input[inputid].NickName} input (index: {i}) input parameter of type {gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)}{Environment.NewLine} to Member or Property and has been ignored");
                   continue;
               }
 
@@ -136,10 +130,8 @@ namespace GsaGH.Helpers.GH {
             case EntityType.Case:
               int caseId = 0;
               if (!GH_Convert.ToInt32(gh_typ.Value, out caseId, GH_Conversion.Both)) {
-                owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
-                  + " input (index: " + i + ") input parameter of type "
-                  + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty) + Environment.NewLine
-                  + " to Integer and has been ignored");
+                owner.AddRuntimeError(
+                  $"Unable to convert {owner.Params.Input[inputid].NickName} input (index: {i}) input parameter of type {gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)}{Environment.NewLine} to Integer and has been ignored");
                 continue;
               }
 

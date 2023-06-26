@@ -46,7 +46,7 @@ namespace GsaGH.Helpers.GsaApi {
       // needs more investigation!
       if (Assembly.GetEntryAssembly() != null
         && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
-        Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+        Assembly.LoadFile($@"{pluginPath}\Microsoft.Data.Sqlite.dll");
       }
 
       return new MicrosoftSQLiteReader();
@@ -80,9 +80,8 @@ namespace GsaGH.Helpers.GsaApi {
       using (SqliteConnection db = Connection(filePath)) {
         db.Open();
         SqliteCommand cmd = db.CreateCommand();
-        cmd.CommandText = "Select " + "SECT_DEPTH_DIAM || ' -- ' || " + "SECT_WIDTH || ' -- ' || "
-          + "SECT_WEB_THICK || ' -- ' || " + "SECT_FLG_THICK || ' -- ' || " + "SECT_ROOT_RAD "
-          + $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
+        cmd.CommandText
+          = $"Select SECT_DEPTH_DIAM || ' -- ' || SECT_WIDTH || ' -- ' || SECT_WEB_THICK || ' -- ' || SECT_FLG_THICK || ' -- ' || SECT_ROOT_RAD as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
         cmd.CommandType = CommandType.Text;
         var data = new List<string>();
         SqliteDataReader r = cmd.ExecuteReader();
@@ -98,9 +97,8 @@ namespace GsaGH.Helpers.GsaApi {
 
         if (vals.Length <= 1) {
           cmd = db.CreateCommand();
-          cmd.CommandText = "Select " + "SECT_DEPTH_DIAM || ' -- ' || " + "SECT_WIDTH || ' -- ' || "
-            + "SECT_WEB_THICK || ' -- ' || " + "SECT_FLG_THICK "
-            + $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
+          cmd.CommandText
+            = $"Select SECT_DEPTH_DIAM || ' -- ' || SECT_WIDTH || ' -- ' || SECT_WEB_THICK || ' -- ' || SECT_FLG_THICK as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
           cmd.CommandType = CommandType.Text;
           data = new List<string>();
           r = cmd.ExecuteReader();
@@ -116,8 +114,8 @@ namespace GsaGH.Helpers.GsaApi {
         }
 
         if (vals.Length <= 1) {
-          cmd.CommandText = "Select " + "SECT_DEPTH_DIAM || ' -- ' || " + "SECT_WEB_THICK "
-            + $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
+          cmd.CommandText
+            = $"Select SECT_DEPTH_DIAM || ' -- ' || SECT_WEB_THICK as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
           cmd.CommandType = CommandType.Text;
           data = new List<string>();
           r = cmd.ExecuteReader();
@@ -227,7 +225,7 @@ namespace GsaGH.Helpers.GsaApi {
               }, StringSplitOptions.None)[1];
               date = date.Replace("-", string.Empty);
               date = date.Substring(0, 8);
-              sections.Add(profile + " " + date);
+              sections.Add($"{profile} {date}");
             } else {
               string profile = Convert.ToString(r["SECT_NAME"]);
               // BSI-IPE IPEAA80
@@ -311,7 +309,7 @@ namespace GsaGH.Helpers.GsaApi {
       var ex = e.ExceptionObject as Exception;
 
       string assemblies = AppDomain.CurrentDomain.GetAssemblies()
-       .Aggregate(string.Empty, (current, ass) => current + ass + "; ");
+       .Aggregate(string.Empty, (current, ass) => $"{current}{ass}; ");
 
       PostHog.Debug(new Dictionary<string, object>() {
         {
@@ -323,7 +321,7 @@ namespace GsaGH.Helpers.GsaApi {
         },
       });
 
-      throw new Exception(ex?.ToString() + "     " + assemblies);
+      throw new Exception($"{ex.ToString()}     {assemblies}");
     }
   }
 }

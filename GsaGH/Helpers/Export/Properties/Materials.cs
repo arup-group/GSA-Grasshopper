@@ -97,19 +97,19 @@ namespace GsaGH.Helpers.Export {
 
     internal string GetReferenceDefinition(Guid guid) {
       if (SteelMaterials.GuidDictionary.TryGetValue(guid, out int steelId)) {
-        return "MS" + steelId;
+        return $"MS{steelId}";
       }
 
       if (ConcreteMaterials.GuidDictionary.TryGetValue(guid, out int concreteId)) {
-        return "MC" + concreteId;
+        return $"MC{concreteId}";
       }
 
       if (FrpMaterials.GuidDictionary.TryGetValue(guid, out int frpId)) {
-        return "MP" + frpId;
+        return $"MP{frpId}";
       }
 
       if (AnalysisMaterials.GuidDictionary.TryGetValue(guid, out int customId)) {
-        return "M" + customId;
+        return $"M{customId}";
       }
 
       return string.Empty;
@@ -332,8 +332,8 @@ namespace GsaGH.Helpers.Export {
       if (apiMaterials.ConcreteDesignCode == string.Empty) {
         apiMaterials.ConcreteDesignCode = material.ConcreteDesignCodeName;
       } else if (apiMaterials.ConcreteDesignCode != material.ConcreteDesignCodeName) {
-        throw new Exception($"Concrete material with {material.ConcreteDesignCodeName} Design Code"
-          + $" cannot be added to a model with {apiMaterials.ConcreteDesignCode} Design Code.");
+        throw new Exception(
+          $"Concrete material with {material.ConcreteDesignCodeName} Design Code cannot be added to a model with {apiMaterials.ConcreteDesignCode} Design Code.");
       }
     }
 
@@ -341,8 +341,8 @@ namespace GsaGH.Helpers.Export {
       if (apiMaterials.SteelDesignCode == string.Empty) {
         apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
       } else if (apiMaterials.SteelDesignCode != material.SteelDesignCodeName) {
-        throw new Exception($"Concrete material with {material.SteelDesignCodeName} Design Code"
-          + $" cannot be added to a model with {apiMaterials.SteelDesignCode} Design Code.");
+        throw new Exception(
+          $"Concrete material with {material.SteelDesignCodeName} Design Code cannot be added to a model with {apiMaterials.SteelDesignCode} Design Code.");
       }
     }
   }

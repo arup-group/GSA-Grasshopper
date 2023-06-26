@@ -13,7 +13,7 @@ namespace GsaGH.Helpers {
 
   internal static class GsaComHelper {
     private static Guid guid = Guid.NewGuid();
-    private static string tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
+    private static string tempPath = $"{Path.GetTempPath()}{guid}.gwb";
 
     internal static ComAuto GetGsaComModel(GsaModel model) {
       ComAuto gsa = GsaComObject.Instance;
@@ -28,7 +28,7 @@ namespace GsaGH.Helpers {
       }
 
       guid = model.Guid;
-      tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
+      tempPath = $"{Path.GetTempPath()}{guid.ToString()}.gwb";
 
       model.Model.SaveAs(tempPath);
 

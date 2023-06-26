@@ -29,15 +29,15 @@ namespace GsaGH.Helpers.Export {
 
     internal string GetReferenceDefinition(Guid guid) {
       if (Sections.GuidDictionary.TryGetValue(guid, out int steelId)) {
-        return "PB" + steelId;
+        return $"PB{steelId}";
       }
 
       if (Prop2ds.GuidDictionary.TryGetValue(guid, out int concreteId)) {
-        return "PA" + concreteId;
+        return $"PA{concreteId}";
       }
 
       if (Prop3ds.GuidDictionary.TryGetValue(guid, out int frpId)) {
-        return "PV" + frpId;
+        return $"PV{frpId}";
       }
 
       return Materials.GetReferenceDefinition(guid);

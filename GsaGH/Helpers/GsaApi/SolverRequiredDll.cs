@@ -16,7 +16,7 @@ namespace GsaGH.Helpers.GsaApi {
 
           loaded = true;
           string gsaVersion = FileVersionInfo
-           .GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
+           .GetVersionInfo($"{AddReferencePriority.InstallPath}\\libiomp5md.dll").FileVersion;
           if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsaVersion) {
             canAnalyse = true;
           } else {
