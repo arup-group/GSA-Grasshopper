@@ -26,7 +26,7 @@ namespace GsaGH.Components {
   ///   Component to edit a Prop2d and ouput the information
   /// </summary>
   public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("5e7627a2-9c3c-4ace-9a08-f9c9a7106755");
+    public override Guid ComponentGuid => new Guid("ff7d1bb6-1d74-4393-a090-6f0fc083b853");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProp2d;
