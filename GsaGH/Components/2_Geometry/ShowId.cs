@@ -147,8 +147,8 @@ namespace GsaGH.Components {
               break;
 
             default:
-              this.AddRuntimeWarning("Unable to convert " + goo.TypeName
-                + " to Node, Element (1D/2D/3D), Member (1D/2D/3D) or Point/Line/Mesh result.");
+              this.AddRuntimeWarning(
+                $"Unable to convert {goo.TypeName} to Node, Element (1D/2D/3D), Member (1D/2D/3D) or Point/Line/Mesh result.");
               break;
           }
 

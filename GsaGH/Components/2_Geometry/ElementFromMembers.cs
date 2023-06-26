@@ -151,10 +151,10 @@ namespace GsaGH.Components {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
-      Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
-      Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
-      Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Input[i].Name = "3D Members [" + unitAbbreviation + "]";
+      Params.Input[i++].Name = $"Nodes [{unitAbbreviation}]";
+      Params.Input[i++].Name = $"1D Members [{unitAbbreviation}]";
+      Params.Input[i++].Name = $"2D Members [{unitAbbreviation}]";
+      Params.Input[i].Name = $"3D Members [{unitAbbreviation}]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -184,14 +184,14 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No",
+      pManager.AddParameter(new GsaNodeParameter(), $"Nodes [{unitAbbreviation}]", "No",
         "Nodes to be included in meshing", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]",
-        "M1D", "1D Members to create 1D Elements from", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]",
-        "M2D", "2D Members to create 2D Elements from", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaMember3dParameter(), "3D Members [" + unitAbbreviation + "]",
-        "M3D", "3D Members to create 3D Elements from", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMember1dParameter(), $"1D Members [{unitAbbreviation}]", "M1D",
+        "1D Members to create 1D Elements from", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMember2dParameter(), $"2D Members [{unitAbbreviation}]", "M2D",
+        "2D Members to create 2D Elements from", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMember3dParameter(), $"3D Members [{unitAbbreviation}]", "M3D",
+        "3D Members to create 3D Elements from", GH_ParamAccess.list);
 
       pManager[0].Optional = true;
       pManager[1].Optional = true;
@@ -227,8 +227,7 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Node input (index: " + i
-              + ") is null and has been ignored");
+            Params.Owner.AddRuntimeWarning($"Node input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -247,8 +246,8 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member1D input (index: " + i
-              + ") is null and has been ignored");
+            Params.Owner.AddRuntimeWarning(
+              $"Member1D input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -267,8 +266,8 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member2D input (index: " + i
-              + ") is null and has been ignored");
+            Params.Owner.AddRuntimeWarning(
+              $"Member2D input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -287,8 +286,8 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member3D input (index: " + i
-              + ") is null and has been ignored");
+            Params.Owner.AddRuntimeWarning(
+              $"Member3D input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -346,7 +345,7 @@ namespace GsaGH.Components {
       }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
+      Message = $"Tol: {_tolerance.ToString().Replace(" ", string.Empty)}";
       if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");

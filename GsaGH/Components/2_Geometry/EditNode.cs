@@ -80,8 +80,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaNodeParameter(), GsaNodeGoo.Name, GsaNodeGoo.NickName,
-        GsaNodeGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaNodeGoo.Name, GH_ParamAccess.item);
+        $"{GsaNodeGoo.Description} to get or set information for. Leave blank to create a new {GsaNodeGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Node number", "ID",
         "Set Node number (ID) - if Node ID is set it will replace any existing nodes in the model",
         GH_ParamAccess.item);
@@ -111,7 +111,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaNodeParameter(), GsaNodeGoo.Name, GsaNodeGoo.NickName,
-        GsaNodeGoo.Description + " with applied changes.", GH_ParamAccess.item);
+        $"{GsaNodeGoo.Description} with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Node number", "ID",
         "Original Node number (ID) if Node ever belonged to a GSA Model", GH_ParamAccess.item);
       pManager.AddPointParameter("Node Position", "Pt",

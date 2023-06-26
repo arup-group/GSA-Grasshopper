@@ -37,7 +37,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaElement2dParameter(), GsaElement2dGoo.Name,
         GsaElement2dGoo.NickName,
-        GsaElement2dGoo.Description + " to get or set information for." + GsaElement2dGoo.Name,
+        $"{GsaElement2dGoo.Description} to get or set information for.{GsaElement2dGoo.Name}",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Element2d Number", "ID",
         "Set Element Number. If ID is set it will replace any existing 2D Element in the model",
@@ -66,7 +66,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaElement2dParameter(), GsaElement2dGoo.Name,
-        GsaElement2dGoo.NickName, GsaElement2dGoo.Description + " with applied changes.",
+        GsaElement2dGoo.NickName, $"{GsaElement2dGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
       pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
@@ -76,9 +76,8 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element Type", "eT",
-        "Get Element 2D Type." + Environment.NewLine
-        + "Type can not be set; it is either Tri3 or Quad4" + Environment.NewLine
-        + "depending on Rhino/Grasshopper mesh face type", GH_ParamAccess.list);
+        $"Get Element 2D Type.{Environment.NewLine}Type can not be set; it is either Tri3 or Quad4{Environment.NewLine}depending on Rhino/Grasshopper mesh face type",
+        GH_ParamAccess.list);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset",
         GH_ParamAccess.list);
       pManager.AddNumberParameter("Orientation Angle", "⭮A",
@@ -111,8 +110,8 @@ namespace GsaGH.Components {
       var ghIds = new List<GH_Integer>();
       if (da.GetDataList(1, ghIds)) {
         if (ghIds.Count != elem.ApiElements.Count) {
-          this.AddRuntimeError("ID input must be a list matching the number of elements "
-            + $"({elem.ApiElements.Count})");
+          this.AddRuntimeError(
+            $"ID input must be a list matching the number of elements ({elem.ApiElements.Count})");
           return;
         }
 
@@ -129,8 +128,8 @@ namespace GsaGH.Components {
           }
         } else {
           if (prop2dGoos.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("PA input must either be a single Prop2d or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"PA input must either be a single Prop2d or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Prop2ds = prop2dGoos.Select(x => x.Value).ToList();
@@ -146,8 +145,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghGrps.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Gr input must either be a single Group ID or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Gr input must either be a single Group ID or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Groups = ghGrps.Select(x => x.Value).ToList();
@@ -163,8 +162,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (offsetGoos.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Of input must either be a single Offset or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Of input must either be a single Offset or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Offsets = offsetGoos.Select(x => x.Value).ToList();
@@ -180,8 +179,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghangles.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("⭮A input must either be a single Number or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"\u2b6eA input must either be a single Number or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.OrientationAngles = ghangles.Select(x => new Angle(x.Value, _angleUnit)).ToList();
@@ -197,8 +196,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghnm.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Nm input must either be a single Text string or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Nm input must either be a single Text string or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Names = ghnm.Select(x => x.Value).ToList();
@@ -214,8 +213,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghcols.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Co input must either be a single Colour or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Co input must either be a single Colour or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Colours = ghcols.Select(x => x.Value).ToList();
@@ -231,8 +230,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghdummies.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dm input must either be a single Boolean or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Dm input must either be a single Boolean or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.IsDummies = ghdummies.Select(x => x.Value).ToList();

@@ -84,7 +84,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = $"Mesh Size [{Length.GetAbbreviation(_lengthUnit)}]";
     }
 
     protected override void BeforeSolveInstance() {
@@ -151,7 +151,7 @@ namespace GsaGH.Components {
       }
 
       if (!brep.IsValidGeometry(out string log)) {
-        this.AddRuntimeError("Input Brep is not valid: " + log);
+        this.AddRuntimeError($"Input Brep is not valid: {log}");
         return;
       }
 
@@ -184,8 +184,8 @@ namespace GsaGH.Components {
             string type = ghObjectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
-            this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
-              + type + " to point or node");
+            this.AddRuntimeError(
+              $"Unable to convert incl. Point/Node input parameter of type {type} to point or node");
           }
         }
       }
@@ -210,8 +210,8 @@ namespace GsaGH.Components {
               if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
                 crvs.Add(crv.DuplicateCurve());
               } else {
-                this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
-                  + $"{ghType.GetTypeName()} to curve or 1D Member");
+                this.AddRuntimeError(
+                  $"Unable to convert incl. Curve/Mem1D input parameter of type {ghType.GetTypeName()} to curve or 1D Member");
               }
 
               break;
@@ -289,7 +289,7 @@ namespace GsaGH.Components {
         }
       }
 
-      Message = "Tol: " + _tolerance.ToString();
+      Message = $"Tol: {_tolerance.ToString()}";
       if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");

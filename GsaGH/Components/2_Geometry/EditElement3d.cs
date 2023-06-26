@@ -25,7 +25,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name,
-        GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " to get or set information for.",
+        GsaElement3dGoo.NickName, $"{GsaElement3dGoo.Description} to get or set information for.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Set Element Number", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
@@ -48,14 +48,11 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name,
-        GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " with applied changes.",
+        GsaElement3dGoo.NickName, $"{GsaElement3dGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
       pManager.AddMeshParameter("Analysis Mesh", "M",
-        "Get Analysis Mesh. " + Environment.NewLine
-        + "This will export a list of solid meshes representing each 3D element."
-        + Environment.NewLine
-        + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
+        $"Get Analysis Mesh. {Environment.NewLine}This will export a list of solid meshes representing each 3D element.{Environment.NewLine}To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
         GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV",
@@ -63,8 +60,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element Type", "eT",
-        "Get Element 3D Type." + Environment.NewLine
-        + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8",
+        $"Get Element 3D Type.{Environment.NewLine}Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8",
         GH_ParamAccess.list);
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
@@ -89,8 +85,8 @@ namespace GsaGH.Components {
       var ghIds = new List<GH_Integer>();
       if (da.GetDataList(1, ghIds)) {
         if (ghIds.Count != elem.ApiElements.Count) {
-          this.AddRuntimeError("ID input must be a list matching the number of elements "
-            + $"({elem.ApiElements.Count})");
+          this.AddRuntimeError(
+            $"ID input must be a list matching the number of elements ({elem.ApiElements.Count})");
           return;
         }
 
@@ -107,8 +103,8 @@ namespace GsaGH.Components {
           }
         } else {
           if (prop3dGoos.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("PA input must either be a single Prop2d or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"PA input must either be a single Prop2d or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Prop3ds = prop3dGoos.Select(x => x.Value).ToList();
@@ -124,8 +120,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghGrps.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Gr input must either be a single Group ID or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Gr input must either be a single Group ID or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Groups = ghGrps.Select(x => x.Value).ToList();
@@ -141,8 +137,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghnm.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Nm input must either be a single Text string or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Nm input must either be a single Text string or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Names = ghnm.Select(x => x.Value).ToList();
@@ -158,8 +154,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghcols.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Co input must either be a single Colour or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Co input must either be a single Colour or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.Colours = ghcols.Select(x => x.Value).ToList();
@@ -175,8 +171,8 @@ namespace GsaGH.Components {
           };
         } else {
           if (ghdummies.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dm input must either be a single Boolean or a"
-              + $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
+            this.AddRuntimeWarning(
+              $"Dm input must either be a single Boolean or a{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
           }
 
           elem.IsDummies = ghdummies.Select(x => x.Value).ToList();
