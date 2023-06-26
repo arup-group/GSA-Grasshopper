@@ -62,7 +62,7 @@ namespace GsaGH.Graphics {
       GH_AssemblyInfo gsaPlugin
         = Instances.ComponentServer.FindAssembly(new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f"));
       string pluginvers = gsaPlugin.Version;
-      Process.Start(@"mailto:oasys@arup.com?subject=Oasys GsaGH version " + pluginvers);
+      Process.Start($@"mailto:oasys@arup.com?subject=Oasys GsaGH version {pluginvers}");
     }
 
     private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
