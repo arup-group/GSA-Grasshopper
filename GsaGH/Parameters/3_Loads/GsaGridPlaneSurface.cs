@@ -22,7 +22,8 @@ namespace GsaGH.Parameters {
     ///   String either in the format of a double (will be converted into Model Units)
     ///   or in the format of a OasysUnits.Length ('5 m')
     /// </summary>
-    public string Elevation { get; set; } = "0";
+    public string Elevation { get; private set; } = "0";
+    
     public GridPlane GridPlane {
       get => _gridPln;
       set {
@@ -57,9 +58,14 @@ namespace GsaGH.Parameters {
       get => _pln;
       set {
         _gridPlnGuid = Guid.NewGuid();
+        double elevation = _pln.Origin.DistanceTo(PreviewPlane.Origin);
         _pln = value;
+        UpdatePreviewPlane(elevation);
       }
     }
+
+    internal Plane PreviewPlane = Plane.WorldXY;
+
     /// <summary>
     ///   String either in the format of a double (will be converted into Model Units)
     ///   or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
@@ -134,6 +140,7 @@ namespace GsaGH.Parameters {
         GridSurfaceId = _gridSrfId,
         _gridSrfGuid = new Guid(_gridSrfGuid.ToString()),
         _gridPlnGuid = new Guid(_gridPlnGuid.ToString()),
+        PreviewPlane = new Plane(PreviewPlane),
       };
       if (_referenceType == ReferenceType.None) {
         return dup;
@@ -216,18 +223,6 @@ namespace GsaGH.Parameters {
       axis.Origin.X = new Length(Plane.Origin.X, modelUnit).Meters;
       axis.Origin.Y = new Length(Plane.Origin.Y, modelUnit).Meters;
       axis.Origin.Z = new Length(Plane.Origin.Z, modelUnit).Meters;
-      if (Elevation != "0") {
-        var elevation = new Length();
-        try {
-          elevation = Length.Parse(Elevation);
-        } catch (Exception) {
-          if (double.TryParse(Elevation, out double elev)) {
-            elevation = new Length(elev, modelUnit);
-          }
-        }
-
-        axis.Origin.Z -= elevation.As(modelUnit);
-      }
 
       axis.XVector.X = Plane.XAxis.X;
       axis.XVector.Y = Plane.XAxis.Y;
@@ -237,6 +232,28 @@ namespace GsaGH.Parameters {
       axis.XYPlane.Z = Plane.YAxis.Z;
 
       return axis;
+    }
+
+    internal void SetElevation(double elevation) {
+      Elevation = elevation.ToString();
+      UpdatePreviewPlane(elevation);
+    }
+    internal void SetElevation(Length elevation) {
+      Elevation = elevation.ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
+      UpdatePreviewPlane(elevation.Value);
+    }
+
+    private void UpdatePreviewPlane(double elevation) {
+      // if elevation is set we want to move the plane in it's normal direction
+      Vector3d vec = _pln.Normal;
+      vec.Unitize();
+      vec.X *= elevation;
+      vec.Y *= elevation;
+      vec.Z *= elevation;
+      var xform = Transform.Translation(vec);
+      var pln = new Plane(_pln);
+      pln.Transform(xform);
+      PreviewPlane = pln;
     }
   }
 }

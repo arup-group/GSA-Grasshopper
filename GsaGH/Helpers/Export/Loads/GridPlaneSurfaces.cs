@@ -57,6 +57,15 @@ namespace GsaGH.Helpers.Export {
           axisId = model.Axes.AddValue(axis);
         }
       } else {
+        if (string.IsNullOrEmpty(axis.Name)) {
+          if (gridplanesurface.Plane.Equals(Rhino.Geometry.Plane.WorldXY)) {
+            return 0;
+          } else if (gridplanesurface.Plane.Equals(Rhino.Geometry.Plane.WorldYZ)) {
+            return -11;
+          } else if (gridplanesurface.Plane.Equals(Rhino.Geometry.Plane.WorldZX)) {
+            return -12;
+          }
+        }
         axisId = Export.Axes.TryGetExistingAxisId(ref model.Axes, axis);
       }
 
@@ -150,7 +159,7 @@ namespace GsaGH.Helpers.Export {
             owner.AddRuntimeWarning("Invalid List type for GridSurface " + grdPlnSrf.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          grdPlnSrf.GridSurface.Elements += 
+          grdPlnSrf.GridSurface.Elements +=
             Lists.GetElementList(grdPlnSrf._refList, ref model, owner);
         } else {
           grdPlnSrf.GridSurface.Elements +=
@@ -183,8 +192,12 @@ namespace GsaGH.Helpers.Export {
     private static int TryUseExistingGridPlane(
       GsaGridPlaneSurface grdPlnSrf, ref ModelAssembly model) {
       GridPlane newPlane = grdPlnSrf.GridPlane;
-      foreach (KeyValuePair<int, GridPlane> kvp in 
+      foreach (KeyValuePair<int, GridPlane> kvp in
         model.Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary) {
+        if (kvp.Key < 0) {
+          continue;
+        }
+
         if (kvp.Value.AxisProperty == newPlane.AxisProperty
           && kvp.Value.Elevation == newPlane.Elevation
           && kvp.Value.IsStoreyType == newPlane.IsStoreyType
@@ -194,14 +207,14 @@ namespace GsaGH.Helpers.Export {
           return kvp.Key;
         }
       }
+
       return model.Loads.GridPlaneSurfaces.GridPlanes.AddValue(
         Guid.NewGuid(), grdPlnSrf.GridPlane);
     }
-
     private static int TryUseExistingGridSurface(
       GsaGridPlaneSurface grdPlnSrf, ref ModelAssembly model) {
       GridSurface newSrf = grdPlnSrf.GridSurface;
-      foreach (KeyValuePair<int, GridSurface> kvp in 
+      foreach (KeyValuePair<int, GridSurface> kvp in
         model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary) {
         if (kvp.Value.Direction == newSrf.Direction
           && kvp.Value.Elements == newSrf.Elements
