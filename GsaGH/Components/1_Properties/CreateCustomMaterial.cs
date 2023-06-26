@@ -76,7 +76,7 @@ namespace GsaGH.Components {
       string densityUnitAbbreviation = Density.GetAbbreviation(_densityUnit);
       string temperatureUnitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
 
-      int i = 1;
+      int i = 2;
       Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
       i++;
       i++;
