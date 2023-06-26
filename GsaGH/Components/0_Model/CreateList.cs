@@ -12,7 +12,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new EntityList
   /// </summary>
-  public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject {
+  public class CreateList : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -20,8 +20,7 @@ namespace GsaGH.Components {
     private EntityType _type = EntityType.Node;
 
     public CreateList() : base("Create List", "CreateList",
-      "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)."
-      + Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.",
+      $"Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members).{Environment.NewLine}You can add a GSA List to a model through the 'GSA' input.",
       CategoryName.Name(), SubCategoryName.Cat0()) { }
 
     public override void SetSelected(int i, int j) {
@@ -31,7 +30,7 @@ namespace GsaGH.Components {
     }
 
     protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new string[] {
+      _spacerDescriptions = new List<string>(new[] {
         "Type",
       });
 
@@ -62,8 +61,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaListParameter(), "GSA List", "L",
-        "GSA Entity List parameter." + Environment.NewLine
-        + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
+        $"GSA Entity List parameter.{Environment.NewLine}You can add a GSA List to a model through the 'GSA' input.",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess DA) {
@@ -75,7 +74,7 @@ namespace GsaGH.Components {
         list.Id = id;
       }
 
-      string name = _type.ToString() + " List";
+      string name = $"{_type.ToString()} List";
       if (DA.GetData(1, ref name)) {
         list.Name = name;
       }

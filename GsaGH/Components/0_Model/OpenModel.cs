@@ -99,9 +99,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Filename and path", "File",
-        "GSA model to open and work with." + Environment.NewLine
-        + "Input either path component, a text string with path and " + Environment.NewLine
-        + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
+        $"GSA model to open and work with.{Environment.NewLine}Input either path component, a text string with path and {Environment.NewLine}filename or an existing GSA model created in Grasshopper.",
+        GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -140,7 +139,7 @@ namespace GsaGH.Components {
               return;
             }
 
-            this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
+            this.AddRuntimeError($"Unable to open Model{Environment.NewLine}{status.ToString()}");
             return;
           }
           default:
@@ -160,7 +159,7 @@ namespace GsaGH.Components {
 
           da.SetData(0, new GsaModelGoo(gsaModel));
         } else {
-          this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
+          this.AddRuntimeError($"Unable to open Model{Environment.NewLine}{status.ToString()}");
         }
       }
     }

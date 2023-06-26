@@ -62,7 +62,7 @@ namespace GsaGH.Components {
       string gwa = string.Empty;
       var strings = new List<string>();
       if (da.GetDataList(1, strings)) {
-        gwa = strings.Aggregate(gwa, (current, s) => current + s + "\n");
+        gwa = strings.Aggregate(gwa, (current, s) => $"{current}{s}\n");
       }
 
       da.SetData(1, m.GwaCommand(gwa));

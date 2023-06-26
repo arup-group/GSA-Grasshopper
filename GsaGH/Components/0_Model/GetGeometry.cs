@@ -102,13 +102,13 @@ namespace GsaGH.Components {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
-      Params.Output[i++].Name = "Nodes [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "1D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "2D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "3D Elements [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "1D Members [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Output[i].Name = "3D Members [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = $"Nodes [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"1D Elements [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"2D Elements [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"3D Elements [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"1D Members [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"2D Members [{unitAbbreviation}]";
+      Params.Output[i].Name = $"3D Members [{unitAbbreviation}]";
 
       i = 1;
       for (int j = 1; j < 7; j++) {
@@ -310,10 +310,10 @@ namespace GsaGH.Components {
         int dropdownCount = reader.GetInt32("dropdownCount");
         dropDownItems = new List<List<string>>();
         for (int i = 0; i < dropdownCount; i++) {
-          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+          int dropdowncontentsCount = reader.GetInt32($"dropdowncontentsCount{i}");
           var tempcontent = new List<string>();
           for (int j = 0; j < dropdowncontentsCount; j++) {
-            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+            tempcontent.Add(reader.GetString($"dropdowncontents{i}{j}"));
           }
 
           dropDownItems.Add(tempcontent);
@@ -326,7 +326,7 @@ namespace GsaGH.Components {
         int dropdownspacerCount = reader.GetInt32("spacerCount");
         spacerDescriptions = new List<string>();
         for (int i = 0; i < dropdownspacerCount; i++) {
-          spacerDescriptions.Add(reader.GetString("spacercontents" + i));
+          spacerDescriptions.Add(reader.GetString($"spacercontents{i}"));
         }
       }
 
@@ -337,7 +337,7 @@ namespace GsaGH.Components {
       int selectionsCount = reader.GetInt32("selectionCount");
       selectedItems = new List<string>();
       for (int i = 0; i < selectionsCount; i++) {
-        selectedItems.Add(reader.GetString("selectioncontents" + i));
+        selectedItems.Add(reader.GetString($"selectioncontents{i}"));
       }
     }
 
@@ -348,9 +348,9 @@ namespace GsaGH.Components {
       if (dropDownItems != null) {
         writer.SetInt32("dropdownCount", dropDownItems.Count);
         for (int i = 0; i < dropDownItems.Count; i++) {
-          writer.SetInt32("dropdowncontentsCount" + i, dropDownItems[i].Count);
+          writer.SetInt32($"dropdowncontentsCount{i}", dropDownItems[i].Count);
           for (int j = 0; j < dropDownItems[i].Count; j++) {
-            writer.SetString("dropdowncontents" + i + j, dropDownItems[i][j]);
+            writer.SetString($"dropdowncontents{i}{j}", dropDownItems[i][j]);
           }
         }
 
@@ -363,7 +363,7 @@ namespace GsaGH.Components {
       if (spacerDescriptions != null) {
         writer.SetInt32("spacerCount", spacerDescriptions.Count);
         for (int i = 0; i < spacerDescriptions.Count; i++) {
-          writer.SetString("spacercontents" + i, spacerDescriptions[i]);
+          writer.SetString($"spacercontents{i}", spacerDescriptions[i]);
         }
 
         spacer = true;
@@ -375,7 +375,7 @@ namespace GsaGH.Components {
       if (selectedItems != null) {
         writer.SetInt32("selectionCount", selectedItems.Count);
         for (int i = 0; i < selectedItems.Count; i++) {
-          writer.SetString("selectioncontents" + i, selectedItems[i]);
+          writer.SetString($"selectioncontents{i}", selectedItems[i]);
         }
 
         select = true;
@@ -417,23 +417,13 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
       pManager.AddGenericParameter("Node filter list", "No",
-        "Filter import by list. (by default 'all')" + Environment.NewLine
-        + "Node list should take the form:" + Environment.NewLine
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter import by list. (by default 'all'){Environment.NewLine}Node list should take the form:{Environment.NewLine} 1 11 to 72 step 2 not (XY3 31 to 45){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Element filter list", "El",
-        "Filter import by list (by default 'all')." + Environment.NewLine
-        + "Element list should take the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter import by list (by default 'all').{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Member filter list", "Me",
-        "Filter import by list (by default 'all')." + Environment.NewLine
-        + "Member list should take the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter import by list (by default 'all').{Environment.NewLine}Member list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -443,24 +433,24 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No", "Nodes from GSA Model",
+      pManager.AddGenericParameter($"Nodes [{unitAbbreviation}]", "No", "Nodes from GSA Model",
         GH_ParamAccess.list);
       pManager.HideParameter(0);
-      pManager.AddGenericParameter("1D Elements [" + unitAbbreviation + "]", "E1D",
+      pManager.AddGenericParameter($"1D Elements [{unitAbbreviation}]", "E1D",
         "1D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Elements [" + unitAbbreviation + "]", "E2D",
+      pManager.AddGenericParameter($"2D Elements [{unitAbbreviation}]", "E2D",
         "2D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Elements [" + unitAbbreviation + "]", "E3D",
+      pManager.AddGenericParameter($"3D Elements [{unitAbbreviation}]", "E3D",
         "3D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D",
+      pManager.AddGenericParameter($"1D Members [{unitAbbreviation}]", "M1D",
         "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
-      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D",
+      pManager.AddGenericParameter($"2D Members [{unitAbbreviation}]", "M2D",
         "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
-      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D",
+      pManager.AddGenericParameter($"3D Members [{unitAbbreviation}]", "M3D",
         "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
     }
 

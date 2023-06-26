@@ -107,8 +107,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(AngleUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Acceleration Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Acceleration Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -122,8 +121,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(AngleUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Angle Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Angle Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -137,8 +135,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(EnergyUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Energy Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Energy Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -152,8 +149,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(ForceUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Force Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Force Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -167,8 +163,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(LengthUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -182,8 +177,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(LengthUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -197,8 +191,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(LengthUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Length Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -212,8 +205,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(MassUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Mass Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Mass Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -227,8 +219,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(StressUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Stress Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Stress Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -242,8 +233,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(TimeUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -257,8 +247,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(TimeUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -272,8 +261,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(TimeUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Time Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -287,8 +275,7 @@ namespace GsaGH.Components {
           catch (ArgumentException) {
             string[] names = Enum.GetNames(typeof(VelocityUnit));
             this.AddRuntimeError(
-              $"Unable to convert '{txt}' to a known Velocity Unit. Accepted inputs are:"
-              + Environment.NewLine + string.Join(Environment.NewLine, names));
+              $"Unable to convert '{txt}' to a known Velocity Unit. Accepted inputs are:{Environment.NewLine}{string.Join(Environment.NewLine, names)}");
           }
         }
       }
@@ -311,9 +298,7 @@ namespace GsaGH.Components {
       da.SetData(i++, units.Velocity.ToString());
 
       this.AddRuntimeRemark(
-        "This component can be used to set the default units when the model is saved and opening in GSA. "
-        + Environment.NewLine
-        + "To change the default units used inside Grasshopper go to the Oasys menu -> Oasys Units.");
+        $"This component can be used to set the default units when the model is saved and opening in GSA. {Environment.NewLine}To change the default units used inside Grasshopper go to the Oasys menu -> Oasys Units.");
     }
   }
 }
