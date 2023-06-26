@@ -18,18 +18,16 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateAnalysisCase;
 
     public CreateAnalysisCase() : base(
-      "Create " + GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty),
+      $"Create {GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty)}",
       GsaAnalysisCaseGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaAnalysisCaseGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
+      $"Create a {GsaAnalysisCaseGoo.Description}", CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Description", "De",
-        "The description should take the form: 1.4L1 + 0.8L3." + Environment.NewLine
-        + "It may also take the form: 1.4A4 or 1.6C2." + Environment.NewLine
-        + "The referenced loads (L#), analysis (A#), and combination (C#) cases must exist in model",
+        $"The description should take the form: 1.4L1 + 0.8L3.{Environment.NewLine}It may also take the form: 1.4A4 or 1.6C2.{Environment.NewLine}The referenced loads (L#), analysis (A#), and combination (C#) cases must exist in model",
         GH_ParamAccess.item);
     }
 

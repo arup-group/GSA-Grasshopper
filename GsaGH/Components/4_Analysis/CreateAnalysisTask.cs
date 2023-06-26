@@ -21,9 +21,9 @@ namespace GsaGH.Components {
     private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
 
     public CreateAnalysisTask() : base(
-      "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
+      $"Create {GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty)}",
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaAnalysisTaskGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
+      $"Create a {GsaAnalysisTaskGoo.Description}", CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 
@@ -75,8 +75,8 @@ namespace GsaGH.Components {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i
-              + ") is null and has been ignored");
+            Params.Owner.AddRuntimeWarning(
+              $"Analysis Case input (index: {i}) is null and has been ignored");
             continue;
           }
 
@@ -86,8 +86,8 @@ namespace GsaGH.Components {
             string type = ghTyp.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
-            Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
-              + type + " to GsaAnalysisCase");
+            Params.Owner.AddRuntimeError(
+              $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
             return;
           }
         }
@@ -99,9 +99,8 @@ namespace GsaGH.Components {
       }
 
       if (_analtype != GsaAnalysisTask.AnalysisType.Static) {
-        this.AddRuntimeWarning("It is currently not possible to adjust the solver settings. "
-          + Environment.NewLine
-          + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
+        this.AddRuntimeWarning(
+          $"It is currently not possible to adjust the solver settings. {Environment.NewLine}Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
       }
 
       var task = new GsaAnalysisTask {

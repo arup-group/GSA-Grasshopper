@@ -27,9 +27,9 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaAnalysisTaskParameter(), GsaAnalysisTaskGoo.Name,
-        GsaAnalysisTaskGoo.NickName, GsaAnalysisTaskGoo.Name + " to Edit", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaAnalysisCaseParameter(), GsaAnalysisCaseGoo.Name + "(s)",
-        GsaAnalysisCaseGoo.NickName, "Add list of " + GsaAnalysisCaseGoo.Name + " to task",
+        GsaAnalysisTaskGoo.NickName, $"{GsaAnalysisTaskGoo.Name} to Edit", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaAnalysisCaseParameter(), $"{GsaAnalysisCaseGoo.Name}(s)",
+        GsaAnalysisCaseGoo.NickName, $"Add list of {GsaAnalysisCaseGoo.Name} to task",
         GH_ParamAccess.list);
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -38,10 +38,10 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaAnalysisTaskParameter(), GsaAnalysisTaskGoo.Name,
-        GsaAnalysisTaskGoo.NickName, "Modified " + GsaAnalysisTaskGoo.Name, GH_ParamAccess.item);
+        GsaAnalysisTaskGoo.NickName, $"Modified {GsaAnalysisTaskGoo.Name}", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaAnalysisCaseParameter(), GsaAnalysisCaseGoo.Name + "(s)",
-        GsaAnalysisCaseGoo.NickName, "List of " + GsaAnalysisCaseGoo.Description,
+      pManager.AddParameter(new GsaAnalysisCaseParameter(), $"{GsaAnalysisCaseGoo.Name}(s)",
+        GsaAnalysisCaseGoo.NickName, $"List of {GsaAnalysisCaseGoo.Description}",
         GH_ParamAccess.list);
       pManager.AddTextParameter("Solver Type", "sT", "Solver Type", GH_ParamAccess.item);
       pManager.AddIntegerParameter("TaskID", "ID",
@@ -62,8 +62,8 @@ namespace GsaGH.Components {
           for (int i = 0; i < ghTypes.Count; i++) {
             GH_ObjectWrapper ghTyp2 = ghTypes[i];
             if (ghTyp2 == null) {
-              Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i
-                + ") is null and has been ignored");
+              Params.Owner.AddRuntimeWarning(
+                $"Analysis Case input (index: {i}) is null and has been ignored");
               continue;
             }
 
@@ -74,8 +74,7 @@ namespace GsaGH.Components {
               typ = typ.Replace("GsaGH.Parameters.", string.Empty);
               typ = typ.Replace("Goo", string.Empty);
               Params.Owner.AddRuntimeError(
-                "Unable to convert Analysis Case input parameter of type " + typ
-                + " to GsaAnalysisCase");
+                $"Unable to convert Analysis Case input parameter of type {typ} to GsaAnalysisCase");
               return;
             }
           }
@@ -98,8 +97,8 @@ namespace GsaGH.Components {
         string type = analysisTaskGoo.Value.GetType().ToString();
         type = type.Replace("GsaGH.Parameters.", string.Empty);
         type = type.Replace("Goo", string.Empty);
-        Params.Owner.AddRuntimeError("Unable to convert Analysis Task input parameter of type "
-          + type + " to GsaAnalysisTask");
+        Params.Owner.AddRuntimeError(
+          $"Unable to convert Analysis Task input parameter of type {type} to GsaAnalysisTask");
       }
     }
   }

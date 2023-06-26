@@ -120,7 +120,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[2].Name = $"GSA Geometry in [{Length.GetAbbreviation(_lengthUnit)}]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -152,21 +152,18 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Model(s) and Lists", "GSA",
-        "Existing GSA Model(s) to append to and Lists" + Environment.NewLine
-        + "If you input more than one model they will be merged" + Environment.NewLine
-        + "with first model in list taking priority for IDs", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Properties", "Pro",
-        "GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model"
-        + Environment.NewLine + "Properties already added to Elements or Members"
-        + Environment.NewLine + "will automatically be added with Geometry input",
+        $"Existing GSA Model(s) to append to and Lists{Environment.NewLine}If you input more than one model they will be merged{Environment.NewLine}with first model in list taking priority for IDs",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]",
+      pManager.AddGenericParameter("Properties", "Pro",
+        $"GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model{Environment.NewLine}Properties already added to Elements or Members{Environment.NewLine}will automatically be added with Geometry input",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter($"GSA Geometry in [{Length.GetAbbreviation(_lengthUnit)}]",
         "Geo",
         "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Load", "Ld",
-        "Loads to add to the model" + Environment.NewLine
-        + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+        $"Loads to add to the model{Environment.NewLine}You can also use this input to add Edited GridPlaneSurfaces",
+        GH_ParamAccess.list);
       pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT",
         "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
       for (int i = 0; i < pManager.ParamCount; i++) {
@@ -246,8 +243,7 @@ namespace GsaGH.Components {
           }
 
           {
-            this.AddRuntimeError("Unable to analyse model. Element ID " + key
-              + " has no property set!");
+            this.AddRuntimeError($"Unable to analyse model. Element ID {key} has no property set!");
             tryAnalyse = false;
           }
         }
@@ -256,9 +252,7 @@ namespace GsaGH.Components {
           if (!SolverRequiredDll.IsCorrectVersionLoaded()) {
             tryAnalyse = false;
             string message
-              = "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:"
-              + Environment.NewLine + Environment.NewLine + SolverRequiredDll.LoadedFromPath
-              + Environment.NewLine + "Either uninstall the host application or delete the file.";
+              = $"A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:{Environment.NewLine}{Environment.NewLine}{SolverRequiredDll.LoadedFromPath}{Environment.NewLine}Either uninstall the host application or delete the file.";
             this.AddRuntimeError(message);
           }
         }
@@ -269,11 +263,11 @@ namespace GsaGH.Components {
               if (model.Model.Analyse(task.Key)) {
                 PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse", apielems.Count);
               } else {
-                this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
+                this.AddRuntimeWarning($"Analysis Case {task.Key} could not be analysed");
               }
 
               if (!model.Model.Results().ContainsKey(task.Key)) {
-                this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
+                this.AddRuntimeWarning($"Analysis Case {task.Key} could not be analysed");
               }
             }
             catch (Exception e) {
@@ -312,7 +306,7 @@ namespace GsaGH.Components {
       }
 
       _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
+      Message = $"Tol: {_tolerance.ToString().Replace(" ", string.Empty)}";
       if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
