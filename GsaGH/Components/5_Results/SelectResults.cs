@@ -75,7 +75,7 @@ namespace GsaGH.Components {
 
         case 1: {
           int newId = int.Parse(
-            string.Join("", _selectedItems[i].ToCharArray().Where(char.IsDigit)));
+            string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit)));
           if (newId != _caseId) {
             _caseId = newId;
             if (_resultType == GsaResult.CaseType.Combination) {
@@ -87,7 +87,7 @@ namespace GsaGH.Components {
         }
         case 2 when _selectedItems[i].ToLower() != "all":
           _permutationIDs = new List<int>() {
-            int.Parse(string.Join("", _selectedItems[i].ToCharArray().Where(char.IsDigit))),
+            int.Parse(string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit))),
           };
           break;
 
@@ -329,7 +329,7 @@ namespace GsaGH.Components {
       if (_selectedItems[1].ToLower() == "all") {
         _caseId = -1;
       } else {
-        int newId = int.Parse(string.Join("", _selectedItems[1].ToCharArray().Where(char.IsDigit)));
+        int newId = int.Parse(string.Join(string.Empty, _selectedItems[1].ToCharArray().Where(char.IsDigit)));
         if (newId != _caseId) {
           _caseId = newId;
         }
@@ -339,7 +339,7 @@ namespace GsaGH.Components {
         _permutationIDs = _selectedItems[2].ToLower() == "all" ? new List<int>() {
           -1,
         } : new List<int>() {
-          int.Parse(string.Join("", _selectedItems[2].ToCharArray().Where(char.IsDigit))),
+          int.Parse(string.Join(string.Empty, _selectedItems[2].ToCharArray().Where(char.IsDigit))),
         };
       }
 
@@ -420,7 +420,7 @@ namespace GsaGH.Components {
         "All",
       };
       if (_selectedItems.Count < 3) {
-        _selectedItems.Add("");
+        _selectedItems.Add(string.Empty);
       }
 
       _selectedItems[2] = "All";
