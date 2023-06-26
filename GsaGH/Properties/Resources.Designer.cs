@@ -383,6 +383,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateProp2dModifier {
+            get {
+                object obj = ResourceManager.GetObject("CreateProp2dModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateProp3d {
             get {
                 object obj = ResourceManager.GetObject("CreateProp3d", resourceCulture);
@@ -643,16 +653,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EditSectionModifier {
-            get {
-                object obj = ResourceManager.GetObject("EditSectionModifier", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap EditSpring {
             get {
                 object obj = ResourceManager.GetObject("EditSpring", resourceCulture);
@@ -793,13 +793,23 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GetProp2dModifier {
+            get {
+                object obj = ResourceManager.GetObject("GetProp2dModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GetMaterials {
             get {
                 object obj = ResourceManager.GetObject("GetMaterials", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
@@ -816,6 +826,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap GetSection {
             get {
                 object obj = ResourceManager.GetObject("GetSection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GetSectionModifier {
+            get {
+                object obj = ResourceManager.GetObject("GetSectionModifier", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

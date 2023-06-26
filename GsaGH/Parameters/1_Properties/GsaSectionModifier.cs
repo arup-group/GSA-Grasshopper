@@ -5,9 +5,6 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
-  /// <summary>
-  ///   Section Modifier class, this class defines the basic properties and methods for any Gsa Offset
-  /// </summary>
   public class GsaSectionModifier {
     public enum StressOptionType {
       NoCalculation,

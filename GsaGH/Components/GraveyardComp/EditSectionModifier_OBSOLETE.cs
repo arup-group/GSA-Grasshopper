@@ -28,7 +28,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditSectionModifier;
+    protected override Bitmap Icon => Resources.GetSectionModifier;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
 
@@ -41,7 +41,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var lengthUnitsMenu = new ToolStripMenuItem("Length") {

@@ -291,7 +291,6 @@ namespace GsaGH.Parameters {
       prop.PropertyModifier.InPlane = _prop2d.PropertyModifier.InPlane;
       prop.PropertyModifier.Shear = _prop2d.PropertyModifier.Shear;
       prop.PropertyModifier.Volume = _prop2d.PropertyModifier.Volume;
-
       // workaround to handle that System.Drawing.Color is non-nullable type
       if ((Color)_prop2d.Colour != Color.FromArgb(0, 0, 0)) {
         prop.Colour = _prop2d.Colour;
