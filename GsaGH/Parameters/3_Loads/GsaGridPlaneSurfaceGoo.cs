@@ -45,12 +45,12 @@ namespace GsaGH.Parameters {
         == Color.FromArgb(255, 150, 0,
           0)) // this is a workaround to change colour between selected and not
       {
-        GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, Color.Gray, Color.Red, Color.Green);
-        args.Pipeline.DrawPoint(Value.Plane.Origin, PointStyle.RoundSimple, 3, Colours.Node);
+        GH_Plane.DrawPlane(args.Pipeline, Value.PreviewPlane, 16, 16, Color.Gray, Color.Red, Color.Green);
+        args.Pipeline.DrawPoint(Value.PreviewPlane.Origin, PointStyle.RoundSimple, 3, Colours.Node);
       } else {
-        GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, Color.LightGray, Color.Red,
+        GH_Plane.DrawPlane(args.Pipeline, Value.PreviewPlane, 16, 16, Color.LightGray, Color.Red,
           Color.Green);
-        args.Pipeline.DrawPoint(Value.Plane.Origin, PointStyle.RoundControlPoint, 3,
+        args.Pipeline.DrawPoint(Value.PreviewPlane.Origin, PointStyle.RoundControlPoint, 3,
           Colours.NodeSelected);
       }
     }

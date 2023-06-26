@@ -183,8 +183,7 @@ namespace GsaGH.Helpers.Import {
         plnDict.TryGetValue(gs.GridPlane, out GridPlane gp);
         gps.GridPlane = gp;
         gps.GridPlaneId = gs.GridPlane;
-        gps.Elevation = new Length(gp.Elevation, LengthUnit.Meter).ToUnit(unit).ToString()
-         .Replace(" ", string.Empty).Replace(",", string.Empty);
+        gps.SetElevation(new Length(gp.Elevation, LengthUnit.Meter));
         gps.StoreyToleranceAbove = gp.ToleranceAbove == 0 ? "auto" :
           new Length(gp.ToleranceAbove, LengthUnit.Meter).ToUnit(unit).ToString()
            .Replace(" ", string.Empty).Replace(",", string.Empty);

@@ -199,6 +199,7 @@ namespace GsaGH.Components {
 
         if (curve.TryGetPolyline(out Polyline polyline)) {
           var ctrlPts = polyline.ToList();
+          gridareaload.Points = polyline.ToList();
 
           if (!planeSet) {
             plane = RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrlPts);
@@ -218,11 +219,9 @@ namespace GsaGH.Components {
 
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
-          ctrlPts = polyline.ToList();
-          (List<Point3d> points, string definition) = GridLoadHelper.CreateDefinition(ctrlPts, plane);
-          gridareaload.Points = points;
 
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
+          string definition = GridLoadHelper.CreateDefinition(ctrlPts, plane);
           gridareaload.GridAreaLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Brep edge to Polyline");

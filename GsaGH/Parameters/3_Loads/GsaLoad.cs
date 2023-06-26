@@ -276,9 +276,8 @@ namespace GsaGH.Parameters {
   }
 
   internal static class GridLoadHelper {
-    internal static (List<Point3d>, string) CreateDefinition(List<Point3d> controlPoints, Plane plane) {
+    internal static string CreateDefinition(List<Point3d> controlPoints, Plane plane) {
       string desc = string.Empty;
-      var points = new List<Point3d>();
       for (int i = 0; i < controlPoints.Count; i++) {
         if (i > 0) {
           desc += " ";
@@ -287,10 +286,9 @@ namespace GsaGH.Parameters {
         plane.RemapToPlaneSpace(controlPoints[i], out Point3d temppt);
         // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
         desc += $"({temppt.X},{temppt.Y})";
-        points.Add(temppt);
       }
 
-      return (points, desc);
+      return desc;
     }
 
     internal static string ClearDefinitionForUnit(string definition) {
