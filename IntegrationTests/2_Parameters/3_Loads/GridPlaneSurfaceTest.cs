@@ -11,7 +11,7 @@ namespace IntegrationTests.Parameters {
     private static GH_Document document = null;
 
     [Theory]
-    [InlineData("DefaultGpElevation", "0cm")]
+    [InlineData("DefaultGpElevation", "0m")]
     [InlineData("DefaultGpTolAbove", "auto")]
     [InlineData("DefaultGpTolBelow", "auto")]
     [InlineData("DefaultGpTolerance", "1cm")]
@@ -21,7 +21,7 @@ namespace IntegrationTests.Parameters {
     }
 
     [Theory]
-    [InlineData("DefaultGsElevation", "0cm")]
+    [InlineData("DefaultGsElevation", "0m")]
     [InlineData("DefaultGsTolAbove", "auto")]
     [InlineData("DefaultGsTolBelow", "auto")]
     [InlineData("DefaultGsTolerance", "1cm")]
@@ -31,7 +31,7 @@ namespace IntegrationTests.Parameters {
     }
 
     [Theory]
-    [InlineData("NumInputElevation", "1500cm")]
+    [InlineData("NumInputElevation", "15m")]
     [InlineData("NumInputTolAbove", "11cm")]
     [InlineData("NumInputTolBelow", "12cm")]
     [InlineData("NumInputTolerance", "25cm")]
@@ -41,7 +41,7 @@ namespace IntegrationTests.Parameters {
     }
 
     [Theory]
-    [InlineData("TxtInputElevation", "1500cm")]
+    [InlineData("TxtInputElevation", "15m")]
     [InlineData("TxtInputTolAbove", "11cm")]
     [InlineData("TxtInputTolBelow", "12cm")]
     [InlineData("TxtInputTolerance", "25cm")]

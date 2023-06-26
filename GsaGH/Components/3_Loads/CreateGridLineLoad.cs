@@ -152,6 +152,7 @@ namespace GsaGH.Components {
 
         if (curve.TryGetPolyline(out Polyline ln)) {
           var controlPoints = ln.ToList();
+          gridlineload.Points = controlPoints;
 
           if (!planeSet) {
             plane = RhinoConversions.CreateBestFitUnitisedPlaneFromPts(controlPoints);
@@ -159,13 +160,10 @@ namespace GsaGH.Components {
             gridPlaneSurface = new GsaGridPlaneSurface(plane, true);
           } else {
             curve = Curve.ProjectToPlane(curve, plane);
-
             curve.TryGetPolyline(out ln);
-
             controlPoints = ln.ToList();
           }
 
-          gridlineload.Points = controlPoints;
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
           string definition = GridLoadHelper.CreateDefinition(controlPoints, plane);
           gridlineload.GridLineLoad.PolyLineDefinition = definition;
