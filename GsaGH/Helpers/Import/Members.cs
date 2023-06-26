@@ -54,7 +54,7 @@ namespace GsaGH.Helpers.Import {
             case MemberType.PILE:
 
               if (topopts.Count < 2) {
-                string error = " Invalid topology Mem1D ID: " + item.Key + ".";
+                string error = $" Invalid topology Mem1D ID: {item.Key}.";
                 owner?.AddRuntimeWarning(error);
                 return;
               }
@@ -68,7 +68,7 @@ namespace GsaGH.Helpers.Import {
             default:
               // ### Member 2d ###
               if (topopts.Count < 2) {
-                string error = " Invalid topology Mem2D ID: " + item.Key + ".";
+                string error = $" Invalid topology Mem2D ID: {item.Key}.";
                 owner?.AddRuntimeWarning(error);
                 return;
               }
