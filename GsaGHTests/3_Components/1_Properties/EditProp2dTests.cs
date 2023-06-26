@@ -37,8 +37,8 @@ namespace GsaGHTests.Properties {
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var mat = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp, 6);
       var thk = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
-      var referenceSurface = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
-      var offset = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
+      var referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
+      var offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
       var modifier = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
