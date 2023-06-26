@@ -45,12 +45,12 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Pressure.GetAbbreviation(_stresshUnit);
       int i = 0;
-      Params.Output[i++].Name = "Stress XX [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Stress YY [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Stress ZZ [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Stress XY [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Stress YZ [" + unitAbbreviation + "]";
-      Params.Output[i].Name = "Stress ZX [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = $"Stress XX [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Stress YY [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Stress ZZ [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Stress XY [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Stress YZ [{unitAbbreviation}]";
+      Params.Output[i].Name = $"Stress ZX [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -71,11 +71,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter results by list (by default 'all'){Environment.NewLine}Input a GSA List or a text string taking the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
@@ -83,25 +79,21 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Pressure.GetAbbreviation(_stresshUnit);
 
-      string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results in the following order:" + Environment.NewLine
-        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre." + Environment.NewLine
-        + "+ve stresses: tensile (ie. +ve direct strain)";
+      string note
+        = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation ; ElementID }} {Environment.NewLine}fx. {{1;2;3}} is Case 1, Permutation 2, Element 3, where each {Environment.NewLine}branch contains a list of results in the following order:{Environment.NewLine}Vertex(1), Vertex(2), ..., Vertex(i), Centre.{Environment.NewLine}+ve stresses: tensile (ie. +ve direct strain)";
 
-      pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx",
-        "Stress in XX-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Stress YY [" + unitAbbreviation + "]", "yy",
-        "Stress in YY-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Stress ZZ [" + unitAbbreviation + "]", "zz",
-        "Stress in ZZ-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Stress XY [" + unitAbbreviation + "]", "xy",
-        "Stress in XY-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Stress YZ [" + unitAbbreviation + "]", "yz",
-        "Stress in YZ-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Stress ZX [" + unitAbbreviation + "]", "zx",
-        "Stress in ZX-direction in Global Axis." + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Stress XX [{unitAbbreviation}]", "xx",
+        $"Stress in XX-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Stress YY [{unitAbbreviation}]", "yy",
+        $"Stress in YY-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Stress ZZ [{unitAbbreviation}]", "zz",
+        $"Stress in ZZ-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Stress XY [{unitAbbreviation}]", "xy",
+        $"Stress in XY-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Stress YZ [{unitAbbreviation}]", "yz",
+        $"Stress in YZ-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Stress ZX [{unitAbbreviation}]", "zx",
+        $"Stress in ZX-direction in Global Axis.{note}", GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -151,7 +143,7 @@ namespace GsaGH.Components {
         foreach (int perm in permutations) {
           if ((vals[perm - 1].XyzResults.Count == 0) & (vals[perm - 1].XxyyzzResults.Count == 0)) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element3D results.");
+            this.AddRuntimeWarning($"Case {acase} contains no Element3D results.");
             continue;
           }
 

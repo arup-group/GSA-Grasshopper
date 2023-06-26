@@ -45,10 +45,10 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       int i = 0;
-      Params.Output[i++].Name = "Translations X [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
-      Params.Output[i].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = $"Translations X [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Translations Y [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Translations Z [{unitAbbreviation}]";
+      Params.Output[i].Name = $"Translations |XYZ| [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -69,10 +69,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Node filter list", "No",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter results by list (by default 'all'){Environment.NewLine}Input a GSA List or a text string taking the form:{Environment.NewLine} 1 11 to 72 step 2 not (XY3 31 to 45){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
@@ -80,26 +77,25 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } "
-        + Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch "
-        + Environment.NewLine + "contains a list matching the NodeIDs in the ID output.";
+      string note
+        = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation }} {Environment.NewLine}fx. {{1;2}} is Case 1, Permutation 2, where each branch {Environment.NewLine}contains a list matching the NodeIDs in the ID output.";
 
-      pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
-        "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
-        "Translations in Y-direction in Global Axis" + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
-        "Translations in Z-direction in Global Axis" + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations in Global Axis" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations X [{unitAbbreviation}]", "Ux",
+        $"Translations in X-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations Y [{unitAbbreviation}]", "Uy",
+        $"Translations in Y-direction in Global Axis{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations Z [{unitAbbreviation}]", "Uz",
+        $"Translations in Z-direction in Global Axis{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations |XYZ| [{unitAbbreviation}]", "|U|",
+        $"Combined |XYZ| Translations in Global Axis{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around X-axis in Global Axis" + note, GH_ParamAccess.tree);
+        $"Rotations around X-axis in Global Axis{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Y-axis in Global Axis" + note, GH_ParamAccess.tree);
+        $"Rotations around Y-axis in Global Axis{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Z-axis in Global Axis" + note, GH_ParamAccess.tree);
+        $"Rotations around Z-axis in Global Axis{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations in Global Axis" + note, GH_ParamAccess.tree);
+        $"Combined |XXYYZZ| Rotations in Global Axis{note}", GH_ParamAccess.tree);
       pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.tree);
     }

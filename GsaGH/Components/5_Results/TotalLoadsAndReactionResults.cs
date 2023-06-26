@@ -55,14 +55,14 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
       int i = 0;
-      Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = $"Force X [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force Y [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force Z [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force |XYZ| [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment XX [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment YY [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment ZZ [{momentunitAbbreviation}]";
+      Params.Output[i].Name = $"Moment |XXYYZZ| [{momentunitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -92,38 +92,38 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
 
-      pManager.AddGenericParameter("Total Force X [" + forceunitAbbreviation + "]", "ΣFx",
+      pManager.AddGenericParameter($"Total Force X [{forceunitAbbreviation}]", "ΣFx",
         "Sum of all Force Loads in GSA Model in X-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Force Y [" + forceunitAbbreviation + "]", "ΣFy",
+      pManager.AddGenericParameter($"Total Force Y [{forceunitAbbreviation}]", "ΣFy",
         "Sum of all Force Loads in GSA Model in Y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Force Z [" + forceunitAbbreviation + "]", "ΣFz",
+      pManager.AddGenericParameter($"Total Force Z [{forceunitAbbreviation}]", "ΣFz",
         "Sum of all Force Loads in GSA Model in Z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Force |XYZ| [" + forceunitAbbreviation + "]", "Σ|F|",
+      pManager.AddGenericParameter($"Total Force |XYZ| [{forceunitAbbreviation}]", "Σ|F|",
         "Sum of all Force Loads in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment XX [" + momentunitAbbreviation + "]", "ΣMxx",
+      pManager.AddGenericParameter($"Total Moment XX [{momentunitAbbreviation}]", "ΣMxx",
         "Sum of all Moment Loads in GSA Model around X-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment XX  [" + momentunitAbbreviation + "]", "ΣMyy",
+      pManager.AddGenericParameter($"Total Moment XX  [{momentunitAbbreviation}]", "ΣMyy",
         "Sum of all Moment Loads in GSA Model around Y-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment XX  [" + momentunitAbbreviation + "]", "ΣMzz",
+      pManager.AddGenericParameter($"Total Moment XX  [{momentunitAbbreviation}]", "ΣMzz",
         "Sum of all Moment Loads in GSA Model around Z-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment |XXYYZZ|  [" + momentunitAbbreviation + "]",
-        "Σ|M|", "Sum of all Moment Loads in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction X [" + forceunitAbbreviation + "]", "ΣRx",
+      pManager.AddGenericParameter($"Total Moment |XXYYZZ|  [{momentunitAbbreviation}]", "Σ|M|",
+        "Sum of all Moment Loads in GSA Model", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Total Reaction X [{forceunitAbbreviation}]", "ΣRx",
         "Sum of all Reaction Forces in GSA Model in X-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction Y [" + forceunitAbbreviation + "]", "ΣRy",
+      pManager.AddGenericParameter($"Total Reaction Y [{forceunitAbbreviation}]", "ΣRy",
         "Sum of all Reaction Forces in GSA Model in Y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction Z [" + forceunitAbbreviation + "]", "ΣRz",
+      pManager.AddGenericParameter($"Total Reaction Z [{forceunitAbbreviation}]", "ΣRz",
         "Sum of all Reaction Forces in GSA Model in Z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction |XYZ| [" + forceunitAbbreviation + "]", "Σ|Rf|",
+      pManager.AddGenericParameter($"Total Reaction |XYZ| [{forceunitAbbreviation}]", "Σ|Rf|",
         "Sum of all Reaction Forces in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction XX [" + momentunitAbbreviation + "]", "ΣRxx",
+      pManager.AddGenericParameter($"Total Reaction XX [{momentunitAbbreviation}]", "ΣRxx",
         "Sum of all Reaction Moments in GSA Model around X-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction XX  [" + momentunitAbbreviation + "]", "ΣRyy",
+      pManager.AddGenericParameter($"Total Reaction XX  [{momentunitAbbreviation}]", "ΣRyy",
         "Sum of all Reaction Moments in GSA Model around Y-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction XX  [" + momentunitAbbreviation + "]", "ΣRzz",
+      pManager.AddGenericParameter($"Total Reaction XX  [{momentunitAbbreviation}]", "ΣRzz",
         "Sum of all Reaction Moments in GSA Model around Z-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction |XXYYZZ|  [" + momentunitAbbreviation + "]",
-        "Σ|Rm|", "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Total Reaction |XXYYZZ|  [{momentunitAbbreviation}]", "Σ|Rm|",
+        "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

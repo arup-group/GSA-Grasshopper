@@ -37,8 +37,8 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some results", GH_ParamAccess.item);
       pManager.AddTextParameter("Result Type", "T",
-        "Result type. " + Environment.NewLine + "Accepted inputs are: " + Environment.NewLine
-        + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item, "A");
+        $"Result type. {Environment.NewLine}Accepted inputs are: {Environment.NewLine}'AnalysisCase' or 'Combination'",
+        GH_ParamAccess.item, "A");
       pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item, 1);
       pManager.AddIntegerParameter("Permutation", "P",
         "Permutations (only applicable for combination cases).", GH_ParamAccess.list);
@@ -71,8 +71,7 @@ namespace GsaGH.Components {
           _result = new Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>();
         }
       } else {
-        this.AddRuntimeError("Error converting input " + Params.Input[0].NickName
-          + " to GSA Model");
+        this.AddRuntimeError($"Error converting input {Params.Input[0].NickName} to GSA Model");
         return;
       }
 
@@ -85,8 +84,8 @@ namespace GsaGH.Components {
           } else if (type.ToUpper().StartsWith("C")) {
             resultType = GsaResult.CaseType.Combination;
           } else {
-            this.AddRuntimeError("Error converting input " + Params.Input[1].NickName
-              + " to 'Analysis' or 'Combination'");
+            this.AddRuntimeError(
+              $"Error converting input {Params.Input[1].NickName} to 'Analysis' or 'Combination'");
             return;
           }
         }
@@ -100,7 +99,7 @@ namespace GsaGH.Components {
         }
 
         if (caseId < 1) {
-          this.AddRuntimeError("Input " + Params.Input[2].NickName + " must be above 0");
+          this.AddRuntimeError($"Input {Params.Input[2].NickName} must be above 0");
           return;
         }
       }
@@ -170,8 +169,8 @@ namespace GsaGH.Components {
             permutationIDs = Enumerable.Range(1, nP).ToList();
           } else {
             if (permutationIDs.Max() > nP) {
-              this.AddRuntimeError("Combination Case C" + caseId + " only contains " + nP
-                + " permutations but the highest permutation in input is " + permutationIDs.Max());
+              this.AddRuntimeError(
+                $"Combination Case C{caseId} only contains {nP} permutations but the highest permutation in input is {permutationIDs.Max()}");
               return;
             }
           }

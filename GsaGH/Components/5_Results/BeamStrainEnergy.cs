@@ -75,8 +75,8 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Energy.GetAbbreviation(_energyUnit) + "/m\u00B3";
-      Params.Output[0].Name = "Strain energy density [" + unitAbbreviation + "]";
+      string unitAbbreviation = $"{Energy.GetAbbreviation(_energyUnit)}/m\u00b3";
+      Params.Output[0].Name = $"Strain energy density [{unitAbbreviation}]";
 
       if (_average) {
         return;
@@ -112,25 +112,19 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter results by list (by default 'all'){Environment.NewLine}Input a GSA List or a text string taking the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      string unitAbbreviation = Energy.GetAbbreviation(_energyUnit) + "/m\u00B3";
-      string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results per element position.";
+      string unitAbbreviation = $"{Energy.GetAbbreviation(_energyUnit)}/m\u00b3";
+      string note
+        = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation ; ElementID }} {Environment.NewLine}fx. {{1;2;3}} is Case 1, Permutation 2, Element 3, where each {Environment.NewLine}branch contains a list of results per element position.";
 
-      pManager.AddGenericParameter("Strain energy density [" + unitAbbreviation + "]", "E",
-        "Strain energy density. The strain energy density for a beam is a measure of how hard the beam is working. The average strain energy density is the average density along the element or member."
-        + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Strain energy density [{unitAbbreviation}]", "E",
+        $"Strain energy density. The strain energy density for a beam is a measure of how hard the beam is working. The average strain energy density is the average density along the element or member.{note}",
+        GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -189,7 +183,7 @@ namespace GsaGH.Components {
         foreach (int perm in permutations) {
           if (vals[perm - 1].XyzResults.Count == 0) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
+            this.AddRuntimeWarning($"Case {acase} contains no Element1D results.");
             continue;
           }
 

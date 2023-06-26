@@ -60,42 +60,36 @@ namespace GsaGH.Components {
 
       if (Params.Output.Count != 10) {
         Params.RegisterOutputParam(new Param_GenericObject());
-        string momentrule = Environment.NewLine
-          + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
-        string note = Environment.NewLine
-          + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-          + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-          + "branch contains a list of results in the following order: " + Environment.NewLine
-          + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" + Environment.NewLine
-          + "Element results are NOT averaged at nodes";
+        string momentrule
+          = $"{Environment.NewLine}+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
+        string note
+          = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation ; ElementID }} {Environment.NewLine}fx. {{1;2;3}} is Case 1, Permutation 2, Element 3, where each {Environment.NewLine}branch contains a list of results in the following order: {Environment.NewLine}Vertex(1), Vertex(2), ..., Vertex(i), Centre{Environment.NewLine}Element results are NOT averaged at nodes";
         Params.Output[8].NickName = "M*x";
         Params.Output[8].Description
-          = "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis."
-          + momentrule + note;
+          = $"Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis.{momentrule}{note}";
         Params.Output[8].Access = GH_ParamAccess.tree;
 
         Params.RegisterOutputParam(new Param_GenericObject());
         Params.Output[9].NickName = "M*y";
         Params.Output[9].Description
-          = "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis."
-          + momentrule + note;
+          = $"Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis.{momentrule}{note}";
         Params.Output[9].Access = GH_ParamAccess.tree;
 
         Params.Output[6].Description
-          = "Element Moments around Local Element Y-axis." + momentrule + note;
+          = $"Element Moments around Local Element Y-axis.{momentrule}{note}";
       }
 
       int i = 0;
-      Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Shear X [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Shear Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment X [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment Y [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment XY [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Wood-Armer X [" + momentunitAbbreviation + "]";
-      Params.Output[i].Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = $"Force X [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force Y [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force Z [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Shear X [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Shear Y [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment X [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment Y [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment XY [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Wood-Armer X [{momentunitAbbreviation}]";
+      Params.Output[i].Name = $"Wood-Armer Y [{momentunitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -120,11 +114,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter results by list (by default 'all'){Environment.NewLine}Input a GSA List or a text string taking the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
@@ -133,38 +123,34 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = ForcePerLength.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Force.GetAbbreviation(_momentUnit);
 
-      string forcerule = Environment.NewLine + "+ve in plane force resultant: tensile";
-      string momentrule = Environment.NewLine
-        + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
-      string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results in the following order: " + Environment.NewLine
-        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" + Environment.NewLine
-        + "Element results are NOT averaged at nodes";
+      string forcerule = $"{Environment.NewLine}+ve in plane force resultant: tensile";
+      string momentrule
+        = $"{Environment.NewLine}+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
+      string note
+        = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation ; ElementID }} {Environment.NewLine}fx. {{1;2;3}} is Case 1, Permutation 2, Element 3, where each {Environment.NewLine}branch contains a list of results in the following order: {Environment.NewLine}Vertex(1), Vertex(2), ..., Vertex(i), Centre{Environment.NewLine}Element results are NOT averaged at nodes";
 
-      pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Nx",
-        "Element in-plane Forces in Local X-direction." + forcerule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Ny",
-        "Element in-plane Forces in Local Y-direction." + forcerule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force XY [" + forceunitAbbreviation + "]", "Nxy",
-        "Element in-plane Forces in Local XY-direction." + forcerule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Shear X [" + forceunitAbbreviation + "]", "Qx",
-        "Element through thickness Shears in Local XZ-plane." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Shear Y [" + forceunitAbbreviation + "]", "Qz",
-        "Element through thickness Shears in Local YZ-plane." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment X [" + momentunitAbbreviation + "]", "Mx",
-        "Element Moments around Local Element X-axis." + momentrule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment Y [" + momentunitAbbreviation + "]", "My",
-        "Element Moments around Local Element Y-axis." + momentrule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment XY [" + momentunitAbbreviation + "]", "Mxy",
-        "Element Moments around Local Element XY-axis." + momentrule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Wood-Armer X [" + momentunitAbbreviation + "]", "M*x",
-        "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis." + momentrule
-        + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Wood-Armer Y [" + momentunitAbbreviation + "]", "M*y",
-        "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis." + momentrule
-        + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force X [{forceunitAbbreviation}]", "Nx",
+        $"Element in-plane Forces in Local X-direction.{forcerule}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force Y [{forceunitAbbreviation}]", "Ny",
+        $"Element in-plane Forces in Local Y-direction.{forcerule}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force XY [{forceunitAbbreviation}]", "Nxy",
+        $"Element in-plane Forces in Local XY-direction.{forcerule}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Shear X [{forceunitAbbreviation}]", "Qx",
+        $"Element through thickness Shears in Local XZ-plane.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Shear Y [{forceunitAbbreviation}]", "Qz",
+        $"Element through thickness Shears in Local YZ-plane.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment X [{momentunitAbbreviation}]", "Mx",
+        $"Element Moments around Local Element X-axis.{momentrule}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment Y [{momentunitAbbreviation}]", "My",
+        $"Element Moments around Local Element Y-axis.{momentrule}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment XY [{momentunitAbbreviation}]", "Mxy",
+        $"Element Moments around Local Element XY-axis.{momentrule}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Wood-Armer X [{momentunitAbbreviation}]", "M*x",
+        $"Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis.{momentrule}{note}",
+        GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Wood-Armer Y [{momentunitAbbreviation}]", "M*y",
+        $"Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis.{momentrule}{note}",
+        GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -220,7 +206,7 @@ namespace GsaGH.Components {
         foreach (int perm in permutations) {
           if ((vals[perm - 1].XyzResults.Count == 0) & (vals[perm - 1].XxyyzzResults.Count == 0)) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
+            this.AddRuntimeWarning($"Case {acase} contains no Element2D results.");
             continue;
           }
 

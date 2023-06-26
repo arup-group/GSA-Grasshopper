@@ -56,14 +56,14 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
       int i = 0;
-      Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = $"Force X [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force Y [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force Z [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Force |XYZ| [{forceunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment XX [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment YY [{momentunitAbbreviation}]";
+      Params.Output[i++].Name = $"Moment ZZ [{momentunitAbbreviation}]";
+      Params.Output[i].Name = $"Moment |XXYYZZ| [{momentunitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -88,10 +88,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Node filter list", "No",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter results by list (by default 'all'){Environment.NewLine}Input a GSA List or a text string taking the form:{Environment.NewLine} 1 11 to 72 step 2 not (XY3 31 to 45){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
@@ -100,27 +97,26 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
 
-      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } "
-        + Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch "
-        + Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
+      string note
+        = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation }} {Environment.NewLine}fx. {{1;2}} is Case 1, Permutation 2, where each branch {Environment.NewLine}branch contains a list matching the NodeIDs in the ID output.";
       string axis = " in Node's Local Axis (Global Axis is no Local Axis has been set).";
 
-      pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Reaction Forces in X-direction" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Reaction Forces in Y-direction" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Reaction Forces in Z-direction" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|",
-        "Combined |XYZ| Reaction Forces" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Reaction Moments around X-axis" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Reaction Moments around Y-axis" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Reaction Moments around Z-axis" + axis + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
-        "Combined |XXYYZZ| Reaction Moments" + axis + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force X [{forceunitAbbreviation}]", "Fx",
+        $"Reaction Forces in X-direction{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force Y [{forceunitAbbreviation}]", "Fy",
+        $"Reaction Forces in Y-direction{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force Z [{forceunitAbbreviation}]", "Fz",
+        $"Reaction Forces in Z-direction{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Force |XYZ| [{forceunitAbbreviation}]", "|F|",
+        $"Combined |XYZ| Reaction Forces{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment XX [{momentunitAbbreviation}]", "Mxx",
+        $"Reaction Moments around X-axis{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment YY [{momentunitAbbreviation}]", "Myy",
+        $"Reaction Moments around Y-axis{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment ZZ [{momentunitAbbreviation}]", "Mzz",
+        $"Reaction Moments around Z-axis{axis}{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Moment |XYZ| [{momentunitAbbreviation}]", "|M|",
+        $"Combined |XXYYZZ| Reaction Moments{axis}{note}", GH_ParamAccess.tree);
       pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.list);
     }

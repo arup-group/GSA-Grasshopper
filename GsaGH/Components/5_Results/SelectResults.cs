@@ -126,8 +126,8 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some results", GH_ParamAccess.item);
       pManager.AddTextParameter("Result Type", "T",
-        "Result type. " + Environment.NewLine + "Accepted inputs are: " + Environment.NewLine
-        + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item);
+        $"Result type. {Environment.NewLine}Accepted inputs are: {Environment.NewLine}'AnalysisCase' or 'Combination'",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Permutation", "P",
         "Permutations (only applicable for combination cases).", GH_ParamAccess.list);
@@ -183,7 +183,7 @@ namespace GsaGH.Components {
 
               if (_selectedItems[1] != "   ") {
                 if (_selectedItems[1] != "All") {
-                  _selectedItems[1] = "A" + _caseId.ToString();
+                  _selectedItems[1] = $"A{_caseId.ToString()}";
                 } else {
                   UpdateDropdowns();
                 }
@@ -204,7 +204,7 @@ namespace GsaGH.Components {
 
               if (_selectedItems[1] != "   ") {
                 if (_selectedItems[1] != "All") {
-                  _selectedItems[1] = "C" + _caseId.ToString();
+                  _selectedItems[1] = $"C{_caseId.ToString()}";
                 } else {
                   UpdateDropdowns();
                 }
@@ -225,8 +225,8 @@ namespace GsaGH.Components {
           if (analCase < 1) {
             _selectedItems[1] = "All";
           } else {
-            _selectedItems[1] = _resultType == GsaResult.CaseType.AnalysisCase ? "A" + analCase :
-              "C" + analCase;
+            _selectedItems[1] = _resultType == GsaResult.CaseType.AnalysisCase ? $"A{analCase}" :
+              $"C{analCase}";
           }
         }
       }
@@ -240,7 +240,7 @@ namespace GsaGH.Components {
             if (_permutationIDs[0] < 1) {
               _selectedItems[2] = "All";
             } else {
-              _selectedItems[2] = "P" + _permutationIDs[0];
+              _selectedItems[2] = $"P{_permutationIDs[0]}";
             }
           } else {
             _selectedItems[2] = "from input";
@@ -260,7 +260,7 @@ namespace GsaGH.Components {
           }
 
           if (!_analysisCaseResults.ContainsKey(_caseId)) {
-            this.AddRuntimeError("Analysis Case A" + _caseId + " does not exist in model");
+            this.AddRuntimeError($"Analysis Case A{_caseId} does not exist in model");
             return;
           }
 
@@ -293,13 +293,13 @@ namespace GsaGH.Components {
             _permutationIDs = Enumerable.Range(1, nP).ToList();
           } else {
             if (_permutationIDs.Count == 0) {
-              this.AddRuntimeWarning("Combination Case C" + _caseId + " does not contain results");
+              this.AddRuntimeWarning($"Combination Case C{_caseId} does not contain results");
               return;
             }
 
             if (_permutationIDs.Max() > nP) {
-              this.AddRuntimeError("Combination Case C" + _caseId + " only contains " + nP
-                + " permutations but the highest permutation in input is " + _permutationIDs.Max());
+              this.AddRuntimeError(
+                $"Combination Case C{_caseId} only contains {nP} permutations but the highest permutation in input is {_permutationIDs.Max()}");
               return;
             }
           }
@@ -385,7 +385,7 @@ namespace GsaGH.Components {
 
         List<int?> ints = modelResults.Item3.Branch(new GH_Path(_caseId));
         if (ints != null) {
-          _dropDownItems[2].AddRange(ints.Select(x => "P" + x.ToString()).ToList());
+          _dropDownItems[2].AddRange(ints.Select(x => $"P{x.ToString()}").ToList());
         } else {
           _dropDownItems[2].Add("-");
         }
@@ -425,7 +425,7 @@ namespace GsaGH.Components {
       }
 
       _selectedItems[2] = "All";
-      _dropDownItems[2].AddRange(permutationsInCase.Select(x => "P" + x.ToString()).ToList());
+      _dropDownItems[2].AddRange(permutationsInCase.Select(x => $"P{x.ToString()}").ToList());
       _permutationIDs = new List<int>() {
         -1,
       };

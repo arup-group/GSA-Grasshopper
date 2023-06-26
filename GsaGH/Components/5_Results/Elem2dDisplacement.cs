@@ -45,10 +45,10 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       int i = 0;
-      Params.Output[i++].Name = "Translations X [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
-      Params.Output[i].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
+      Params.Output[i++].Name = $"Translations X [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Translations Y [{unitAbbreviation}]";
+      Params.Output[i++].Name = $"Translations Z [{unitAbbreviation}]";
+      Params.Output[i].Name = $"Translations |XYZ| [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -69,11 +69,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter results by list (by default 'all'){Environment.NewLine}Input a GSA List or a text string taking the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
@@ -81,28 +77,25 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results in the following order:" + Environment.NewLine
-        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre";
+      string note
+        = $"{Environment.NewLine}DataTree organised as {{ CaseID ; Permutation ; ElementID }} {Environment.NewLine}fx. {{1;2;3}} is Case 1, Permutation 2, Element 3, where each {Environment.NewLine}branch contains a list of results in the following order:{Environment.NewLine}Vertex(1), Vertex(2), ..., Vertex(i), Centre";
 
-      pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
-        "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
-        "Translations in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
-        "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations in Global Axis." + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations X [{unitAbbreviation}]", "Ux",
+        $"Translations in X-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations Y [{unitAbbreviation}]", "Uy",
+        $"Translations in Y-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations Z [{unitAbbreviation}]", "Uz",
+        $"Translations in Z-direction in Global Axis.{note}", GH_ParamAccess.tree);
+      pManager.AddGenericParameter($"Translations |XYZ| [{unitAbbreviation}]", "|U|",
+        $"Combined |XYZ| Translations in Global Axis.{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
+        $"Rotations around X-axis in Global Axis.{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Y-axis in Global Axiss." + note, GH_ParamAccess.tree);
+        $"Rotations around Y-axis in Global Axiss.{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
+        $"Rotations around Z-axis in Global Axis.{note}", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations in Global Axis." + note, GH_ParamAccess.tree);
+        $"Combined |XXYYZZ| Rotations in Global Axis.{note}", GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -154,7 +147,7 @@ namespace GsaGH.Components {
         foreach (int perm in permutations) {
           if ((vals[perm - 1].XyzResults.Count == 0) & (vals[perm - 1].XxyyzzResults.Count == 0)) {
             string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
+            this.AddRuntimeWarning($"Case {acase} contains no Element2D results.");
             continue;
           }
 

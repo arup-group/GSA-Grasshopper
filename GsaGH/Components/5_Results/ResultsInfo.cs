@@ -61,8 +61,7 @@ namespace GsaGH.Components {
           _modelGuid = model.Guid;
         }
       } else {
-        this.AddRuntimeError("Error converting input " + Params.Input[0].NickName
-          + " to GSA Model");
+        this.AddRuntimeError($"Error converting input {Params.Input[0].NickName} to GSA Model");
         return;
       }
 

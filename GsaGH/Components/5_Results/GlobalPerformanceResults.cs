@@ -66,18 +66,18 @@ namespace GsaGH.Components {
       string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
       int i = 0;
-      Params.Output[i++].Name = "Effective Mass X [" + massUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Mass Y [" + massUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Mass Z [" + massUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Mass |XYZ| [" + massUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Inertia X [" + inertiaUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Inertia Y [" + inertiaUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Inertia Z [" + inertiaUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Effective Inertia |XYZ| [" + inertiaUnitAbbreviation + "]";
+      Params.Output[i++].Name = $"Effective Mass X [{massUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Mass Y [{massUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Mass Z [{massUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Mass |XYZ| [{massUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Inertia X [{inertiaUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Inertia Y [{inertiaUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Inertia Z [{inertiaUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Effective Inertia |XYZ| [{inertiaUnitAbbreviation}]";
       i++;
-      Params.Output[i++].Name = "Modal Mass [" + massUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Modal Stiffness [" + forceperlengthUnitAbbreviation + "]";
-      Params.Output[i].Name = "Modal Geometric Stiffness [" + forceperlengthUnitAbbreviation + "]";
+      Params.Output[i++].Name = $"Modal Mass [{massUnitAbbreviation}]";
+      Params.Output[i++].Name = $"Modal Stiffness [{forceperlengthUnitAbbreviation}]";
+      Params.Output[i].Name = $"Modal Geometric Stiffness [{forceperlengthUnitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -119,31 +119,30 @@ namespace GsaGH.Components {
       string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(_inertiaUnit);
       string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
-      pManager.AddGenericParameter("Effective Mass X [" + massUnitAbbreviation + "]", "Σmx",
+      pManager.AddGenericParameter($"Effective Mass X [{massUnitAbbreviation}]", "Σmx",
         "Effective Mass in GSA Model in X-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Mass Y [" + massUnitAbbreviation + "]", "Σmy",
+      pManager.AddGenericParameter($"Effective Mass Y [{massUnitAbbreviation}]", "Σmy",
         "Effective Mass in GSA Model in Y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Mass Z [" + massUnitAbbreviation + "]", "Σmz",
+      pManager.AddGenericParameter($"Effective Mass Z [{massUnitAbbreviation}]", "Σmz",
         "Effective Mass in GSA Model in Z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Mass |XYZ| [" + massUnitAbbreviation + "]", "Σ|m|",
+      pManager.AddGenericParameter($"Effective Mass |XYZ| [{massUnitAbbreviation}]", "Σ|m|",
         "Effective Mass in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Inertia X [" + inertiaUnitAbbreviation + "]", "ΣIx",
+      pManager.AddGenericParameter($"Effective Inertia X [{inertiaUnitAbbreviation}]", "ΣIx",
         "Effective Inertia in GSA Model in X-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Inertia Y [" + inertiaUnitAbbreviation + "]", "ΣIy",
+      pManager.AddGenericParameter($"Effective Inertia Y [{inertiaUnitAbbreviation}]", "ΣIy",
         "Effective Inertia in GSA Model in Y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Inertia Z [" + inertiaUnitAbbreviation + "]", "ΣIz",
+      pManager.AddGenericParameter($"Effective Inertia Z [{inertiaUnitAbbreviation}]", "ΣIz",
         "Effective Inertia in GSA Model in Z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Effective Inertia |XYZ| [" + inertiaUnitAbbreviation + "]",
-        "Σ|I|", "Effective Inertia in GSA Model", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Effective Inertia |XYZ| [{inertiaUnitAbbreviation}]", "Σ|I|",
+        "Effective Inertia in GSA Model", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Modal Mass [" + massUnitAbbreviation + "]", "MM",
+      pManager.AddGenericParameter($"Modal Mass [{massUnitAbbreviation}]", "MM",
         "Modal Mass of selected LoadCase / mode", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Modal Stiffness [" + forceperlengthUnitAbbreviation + "]", "MS",
+      pManager.AddGenericParameter($"Modal Stiffness [{forceperlengthUnitAbbreviation}]", "MS",
         "Modal Stiffness of selected LoadCase / mode", GH_ParamAccess.item);
-      pManager.AddGenericParameter(
-        "Modal Geometric Stiffness [" + forceperlengthUnitAbbreviation + "]", "MGS",
-        "Modal Geometric Stiffness of selected LoadCase / mode", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Modal Geometric Stiffness [{forceperlengthUnitAbbreviation}]",
+        "MGS", "Modal Geometric Stiffness of selected LoadCase / mode", GH_ParamAccess.item);
       pManager.AddGenericParameter("Frequency [Hz]", "f", "Frequency of selected LoadCase / mode",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Load Factor", "LF", "Load Factor for selected LoadCase / mode",
