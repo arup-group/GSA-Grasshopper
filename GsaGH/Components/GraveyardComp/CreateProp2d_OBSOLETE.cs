@@ -86,19 +86,14 @@ namespace GsaGH.Components {
         Params.Input[i].NickName = "Mat";
         Params.Input[i].Name = "Material";
         Params.Input[i].Description
-          = "GsaMaterial or Number referring to a Material already in Existing GSA Model."
-          + Environment.NewLine + "Accepted inputs are: " + Environment.NewLine + "0 : Generic"
-          + Environment.NewLine + "1 : Steel" + Environment.NewLine + "2 : Concrete (default)"
-          + Environment.NewLine + "3 : Aluminium" + Environment.NewLine + "4 : Glass"
-          + Environment.NewLine + "5 : FRP" + Environment.NewLine + "7 : Timber"
-          + Environment.NewLine + "8 : Fabric";
+          = $"GsaMaterial or Number referring to a Material already in Existing GSA Model.{Environment.NewLine}Accepted inputs are: {Environment.NewLine}0 : Generic{Environment.NewLine}1 : Steel{Environment.NewLine}2 : Concrete (default){Environment.NewLine}3 : Aluminium{Environment.NewLine}4 : Glass{Environment.NewLine}5 : FRP{Environment.NewLine}7 : Timber{Environment.NewLine}8 : Fabric";
 
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;
 
         i++;
         Params.Input[i].NickName = "Thk";
-        Params.Input[i].Name = "Thickness [" + _unitAbbreviation + "]";
+        Params.Input[i].Name = $"Thickness [{_unitAbbreviation}]";
         Params.Input[i].Description = "Section thickness";
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;
@@ -245,10 +240,10 @@ namespace GsaGH.Components {
         int dropdownCount = reader.GetInt32("dropdownCount");
         dropDownItems = new List<List<string>>();
         for (int i = 0; i < dropdownCount; i++) {
-          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+          int dropdowncontentsCount = reader.GetInt32($"dropdowncontentsCount{i}");
           var tempcontent = new List<string>();
           for (int j = 0; j < dropdowncontentsCount; j++) {
-            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+            tempcontent.Add(reader.GetString($"dropdowncontents{i}{j}"));
           }
 
           dropDownItems.Add(tempcontent);
@@ -261,7 +256,7 @@ namespace GsaGH.Components {
         int dropdownspacerCount = reader.GetInt32("spacerCount");
         spacerDescriptions = new List<string>();
         for (int i = 0; i < dropdownspacerCount; i++) {
-          spacerDescriptions.Add(reader.GetString("spacercontents" + i));
+          spacerDescriptions.Add(reader.GetString($"spacercontents{i}"));
         }
       }
 
@@ -273,7 +268,7 @@ namespace GsaGH.Components {
         int selectionsCount = reader.GetInt32("selectionCount");
         selectedItems = new List<string>();
         for (int i = 0; i < selectionsCount; i++) {
-          selectedItems.Add(reader.GetString("selectioncontents" + i));
+          selectedItems.Add(reader.GetString($"selectioncontents{i}"));
         }
       }
     }
@@ -285,9 +280,9 @@ namespace GsaGH.Components {
       if (dropDownItems != null) {
         writer.SetInt32("dropdownCount", dropDownItems.Count);
         for (int i = 0; i < dropDownItems.Count; i++) {
-          writer.SetInt32("dropdowncontentsCount" + i, dropDownItems[i].Count);
+          writer.SetInt32($"dropdowncontentsCount{i}", dropDownItems[i].Count);
           for (int j = 0; j < dropDownItems[i].Count; j++) {
-            writer.SetString("dropdowncontents" + i + j, dropDownItems[i][j]);
+            writer.SetString($"dropdowncontents{i}{j}", dropDownItems[i][j]);
           }
         }
 
@@ -300,7 +295,7 @@ namespace GsaGH.Components {
       if (spacerDescriptions != null) {
         writer.SetInt32("spacerCount", spacerDescriptions.Count);
         for (int i = 0; i < spacerDescriptions.Count; i++) {
-          writer.SetString("spacercontents" + i, spacerDescriptions[i]);
+          writer.SetString($"spacercontents{i}", spacerDescriptions[i]);
         }
 
         spacer = true;
@@ -312,7 +307,7 @@ namespace GsaGH.Components {
       if (selectedItems != null) {
         writer.SetInt32("selectionCount", selectedItems.Count);
         for (int i = 0; i < selectedItems.Count; i++) {
-          writer.SetString("selectioncontents" + i, selectedItems[i]);
+          writer.SetString($"selectioncontents{i}", selectedItems[i]);
         }
 
         select = true;

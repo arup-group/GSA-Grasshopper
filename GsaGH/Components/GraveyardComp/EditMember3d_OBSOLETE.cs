@@ -79,8 +79,8 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember3dParameter(), GsaMember3dGoo.Name,
         GsaMember3dGoo.NickName,
-        GsaMember3dGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaMember3dGoo.Name, GH_ParamAccess.item);
+        $"{GsaMember3dGoo.Description} to get or set information for. Leave blank to create a new {GsaMember3dGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member3d Number", "ID",
         "Set Member Number. If ID is set it will replace any existing 3d Member in the model",
         GH_ParamAccess.item);
@@ -88,7 +88,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Set new 3D Property.",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
+      pManager.AddGenericParameter($"Mesh Size [{Length.GetAbbreviation(_lengthUnit)}]", "Ms",
         "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
@@ -110,14 +110,14 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaMember3dParameter(), GsaMember3dGoo.Name,
-        GsaMember3dGoo.NickName, GsaMember3dGoo.Description + " with applied changes.",
+        GsaMember3dGoo.NickName, $"{GsaMember3dGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
       pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Get 3D Property",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
+      pManager.AddGenericParameter($"Mesh Size [{Length.GetAbbreviation(_lengthUnit)}]", "Ms",
         "Get Targe mesh size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);

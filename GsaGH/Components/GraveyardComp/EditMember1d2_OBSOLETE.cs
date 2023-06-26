@@ -42,17 +42,10 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Type", "mT",
-        "Set 1D Member Type" + Environment.NewLine
-        + "Default is 0: Generic 1D - Accepted inputs are:" + Environment.NewLine + "2: Beam"
-        + Environment.NewLine + "3: Column" + Environment.NewLine + "6: Cantilever"
-        + Environment.NewLine + "8: Compos" + Environment.NewLine + "9: Pile" + Environment.NewLine
-        + "11: Void cutter", GH_ParamAccess.item);
+        $"Set 1D Member Type{Environment.NewLine}Default is 0: Generic 1D - Accepted inputs are:{Environment.NewLine}2: Beam{Environment.NewLine}3: Column{Environment.NewLine}6: Cantilever{Environment.NewLine}8: Compos{Environment.NewLine}9: Pile{Environment.NewLine}11: Void cutter",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("1D Element Type", "eT",
-        "Set Element 1D Type" + Environment.NewLine + "Accepted inputs are:" + Environment.NewLine
-        + "1: Bar" + Environment.NewLine + "2: Beam" + Environment.NewLine + "3: Spring"
-        + Environment.NewLine + "9: Link" + Environment.NewLine + "10: Cable" + Environment.NewLine
-        + "19: Spacer" + Environment.NewLine + "20: Strut" + Environment.NewLine + "21: Tie"
-        + Environment.NewLine + "23: Rod" + Environment.NewLine + "24: Damper",
+        $"Set Element 1D Type{Environment.NewLine}Accepted inputs are:{Environment.NewLine}1: Bar{Environment.NewLine}2: Beam{Environment.NewLine}3: Spring{Environment.NewLine}9: Link{Environment.NewLine}10: Cable{Environment.NewLine}19: Spacer{Environment.NewLine}20: Strut{Environment.NewLine}21: Tie{Environment.NewLine}23: Rod{Environment.NewLine}24: Damper",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
       pManager.AddGenericParameter("Start release", "⭰", "Set Release (Bool6) at Start of Member",
@@ -64,8 +57,8 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node",
         GH_ParamAccess.item);
       var ms = new Length(1, DefaultUnits.LengthUnitGeometry);
-      pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms",
-        "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Mesh Size [{ms.ToString("a")}]", "Ms", "Set Member Mesh Size",
+        GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
 
@@ -209,10 +202,8 @@ namespace GsaGH.Components {
         mem.MeshSize
           = ((Length)Input.UnitNumber(this, da, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
         if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter) {
-          this.AddRuntimeRemark("Mesh size input set in ["
-            + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
-            + Environment.NewLine
-            + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
+          this.AddRuntimeRemark(
+            $"Mesh size input set in [{string.Concat(mem.MeshSize.ToString().Where(char.IsLetter))}]. {Environment.NewLine}Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
       }
 

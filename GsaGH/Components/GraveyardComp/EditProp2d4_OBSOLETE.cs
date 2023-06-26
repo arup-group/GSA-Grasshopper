@@ -51,8 +51,8 @@ namespace GsaGH.Components.GraveyardComp {
     }
 
     public virtual void VariableParameterMaintenance() {
-      Params.Input[3].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
-      Params.Output[3].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[3].Name = $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]";
+      Params.Output[3].Name = $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]";
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
@@ -96,13 +96,13 @@ namespace GsaGH.Components.GraveyardComp {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaProp2dParameter(), GsaProp2dGoo.Name, GsaProp2dGoo.NickName,
-        GsaProp2dGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaProp2dGoo.Name, GH_ParamAccess.item);
+        $"{GsaProp2dGoo.Description} to get or set information for. Leave blank to create a new {GsaProp2dGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID",
         "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
+      pManager.AddGenericParameter($"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", "Th",
         "Set Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Axis", "Ax",
         "Input a Plane to set a custom Axis or input an integer (Global (0) or Topological (-1)) to reference a predefined Axis in the model",
@@ -111,12 +111,7 @@ namespace GsaGH.Components.GraveyardComp {
       pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty",
-        "Set 2D Property Type." + Environment.NewLine + "Input either text string or integer:"
-        + Environment.NewLine + "Plane Stress : 1" + Environment.NewLine + "Plane Strain : 2"
-        + Environment.NewLine + "Axis Symmetric : 3" + Environment.NewLine + "Fabric : 4"
-        + Environment.NewLine + "Plate : 5" + Environment.NewLine + "Shell : 6"
-        + Environment.NewLine + "Curved Shell : 7" + Environment.NewLine + "Torsion : 8"
-        + Environment.NewLine + "Wall : 9" + Environment.NewLine + "Load : 10",
+        $"Set 2D Property Type.{Environment.NewLine}Input either text string or integer:{Environment.NewLine}Plane Stress : 1{Environment.NewLine}Plane Strain : 2{Environment.NewLine}Axis Symmetric : 3{Environment.NewLine}Fabric : 4{Environment.NewLine}Plate : 5{Environment.NewLine}Shell : 6{Environment.NewLine}Curved Shell : 7{Environment.NewLine}Torsion : 8{Environment.NewLine}Wall : 9{Environment.NewLine}Load : 10",
         GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -125,11 +120,11 @@ namespace GsaGH.Components.GraveyardComp {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaProp2dParameter(), GsaProp2dGoo.Name, GsaProp2dGoo.NickName,
-        GsaProp2dGoo.Description + " with applied changes.", GH_ParamAccess.item);
+        $"{GsaProp2dGoo.Description} with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
+      pManager.AddGenericParameter($"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", "Th",
         "Get Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Axis", "Ax",
         "Get Local Axis either as Plane for custom or an integer (Global (0) or Topological (1)) for referenced Axis.",

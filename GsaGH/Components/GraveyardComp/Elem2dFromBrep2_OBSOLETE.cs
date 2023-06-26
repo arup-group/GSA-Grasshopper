@@ -84,7 +84,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = $"Mesh Size [{Length.GetAbbreviation(_lengthUnit)}]";
     }
 
     protected override void BeforeSolveInstance() {
@@ -158,8 +158,8 @@ namespace GsaGH.Components {
             string type = objectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
-            this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
-              + type + " to point or node");
+            this.AddRuntimeError(
+              $"Unable to convert incl. Point/Node input parameter of type {type} to point or node");
           }
         }
       }
@@ -178,8 +178,8 @@ namespace GsaGH.Components {
             string type = objectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
-            this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
-              + type + " to curve or 1D Member");
+            this.AddRuntimeError(
+              $"Unable to convert incl. Curve/Mem1D input parameter of type {type} to curve or 1D Member");
           }
         }
       }
@@ -241,7 +241,7 @@ namespace GsaGH.Components {
         }
       }
 
-      Message = "Tol: " + _tolerance;
+      Message = $"Tol: {_tolerance}";
       if (_tolerance.Meters < 0.001) {
         this.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");

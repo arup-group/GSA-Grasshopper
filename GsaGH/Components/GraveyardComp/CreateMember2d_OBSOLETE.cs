@@ -54,7 +54,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = $"Mesh Size [{Length.GetAbbreviation(_lengthUnit)}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -83,7 +83,7 @@ namespace GsaGH.Components {
         "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Target mesh size",
+      pManager.AddGenericParameter($"Mesh Size [{unitAbbreviation}]", "Ms", "Target mesh size",
         GH_ParamAccess.item);
 
       pManager.HideParameter(0);

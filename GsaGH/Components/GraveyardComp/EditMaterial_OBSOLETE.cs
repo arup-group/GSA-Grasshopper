@@ -26,16 +26,13 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
         GsaMaterialGoo.NickName,
-        GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaMaterialGoo.Name, GH_ParamAccess.item);
+        $"{GsaMaterialGoo.Description} to get or set information for. Leave blank to create a new {GsaMaterialGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An",
         "Set Material Analysis Property Number (0 -> 'from Grade'", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT",
-        "Set Material Type" + Environment.NewLine + "Input either text string or integer:"
-        + Environment.NewLine + "Generic : 0" + Environment.NewLine + "Steel : 1"
-        + Environment.NewLine + "Concrete : 2" + Environment.NewLine + "Aluminium : 3"
-        + Environment.NewLine + "Glass : 4" + Environment.NewLine + "FRP : 5" + Environment.NewLine
-        + "Timber : 7" + Environment.NewLine + "Fabric : 8", GH_ParamAccess.item);
+        $"Set Material Type{Environment.NewLine}Input either text string or integer:{Environment.NewLine}Generic : 0{Environment.NewLine}Steel : 1{Environment.NewLine}Concrete : 2{Environment.NewLine}Aluminium : 3{Environment.NewLine}Glass : 4{Environment.NewLine}FRP : 5{Environment.NewLine}Timber : 7{Environment.NewLine}Fabric : 8",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Material Grade", "Grd", "Set Material Grade",
         GH_ParamAccess.item);
 
@@ -46,7 +43,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
-        GsaMaterialGoo.NickName, GsaMaterialGoo.Description + " with applied changes.",
+        GsaMaterialGoo.NickName, $"{GsaMaterialGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An",
         "Get Material Analysis Property (0 -> 'from Grade')", GH_ParamAccess.item);

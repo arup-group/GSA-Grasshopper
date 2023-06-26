@@ -50,9 +50,8 @@ namespace GsaGH.Components {
       pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task",
         GH_ParamAccess.item);
       pManager.AddVectorParameter("Modal", "Md",
-        "Modal results in vector form:" + Environment.NewLine + "x: Modal Mass"
-        + Environment.NewLine + "y: Modal Stiffness" + Environment.NewLine
-        + "z: Modal Geometric Stiffness", GH_ParamAccess.item);
+        $"Modal results in vector form:{Environment.NewLine}x: Modal Mass{Environment.NewLine}y: Modal Stiffness{Environment.NewLine}z: Modal Geometric Stiffness",
+        GH_ParamAccess.item);
       pManager.AddNumberParameter("Frequency [Hz]", "f", "Frequency of selected LoadCase / mode",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Load Factor", "LF", "Load Factor for selected LoadCase / mode",
@@ -79,7 +78,7 @@ namespace GsaGH.Components {
 
       model.Model.Results().TryGetValue(analCase, out AnalysisCaseResult analysisCaseResult);
       if (analysisCaseResult == null) {
-        this.AddRuntimeError("No results exist for Analysis Case " + analCase + " in file");
+        this.AddRuntimeError($"No results exist for Analysis Case {analCase} in file");
         return;
       }
 

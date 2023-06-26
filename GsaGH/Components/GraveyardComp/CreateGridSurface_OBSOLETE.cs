@@ -111,10 +111,8 @@ namespace GsaGH.Components {
         case FoldMode.OneDimensionalTwoWay:
           Params.Input[5].NickName = "Exp";
           Params.Input[5].Name = "Load Expansion";
-          Params.Input[5].Description = "Load Expansion: " + Environment.NewLine
-            + "Accepted inputs are:" + Environment.NewLine + "0 : Corner (plane)"
-            + Environment.NewLine + "1 : Smooth (plane)" + Environment.NewLine + "2 : Plane"
-            + Environment.NewLine + "3 : Legacy";
+          Params.Input[5].Description
+            = $"Load Expansion: {Environment.NewLine}Accepted inputs are:{Environment.NewLine}0 : Corner (plane){Environment.NewLine}1 : Smooth (plane){Environment.NewLine}2 : Plane{Environment.NewLine}3 : Legacy";
           Params.Input[5].Access = GH_ParamAccess.item;
           Params.Input[5].Optional = true;
 
@@ -166,14 +164,10 @@ namespace GsaGH.Components {
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
         GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Element list", "El",
-        "List of Elements for which load should be expanded to (by default 'all')."
-        + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"List of Elements for which load should be expanded to (by default 'all').{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]", "To",
+      pManager.AddGenericParameter($"Tolerance [{unitAbbreviation}]", "To",
         "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
       pManager.AddAngleParameter("Span Direction", "Di",
         "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
@@ -226,11 +220,7 @@ namespace GsaGH.Components {
         string type = ghTyp.Value.ToString().ToUpper();
         if (type.StartsWith("GSA ")) {
           Params.Owner.AddRuntimeError(
-            "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine
-            + "Element list should take the form:" + Environment.NewLine
-            + "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'"
-            + Environment.NewLine
-            + "Refer to GSA help file for definition of lists and full vocabulary.");
+            $"You cannot input a Node/Element/Member in ElementList input!{Environment.NewLine}Element list should take the form:{Environment.NewLine}'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.");
           return;
         }
       }

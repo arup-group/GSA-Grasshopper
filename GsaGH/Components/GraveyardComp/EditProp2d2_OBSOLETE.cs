@@ -40,7 +40,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Material", "Ma",
         "Set GSA Material or reference existing material by ID", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]", "Th",
+      pManager.AddGenericParameter($"Thickness [{unitAbbreviation}]", "Th",
         "Set Property Thickness", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Axis", "Ax",
         "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);

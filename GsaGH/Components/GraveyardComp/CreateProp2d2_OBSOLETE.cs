@@ -135,7 +135,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Thk",
+      pManager.AddGenericParameter($"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", "Thk",
         "Section thickness", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
     }
@@ -227,7 +227,7 @@ namespace GsaGH.Components {
         }
       }
 
-      throw new Exception("Unable to convert " + name + " to Prop2d Type");
+      throw new Exception($"Unable to convert {name} to Prop2d Type");
     }
 
     private void ResetDropdownMenus() {

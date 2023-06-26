@@ -75,7 +75,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2].Name = "Grid Elevation [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[2].Name = $"Grid Elevation [{Length.GetAbbreviation(_lengthUnit)}]";
 
       if (_mode != FoldMode.Storey) {
         return;
@@ -87,13 +87,13 @@ namespace GsaGH.Components {
       }
 
       Params.Input[4].NickName = "tA";
-      Params.Input[4].Name = "Tolerance Above [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = $"Tolerance Above [{Length.GetAbbreviation(_lengthUnit)}]";
       Params.Input[4].Description = "Tolerance Above Grid Plane";
       Params.Input[4].Access = GH_ParamAccess.item;
       Params.Input[4].Optional = true;
 
       Params.Input[5].NickName = "tB";
-      Params.Input[5].Name = "Tolerance Below [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[5].Name = $"Tolerance Below [{Length.GetAbbreviation(_lengthUnit)}]";
       Params.Input[5].Description = "Tolerance Below Grid Plane";
       Params.Input[5].Access = GH_ParamAccess.item;
       Params.Input[5].Optional = true;
@@ -125,8 +125,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Grid Plane ID", "ID",
         "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model",
         GH_ParamAccess.item, 0);
-      pManager.AddGenericParameter("Grid Elevation [" + Length.GetAbbreviation(_lengthUnit) + "]",
-        "Ev",
+      pManager.AddGenericParameter($"Grid Elevation [{Length.GetAbbreviation(_lengthUnit)}]", "Ev",
         "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);

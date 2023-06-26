@@ -146,9 +146,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       this.AddRuntimeError(
-        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}"
-        + $"Please use the new CreateMaterial component that now supports standard materials."
-        + $"{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
+        $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}Please use the new CreateMaterial component that now supports standard materials.{Environment.NewLine}Simply drag a new Create Material component onto the canvas.");
 
       da.SetData(0, new GsaMaterialGoo(null));
     }
@@ -158,7 +156,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Generic;
 
@@ -172,7 +170,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Steel;
 
@@ -186,7 +184,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Concrete;
 
@@ -200,7 +198,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Timber;
 
@@ -214,7 +212,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Aluminium;
 
@@ -228,7 +226,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Frp;
 
@@ -242,7 +240,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Glass;
 
@@ -256,7 +254,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + "Parameters");
+      RecordUndoEvent($"{_mode}Parameters");
 
       _mode = FoldMode.Fabric;
 

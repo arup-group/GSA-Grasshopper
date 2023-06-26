@@ -39,11 +39,11 @@ namespace GsaGH.Components {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
-      Params.Input[i++].Name = "Brep [in " + unitAbbreviation + "]";
-      Params.Input[i++].Name = "Incl. Points or Nodes [in " + unitAbbreviation + "]";
-      Params.Input[i++].Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
+      Params.Input[i++].Name = $"Brep [in {unitAbbreviation}]";
+      Params.Input[i++].Name = $"Incl. Points or Nodes [in {unitAbbreviation}]";
+      Params.Input[i++].Name = $"Incl. Curves or 1D Members [in {unitAbbreviation}]";
       i++;
-      Params.Input[i].Name = "Mesh Size [" + unitAbbreviation + "]";
+      Params.Input[i].Name = $"Mesh Size [{unitAbbreviation}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -62,14 +62,14 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      pManager.AddBrepParameter("Brep [in " + unitAbbreviation + "]", "B",
-        "Brep (can be non-planar)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Incl. Points or Nodes [in " + unitAbbreviation + "]", "(P)",
+      pManager.AddBrepParameter($"Brep [in {unitAbbreviation}]", "B", "Brep (can be non-planar)",
+        GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Incl. Points or Nodes [in {unitAbbreviation}]", "(P)",
         "Inclusion points or Nodes", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]",
-        "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
+      pManager.AddGenericParameter($"Incl. Curves or 1D Members [in {unitAbbreviation}]", "(C)",
+        "Inclusion curves or 1D Members", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size",
+      pManager.AddNumberParameter($"Mesh Size [{unitAbbreviation}]", "Ms", "Targe mesh size",
         GH_ParamAccess.item, 0);
 
       pManager[1].Optional = true;
@@ -114,8 +114,8 @@ namespace GsaGH.Components {
             string type = objectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
-            this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type "
-              + type + " to point or node");
+            this.AddRuntimeError(
+              $"Unable to convert incl. Point/Node input parameter of type {type} to point or node");
           }
         }
       }
@@ -134,8 +134,8 @@ namespace GsaGH.Components {
             string type = objectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
-            this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type "
-              + type + " to curve or 1D Member");
+            this.AddRuntimeError(
+              $"Unable to convert incl. Curve/Mem1D input parameter of type {type} to curve or 1D Member");
           }
         }
       }

@@ -143,44 +143,36 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
         GsaSectionModifierGoo.NickName,
-        GsaSectionModifierGoo.Description
-        + " to get or set information for. Leave blank to create a new "
-        + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
+        $"{GsaSectionModifierGoo.Description} to get or set information for. Leave blank to create a new {GsaSectionModifierGoo.Name}",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Area Modifier", "A",
-        "Modify the effective Area using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using an Area UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Area using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using an Area UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("I11 Modifier", "I11",
-        "Modify the effective Iyy/Iuu using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Iyy/Iuu using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using an AreaMomentOfInertia UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("I22 Modifier", "I22",
-        "Modify the effective Izz/Ivv using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Izz/Ivv using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using an AreaMomentOfInertia UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("J Modifier", "J",
-        "Modify the effective J using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective J using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using an AreaMomentOfInertia UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("K11 Modifier", "K11",
-        "Modify the effective Kyy/Kuu using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using a DecimalFraction UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Kyy/Kuu using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using a DecimalFraction UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("K22 Modifier", "K22",
-        "Modify the effective Kzz/Kvv using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using a DecimalFraction UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Kzz/Kvv using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using a DecimalFraction UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Volume Modifier", "V",
-        "Modify the effective Volume/Length using either:" + Environment.NewLine
-        + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)"
-        + Environment.NewLine + "TO using a VolumePerLength UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Volume/Length using either:{Environment.NewLine}BY using a Percentage UnitNumber (tweaking the existing value BY this percentage){Environment.NewLine}TO using a VolumePerLength UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Additional Mass", "+kg",
         "Additional mass per unit length using a LinearDensity UnitNumber", GH_ParamAccess.item);
@@ -194,9 +186,8 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
 
       pManager.AddIntegerParameter("Stress Option Type", "Str",
-        "Set the Stress Option Type. Accepted inputs are:" + Environment.NewLine
-        + "0: No calculation" + Environment.NewLine + "1: Use modified section properties"
-        + Environment.NewLine + "2: Use unmodified section properties", GH_ParamAccess.item);
+        $"Set the Stress Option Type. Accepted inputs are:{Environment.NewLine}0: No calculation{Environment.NewLine}1: Use modified section properties{Environment.NewLine}2: Use unmodified section properties",
+        GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -206,40 +197,35 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
         GsaSectionModifierGoo.NickName,
-        GsaSectionModifierGoo.Description + " with applied changes.", GH_ParamAccess.item);
+        $"{GsaSectionModifierGoo.Description} with applied changes.", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Area Modifier", "A",
-        "Modified effective Area in either:" + Environment.NewLine + "BY as a Percentage UnitNumber"
-        + Environment.NewLine + "TO as an Area UnitNumber", GH_ParamAccess.item);
+        $"Modified effective Area in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as an Area UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("I11 Modifier", "I11",
-        "Modify the effective Iyy/Iuu in either:" + Environment.NewLine
-        + "BY as a Percentage UnitNumber" + Environment.NewLine
-        + "TO as an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Iyy/Iuu in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as an AreaMomentOfInertia UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("I22 Modifier", "I22",
-        "Modify the effective Izz/Ivv in either:" + Environment.NewLine
-        + "BY as a Percentage UnitNumber" + Environment.NewLine
-        + "TO as an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Izz/Ivv in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as an AreaMomentOfInertia UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("J Modifier", "J",
-        "Modify the effective J in either:" + Environment.NewLine + "BY as a Percentage UnitNumber"
-        + Environment.NewLine + "TO as an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective J in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as an AreaMomentOfInertia UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("K11 Modifier", "K11",
-        "Modify the effective Kyy/Kuu in either:" + Environment.NewLine
-        + "BY as a Percentage UnitNumber" + Environment.NewLine
-        + "TO as a DecimalFraction UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Kyy/Kuu in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as a DecimalFraction UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("K22 Modifier", "K22",
-        "Modify the effective Kzz/Kvv in either:" + Environment.NewLine
-        + "BY as a Percentage UnitNumber" + Environment.NewLine
-        + "TO as a DecimalFraction UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Kzz/Kvv in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as a DecimalFraction UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Volume Modifier", "V",
-        "Modify the effective Volume/Length in either:" + Environment.NewLine
-        + "BY as a Percentage UnitNumber" + Environment.NewLine
-        + "TO as a VolumePerLength UnitNumber", GH_ParamAccess.item);
+        $"Modify the effective Volume/Length in either:{Environment.NewLine}BY as a Percentage UnitNumber{Environment.NewLine}TO as a VolumePerLength UnitNumber",
+        GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Additional Mass", "+kg", "Additional mass per unit length",
         GH_ParamAccess.item);
@@ -253,9 +239,8 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Stress Option Type", "Str",
-        "Get the Stress Option Type:" + Environment.NewLine + "0: No Calculation"
-        + Environment.NewLine + "1: Use Modified section properties" + Environment.NewLine
-        + "2: Use Unmodified section properties", GH_ParamAccess.item);
+        $"Get the Stress Option Type:{Environment.NewLine}0: No Calculation{Environment.NewLine}1: Use Modified section properties{Environment.NewLine}2: Use Unmodified section properties",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -374,9 +359,8 @@ namespace GsaGH.Components {
         if (da.GetData(8, ref ghTyp)) {
           if (ghTyp.Value is GH_UnitNumber unitNumber) {
             if (unitNumber.Value.QuantityInfo.UnitType != typeof(LinearDensityUnit)) {
-              this.AddRuntimeError("Error in " + Params.Input[8].NickName
-                + " input: Wrong unit type" + Environment.NewLine + "Unit type is "
-                + unitNumber.Value.QuantityInfo.Name + " but must be LinearDensity");
+              this.AddRuntimeError(
+                $"Error in {Params.Input[8].NickName} input: Wrong unit type{Environment.NewLine}Unit type is {unitNumber.Value.QuantityInfo.Name} but must be LinearDensity");
               return;
             }
 
@@ -385,14 +369,13 @@ namespace GsaGH.Components {
             if (LinearDensity.TryParse(txt, out LinearDensity res)) {
               modifier.AdditionalMass = res;
             } else {
-              this.AddRuntimeError("Unable to convert " + Params.Input[8].NickName
-                + " to LinearDensity");
+              this.AddRuntimeError(
+                $"Unable to convert {Params.Input[8].NickName} to LinearDensity");
             }
           } else if (GH_Convert.ToDouble(ghTyp.Value, out double val, GH_Conversion.Both)) {
             modifier.AdditionalMass = new LinearDensity(val, _linearDensityUnit);
           } else {
-            this.AddRuntimeError("Unable to convert " + Params.Input[8].NickName
-              + " to UnitNumber");
+            this.AddRuntimeError($"Unable to convert {Params.Input[8].NickName} to UnitNumber");
             return;
           }
         }
@@ -425,8 +408,8 @@ namespace GsaGH.Components {
               break;
 
             default:
-              this.AddRuntimeError("Error in " + Params.Input[11].NickName
-                + " input: Must be either 0, 1 or 2 but is " + stress);
+              this.AddRuntimeError(
+                $"Error in {Params.Input[11].NickName} input: Must be either 0, 1 or 2 but is {stress}");
               return;
           }
         } else if (GH_Convert.ToString(obj, out string stressString, GH_Conversion.Both)) {
@@ -437,15 +420,13 @@ namespace GsaGH.Components {
           } else if (stressString.ToLower().Replace(" ", string.Empty).Contains("mod")) {
             modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
           } else {
-            this.AddRuntimeError("Error in " + Params.Input[11].NickName
-              + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '"
-              + stress + "'");
+            this.AddRuntimeError(
+              $"Error in {Params.Input[11].NickName} input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '{stress}'");
             return;
           }
         } else {
-          this.AddRuntimeError("Error in " + Params.Input[11].NickName
-            + " input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is "
-            + stress + "'");
+          this.AddRuntimeError(
+            $"Error in {Params.Input[11].NickName} input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is {stress}'");
           return;
         }
       }
@@ -502,8 +483,8 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      Message = Length.GetAbbreviation(_lengthUnit) + ", "
-        + LinearDensity.GetAbbreviation(_linearDensityUnit);
+      Message
+        = $"{Length.GetAbbreviation(_lengthUnit)}, {LinearDensity.GetAbbreviation(_linearDensityUnit)}";
     }
   }
 }

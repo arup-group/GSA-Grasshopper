@@ -100,8 +100,8 @@ namespace GsaGH.Components.GraveyardComp {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
         GsaMember1dGoo.NickName,
-        GsaMember1dGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaMember1dGoo.Name, GH_ParamAccess.item);
+        $"{GsaMember1dGoo.Description} to get or set information for. Leave blank to create a new {GsaMember1dGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member1d Number", "ID",
         "Set Member Number. If ID is set it will replace any existing 1D Member in the model.",
         GH_ParamAccess.item);
@@ -111,17 +111,10 @@ namespace GsaGH.Components.GraveyardComp {
       pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Member Type", "mT",
-        "Set 1D Member Type" + Environment.NewLine
-        + "Default is 0: Generic 1D - Accepted inputs are:" + Environment.NewLine + "2: Beam"
-        + Environment.NewLine + "3: Column" + Environment.NewLine + "6: Cantilever"
-        + Environment.NewLine + "8: Compos" + Environment.NewLine + "9: Pile" + Environment.NewLine
-        + "11: Void cutter", GH_ParamAccess.item);
+        $"Set 1D Member Type{Environment.NewLine}Default is 0: Generic 1D - Accepted inputs are:{Environment.NewLine}2: Beam{Environment.NewLine}3: Column{Environment.NewLine}6: Cantilever{Environment.NewLine}8: Compos{Environment.NewLine}9: Pile{Environment.NewLine}11: Void cutter",
+        GH_ParamAccess.item);
       pManager.AddTextParameter("1D Element Type", "eT",
-        "Set Element 1D Type" + Environment.NewLine + "Accepted inputs are:" + Environment.NewLine
-        + "1: Bar" + Environment.NewLine + "2: Beam" + Environment.NewLine + "3: Spring"
-        + Environment.NewLine + "9: Link" + Environment.NewLine + "10: Cable" + Environment.NewLine
-        + "19: Spacer" + Environment.NewLine + "20: Strut" + Environment.NewLine + "21: Tie"
-        + Environment.NewLine + "23: Rod" + Environment.NewLine + "24: Damper",
+        $"Set Element 1D Type{Environment.NewLine}Accepted inputs are:{Environment.NewLine}1: Bar{Environment.NewLine}2: Beam{Environment.NewLine}3: Spring{Environment.NewLine}9: Link{Environment.NewLine}10: Cable{Environment.NewLine}19: Spacer{Environment.NewLine}20: Strut{Environment.NewLine}21: Tie{Environment.NewLine}23: Rod{Environment.NewLine}24: Damper",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
         GH_ParamAccess.item);
@@ -138,7 +131,7 @@ namespace GsaGH.Components.GraveyardComp {
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
+        $"Set {GsaBucklingLengthFactorsGoo.Name}", GsaBucklingLengthFactorsGoo.NickName,
         GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour",
@@ -156,7 +149,7 @@ namespace GsaGH.Components.GraveyardComp {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
-        GsaMember1dGoo.NickName, GsaMember1dGoo.Description + " with applied changes.",
+        GsaMember1dGoo.NickName, $"{GsaMember1dGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member1d Number", "ID", "Get Member Number",
         GH_ParamAccess.item);
@@ -183,7 +176,7 @@ namespace GsaGH.Components.GraveyardComp {
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
+        $"Get {GsaBucklingLengthFactorsGoo.Name}", GsaBucklingLengthFactorsGoo.NickName,
         GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 

@@ -314,7 +314,7 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.Displacement when (int)_disp < 4:
-          Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name = $"Values [{lengthunitAbbreviation}]";
           break;
 
         case FoldMode.Displacement:
@@ -322,19 +322,18 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force when ((int)_disp < 4) | _isShear:
-          Params.Output[2].Name = "Legend Values ["
-            + ForcePerLength.GetAbbreviation(DefaultUnits.ForcePerLengthUnit) + "/"
-            + lengthunitAbbreviation + "]";
+          Params.Output[2].Name
+            = $"Legend Values [{ForcePerLength.GetAbbreviation(DefaultUnits.ForcePerLengthUnit)}/{lengthunitAbbreviation}]";
           break;
 
         case FoldMode.Force:
-          Params.Output[2].Name = "Legend Values [" + Force.GetAbbreviation(DefaultUnits.ForceUnit)
-            + "·" + lengthunitAbbreviation + "/" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name
+            = $"Legend Values [{Force.GetAbbreviation(DefaultUnits.ForceUnit)}·{lengthunitAbbreviation}/{lengthunitAbbreviation}]";
           break;
 
         case FoldMode.Stress:
-          Params.Output[2].Name = "Legend Values ["
-            + Pressure.GetAbbreviation(DefaultUnits.StressUnitResult) + "]";
+          Params.Output[2].Name
+            = $"Legend Values [{Pressure.GetAbbreviation(DefaultUnits.StressUnitResult)}]";
           break;
       }
     }
@@ -395,15 +394,11 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Element filter list", "El",
-        "Filter import by list." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item, "All");
       pManager.AddColourParameter("Colour", "Co",
-        "Optional list of colours to override default colours" + Environment.NewLine
-        + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+        $"Optional list of colours to override default colours{Environment.NewLine}A new gradient will be created from the input list of colours",
+        GH_ParamAccess.list);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
     }
@@ -415,7 +410,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Mesh", "M", "Mesh with coloured result values",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values",
+      pManager.AddGenericParameter($"Values [{lengthunitAbbreviation}]", "LT", "Legend Values",
         GH_ParamAccess.list);
     }
 
@@ -432,19 +427,17 @@ namespace GsaGH.Components {
         result = goo.Value;
         switch (result.Type) {
           case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
-            this.AddRuntimeWarning("Combination case contains "
-              + result.SelectedPermutationIds.Count
-              + " - only one permutation can be displayed at a time." + Environment.NewLine
-              + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+            this.AddRuntimeWarning(
+              $"Combination case contains {result.SelectedPermutationIds.Count} - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations");
+            _case = $"Case C{result.CaseId} P{result.SelectedPermutationIds[0]}";
             break;
 
           case GsaResult.CaseType.Combination:
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+            _case = $"Case C{result.CaseId} P{result.SelectedPermutationIds[0]}";
             break;
 
           case GsaResult.CaseType.AnalysisCase:
-            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+            _case = $"Case A{result.CaseId}{Environment.NewLine}{result.CaseName}";
             break;
         }
       } else {
@@ -792,34 +785,34 @@ namespace GsaGH.Components {
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
             Length displacement = new Length(t, _lengthUnit).ToUnit(_lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
+            _legendValues.Add(displacement.ToString($"f{significantDigits}"));
             ts.Add(new GH_UnitNumber(displacement));
             break;
           }
           case FoldMode.Displacement: {
             var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
+            _legendValues.Add(rotation.ToString($"s{significantDigits}"));
             ts.Add(new GH_UnitNumber(rotation));
             break;
           }
           case FoldMode.Force when ((int)_disp < 4) | _isShear: {
             var forcePerLength = new ForcePerLength(t, DefaultUnits.ForcePerLengthUnit);
-            _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
+            _legendValues.Add(forcePerLength.ToString($"s{significantDigits}"));
             ts.Add(new GH_UnitNumber(forcePerLength));
             break;
           }
           case FoldMode.Force: {
             IQuantity length = new Length(0, _lengthUnit);
             string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-            _legendValues.Add(new Force(t, DefaultUnits.ForceUnit).ToString("s" + significantDigits)
-              + lengthunitAbbreviation + "/" + lengthunitAbbreviation);
+            _legendValues.Add(
+              $"{new Force(t, DefaultUnits.ForceUnit).ToString($"s{significantDigits}")}{lengthunitAbbreviation}/{lengthunitAbbreviation}");
             var moment = new Moment(t, DefaultUnits.MomentUnit);
             ts.Add(new GH_UnitNumber(moment));
             break;
           }
           case FoldMode.Stress: {
             var stress = new Pressure(t, DefaultUnits.StressUnitResult);
-            _legendValues.Add(stress.ToString("s" + significantDigits));
+            _legendValues.Add(stress.ToString($"s{significantDigits}"));
             ts.Add(new GH_UnitNumber(stress));
             break;
           }
@@ -879,7 +872,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + " Parameters");
+      RecordUndoEvent($"{_mode} Parameters");
       _mode = FoldMode.Displacement;
 
       _slider = true;
@@ -893,7 +886,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + " Parameters");
+      RecordUndoEvent($"{_mode} Parameters");
       _mode = FoldMode.Force;
 
       _slider = false;
@@ -908,7 +901,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      RecordUndoEvent(_mode + " Parameters");
+      RecordUndoEvent($"{_mode} Parameters");
       _mode = FoldMode.Stress;
 
       _slider = false;

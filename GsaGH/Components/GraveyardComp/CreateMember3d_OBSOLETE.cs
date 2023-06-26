@@ -37,7 +37,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[2].Name = $"Mesh Size [{Length.GetAbbreviation(_lengthUnit)}]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -60,7 +60,7 @@ namespace GsaGH.Components {
       pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size",
+      pManager.AddGenericParameter($"Mesh Size [{unitAbbreviation}]", "Ms", "Targe mesh size",
         GH_ParamAccess.item);
 
       pManager[1].Optional = true;

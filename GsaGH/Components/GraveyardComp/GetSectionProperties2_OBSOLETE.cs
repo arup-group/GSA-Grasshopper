@@ -51,15 +51,15 @@ namespace GsaGH.Components {
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
-      Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
-      Params.Output[1].Name = "Moment of Inertia y-y ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[2].Name = "Moment of Inertia z-z ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      Params.Output[3].Name = "Moment of Inertia y-z ["
-        + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      Params.Output[0].Name = $"Area [{Area.GetAbbreviation(areaUnit)}]";
+      Params.Output[1].Name
+        = $"Moment of Inertia y-y [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]";
+      Params.Output[2].Name
+        = $"Moment of Inertia z-z [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]";
+      Params.Output[3].Name
+        = $"Moment of Inertia y-z [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]";
       Params.Output[4].Name
-        = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+        = $"Torsion constant [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]";
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
@@ -103,26 +103,26 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName,
-        GsaSectionGoo.Description + " to get a bit more info out of.", GH_ParamAccess.item);
+        $"{GsaSectionGoo.Description} to get a bit more info out of.", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
-      pManager.AddGenericParameter("Area [" + Area.GetAbbreviation(areaUnit) + "]", "A",
-        "Section Area", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Area [{Area.GetAbbreviation(areaUnit)}]", "A", "Section Area",
+        GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Moment of Inertia y-y [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "Iyy",
+        $"Moment of Inertia y-y [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]", "Iyy",
         "Section Moment of Intertia around local y-y axis", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Moment of Inertia z-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "Izz",
+        $"Moment of Inertia z-z [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]", "Izz",
         "Section Moment of Intertia around local z-z axis", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Moment of Inertia y-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "Iyz",
+        $"Moment of Inertia y-z [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]", "Iyz",
         "Section Moment of Intertia around local y-z axis", GH_ParamAccess.item);
       pManager.AddGenericParameter(
-        "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]", "J",
+        $"Torsion constant [{AreaMomentOfInertia.GetAbbreviation(inertiaUnit)}]", "J",
         "Section Torsion constant J", GH_ParamAccess.item);
       pManager.AddGenericParameter("Shear Area Factor in y", "Ky",
         "Section Shear Area Factor in local y-direction", GH_ParamAccess.item);
@@ -149,7 +149,7 @@ namespace GsaGH.Components {
         if (GsaSection.ValidProfile(profile)) {
           section = new GsaSection(profile);
         } else {
-          this.AddRuntimeWarning("Invalid profile syntax: " + profile);
+          this.AddRuntimeWarning($"Invalid profile syntax: {profile}");
           return;
         }
       }

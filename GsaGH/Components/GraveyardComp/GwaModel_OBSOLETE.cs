@@ -43,11 +43,11 @@ namespace GsaGH.Components {
       string gwa = string.Empty;
       var strings = new List<string>();
       if (da.GetDataList(0, strings)) {
-        gwa = strings.Aggregate(gwa, (current, s) => current + s + "\n");
+        gwa = strings.Aggregate(gwa, (current, s) => $"{current}{s}\n");
       }
 
       m.GwaCommand(gwa);
-      string temp = Path.GetTempPath() + Guid.NewGuid() + ".gwb";
+      string temp = $"{Path.GetTempPath()}{Guid.NewGuid()}.gwb";
       m.SaveAs(temp);
       var gsaGh = new GsaModel();
       gsaGh.Model.Open(temp);

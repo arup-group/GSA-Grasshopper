@@ -49,8 +49,8 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember2dParameter(), GsaMember2dGoo.Name,
         GsaMember2dGoo.NickName,
-        GsaMember2dGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaMember2dGoo.Name, GH_ParamAccess.item);
+        $"{GsaMember2dGoo.Description} to get or set information for. Leave blank to create a new {GsaMember2dGoo.Name}",
+        GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member2d Number", "ID",
         "Set Member Number. If ID is set it will replace any existing 2d Member in the model",
         GH_ParamAccess.item);
@@ -67,14 +67,10 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Member Type", "mT",
-        "Set 2D Member Type" + Environment.NewLine
-        + "Default is 1: Generic 2D - Accepted inputs are:" + Environment.NewLine + "4: Slab"
-        + Environment.NewLine + "5: Wall" + Environment.NewLine + "7: Ribbed Slab"
-        + Environment.NewLine + "12: Void-cutter", GH_ParamAccess.item);
+        $"Set 2D Member Type{Environment.NewLine}Default is 1: Generic 2D - Accepted inputs are:{Environment.NewLine}4: Slab{Environment.NewLine}5: Wall{Environment.NewLine}7: Ribbed Slab{Environment.NewLine}12: Void-cutter",
+        GH_ParamAccess.item);
       pManager.AddTextParameter("2D Element Type", "eT",
-        "Set Member 2D Analysis Element Type" + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "0: Linear - Tri3/Quad4 Elements (default)" + Environment.NewLine
-        + "1: Quadratic - Tri6/Quad8 Elements" + Environment.NewLine + "2: Rigid Diaphragm",
+        $"Set Member 2D Analysis Element Type{Environment.NewLine}Accepted inputs are:{Environment.NewLine}0: Linear - Tri3/Quad4 Elements (default){Environment.NewLine}1: Quadratic - Tri6/Quad8 Elements{Environment.NewLine}2: Rigid Diaphragm",
         GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
@@ -102,7 +98,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaMember2dParameter(), GsaMember2dGoo.Name,
-        GsaMember2dGoo.NickName, GsaMember2dGoo.Description + " with applied changes.",
+        GsaMember2dGoo.NickName, $"{GsaMember2dGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
       pManager.AddBrepParameter("Brep", "B", "Member Brep", GH_ParamAccess.item);
@@ -119,8 +115,7 @@ namespace GsaGH.Components {
 
       pManager.AddTextParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
       pManager.AddTextParameter("2D Element Type", "eT",
-        "Get Member 2D Analysis Element Type" + Environment.NewLine
-        + "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm",
+        $"Get Member 2D Analysis Element Type{Environment.NewLine}0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm",
         GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset",

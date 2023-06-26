@@ -29,7 +29,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaElement2dParameter(), GsaElement2dGoo.Name,
         GsaElement2dGoo.NickName,
-        GsaElement2dGoo.Description + " to get or set information for." + GsaElement2dGoo.Name,
+        $"{GsaElement2dGoo.Description} to get or set information for.{GsaElement2dGoo.Name}",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Element2d Number", "ID",
         "Set Element Number. If ID is set it will replace any existing 2D Element in the model",
@@ -56,7 +56,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaElement2dParameter(), GsaElement2dGoo.Name,
-        GsaElement2dGoo.NickName, GsaElement2dGoo.Description + " with applied changes.",
+        GsaElement2dGoo.NickName, $"{GsaElement2dGoo.Description} with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
       pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
@@ -66,9 +66,8 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element Type", "eT",
-        "Get Element 2D Type." + Environment.NewLine
-        + "Type can not be set; it is either Tri3 or Quad4" + Environment.NewLine
-        + "depending on Rhino/Grasshopper mesh face type", GH_ParamAccess.list);
+        $"Get Element 2D Type.{Environment.NewLine}Type can not be set; it is either Tri3 or Quad4{Environment.NewLine}depending on Rhino/Grasshopper mesh face type",
+        GH_ParamAccess.list);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset",
         GH_ParamAccess.list);
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
@@ -95,8 +94,8 @@ namespace GsaGH.Components {
       if (da.GetDataList(1, ghId)) {
         for (int i = 0; i < ghId.Count; i++) {
           if (i > elem.ApiElements.Count - 1) {
-            this.AddRuntimeWarning("ID input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess ID's have been ignored");
+            this.AddRuntimeWarning(
+              $"ID input List Length is longer than number of elements.{Environment.NewLine}Excess ID's have been ignored");
             continue;
           }
 
@@ -106,9 +105,8 @@ namespace GsaGH.Components {
 
           if (inIds.Contains(id)) {
             if (id > 0) {
-              this.AddRuntimeWarning("ID input(" + i + ") = " + id
-                + " already exist in your input list." + Environment.NewLine
-                + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
+              this.AddRuntimeWarning(
+                $"ID input({i}) = {id} already exist in your input list.{Environment.NewLine}You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
               continue;
             }
           }
@@ -124,8 +122,8 @@ namespace GsaGH.Components {
         var prop2Ds = new List<GsaProp2d>();
         for (int i = 0; i < ghTypes.Count; i++) {
           if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("PA input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess PA's have been ignored");
+            this.AddRuntimeWarning(
+              $"PA input List Length is longer than number of elements.{Environment.NewLine}Excess PA's have been ignored");
           }
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
@@ -150,8 +148,8 @@ namespace GsaGH.Components {
         var inGroups = new List<int>();
         for (int i = 0; i < ghGroups.Count; i++) {
           if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Group input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Group numbers have been ignored");
+            this.AddRuntimeWarning(
+              $"Group input List Length is longer than number of elements.{Environment.NewLine}Excess Group numbers have been ignored");
             continue;
           }
 
@@ -168,8 +166,8 @@ namespace GsaGH.Components {
         var inOffsets = new List<GsaOffset>();
         for (int i = 0; i < ghTypes.Count; i++) {
           if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Offset input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Offsets have been ignored");
+            this.AddRuntimeWarning(
+              $"Offset input List Length is longer than number of elements.{Environment.NewLine}Excess Offsets have been ignored");
           }
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
@@ -180,9 +178,8 @@ namespace GsaGH.Components {
             if (GH_Convert.ToDouble(ghTyp.Value, out double z, GH_Conversion.Both)) {
               offset.Z = new Length(z, DefaultUnits.LengthUnitGeometry);
               string unitAbbreviation = string.Concat(offset.Z.ToString().Where(char.IsLetter));
-              this.AddRuntimeRemark("Offset input converted to Z-offset in [" + unitAbbreviation
-                + "]" + Environment.NewLine
-                + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+              this.AddRuntimeRemark(
+                $"Offset input converted to Z-offset in [{unitAbbreviation}]{Environment.NewLine}Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
             } else {
               this.AddRuntimeError("Unable to convert Offset input to Offset or double");
               return;
@@ -200,8 +197,8 @@ namespace GsaGH.Components {
         var inNames = new List<string>();
         for (int i = 0; i < ghStrings.Count; i++) {
           if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Name input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Names have been ignored");
+            this.AddRuntimeWarning(
+              $"Name input List Length is longer than number of elements.{Environment.NewLine}Excess Names have been ignored");
             continue;
           }
 
@@ -218,8 +215,8 @@ namespace GsaGH.Components {
         var inColours = new List<Color>();
         for (int i = 0; i < ghColours.Count; i++) {
           if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Colour input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Colours have been ignored");
+            this.AddRuntimeWarning(
+              $"Colour input List Length is longer than number of elements.{Environment.NewLine}Excess Colours have been ignored");
             continue;
           }
 
@@ -237,8 +234,8 @@ namespace GsaGH.Components {
         var inDummies = new List<bool>();
         for (int i = 0; i < ghDummy.Count; i++) {
           if (i > elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dummy input List Length is longer than number of elements."
-              + Environment.NewLine + "Excess Dummy booleans have been ignored");
+            this.AddRuntimeWarning(
+              $"Dummy input List Length is longer than number of elements.{Environment.NewLine}Excess Dummy booleans have been ignored");
             continue;
           }
 
