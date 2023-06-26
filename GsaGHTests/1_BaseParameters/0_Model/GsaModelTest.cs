@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters {
       string file = GsaFile.SteelDesignSimple;
       m.Model.Open(file);
 
-      string tempfilename = Path.GetTempPath() + "GSA-Grasshopper_temp.gwb";
+      string tempfilename = $"{Path.GetTempPath()}GSA-Grasshopper_temp.gwb";
       ReturnValue returnValue = m.Model.SaveAs(tempfilename);
 
       Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
