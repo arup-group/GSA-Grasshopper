@@ -693,6 +693,10 @@ namespace GsaGH.Components {
         0, 1, 2,
       };
 
+      if (model.ModelUnit != _lengthUnit) {
+        model.ModelUnit = _lengthUnit;
+      }
+
       try {
         Parallel.ForEach(steps, i => {
           switch (i) {
