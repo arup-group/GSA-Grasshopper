@@ -196,7 +196,7 @@ namespace GsaGH.Helpers.Export {
           return AddOrSetStandardMaterial(material, ref apiMaterials.AluminiumMaterials);
 
         case MatType.Concrete:
-          UpdateConcreteCode(material, ref apiMaterials);
+          UpdateCode(material, ref apiMaterials);
           return AddOrSetStandardMaterial(material, ref apiMaterials.ConcreteMaterials);
 
         case MatType.Fabric:
@@ -209,7 +209,7 @@ namespace GsaGH.Helpers.Export {
           return AddOrSetStandardMaterial(material, ref apiMaterials.GlassMaterials);
 
         case MatType.Steel:
-          UpdateSteelCode(material, ref apiMaterials);
+          UpdateCode(material, ref apiMaterials);
           return AddOrSetStandardMaterial(material, ref apiMaterials.SteelMaterials);
 
         case MatType.Timber:
@@ -334,20 +334,20 @@ namespace GsaGH.Helpers.Export {
       return newMaterials;
     }
 
-    private static void UpdateConcreteCode(GsaMaterial material, ref Materials apiMaterials) {
-      if (apiMaterials.ConcreteDesignCode == string.Empty) {
+    private static void UpdateCode(GsaMaterial material, ref Materials apiMaterials) {
+      if (apiMaterials.ConcreteDesignCode == string.Empty 
+        && apiMaterials.SteelDesignCode == string.Empty) {
         apiMaterials.ConcreteDesignCode = material.ConcreteDesignCodeName;
-      } else if (apiMaterials.ConcreteDesignCode != material.ConcreteDesignCodeName) {
-        throw new Exception($"Concrete material with {material.ConcreteDesignCodeName} Design Code" +
+        apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
+      }
+      
+      if (apiMaterials.ConcreteDesignCode != material.ConcreteDesignCodeName) {
+        throw new Exception($"Material with {material.ConcreteDesignCodeName} Design Code" +
           $" cannot be added to a model with {apiMaterials.ConcreteDesignCode} Design Code.");
       }
-    }
 
-    private static void UpdateSteelCode(GsaMaterial material, ref Materials apiMaterials) {
-      if (apiMaterials.SteelDesignCode == string.Empty) {
-        apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
-      } else if (apiMaterials.SteelDesignCode != material.SteelDesignCodeName) {
-        throw new Exception($"Concrete material with {material.SteelDesignCodeName} Design Code" +
+      if (apiMaterials.SteelDesignCode != material.SteelDesignCodeName) {
+        throw new Exception($"Material with {material.SteelDesignCodeName} Design Code" +
           $" cannot be added to a model with {apiMaterials.SteelDesignCode} Design Code.");
       }
     }
