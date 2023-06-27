@@ -15,7 +15,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void WhenCreated_ThenComponentGuid_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      var expectedGuid = new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
+      var expectedGuid = new Guid("3f359541-342e-4323-be43-d12c4708f2e5");
       Assert.Equal(expectedGuid, obj.ComponentGuid);
     }
 
@@ -54,7 +54,7 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Fact]
-    private void InputParamsAreValid() {
+    public void InputParamsAreValid() {
       var obj = new ReactionForceDiagrams();
       var expectedParam = new GsaResultParameter() {
         Name = "Result",
@@ -74,6 +74,14 @@ namespace GsaGHTests.Components.Results {
         Access = GH_ParamAccess.item,
         Optional = true,
       };
+      var expectedColorParam = new Param_Colour() {
+        Name = "Colour",
+        NickName = "Co",
+        Description
+          = "[Optional] Colour to override default colour",
+        Access = GH_ParamAccess.item,
+        Optional = true,
+      };
       var expectedNumberParam = new Param_Number() {
         Name = "Scalar",
         NickName = "x:X",
@@ -86,6 +94,7 @@ namespace GsaGHTests.Components.Results {
       var expectedInputs = new List<IGH_Param>() {
         expectedParam,
         expectedStringParam,
+        expectedColorParam,
         expectedNumberParam,
       };
 
@@ -103,7 +112,7 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Fact]
-    private void OutputParamsAreValid() {
+    public void OutputParamsAreValid() {
       var obj = new ReactionForceDiagrams();
       var expectedPointParam = new Param_Point() {
         Name = "Anchor Point",
