@@ -127,7 +127,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
         "Set Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
+        "Reference Surface Middle (default) = 0, Top = 1, Bottom = 2", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp2dModifierParameter());
@@ -161,7 +161,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]", "Th",
         "Get Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
+        "Reference Surface Middle (default) = 0, Top = 1, Bottom = 2", GH_ParamAccess.item);
       pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp2dModifierParameter());
@@ -236,7 +236,8 @@ namespace GsaGH.Components {
             prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
           }
         } catch {
-          this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value + " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
+          this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value +
+            " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
           return;
         }
       }

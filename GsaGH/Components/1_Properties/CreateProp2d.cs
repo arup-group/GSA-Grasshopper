@@ -99,9 +99,10 @@ namespace GsaGH.Components {
           SetMaterialInputAt(1);
 
           if (_mode != Prop2dType.PlaneStress) {
-            SetInputProperties(2, "RS", "Reference Surface", "Reference Surface Top = 0," +
-              "Middle = 1 (default), Bottom = 2", optional: true);
-            SetInputProperties(3, "Off", $"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Additional Offset", optional: true);
+            SetInputProperties(2, "RS", "Reference Surface",
+              "Reference Surface Middle = 0 (default), Top = 1, Bottom = 2", optional: true);
+            SetInputProperties(3, "Off", $"Offset [{Length.GetAbbreviation(_lengthUnit)}]",
+              "Additional Offset", optional: true);
           }
           return;
       }
@@ -130,9 +131,9 @@ namespace GsaGH.Components {
         "Thk", "Section thickness", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Reference Surface", "RS",
-        "Reference Surface Middle = 0, Top = 1 (default), Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
-        GH_ParamAccess.item);
+        "Reference Surface Middle = 0 (default), Top = 1, Bottom = 2", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off",
+        "Additional Offset", GH_ParamAccess.item);
       pManager[2].Optional = true;
       pManager[3].Optional = true;
     }
@@ -167,7 +168,7 @@ namespace GsaGH.Components {
           GsaMaterialGoo materialGoo = null;
           if (da.GetData(1, ref materialGoo)) {
             prop.Material = materialGoo.Value;
-          } 
+          }
 
           if (_mode == Prop2dType.FlatPlate || _mode == Prop2dType.Shell || _mode == Prop2dType.CurvedShell) {
             var ghReferenceSurface = new GH_ObjectWrapper();
@@ -179,7 +180,8 @@ namespace GsaGH.Components {
                   prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
                 }
               } catch {
-                this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value + " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
+                this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value +
+                  " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
                 return;
               }
             } else {
@@ -188,7 +190,7 @@ namespace GsaGH.Components {
 
             prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
           }
-        } 
+        }
       } else {
         prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (prop.SupportType != SupportType.Auto && prop.SupportType != SupportType.AllEdges) {
