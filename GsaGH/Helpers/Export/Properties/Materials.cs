@@ -38,7 +38,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void Assemble(ref Model apiModel) {
-      RebuildOtherMaterialsToDesignCodes(apiModel);
+      RebuildMaterialsToDesignCodes(apiModel);
 
       if (AnalysisMaterials.Count > 0) {
         foreach (KeyValuePair<int, AnalysisMaterial> mat in AnalysisMaterials.ReadOnlyDictionary) {
@@ -186,6 +186,7 @@ namespace GsaGH.Helpers.Export {
       if (!apiMaterials._materials.ContainsKey(material.Guid)) {
         apiMaterials._materials.Add(material.Guid, material);
       }
+
       if (material.IsCustom) {
         return AddOrSetCustomMaterial(material, ref apiMaterials.AnalysisMaterials);
       }
@@ -298,13 +299,25 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    private void RebuildOtherMaterialsToDesignCodes(Model apiModel) {
-      FrpMaterials = RebuildApiMaterials<FrpMaterial>(apiModel, FrpMaterials.GuidDictionary);
+    private void RebuildMaterialsToDesignCodes(Model apiModel) {
+      SteelMaterials = RebuildApiMaterials<SteelMaterial>(
+        apiModel, SteelMaterials.GuidDictionary);
+      
+      ConcreteMaterials = RebuildApiMaterials<ConcreteMaterial>(
+        apiModel, ConcreteMaterials.GuidDictionary);
+      
+      FrpMaterials = RebuildApiMaterials<FrpMaterial>(
+        apiModel, FrpMaterials.GuidDictionary);
+      
       AluminiumMaterials = RebuildApiMaterials<AluminiumMaterial>(
         apiModel, AluminiumMaterials.GuidDictionary); ;
+      
       TimberMaterials = RebuildApiMaterials<TimberMaterial>(
         apiModel, TimberMaterials.GuidDictionary);
-      GlassMaterials = RebuildApiMaterials<GlassMaterial>(apiModel, GlassMaterials.GuidDictionary);
+      
+      GlassMaterials = RebuildApiMaterials<GlassMaterial>(
+        apiModel, GlassMaterials.GuidDictionary);
+      
       FabricMaterials = RebuildApiMaterials<FabricMaterial>(
         apiModel, FabricMaterials.GuidDictionary);
     }
