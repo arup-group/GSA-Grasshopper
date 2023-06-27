@@ -31,7 +31,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to display GSA reaction forces
   /// </summary>
-  public class ReactionForceDiagrams : GH_OasysDropDownComponent {
+  public class ReactionForceDiagrams_OBSOLETE : GH_OasysDropDownComponent {
     private enum DisplayValue {
       X,
       Y,
@@ -43,8 +43,8 @@ namespace GsaGH.Components {
       ResXxyyzz,
     }
 
-    public override Guid ComponentGuid => new Guid("3f359541-342e-4323-be43-d12c4708f2e5");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ReactionForceDiagram;
     private readonly List<string> _reactionStringList = new List<string>(new[] {
@@ -66,7 +66,7 @@ namespace GsaGH.Components {
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
     private bool _showText = true;
 
-    public ReactionForceDiagrams() : base("Reaction Force Diagrams", "ReactionForce",
+    public ReactionForceDiagrams_OBSOLETE() : base("Reaction Force Diagrams", "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams", CategoryName.Name(),
       SubCategoryName.Cat5()) { }
 
@@ -170,15 +170,11 @@ namespace GsaGH.Components {
         + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
-      pManager.AddColourParameter(
-        "Colour", "Co", "[Optional] Colour to override default colour", GH_ParamAccess.item);
+      pManager[1].Optional = true;
       pManager.AddNumberParameter("Scalar", "x:X",
         "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
         GH_ParamAccess.item);
-
-      for (int i = 1; i < pManager.ParamCount; i++) {
-        pManager[i].Optional = true;
-      }
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -214,23 +210,14 @@ namespace GsaGH.Components {
         lengthUnit, gsaResult.Model.Model.Axes());
 
       double scale = 1;
-      if (!dataAccess.GetData(3, ref scale)) {
+      if (!dataAccess.GetData(2, ref scale)) {
         scale = ComputeAutoScale(forceValues, gsaResult.Model.BoundingBox);
-      }
-
-      Color color = Color.Empty;
-      bool colourInput = false;
-      if (dataAccess.GetData(2, ref color)) {
-        colourInput = true;
       }
 
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes, node => {
         VectorResultGoo reactionForceVector = CreateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) {
-          if (colourInput) {
-            reactionForceVector.SetColor(color);
-          }
           _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
         }
       });
