@@ -521,24 +521,11 @@ namespace GsaGH.Parameters {
         return false;
       }
 
-      if (Math.Round(a.CoefficientOfThermalExpansion, 11) !=
-        Math.Round(b.CoefficientOfThermalExpansion, 11)) {
-        return false;
-      }
-
-      if (Math.Round(a.Density, 11) != Math.Round(b.Density, 11)) {
-        return false;
-      }
-
-      if (Math.Round(a.ElasticModulus, 11) != Math.Round(b.ElasticModulus, 11)) {
-        return false;
-      }
-
-      if (Math.Round(a.PoissonsRatio, 11) != Math.Round(b.PoissonsRatio, 11)) {
-        return false;
-      }
-
-      return true;
+      return Math.Round(a.CoefficientOfThermalExpansion, 11) == 
+        Math.Round(b.CoefficientOfThermalExpansion, 11)
+        && Math.Round(a.Density, 11) == Math.Round(b.Density, 11)
+        && Math.Round(a.ElasticModulus, 11) != Math.Round(b.ElasticModulus, 11)
+        && Math.Round(a.PoissonsRatio, 11) != Math.Round(b.PoissonsRatio, 11);
     }
 
     private AnalysisMaterial CreateCodeAnalysisMaterial(string name) {
