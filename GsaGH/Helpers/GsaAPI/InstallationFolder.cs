@@ -9,6 +9,6 @@ namespace GsaGH.Helpers.GsaApi {
   public class InstallationFolder {
     public static string GetPath
       => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys",
-        "GSA 10.1");
+        "GSA 10.2");
   }
 }

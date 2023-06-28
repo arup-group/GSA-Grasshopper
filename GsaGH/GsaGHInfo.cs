@@ -23,8 +23,8 @@ namespace GsaGH {
       =>
         //Return a short string describing the purpose of this GHA library.
         "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine + (isBeta ? disclaimer : string.Empty)
-        + Environment.NewLine + "A licensed version of GSA 10.1.65 or later installed in "
-        + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin." + Environment.NewLine
+        + Environment.NewLine + "A licensed version of GSA 10.2.x or later installed in "
+        + @"C:\Program Files\Oasys\GSA 10.2\ is required to use this plugin." + Environment.NewLine
         + "Contact oasys@arup.com to request a free trial version." + Environment.NewLine
         + TermsConditions + Environment.NewLine + Copyright;
     public override Bitmap Icon => Resources.GSALogo;
@@ -44,7 +44,7 @@ namespace GsaGH {
       $"including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. " +
       $"Future versions may contain breaking changes. Any files, results, or other types of output information created using " +
       $"{PluginName} should not be relied upon without thorough and independent checking. " +
-      $"{PluginName} {Vers} requires {ProductName} 10.1.{MinGsaVersion} or higher installed.";
+      $"{PluginName} {Vers} requires {ProductName} 10.2.{MinGsaVersion} or higher installed.";
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     internal static bool isBeta = true;
   }
@@ -85,7 +85,7 @@ namespace GsaGH {
           + gsaVers.FileBuildPart;
         if (gsaVers.FileBuildPart < GsaGhInfo.MinGsaVersion) {
           var exception = new Exception("Version " + GsaGhInfo.Vers
-            + " of GSA-Grasshopper requires GSA 10.1." + GsaGhInfo.MinGsaVersion + " installed. Please upgrade GSA.");
+            + " of GSA-Grasshopper requires GSA 10.2." + GsaGhInfo.MinGsaVersion + " installed. Please upgrade GSA.");
           var ghLoadingException
             = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);

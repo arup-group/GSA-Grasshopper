@@ -9,7 +9,7 @@ namespace GsaGHTests.Helper {
         if (steelDesignComplex == "") {
           steelDesignComplex
             = DownloadFile(
-              "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
+              "https://samples.oasys-software.com/gsa/10.2/Steel/Steel_Design_Complex.gwb");
         }
 
         return steelDesignComplex;
@@ -20,7 +20,7 @@ namespace GsaGHTests.Helper {
         if (steelDesignSimple == "") {
           steelDesignSimple
             = DownloadFile(
-              "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Simple.gwb");
+              "https://samples.oasys-software.com/gsa/10.2/Steel/Steel_Design_Simple.gwb");
         }
 
         return steelDesignSimple;
