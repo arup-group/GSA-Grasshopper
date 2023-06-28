@@ -60,7 +60,7 @@ steps:
   failOnStderr: false
 
 - powershell: |
-    Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{9E3AC20D-5051-423C-BC98-D0F5DCAC55EF}"
+    Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{9E3AC20D-5051-423C-BC98-D0F5DCAC55EF}"  
   displayName: 'List GSA Registry Fields'
   failOnStderr: false
 
