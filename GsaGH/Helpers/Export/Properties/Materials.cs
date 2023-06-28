@@ -38,7 +38,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void Assemble(ref Model apiModel) {
-      RebuildOtherMaterialsToDesignCodes(apiModel);
+      ValidateMaterialsToDesignCodes(apiModel);
 
       if (AnalysisMaterials.Count > 0) {
         foreach (KeyValuePair<int, AnalysisMaterial> mat in AnalysisMaterials.ReadOnlyDictionary) {
@@ -179,13 +179,12 @@ namespace GsaGH.Helpers.Export {
       return material == null ? 0 : AddMaterial(material, ref apiMaterials);
     }
 
-
-
     private static int AddMaterial(
       GsaMaterial material, ref Materials apiMaterials) {
       if (!apiMaterials._materials.ContainsKey(material.Guid)) {
         apiMaterials._materials.Add(material.Guid, material);
       }
+
       if (material.IsCustom) {
         return AddOrSetCustomMaterial(material, ref apiMaterials.AnalysisMaterials);
       }
@@ -195,7 +194,7 @@ namespace GsaGH.Helpers.Export {
           return AddOrSetStandardMaterial(material, ref apiMaterials.AluminiumMaterials);
 
         case MatType.Concrete:
-          UpdateConcreteCode(material, ref apiMaterials);
+          UpdateCode(material, ref apiMaterials);
           return AddOrSetStandardMaterial(material, ref apiMaterials.ConcreteMaterials);
 
         case MatType.Fabric:
@@ -208,7 +207,7 @@ namespace GsaGH.Helpers.Export {
           return AddOrSetStandardMaterial(material, ref apiMaterials.GlassMaterials);
 
         case MatType.Steel:
-          UpdateSteelCode(material, ref apiMaterials);
+          UpdateCode(material, ref apiMaterials);
           return AddOrSetStandardMaterial(material, ref apiMaterials.SteelMaterials);
 
         case MatType.Timber:
@@ -298,43 +297,68 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    private void RebuildOtherMaterialsToDesignCodes(Model apiModel) {
-      FrpMaterials = RebuildApiMaterials<FrpMaterial>(apiModel, FrpMaterials.GuidDictionary);
-      AluminiumMaterials = RebuildApiMaterials<AluminiumMaterial>(
+    private void ValidateMaterialsToDesignCodes(Model apiModel) {
+      SteelMaterials = ValidateOrRebuildApiMaterials<SteelMaterial>(
+        apiModel, SteelMaterials.GuidDictionary);
+      
+      ConcreteMaterials = ValidateOrRebuildApiMaterials<ConcreteMaterial>(
+        apiModel, ConcreteMaterials.GuidDictionary);
+      
+      FrpMaterials = ValidateOrRebuildApiMaterials<FrpMaterial>(
+        apiModel, FrpMaterials.GuidDictionary);
+      
+      AluminiumMaterials = ValidateOrRebuildApiMaterials<AluminiumMaterial>(
         apiModel, AluminiumMaterials.GuidDictionary); ;
-      TimberMaterials = RebuildApiMaterials<TimberMaterial>(
+      
+      TimberMaterials = ValidateOrRebuildApiMaterials<TimberMaterial>(
         apiModel, TimberMaterials.GuidDictionary);
-      GlassMaterials = RebuildApiMaterials<GlassMaterial>(apiModel, GlassMaterials.GuidDictionary);
-      FabricMaterials = RebuildApiMaterials<FabricMaterial>(
+      
+      GlassMaterials = ValidateOrRebuildApiMaterials<GlassMaterial>(
+        apiModel, GlassMaterials.GuidDictionary);
+      
+      FabricMaterials = ValidateOrRebuildApiMaterials<FabricMaterial>(
         apiModel, FabricMaterials.GuidDictionary);
     }
 
-    private GsaGuidDictionary<T> RebuildApiMaterials<T>(
+    private GsaGuidDictionary<T> ValidateOrRebuildApiMaterials<T>(
       Model apiModel, ReadOnlyDictionary<Guid, int> guidDictionary) {
       var newMaterials = new GsaGuidDictionary<T>(new Dictionary<int, T>());
       foreach (KeyValuePair<Guid, int> item in guidDictionary) {
         if (_materials.TryGetValue(item.Key, out GsaMaterial material)) {
-          material.RecreateForDesignCode(apiModel);
+          if (!material.AnalysisMaterialsModified) {
+            material.RecreateForDesignCode(apiModel);
+          }
+
           newMaterials.SetValue(item.Value, item.Key, (T)material.StandardMaterial);
         }
       }
       return newMaterials;
     }
 
-    private static void UpdateConcreteCode(GsaMaterial material, ref Materials apiMaterials) {
-      if (apiMaterials.ConcreteDesignCode == string.Empty) {
-        apiMaterials.ConcreteDesignCode = material.ConcreteDesignCodeName;
-      } else if (apiMaterials.ConcreteDesignCode != material.ConcreteDesignCodeName) {
-        throw new Exception($"Concrete material with {material.ConcreteDesignCodeName} Design Code" +
+    private static void UpdateCode(GsaMaterial material, ref Materials apiMaterials) {
+      if (apiMaterials.ConcreteDesignCode == string.Empty 
+        && apiMaterials.SteelDesignCode == string.Empty) {
+        if (material.AnalysisMaterialsModified) {
+          apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
+          apiMaterials.ConcreteDesignCode = material.ConcreteDesignCodeName;
+        } else if (material.MaterialType == MatType.Steel) {
+          apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
+        } else {
+          apiMaterials.ConcreteDesignCode = material.ConcreteDesignCodeName;
+        }
+      }
+
+      if (!material.AnalysisMaterialsModified) {
+        return;
+      }
+      
+      if (apiMaterials.ConcreteDesignCode != material.ConcreteDesignCodeName) {
+        throw new Exception($"Material with {material.ConcreteDesignCodeName} Design Code" +
           $" cannot be added to a model with {apiMaterials.ConcreteDesignCode} Design Code.");
       }
-    }
 
-    private static void UpdateSteelCode(GsaMaterial material, ref Materials apiMaterials) {
-      if (apiMaterials.SteelDesignCode == string.Empty) {
-        apiMaterials.SteelDesignCode = material.SteelDesignCodeName;
-      } else if (apiMaterials.SteelDesignCode != material.SteelDesignCodeName) {
-        throw new Exception($"Concrete material with {material.SteelDesignCodeName} Design Code" +
+      if (apiMaterials.SteelDesignCode != material.SteelDesignCodeName) {
+        throw new Exception($"Material with {material.SteelDesignCodeName} Design Code" +
           $" cannot be added to a model with {apiMaterials.SteelDesignCode} Design Code.");
       }
     }

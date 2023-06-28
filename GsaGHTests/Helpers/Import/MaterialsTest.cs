@@ -136,11 +136,11 @@ namespace GsaGHTests.Helpers.Import {
       string concreteCodeName = "EC2-1-1";
       var model = new GsaAPI.Model(concreteCodeName, steelCodeName);
 
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, steelCodeName)) {
+      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, string.Empty, steelCodeName)) {
         model.AddSteelMaterial(model.CreateSteelMaterial(grade));
       }
       foreach (string grade in
-        GsaMaterial.GetGradeNames(GsaMaterial.MatType.Concrete, "", concreteCodeName)) {
+        GsaMaterial.GetGradeNames(GsaMaterial.MatType.Concrete, concreteCodeName, string.Empty)) {
         model.AddConcreteMaterial(model.CreateConcreteMaterial(grade));
       }
       foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Frp)) {
