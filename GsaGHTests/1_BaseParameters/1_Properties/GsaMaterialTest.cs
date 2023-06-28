@@ -12,7 +12,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void CreateSteelStandardMaterialsTest() {
       foreach (string codeName in DesignCode.GetSteelDesignCodeNames()) {
-        List<string> gradeNames = GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, codeName);
+        List<string> gradeNames = GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, string.Empty, codeName);
 
         Assert.NotEmpty(gradeNames);
 
@@ -34,12 +34,12 @@ namespace GsaGHTests.Parameters {
     public void CreateConcreteStandardMaterialsTest() {
       foreach (string codeName in DesignCode.GetConcreteDesignCodeNames()) {
         List<string> gradeNames = GsaMaterial.GetGradeNames(
-          GsaMaterial.MatType.Concrete, "", codeName);
+          GsaMaterial.MatType.Concrete, codeName, string.Empty);
 
         Assert.NotEmpty(gradeNames);
 
         foreach (string grade in gradeNames) {
-          var material = new GsaMaterial(GsaMaterial.MatType.Concrete, grade, "", codeName);
+          var material = new GsaMaterial(GsaMaterial.MatType.Concrete, grade, codeName);
           Assert.NotNull(material);
           Assert.Equal(GsaMaterial.MatType.Concrete, material.MaterialType);
           DuplicateTest(material);
