@@ -60,8 +60,9 @@ steps:
   failOnStderr: false
 
 - powershell: |
-    Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{DA9D8CF0-713B-4E11-B1EB-5C2C47FD32A5}"  
+    Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{9E3AC20D-5051-423C-BC98-D0F5DCAC55EF}"  
   displayName: 'List GSA Registry Fields'
+  failOnStderr: false
 
 - task: NuGetToolInstaller@1
 
