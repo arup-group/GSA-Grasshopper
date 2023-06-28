@@ -15,17 +15,14 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using DiagramType = GsaGH.Parameters.Enums.DiagramType;
 using Line = GsaAPI.Line;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers;
 
 namespace GsaGH.Components {
@@ -39,7 +36,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Elem1dDiagram;
 
     private string _case = string.Empty;
-    private DiagramType _displayedDiagramType = DiagramType.AxialForceFx;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -50,20 +46,8 @@ namespace GsaGH.Components {
     public Elem1dResultDiagram() : base("1D Element Result Diagram", "ResultElem1dDiagram",
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) { }
 
-    public override void CreateAttributes() {
-      if (!_isInitialised) {
-        InitialiseDropdowns();
-      }
-
-      m_attributes = new DropDownComponentAttributes(this, SetSelected, _dropDownItems,
-        _selectedItems, _spacerDescriptions);
-    }
-
     public override bool Read(GH_IReader reader) {
       //warning - sensitive for description string! do not change description if not needed!
-      _displayedDiagramType = Mappings.diagramTypeMapping
-       .Where(item => item.Description == reader.GetString("diagramType"))
-       .Select(item => item.GsaGhEnum).FirstOrDefault();
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -75,22 +59,34 @@ namespace GsaGH.Components {
     }
 
     public override void SetSelected(int i, int j) {
-      _displayedDiagramType = (DiagramType)j;
       _selectedItems[i] = _dropDownItems[i][j];
+      if (i == 0) {
+        if (j == 0) {
+          if (_dropDownItems[1] != 
+            Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList()) {
+            _dropDownItems[1] = 
+              Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList();
+            _selectedItems[1] = _dropDownItems[1][5]; // Myy
+          }
+        } else {
+          if (_dropDownItems[1] !=
+            Mappings.diagramTypeMappingStress.Select(item => item.Description).ToList()) {
+            _dropDownItems[1] =
+              Mappings.diagramTypeMappingStress.Select(item => item.Description).ToList();
+            _selectedItems[1] = _dropDownItems[1][7]; // Combined C1
+          }
+        }
+      }
 
       base.UpdateUI();
     }
 
     public override bool Write(GH_IWriter writer) {
-      writer.SetString("diagramType",
-        Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
-         .Select(item => item.Description).FirstOrDefault());
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnit));
-
       return base.Write(writer);
     }
 
@@ -127,22 +123,23 @@ namespace GsaGH.Components {
       }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-
       menu.Items.Add(unitsMenu);
-
       Menu_AppendSeparator(menu);
     }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Diagram Type",
+        "Type", "Diagram"
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(Mappings.diagramTypeMapping.Select(item => item.Description).ToList());
+      _dropDownItems.Add(new List<string>() { "Force", "Stress" });
       _selectedItems.Add(_dropDownItems[0][0]);
+
+      _dropDownItems.Add(Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList());
+      _selectedItems.Add(_dropDownItems[1][5]); // Myy
 
       _isInitialised = true;
     }
@@ -234,13 +231,16 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
+      DiagramType type = _selectedItems[0] == "Force"
+        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
+        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
         = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = elementlist,
-        Type = Mappings.diagramTypeMapping.Where(item => item.GsaGhEnum == _displayedDiagramType)
-         .Select(item => item.GsaApiEnum).FirstOrDefault(),
+        Type = type,
         Cases = _case,
         ScaleFactor = computedScale,
         IsNormalised = autoScale,
@@ -282,14 +282,14 @@ namespace GsaGH.Components {
 
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
-      PostHog.Result(result.Type, 1, "Diagram", _displayedDiagramType.ToString());
+      PostHog.Result(result.Type, 1, "Diagram", type.ToString());
     }
 
     private List<AnnotationGoo> GenerateAnnotations(
       IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
       int significantDigits, Color color) {
       var diagramAnnotations = new List<AnnotationGoo>();
-      
+
       foreach (Annotation annotation in annotationsFromModel) {
         {
           //move position
@@ -364,7 +364,10 @@ namespace GsaGH.Components {
 
     private bool IsForce() {
       bool isForce = false;
-      switch (_displayedDiagramType) {
+      DiagramType type = _selectedItems[0] == "Force"
+        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
+        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      switch (type) {
         case DiagramType.AxialForceFx:
         case DiagramType.ShearForceFy:
         case DiagramType.ShearForceFz:
@@ -378,7 +381,10 @@ namespace GsaGH.Components {
 
     private bool IsMoment() {
       bool isMoment = false;
-      switch (_displayedDiagramType) {
+      DiagramType type = _selectedItems[0] == "Force"
+        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
+        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      switch (type) {
         case DiagramType.MomentMyy:
         case DiagramType.MomentMzz:
         case DiagramType.ResolvedMomentMyz:
@@ -392,7 +398,10 @@ namespace GsaGH.Components {
 
     private bool IsStress() {
       bool isStress = false;
-      switch (_displayedDiagramType) {
+      DiagramType type = _selectedItems[0] == "Force"
+        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
+        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      switch (type) {
         case DiagramType.AxialStressA:
         case DiagramType.BendingStressByNegativeZ:
         case DiagramType.BendingStressByPositiveZ:
