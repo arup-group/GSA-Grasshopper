@@ -195,39 +195,42 @@ namespace GsaGH.Helpers.GsaApi {
         },
       };
 
-    internal static readonly IList<DiagramTypeMapping> diagramTypeMapping
+    internal static readonly IList<DiagramTypeMapping> diagramTypeMappingForce
       = new List<DiagramTypeMapping>() {
-        new DiagramTypeMapping("Axial Force Fx", DiagramType.AxialForceFx,
+        new DiagramTypeMapping("Axial Fx", DiagramType.AxialForceFx,
           Diagram.DiagramType.AxialForceFx),
-        new DiagramTypeMapping("Shear Force Fy", DiagramType.ShearForceFy,
+        new DiagramTypeMapping("Shear Fy", DiagramType.ShearForceFy,
           Diagram.DiagramType.ShearForceFy),
-        new DiagramTypeMapping("Shear Force Fz", DiagramType.ShearForceFz,
+        new DiagramTypeMapping("Shear Fz", DiagramType.ShearForceFz,
           Diagram.DiagramType.ShearForceFz),
+        new DiagramTypeMapping("Res. Shear |Fyz|", DiagramType.ResolvedShearFyz,
+          Diagram.DiagramType.ResolvedShearFyz),
         new DiagramTypeMapping("Torsion Mxx", DiagramType.TorsionMxx,
           Diagram.DiagramType.TorsionMxx),
         new DiagramTypeMapping("Moment Myy", DiagramType.MomentMyy, Diagram.DiagramType.MomentMyy),
         new DiagramTypeMapping("Moment Mzz", DiagramType.MomentMzz, Diagram.DiagramType.MomentMzz),
-        new DiagramTypeMapping("Resolved Shear Fyz", DiagramType.ResolvedShearFyz,
-          Diagram.DiagramType.ResolvedShearFyz),
-        new DiagramTypeMapping("Resolved Moment Myz", DiagramType.ResolvedMomentMyz,
-          Diagram.DiagramType.ResolvedMomentMyz),
-        new DiagramTypeMapping("Axial Stress A", DiagramType.AxialStressA,
+        new DiagramTypeMapping("Res. Moment |Myz|", DiagramType.ResolvedMomentMyz,
+          Diagram.DiagramType.ResolvedMomentMyz), };
+
+    internal static readonly IList<DiagramTypeMapping> diagramTypeMappingStress
+      = new List<DiagramTypeMapping>() {
+        new DiagramTypeMapping("Axial A", DiagramType.AxialStressA,
           Diagram.DiagramType.AxialStressA),
-        new DiagramTypeMapping("Shear Stress Sy", DiagramType.ShearStressSy,
+        new DiagramTypeMapping("Shear Sy", DiagramType.ShearStressSy,
           Diagram.DiagramType.ShearStressSy),
-        new DiagramTypeMapping("Shear Stress Sz", DiagramType.ShearStressSz,
+        new DiagramTypeMapping("Shear Sz", DiagramType.ShearStressSz,
           Diagram.DiagramType.ShearStressSz),
-        new DiagramTypeMapping("Bending Stress By Positive Z", DiagramType.BendingStressByPositiveZ,
+        new DiagramTypeMapping("Bending By +z", DiagramType.BendingStressByPositiveZ,
           Diagram.DiagramType.BendingStressByPositiveZ),
-        new DiagramTypeMapping("Bending Stress By Negative Z", DiagramType.BendingStressByNegativeZ,
+        new DiagramTypeMapping("Bending By -z", DiagramType.BendingStressByNegativeZ,
           Diagram.DiagramType.BendingStressByNegativeZ),
-        new DiagramTypeMapping("Bending Stress Bz Positive Y", DiagramType.BendingStressBzPositiveY,
+        new DiagramTypeMapping("Bending Bz +y", DiagramType.BendingStressBzPositiveY,
           Diagram.DiagramType.BendingStressBzPositiveY),
-        new DiagramTypeMapping("Bending Stress Bz Negative Y", DiagramType.BendingStressBzNegativeY,
+        new DiagramTypeMapping("Bending Bz -y", DiagramType.BendingStressBzNegativeY,
           Diagram.DiagramType.BendingStressBzNegativeY),
-        new DiagramTypeMapping("Combined Stress C1", DiagramType.CombinedStressC1,
+        new DiagramTypeMapping("Combined C1", DiagramType.CombinedStressC1,
           Diagram.DiagramType.CombinedStressC1),
-        new DiagramTypeMapping("Combined Stress C2", DiagramType.CombinedStressC2,
+        new DiagramTypeMapping("Combined C2", DiagramType.CombinedStressC2,
           Diagram.DiagramType.CombinedStressC2), };
 
     internal static AlignmentType GetAlignmentType(string typestring) {
