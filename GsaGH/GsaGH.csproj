@@ -49,7 +49,7 @@ Copyright © Oasys 1985 - 2022</Description>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
-    <PackageReference Include="OasysGH" Version="0.6.9-beta" />
+    <PackageReference Include="OasysGH" Version="0.6.10-beta" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
