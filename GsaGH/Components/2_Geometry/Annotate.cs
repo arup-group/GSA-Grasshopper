@@ -17,19 +17,19 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowID;
     private GH_Structure<AnnotationGoo> _annotations = new GH_Structure<AnnotationGoo>();
+    private Color _color = Color.Empty;
     private GH_Structure<GH_Point> _points = new GH_Structure<GH_Point>();
     private GH_Structure<GH_String> _texts = new GH_Structure<GH_String>();
-    private Color _color = Color.Empty;
 
     public Annotate() : base("Annotate", "A",
-      "Show the ID of a Node, Element, or Member parameters, or get Result or Diagram values", CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+      "Show the ID of a Node, Element, or Member parameters, or get Result or Diagram values",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Node/Element/Member/Load/Result/Diagram", "Geo",
         "Node, Element, Member or Point/Line/Mesh result to get ID for.", GH_ParamAccess.tree);
-      pManager.AddColourParameter(
-        "Colour", "Co", "[Optional] Colour to override default colour", GH_ParamAccess.item);
+      pManager.AddColourParameter("Colour", "Co", "[Optional] Colour to override default colour",
+        GH_ParamAccess.item);
       pManager[1].Optional = true;
     }
 
@@ -39,19 +39,16 @@ namespace GsaGH.Components {
       pManager.AddPointParameter("Position", "P", "The (centre/mid) location(s) of the object(s)",
         GH_ParamAccess.tree);
       pManager.HideParameter(1);
-      pManager.AddTextParameter("Text", "T", "The objects ID(s) or the result/diagram value(s)", GH_ParamAccess.tree);
+      pManager.AddTextParameter("Text", "T", "The objects ID(s) or the result/diagram value(s)",
+        GH_ParamAccess.tree);
     }
 
-    private void AddAnnotation(Point3d pt, string txt, GH_Path path) {
-      _annotations.Append(new AnnotationGoo(pt, _color, txt), path);
-      _points.Append(new GH_Point(pt), path);
-      _texts.Append(new GH_String(txt), path);
-    }
     private void AddAnnotation(Point3d pt, string txt, Color color, GH_Path path) {
       if (_color != Color.Empty) {
         color = _color;
       }
-      _annotations.Append(new AnnotationGoo(pt, color, txt), path);
+
+      _annotations.Append(new AnnotationGoo(pt, color == Color.Empty ? _color : color, txt), path);
       _points.Append(new GH_Point(pt), path);
       _texts.Append(new GH_String(txt), path);
     }
@@ -76,21 +73,22 @@ namespace GsaGH.Components {
 
           switch (goo) {
             case AnnotationGoo annotationGoo:
-              AddAnnotation(annotationGoo.Value.Point, annotationGoo.Value.Text, annotationGoo.Color, path); 
+              AddAnnotation(annotationGoo.Value.Point, annotationGoo.Value.Text,
+                annotationGoo.Color, path);
               break;
 
             case GsaElement2dGoo e2d:
               for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
-                AddAnnotation(
-                  e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Ids[i].ToString(), path);
+                AddAnnotation(e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Ids[i].ToString(),
+                  Color.Empty, path);
               }
 
               continue;
 
             case GsaElement3dGoo e3d:
               for (int i = 0; i < e3d.Value.NgonMesh.Ngons.Count; i++) {
-                AddAnnotation(
-                  e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), e3d.Value.Ids[i].ToString(), path);
+                AddAnnotation(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i),
+                  e3d.Value.Ids[i].ToString(), Color.Empty, path);
               }
 
               continue;
@@ -98,11 +96,11 @@ namespace GsaGH.Components {
             case MeshResultGoo resMesh:
               for (int i = 0; i < resMesh.ElementIds.Count; i++) {
                 if (resMesh.Value.Ngons.Count > 0) {
-                  AddAnnotation(
-                  resMesh.Value.Ngons.GetNgonCenter(i), resMesh.ElementIds[i].ToString(), path);
+                  AddAnnotation(resMesh.Value.Ngons.GetNgonCenter(i),
+                    resMesh.ElementIds[i].ToString(), Color.Empty, path);
                 } else {
-                  AddAnnotation(
-                  resMesh.Value.Faces.GetFaceCenter(i), resMesh.ElementIds[i].ToString(), path);
+                  AddAnnotation(resMesh.Value.Faces.GetFaceCenter(i),
+                    resMesh.ElementIds[i].ToString(), Color.Empty, path);
                 }
               }
 
@@ -155,7 +153,7 @@ namespace GsaGH.Components {
               break;
           }
 
-          AddAnnotation(pt, id.ToString(), path);
+          AddAnnotation(pt, id.ToString(), Color.Empty, path);
         }
       }
 
