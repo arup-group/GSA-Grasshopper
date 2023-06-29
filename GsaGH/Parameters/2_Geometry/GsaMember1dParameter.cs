@@ -51,34 +51,5 @@ namespace GsaGH.Parameters {
     public void BakeGeometry(RhinoDoc doc, List<Guid> obj_ids) {
       BakeGeometry(doc, null, obj_ids);
     }
-
-    protected override ToolStripMenuItem Menu_CustomMultiValueItem() {
-      return null;
-    }
-
-    protected override ToolStripMenuItem Menu_CustomSingleValueItem() {
-      return null;
-    }
-
-    protected override GH_GetterResult Prompt_Singular(ref GsaMember1dGoo value) {
-      GH_Curve crv = GH_CurveGetter.GetCurve();
-      if (crv == null || !crv.IsValid) {
-        return GH_GetterResult.cancel;
-      }
-
-      value = new GsaMember1dGoo(new GsaMember1d(crv.Value));
-      return GH_GetterResult.success;
-    }
-
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaMember1dGoo> values) {
-      List<GH_Curve> crvs = GH_CurveGetter.GetCurves();
-      if (crvs == null || crvs.Count == 0) {
-        return GH_GetterResult.cancel;
-      }
-
-      values = crvs.Select(crv =>
-        new GsaMember1dGoo(new GsaMember1d(crv.Value))).ToList();
-      return GH_GetterResult.success;
-    }
   }
 }

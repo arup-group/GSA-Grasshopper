@@ -54,52 +54,5 @@ namespace GsaGH.Parameters {
     public void BakeGeometry(RhinoDoc doc, List<Guid> obj_ids) {
       BakeGeometry(doc, null, obj_ids);
     }
-
-
-    protected override ToolStripMenuItem Menu_CustomMultiValueItem() {
-      return null;
-    }
-
-    protected override ToolStripMenuItem Menu_CustomSingleValueItem() {
-      return null;
-    }
-
-    protected override GH_GetterResult Prompt_Singular(ref GsaNodeGoo value) {
-      var getter = new GH_PointGetter();
-      getter.RecreateSetup(GetFirst());
-      getter.AcceptPreselected = true;
-      GH_Point pt = getter.GetPoint();
-      if (pt == null) {
-        return GH_GetterResult.cancel;
-      }
-
-      value = new GsaNodeGoo(new GsaNode(pt.Value));
-      return GH_GetterResult.success;
-    }
-
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaNodeGoo> values) {
-      var getter = new GH_PointGetter();
-      getter.RecreateSetup(GetFirst());
-      getter.AcceptPreselected = true;
-      List<GH_Point> pts = getter.GetPoints();
-      if (pts == null) {
-        return GH_GetterResult.cancel;
-      }
-
-      values = pts.Select(p => new GsaNodeGoo(new GsaNode(p.Value))).ToList();
-      return GH_GetterResult.success;
-    }
-
-    private GH_Point GetFirst() {
-      GH_Point gH_Point = null;
-      GsaNodeGoo node = m_data.get_FirstItem(filter_nulls: true);
-      if (node != null) {
-        gH_Point = new GH_Point(node.Value.Point);
-      } else {
-        gH_Point = new GH_Point(default(Point3d));
-      }
-
-      return gH_Point;
-    }
   }
 }
