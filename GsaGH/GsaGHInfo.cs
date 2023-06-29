@@ -36,7 +36,7 @@ namespace GsaGH {
     internal const string Copyright = "Copyright © Oasys 1985 - 2023";
     internal const string PluginName = "GsaGH";
     internal const string ProductName = "GSA";
-    internal static int MinGsaVersion = 66;
+    internal static int MinGsaVersion = 0;
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
     internal const string Vers = "0.9.50";
