@@ -102,6 +102,7 @@ namespace GsaGH.Parameters {
         UpdatePreview();
       }
     }
+    internal GH_Point GH_Point { get; set; }
     internal Brep _previewSupportSymbol;
     internal Text3d _previewText;
     internal Line _previewXaxis;
@@ -113,6 +114,9 @@ namespace GsaGH.Parameters {
 
     public GsaNode() { }
 
+    internal GsaNode(GH_Point pt) {
+      GH_Point = pt;
+    }
     public GsaNode(Point3d position, int id = 0) {
       Point = position;
       Id = id;

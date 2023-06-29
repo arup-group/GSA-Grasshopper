@@ -1,16 +1,24 @@
-﻿using Grasshopper.Kernel;
+﻿using Grasshopper.Getters;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.DocObjects;
+using Rhino;
 using Rhino.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace GsaGH.Parameters {
   /// <summary>
   ///   This class provides a parameter interface for the <see cref="GsaElement3dGoo" /> type.
   /// </summary>
-  public class GsaElement3dParameter : GH_OasysPersistentGeometryParam<GsaElement3dGoo> {
+  public class GsaElement3dParameter : GH_OasysPersistentGeometryParam<GsaElement3dGoo>,
+    IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("e7326f8e-c8e5-40d9-b8e4-6912ccf80b92");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override string InstanceDescription
@@ -31,6 +39,47 @@ namespace GsaGH.Parameters {
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element3d");
       return new GsaElement3dGoo(null);
+    }
+
+    public bool IsBakeCapable => !m_data.IsEmpty;
+    public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
+      var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
+      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.DisplayMesh)), att, doc);
+      obj_ids.AddRange(gH_BakeUtility.BakedIds);
+    }
+
+    public void BakeGeometry(RhinoDoc doc, List<Guid> obj_ids) {
+      BakeGeometry(doc, null, obj_ids);
+    }
+
+
+    protected override ToolStripMenuItem Menu_CustomMultiValueItem() {
+      return null;
+    }
+
+    protected override ToolStripMenuItem Menu_CustomSingleValueItem() {
+      return null;
+    }
+
+    protected override GH_GetterResult Prompt_Singular(ref GsaElement3dGoo value) {
+      GH_Mesh m = GH_MeshGetter.GetMesh();
+      if (m == null) {
+        return GH_GetterResult.cancel;
+      }
+
+      value = new GsaElement3dGoo(new GsaElement3d(m.Value));
+      return GH_GetterResult.success;
+    }
+
+    protected override GH_GetterResult Prompt_Plural(ref List<GsaElement3dGoo> values) {
+      List<GH_Mesh> ms = GH_MeshGetter.GetMeshes();
+      if (ms == null || ms.Count == 0) {
+        return GH_GetterResult.cancel;
+      }
+
+      values = ms.Select(m =>
+        new GsaElement3dGoo(new GsaElement3d(m.Value))).ToList();
+      return GH_GetterResult.success;
     }
   }
 }
