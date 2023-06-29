@@ -11,18 +11,18 @@ using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
 
-namespace GsaGH.Components {
-  public class ShowId : GH_OasysComponent {
+namespace GsaGH.Components.GraveyardComp {
+  public class ShowId_OBSOLETE : GH_OasysComponent {
     public override BoundingBox ClippingBox
       => _pts != null ? new BoundingBox(_pts) : base.ClippingBox;
     public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowID;
     private List<Point3d> _pts;
     private List<string> _txts;
 
-    public ShowId() : base("ShowID", "ID",
+    public ShowId_OBSOLETE() : base("ShowID", "ID",
       "Show the ID of a Node, Element, Member geometry or Result parameters", CategoryName.Name(),
       SubCategoryName.Cat2()) { }
 
@@ -97,7 +97,8 @@ namespace GsaGH.Components {
                 if (resMesh.Value.Ngons.Count > 0) {
                   _pts.Add(resMesh.Value.Ngons.GetNgonCenter(i));
                   ghPts.Append(new GH_Point(resMesh.Value.Ngons.GetNgonCenter(i)), path);
-                } else {
+                }
+                else {
                   _pts.Add(resMesh.Value.Faces.GetFaceCenter(i));
                   ghPts.Append(new GH_Point(resMesh.Value.Faces.GetFaceCenter(i)), path);
                 }

@@ -64,7 +64,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ElementFromMembers))]
     [InlineData(typeof(LocalAxes))]
     [InlineData(typeof(SectionAlignment))]
-    [InlineData(typeof(ShowId))]
+    [InlineData(typeof(Annotate))]
     // 3_Loads
     [InlineData(typeof(CreateBeamLoads))]
     [InlineData(typeof(CreateFaceLoads))]
