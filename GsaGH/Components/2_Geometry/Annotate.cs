@@ -27,7 +27,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Node/Element/Member/Load/Result/Diagram", "Geo",
-        "Node, Element, Member or Point/Line/Mesh result to get ID for.", GH_ParamAccess.tree);
+        "Node, Element, Member, Point/Line/Mesh result, Result or Load diagram or to get ID for.", GH_ParamAccess.tree);
       pManager.AddColourParameter("Colour", "Co", "[Optional] Colour to override default colour",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
