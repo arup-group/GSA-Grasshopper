@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -47,11 +48,11 @@ namespace GsaGH.Parameters {
         _model = value;
         InstantiateApiFields();
       }
-    } 
+    }
     internal Helpers.Import.Properties Properties { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
-      private Model _model = new Model();
+    private Model _model = new Model();
 
     public GsaModel() {
       SetUserDefaultUnits(Model.UiUnits());
@@ -143,7 +144,7 @@ namespace GsaGH.Parameters {
         steelDesignCode = DesignCode.GetSteelDesignCodeNames()[8];
       }
 
-      return new Model(concreteDesignCode, steelDesignCode);
+      return TryUpgradeCode(concreteDesignCode, steelDesignCode);
     }
 
     private void InstantiateApiFields() {
@@ -171,6 +172,44 @@ namespace GsaGH.Parameters {
       double factor = 1 / new Length(1, ModelUnit).Meters;
       var scale = Transform.Scale(new Point3d(0, 0, 0), factor);
       return new BoundingBox(pts, scale);
+    }
+
+    private static Model TryUpgradeCode(string ssConcreteCode, string ssSteelCode) {
+      string concreteDesignCode = ssConcreteCode;
+      string steelDesignCode = ssSteelCode;
+      try {
+        // will fail for superseeded codesd
+        return new Model(concreteDesignCode, steelDesignCode);
+      } catch (GsaApiException) { //GsaAPI.GsaApiException: 'Concrete design code is not supported.'
+        ReadOnlyCollection<string> concreteCodes = DesignCode.GetConcreteDesignCodeNames();
+        if (!concreteCodes.Contains(concreteDesignCode)) {
+          concreteDesignCode = FindSimilarCode(concreteDesignCode, concreteCodes);
+        }
+
+        ReadOnlyCollection<string> steelCodes = DesignCode.GetSteelDesignCodeNames();
+        if (!steelCodes.Contains(steelDesignCode)) {
+          steelDesignCode = FindSimilarCode(steelDesignCode, steelCodes);
+        }
+
+        return new Model(concreteDesignCode, steelDesignCode);
+      }
+    }
+
+    private static string FindSimilarCode(string code, ReadOnlyCollection<string> codes) {
+      var codeList = codes.ToList();
+      for (int i = 0; i < code.Length; i++) {
+        for (int j = codeList.Count - 1; j >= 0; j--) {
+          if (codeList[j][i] != code[i]) {
+            if (codeList.Count > 1) {
+              codeList.RemoveAt(j);
+              if (codeList.Count == 1) {
+                return codeList[0];
+              }
+            }
+          }
+        }
+      }
+      return codeList[0];
     }
   }
 }

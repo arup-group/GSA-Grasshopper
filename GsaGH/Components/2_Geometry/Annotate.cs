@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -12,57 +11,60 @@ using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
-  public class ShowId : GH_OasysComponent {
-    public override BoundingBox ClippingBox
-      => _pts != null ? new BoundingBox(_pts) : base.ClippingBox;
-    public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
+  public class Annotate : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("fcad844d-a044-4064-8c6e-f3ea47553941");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowID;
-    private List<Point3d> _pts;
-    private List<string> _txts;
+    private GH_Structure<AnnotationGoo> _annotations = new GH_Structure<AnnotationGoo>();
+    private Color _color = Color.Empty;
+    private GH_Structure<GH_Point> _points = new GH_Structure<GH_Point>();
+    private GH_Structure<GH_String> _texts = new GH_Structure<GH_String>();
 
-    public ShowId() : base("ShowID", "ID",
-      "Show the ID of a Node, Element, Member geometry or Result parameters", CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      if (_txts == null) {
-        return;
-      }
-
-      for (int i = 0; i < _txts.Count; i++) {
-        Point2d positionOnTheScreen = args.Viewport.WorldToClient(_pts[i]);
-        args.Display.Draw2dText(_txts[i],
-          Attributes.Selected ? args.WireColour_Selected : args.WireColour, positionOnTheScreen,
-          true);
-      }
-    }
+    public Annotate() : base("Annotate", "A",
+      "Show the ID of a Node, Element, or Member parameters, or get Result or Diagram values",
+      CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Node/Element/Member/Result", "Geo",
-        "Node, Element, Member or Point/Line/Mesh result to get ID for.", GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Node/Element/Member/Load/Result/Diagram", "Geo",
+        "Node, Element, Member, Point/Line/Mesh result, Result or Load diagram or to get ID for.", GH_ParamAccess.tree);
+      pManager.AddColourParameter("Colour", "Co", "[Optional] Colour to override default colour",
+        GH_ParamAccess.item);
+      pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the GSA object",
+        GH_ParamAccess.tree);
       pManager.AddPointParameter("Position", "P", "The (centre/mid) location(s) of the object(s)",
         GH_ParamAccess.tree);
-      pManager.HideParameter(0);
-      pManager.AddIntegerParameter("Index", "ID", "The objects ID(s)", GH_ParamAccess.tree);
+      pManager.HideParameter(1);
+      pManager.AddTextParameter("Text", "T", "The objects ID(s) or the result/diagram value(s)",
+        GH_ParamAccess.tree);
+    }
+
+    private void AddAnnotation(Point3d pt, string txt, Color color, GH_Path path) {
+      if (_color != Color.Empty) {
+        color = _color;
+      }
+
+      _annotations.Append(new AnnotationGoo(pt, color == Color.Empty ? _color : color, txt), path);
+      _points.Append(new GH_Point(pt), path);
+      _texts.Append(new GH_String(txt), path);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      _pts = new List<Point3d>();
-      _txts = new List<string>();
-
       if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
         return;
       }
 
-      var ids = new GH_Structure<GH_Integer>();
-      var ghPts = new GH_Structure<GH_Point>();
+      if (!da.GetData(1, ref _color)) {
+        _color = Color.Empty;
+      }
+
+      _annotations = new GH_Structure<AnnotationGoo>();
+      _points = new GH_Structure<GH_Point>();
+      _texts = new GH_Structure<GH_String>();
 
       foreach (GH_Path path in tree.Paths) {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
@@ -70,36 +72,35 @@ namespace GsaGH.Components {
           Point3d pt = Point3d.Unset;
 
           switch (goo) {
+            case AnnotationGoo annotationGoo:
+              AddAnnotation(annotationGoo.Value.Point, annotationGoo.Value.Text,
+                annotationGoo.Color, path);
+              break;
+
             case GsaElement2dGoo e2d:
               for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
-                _txts.Add(e2d.Value.Ids[i].ToString());
-                ids.Append(new GH_Integer(e2d.Value.Ids[i]), path);
-                _pts.Add(e2d.Value.Mesh.Faces.GetFaceCenter(i));
-                ghPts.Append(new GH_Point(e2d.Value.Mesh.Faces.GetFaceCenter(i)), path);
+                AddAnnotation(e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Ids[i].ToString(),
+                  Color.Empty, path);
               }
 
               continue;
 
             case GsaElement3dGoo e3d:
               for (int i = 0; i < e3d.Value.NgonMesh.Ngons.Count; i++) {
-                _txts.Add(e3d.Value.Ids[i].ToString());
-                ids.Append(new GH_Integer(e3d.Value.Ids[i]), path);
-                _pts.Add(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i));
-                ghPts.Append(new GH_Point(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i)), path);
+                AddAnnotation(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i),
+                  e3d.Value.Ids[i].ToString(), Color.Empty, path);
               }
 
               continue;
 
             case MeshResultGoo resMesh:
               for (int i = 0; i < resMesh.ElementIds.Count; i++) {
-                _txts.Add(resMesh.ElementIds[i].ToString());
-                ids.Append(new GH_Integer(resMesh.ElementIds[i]), path);
                 if (resMesh.Value.Ngons.Count > 0) {
-                  _pts.Add(resMesh.Value.Ngons.GetNgonCenter(i));
-                  ghPts.Append(new GH_Point(resMesh.Value.Ngons.GetNgonCenter(i)), path);
+                  AddAnnotation(resMesh.Value.Ngons.GetNgonCenter(i),
+                    resMesh.ElementIds[i].ToString(), Color.Empty, path);
                 } else {
-                  _pts.Add(resMesh.Value.Faces.GetFaceCenter(i));
-                  ghPts.Append(new GH_Point(resMesh.Value.Faces.GetFaceCenter(i)), path);
+                  AddAnnotation(resMesh.Value.Faces.GetFaceCenter(i),
+                    resMesh.ElementIds[i].ToString(), Color.Empty, path);
                 }
               }
 
@@ -152,15 +153,13 @@ namespace GsaGH.Components {
               break;
           }
 
-          _txts.Add(id.ToString());
-          ids.Append(new GH_Integer(id), path);
-          _pts.Add(pt);
-          ghPts.Append(new GH_Point(pt), path);
+          AddAnnotation(pt, id.ToString(), Color.Empty, path);
         }
       }
 
-      da.SetDataTree(0, ghPts);
-      da.SetDataTree(1, ids);
+      da.SetDataTree(0, _annotations);
+      da.SetDataTree(1, _points);
+      da.SetDataTree(2, _texts);
     }
   }
 }

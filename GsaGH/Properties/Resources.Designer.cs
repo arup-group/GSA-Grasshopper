@@ -793,23 +793,23 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GetProp2dModifier {
-            get {
-                object obj = ResourceManager.GetObject("GetProp2dModifier", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap GetMaterials {
             get {
                 object obj = ResourceManager.GetObject("GetMaterials", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GetProp2dModifier {
+            get {
+                object obj = ResourceManager.GetObject("GetProp2dModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
@@ -1136,6 +1136,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap PointLoad {
             get {
                 object obj = ResourceManager.GetObject("PointLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Prop2dModifierParam {
+            get {
+                object obj = ResourceManager.GetObject("Prop2dModifierParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

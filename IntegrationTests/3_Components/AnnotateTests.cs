@@ -9,7 +9,7 @@ using Xunit;
 
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
-  public class ShowIdTests {
+  public class AnnotateTests {
     private static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
@@ -35,7 +35,7 @@ namespace IntegrationTests.Components {
     [Fact]
     public void TestNoWarningOrErrors() {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "warning");
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "throwWarning");
 
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "invalidTest");
@@ -295,6 +295,42 @@ namespace IntegrationTests.Components {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Integer>)param.VolatileData.get_Branch(0);
+      for (int i = 0; i < expectedVals.Length; i++) {
+        Assert.Equal(expectedVals[i], output[i].Value);
+      }
+    }
+
+    [Theory]
+    [InlineData("DiagramValues", new string[] {
+      "-1.667 kN·m",
+      "0",
+      "6.178 kN·m",
+      "0",
+      "-6.374 kN·m",
+      "0",
+      "-1.667 kN·m",
+      "0",
+      "-7.943 kN·m",
+      "0",
+      "-6.374 kN·m",
+      "0",
+      "-6.374 kN·m",
+      "0",
+      "-7.943 kN·m",
+      "0",
+      "-1.667 kN·m",
+      "0",
+      "-6.374 kN·m",
+      "0",
+      "6.178 kN·m",
+      "0",
+      "-1.667 kN·m",
+      "0"
+    })]
+    public void TestAnnotationText(string name, string[] expectedVals) {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      var output = (List<GH_String>)param.VolatileData.get_Branch(0);
       for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i], output[i].Value);
       }

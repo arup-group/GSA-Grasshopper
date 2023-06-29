@@ -1,7 +1,7 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using OasysGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
@@ -27,8 +27,8 @@ namespace GsaGHTests.Components.Properties {
     public void CreateComponentTest1() {
       GH_OasysDropDownComponent comp = ComponentMother();
 
-      var output = (GH_String)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("STD CH(ft) 1 2 3 4", output.Value);
+      var output = (OasysProfileGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal("STD CH(ft) 1 2 3 4", output.ToString());
     }
 
     [Theory]
@@ -42,8 +42,8 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysDropDownComponent comp = ComponentMother();
       comp.SetSelected(1, j);
 
-      var output = (GH_String)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(profile, output.Value);
+      var output = (OasysProfileGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(profile, output.ToString());
     }
   }
 }
