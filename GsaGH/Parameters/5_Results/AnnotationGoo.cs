@@ -10,15 +10,19 @@ namespace GsaGH.Parameters {
   public class AnnotationGoo : GH_OasysGeometricGoo<TextDot>, IGH_PreviewData {
     public override string TypeName => "Annotation";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public override string TypeDescription => "Annotation for diagram result";
-    public Color Color { get; private set; }
+    public override string TypeDescription => "Annotation any GSA object for ID or result value";
+    public Color Color { get; private set; } = Color.Empty;
 
     public AnnotationGoo(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      args.Pipeline.Draw2dText(Value.Text, Color, Value.Point, true);
+      if (Color != Color.Empty) { 
+        args.Pipeline.Draw2dText(Value.Text, Color, Value.Point, true);
+      } else {
+        args.Pipeline.Draw2dText(Value.Text, args.Color, Value.Point, true);
+      }
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }

@@ -24,6 +24,7 @@ using Line = GsaAPI.Line;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using GsaGH.Helpers;
+using Newtonsoft.Json.Linq;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -42,6 +43,8 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
+    private bool _colourInput = false;
+    private List<AnnotationGoo> _displayAnnotations = new List<AnnotationGoo>();
 
     public Elem1dResultDiagram() : base("1D Element Result Diagram", "ResultElem1dDiagram",
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) { }
@@ -62,9 +65,9 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0) {
         if (j == 0) {
-          if (_dropDownItems[1] != 
+          if (_dropDownItems[1] !=
             Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList()) {
-            _dropDownItems[1] = 
+            _dropDownItems[1] =
               Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList();
             _selectedItems[1] = _dropDownItems[1][5]; // Myy
           }
@@ -147,10 +150,10 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Element filter list", "El",
+      pManager.AddGenericParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item, "All");
-      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item, true);
+        GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item, false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
         GH_ParamAccess.item, 3);
       pManager.AddColourParameter(
@@ -168,6 +171,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
+      pManager.HideParameter(1);
     }
 
     protected override void BeforeSolveInstance() {
@@ -212,7 +216,10 @@ namespace GsaGH.Components {
         }
       }
 
-      string elementlist = GetElementFilters(da);
+      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(elementlist)) {
+        return;
+      }
 
       var ghScale = new GH_Number();
       double scale = 1;
@@ -253,9 +260,8 @@ namespace GsaGH.Components {
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Color.Empty;
-      bool colourInput = false;
       if (da.GetData(4, ref color)) {
-        colourInput = true;
+        _colourInput = true;
       }
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
@@ -264,8 +270,8 @@ namespace GsaGH.Components {
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
-        Color col = colourInput ? color : (Color)item.Colour;
-        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, col));
+        color = _colourInput ? color : (Color)item.Colour;
+        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, color));
       }
 
       bool showAnnotations = true;
@@ -274,20 +280,32 @@ namespace GsaGH.Components {
       da.GetData(2, ref showAnnotations);
       da.GetData(3, ref significantDigits);
 
+      diagramAnnotations = GenerateAnnotations(
+        diagramResults.Annotations, lengthScaleFactor, significantDigits, color);
+
       if (showAnnotations) {
-        Color col = colourInput ? color : Color.Empty;
-        diagramAnnotations = GenerateAnnotations(
-          diagramResults.Annotations, lengthScaleFactor, significantDigits, col);
+        _displayAnnotations = diagramAnnotations;
+      } else {
+        _displayAnnotations = new List<AnnotationGoo>();
       }
 
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
+
       PostHog.Result(result.Type, 1, "Diagram", type.ToString());
     }
 
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+      foreach (AnnotationGoo annotation in _displayAnnotations) {
+        args.Display.Draw2dText(
+          annotation.Value.Text, annotation.Color, annotation.Value.Point, true);
+      }
+    }
+
     private List<AnnotationGoo> GenerateAnnotations(
-      IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
-      int significantDigits, Color color) {
+    IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
+    int significantDigits, Color color) {
       var diagramAnnotations = new List<AnnotationGoo>();
 
       foreach (Annotation annotation in annotationsFromModel) {
@@ -328,21 +346,6 @@ namespace GsaGH.Components {
       }
 
       return valid;
-    }
-
-    private static string GetElementFilters(IGH_DataAccess dataAccess) {
-      string nodeList = string.Empty;
-      var ghNoList = new GH_String();
-      if (dataAccess.GetData(1, ref ghNoList)) {
-        nodeList = GH_Convert.ToString(ghNoList, out string tempNodeList, GH_Conversion.Both) ?
-          tempNodeList : string.Empty;
-      }
-
-      if (nodeList.ToLower() == "all" || string.IsNullOrEmpty(nodeList)) {
-        nodeList = "All";
-      }
-
-      return nodeList;
     }
 
     private double ComputeUnitScale(bool autoScale = false) {
