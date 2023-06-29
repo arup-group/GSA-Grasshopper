@@ -12,7 +12,7 @@ namespace GsaGH.Components {
   /// Component to create GSA profile
   /// </summary>
   public class CreateProfile : CreateOasysProfile {
-    public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
+    public override Guid ComponentGuid => new Guid("89219d7d-eee1-404e-a4d5-3a8ae0e37cf7");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProfile;
