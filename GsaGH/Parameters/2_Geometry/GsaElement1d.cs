@@ -247,7 +247,6 @@ namespace GsaGH.Parameters {
         Group = ApiElement.Group,
         IsDummy = ApiElement.IsDummy,
         Name = ApiElement.Name.ToString(),
-        Offset = ApiElement.Offset,
         OrientationAngle = ApiElement.OrientationAngle,
         OrientationNode = ApiElement.OrientationNode,
         ParentMember = ApiElement.ParentMember,
@@ -257,6 +256,12 @@ namespace GsaGH.Parameters {
       };
       elem.SetEndRelease(0, ApiElement.GetEndRelease(0));
       elem.SetEndRelease(1, ApiElement.GetEndRelease(1));
+
+      elem.Offset.X1 = ApiElement.Offset.X1;
+      elem.Offset.X2 = ApiElement.Offset.X2;
+      elem.Offset.Y = ApiElement.Offset.Y;
+      elem.Offset.Z = ApiElement.Offset.Z;
+
       if ((Color)ApiElement.Colour
         != Color.FromArgb(0, 0,
           0)) // workaround to handle that System.Drawing.Color is non-nullable type

@@ -298,7 +298,6 @@ namespace GsaGH.Parameters {
         MomentAmplificationFactorStrongAxis = ApiMember.MomentAmplificationFactorStrongAxis,
         MomentAmplificationFactorWeakAxis = ApiMember.MomentAmplificationFactorWeakAxis,
         Name = ApiMember.Name.ToString(),
-        Offset = ApiMember.Offset,
         OrientationAngle = ApiMember.OrientationAngle,
         OrientationNode = ApiMember.OrientationNode,
         Property = ApiMember.Property,
@@ -309,6 +308,11 @@ namespace GsaGH.Parameters {
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
       }
+
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
 
       mem.MeshSize = MeshSize;
 
