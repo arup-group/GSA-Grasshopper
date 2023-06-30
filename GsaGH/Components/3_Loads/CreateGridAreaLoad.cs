@@ -32,6 +32,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AreaLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
+    private bool _expansionTypeChanged = false;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
 
     public CreateGridAreaLoad() : base("Create Grid Area Load", "AreaLoad",
@@ -46,6 +47,10 @@ namespace GsaGH.Components {
           (ExpansionType)value : (ExpansionType)reader.GetInt32("Mode");
       } catch {
         this.AddRuntimeError("Can't parse Mode field to the ExpansionType enum.");
+      }
+
+      if (reader.ItemExists("ExpansionChanged")) {
+        _expansionTypeChanged = reader.GetBoolean("ExpansionChanged");
       }
 
       return base.Read(reader);
@@ -64,6 +69,7 @@ namespace GsaGH.Components {
 
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_expansionType);
+      writer.SetBoolean("ExpansionChanged", _expansionTypeChanged);
       return base.Write(writer);
     }
 
@@ -161,13 +167,16 @@ namespace GsaGH.Components {
             plane = gridPlaneSurface.Plane;
             planeSet = true;
             _expansionType = ExpansionType.UseGpsSettings;
-            UpdateMessage();
-            break;
+              UpdateMessage(gridPlaneSurface.GridSurface.ElementType
+                  == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+              break;
           }
           case Plane pln:
             plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             planeSet = true;
+            UpdateMessage(gridPlaneSurface.GridSurface.ElementType
+                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
           default: {
@@ -305,24 +314,35 @@ namespace GsaGH.Components {
 
     private void SetUse1D(object s, EventArgs e) {
       _expansionType = ExpansionType.To1D;
-      UpdateMessage();
+      UpdateMessage("1D");
+      _expansionTypeChanged = true;
       base.UpdateUI();
     }
 
     private void SetUse2D(object s, EventArgs e) {
       _expansionType = ExpansionType.To2D;
-      UpdateMessage();
+      UpdateMessage("2D");
+      _expansionTypeChanged = true;
       base.UpdateUI();
     }
 
     private void SetUseGps(object s, EventArgs e) {
       _expansionType = ExpansionType.UseGpsSettings;
-      UpdateMessage();
+      Message = string.Empty;
+      _expansionTypeChanged = true;
       base.UpdateUI();
     }
 
-    private void UpdateMessage() {
-      Message = "Expansion: " + _expansionType.ToString().Replace("_", " ");
+    private void UpdateMessage(string type = "") {
+      if (string.IsNullOrEmpty(type)) {
+        if (_expansionType == ExpansionType.To1D) {
+          Message = "Expand to 1D";
+        } else if (_expansionType == ExpansionType.To2D) {
+          Message = "Expand to 2D";
+        }
+      } else {
+        Message = $"Expand to {type}";
+      }
     }
   }
 }
