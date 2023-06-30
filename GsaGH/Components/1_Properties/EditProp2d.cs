@@ -90,6 +90,8 @@ namespace GsaGH.Components {
     public virtual void VariableParameterMaintenance() {
       Params.Input[7].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
       Params.Output[7].Name = "Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[9].Name = "Offset [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Output[9].Name = "Offset [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
