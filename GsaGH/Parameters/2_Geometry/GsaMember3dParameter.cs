@@ -1,4 +1,7 @@
-﻿using Grasshopper.Getters;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -7,11 +10,6 @@ using OasysGH.Parameters;
 using Rhino.DocObjects;
 using Rhino;
 using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -24,6 +22,7 @@ namespace GsaGH.Parameters {
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaMember3dGoo.Name + " parameter" :
         base.InstanceDescription;
+    public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaMember3dGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Mem3dParam;
 
@@ -46,7 +45,6 @@ namespace GsaGH.Parameters {
       return new GsaMember3dGoo(null);
     }
 
-    public bool IsBakeCapable => !m_data.IsEmpty;
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
       gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.SolidMesh)), att, doc);
