@@ -19,11 +19,11 @@ namespace GsaGH.Parameters {
     public override string TypeName
       => SourceCount == 0 ? GsaProp2dModifierGoo.Name : base.TypeName;
     // todo: create icons!
-    protected override Bitmap Icon => Resources.SectionModifierParam;
+    protected override Bitmap Icon => Resources.Prop2dModifierParam;
 
     public GsaProp2dModifierParameter() : base(new GH_InstanceDescription(
-      GsaSectionModifierGoo.Name, GsaProp2dModifierGoo.NickName,
-      GsaSectionModifierGoo.Description + " parameter", CategoryName.Name(),
+      GsaProp2dModifierGoo.Name, GsaProp2dModifierGoo.NickName,
+      GsaProp2dModifierGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaProp2dModifierGoo PreferredCast(object data) {
