@@ -34,7 +34,7 @@ Copyright © Oasys 1985 - 2022</Description>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="Copy &quot;$(TargetPath)&quot; &quot;$(TargetDir)GSA.gha&quot;&#xD;&#xA;Copy &quot;Properties\Icons\GSALogo64.png&quot; &quot;$(TargetDir)GsaIcon.png&quot;" />
   </Target>
-  
+ 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>GsaGHTests</_Parameter1>
@@ -111,10 +111,6 @@ Copyright © Oasys 1985 - 2022</Description>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
   
 </Project>
