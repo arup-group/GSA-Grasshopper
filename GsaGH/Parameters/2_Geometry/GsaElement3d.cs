@@ -309,12 +309,16 @@ namespace GsaGH.Parameters {
           Name = ApiElements[i].Name.ToString(),
           OrientationNode = ApiElements[i].OrientationNode,
           OrientationAngle = ApiElements[i].OrientationAngle,
-          Offset = ApiElements[i].Offset,
           ParentMember = ApiElements[i].ParentMember,
           Property = ApiElements[i].Property,
           Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology.ToList()),
           Type = ApiElements[i].Type,
         });
+
+        elems[i].Offset.X1 = ApiElements[i].Offset.X1;
+        elems[i].Offset.X2 = ApiElements[i].Offset.X2;
+        elems[i].Offset.Y = ApiElements[i].Offset.Y;
+        elems[i].Offset.Z = ApiElements[i].Offset.Z;
 
         if (memType == ApiObjectMember.All) {
           continue;

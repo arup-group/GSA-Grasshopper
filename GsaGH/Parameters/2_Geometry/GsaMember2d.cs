@@ -400,22 +400,25 @@ namespace GsaGH.Parameters {
         IsDummy = ApiMember.IsDummy,
         MeshSize = ApiMember.MeshSize,
         Name = ApiMember.Name.ToString(),
-        Offset = ApiMember.Offset,
         OrientationAngle = ApiMember.OrientationAngle,
         OrientationNode = ApiMember.OrientationNode,
         Property = ApiMember.Property,
         Type = ApiMember.Type,
         Type2D = ApiMember.Type2D,
         AutomaticOffset = ApiMember.AutomaticOffset,
+        IsIntersector = ApiMember.IsIntersector,
       };
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
       }
 
-      if ((Color)ApiMember.Colour
-        != Color.FromArgb(0, 0,
-          0)) // workaround to handle that System.Drawing.Color is non-nullable type
-      {
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
+
+      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
+        // workaround to handle that System.Drawing.Color is non-nullable type
         mem.Colour = ApiMember.Colour;
       }
 
