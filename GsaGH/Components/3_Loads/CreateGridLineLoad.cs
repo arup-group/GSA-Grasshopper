@@ -18,14 +18,10 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 
 namespace GsaGH.Components {
   public class CreateGridLineLoad : GH_OasysDropDownComponent {
-    private enum ExpansionType {
-      UseGpsSettings = 0,
-      To1D = 1,
-      To2D = 2,
-    }
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
