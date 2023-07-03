@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -14,6 +16,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
+using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Components {
@@ -22,11 +25,26 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.PointLoad;
+    private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
+    private bool _expansionTypeChanged = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
 
     public CreateGridPointLoad() : base("Create Grid Point Load", "PointLoad",
       "Create GSA Grid Point Load", CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      if (reader.ItemExists("Mode")) {
+        _expansionType = reader.TryGetEnum("Mode", typeof(ExpansionType), out int value) ?
+          (ExpansionType)value : (ExpansionType)reader.GetInt32("Mode");
+      }
+
+      if (reader.ItemExists("ExpansionChanged")) {
+        _expansionTypeChanged = reader.GetBoolean("ExpansionChanged");
+      }
+
+      return base.Read(reader);
     }
 
     public override void SetSelected(int i, int j) {
@@ -38,6 +56,31 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Force.GetAbbreviation(_forceUnit);
       Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("Mode", (int)_expansionType);
+      writer.SetBoolean("ExpansionChanged", _expansionTypeChanged);
+      return base.Write(writer);
+    }
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+
+      bool noGps = Params.Input[2].SourceCount == 0;
+      Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGps, !noGps,
+        _expansionType == ExpansionType.UseGpsSettings);
+      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, noGps,
+        _expansionType == ExpansionType.To1D);
+      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, noGps,
+        _expansionType == ExpansionType.To2D);
+    }
+
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      UpdateMessage();
     }
 
     protected override void InitialiseDropdowns() {
@@ -114,36 +157,64 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
-            gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-            gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
-            break;
-          }
+              gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
+              gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+              _expansionType = ExpansionType.UseGpsSettings;
+              UpdateMessage(gridPlaneSurface.GridSurface.ElementType
+                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+              break;
+            }
           case Plane pln:
             plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+            UpdateMessage(gridPlaneSurface.GridSurface.ElementType
+                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
           default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gsaGridPointLoad.GridPointLoad.GridSurface = id;
-              gsaGridPointLoad.GridPlaneSurface = null;
-            } else {
-              this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
-              return;
-            }
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gsaGridPointLoad.GridPointLoad.GridSurface = id;
+                gsaGridPointLoad.GridPlaneSurface = null;
+              } else {
+                this.AddRuntimeError(
+                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                  + Environment.NewLine
+                  + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       } else {
         plane = Plane.WorldXY;
         plane.Origin = point3d;
-        gridPlaneSurface = new GsaGridPlaneSurface(plane);
+        gridPlaneSurface = new GsaGridPlaneSurface(plane, true);
         gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+
+        if (!_expansionTypeChanged && _expansionType == ExpansionType.UseGpsSettings) {
+          _expansionType = ExpansionType.To1D;
+          this.AddRuntimeRemark(
+            "Input Point has automatically been converted to a GridPlaneSurface."
+            + Environment.NewLine + "The default expansion type is set to be onto 1D Elements."
+            + Environment.NewLine + "You can change this by right-clicking the component.");
+          UpdateMessage();
+        }
+
+        switch (_expansionType) {
+          case ExpansionType.To1D:
+            gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+            break;
+
+          case ExpansionType.To2D:
+            gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
+            break;
+
+          case ExpansionType.UseGpsSettings:
+          default:
+            break;
+        }
       }
 
       string dir = "Z";
@@ -193,6 +264,39 @@ namespace GsaGH.Components {
     protected override void UpdateUIFromSelectedItems() {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
+    }
+
+    private void SetUse1D(object s, EventArgs e) {
+      _expansionType = ExpansionType.To1D;
+      UpdateMessage("1D");
+      _expansionTypeChanged = true;
+      base.UpdateUI();
+    }
+
+    private void SetUse2D(object s, EventArgs e) {
+      _expansionType = ExpansionType.To2D;
+      UpdateMessage("2D");
+      _expansionTypeChanged = true;
+      base.UpdateUI();
+    }
+
+    private void SetUseGps(object s, EventArgs e) {
+      _expansionType = ExpansionType.UseGpsSettings;
+      Message = string.Empty;
+      _expansionTypeChanged = true;
+      base.UpdateUI();
+    }
+
+    private void UpdateMessage(string type = "") {
+      if (string.IsNullOrEmpty(type)) {
+        if (_expansionType == ExpansionType.To1D) {
+          Message = "Expand to 1D";
+        } else if (_expansionType == ExpansionType.To2D) {
+          Message = "Expand to 2D";
+        }
+      } else {
+        Message = $"Expand to {type}";
+      }
     }
   }
 }
