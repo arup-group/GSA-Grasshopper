@@ -253,16 +253,16 @@ namespace GsaGH.Parameters {
       MaterialType = MatType.Aluminium;
       _aluminiumMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
     }
 
     internal GsaMaterial(ConcreteMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Concrete;
       _concreteMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
     }
 
     internal GsaMaterial(FabricMaterial apiMaterial, int id, Model model) {
@@ -276,32 +276,32 @@ namespace GsaGH.Parameters {
       MaterialType = MatType.Frp;
       _frpMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
     }
 
     internal GsaMaterial(GlassMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Glass;
       _glassMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
     }
 
     internal GsaMaterial(SteelMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Steel;
       _steelMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
     }
 
     internal GsaMaterial(TimberMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Timber;
       _timberMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
     }
 
     internal GsaMaterial(MatType type, string gradeName,
