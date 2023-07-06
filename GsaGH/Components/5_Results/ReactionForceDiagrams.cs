@@ -174,8 +174,10 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Diagram Lines", "L", "Reaction Force Vectors", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Annotations", "Ann", "Annotations", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Diagram lines", "L", "Lines of the diagram",
+        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
+        GH_ParamAccess.list);
       pManager.HideParameter(0);
       pManager.HideParameter(1);
     }
