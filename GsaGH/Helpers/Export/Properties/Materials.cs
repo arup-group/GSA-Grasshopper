@@ -308,7 +308,7 @@ namespace GsaGH.Helpers.Export {
         apiModel, FrpMaterials.GuidDictionary);
       
       AluminiumMaterials = ValidateOrRebuildApiMaterials<AluminiumMaterial>(
-        apiModel, AluminiumMaterials.GuidDictionary); ;
+        apiModel, AluminiumMaterials.GuidDictionary);
       
       TimberMaterials = ValidateOrRebuildApiMaterials<TimberMaterial>(
         apiModel, TimberMaterials.GuidDictionary);
