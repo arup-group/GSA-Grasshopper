@@ -440,24 +440,24 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No", "Nodes from GSA Model",
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No", "Nodes from GSA Model",
         GH_ParamAccess.list);
       pManager.HideParameter(0);
-      pManager.AddGenericParameter("1D Elements [" + unitAbbreviation + "]", "E1D",
+      pManager.AddParameter(new GsaElement1dParameter(), "1D Elements [" + unitAbbreviation + "]", "E1D",
         "1D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Elements [" + unitAbbreviation + "]", "E2D",
+      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements [" + unitAbbreviation + "]", "E2D",
         "2D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Elements [" + unitAbbreviation + "]", "E3D",
+      pManager.AddParameter(new GsaElement3dParameter(), "3D Elements [" + unitAbbreviation + "]", "E3D",
         "3D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D",
+      pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]", "M1D",
         "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
-      pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D",
+      pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]", "M2D",
         "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
-      pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D",
+      pManager.AddParameter(new GsaMember3dParameter(), "3D Members [" + unitAbbreviation + "]", "M3D",
         "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
     }
 

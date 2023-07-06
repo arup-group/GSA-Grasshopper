@@ -253,16 +253,18 @@ namespace GsaGH.Parameters {
       MaterialType = MatType.Aluminium;
       _aluminiumMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(ConcreteMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Concrete;
       _concreteMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(FabricMaterial apiMaterial, int id, Model model) {
@@ -270,38 +272,43 @@ namespace GsaGH.Parameters {
       _fabricMaterial = apiMaterial;
       _id = id;
       SetCodeNames(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(FrpMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Frp;
       _frpMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(GlassMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Glass;
       _glassMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(SteelMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Steel;
       _steelMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(TimberMaterial apiMaterial, int id, Model model) {
       MaterialType = MatType.Timber;
       _timberMaterial = apiMaterial;
       _id = id;
-      CheckIfAnalysisMaterialIsModified(model);
       SetCodeNames(model);
+      CheckIfAnalysisMaterialIsModified(model);
+      SimplifyCodeNames();
     }
 
     internal GsaMaterial(MatType type, string gradeName,
@@ -437,7 +444,7 @@ namespace GsaGH.Parameters {
         case MatType.Timber:
           _timberMaterial = m.CreateTimberMaterial(gradeName);
           if (AnalysisMaterialsModified) {
-            _timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial); 
+            _timberMaterial.AnalysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
             _timberMaterial.Name = Name;
           }
           break;
@@ -521,11 +528,11 @@ namespace GsaGH.Parameters {
         return false;
       }
 
-      return Math.Round(a.CoefficientOfThermalExpansion, 11) == 
+      return Math.Round(a.CoefficientOfThermalExpansion, 11) ==
         Math.Round(b.CoefficientOfThermalExpansion, 11)
         && Math.Round(a.Density, 11) == Math.Round(b.Density, 11)
-        && Math.Round(a.ElasticModulus, 11) != Math.Round(b.ElasticModulus, 11)
-        && Math.Round(a.PoissonsRatio, 11) != Math.Round(b.PoissonsRatio, 11);
+        && Math.Round(a.ElasticModulus, 11) == Math.Round(b.ElasticModulus, 11)
+        && Math.Round(a.PoissonsRatio, 11) == Math.Round(b.PoissonsRatio, 11);
     }
 
     private AnalysisMaterial CreateCodeAnalysisMaterial(string name) {
@@ -565,6 +572,24 @@ namespace GsaGH.Parameters {
     private void SetCodeNames(Model model) {
       ConcreteDesignCodeName = model.ConcreteDesignCode();
       SteelDesignCodeName = model.SteelDesignCode();
+    }
+
+    private void SimplifyCodeNames() {
+      if (!AnalysisMaterialsModified) {
+        switch (MaterialType) {
+          case MatType.Concrete:
+            SteelDesignCodeName = string.Empty;
+            return;
+          case MatType.Steel:
+            ConcreteDesignCodeName = string.Empty;
+            return;
+
+          default:
+            SteelDesignCodeName = string.Empty;
+            ConcreteDesignCodeName = string.Empty;
+            return;
+        }
+      }
     }
   }
 }

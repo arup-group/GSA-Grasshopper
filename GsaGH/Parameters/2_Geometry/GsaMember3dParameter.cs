@@ -1,21 +1,28 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
+using Rhino.DocObjects;
+using Rhino;
 using Rhino.Geometry;
-using System;
-using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
   ///   This class provides a parameter interface for the <see cref="GsaMember3dGoo" /> type.
   /// </summary>
-  public class GsaMember3dParameter : GH_OasysPersistentGeometryParam<GsaMember3dGoo> {
+  public class GsaMember3dParameter : GH_OasysPersistentGeometryParam<GsaMember3dGoo>,
+    IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("7608a5a0-7762-4214-8c30-fb395365056e");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaMember3dGoo.Name + " parameter" :
         base.InstanceDescription;
+    public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaMember3dGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Mem3dParam;
 
@@ -36,6 +43,16 @@ namespace GsaGH.Parameters {
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member3d");
       return new GsaMember3dGoo(null);
+    }
+
+    public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
+      var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
+      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.SolidMesh)), att, doc);
+      obj_ids.AddRange(gH_BakeUtility.BakedIds);
+    }
+
+    public void BakeGeometry(RhinoDoc doc, List<Guid> obj_ids) {
+      BakeGeometry(doc, null, obj_ids);
     }
   }
 }

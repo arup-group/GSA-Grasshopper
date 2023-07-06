@@ -180,7 +180,6 @@ namespace GsaGH.Parameters {
         IsIntersector = ApiMember.IsIntersector,
         MeshSize = ApiMember.MeshSize,
         Name = ApiMember.Name,
-        Offset = ApiMember.Offset,
         OrientationAngle = ApiMember.OrientationAngle,
         OrientationNode = ApiMember.OrientationNode,
         Property = ApiMember.Property,
@@ -189,6 +188,11 @@ namespace GsaGH.Parameters {
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
       }
+
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type

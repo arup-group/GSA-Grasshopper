@@ -88,7 +88,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 9);
       ComponentTestHelper.SetInput(comp, true, 10);
       ComponentTestHelper.SetInput(comp, 0.7, 11);
-      ComponentTestHelper.SetInput(comp, false, 12);
+      ComponentTestHelper.SetInput(comp, false, 12); // is intersector
       ComponentTestHelper.SetInput(comp, "name", 14);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 15);
       ComponentTestHelper.SetInput(comp, true, 16);
@@ -127,7 +127,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(4, output9.Value.Z.Value);
       Assert.True(output10.Value);
       Assert.Equal(0.7, output11.Value);
-      Assert.True(output12.Value);
+      Assert.False(output12.Value);
       Assert.Equal(0.0, output13.Value);
       Assert.Equal("name", output14.Value);
       Assert.Equal(255, output15.Value.R);
