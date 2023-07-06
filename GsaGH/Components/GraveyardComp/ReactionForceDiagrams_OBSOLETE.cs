@@ -61,8 +61,8 @@ namespace GsaGH.Components {
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private ConcurrentDictionary<int, VectorResultGoo> _reactionForceVectors
-      = new ConcurrentDictionary<int, VectorResultGoo>();
+    private ConcurrentDictionary<int, DiagramGoo> _reactionForceVectors
+      = new ConcurrentDictionary<int, DiagramGoo>();
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
     private bool _showText = true;
 
@@ -82,7 +82,7 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      foreach (KeyValuePair<int, VectorResultGoo> force in _reactionForceVectors) {
+      foreach (KeyValuePair<int, DiagramGoo> force in _reactionForceVectors) {
         force.Value.ShowText(_showText);
       }
     }
@@ -214,9 +214,9 @@ namespace GsaGH.Components {
         scale = ComputeAutoScale(forceValues, gsaResult.Model.BoundingBox);
       }
 
-      _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
+      _reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
       Parallel.ForEach(nodes, node => {
-        VectorResultGoo reactionForceVector = CreateReactionForceVector(node, forceValues, scale);
+        DiagramGoo reactionForceVector = CreateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) {
           _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
         }
@@ -348,7 +348,7 @@ namespace GsaGH.Components {
       return momentUnitsMenu;
     }
 
-    private VectorResultGoo CreateReactionForceVector(
+    private DiagramGoo CreateReactionForceVector(
       KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
@@ -415,9 +415,9 @@ namespace GsaGH.Components {
           break;
       }
 
-      var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue, nodeId);
+      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction, forceValue.ToString(), isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow );
 
-      return isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold).DrawArrowHead(true);
+      return isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
@@ -450,21 +450,38 @@ namespace GsaGH.Components {
     }
 
     private void SetOutputs(IGH_DataAccess dataAccess) {
-      IOrderedEnumerable<KeyValuePair<int, VectorResultGoo>> orderedDict
+      IOrderedEnumerable<KeyValuePair<int, DiagramGoo>> orderedDict
         = _reactionForceVectors.OrderBy(index => index.Key);
       var startingPoints = new List<Point3d>();
-      var vectors = new List<VectorResultGoo>();
-      var forceValues = new List<IQuantity>();
+      var vectors = new List<DiagramGoo>();
+      var annotations = new List<AnnotationGoo>();
 
-      foreach (KeyValuePair<int, VectorResultGoo> keyValuePair in orderedDict) {
+      foreach (KeyValuePair<int, DiagramGoo> keyValuePair in orderedDict) {
         startingPoints.Add(keyValuePair.Value.StartingPoint);
         vectors.Add(keyValuePair.Value);
-        forceValues.Add(keyValuePair.Value.ForceValue);
+        annotations.Add(new AnnotationGoo(GenerateAnnotationPosition(keyValuePair.Value), Color.AliceBlue, keyValuePair.Value.ForceValue.ToString()));
       }
 
       dataAccess.SetDataList(0, startingPoints);
       dataAccess.SetDataList(1, vectors);
-      dataAccess.SetDataList(2, forceValues);
+      dataAccess.SetDataList(2, annotations);
+    }
+
+    private Point3d GenerateAnnotationPosition(DiagramGoo vector) {
+      var line = new Rhino.Geometry.Line(vector.StartingPoint, vector.Direction);
+      line.Flip();
+      line.Transform(Rhino.Geometry.Transform.Scale(vector.StartingPoint, -1));
+      Point3d endPoint = line.From;
+
+      int _pixelsPerUnit = 100;
+      int offset = 30;
+      Vector3d direction = line.Direction;
+
+      direction.Unitize();
+      var t = Rhino.Geometry.Transform.Translation(direction * -1 * offset / _pixelsPerUnit);
+      endPoint.Transform(t);
+
+      return endPoint;
     }
 
     private void ShowText(object sender, EventArgs e) {

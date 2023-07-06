@@ -142,8 +142,7 @@ namespace GsaGH.Components {
               pt = resLine.Value.PointAt(0.5);
               break;
 
-            case VectorResultGoo resVector:
-              id = resVector.NodeId;
+            case DiagramGoo resVector:
               pt = resVector.StartingPoint;
               break;
 
