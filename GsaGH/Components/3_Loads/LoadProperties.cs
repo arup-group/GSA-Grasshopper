@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -13,6 +14,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class LoadProperties : GH_OasysDropDownComponent {
@@ -213,7 +215,7 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridLine:
             da.SetData(0, gsaLoad.LineLoad.GridLineLoad.Case);
             da.SetData(1, gsaLoad.LineLoad.GridLineLoad.Name);
-            da.SetData(2, new Rhino.Geometry.Polyline(gsaLoad.LineLoad.Points));
+            da.SetData(2, new Polyline(gsaLoad.LineLoad.Points));
             da.SetData(3, gsaLoad.LineLoad.GridLineLoad.AxisProperty);
             da.SetData(4, gsaLoad.LineLoad.GridLineLoad.Direction);
             var apiLineForce1 = new ForcePerLength(gsaLoad.LineLoad.GridLineLoad.ValueAtStart,
@@ -232,7 +234,14 @@ namespace GsaGH.Components {
           case GsaLoad.LoadTypes.GridArea:
             da.SetData(0, gsaLoad.AreaLoad.GridAreaLoad.Case);
             da.SetData(1, gsaLoad.AreaLoad.GridAreaLoad.Name);
-            da.SetData(2, new Rhino.Geometry.Polyline(gsaLoad.AreaLoad.Points));
+            var polyline = new Polyline(gsaLoad.AreaLoad.Points);
+            if (!polyline.IsClosed) {
+              var pts = gsaLoad.AreaLoad.Points.ToList();
+              pts.Add(pts[0]);
+              polyline = new Polyline(pts);
+            }
+
+            da.SetData(2, polyline);
             da.SetData(3, gsaLoad.AreaLoad.GridAreaLoad.AxisProperty);
             da.SetData(4, gsaLoad.AreaLoad.GridAreaLoad.Direction);
             var apiAreaForce = new Pressure(gsaLoad.AreaLoad.GridAreaLoad.Value,
