@@ -7,11 +7,12 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
 
-  public enum ArrowMode { 
+  public enum ArrowMode {
     NoArrow,
     OneArrow,
     DoubleArrow,
   }
+
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="GH_Vector" /> can be used in Grasshopper.
   /// </summary>
@@ -21,17 +22,16 @@ namespace GsaGH.Parameters {
         _reactionForceLine.From,
         _reactionForceLine.To,
       });
-    public BoundingBox ClippingBox => Boundingbox;
     public Vector3d Direction { get; private set; }
     public override string TypeDescription => "A GSA result vector type.";
     public override string TypeName => "Result Vector";
+    public Color Color { get; private set; } = Colours.GsaDarkPurple;
+    public readonly ArrowMode ArrowMode;
     public readonly string ForceValue;
     public readonly Point3d StartingPoint;
-    public readonly ArrowMode ArrowMode;
-    public Color Color { get; private set; } = Colours.GsaDarkPurple;
     private Line _reactionForceLine;
     /// <summary>
-    /// OBSOLETE!
+    ///   OBSOLETE!
     /// </summary>
     private bool _showText;
 
@@ -49,30 +49,28 @@ namespace GsaGH.Parameters {
       Value = GetGhVector();
     }
 
-    public override bool CastTo<TQ>(out TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
-        target = (TQ)(object)new GH_Vector(Value);
-        return true;
-      }
-
-      target = default;
-      return false;
-    }
+    public BoundingBox ClippingBox => Boundingbox;
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
 
-      if (ArrowMode == ArrowMode.NoArrow) { }
-      else if(ArrowMode == ArrowMode.OneArrow) {
-        args.Pipeline.DrawArrow(_reactionForceLine, Color); }
-      else if(ArrowMode == ArrowMode.DoubleArrow){
-        const int arrowHeadScreenSize = 20;
-        Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
-        args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
+      switch (ArrowMode) {
+        case ArrowMode.NoArrow:
+          args.Pipeline.DrawLine(_reactionForceLine, Color);
+          break;
+        case ArrowMode.OneArrow:
+          args.Pipeline.DrawArrow(_reactionForceLine, Color);
+          break;
+        case ArrowMode.DoubleArrow: {
+          const int arrowHeadScreenSize = 20;
+          Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
+          args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
+          break;
+        }
       }
-           
+
       if (!_showText) {
         return;
       }
@@ -82,6 +80,16 @@ namespace GsaGH.Parameters {
       Point2d positionOnTheScreen = args.Pipeline.Viewport.WorldToClient(endOffsetPoint);
 
       args.Pipeline.Draw2dText(ForceValue.ToString(), Color, positionOnTheScreen, true);
+    }
+
+    public override bool CastTo<TQ>(out TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Vector))) {
+        target = (TQ)(object)new GH_Vector(Value);
+        return true;
+      }
+
+      target = default;
+      return false;
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
