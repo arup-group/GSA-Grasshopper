@@ -26,6 +26,7 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -75,7 +76,6 @@ namespace GsaGH.Components {
       m_attributes = new DropDownComponentAttributes(this, SetSelected, _dropDownItems,
         _selectedItems, _spacerDescriptions);
     }
-
 
     public override bool Read(GH_IReader reader) {
       _selectedDisplayValue = (DisplayValue)reader.GetInt32("Display");
@@ -159,11 +159,12 @@ namespace GsaGH.Components {
         + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item, false);
+      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
+        false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
         GH_ParamAccess.item, 3);
-      pManager.AddColourParameter(
-        "Colour", "Co", "[Optional] Colour to override default colour", GH_ParamAccess.item);
+      pManager.AddColourParameter("Colour", "Co", "[Optional] Colour to override default colour",
+        GH_ParamAccess.item);
       pManager.AddNumberParameter("Scalar", "x:X",
         "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
         GH_ParamAccess.item);
@@ -178,7 +179,6 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
-      pManager.HideParameter(0);
       pManager.HideParameter(1);
     }
 
@@ -227,14 +227,17 @@ namespace GsaGH.Components {
       var _reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
       var _annotations = new ConcurrentBag<AnnotationGoo>();
       Parallel.ForEach(nodes, node => {
-        DiagramGoo reactionForceVector = CreateReactionForceVector(node, forceValues, scale, significantDigits);
+        DiagramGoo reactionForceVector
+          = CreateReactionForceVector(node, forceValues, scale, significantDigits);
         if (reactionForceVector != null) {
           if (colourInput) {
             reactionForceVector.SetColor(color);
           }
+
           _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
-          _annotations.Add(new AnnotationGoo(GenerateAnnotationPosition(reactionForceVector), reactionForceVector.Color, $"{reactionForceVector.ForceValue} {Message} "));
-          
+          _annotations.Add(new AnnotationGoo(GenerateAnnotationPosition(reactionForceVector),
+            reactionForceVector.Color, $"{reactionForceVector.ForceValue} {Message} "));
+
           ((IGH_PreviewObject)Params.Output[1]).Hidden = !_showText;
         }
       });
@@ -248,47 +251,41 @@ namespace GsaGH.Components {
       double maxValue = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-          maxValue = Math.Max(
-            forceValues.DmaxX.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxX.As(_forceUnit),
             Math.Abs(forceValues.DminX.As(_forceUnit)));
           break;
         case DisplayValue.Y:
-          maxValue = Math.Max(
-            forceValues.DmaxY.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxY.As(_forceUnit),
             Math.Abs(forceValues.DminY.As(_forceUnit)));
           break;
         case DisplayValue.Z:
-          maxValue = Math.Max(
-            forceValues.DmaxZ.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxZ.As(_forceUnit),
             Math.Abs(forceValues.DminZ.As(_forceUnit)));
           break;
         case DisplayValue.ResXyz:
-          maxValue = Math.Max(
-            forceValues.DmaxXyz.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxXyz.As(_forceUnit),
             Math.Abs(forceValues.DminXyz.As(_forceUnit)));
           break;
 
         case DisplayValue.Xx:
-          maxValue = Math.Max(
-            forceValues.DmaxXx.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXx.As(_momentUnit),
             Math.Abs(forceValues.DminXx.As(_momentUnit)));
           break;
         case DisplayValue.Yy:
-          maxValue = Math.Max(
-            forceValues.DmaxYy.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxYy.As(_momentUnit),
             Math.Abs(forceValues.DminYy.As(_momentUnit)));
           break;
         case DisplayValue.Zz:
-          maxValue = Math.Max(
-            forceValues.DmaxZz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxZz.As(_momentUnit),
             Math.Abs(forceValues.DminZz.As(_momentUnit)));
           break;
         case DisplayValue.ResXxyyzz:
-          maxValue = Math.Max(
-            forceValues.DmaxXxyyzz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXxyyzz.As(_momentUnit),
             Math.Abs(forceValues.DminXxyyzz.As(_momentUnit)));
           break;
-      };
+      }
+
+      ;
 
       double factor = 0.1; // maxVector = 10% of bbox diagonal
       return bbox.Diagonal.Length * factor / maxValue;
@@ -344,7 +341,8 @@ namespace GsaGH.Components {
     }
 
     private DiagramGoo CreateReactionForceVector(
-      KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale, int significantDigits) {
+      KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale,
+      int significantDigits) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;
@@ -410,7 +408,9 @@ namespace GsaGH.Components {
           break;
       }
 
-      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction, Math.Round(forceValue.Value, significantDigits).ToString(), isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
+      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction,
+        Math.Round(forceValue.Value, significantDigits).ToString(),
+        isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
 
       return isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
     }
@@ -444,7 +444,9 @@ namespace GsaGH.Components {
       return valid;
     }
 
-    private void SetOutputs(IGH_DataAccess dataAccess, ConcurrentDictionary<int, DiagramGoo> reactionForceVectors, ConcurrentBag<AnnotationGoo> annotations ) {
+    private void SetOutputs(
+      IGH_DataAccess dataAccess, ConcurrentDictionary<int, DiagramGoo> reactionForceVectors,
+      ConcurrentBag<AnnotationGoo> annotations) {
       IOrderedEnumerable<KeyValuePair<int, DiagramGoo>> orderedDict
         = reactionForceVectors.OrderBy(index => index.Key);
       var vectors = new List<DiagramGoo>();
@@ -453,12 +455,12 @@ namespace GsaGH.Components {
         vectors.Add(keyValuePair.Value);
       }
 
-      dataAccess.SetDataList(0, orderedDict);
+      dataAccess.SetDataList(0, vectors);
       dataAccess.SetDataList(1, annotations);
     }
 
     private Point3d GenerateAnnotationPosition(DiagramGoo vector) {
-      var line = new Rhino.Geometry.Line(vector.StartingPoint, vector.Direction);
+      var line = new Line(vector.StartingPoint, vector.Direction);
       line.Flip();
       line.Transform(Transform.Scale(vector.StartingPoint, -1));
       Point3d endPoint = line.From;

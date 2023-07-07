@@ -64,6 +64,7 @@ namespace GsaGH.Parameters {
           args.Pipeline.DrawArrow(_reactionForceLine, Color);
           break;
         case ArrowMode.DoubleArrow: {
+          args.Pipeline.DrawArrow(_reactionForceLine, Color);
           const int arrowHeadScreenSize = 20;
           Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
           args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
