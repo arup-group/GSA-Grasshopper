@@ -17,7 +17,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenCreateInstance_ThenObject_ShouldNotBeNull() {
-      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, null, ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, ArrowMode.NoArrow);
       Assert.NotNull(obj);
     }
 
@@ -32,12 +32,10 @@ namespace GsaGHTests.Parameters {
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ));
 
-      var obj = new DiagramGoo(expectedPoint, expectedVector, expectedForceValue,
-        ArrowMode.NoArrow);
+      var obj = new DiagramGoo(expectedPoint, expectedVector, ArrowMode.NoArrow);
 
       Assert.Equal(expectedPoint, obj.StartingPoint);
       Assert.Equal(expectedVector, obj.Direction);
-      Assert.Equal(expectedForceValue, obj.ForceValue);
       Assert.Equal(expectedValue.Value, obj.Value.Value);
       Assert.Equal(ArrowMode.NoArrow, obj.ArrowMode);
       Assert.Equal(Colours.GsaDarkPurple, obj.Color);
@@ -53,11 +51,10 @@ namespace GsaGHTests.Parameters {
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ));
 
-      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, null, ArrowMode.OneArrow);
+      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, ArrowMode.OneArrow);
 
       Assert.Equal(expectedPoint, obj.StartingPoint);
       Assert.Equal(expectedVector, obj.Direction);
-      Assert.Null(obj.ForceValue);
       Assert.Equal(expectedValue.Value, obj.Value.Value);
       Assert.Equal(ArrowMode.OneArrow, obj.ArrowMode);
       Assert.Equal(Colours.GsaDarkPurple, obj.Color);
@@ -73,12 +70,10 @@ namespace GsaGHTests.Parameters {
         expectedReactionForceLine.ToX - expectedReactionForceLine.FromX,
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ));
-      var obj = new DiagramGoo(expectedPoint, expectedVector, expectedForceValue,
-        ArrowMode.DoubleArrow);
+      var obj = new DiagramGoo(expectedPoint, expectedVector, ArrowMode.DoubleArrow);
 
       Assert.Equal(expectedPoint, obj.StartingPoint);
       Assert.Equal(expectedVector, obj.Direction);
-      Assert.Equal(expectedForceValue, obj.ForceValue);
       Assert.Equal(expectedValue.Value, obj.Value.Value);
       Assert.Equal(ArrowMode.DoubleArrow, obj.ArrowMode);
       Assert.Equal(Colours.GsaDarkPurple, obj.Color);
@@ -86,11 +81,9 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenDuplicateGeometry_ThenMethod_ShouldReturnDuplicatedObject() {
-      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero, ArrowMode.NoArrow);
 
-      var expectedObj = new DiagramGoo(Point3d.Origin, Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var expectedObj = new DiagramGoo(Point3d.Origin, Vector3d.Zero, ArrowMode.NoArrow);
 
       IGH_GeometricGoo actualObj = obj.DuplicateGeometry();
 
@@ -108,7 +101,7 @@ namespace GsaGHTests.Parameters {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       string force = new Force(4, ForceUnit.Kilonewton).ToString();
-      var obj = new DiagramGoo(startingPoint, vector3d, force, ArrowMode.NoArrow);
+      var obj = new DiagramGoo(startingPoint, vector3d, ArrowMode.NoArrow);
 
       BoundingBox expectedBoundingBox = obj.Boundingbox;
       BoundingBox actualResult = obj.ClippingBox;
@@ -118,8 +111,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetBoundingBox_ThenMethod_ShouldReturnValidValue() {
-      var obj = new DiagramGoo(new Point3d(3, 3, 3), new Vector3d(3, 3, 3),
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(new Point3d(3, 3, 3), new Vector3d(3, 3, 3), ArrowMode.NoArrow);
 
       BoundingBox actualBoundingBox = obj.Boundingbox;
       var expectedBoundingBox = new BoundingBox(new List<Point3d>() {
@@ -140,8 +132,7 @@ namespace GsaGHTests.Parameters {
     public void WhenGetBoundingBoxWithTransform_ThenMethod_ShouldReturnValidValue() {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
-      var obj = new DiagramGoo(startingPoint, vector3d,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(startingPoint, vector3d, ArrowMode.NoArrow);
 
       BoundingBox actualBoundingBox
         = obj.GetBoundingBox(new Transform(Transform.Mirror(startingPoint, vector3d)));
@@ -161,8 +152,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetTypeDescription_ThenShouldReturnValidString() {
-      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero, ArrowMode.NoArrow);
 
       string expectedString = "A GSA result diagram type.";
 
@@ -171,8 +161,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetTypeName_ThenShouldReturnValidString() {
-      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero, ArrowMode.NoArrow);
 
       string expectedString = "Diagram Vector";
 
@@ -181,8 +170,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenInitialised_ThenClassContainSetColorMethod() {
-      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, new Force().ToString(),
-        ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, ArrowMode.NoArrow);
       MethodInfo[] actualMethods = obj.GetType().GetMethods();
 
       Assert.Contains(actualMethods, info => info.Name.Equals("SetColor"));
@@ -198,8 +186,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenSetColor_ThenColorOfDiagramShoouldBeChanged() {
-      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, new Force().ToString(),
-        ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, ArrowMode.NoArrow);
       Assert.Equal(Colours.GsaDarkPurple, obj.Color);
 
       obj.SetColor(Color.Aqua);
@@ -207,35 +194,15 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Color.Aqua, obj.Color);
     }
 
-    /// <summary>
-    ///   ToDO remove when showText will be deleted
-    /// </summary>
-    [Fact]
-    public void WhenInitialised_ThenClassContainShowTextMethod() {
-      var obj = new DiagramGoo(Point3d.Unset, Vector3d.Unset, new Force().ToString(),
-        ArrowMode.NoArrow);
-      MethodInfo[] actualMethods = obj.GetType().GetMethods();
-
-      Assert.Contains(actualMethods, info => info.Name.Equals("ShowText"));
-
-      MethodInfo showTextMethodInfo
-        = actualMethods.FirstOrDefault(method => method.Name.Equals("ShowText"));
-
-      Assert.True(showTextMethodInfo?.IsPublic);
-      Assert.True(showTextMethodInfo?.GetParameters().Length == 1);
-      Assert.True(showTextMethodInfo?.GetParameters()[0].ParameterType == typeof(bool));
-      Assert.True(showTextMethodInfo?.ReturnParameter?.ParameterType.Name == "Void");
-    }
-
     [Fact]
     public void WhenMorph_ThenMethod_ShouldNothingChange() {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       string force = new Force(4, ForceUnit.Kilonewton).ToString();
-      var obj = new DiagramGoo(startingPoint, vector3d, force, ArrowMode.NoArrow);
+      var obj = new DiagramGoo(startingPoint, vector3d, ArrowMode.NoArrow);
 
       IGH_GeometricGoo actualObject = obj.Morph(new TwistSpaceMorph());
-      var expectedObject = new DiagramGoo(startingPoint, vector3d, force, ArrowMode.NoArrow);
+      var expectedObject = new DiagramGoo(startingPoint, vector3d, ArrowMode.NoArrow);
 
       Assert.Equal(expectedObject.Boundingbox.Diagonal, actualObject.Boundingbox.Diagonal);
       Assert.Equal(expectedObject.Boundingbox.Max, actualObject.Boundingbox.Max);
@@ -247,7 +214,7 @@ namespace GsaGHTests.Parameters {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       string force = new Force(4, ForceUnit.Kilonewton).ToString();
-      var obj = new DiagramGoo(startingPoint, vector3d, force, ArrowMode.NoArrow);
+      var obj = new DiagramGoo(startingPoint, vector3d, ArrowMode.NoArrow);
 
       object actualObject = obj.ScriptVariable();
 
@@ -256,11 +223,10 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenToString_ThenMethod_ShouldReturnValidString() {
-      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero, ArrowMode.NoArrow);
 
       string expectedString
-        = $"Diagram Result: Starting point: {Point3d.Origin}, Direction:{Vector3d.Zero}, Force:4 kN";
+        = $"Diagram Result: Starting point: {Point3d.Origin}, Direction:{Vector3d.Zero}";
 
       Assert.Equal(expectedString, obj.ToString());
     }
@@ -269,8 +235,7 @@ namespace GsaGHTests.Parameters {
     public void WhenTransform_ThenMethod_ShouldReturnValidObject() {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
-      var obj = new DiagramGoo(startingPoint, vector3d,
-        new Force(4, ForceUnit.Kilonewton).ToString(), ArrowMode.NoArrow);
+      var obj = new DiagramGoo(startingPoint, vector3d, ArrowMode.NoArrow);
 
       IGH_GeometricGoo actualObject
         = obj.Transform(new Transform(Transform.Mirror(startingPoint, vector3d)));

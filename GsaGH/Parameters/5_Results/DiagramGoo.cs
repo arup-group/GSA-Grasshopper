@@ -6,7 +6,6 @@ using GsaGH.Helpers.Graphics;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-
   public enum ArrowMode {
     NoArrow,
     OneArrow,
@@ -27,23 +26,16 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Diagram Vector";
     public Color Color { get; private set; } = Colours.GsaDarkPurple;
     public readonly ArrowMode ArrowMode;
-    public readonly string ForceValue;
     public readonly Point3d StartingPoint;
     private Line _reactionForceLine;
-    /// <summary>
-    ///   OBSOLETE!
-    /// </summary>
-    private bool _showText;
 
     /// <summary>
     ///   Goo wrapper GH_Vector class for reaction force vectors.
     ///   Default color: Gsa_Purple
     /// </summary>
-    public DiagramGoo(
-      Point3d startingPoint, Vector3d direction, string forceValue, ArrowMode arrowMode) {
+    public DiagramGoo(Point3d startingPoint, Vector3d direction, ArrowMode arrowMode) {
       StartingPoint = startingPoint == Point3d.Unset ? Point3d.Origin : startingPoint;
       Direction = direction == Vector3d.Unset ? Vector3d.Zero : direction;
-      ForceValue = forceValue;
       ArrowMode = arrowMode;
       _reactionForceLine = CreateReactionForceLine(Direction);
       Value = GetGhVector();
@@ -71,16 +63,6 @@ namespace GsaGH.Parameters {
           break;
         }
       }
-
-      if (!_showText) {
-        return;
-      }
-
-      const int offset = 30;
-      Point3d endOffsetPoint = CalculateExtraEndOffsetPoint(pixelsPerUnit, offset);
-      Point2d positionOnTheScreen = args.Pipeline.Viewport.WorldToClient(endOffsetPoint);
-
-      args.Pipeline.Draw2dText(ForceValue, Color, positionOnTheScreen, true);
     }
 
     public override bool CastTo<TQ>(out TQ target) {
@@ -94,7 +76,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new DiagramGoo(StartingPoint, Direction, ForceValue, ArrowMode);
+      return new DiagramGoo(StartingPoint, Direction, ArrowMode);
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
@@ -106,7 +88,7 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       Point3d sPoint = xmorph.MorphPoint(StartingPoint);
-      return new DiagramGoo(sPoint, Direction, ForceValue, ArrowMode);
+      return new DiagramGoo(sPoint, Direction, ArrowMode);
     }
 
     public override object ScriptVariable() {
@@ -118,26 +100,14 @@ namespace GsaGH.Parameters {
       return this;
     }
 
-    //obsolete
-    public void ShowText(bool showText) {
-      _showText = showText;
-    }
-
     public override string ToString() {
-      return
-        $"Diagram Result: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue}";
+      return $"Diagram Result: Starting point: {StartingPoint}, Direction:{Direction}";
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
       Point3d sPoint = StartingPoint;
       sPoint.Transform(xform);
-      return new DiagramGoo(sPoint, Direction, ForceValue, ArrowMode);
-    }
-
-    private Point3d CalculateExtraEndOffsetPoint(double pixelsPerUnit, int offset) {
-      var point = new Point3d(_reactionForceLine.From);
-
-      return TransformPoint(point, pixelsPerUnit, offset);
+      return new DiagramGoo(sPoint, Direction, ArrowMode);
     }
 
     private Point3d CalculateExtraStartOffsetPoint(double pixelsPerUnit, int offset) {

@@ -79,14 +79,6 @@ namespace GsaGH.Components {
         _selectedItems, _spacerDescriptions);
     }
 
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      foreach (KeyValuePair<int, DiagramGoo> force in _reactionForceVectors) {
-        force.Value.ShowText(_showText);
-      }
-    }
-
     public override bool Read(GH_IReader reader) {
       _selectedDisplayValue = (DisplayValue)reader.GetInt32("Display");
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
@@ -227,73 +219,43 @@ namespace GsaGH.Components {
         _selectedDisplayValue.ToString());
     }
 
-    private string GetNodeFilters(IGH_DataAccess dataAccess) {
-      string nodeList = "All";
-      var ghType = new GH_ObjectWrapper();
-      if (dataAccess.GetData(1, ref ghType)) {
-        if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-            this.AddRuntimeWarning(
-            "List must be of type Node to apply to node filter");
-          }
-          nodeList = $"\"{listGoo.Value.Name}\"";
-        } else {
-          GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
-        }
-      }
-
-      if (string.IsNullOrEmpty(nodeList) || nodeList.ToLower() == "all") {
-        nodeList = "All";
-      }
-
-      return nodeList;
-    }
-
     private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {
       double maxValue = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-          maxValue = Math.Max(
-            forceValues.DmaxX.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxX.As(_forceUnit),
             Math.Abs(forceValues.DminX.As(_forceUnit)));
           break;
         case DisplayValue.Y:
-          maxValue = Math.Max(
-            forceValues.DmaxY.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxY.As(_forceUnit),
             Math.Abs(forceValues.DminY.As(_forceUnit)));
           break;
         case DisplayValue.Z:
-          maxValue = Math.Max(
-            forceValues.DmaxZ.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxZ.As(_forceUnit),
             Math.Abs(forceValues.DminZ.As(_forceUnit)));
           break;
         case DisplayValue.ResXyz:
-          maxValue = Math.Max(
-            forceValues.DmaxXyz.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxXyz.As(_forceUnit),
             Math.Abs(forceValues.DminXyz.As(_forceUnit)));
           break;
 
         case DisplayValue.Xx:
-          maxValue = Math.Max(
-            forceValues.DmaxXx.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXx.As(_momentUnit),
             Math.Abs(forceValues.DminXx.As(_momentUnit)));
           break;
         case DisplayValue.Yy:
-          maxValue = Math.Max(
-            forceValues.DmaxYy.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxYy.As(_momentUnit),
             Math.Abs(forceValues.DminYy.As(_momentUnit)));
           break;
         case DisplayValue.Zz:
-          maxValue = Math.Max(
-            forceValues.DmaxZz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxZz.As(_momentUnit),
             Math.Abs(forceValues.DminZz.As(_momentUnit)));
           break;
         case DisplayValue.ResXxyyzz:
-          maxValue = Math.Max(
-            forceValues.DmaxXxyyzz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXxyyzz.As(_momentUnit),
             Math.Abs(forceValues.DminXxyyzz.As(_momentUnit)));
           break;
-      };
+      }
 
       double factor = 0.1; // maxVector = 10% of bbox diagonal
       return bbox.Diagonal.Length * factor / maxValue;
@@ -415,7 +377,8 @@ namespace GsaGH.Components {
           break;
       }
 
-      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction, forceValue.ToString(), isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow );
+      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction,
+        isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
 
       return isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
     }
@@ -454,34 +417,14 @@ namespace GsaGH.Components {
         = _reactionForceVectors.OrderBy(index => index.Key);
       var startingPoints = new List<Point3d>();
       var vectors = new List<DiagramGoo>();
-      var annotations = new List<AnnotationGoo>();
 
       foreach (KeyValuePair<int, DiagramGoo> keyValuePair in orderedDict) {
         startingPoints.Add(keyValuePair.Value.StartingPoint);
         vectors.Add(keyValuePair.Value);
-        annotations.Add(new AnnotationGoo(GenerateAnnotationPosition(keyValuePair.Value), Color.AliceBlue, keyValuePair.Value.ForceValue.ToString()));
       }
 
       dataAccess.SetDataList(0, startingPoints);
       dataAccess.SetDataList(1, vectors);
-      dataAccess.SetDataList(2, annotations);
-    }
-
-    private Point3d GenerateAnnotationPosition(DiagramGoo vector) {
-      var line = new Rhino.Geometry.Line(vector.StartingPoint, vector.Direction);
-      line.Flip();
-      line.Transform(Rhino.Geometry.Transform.Scale(vector.StartingPoint, -1));
-      Point3d endPoint = line.From;
-
-      int _pixelsPerUnit = 100;
-      int offset = 30;
-      Vector3d direction = line.Direction;
-
-      direction.Unitize();
-      var t = Rhino.Geometry.Transform.Translation(direction * -1 * offset / _pixelsPerUnit);
-      endPoint.Transform(t);
-
-      return endPoint;
     }
 
     private void ShowText(object sender, EventArgs e) {

@@ -280,12 +280,9 @@ namespace GsaGH.Components {
 
         var line = new Rhino.Geometry.Line(startPoint, endPoint);
         line.Flip();
-        Annotation annotation = diagramResults.Annotations.Where(anno
-          => anno.Position.X == startPoint.X && anno.Position.Y == startPoint.Y
-          && anno.Position.Z == startPoint.Z).FirstOrDefault();
 
-        diagramLines.Add(new DiagramGoo(startPoint, line.Direction,
-          annotation?.String ?? string.Empty, ArrowMode.NoArrow).SetColor(color));
+        diagramLines.Add(
+          new DiagramGoo(startPoint, line.Direction, ArrowMode.NoArrow).SetColor(color));
       }
 
       bool showAnnotations = true;

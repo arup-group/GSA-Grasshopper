@@ -227,16 +227,14 @@ namespace GsaGH.Components {
       var _reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
       var _annotations = new ConcurrentBag<AnnotationGoo>();
       Parallel.ForEach(nodes, node => {
-        DiagramGoo reactionForceVector
-          = CreateReactionForceVector(node, forceValues, scale, significantDigits);
+        DiagramGoo reactionForceVector = CreateReactionForceVectorWithAnnotations(node, forceValues,
+          scale, significantDigits, _annotations);
         if (reactionForceVector != null) {
           if (colourInput) {
             reactionForceVector.SetColor(color);
           }
 
           _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
-          _annotations.Add(new AnnotationGoo(GenerateAnnotationPosition(reactionForceVector),
-            reactionForceVector.Color, $"{reactionForceVector.ForceValue} {Message} "));
 
           ((IGH_PreviewObject)Params.Output[1]).Hidden = !_showText;
         }
@@ -340,9 +338,9 @@ namespace GsaGH.Components {
       return momentUnitsMenu;
     }
 
-    private DiagramGoo CreateReactionForceVector(
+    private DiagramGoo CreateReactionForceVectorWithAnnotations(
       KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale,
-      int significantDigits) {
+      int significantDigits, ConcurrentBag<AnnotationGoo> annotationGoos) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;
@@ -409,10 +407,13 @@ namespace GsaGH.Components {
       }
 
       var vectorResult = new DiagramGoo(node.Value.Value.Point, direction,
-        Math.Round(forceValue.Value, significantDigits).ToString(),
         isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
+      vectorResult = isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
 
-      return isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
+      annotationGoos.Add(new AnnotationGoo(GenerateAnnotationPosition(vectorResult),
+        vectorResult.Color, $"{Math.Round(forceValue.Value, significantDigits)} {Message} "));
+
+      return vectorResult;
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
