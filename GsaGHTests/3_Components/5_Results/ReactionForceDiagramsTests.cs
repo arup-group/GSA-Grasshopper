@@ -66,19 +66,31 @@ namespace GsaGHTests.Components.Results {
       var expectedStringParam = new Param_String() {
         Name = "Node filter list",
         NickName = "No",
-        Description = 
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        Description = "Filter results by list (by default 'all')" + Environment.NewLine
+          + "Input a GSA List or a text string taking the form:" + Environment.NewLine
+          + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
+          + "Refer to GSA help file for definition of lists and full vocabulary.",
+        Access = GH_ParamAccess.item,
+        Optional = true,
+      };
+      var expectedBooleanParam = new Param_Boolean() {
+        Name = "Annotation",
+        NickName = "A",
+        Description = "Show Annotation",
+        Access = GH_ParamAccess.item,
+        Optional = true,
+      };
+      var expectedIntParam = new Param_Integer() {
+        Name = "Significant Digits",
+        NickName = "SD",
+        Description = "Round values to significant digits",
         Access = GH_ParamAccess.item,
         Optional = true,
       };
       var expectedColorParam = new Param_Colour() {
         Name = "Colour",
         NickName = "Co",
-        Description
-          = "[Optional] Colour to override default colour",
+        Description = "[Optional] Colour to override default colour",
         Access = GH_ParamAccess.item,
         Optional = true,
       };
@@ -94,6 +106,8 @@ namespace GsaGHTests.Components.Results {
       var expectedInputs = new List<IGH_Param>() {
         expectedParam,
         expectedStringParam,
+        expectedBooleanParam,
+        expectedIntParam,
         expectedColorParam,
         expectedNumberParam,
       };
@@ -114,28 +128,21 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void OutputParamsAreValid() {
       var obj = new ReactionForceDiagrams();
-      var expectedPointParam = new Param_Point() {
-        Name = "Anchor Point",
-        NickName = "A",
-        Description = "Support Node Location",
-        Access = GH_ParamAccess.list,
-      };
-      var expectedVectorParam = new Param_Vector() {
-        Name = "Vector",
-        NickName = "V",
-        Description = "Reaction Force Vector",
+      var expectedLinesParam = new Param_GenericObject() {
+        Name = "Diagram lines",
+        NickName = "L",
+        Description = "Lines of the diagram",
         Access = GH_ParamAccess.list,
       };
       var expectedGenericParam = new Param_GenericObject() {
-        Name = "Value",
+        Name = "Annotations",
         NickName = "Val",
-        Description = "Reaction Force Value",
+        Description = "Annotations for the diagram",
         Access = GH_ParamAccess.list,
       };
 
       var expectedOutputs = new List<IGH_Param>() {
-        expectedPointParam,
-        expectedVectorParam,
+        expectedLinesParam,
         expectedGenericParam,
       };
 

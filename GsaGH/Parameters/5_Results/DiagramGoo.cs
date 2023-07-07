@@ -23,8 +23,8 @@ namespace GsaGH.Parameters {
         _reactionForceLine.To,
       });
     public Vector3d Direction { get; private set; }
-    public override string TypeDescription => "A GSA result vector type.";
-    public override string TypeName => "Result Vector";
+    public override string TypeDescription => "A GSA result diagram type.";
+    public override string TypeName => "Diagram Vector";
     public Color Color { get; private set; } = Colours.GsaDarkPurple;
     public readonly ArrowMode ArrowMode;
     public readonly string ForceValue;
@@ -79,7 +79,7 @@ namespace GsaGH.Parameters {
       Point3d endOffsetPoint = CalculateExtraEndOffsetPoint(pixelsPerUnit, offset);
       Point2d positionOnTheScreen = args.Pipeline.Viewport.WorldToClient(endOffsetPoint);
 
-      args.Pipeline.Draw2dText(ForceValue.ToString(), Color, positionOnTheScreen, true);
+      args.Pipeline.Draw2dText(ForceValue, Color, positionOnTheScreen, true);
     }
 
     public override bool CastTo<TQ>(out TQ target) {
@@ -124,7 +124,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       return
-        $"VectorResult: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue}";
+        $"Diagram Result: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue}";
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {

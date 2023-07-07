@@ -44,28 +44,15 @@ namespace IntegrationTests.ExampleFiles {
     }
 
     [Fact]
-    public void LineResultsGooTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "ResultLine");
-      foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
-        var item = (LineResultGoo)data;
-        Assert.True(item.Value.IsValid);
-        Assert.True(item.Boundingbox.IsValid);
-        Assert.True(item.ClippingBox.IsValid);
-        Assert.Equal("A GSA result line type.", item.TypeDescription);
-        Assert.Equal("Result Line", item.TypeName);
-      }
-    }
-
-    [Fact]
     public void VectorResultGooTest() {
       IGH_Param param = Helper.FindParameter(Document(), "ReactionForceVector");
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
-        var item = (VectorResultGoo)data;
+        var item = (DiagramGoo)data;
         Assert.True(item.Value.IsValid);
         Assert.True(item.Boundingbox.IsValid);
         Assert.True(item.ClippingBox.IsValid);
-        Assert.Equal("A GSA result vector type.", item.TypeDescription);
-        Assert.Equal("Result Vector", item.TypeName);
+        Assert.Equal("A GSA result diagram type.", item.TypeDescription);
+        Assert.Equal("Diagram Vector", item.TypeName);
       }
     }
 
@@ -85,6 +72,7 @@ namespace IntegrationTests.ExampleFiles {
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }
+
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
