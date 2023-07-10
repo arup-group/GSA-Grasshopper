@@ -116,7 +116,7 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() { }
 
     public override void CreateAttributes() {
-      m_attributes = new ThreeButtonAtrributes(this, "Save", "Save As", "Open in GSA",
+      m_attributes = new ThreeButtonComponentAttributes(this, "Save", "Save As", "Open in GSA",
         SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
     }
 
