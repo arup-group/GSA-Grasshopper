@@ -56,7 +56,7 @@ namespace GsaGH.Components {
           _zz2,
         },
       };
-      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases,
+      m_attributes = new CheckBoxComponentAttributes(this, SetReleases,
         new List<string>() {
           "Start Release",
           "End Release",
@@ -156,14 +156,14 @@ namespace GsaGH.Components {
 
       if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)) {
         this.AddRuntimeRemark(
-          "Service message from your favourite Oasys dev team:" + Environment.NewLine 
-          + "Based on your Default Unit Settings (changed in the Oasys Menu)," + Environment.NewLine 
-          + "one or more input curves have relatively short length less than" + Environment.NewLine 
+          "Service message from your favourite Oasys dev team:" + Environment.NewLine
+          + "Based on your Default Unit Settings (changed in the Oasys Menu)," + Environment.NewLine
+          + "one or more input curves have relatively short length less than" + Environment.NewLine
           + "the set tolerance (" + DefaultUnits.Tolerance.ToString().Replace(" ", string.Empty) + ")."
-          + Environment.NewLine 
-          + "This may convert into a zero-length line when assembling the GSA Model," + Environment.NewLine 
-          + "thus creating invalid topology that cannot be analysed." + Environment.NewLine 
-          + "You can ignore this message if you are creating your model in another unit" + Environment.NewLine 
+          + Environment.NewLine
+          + "This may convert into a zero-length line when assembling the GSA Model," + Environment.NewLine
+          + "thus creating invalid topology that cannot be analysed." + Environment.NewLine
+          + "You can ignore this message if you are creating your model in another unit" + Environment.NewLine
           + "(set on 'Analyse' or 'CreateModel' components) than "
           + DefaultUnits.LengthUnitGeometry.ToString() + ".");
       }
@@ -191,7 +191,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {
-          mem.Section = sectionGoo.Value;
+        mem.Section = sectionGoo.Value;
       }
 
       double meshSize = 0;
