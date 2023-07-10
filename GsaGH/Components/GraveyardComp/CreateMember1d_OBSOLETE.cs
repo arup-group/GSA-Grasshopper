@@ -59,7 +59,7 @@ namespace GsaGH.Components {
           _zz2,
         },
       };
-      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases,
+      m_attributes = new CheckBoxComponentAttributes(this, SetReleases,
         new List<string>() {
           "Start Release",
           "End Release",
