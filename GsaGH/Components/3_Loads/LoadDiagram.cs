@@ -9,6 +9,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
@@ -197,10 +198,8 @@ namespace GsaGH.Components {
       GraphicDrawResult diagramResults = modelGoo.Value.Model.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
-      Color color = Color.Empty;
-      if (da.GetData(5, ref color)) {
-        _colourInput = true;
-      }
+      Color color = Colours.GsaDarkPurple;
+      _colourInput = da.GetData(5, ref color);
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
