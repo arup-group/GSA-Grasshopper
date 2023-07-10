@@ -199,7 +199,7 @@ namespace GsaGH.Components {
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Colours.GsaDarkPurple;
-      _colourInput = da.GetData(5, ref color);
+      da.GetData(5, ref color);
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
@@ -207,13 +207,13 @@ namespace GsaGH.Components {
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
-        color = _colourInput ? color : (Color)item.Colour;
+        color = color != Color.Empty ? color : (Color)item.Colour;
 
         var line = new Rhino.Geometry.Line(startPoint, endPoint);
         line.Flip();
 
         diagramLines.Add(
-          new DiagramGoo(startPoint, line.Direction, ArrowMode.OneArrow).SetColor(color));
+          new DiagramGoo(endPoint, line.Direction * -1, ArrowMode.OneArrow).SetColor(color));
       }
 
       bool showAnnotations = true;
