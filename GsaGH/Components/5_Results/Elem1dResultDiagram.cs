@@ -8,6 +8,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
@@ -20,11 +21,9 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using Line = GsaAPI.Line;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using GsaGH.Helpers;
-using Newtonsoft.Json.Linq;
+using Line = GsaAPI.Line;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -43,8 +42,6 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
-    private bool _colourInput = false;
-    private List<AnnotationGoo> _displayAnnotations = new List<AnnotationGoo>();
 
     public Elem1dResultDiagram() : base("1D Element Result Diagram", "ResultElem1dDiagram",
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) { }
@@ -65,17 +62,17 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0) {
         if (j == 0) {
-          if (_dropDownItems[1] !=
-            Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList()) {
-            _dropDownItems[1] =
-              Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList();
+          if (_dropDownItems[1] != Mappings.diagramTypeMappingForce.Select(item => item.Description)
+           .ToList()) {
+            _dropDownItems[1] = Mappings.diagramTypeMappingForce.Select(item => item.Description)
+             .ToList();
             _selectedItems[1] = _dropDownItems[1][5]; // Myy
           }
         } else {
-          if (_dropDownItems[1] !=
-            Mappings.diagramTypeMappingStress.Select(item => item.Description).ToList()) {
-            _dropDownItems[1] =
-              Mappings.diagramTypeMappingStress.Select(item => item.Description).ToList();
+          if (_dropDownItems[1] != Mappings.diagramTypeMappingStress
+           .Select(item => item.Description).ToList()) {
+            _dropDownItems[1] = Mappings.diagramTypeMappingStress.Select(item => item.Description)
+             .ToList();
             _selectedItems[1] = _dropDownItems[1][7]; // Combined C1
           }
         }
@@ -132,16 +129,21 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Type", "Diagram"
+        "Type",
+        "Diagram",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(new List<string>() { "Force", "Stress" });
+      _dropDownItems.Add(new List<string>() {
+        "Force",
+        "Stress",
+      });
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(Mappings.diagramTypeMappingForce.Select(item => item.Description).ToList());
+      _dropDownItems.Add(Mappings.diagramTypeMappingForce.Select(item => item.Description)
+       .ToList());
       _selectedItems.Add(_dropDownItems[1][5]); // Myy
 
       _isInitialised = true;
@@ -153,11 +155,12 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item, false);
+      pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
+        false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
         GH_ParamAccess.item, 3);
-      pManager.AddColourParameter(
-        "Colour", "Co", "[Optional] Colour to override default colour", GH_ParamAccess.item);
+      pManager.AddColourParameter("Colour", "Co", "[Optional] Colour to override default colour",
+        GH_ParamAccess.item);
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
         GH_ParamAccess.item);
 
@@ -202,7 +205,7 @@ namespace GsaGH.Components {
           case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
             string warningText
               = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
-            this.AddRuntimeWarning(warningText.ToString());
+            this.AddRuntimeWarning(warningText);
             _case = $"C{result.CaseId}";
             break;
 
@@ -238,9 +241,11 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
-      DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
-        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      DiagramType type = _selectedItems[0] == "Force" ?
+        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+         .FirstOrDefault();
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
@@ -253,16 +258,14 @@ namespace GsaGH.Components {
         IsNormalised = autoScale,
       };
 
-      var diagramLines = new List<DiagramLineGoo>();
+      var diagramLines = new List<DiagramGoo>();
       var diagramAnnotations = new List<AnnotationGoo>();
 
       GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Color.Empty;
-      if (da.GetData(4, ref color)) {
-        _colourInput = true;
-      }
+      da.GetData(4, ref color);
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
@@ -270,8 +273,13 @@ namespace GsaGH.Components {
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
-        color = _colourInput ? color : (Color)item.Colour;
-        diagramLines.Add(new DiagramLineGoo(startPoint, endPoint, color));
+        color = color != Color.Empty ? color : (Color)item.Colour;
+
+        var line = new Rhino.Geometry.Line(startPoint, endPoint);
+        line.Flip();
+
+        diagramLines.Add(
+          new DiagramGoo(startPoint, line.Direction, ArrowMode.NoArrow).SetColor(color));
       }
 
       bool showAnnotations = true;
@@ -280,14 +288,10 @@ namespace GsaGH.Components {
       da.GetData(2, ref showAnnotations);
       da.GetData(3, ref significantDigits);
 
-      diagramAnnotations = GenerateAnnotations(
-        diagramResults.Annotations, lengthScaleFactor, significantDigits, color);
+      diagramAnnotations = GenerateAnnotations(diagramResults.Annotations, lengthScaleFactor,
+        significantDigits, color);
 
-      if (showAnnotations) {
-        _displayAnnotations = diagramAnnotations;
-      } else {
-        _displayAnnotations = new List<AnnotationGoo>();
-      }
+      ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
 
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
@@ -295,17 +299,9 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 1, "Diagram", type.ToString());
     }
 
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-      foreach (AnnotationGoo annotation in _displayAnnotations) {
-        args.Display.Draw2dText(
-          annotation.Value.Text, annotation.Color, annotation.Value.Point, true);
-      }
-    }
-
     private List<AnnotationGoo> GenerateAnnotations(
-    IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
-    int significantDigits, Color color) {
+      IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
+      int significantDigits, Color color) {
       var diagramAnnotations = new List<AnnotationGoo>();
 
       foreach (Annotation annotation in annotationsFromModel) {
@@ -320,15 +316,10 @@ namespace GsaGH.Components {
             //convert annotation value
             double valueScaleFactor = ComputeUnitScale();
             valueToAnnotate
-              = Math.Round(valResult * valueScaleFactor, significantDigits).ToString();
+              = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
           }
 
-          if (color == Color.Empty) {
-            color = (Color)annotation.Colour;
-          }
-
-          diagramAnnotations.Add(new AnnotationGoo(location, color,
-            $"{valueToAnnotate} {Message}"));
+          diagramAnnotations.Add(new AnnotationGoo(location, color, valueToAnnotate));
         }
       }
 
@@ -367,9 +358,11 @@ namespace GsaGH.Components {
 
     private bool IsForce() {
       bool isForce = false;
-      DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
-        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      DiagramType type = _selectedItems[0] == "Force" ?
+        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+         .FirstOrDefault();
       switch (type) {
         case DiagramType.AxialForceFx:
         case DiagramType.ShearForceFy:
@@ -384,9 +377,11 @@ namespace GsaGH.Components {
 
     private bool IsMoment() {
       bool isMoment = false;
-      DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
-        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      DiagramType type = _selectedItems[0] == "Force" ?
+        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+         .FirstOrDefault();
       switch (type) {
         case DiagramType.MomentMyy:
         case DiagramType.MomentMzz:
@@ -401,9 +396,11 @@ namespace GsaGH.Components {
 
     private bool IsStress() {
       bool isStress = false;
-      DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault()
-        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum).FirstOrDefault();
+      DiagramType type = _selectedItems[0] == "Force" ?
+        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+         .FirstOrDefault();
       switch (type) {
         case DiagramType.AxialStressA:
         case DiagramType.BendingStressByNegativeZ:
