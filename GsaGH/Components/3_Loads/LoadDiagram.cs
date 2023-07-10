@@ -18,7 +18,6 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -32,15 +31,12 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5ea823af-a567-40a6-8e82-0e14eb8dda0e");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Elem1dDiagram;
+    protected override Bitmap Icon => Resources.ShowLoadDiagrams;
 
-    private string _case = string.Empty;
     private bool _colourInput = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
 
     public LoadDiagram() : base("Load Diagram", "LoadDiagram", "Displays GSA Load Diagram",
@@ -107,7 +103,7 @@ namespace GsaGH.Components {
 
       _dropDownItems.Add(Mappings.diagramTypeMappingLoads.Select(item => item.Description)
        .ToList());
-      _selectedItems.Add(_dropDownItems[0][5]);
+      _selectedItems.Add(_dropDownItems[0][0]);
 
       _isInitialised = true;
     }
@@ -115,6 +111,9 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA model", "GSA",
         "GSA model containing some Analysis Cases and Tasks", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Case filter list", "C",
+        $"Filter import by list.{Environment.NewLine}The case list should take the form:{Environment.NewLine} 1 L1 M1 A1 C1 C2p1 A3 to A5 T1.",
+        GH_ParamAccess.item);
       pManager.AddGenericParameter("Element filter list", "El",
         $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
@@ -146,9 +145,16 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaModelGoo modelGoo = null;
-      da.GetData(0, ref modelGoo);
+      if (!da.GetData(0, ref modelGoo) || !IsGhObjectValid(modelGoo)) {
+        return;
+      }
 
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
+      string caseList = Inputs.GetElementListNameForesults(this, da, 1);
+      if (string.IsNullOrEmpty(caseList)) {
+        return;
+      }
+
+      string elementlist = Inputs.GetElementListNameForesults(this, da, 2);
       if (string.IsNullOrEmpty(elementlist)) {
         return;
       }
@@ -156,7 +162,7 @@ namespace GsaGH.Components {
       var ghScale = new GH_Number();
       double scale = 1;
       bool autoScale = true;
-      if (da.GetData(5, ref ghScale)) {
+      if (da.GetData(6, ref ghScale)) {
         GH_Convert.ToDouble(ghScale, out scale, GH_Conversion.Both);
         autoScale = false;
       }
@@ -180,7 +186,7 @@ namespace GsaGH.Components {
       var graphic = new DiagramSpecification() {
         ListDefinition = elementlist,
         Type = type,
-        Cases = _case,
+        Cases = caseList,
         ScaleFactor = computedScale,
         IsNormalised = autoScale,
       };
@@ -192,7 +198,7 @@ namespace GsaGH.Components {
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Color.Empty;
-      if (da.GetData(4, ref color)) {
+      if (da.GetData(5, ref color)) {
         _colourInput = true;
       }
 
@@ -214,8 +220,8 @@ namespace GsaGH.Components {
       bool showAnnotations = true;
       int significantDigits = 3;
 
-      da.GetData(2, ref showAnnotations);
-      da.GetData(3, ref significantDigits);
+      da.GetData(3, ref showAnnotations);
+      da.GetData(4, ref significantDigits);
 
       diagramAnnotations = GenerateAnnotations(diagramResults.Annotations, lengthScaleFactor,
         significantDigits, color);
@@ -226,6 +232,17 @@ namespace GsaGH.Components {
       da.SetDataList(1, diagramAnnotations);
 
       //PostHog.Result(modelGoo.Value.Model.case, 1, "Diagram", type.ToString());
+    }
+
+    private bool IsGhObjectValid(GsaModelGoo modelGoo) {
+      bool valid = false;
+      if (modelGoo?.Value == null) {
+        this.AddRuntimeWarning("Input is null");
+      } else {
+        valid = true;
+      }
+
+      return valid;
     }
 
     private List<AnnotationGoo> GenerateAnnotations(
