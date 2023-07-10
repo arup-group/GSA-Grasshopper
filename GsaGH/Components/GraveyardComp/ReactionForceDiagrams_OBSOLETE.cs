@@ -61,8 +61,9 @@ namespace GsaGH.Components {
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private ConcurrentDictionary<int, DiagramGoo> _reactionForceVectors
-      = new ConcurrentDictionary<int, DiagramGoo>();
+    private ConcurrentDictionary<int, (DiagramGoo, IQuantity)> _reactionForceVectors
+      = new ConcurrentDictionary<int, (DiagramGoo, IQuantity)>();
+
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
     private bool _showText = true;
 
@@ -206,11 +207,12 @@ namespace GsaGH.Components {
         scale = ComputeAutoScale(forceValues, gsaResult.Model.BoundingBox);
       }
 
-      _reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
+      _reactionForceVectors = new ConcurrentDictionary<int, (DiagramGoo, IQuantity)>();
       Parallel.ForEach(nodes, node => {
-        DiagramGoo reactionForceVector = CreateReactionForceVector(node, forceValues, scale);
+        (DiagramGoo reactionForceVector, IQuantity forceValue) 
+          = CreateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) {
-          _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
+          _reactionForceVectors.TryAdd(node.Key, (reactionForceVector, forceValue));
         }
       });
 
@@ -310,7 +312,7 @@ namespace GsaGH.Components {
       return momentUnitsMenu;
     }
 
-    private DiagramGoo CreateReactionForceVector(
+    private (DiagramGoo diagram, IQuantity quantity) CreateReactionForceVector(
       KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
@@ -319,7 +321,7 @@ namespace GsaGH.Components {
         = forceValues.XxyyzzResults;
 
       if (!xyzResults.ContainsKey(nodeId)) {
-        return null;
+        return (null, null);
       }
 
       bool isForce = (int)_selectedDisplayValue < 4;
@@ -379,8 +381,8 @@ namespace GsaGH.Components {
 
       var vectorResult = new DiagramGoo(node.Value.Value.Point, direction,
         isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
-
-      return isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
+      
+      return (isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold), forceValue);
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
@@ -413,18 +415,21 @@ namespace GsaGH.Components {
     }
 
     private void SetOutputs(IGH_DataAccess dataAccess) {
-      IOrderedEnumerable<KeyValuePair<int, DiagramGoo>> orderedDict
+      IOrderedEnumerable<KeyValuePair<int, (DiagramGoo, IQuantity)>> orderedDict
         = _reactionForceVectors.OrderBy(index => index.Key);
       var startingPoints = new List<Point3d>();
       var vectors = new List<DiagramGoo>();
+      var forces = new List<IQuantity>();
 
-      foreach (KeyValuePair<int, DiagramGoo> keyValuePair in orderedDict) {
-        startingPoints.Add(keyValuePair.Value.StartingPoint);
-        vectors.Add(keyValuePair.Value);
+      foreach (KeyValuePair<int, (DiagramGoo diagram, IQuantity force)> keyValuePair in orderedDict) {
+        startingPoints.Add(keyValuePair.Value.diagram.StartingPoint);
+        vectors.Add(keyValuePair.Value.diagram);
+        forces.Add(keyValuePair.Value.force);
       }
 
       dataAccess.SetDataList(0, startingPoints);
       dataAccess.SetDataList(1, vectors);
+      dataAccess.SetDataList(2, forces);
     }
 
     private void ShowText(object sender, EventArgs e) {

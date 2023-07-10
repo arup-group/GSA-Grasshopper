@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Security.Cryptography;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
@@ -9,6 +10,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
+using Rhino.Input.Custom;
 
 namespace GsaGH.Components {
   public class Annotate : GH_OasysComponent {
@@ -68,9 +70,6 @@ namespace GsaGH.Components {
 
       foreach (GH_Path path in tree.Paths) {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
-          int id = 0;
-          Point3d pt = Point3d.Unset;
-
           switch (goo) {
             case AnnotationGoo annotationGoo:
               AddAnnotation(annotationGoo.Value.Point, annotationGoo.Value.Text,
@@ -107,43 +106,40 @@ namespace GsaGH.Components {
               continue;
 
             case GsaNodeGoo node:
-              id = node.Value.Id;
-              pt = node.Value.Point;
+              AddAnnotation(node.Value.Point, node.Value.Id.ToString(), Color.Empty, path);
               break;
 
             case GsaElement1dGoo e1d:
-              id = e1d.Value.Id;
-              pt = e1d.Value.Line.PointAtNormalizedLength(0.5);
+              AddAnnotation(e1d.Value.Line.PointAtNormalizedLength(0.5),
+                e1d.Value.Id.ToString(), Color.Empty, path);
               break;
 
             case GsaMember1dGoo m1d:
-              id = m1d.Value.Id;
-              pt = m1d.Value.PolyCurve.PointAtNormalizedLength(0.5);
+              AddAnnotation(m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
+                m1d.Value.Id.ToString(), Color.Empty, path);
               break;
 
             case GsaMember2dGoo m2d:
-              id = m2d.Value.Id;
               m2d.Value.PolyCurve.TryGetPolyline(out Polyline pl);
-              pt = pl.CenterPoint();
+              AddAnnotation(pl.CenterPoint(), m2d.Value.Id.ToString(), Color.Empty, path);
               break;
-
             case GsaMember3dGoo m3d:
-              id = m3d.Value.Id;
-              pt = m3d.Value.SolidMesh.GetBoundingBox(false).Center;
+              AddAnnotation(m3d.Value.SolidMesh.GetBoundingBox(false).Center,
+                m3d.Value.Id.ToString(), Color.Empty, path);
               break;
 
             case PointResultGoo resPoint:
-              id = resPoint.NodeId;
-              pt = resPoint.Value;
+              AddAnnotation(resPoint.Value, resPoint.NodeId.ToString(),
+                Color.Empty, path);
               break;
 
             case LineResultGoo resLine:
-              id = resLine.ElementId;
-              pt = resLine.Value.PointAt(0.5);
+              AddAnnotation(resLine.Value.PointAt(0.5), resLine.ElementId.ToString(), 
+                Color.Empty, path);
               break;
 
             case DiagramGoo resVector:
-              pt = resVector.StartingPoint;
+              AddAnnotation(resVector.StartingPoint, string.Empty, Color.Empty, path);
               break;
 
             default:
@@ -151,8 +147,6 @@ namespace GsaGH.Components {
                 + " to Node, Element (1D/2D/3D), Member (1D/2D/3D) or Point/Line/Mesh result.");
               break;
           }
-
-          AddAnnotation(pt, id.ToString(), Color.Empty, path);
         }
       }
 
