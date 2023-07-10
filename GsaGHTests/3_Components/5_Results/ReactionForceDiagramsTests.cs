@@ -15,7 +15,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void WhenCreated_ThenComponentGuid_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      var expectedGuid = new Guid("3f359541-342e-4323-be43-d12c4708f2e5");
+      var expectedGuid = new Guid("2c9d902f-931f-4d42-904e-ea1f2448aadb");
       Assert.Equal(expectedGuid, obj.ComponentGuid);
     }
 

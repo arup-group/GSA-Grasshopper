@@ -287,10 +287,6 @@ namespace IntegrationTests.Components {
       23,
       24,
     })]
-    [InlineData("ResVectIds", new int[] {
-      1,
-      2,
-    })]
     public void TestShowIds(string name, int[] expectedVals) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
@@ -303,29 +299,21 @@ namespace IntegrationTests.Components {
     [Theory]
     [InlineData("DiagramValues", new string[] {
       "-1.667 kN·m",
-      "0",
       "6.178 kN·m",
-      "0",
       "-6.374 kN·m",
-      "0",
       "-1.667 kN·m",
-      "0",
       "-7.943 kN·m",
-      "0",
       "-6.374 kN·m",
-      "0",
       "-6.374 kN·m",
-      "0",
       "-7.943 kN·m",
-      "0",
       "-1.667 kN·m",
-      "0",
       "-6.374 kN·m",
-      "0",
       "6.178 kN·m",
-      "0",
       "-1.667 kN·m",
-      "0"
+    })]
+    [InlineData("ResVectEmptyString", new string[] {
+      "",
+      "",
     })]
     public void TestAnnotationText(string name, string[] expectedVals) {
       GH_Document doc = Document;
