@@ -75,8 +75,8 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      ToolStripMenuItem forceUnitsMenu = GetToolStripMenuItem("Force", EngineeringUnits.Force,
-        Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
@@ -85,8 +85,9 @@ namespace GsaGH.Components {
       });
 
       if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GetToolStripMenuItem("Model geometry",
-          EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit), UpdateModel);
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
 
         unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
@@ -140,16 +141,6 @@ namespace GsaGH.Components {
     }
 
     protected override void BeforeSolveInstance() {
-      //if (IsForce()) {
-      //  Message = Force.GetAbbreviation(_forceUnit);
-      //} else if (IsMoment()) {
-      //  Message = Moment.GetAbbreviation(_momentUnit);
-      //} else if (IsStress()) {
-      //  Message = Pressure.GetAbbreviation(_stressUnit);
-      //} else {
-      //  Message = "Error";
-      //  this.AddRuntimeError("Cannot get unit for selected diagramType!");
-      //}
       Message = Force.GetAbbreviation(_forceUnit);
     }
 
@@ -267,96 +258,10 @@ namespace GsaGH.Components {
     private double ComputeUnitScale(bool autoScale = false) {
       double unitScaleFactor = 1.0d;
       if (!autoScale) {
-        if (IsForce()) {
-          unitScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
-        } else if (IsStress()) {
-          unitScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
-        } else if (IsMoment()) {
-          unitScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
-        } else {
-          this.AddRuntimeError("Not supported diagramType!");
-        }
+        unitScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
       }
 
       return unitScaleFactor;
-    }
-
-    private bool IsForce() {
-      bool isForce = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[0]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
-      switch (type) {
-        case DiagramType.AxialForceFx:
-        case DiagramType.ShearForceFy:
-        case DiagramType.ShearForceFz:
-        case DiagramType.ResolvedShearFyz:
-          isForce = true;
-          break;
-      }
-
-      return isForce;
-    }
-
-    private bool IsMoment() {
-      bool isMoment = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[0])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[0]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
-      switch (type) {
-        case DiagramType.MomentMyy:
-        case DiagramType.MomentMzz:
-        case DiagramType.ResolvedMomentMyz:
-        case DiagramType.TorsionMxx:
-          isMoment = true;
-          break;
-      }
-
-      return isMoment;
-    }
-
-    private bool IsStress() {
-      bool isStress = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
-      switch (type) {
-        case DiagramType.AxialStressA:
-        case DiagramType.BendingStressByNegativeZ:
-        case DiagramType.BendingStressByPositiveZ:
-        case DiagramType.BendingStressBzNegativeY:
-        case DiagramType.BendingStressBzPositiveY:
-        case DiagramType.CombinedStressC1:
-        case DiagramType.CombinedStressC2:
-        case DiagramType.ShearStressSz:
-        case DiagramType.ShearStressSy:
-          isStress = true;
-          break;
-      }
-
-      return isStress;
-    }
-
-    private static ToolStripMenuItem GetToolStripMenuItem(
-      string name, EngineeringUnits units, string unitString, Action<string> action) {
-      var menu = new ToolStripMenuItem(name) {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(units)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => action(unit)) {
-          Checked = unit == unitString,
-          Enabled = true,
-        };
-        menu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return menu;
     }
 
     private void UpdateForce(string unit) {
@@ -365,26 +270,8 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void UpdateStress(string unit) {
-      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateLength(string unit) {
-      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
     private void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateMoment(string unit) {
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
