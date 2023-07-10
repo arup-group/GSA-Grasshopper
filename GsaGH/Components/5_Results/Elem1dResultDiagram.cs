@@ -36,7 +36,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Elem1dDiagram;
 
     private string _case = string.Empty;
-    private bool _colourInput = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -266,9 +265,7 @@ namespace GsaGH.Components {
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Color.Empty;
-      if (da.GetData(4, ref color)) {
-        _colourInput = true;
-      }
+      da.GetData(4, ref color);
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
@@ -276,7 +273,7 @@ namespace GsaGH.Components {
         var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
         startPoint *= lengthScaleFactor;
         endPoint *= lengthScaleFactor;
-        color = _colourInput ? color : (Color)item.Colour;
+        color = color != Color.Empty ? color : (Color)item.Colour;
 
         var line = new Rhino.Geometry.Line(startPoint, endPoint);
         line.Flip();

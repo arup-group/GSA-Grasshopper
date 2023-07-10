@@ -213,10 +213,7 @@ namespace GsaGH.Components {
       }
 
       Color color = Color.Empty;
-      bool colourInput = false;
-      if (dataAccess.GetData(4, ref color)) {
-        colourInput = true;
-      }
+      dataAccess.GetData(4, ref color);
 
       int significantDigits = 3;
       bool _showText = true;
@@ -229,15 +226,17 @@ namespace GsaGH.Components {
       Parallel.ForEach(nodes, node => {
         DiagramGoo reactionForceVector = CreateReactionForceVectorWithAnnotations(node, forceValues,
           scale, significantDigits, _annotations);
-        if (reactionForceVector != null) {
-          if (colourInput) {
-            reactionForceVector.SetColor(color);
-          }
-
-          _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
-
-          ((IGH_PreviewObject)Params.Output[1]).Hidden = !_showText;
+        if (reactionForceVector == null) {
+          return;
         }
+
+        if (color != Color.Empty) {
+          reactionForceVector.SetColor(color);
+        }
+
+        _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
+
+        ((IGH_PreviewObject)Params.Output[1]).Hidden = !_showText;
       });
 
       SetOutputs(dataAccess, _reactionForceVectors, _annotations);
