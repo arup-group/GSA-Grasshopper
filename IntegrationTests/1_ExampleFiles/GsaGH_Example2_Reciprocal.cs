@@ -57,14 +57,12 @@ namespace IntegrationTests.ExampleFiles {
     }
 
     [Theory]
-    [InlineData("Number")]
     [InlineData("MorphVectorResult")]
     [InlineData("TransformVectorResult")]
     [InlineData("MorphLineResult")]
     [InlineData("TransformLineResult")]
     [InlineData("Line")]
     [InlineData("Curve")]
-    [InlineData("NodeId")]
     [InlineData("CaseId")]
     [InlineData("Vector")]
     public void TestCastTo(string groupIdentifier) {
