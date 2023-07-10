@@ -43,7 +43,7 @@ namespace GsaGH.Components {
           _zz,
         },
       };
-      m_attributes = new CheckBoxComponentComponentAttributes(this, SetReleases,
+      m_attributes = new CheckBoxComponentAttributes(this, SetReleases,
         new List<string>() {
           "Set 6 DOF",
         }, bool6, new List<List<string>>() {
