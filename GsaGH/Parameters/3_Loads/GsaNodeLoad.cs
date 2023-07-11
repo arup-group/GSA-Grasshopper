@@ -1,27 +1,37 @@
 ﻿using GsaAPI;
 using Rhino.Geometry;
+using System;
 
 namespace GsaGH.Parameters {
-  public class GsaNodeLoad {
-    public enum NodeLoadTypes // direct copy from GSA API enums
+  public class GsaNodeLoad : IGsaLoad {
+    public enum NodeLoadType // direct copy from GSA API enums
     {
       NodeLoad = 0,
       AppliedDisp = 1,
       Settlement = 2,
       Gravity = 3,
-      NumTypes = 4,
+      NumTypes = 4, W
     }
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
-    public NodeLoadTypes Type;
-    internal GsaList _refList;
+    public NodeLoadType Type;
+    public LoadType LoadType => LoadType.Node;
+    public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
+    public GsaList ReferenceList { get; set; }
+
+    public Guid RefObjectGuid => throw new NotImplementedException();
+
     internal Point3d _refPoint = Point3d.Unset;
 
     public GsaNodeLoad() {
-      Type = NodeLoadTypes.NodeLoad;
+      Type = NodeLoadType.NodeLoad;
     }
 
-    public GsaNodeLoad Duplicate() {
+    public int CaseId() {
+      return NodeLoad.Case;
+    }
+
+    public IGsaLoad Duplicate() {
       var dup = new GsaNodeLoad {
         NodeLoad = {
           AxisProperty = NodeLoad.AxisProperty,
@@ -37,11 +47,15 @@ namespace GsaGH.Parameters {
         dup._refPoint = new Point3d(_refPoint);
       }
 
-      if (_refList != null) {
-        dup._refList = _refList.Duplicate();
+      if (ReferenceList != null) {
+        dup.ReferenceList = ReferenceList.Duplicate();
       }
 
       return dup;
+    }
+
+    public override string ToString() {
+      return string.Join(" ", LoadType.ToString().Trim(), NodeLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

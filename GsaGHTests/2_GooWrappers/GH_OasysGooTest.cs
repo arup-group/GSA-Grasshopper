@@ -1,8 +1,8 @@
-﻿using System;
-using System.Reflection;
-using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using System;
+using System.Reflection;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -24,7 +24,13 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
     [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
     [InlineData(typeof(GsaSectionModifierGoo), typeof(GsaSectionModifier))]
-    [InlineData(typeof(GsaLoadGoo), typeof(GsaLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaBeamLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaFaceLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaGravityLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaGridAreaLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaGridLineLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaGridPointLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaNodeLoad))]
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]

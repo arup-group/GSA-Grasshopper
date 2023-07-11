@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -14,6 +11,9 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
@@ -177,15 +177,15 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.NodeForce:
         case FoldMode.NodeMoment:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NodeLoad;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadType.NodeLoad;
           break;
 
         case FoldMode.AppliedDispl:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.AppliedDisp;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadType.AppliedDisp;
           break;
 
         case FoldMode.Settlement:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.Settlement;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadType.Settlement;
           break;
       }
 
@@ -204,7 +204,7 @@ namespace GsaGH.Components {
           nodeLoad._refPoint = goo.Value.Point;
         } else if (ghTyp.Value is GsaListGoo value) {
           if (value.Value.EntityType == EntityType.Node) {
-            nodeLoad._refList = value.Value;
+            nodeLoad.ReferenceList = value.Value;
           } else {
             this.AddRuntimeWarning("List must be of type Node to apply to Node loading");
           }
@@ -302,8 +302,7 @@ namespace GsaGH.Components {
 
       nodeLoad.NodeLoad.Value = load;
 
-      var gsaLoad = new GsaLoad(nodeLoad);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(nodeLoad));
     }
 
     protected override void UpdateUIFromSelectedItems() {

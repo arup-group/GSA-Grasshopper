@@ -34,7 +34,7 @@ namespace GsaGH.Helpers {
     }
 
     internal static void Load(
-      GsaLoad.LoadTypes loadType, ReferenceType refType, string subType = "-") {
+      LoadType loadType, ReferenceType refType, string subType = "-") {
       const string eventName = "Load";
       bool objLoad = refType != ReferenceType.None;
       var properties = new Dictionary<string, object>() {

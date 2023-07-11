@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using GsaAPI;
+﻿using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {
@@ -26,10 +26,9 @@ namespace GsaGH.Helpers.Import {
       var gsaloads = beamLoads.ToList();
 
       foreach (BeamLoad gsaLoad in gsaloads) {
-        var myload = new GsaBeamLoad {
+        var load = new GsaBeamLoad {
           BeamLoad = gsaLoad,
         };
-        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -48,10 +47,9 @@ namespace GsaGH.Helpers.Import {
       var gsaloads = faceLoads.ToList();
 
       foreach (FaceLoad faceLoad in gsaloads) {
-        var myload = new GsaFaceLoad {
+        var load = new GsaFaceLoad {
           FaceLoad = faceLoad,
         };
-        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -70,10 +68,9 @@ namespace GsaGH.Helpers.Import {
       var gloads = gravityLoads.ToList();
 
       foreach (GravityLoad gload in gloads) {
-        var myload = new GsaGravityLoad {
+        var load = new GsaGravityLoad {
           GravityLoad = gload,
         };
-        var load = new GsaLoad(myload);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -99,7 +96,7 @@ namespace GsaGH.Helpers.Import {
       var gsaloads = areaLoads.ToList();
 
       foreach (GridAreaLoad gridAreaLoad in gsaloads) {
-        var myload = new GsaGridAreaLoad {
+        var load = new GsaGridAreaLoad {
           GridAreaLoad = gridAreaLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit)
@@ -107,11 +104,11 @@ namespace GsaGH.Helpers.Import {
 
         if (gridAreaLoad.PolyLineDefinition != string.Empty &&
           gridAreaLoad.PolyLineDefinition.Contains('(')) {
-          myload.Points = GridLoadHelper.ConvertPoints(
-            gridAreaLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
+          load.Points = GridLoadHelper.ConvertPoints(
+            gridAreaLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
         }
 
-        loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
+        loads.Add(new GsaLoadGoo(load));
       }
 
       return loads;
@@ -136,7 +133,7 @@ namespace GsaGH.Helpers.Import {
       var gsaloads = lineLoads.ToList();
 
       foreach (GridLineLoad gridLineLoad in gsaloads) {
-        var myload = new GsaGridLineLoad {
+        var load = new GsaGridLineLoad {
           GridLineLoad = gridLineLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit)
@@ -144,11 +141,11 @@ namespace GsaGH.Helpers.Import {
 
         if (gridLineLoad.PolyLineDefinition != string.Empty &&
           gridLineLoad.PolyLineDefinition.Contains('(')) {
-          myload.Points = GridLoadHelper.ConvertPoints(
-          gridLineLoad.PolyLineDefinition.ToString(), unit, myload.GridPlaneSurface.Plane);
+          load.Points = GridLoadHelper.ConvertPoints(
+          gridLineLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
         }
 
-        loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
+        loads.Add(new GsaLoadGoo(load));
       }
 
       return loads;
@@ -234,17 +231,17 @@ namespace GsaGH.Helpers.Import {
       var gsaloads = pointLoads.ToList();
 
       foreach (GridPointLoad gridPointLoad in gsaloads) {
-        var myload = new GsaGridPointLoad {
+        var load = new GsaGridPointLoad {
           GridPointLoad = gridPointLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit), };
 
         if (unit != LengthUnit.Meter) {
-          myload.GridPointLoad.X = new Length(myload.GridPointLoad.X, LengthUnit.Meter).As(unit);
-          myload.GridPointLoad.Y = new Length(myload.GridPointLoad.Y, LengthUnit.Meter).As(unit);
+          load.GridPointLoad.X = new Length(load.GridPointLoad.X, LengthUnit.Meter).As(unit);
+          load.GridPointLoad.Y = new Length(load.GridPointLoad.Y, LengthUnit.Meter).As(unit);
         }
 
-        loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
+        loads.Add(new GsaLoadGoo(load));
       }
 
       return loads;
@@ -267,35 +264,35 @@ namespace GsaGH.Helpers.Import {
         try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
         {
           var gsaloads = model.NodeLoads(typ).ToList();
-          GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
+          GsaNodeLoad.NodeLoadType ntyp = GsaNodeLoad.NodeLoadType.NodeLoad;
           switch (typ) {
             case NodeLoadType.APPL_DISP:
-              ntyp = GsaNodeLoad.NodeLoadTypes.AppliedDisp;
+              ntyp = GsaNodeLoad.NodeLoadType.AppliedDisp;
               break;
 
             case NodeLoadType.GRAVITY:
-              ntyp = GsaNodeLoad.NodeLoadTypes.Gravity;
+              ntyp = GsaNodeLoad.NodeLoadType.Gravity;
               break;
 
             case NodeLoadType.NODE_LOAD:
-              ntyp = GsaNodeLoad.NodeLoadTypes.NodeLoad;
+              ntyp = GsaNodeLoad.NodeLoadType.NodeLoad;
               break;
 
             case NodeLoadType.NUM_TYPES:
-              ntyp = GsaNodeLoad.NodeLoadTypes.NumTypes;
+              ntyp = GsaNodeLoad.NodeLoadType.NumTypes;
               break;
 
             case NodeLoadType.SETTLEMENT:
-              ntyp = GsaNodeLoad.NodeLoadTypes.Settlement;
+              ntyp = GsaNodeLoad.NodeLoadType.Settlement;
               break;
           }
 
           foreach (NodeLoad gsaLoad in gsaloads) {
-            var myload = new GsaNodeLoad {
+            var load = new GsaNodeLoad {
               NodeLoad = gsaLoad,
               Type = ntyp,
             };
-            loads.Add(new GsaLoadGoo(new GsaLoad(myload)));
+            loads.Add(new GsaLoadGoo(load));
           }
         } catch (Exception) {
           // ignored

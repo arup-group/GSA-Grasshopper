@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using GH_IO.Serialization;
+﻿using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -16,6 +12,10 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 
@@ -257,8 +257,7 @@ namespace GsaGH.Components {
       gsaGridPointLoad.GridPointLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
-      var gsaLoad = new GsaLoad(gsaGridPointLoad);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(gsaGridPointLoad));
     }
 
     protected override void UpdateUIFromSelectedItems() {

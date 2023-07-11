@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using GH_IO.Serialization;
+﻿using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -18,6 +13,11 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 
 namespace GsaGH.Components {
@@ -159,14 +159,14 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
-            gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-            plane = gridPlaneSurface.Plane;
-            planeSet = true;
-            _expansionType = ExpansionType.UseGpsSettings;
+              gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
+              plane = gridPlaneSurface.Plane;
+              planeSet = true;
+              _expansionType = ExpansionType.UseGpsSettings;
               UpdateMessage(gridPlaneSurface.GridSurface.ElementType
                   == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
               break;
-          }
+            }
           case Plane pln:
             plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
@@ -176,19 +176,19 @@ namespace GsaGH.Components {
             break;
 
           default: {
-            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              gridareaload.GridAreaLoad.GridSurface = id;
-              gridareaload.GridPlaneSurface = null;
-            } else {
-              this.AddRuntimeError(
-                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                + Environment.NewLine
-                + "If no input here then the brep's best-fit plane will be used");
-              return;
-            }
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gridareaload.GridAreaLoad.GridSurface = id;
+                gridareaload.GridPlaneSurface = null;
+              } else {
+                this.AddRuntimeError(
+                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                  + Environment.NewLine
+                  + "If no input here then the brep's best-fit plane will be used");
+                return;
+              }
 
-            break;
-          }
+              break;
+            }
         }
       }
 
@@ -299,8 +299,7 @@ namespace GsaGH.Components {
       gridareaload.GridAreaLoad.Value = ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit))
        .NewtonsPerSquareMeter;
 
-      var gsaLoad = new GsaLoad(gridareaload);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(gridareaload));
     }
 
     protected override void UpdateUIFromSelectedItems() {
