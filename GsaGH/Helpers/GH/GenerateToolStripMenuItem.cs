@@ -7,6 +7,10 @@ namespace GsaGH.Helpers.GH {
   internal static class GenerateToolStripMenuItem {
     public static ToolStripMenuItem GetSubMenuItem(
       string name, EngineeringUnits units, string unitString, Action<string> action) {
+      if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(unitString)) {
+        return null;
+      }
+
       var menu = new ToolStripMenuItem(name) {
         Enabled = true,
       };
