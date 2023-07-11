@@ -9,10 +9,13 @@ using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using OasysGH.UI;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -46,39 +49,57 @@ namespace GsaGH.Parameters {
 
         return cols;
       }
-      set
-        => CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
+      set {
+       CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
           value);
+        UpdatePreview();
+      }
     }
     public int Count => ApiElements.Count;
     public List<int> Groups {
       get => (from element in ApiElements where element != null select element.Group).ToList();
-      set => CloneApiElements(ApiObjectMember.Group, value);
+      set {
+        CloneApiElements(ApiObjectMember.Group, value);
+        UpdatePreview();
+      }
+
     }
     public Guid Guid => _guid;
     public List<int> Ids { get; set; } = new List<int>();
     public List<bool> IsDummies {
       get => (from element in ApiElements where element != null select element.IsDummy).ToList();
-      set => CloneApiElements(ApiObjectMember.Dummy, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Dummy, null, value);
+        UpdatePreview();
+      }
     }
     public Mesh Mesh { get; private set; } = new Mesh();
     public List<string> Names {
       get => (from element in ApiElements where element != null select element.Name).ToList();
-      set => CloneApiElements(ApiObjectMember.Name, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Name, null, null, value);
+        UpdatePreview();
+      }
     }
     public List<GsaOffset> Offsets {
       get
         => (from element in ApiElements where element != null
             select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
               element.Offset.Z)).ToList();
-      set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
+        UpdatePreview();
+      }
     }
     public List<Angle> OrientationAngles {
       get
         => (from element in ApiElements where element != null
             select new Angle(element.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian))
          .ToList();
-      set => CloneApiElements(ApiObjectMember.OrientationAngle, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.OrientationAngle, null, null, null, value);
+        UpdatePreview();
+      }
     }
     public List<int> ParentMembers {
       get {
@@ -94,7 +115,13 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp2d> Prop2ds { get; set; } = new List<GsaProp2d>();
+    public List<GsaProp2d> Prop2ds {
+      get => _prop2ds;
+      set {
+        _prop2ds = value ?? new List<GsaProp2d>();
+        UpdatePreview();
+      }
+    }
     public List<List<int>> TopoInt { get; private set; }
     public List<Point3d> Topology { get; private set; }
     public DataTree<int> TopologyIDs {
@@ -111,11 +138,22 @@ namespace GsaGH.Parameters {
     }
     public List<ElementType> Types {
       get => (from t in ApiElements where t != null select t.Type).ToList();
-      set => CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
+        UpdatePreview();
+      }
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
-
+    internal (Mesh Mesh, IEnumerable<Line> Outlines) Section3dPreview { get; private set; }
+    internal DisplayMaterial PreviewMaterial
+      => (Color)ApiElements[0].Colour == Color.FromArgb(0, 0, 0)
+      ? Helpers.Graphics.Colours.Element2dFace : new DisplayMaterial {
+        Diffuse = Color.FromArgb(50, 150, 150, 150),
+        Emission = Colours[0],
+        Transparency = 0.1,
+      };
     private Guid _guid = Guid.NewGuid();
+    private List<GsaProp2d> _prop2ds = new List<GsaProp2d>();
 
     public GsaElement2d() { }
 
@@ -132,6 +170,7 @@ namespace GsaGH.Parameters {
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
+      UpdatePreview();
     }
 
     public GsaElement2d(
@@ -150,6 +189,7 @@ namespace GsaGH.Parameters {
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
+      UpdatePreview();
     }
 
     internal GsaElement2d(
@@ -160,6 +200,7 @@ namespace GsaGH.Parameters {
       ApiElements = elements.Values.ToList();
       Ids = elements.Keys.ToList();
       Prop2ds = prop2ds;
+      UpdatePreview();
     }
 
     public static Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
@@ -177,7 +218,7 @@ namespace GsaGH.Parameters {
       gsaElement2D.Topology = convertMesh.Item2;
       gsaElement2D.TopoInt = convertMesh.Item3;
       gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
-
+      gsaElement2D.UpdatePreview();
       return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2,
         tuple.Item3);
     }
@@ -190,9 +231,10 @@ namespace GsaGH.Parameters {
 
       dup.Ids = Ids.ToList();
       dup.Mesh = (Mesh)Mesh.DuplicateShallow();
-      dup.Prop2ds = Prop2ds.ConvertAll(x => x.Duplicate());
       dup.Topology = Topology;
       dup.TopoInt = TopoInt;
+      dup._prop2ds = Prop2ds;
+      dup.UpdatePreview();
       return dup;
     }
 
@@ -244,14 +286,14 @@ namespace GsaGH.Parameters {
         return null; // the logic below assumes the number of elements is equal to number of faces
       }
 
-      GsaElement2d dup = Clone();
       Mesh = newMesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, 0);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
-      return dup;
+      UpdatePreview();
+      return this;
     }
 
     internal void CloneApiElements() {
@@ -350,6 +392,14 @@ namespace GsaGH.Parameters {
       }
 
       ApiElements = elems;
+    }
+
+    private void UpdatePreview() {
+      if (Prop2ds != null && !Prop2ds[0].IsReferencedById) {
+        Section3dPreview = Helpers.Graphics.Section3dPreview.CreatePreview(this);
+      } else {
+        Section3dPreview = (null, null);
+      }
     }
   }
 }

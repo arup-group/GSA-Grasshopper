@@ -7,7 +7,9 @@ using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
+using OasysGH.Units;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -109,7 +111,13 @@ namespace GsaGH.Parameters {
         UpdatePreview();
       }
     }
-    public GsaSection Section { get; set; } = new GsaSection();
+    public GsaSection Section {
+      get => _section;
+      set {
+        _section = value ?? new GsaSection();
+        UpdatePreview();
+      }
+    }
     public ElementType Type {
       get => ApiElement.Type;
       set {
@@ -118,6 +126,14 @@ namespace GsaGH.Parameters {
       }
     }
     internal Element ApiElement { get; set; } = new Element();
+    internal (Mesh Mesh, IEnumerable<Line> Outlines) Section3dPreview { get; private set; }
+    internal DisplayMaterial PreviewMaterial 
+      => (Color)ApiElement.Colour == Color.FromArgb(0, 0, 0) 
+      ? Colours.Element2dFace : new DisplayMaterial {
+      Diffuse = Color.FromArgb(50, 150, 150, 150),
+      Emission = Colour,
+      Transparency = 0.1,
+    };
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;
@@ -127,6 +143,7 @@ namespace GsaGH.Parameters {
     private GsaNode _orientationNode;
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
+    private GsaSection _section = new GsaSection();
 
     public GsaElement1d() { }
 
@@ -136,7 +153,7 @@ namespace GsaGH.Parameters {
       };
       _line = line;
       Id = Id;
-      Section = new GsaSection(prop);
+      _section = new GsaSection(prop);
       _orientationNode = orientationNode;
       UpdatePreview();
     }
@@ -273,6 +290,12 @@ namespace GsaGH.Parameters {
     }
 
     internal void UpdatePreview() {
+      if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
+        Section3dPreview = Helpers.Graphics.Section3dPreview.CreatePreview(this);
+      } else {
+        Section3dPreview = (null, null);
+      }
+
       if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }

@@ -43,6 +43,7 @@ namespace GsaGH.Parameters {
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
       gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Line(x.Value.Line.Line)), att, doc);
+      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.Section3dPreview.Mesh)), att, doc);
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 
