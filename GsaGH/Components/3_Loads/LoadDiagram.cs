@@ -34,7 +34,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowLoadDiagrams;
-    private int _caseId = 1;
+    private string _caseId = "A1";
 
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private GsaModel _gsaModel;
@@ -60,19 +60,12 @@ namespace GsaGH.Components {
       switch (i) {
         case 0: {
           if (_selectedItems[i].ToLower() == "all") {
-            _caseId = -1;
-          } else {
-            int newId = int.Parse(string.Join(string.Empty,
-              _selectedItems[i].ToCharArray().Where(char.IsDigit)));
-            if (newId != _caseId) {
-              _caseId = newId;
-            }
+            _caseId = "all";
+          } else if (!_selectedItems[i].Equals(_caseId)) {
+            _caseId = _selectedItems[i];
           }
 
           UpdateCaseDropdown();
-          break;
-        }
-        case 1: {
           break;
         }
       }
@@ -184,9 +177,9 @@ namespace GsaGH.Components {
       _gsaModel = modelGoo.Value;
       UpdateCaseDropdown();
 
-      string caseList = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(caseList)) {
-        return;
+      string caseList = string.Empty;
+      if (da.GetData(1, ref caseList)) {
+        _selectedItems[0] = caseList;
       }
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 2);
@@ -221,7 +214,7 @@ namespace GsaGH.Components {
       var graphic = new DiagramSpecification() {
         ListDefinition = elementlist,
         Type = type,
-        Cases = caseList,
+        Cases = _caseId,
         ScaleFactor = computedScale,
         IsNormalised = autoScale,
       };
@@ -345,7 +338,7 @@ namespace GsaGH.Components {
       }
 
       _dropDownItems[0] = cases;
-      _selectedItems[0] = type[0] + _caseId.ToString();
+      _selectedItems[0] = _caseId;
     }
   }
 }
