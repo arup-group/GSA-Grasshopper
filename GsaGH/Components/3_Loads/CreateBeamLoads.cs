@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -14,6 +11,9 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
@@ -261,10 +261,10 @@ namespace GsaGH.Components {
                   "List must be of type Element or Member to apply to beam loading");
               }
 
-            if (value.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              if (value.Value.EntityType == EntityType.Member) {
+                this.AddRuntimeRemark(
+                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
               break;
             }
@@ -275,18 +275,15 @@ namespace GsaGH.Components {
               break;
             }
           case GsaMember1dGoo value: {
-            beamLoad._refObjectGuid = value.Value.Guid;
-            beamLoad._referenceType = ReferenceType.MemberChildElements;
-            if (_mode != FoldMode.Uniform) {
-              this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-            } else {
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              beamLoad._refObjectGuid = value.Value.Guid;
+              beamLoad._referenceType = ReferenceType.Member;
+              if (_mode != FoldMode.Uniform) {
+                this.AddRuntimeWarning(
+                  "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+              }
 
-            break;
-          }
+              break;
+            }
           case GsaMaterialGoo value: {
               if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(

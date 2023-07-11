@@ -1,9 +1,9 @@
-﻿using System;
+﻿using GsaAPI;
+using GsaGH.Parameters;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using GsaAPI;
-using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class ElementListFromReference {
@@ -20,7 +20,7 @@ namespace GsaGH.Helpers.Export {
     internal static string GetReferenceElementIdsDefinition(
       GsaGridPlaneSurface load, ModelAssembly model) {
       return GetReferenceDefinition(
-        load._refObjectGuid, 
+        load._refObjectGuid,
         load._referenceType,
         model.Properties,
         model.Elements,
@@ -80,11 +80,11 @@ namespace GsaGH.Helpers.Export {
         string.Empty :
         GetMemberChildElementReferenceIdsDefinition(id, memberElementRelationship);
     }
-    
+
     internal static string GetReferenceDefinition(
-      Guid guid, 
+      Guid guid,
       ReferenceType referenceType,
-      Properties apiProperties, 
+      Properties apiProperties,
       GsaGuidIntListDictionary<Element> apiElements,
       GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
@@ -99,7 +99,7 @@ namespace GsaGH.Helpers.Export {
           return GetMemberChildElementsReferenceDefinition(guid, apiMembers, memberElementRelationship);
 
         case ReferenceType.Member:
-          return apiMembers.GuidDictionary.TryGetValue(guid, out int id) 
+          return apiMembers.GuidDictionary.TryGetValue(guid, out int id)
             ? id.ToString() : string.Empty;
 
         case ReferenceType.None:
