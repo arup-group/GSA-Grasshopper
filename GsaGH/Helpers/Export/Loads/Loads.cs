@@ -148,37 +148,35 @@ namespace GsaGH.Helpers.Export {
 
     private static void ConvertBeamLoad(GsaLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.BeamLoad._referenceType);
-      if (load.BeamLoad._referenceType != ReferenceType.None) {
-        string objectElemList = load.BeamLoad.BeamLoad.Elements;
+      //if (load.BeamLoad._referenceType != ReferenceType.None) {
+      string objectElemList = load.BeamLoad.BeamLoad.Elements;
 
-        if (load.BeamLoad._referenceType == ReferenceType.List) {
-          if (load.BeamLoad._refList == null
-            && (load.BeamLoad._refList.EntityType != Parameters.EntityType.Element
-            || load.BeamLoad._refList.EntityType != Parameters.EntityType.Member)) {
-            owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-              + Environment.NewLine + "Element list has not been set");
-          }
-          objectElemList +=
-            Lists.GetElementList(load.BeamLoad._refList, ref model, owner);
-        } else {
-          objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(
-            load.BeamLoad, model);
+      if (load.BeamLoad._referenceType == ReferenceType.List) {
+        if (load.BeamLoad._refList == null
+          && (load.BeamLoad._refList.EntityType != Parameters.EntityType.Element
+          || load.BeamLoad._refList.EntityType != Parameters.EntityType.Member)) {
+          owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+            + Environment.NewLine + "Element list has not been set");
         }
-
-        if (objectElemList.Trim() != string.Empty) {
-          load.BeamLoad.BeamLoad.Elements = objectElemList;
-        } else {
-          string warning = "One or more BeamLoads with reference to a "
-            + load.BeamLoad._referenceType
-            + " could not be added to the model. Ensure the reference "
-            + load.BeamLoad._referenceType + " has been added to the model.";
-          if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
-            owner.AddRuntimeWarning(warning);
-          }
-
-          return;
-        }
+        objectElemList += Lists.GetElementList(load.BeamLoad._refList, ref model, owner);
+      } else {
+        objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(load.BeamLoad, model);
       }
+
+      if (objectElemList.Trim() != string.Empty) {
+        load.BeamLoad.BeamLoad.Elements = objectElemList;
+      } else {
+        string warning = "One or more BeamLoads with reference to a "
+          + load.BeamLoad._referenceType
+          + " could not be added to the model. Ensure the reference "
+          + load.BeamLoad._referenceType + " has been added to the model.";
+        if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
+          owner.AddRuntimeWarning(warning);
+        }
+
+        return;
+      }
+      //}
 
       model.Loads.Beams.Add(load.BeamLoad.BeamLoad);
     }
