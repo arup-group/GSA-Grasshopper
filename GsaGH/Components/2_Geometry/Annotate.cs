@@ -145,6 +145,9 @@ namespace GsaGH.Components {
             default:
               this.AddRuntimeWarning("Unable to convert " + goo.TypeName
                 + " to Node, Element (1D/2D/3D), Member (1D/2D/3D) or Point/Line/Mesh result.");
+              _annotations.Append(null, path);
+              _points.Append(null, path);
+              _texts.Append(null, path);
               break;
           }
         }
