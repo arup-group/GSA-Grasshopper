@@ -305,8 +305,7 @@ namespace GsaGH.Components {
 
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
-      var gsaLoad = new GsaLoad(gridlineload);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 
     protected override void UpdateUIFromSelectedItems() {

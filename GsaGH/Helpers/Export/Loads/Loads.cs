@@ -21,215 +21,230 @@ namespace GsaGH.Helpers.Export {
 
     internal Loads(Model model) {
       Nodes = new Load.NodeLoads();
-
       Gravities = new List<GravityLoad>();
       Beams = new List<BeamLoad>();
       Faces = new List<FaceLoad>();
-
       GridPoints = new List<GridPointLoad>();
       GridLines = new List<GridLineLoad>();
       GridAreas = new List<GridAreaLoad>();
-
       GridPlaneSurfaces = new GridPlaneSurfaces(model);
     }
 
-    internal static void ConvertLoad(List<GsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
+    internal static void ConvertLoad(List<IGsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
       if (loads == null) {
         return;
       }
 
-      foreach (GsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
+      foreach (IGsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
         ConvertLoad(load, ref model, owner);
       }
     }
 
-    internal static void ConvertLoad(GsaLoad load, ref ModelAssembly model, GH_Component owner) {
+    internal static void ConvertLoad(IGsaLoad load, ref ModelAssembly model, GH_Component owner) {
       switch (load.LoadType) {
-        case GsaLoad.LoadTypes.Gravity:
-          PostHog.Load(load.LoadType, load.GravityLoad._referenceType);
-          if (load.GravityLoad._referenceType != ReferenceType.None) {
-            string objectElemList = load.GravityLoad.GravityLoad.Elements;
-
-            if (load.GravityLoad._referenceType == ReferenceType.List) {
-              if (load.GravityLoad._refList == null
-                && (load.GravityLoad._refList.EntityType != Parameters.EntityType.Element
-                || load.GravityLoad._refList.EntityType != Parameters.EntityType.Member)) {
-                owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
-                  + Environment.NewLine + "Element list has not been set");
-              }
-              objectElemList +=
-                Lists.GetElementList(load.GravityLoad._refList, ref model, owner);
-            } else {
-              objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(load.GravityLoad, model);
-            }
-
-            if (objectElemList.Trim() != string.Empty) {
-              load.GravityLoad.GravityLoad.Elements = objectElemList;
-            } else {
-              string warning = "One or more GravityLoads with reference to a "
-                + load.GravityLoad._referenceType
-                + " could not be added to the model. Ensure the reference "
-                + load.GravityLoad._referenceType + " has been added to the model.";
-              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
-                owner.AddRuntimeWarning(warning);
-              }
-
-              break;
-            }
-          }
-
-          model.Loads.Gravities.Add(load.GravityLoad.GravityLoad);
+        case LoadType.Gravity:
+          ConvertGravityLoad((GsaGravityLoad)load, ref model, owner);
           break;
 
-        case GsaLoad.LoadTypes.Beam:
-          PostHog.Load(load.LoadType, load.BeamLoad._referenceType);
-          if (load.BeamLoad._referenceType != ReferenceType.None) {
-            string objectElemList = load.BeamLoad.BeamLoad.Elements;
-
-            if (load.BeamLoad._referenceType == ReferenceType.List) {
-              if (load.BeamLoad._refList == null
-                && (load.BeamLoad._refList.EntityType != Parameters.EntityType.Element
-                || load.BeamLoad._refList.EntityType != Parameters.EntityType.Member)) {
-                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-                  + Environment.NewLine + "Element list has not been set");
-              }
-              objectElemList +=
-                Lists.GetElementList(load.BeamLoad._refList, ref model, owner);
-            } else {
-              objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(
-                load.BeamLoad, model);
-            }
-
-            if (objectElemList.Trim() != string.Empty) {
-              load.BeamLoad.BeamLoad.Elements = objectElemList;
-            } else {
-              string warning = "One or more BeamLoads with reference to a "
-                + load.BeamLoad._referenceType
-                + " could not be added to the model. Ensure the reference "
-                + load.BeamLoad._referenceType + " has been added to the model.";
-              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
-                owner.AddRuntimeWarning(warning);
-              }
-
-              break;
-            }
-          }
-
-          model.Loads.Beams.Add(load.BeamLoad.BeamLoad);
+        case LoadType.Beam:
+          ConvertBeamLoad((GsaBeamLoad)load, ref model, owner);
           break;
 
-        case GsaLoad.LoadTypes.Face:
-          PostHog.Load(load.LoadType, load.FaceLoad._referenceType);
-          if (load.FaceLoad._referenceType != ReferenceType.None) {
-            string objectElemList = load.FaceLoad.FaceLoad.Elements;
-
-            if (load.FaceLoad._referenceType == ReferenceType.List) {
-              if (load.FaceLoad._refList == null
-                && (load.FaceLoad._refList.EntityType != Parameters.EntityType.Element
-                || load.FaceLoad._refList.EntityType != Parameters.EntityType.Member)) {
-                owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-                  + Environment.NewLine + "Element list has not been set");
-              }
-              objectElemList +=
-                Lists.GetElementList(load.FaceLoad._refList, ref model, owner);
-            } else {
-              objectElemList += ElementListFromReference.GetReferenceElementIdsDefinition(
-                load.FaceLoad, model);
-            }
-
-            if (objectElemList.Trim() != string.Empty) {
-              load.FaceLoad.FaceLoad.Elements = objectElemList;
-            } else {
-              string warning = "One or more FaceLoads with reference to a "
-                + load.FaceLoad._referenceType
-                + " could not be added to the model. Ensure the reference "
-                + load.FaceLoad._referenceType + " has been added to the model.";
-              if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
-                owner.AddRuntimeWarning(warning);
-              }
-
-              break;
-            }
-          }
-
-          model.Loads.Faces.Add(load.FaceLoad.FaceLoad);
+        case LoadType.Face:
+          ConvertFaceLoad((GsaFaceLoad)load, ref model, owner);
           break;
 
-        case GsaLoad.LoadTypes.GridPoint:
-          PostHog.Load(load.LoadType, ReferenceType.None);
-          if (load.PointLoad.GridPlaneSurface == null) {
-            model.Loads.GridPoints.Add(load.PointLoad.GridPointLoad);
-            break;
-          }
-
-          GsaGridPointLoad gridptref = load.PointLoad.Duplicate();
-          if (model.Unit != LengthUnit.Meter) {
-            gridptref.GridPointLoad.X = new Length(
-              gridptref.GridPointLoad.X, model.Unit).As(LengthUnit.Meter);
-            gridptref.GridPointLoad.Y = new Length(
-              gridptref.GridPointLoad.Y, model.Unit).As(LengthUnit.Meter);
-          }
-
-          GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
-
-          if (gridplnsrf.GridPlane != null) {
-            gridptref.GridPointLoad.GridSurface 
-              = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
-          }
-
-          model.Loads.GridPoints.Add(gridptref.GridPointLoad);
+        case LoadType.GridPoint:
+          ConvertGridPointLoad((GsaGridPointLoad)load, ref model, owner);
           break;
 
-        case GsaLoad.LoadTypes.GridLine:
-          PostHog.Load(load.LoadType, ReferenceType.None);
-          if (load.LineLoad.GridPlaneSurface == null) {
-            model.Loads.GridLines.Add(load.LineLoad.GridLineLoad);
-            break;
-          }
-
-          GsaGridLineLoad gridlnref = load.LineLoad;
-          if (model.Unit != LengthUnit.Meter
-            && gridlnref.GridLineLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
-            gridlnref.GridLineLoad.PolyLineDefinition =
-              GridLoadHelper.ClearDefinitionForUnit(gridlnref.GridLineLoad.PolyLineDefinition) +
-              $"({Length.GetAbbreviation(model.Unit)})";
-          }
-
-          gridplnsrf = gridlnref.GridPlaneSurface;
-
-          if (gridplnsrf.GridPlane != null) {
-            gridlnref.GridLineLoad.GridSurface 
-              = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
-          }
-
-          model.Loads.GridLines.Add(gridlnref.GridLineLoad);
+        case LoadType.GridLine:
+          ConvertGridLineLoad((GsaGridLineLoad)load, ref model, owner);
           break;
 
-        case GsaLoad.LoadTypes.GridArea:
-          PostHog.Load(load.LoadType, ReferenceType.None,
-            load.AreaLoad.GridAreaLoad.Type.ToString());
-          if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
-            load.AreaLoad.GridAreaLoad.PolyLineDefinition =
-            GridLoadHelper.ClearDefinitionForUnit(load.AreaLoad.GridAreaLoad.PolyLineDefinition) +
-            $"({Length.GetAbbreviation(model.Unit)})";
-          }
-
-          if (load.AreaLoad.GridPlaneSurface == null) {
-            model.Loads.GridAreas.Add(load.AreaLoad.GridAreaLoad);
-            break;
-          }
-
-          GsaGridAreaLoad gridarref = load.AreaLoad;
-          gridplnsrf = gridarref.GridPlaneSurface;
-
-          if (gridplnsrf.GridPlane != null) {
-            gridarref.GridAreaLoad.GridSurface
-              = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
-          }
-
-          model.Loads.GridAreas.Add(gridarref.GridAreaLoad);
+        case LoadType.GridArea:
+          ConvertGridAreaLoad((GsaGridAreaLoad)load, ref model, owner);
           break;
       }
+    }
+
+    private static void ConvertGridAreaLoad(GsaGridAreaLoad load, ref ModelAssembly model, GH_Component owner) {
+      PostHog.Load(load.LoadType, ReferenceType.None,
+        load.GridAreaLoad.Type.ToString());
+      if (load.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
+        load.GridAreaLoad.PolyLineDefinition =
+        GridLoadHelper.ClearDefinitionForUnit(load.GridAreaLoad.PolyLineDefinition) +
+        $"({Length.GetAbbreviation(model.Unit)})";
+      }
+
+      if (load.GridPlaneSurface == null) {
+        model.Loads.GridAreas.Add(load.GridAreaLoad);
+        return;
+      }
+
+      GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;
+
+      if (gridplnsrf.GridPlane != null) {
+        load.GridAreaLoad.GridSurface
+          = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
+      }
+
+      model.Loads.GridAreas.Add(load.GridAreaLoad);
+    }
+
+    private static void ConvertGridLineLoad(GsaGridLineLoad load, ref ModelAssembly model, GH_Component owner) {
+      PostHog.Load(load.LoadType, ReferenceType.None);
+      if (load.GridPlaneSurface == null) {
+        model.Loads.GridLines.Add(load.GridLineLoad);
+        return;
+      }
+
+      if (model.Unit != LengthUnit.Meter
+        && load.GridLineLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
+        load.GridLineLoad.PolyLineDefinition =
+          GridLoadHelper.ClearDefinitionForUnit(load.GridLineLoad.PolyLineDefinition) +
+          $"({Length.GetAbbreviation(model.Unit)})";
+      }
+
+      GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;
+
+      if (gridplnsrf.GridPlane != null) {
+        load.GridLineLoad.GridSurface
+          = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
+      }
+
+      model.Loads.GridLines.Add(load.GridLineLoad);
+    }
+
+    private static void ConvertGridPointLoad(GsaGridPointLoad load, ref ModelAssembly model, GH_Component owner) {
+      PostHog.Load(load.LoadType, ReferenceType.None);
+      if (load.GridPlaneSurface == null) {
+        model.Loads.GridPoints.Add(load.GridPointLoad);
+        return;
+      }
+
+      var gridptref = (GsaGridPointLoad)load.Duplicate();
+      if (model.Unit != LengthUnit.Meter) {
+        gridptref.GridPointLoad.X = new Length(
+          gridptref.GridPointLoad.X, model.Unit).As(LengthUnit.Meter);
+        gridptref.GridPointLoad.Y = new Length(
+          gridptref.GridPointLoad.Y, model.Unit).As(LengthUnit.Meter);
+      }
+
+      GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
+
+      if (gridplnsrf.GridPlane != null) {
+        gridptref.GridPointLoad.GridSurface
+          = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
+      }
+
+      model.Loads.GridPoints.Add(gridptref.GridPointLoad);
+    }
+
+    private static void ConvertBeamLoad(GsaBeamLoad load, ref ModelAssembly model, GH_Component owner) {
+      PostHog.Load(load.LoadType, load.ReferenceType);
+      //if (load.BeamLoad.ReferenceType != ReferenceType.None) {
+      string objectElemList = load.BeamLoad.Elements;
+
+      if (load.ReferenceType == ReferenceType.List) {
+        if (load.ReferenceList == null
+          && (load.ReferenceList.EntityType != Parameters.EntityType.Element
+          || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+          owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+            + Environment.NewLine + "Element list has not been set");
+        }
+        objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
+      } else {
+        objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
+      }
+
+      if (objectElemList.Trim() != string.Empty) {
+        load.BeamLoad.Elements = objectElemList;
+      } else {
+        string warning = "One or more BeamLoads with reference to a "
+          + load.ReferenceType
+          + " could not be added to the model. Ensure the reference "
+          + load.ReferenceType + " has been added to the model.";
+        if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
+          owner.AddRuntimeWarning(warning);
+        }
+
+        return;
+      }
+      //}
+
+      model.Loads.Beams.Add(load.BeamLoad);
+    }
+
+    private static void ConvertGravityLoad(GsaGravityLoad load, ref ModelAssembly model, GH_Component owner) {
+      PostHog.Load(load.LoadType, load.ReferenceType);
+      if (load.ReferenceType != ReferenceType.None) {
+        string objectElemList = load.GravityLoad.Elements;
+
+        if (load.ReferenceType == ReferenceType.List) {
+          if (load.ReferenceList == null
+            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
+            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
+              + Environment.NewLine + "Element list has not been set");
+          }
+          objectElemList +=
+            Lists.GetElementList(load.ReferenceList, ref model, owner);
+        } else {
+          objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
+        }
+
+        if (objectElemList.Trim() != string.Empty) {
+          load.GravityLoad.Elements = objectElemList;
+        } else {
+          string warning = "One or more GravityLoads with reference to a "
+            + load.ReferenceType
+            + " could not be added to the model. Ensure the reference "
+            + load.ReferenceType + " has been added to the model.";
+          if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
+            owner.AddRuntimeWarning(warning);
+          }
+
+          return;
+        }
+      }
+
+      model.Loads.Gravities.Add(load.GravityLoad);
+    }
+
+    private static void ConvertFaceLoad(GsaFaceLoad load, ref ModelAssembly model, GH_Component owner) {
+      PostHog.Load(load.LoadType, load.ReferenceType);
+      if (load.ReferenceType != ReferenceType.None) {
+        string objectElemList = load.FaceLoad.Elements;
+
+        if (load.ReferenceType == ReferenceType.List) {
+          if (load.ReferenceList == null
+            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
+            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+              + Environment.NewLine + "Element list has not been set");
+          }
+          objectElemList +=
+            Lists.GetElementList(load.ReferenceList, ref model, owner);
+        } else {
+          objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
+        }
+
+        if (objectElemList.Trim() != string.Empty) {
+          load.FaceLoad.Elements = objectElemList;
+        } else {
+          string warning = "One or more FaceLoads with reference to a "
+            + load.ReferenceType
+            + " could not be added to the model. Ensure the reference "
+            + load.ReferenceType + " has been added to the model.";
+          if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
+            owner.AddRuntimeWarning(warning);
+          }
+          return;
+        }
+      }
+
+      model.Loads.Faces.Add(load.FaceLoad);
     }
   }
 }
