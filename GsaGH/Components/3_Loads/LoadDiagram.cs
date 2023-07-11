@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -33,9 +34,10 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowLoadDiagrams;
+    private int _caseId = 1;
 
-    private bool _colourInput = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private GsaModel _gsaModel;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private bool _undefinedModelLengthUnit;
@@ -54,6 +56,26 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
+
+      switch (i) {
+        case 0: {
+          if (_selectedItems[i].ToLower() == "all") {
+            _caseId = -1;
+          } else {
+            int newId = int.Parse(string.Join(string.Empty,
+              _selectedItems[i].ToCharArray().Where(char.IsDigit)));
+            if (newId != _caseId) {
+              _caseId = newId;
+            }
+          }
+
+          UpdateCaseDropdown();
+          break;
+        }
+        case 1: {
+          break;
+        }
+      }
 
       base.UpdateUI();
     }
@@ -96,15 +118,23 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
+        "Case ID",
         "Load Type",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
+      //cases
+      _dropDownItems.Add(new List<string>() {
+        string.Empty,
+      });
+      _selectedItems.Add(string.Empty);
+
+      //Diagram Types
       _dropDownItems.Add(Mappings.diagramTypeMappingLoads.Select(item => item.Description)
        .ToList());
-      _selectedItems.Add(_dropDownItems[0][0]);
+      _selectedItems.Add(_dropDownItems[1][0]);
 
       _isInitialised = true;
     }
@@ -147,8 +177,12 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaModelGoo modelGoo = null;
       if (!da.GetData(0, ref modelGoo) || !IsGhObjectValid(modelGoo)) {
+        _gsaModel = null;
         return;
       }
+
+      _gsaModel = modelGoo.Value;
+      UpdateCaseDropdown();
 
       string caseList = Inputs.GetElementListNameForesults(this, da, 1);
       if (string.IsNullOrEmpty(caseList)) {
@@ -168,7 +202,7 @@ namespace GsaGH.Components {
         autoScale = false;
       }
 
-      LengthUnit lengthUnit = modelGoo.Value.ModelUnit;
+      LengthUnit lengthUnit = _gsaModel.ModelUnit;
       _undefinedModelLengthUnit = false;
       if (lengthUnit == LengthUnit.Undefined) {
         lengthUnit = _lengthUnit;
@@ -178,12 +212,12 @@ namespace GsaGH.Components {
       }
 
       DiagramType type = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description == _selectedItems[0]).Select(item => item.GsaApiEnum)
+       .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
        .FirstOrDefault();
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
-        = GraphicsScalar.ComputeScale(modelGoo.Value, scale, _lengthUnit, autoScale, unitScale);
+        = GraphicsScalar.ComputeScale(_gsaModel, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = elementlist,
         Type = type,
@@ -195,7 +229,7 @@ namespace GsaGH.Components {
       var diagramLines = new List<DiagramGoo>();
       var diagramAnnotations = new List<AnnotationGoo>();
 
-      GraphicDrawResult diagramResults = modelGoo.Value.Model.GetDiagrams(graphic);
+      GraphicDrawResult diagramResults = _gsaModel.Model.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Colours.GsaDarkPurple;
@@ -290,6 +324,28 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
+    }
+
+    private void UpdateCaseDropdown() {
+      if (_gsaModel == null) {
+        return;
+      }
+
+      Tuple<List<string>, List<int>, DataTree<int?>> modelResults
+        = ResultHelper.GetAvalailableResults(_gsaModel);
+      string type = "Analysis";
+
+      var cases = new List<string>();
+      for (int i = 0; i < modelResults.Item1.Count; i++) {
+        if (modelResults.Item1[i] != type) {
+          continue;
+        }
+
+        cases.Add(type[0] + modelResults.Item2[i].ToString());
+      }
+
+      _dropDownItems[0] = cases;
+      _selectedItems[0] = type[0] + _caseId.ToString();
     }
   }
 }
