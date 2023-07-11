@@ -276,10 +276,13 @@ namespace GsaGH.Components {
             }
           case GsaMember1dGoo value: {
               beamLoad.RefObjectGuid = value.Value.Guid;
-              beamLoad.ReferenceType = ReferenceType.Member;
+              beamLoad.ReferenceType = ReferenceType.MemberChildElements;
               if (_mode != FoldMode.Uniform) {
                 this.AddRuntimeWarning(
                   "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+              } else {
+                this.AddRuntimeRemark(
+                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               }
 
               break;
