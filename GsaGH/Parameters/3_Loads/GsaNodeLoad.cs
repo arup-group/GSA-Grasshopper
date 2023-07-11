@@ -1,6 +1,6 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using Rhino.Geometry;
-using System;
 
 namespace GsaGH.Parameters {
   public class GsaNodeLoad : IGsaLoad {

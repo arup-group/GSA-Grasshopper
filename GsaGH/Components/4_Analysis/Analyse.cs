@@ -1,4 +1,9 @@
-﻿using GH_IO.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaAPI;
@@ -15,11 +20,6 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Windows.Forms;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {

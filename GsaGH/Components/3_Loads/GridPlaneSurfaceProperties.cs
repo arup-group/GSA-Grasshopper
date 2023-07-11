@@ -31,7 +31,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {

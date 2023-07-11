@@ -1,6 +1,6 @@
-﻿using OasysUnits;
+﻿using System.Collections.Generic;
+using OasysUnits;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {

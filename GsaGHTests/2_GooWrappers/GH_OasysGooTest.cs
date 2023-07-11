@@ -1,8 +1,8 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System;
+using System.Reflection;
+using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using System;
-using System.Reflection;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

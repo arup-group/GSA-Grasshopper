@@ -1,9 +1,9 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Collections.Generic;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using System;
-using System.Collections.Generic;
 
 namespace GsaGH.Helpers.Export {
   internal class GetInputsForModelAssembly {

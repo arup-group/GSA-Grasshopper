@@ -1,5 +1,5 @@
-﻿using GsaAPI;
-using System;
+﻿using System;
+using GsaAPI;
 
 namespace GsaGH.Parameters {
   public class GsaGravityLoad : IGsaLoad {

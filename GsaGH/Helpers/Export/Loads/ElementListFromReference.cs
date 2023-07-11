@@ -1,9 +1,9 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class ElementListFromReference {
@@ -16,9 +16,9 @@ namespace GsaGH.Helpers.Export {
          .Add(item.Key));
       return relationships;
     }
-    
-        internal static string GetReferenceElementIdsDefinition(
-      GsaGridPlaneSurface load, ModelAssembly model) {
+
+    internal static string GetReferenceElementIdsDefinition(
+  GsaGridPlaneSurface load, ModelAssembly model) {
       return GetReferenceDefinition(
         load._refObjectGuid,
         load._referenceType,

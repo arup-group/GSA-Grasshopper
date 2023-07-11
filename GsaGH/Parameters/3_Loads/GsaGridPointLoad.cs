@@ -1,7 +1,7 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using OasysUnits;
 using Rhino.Geometry;
-using System;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {

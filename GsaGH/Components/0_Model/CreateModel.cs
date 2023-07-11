@@ -1,4 +1,8 @@
-﻿using GH_IO.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaGH.Components.GraveyardComp;
@@ -14,10 +18,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace GsaGH.Components {
   /// <summary>
