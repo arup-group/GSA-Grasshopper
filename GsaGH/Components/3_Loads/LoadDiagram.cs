@@ -40,6 +40,15 @@ namespace GsaGH.Components {
     private GsaModel _gsaModel;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private List<string> _loadTypes = new List<string>() {
+      "All",
+      "Gravity",
+      "Grid",
+      "Nodal",
+      "Beam",
+      "2D",
+      "3D",
+    };
     private bool _undefinedModelLengthUnit;
 
     public LoadDiagram() : base("Load Diagram", "LoadDiagram", "Displays GSA Load Diagram",
@@ -58,7 +67,7 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
 
       switch (i) {
-        case 0: {
+        case 0: { // Cases
           if (_selectedItems[i].ToLower() == "all") {
             _caseId = "all";
           } else if (!_selectedItems[i].Equals(_caseId)) {
@@ -66,6 +75,56 @@ namespace GsaGH.Components {
           }
 
           UpdateCaseDropdown();
+          break;
+        }
+        case 1: { // Load Type
+          int k = 2;
+          switch (_selectedItems[i]) {
+            case "All": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Select(item => item.Description.ToString()).ToList();
+              break;
+            }
+            case "Gravity": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Where(item => item.Description.Contains("Gravity")).Select(item => item.Description)
+               .ToList();
+              break;
+            }
+            case "Grid": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Where(item => item.Description.Contains("Grid")).Select(item => item.Description)
+               .ToList();
+              break;
+            }
+            case "Nodal": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Where(item => item.Description.Contains("Nodal")).Select(item => item.Description)
+               .ToList();
+              break;
+            }
+            case "Beam": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Where(item => item.Description.Contains("1d")).Select(item => item.Description)
+               .ToList();
+              break;
+            }
+            case "2D": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Where(item => item.Description.Contains("2d")).Select(item => item.Description)
+               .ToList();
+              break;
+            }
+            case "3D": {
+              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
+               .Where(item => item.Description.Contains("3d")).Select(item => item.Description)
+               .ToList();
+              break;
+            }
+            default: break;
+          }
+
+          _selectedItems[k] = _dropDownItems[k][0];
           break;
         }
       }
@@ -113,6 +172,7 @@ namespace GsaGH.Components {
       _spacerDescriptions = new List<string>(new[] {
         "Case ID",
         "Load Type",
+        "Diagram Type",
       });
 
       _dropDownItems = new List<List<string>>();
@@ -124,10 +184,14 @@ namespace GsaGH.Components {
       });
       _selectedItems.Add(string.Empty);
 
+      //Load Types
+      _dropDownItems.Add(_loadTypes);
+      _selectedItems.Add(_dropDownItems[1][0]);
+
       //Diagram Types
       _dropDownItems.Add(Mappings.diagramTypeMappingLoads.Select(item => item.Description)
        .ToList());
-      _selectedItems.Add(_dropDownItems[1][0]);
+      _selectedItems.Add(_dropDownItems[2][0]);
 
       _isInitialised = true;
     }
@@ -205,7 +269,7 @@ namespace GsaGH.Components {
       }
 
       DiagramType type = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+       .Where(item => item.Description == _selectedItems[2]).Select(item => item.GsaApiEnum)
        .FirstOrDefault();
 
       double unitScale = ComputeUnitScale(autoScale);
