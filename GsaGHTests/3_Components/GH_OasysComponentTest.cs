@@ -1,4 +1,6 @@
 ﻿using System;
+using Grasshopper.Kernel;
+using GsaGH;
 using GsaGH.Components;
 using OasysGH.Components;
 using Xunit;
@@ -77,6 +79,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateNodeLoad))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
     [InlineData(typeof(LoadProperties))]
+    [InlineData(typeof(LoadDiagram))]
     // 4_Analysis
     [InlineData(typeof(GhAnalyse))]
     [InlineData(typeof(AnalysisCaseInfo))]
@@ -113,18 +116,18 @@ namespace GsaGHTests.Components {
     public void GH_OasysComponentTest(Type t) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       Assert.NotNull(comp.Icon_24x24);
-      Assert.NotEqual(Grasshopper.Kernel.GH_Exposure.hidden, comp.Exposure);
+      Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
-      Assert.Equal(GsaGH.PluginInfo.Instance, comp.PluginInfo);
+      Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }
 
     [Fact]
     public void GH_OasysTaskCapableComponent() {
       var comp = new GetGeometry();
       Assert.NotNull(comp.Icon_24x24);
-      Assert.NotEqual(Grasshopper.Kernel.GH_Exposure.hidden, comp.Exposure);
+      Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
-      Assert.Equal(GsaGH.PluginInfo.Instance, comp.PluginInfo);
+      Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }
   }
 }
