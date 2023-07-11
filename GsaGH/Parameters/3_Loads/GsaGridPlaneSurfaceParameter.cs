@@ -29,14 +29,14 @@ namespace GsaGH.Parameters {
         var loadGoo = (GsaLoadGoo)data;
         if (loadGoo.Value != null) {
           switch (loadGoo.Value.LoadType) {
-            case GsaLoad.LoadTypes.GridPoint:
-              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.PointLoad.GridPlaneSurface);
+            case LoadType.GridPoint:
+              return new GsaGridPlaneSurfaceGoo(((GsaGridPointLoad)loadGoo.Value).GridPlaneSurface);
 
-            case GsaLoad.LoadTypes.GridLine:
-              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.LineLoad.GridPlaneSurface);
+            case LoadType.GridLine:
+              return new GsaGridPlaneSurfaceGoo(((GsaGridLineLoad)loadGoo.Value).GridPlaneSurface);
 
-            case GsaLoad.LoadTypes.GridArea:
-              return new GsaGridPlaneSurfaceGoo(loadGoo.Value.AreaLoad.GridPlaneSurface);
+            case LoadType.GridArea:
+              return new GsaGridPlaneSurfaceGoo(((GsaGridAreaLoad)loadGoo.Value).GridPlaneSurface);
 
             default:
               this.AddRuntimeError(

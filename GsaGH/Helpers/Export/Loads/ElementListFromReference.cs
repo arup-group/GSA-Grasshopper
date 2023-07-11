@@ -16,42 +16,9 @@ namespace GsaGH.Helpers.Export {
          .Add(item.Key));
       return relationships;
     }
-
-    internal static string GetReferenceElementIdsDefinition(
+    
+        internal static string GetReferenceElementIdsDefinition(
       GsaGridPlaneSurface load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid,
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
-    }
-
-    internal static string GetReferenceElementIdsDefinition(
-      GsaGravityLoad load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid,
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
-    }
-
-    internal static string GetReferenceElementIdsDefinition(
-      GsaFaceLoad load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid,
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
-    }
-
-    internal static string GetReferenceElementIdsDefinition(
-      GsaBeamLoad load, ModelAssembly model) {
       return GetReferenceDefinition(
         load._refObjectGuid,
         load._referenceType,
@@ -79,6 +46,10 @@ namespace GsaGH.Helpers.Export {
       return !dictionary.GuidDictionary.TryGetValue(guid, out int id) ?
         string.Empty :
         GetMemberChildElementReferenceIdsDefinition(id, memberElementRelationship);
+    }
+
+    internal static string GetReferenceDefinition(IGsaLoad load, ModelAssembly model) {
+      return GetReferenceDefinition(load.RefObjectGuid, load.ReferenceType, model.Properties, model.Elements, model.Members, model.MemberElementRelationship);
     }
 
     internal static string GetReferenceDefinition(

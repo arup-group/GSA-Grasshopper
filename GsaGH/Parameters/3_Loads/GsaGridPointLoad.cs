@@ -1,15 +1,25 @@
 ﻿using GsaAPI;
 using OasysUnits;
 using Rhino.Geometry;
+using System;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
-  public class GsaGridPointLoad {
+  public class GsaGridPointLoad : IGsaLoad {
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
     public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
+    public LoadType LoadType => LoadType.GridPoint;
+    public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
+    public GsaList ReferenceList => GridPlaneSurface._refList;
+    public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
+
     public GsaGridPointLoad() { }
 
-    public GsaGridPointLoad Duplicate() {
+    public int CaseId() {
+      return GridPointLoad.Case;
+    }
+
+    public IGsaLoad Duplicate() {
       var dup = new GsaGridPointLoad {
         GridPointLoad = {
           AxisProperty = GridPointLoad.AxisProperty,
@@ -32,6 +42,10 @@ namespace GsaGH.Parameters {
               new Length(GridPointLoad.X, m).As(unit),
               new Length(GridPointLoad.Y, m).As(unit),
               new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
+    }
+
+    public override string ToString() {
+      return string.Join(" ", LoadType.ToString().Trim(), GridPointLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

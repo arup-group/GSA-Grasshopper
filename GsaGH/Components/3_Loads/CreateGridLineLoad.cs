@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using GH_IO.Serialization;
+﻿using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -18,6 +13,11 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 
 namespace GsaGH.Components {
@@ -305,8 +305,7 @@ namespace GsaGH.Components {
 
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
-      var gsaLoad = new GsaLoad(gridlineload);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 
     protected override void UpdateUIFromSelectedItems() {

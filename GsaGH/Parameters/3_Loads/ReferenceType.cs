@@ -1,5 +1,5 @@
 ﻿namespace GsaGH.Parameters {
-  internal enum ReferenceType {
+  public enum ReferenceType {
     None,
     Property,
     Element,

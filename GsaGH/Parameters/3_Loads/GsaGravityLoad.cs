@@ -2,11 +2,12 @@
 using System;
 
 namespace GsaGH.Parameters {
-  public class GsaGravityLoad {
+  public class GsaGravityLoad : IGsaLoad {
     public GravityLoad GravityLoad { get; set; } = new GravityLoad();
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
+    public LoadType LoadType => LoadType.Gravity;
+    public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
+    public GsaList ReferenceList { get; set; }
+    public Guid RefObjectGuid { get; set; }
 
     public GsaGravityLoad() {
       GravityLoad.Factor = new Vector3() {
@@ -19,7 +20,11 @@ namespace GsaGH.Parameters {
       GravityLoad.Nodes = "all";
     }
 
-    public GsaGravityLoad Duplicate() {
+    public int CaseId() {
+      return GravityLoad.Case;
+    }
+
+    public IGsaLoad Duplicate() {
       var dup = new GsaGravityLoad {
         GravityLoad = {
           Case = GravityLoad.Case,
@@ -29,19 +34,27 @@ namespace GsaGH.Parameters {
           Factor = GravityLoad.Factor,
         },
       };
-      if (_referenceType == ReferenceType.None) {
+      if (ReferenceType == ReferenceType.None) {
         return dup;
       }
 
-      if (_referenceType == ReferenceType.List) {
-        dup._referenceType = ReferenceType.List;
-        dup._refList = _refList.Duplicate();
+      if (ReferenceType == ReferenceType.List) {
+        dup.ReferenceType = ReferenceType.List;
+        dup.ReferenceList = ReferenceList.Duplicate();
       } else {
-        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-        dup._referenceType = _referenceType;
+        dup.RefObjectGuid = new Guid(RefObjectGuid.ToString());
+        dup.ReferenceType = ReferenceType;
       }
 
       return dup;
+    }
+
+    public override string ToString() {
+      if (LoadType == LoadType.Gravity && GravityLoad == null) {
+        return "Null";
+      }
+
+      return string.Join(" ", LoadType.ToString().Trim(), GravityLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

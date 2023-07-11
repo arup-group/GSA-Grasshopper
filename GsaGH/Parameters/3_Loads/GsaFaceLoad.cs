@@ -2,11 +2,12 @@
 using System;
 
 namespace GsaGH.Parameters {
-  public class GsaFaceLoad {
+  public class GsaFaceLoad : IGsaLoad {
     public FaceLoad FaceLoad { get; set; }
-    internal ReferenceType _referenceType = ReferenceType.None;
-    internal GsaList _refList;
-    internal Guid _refObjectGuid;
+    public LoadType LoadType => LoadType.Face;
+    public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
+    public GsaList ReferenceList { get; set; }
+    public Guid RefObjectGuid { get; set; }
 
     public GsaFaceLoad() {
       FaceLoad = new FaceLoad {
@@ -14,7 +15,11 @@ namespace GsaGH.Parameters {
       };
     }
 
-    public GsaFaceLoad Duplicate() {
+    public int CaseId() {
+      return FaceLoad.Case;
+    }
+
+    public IGsaLoad Duplicate() {
       var dup = new GsaFaceLoad {
         FaceLoad = {
           AxisProperty = FaceLoad.AxisProperty,
@@ -48,19 +53,23 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      if (_referenceType == ReferenceType.None) {
+      if (ReferenceType == ReferenceType.None) {
         return dup;
       }
 
-      if (_referenceType == ReferenceType.List) {
-        dup._referenceType = ReferenceType.List;
-        dup._refList = _refList.Duplicate();
+      if (ReferenceType == ReferenceType.List) {
+        dup.ReferenceType = ReferenceType.List;
+        dup.ReferenceList = ReferenceList.Duplicate();
       } else {
-        dup._refObjectGuid = new Guid(_refObjectGuid.ToString());
-        dup._referenceType = _referenceType;
+        dup.RefObjectGuid = new Guid(RefObjectGuid.ToString());
+        dup.ReferenceType = ReferenceType;
       }
 
       return dup;
+    }
+
+    public override string ToString() {
+      return string.Join(" ", LoadType.ToString().Trim(), FaceLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }
