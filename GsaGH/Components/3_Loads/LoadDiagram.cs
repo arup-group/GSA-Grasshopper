@@ -98,8 +98,8 @@ namespace GsaGH.Components {
               _dropDownItems[k] = _allDiagramTypes;
               break;
             }
-            case "Gravity": {
-              _dropDownItems[k] = _gravityDiagramTypes;
+            case "Gravity": { // TODO
+              _dropDownItems[k] = _allDiagramTypes; //_gravityDiagramTypes;
               break;
             }
             case "Grid": {
