@@ -140,7 +140,7 @@ namespace GsaGH.Components {
             var gravityLoad = (GsaGravityLoad)gsaLoad;
             da.SetData(0, gravityLoad.GravityLoad.Case);
             da.SetData(1, gravityLoad.GravityLoad.Name);
-            da.SetData(2, gravityLoad.GravityLoad.Elements);
+            da.SetData(2, gravityLoad.GravityLoad.EntityList);
             da.SetData(6, gravityLoad.GravityLoad.Factor.X);
             da.SetData(7, gravityLoad.GravityLoad.Factor.Y);
             da.SetData(8, gravityLoad.GravityLoad.Factor.Z);
@@ -162,7 +162,7 @@ namespace GsaGH.Components {
             var beamLoad = (GsaBeamLoad)gsaLoad;
             da.SetData(0, beamLoad.BeamLoad.Case);
             da.SetData(1, beamLoad.BeamLoad.Name);
-            da.SetData(2, beamLoad.BeamLoad.Elements);
+            da.SetData(2, beamLoad.BeamLoad.EntityList);
             da.SetData(3, beamLoad.BeamLoad.AxisProperty);
             da.SetData(4, beamLoad.BeamLoad.Direction);
             da.SetData(5, beamLoad.BeamLoad.IsProjected);
@@ -182,7 +182,7 @@ namespace GsaGH.Components {
             var faceLoad = (GsaFaceLoad)gsaLoad;
             da.SetData(0, faceLoad.FaceLoad.Case);
             da.SetData(1, faceLoad.FaceLoad.Name);
-            da.SetData(2, faceLoad.FaceLoad.Elements);
+            da.SetData(2, faceLoad.FaceLoad.EntityList);
             da.SetData(3, faceLoad.FaceLoad.AxisProperty);
             da.SetData(4, faceLoad.FaceLoad.Direction);
             da.SetData(5, faceLoad.FaceLoad.IsProjected);
