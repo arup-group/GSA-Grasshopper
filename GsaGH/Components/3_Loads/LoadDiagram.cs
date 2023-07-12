@@ -34,9 +34,21 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowLoadDiagrams;
+    private List<string> _2dDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Where(item => item.Description.Contains("2d")).Select(item => item.Description).ToList();
+    private List<string> _3dDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Where(item => item.Description.Contains("3d")).Select(item => item.Description).ToList();
+    private List<string> _allDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Select(item => item.Description.ToString()).ToList();
+    private List<string> _beamDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Where(item => item.Description.Contains("1d")).Select(item => item.Description).ToList();
     private string _caseId = "A1";
 
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private List<string> _gravityDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Where(item => item.Description.Contains("Gravity")).Select(item => item.Description).ToList();
+    private List<string> _gridDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Where(item => item.Description.Contains("Grid")).Select(item => item.Description).ToList();
     private GsaModel _gsaModel;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -49,6 +61,8 @@ namespace GsaGH.Components {
       "2D",
       "3D",
     };
+    private List<string> _nodalDiagramTypes = Mappings.diagramTypeMappingLoads
+     .Where(item => item.Description.Contains("Nodal")).Select(item => item.Description).ToList();
     private bool _undefinedModelLengthUnit;
 
     public LoadDiagram() : base("Load Diagram", "LoadDiagram", "Displays GSA Load Diagram",
@@ -81,44 +95,31 @@ namespace GsaGH.Components {
           int k = 2;
           switch (_selectedItems[i]) {
             case "All": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Select(item => item.Description.ToString()).ToList();
+              _dropDownItems[k] = _allDiagramTypes;
               break;
             }
             case "Gravity": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Where(item => item.Description.Contains("Gravity")).Select(item => item.Description)
-               .ToList();
+              _dropDownItems[k] = _gravityDiagramTypes;
               break;
             }
             case "Grid": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Where(item => item.Description.Contains("Grid")).Select(item => item.Description)
-               .ToList();
+              _dropDownItems[k] = _gridDiagramTypes;
               break;
             }
             case "Nodal": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Where(item => item.Description.Contains("Nodal")).Select(item => item.Description)
-               .ToList();
+              _dropDownItems[k] = _nodalDiagramTypes;
               break;
             }
             case "Beam": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Where(item => item.Description.Contains("1d")).Select(item => item.Description)
-               .ToList();
+              _dropDownItems[k] = _beamDiagramTypes;
               break;
             }
             case "2D": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Where(item => item.Description.Contains("2d")).Select(item => item.Description)
-               .ToList();
+              _dropDownItems[k] = _2dDiagramTypes;
               break;
             }
             case "3D": {
-              _dropDownItems[k] = Mappings.diagramTypeMappingLoads
-               .Where(item => item.Description.Contains("3d")).Select(item => item.Description)
-               .ToList();
+              _dropDownItems[k] = _3dDiagramTypes;
               break;
             }
             default: break;
