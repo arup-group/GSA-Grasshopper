@@ -69,8 +69,7 @@ namespace GsaGH.Components {
         crvs = ghcrvs.Select(crv => crv.Value).ToList();
       }
 
-      var mem = new GsaMember2d();
-      mem = new GsaMember2d(ghbrep.Value, crvs, points);
+      var mem = new GsaMember2d(ghbrep.Value, crvs, points);
 
       GsaProp2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
@@ -87,6 +86,7 @@ namespace GsaGH.Components {
         mem.AutomaticInternalOffset = internalOffset;
       }
 
+      mem.UpdatePreview();
       da.SetData(0, new GsaMember2dGoo(mem));
     }
   }

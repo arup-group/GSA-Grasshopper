@@ -267,6 +267,8 @@ namespace GsaGH.Components {
         mem.IsDummy = dummy;
       }
 
+      mem.UpdatePreview();
+
       da.SetData(0, new GsaMember2dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.Brep);

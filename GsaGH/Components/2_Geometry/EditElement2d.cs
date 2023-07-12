@@ -231,6 +231,8 @@ namespace GsaGH.Components {
         }
       }
 
+      elem.UpdatePreview();
+
       // #### outputs ####
       da.SetData(0, new GsaElement2dGoo(elem));
       da.SetDataList(1, elem.Ids);

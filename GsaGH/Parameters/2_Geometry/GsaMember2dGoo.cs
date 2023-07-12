@@ -71,6 +71,11 @@ namespace GsaGH.Parameters {
             0) // this is a workaround to change colour between selected and not
             ? Colours.Member2dFace : Colours.Member2dFaceSelected); //UI.Colour.Member2dFace
       }
+
+      if (Value.Section3dPreview != null) {
+        args.Pipeline.DrawMeshShaded(Value.Section3dPreview.Mesh, Value.Section3dPreview.PreviewMaterial);
+      }
+
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
@@ -156,14 +161,19 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.InclusionPoints == null) {
-        return;
-      }
-
-      {
+      if (Value.InclusionPoints != null) {
         foreach (Point3d point3d in Value.InclusionPoints) {
           args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 3,
             Value.IsDummy ? Colours.Dummy1D : Colours.Member2dInclPt);
+        }
+
+      }
+
+      if (Value.Section3dPreview != null) {
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member2dEdge);
+        } else {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member2dEdgeSelected);
         }
       }
     }

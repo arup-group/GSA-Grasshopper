@@ -199,6 +199,7 @@ namespace GsaGH.Components {
         mem.MeshSize = meshSize;
       }
 
+      mem.UpdatePreview();
       da.SetData(0, new GsaMember1dGoo(mem));
     }
   }

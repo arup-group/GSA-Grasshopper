@@ -8,6 +8,7 @@ using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.UI;
 using OasysUnits;
@@ -49,37 +50,24 @@ namespace GsaGH.Parameters {
 
         return cols;
       }
-      set {
-       CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
+      set => CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
           value);
-        UpdatePreview();
-      }
     }
     public int Count => ApiElements.Count;
     public List<int> Groups {
       get => (from element in ApiElements where element != null select element.Group).ToList();
-      set {
-        CloneApiElements(ApiObjectMember.Group, value);
-        UpdatePreview();
-      }
-
+      set => CloneApiElements(ApiObjectMember.Group, value);
     }
     public Guid Guid => _guid;
     public List<int> Ids { get; set; } = new List<int>();
     public List<bool> IsDummies {
       get => (from element in ApiElements where element != null select element.IsDummy).ToList();
-      set {
-        CloneApiElements(ApiObjectMember.Dummy, null, value);
-        UpdatePreview();
-      }
+      set => CloneApiElements(ApiObjectMember.Dummy, null, value);
     }
     public Mesh Mesh { get; private set; } = new Mesh();
     public List<string> Names {
       get => (from element in ApiElements where element != null select element.Name).ToList();
-      set {
-        CloneApiElements(ApiObjectMember.Name, null, null, value);
-        UpdatePreview();
-      }
+      set => CloneApiElements(ApiObjectMember.Name, null, null, value);
     }
     public List<GsaOffset> Offsets {
       get
@@ -96,10 +84,7 @@ namespace GsaGH.Parameters {
         => (from element in ApiElements where element != null
             select new Angle(element.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian))
          .ToList();
-      set {
-        CloneApiElements(ApiObjectMember.OrientationAngle, null, null, null, value);
-        UpdatePreview();
-      }
+      set => CloneApiElements(ApiObjectMember.OrientationAngle, null, null, null, value);
     }
     public List<int> ParentMembers {
       get {
@@ -115,13 +100,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp2d> Prop2ds {
-      get => _prop2ds;
-      set {
-        _prop2ds = value ?? new List<GsaProp2d>();
-        UpdatePreview();
-      }
-    }
+    public List<GsaProp2d> Prop2ds { get; set; } = new List<GsaProp2d>();
     public List<List<int>> TopoInt { get; private set; }
     public List<Point3d> Topology { get; private set; }
     public DataTree<int> TopologyIDs {
@@ -144,16 +123,8 @@ namespace GsaGH.Parameters {
       }
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
-    internal (Mesh Mesh, IEnumerable<Line> Outlines) Section3dPreview { get; private set; }
-    internal DisplayMaterial PreviewMaterial
-      => (Color)ApiElements[0].Colour == Color.FromArgb(0, 0, 0)
-      ? Helpers.Graphics.Colours.Element2dFace : new DisplayMaterial {
-        Diffuse = Color.FromArgb(50, 150, 150, 150),
-        Emission = Colours[0],
-        Transparency = 0.1,
-      };
+    internal GsaSection3dPreview Section3dPreview { get; private set; }
     private Guid _guid = Guid.NewGuid();
-    private List<GsaProp2d> _prop2ds = new List<GsaProp2d>();
 
     public GsaElement2d() { }
 
@@ -170,7 +141,6 @@ namespace GsaGH.Parameters {
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
-      UpdatePreview();
     }
 
     public GsaElement2d(
@@ -189,7 +159,6 @@ namespace GsaGH.Parameters {
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
-      UpdatePreview();
     }
 
     internal GsaElement2d(
@@ -200,7 +169,6 @@ namespace GsaGH.Parameters {
       ApiElements = elements.Values.ToList();
       Ids = elements.Keys.ToList();
       Prop2ds = prop2ds;
-      UpdatePreview();
     }
 
     public static Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
@@ -218,7 +186,6 @@ namespace GsaGH.Parameters {
       gsaElement2D.Topology = convertMesh.Item2;
       gsaElement2D.TopoInt = convertMesh.Item3;
       gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
-      gsaElement2D.UpdatePreview();
       return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2,
         tuple.Item3);
     }
@@ -233,8 +200,11 @@ namespace GsaGH.Parameters {
       dup.Mesh = (Mesh)Mesh.DuplicateShallow();
       dup.Topology = Topology;
       dup.TopoInt = TopoInt;
-      dup._prop2ds = Prop2ds;
-      dup.UpdatePreview();
+      dup.Prop2ds = Prop2ds;
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview;
+      }
+
       return dup;
     }
 
@@ -252,6 +222,10 @@ namespace GsaGH.Parameters {
 
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xmorph.Morph(xMs);
+
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+      }
 
       return dup.UpdateGeometry(xMs);
     }
@@ -278,6 +252,10 @@ namespace GsaGH.Parameters {
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xMs.Transform(xform);
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Transform(xform);
+      }
+
       return dup.UpdateGeometry(xMs);
     }
 
@@ -292,7 +270,6 @@ namespace GsaGH.Parameters {
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
-      UpdatePreview();
       return this;
     }
 
@@ -394,11 +371,18 @@ namespace GsaGH.Parameters {
       ApiElements = elems;
     }
 
-    private void UpdatePreview() {
+    internal void UpdatePreview() {
       if (Prop2ds != null && !Prop2ds[0].IsReferencedById) {
-        Section3dPreview = Helpers.Graphics.Section3dPreview.CreatePreview(this);
+        Section3dPreview = new GsaSection3dPreview(this) {
+          PreviewMaterial = (Color)ApiElements[0].Colour == Color.FromArgb(0, 0, 0)
+            ? Helpers.Graphics.Colours.Element2dFace : new DisplayMaterial {
+              Diffuse = Color.FromArgb(50, 150, 150, 150),
+              Emission = Colours[0],
+              Transparency = 0.1,
+            }
+        };
       } else {
-        Section3dPreview = (null, null);
+        Section3dPreview = null;
       }
     }
   }

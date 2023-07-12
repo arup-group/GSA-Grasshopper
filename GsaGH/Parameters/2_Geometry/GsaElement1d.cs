@@ -54,7 +54,6 @@ namespace GsaGH.Parameters {
       set {
         _line = value;
         _guid = Guid.NewGuid();
-        UpdatePreview();
       }
     }
     public string Name {
@@ -98,7 +97,7 @@ namespace GsaGH.Parameters {
 
         CloneApiObject();
         ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaBool6 ReleaseStart {
@@ -108,16 +107,10 @@ namespace GsaGH.Parameters {
 
         CloneApiObject();
         ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
-    public GsaSection Section {
-      get => _section;
-      set {
-        _section = value ?? new GsaSection();
-        UpdatePreview();
-      }
-    }
+    public GsaSection Section { get; set; } = new GsaSection();
     public ElementType Type {
       get => ApiElement.Type;
       set {
@@ -126,14 +119,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Element ApiElement { get; set; } = new Element();
-    internal (Mesh Mesh, IEnumerable<Line> Outlines) Section3dPreview { get; private set; }
-    internal DisplayMaterial PreviewMaterial 
-      => (Color)ApiElement.Colour == Color.FromArgb(0, 0, 0) 
-      ? Colours.Element2dFace : new DisplayMaterial {
-      Diffuse = Color.FromArgb(50, 150, 150, 150),
-      Emission = Colour,
-      Transparency = 0.1,
-    };
+    internal GsaSection3dPreview Section3dPreview { get; private set; }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;
@@ -143,7 +129,6 @@ namespace GsaGH.Parameters {
     private GsaNode _orientationNode;
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
-    private GsaSection _section = new GsaSection();
 
     public GsaElement1d() { }
 
@@ -153,9 +138,9 @@ namespace GsaGH.Parameters {
       };
       _line = line;
       Id = Id;
-      _section = new GsaSection(prop);
+      Section = new GsaSection(prop);
       _orientationNode = orientationNode;
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     internal GsaElement1d(
@@ -167,7 +152,7 @@ namespace GsaGH.Parameters {
       Id = id;
       Section = section;
       _orientationNode = orientationNode;
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     internal GsaElement1d(
@@ -215,7 +200,10 @@ namespace GsaGH.Parameters {
         dup._orientationNode = _orientationNode.Duplicate();
       }
 
-      UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview;
+      }
+
       return dup;
     }
 
@@ -231,6 +219,9 @@ namespace GsaGH.Parameters {
       LineCurve xLn = Line;
       xmorph.Morph(xLn);
       elem.Line = xLn;
+      if (Section3dPreview != null) {
+        elem.Section3dPreview = Section3dPreview.Morph(xmorph);
+      }
 
       return elem;
     }
@@ -251,6 +242,10 @@ namespace GsaGH.Parameters {
       xLn.Transform(xform);
       elem.Line = xLn;
 
+      if (Section3dPreview != null) {
+        elem.Section3dPreview = Section3dPreview.Transform(xform);
+      }
+      
       return elem;
     }
 
@@ -291,11 +286,21 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
-        Section3dPreview = Helpers.Graphics.Section3dPreview.CreatePreview(this);
+        Section3dPreview = new GsaSection3dPreview(this) {
+          PreviewMaterial = (Color)ApiElement.Colour == Color.FromArgb(0, 0, 0)
+            ? Colours.Element2dFace : new DisplayMaterial {
+              Diffuse = Color.FromArgb(50, 150, 150, 150),
+              Emission = Colour,
+              Transparency = 0.1,
+            }
+        };
       } else {
-        Section3dPreview = (null, null);
+        Section3dPreview = null;
       }
+      UpdateReleasesPreview();
+    }
 
+    internal void UpdateReleasesPreview() {
       if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }

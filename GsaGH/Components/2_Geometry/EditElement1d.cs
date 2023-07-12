@@ -199,6 +199,8 @@ namespace GsaGH.Components {
         elem.IsDummy = dummy;
       }
 
+      elem.UpdatePreview();
+
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));

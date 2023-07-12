@@ -346,6 +346,8 @@ namespace GsaGH.Components {
           Environment.NewLine + $"This may cause model instabilities.");
       }
 
+      mem.UpdatePreview();
+
       da.SetData(0, new GsaMember1dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);

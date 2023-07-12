@@ -47,6 +47,7 @@ namespace GsaGH.Components {
         }
 
         elem.Prop2ds = prop2Ds;
+        elem.UpdatePreview();
       }
 
       da.SetData(0, new GsaElement2dGoo(elem));

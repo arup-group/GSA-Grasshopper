@@ -43,11 +43,25 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value == null || Value.Section3dPreview == null) {
+        return;
+      }
+
+      args.Pipeline.DrawMeshShaded(Value.Section3dPreview.Mesh, Value.Section3dPreview.PreviewMaterial);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null) {
         return;
+      }
+
+      if (Value.Section3dPreview != null) {
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member1d);
+        } else {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member1dSelected);
+        }
       }
 
       if (Value.PolyCurve != null) {

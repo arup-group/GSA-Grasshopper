@@ -4,8 +4,10 @@ using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -121,7 +123,7 @@ namespace GsaGH.Parameters {
     internal Member ApiMember { get; set; } = new Member() {
       Type = MemberType.GENERIC_2D,
     };
-
+    internal GsaSection3dPreview Section3dPreview { get; private set; }
     // list of polyline curve type (arch or line) for member1d/2d
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
@@ -161,6 +163,7 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
+
       Prop2d = new GsaProp2d(prop);
     }
 
@@ -266,10 +269,14 @@ namespace GsaGH.Parameters {
 
       var dupInclCrvs = _inclCrvs.Select(t => (PolyCurve)t.DuplicateShallow()).ToList();
       dup._inclCrvs = dupInclCrvs;
-      dup.IncLinesTopology = IncLinesTopology;
-      dup.IncLinesTopologyType = IncLinesTopologyType;
+      dup.IncLinesTopology = IncLinesTopology.ToList();
+      dup.IncLinesTopologyType = IncLinesTopologyType.ToList();
 
-      dup.InclusionPoints = InclusionPoints;
+      dup.InclusionPoints = InclusionPoints.ToList();
+
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview;
+      }
 
       return dup;
     }
@@ -318,6 +325,10 @@ namespace GsaGH.Parameters {
         dup.InclusionPoints[i] = xmorph.MorphPoint(dup.InclusionPoints[i]);
       }
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+      }
+
       return dup;
     }
 
@@ -363,6 +374,10 @@ namespace GsaGH.Parameters {
 
       dup.InclusionPoints = xform.TransformList(dup.InclusionPoints).ToList();
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Transform(xform);
+      }
+
       return dup;
     }
 
@@ -392,6 +407,7 @@ namespace GsaGH.Parameters {
     internal void CloneApiObject() {
       ApiMember = GetAPI_MemberClone();
       _guid = Guid.NewGuid();
+      UpdatePreview();
     }
 
     internal Member GetAPI_MemberClone() {
@@ -423,6 +439,21 @@ namespace GsaGH.Parameters {
       }
 
       return mem;
+    }
+
+    internal void UpdatePreview() {
+      if (Prop2d != null && !Prop2d.IsReferencedById) {
+        Section3dPreview = new GsaSection3dPreview(this) {
+          PreviewMaterial = (Color)ApiMember.Colour == Color.FromArgb(0, 0, 0)
+            ? Colours.Element2dFace : new DisplayMaterial {
+              Diffuse = Color.FromArgb(50, 150, 150, 150),
+              Emission = Colour,
+              Transparency = 0.1,
+            }
+        };
+      } else {
+        Section3dPreview = null;
+      }
     }
   }
 }

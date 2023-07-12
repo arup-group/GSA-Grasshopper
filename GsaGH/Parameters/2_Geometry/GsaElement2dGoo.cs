@@ -44,7 +44,7 @@ namespace GsaGH.Parameters {
         args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
           ? Colours.Element2dFace : Colours.Element2dFaceSelected);
 
-      if (Value.Section3dPreview != (null, null)) {
+      if (Value.Section3dPreview != null) {
         args.Pipeline.DrawMeshShaded(Value.Section3dPreview.Mesh,
         args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
           ? Colours.Element2dFace : Colours.Element2dFaceSelected);
@@ -62,7 +62,7 @@ namespace GsaGH.Parameters {
         args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdgeSelected, 2);
       }
 
-      if (Value.Section3dPreview != (null, null)) {
+      if (Value.Section3dPreview != null) {
         if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
           args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Element2dEdge, 1);
         } else {

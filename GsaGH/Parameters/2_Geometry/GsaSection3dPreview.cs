@@ -1,0 +1,215 @@
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using GsaAPI;
+using OasysGH.Units;
+using GsaGH.Helpers.Export;
+using Rhino.Display;
+using Rhino.Geometry;
+using Line = Rhino.Geometry.Line;
+
+namespace GsaGH.Parameters {
+  internal enum Layer {
+    Analysis,
+    Design
+  }
+  public class GsaSection3dPreview {
+    public Mesh Mesh { get; set; }
+    public IEnumerable<Line> Outlines { get; set; }
+    public DisplayMaterial PreviewMaterial { get; set; }
+
+    public GsaSection3dPreview(GsaElement1d elem) {
+      Model model = AssembleTempModel(elem);
+      CreateGraphics(model, Layer.Analysis);
+    }
+    public GsaSection3dPreview(GsaElement2d elem) {
+      Model model = AssembleTempModel(elem);
+      CreateGraphics(model, Layer.Analysis);
+    }
+
+    public GsaSection3dPreview(GsaMember1d mem) {
+      Model model = AssembleTempModel(mem);
+      CreateGraphics(model, Layer.Design);
+    }
+
+    public GsaSection3dPreview(GsaMember2d mem) {
+      Model model = AssembleTempModel(mem);
+      CreateGraphics(model, Layer.Design);
+    }
+    private GsaSection3dPreview() { }
+
+    public GsaSection3dPreview Transform(Transform xform) {
+      Mesh m = Mesh.DuplicateMesh();
+      m.Transform(xform);
+      IEnumerable<Line> lns = Outlines.Select(l => new Line(l.From, l.To));
+      var dup = new GsaSection3dPreview() {
+        Mesh = m,
+        Outlines = lns,
+        PreviewMaterial = PreviewMaterial
+      };
+      return dup;
+    }
+
+    public GsaSection3dPreview Morph(SpaceMorph xmorph) {
+      Mesh m = Mesh.DuplicateMesh();
+      xmorph.Morph(m);
+      IEnumerable<Line> lns = Outlines.Select(
+        l => new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To)));
+      var dup = new GsaSection3dPreview() {
+        Mesh = m,
+        Outlines = lns,
+        PreviewMaterial = PreviewMaterial
+      };
+      return dup;
+    }
+
+    private static Model AssembleTempModel(GsaElement1d elem) {
+      var model = new Model();
+      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      var topo = new List<int> {
+        model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.From, unit)),
+        model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.To, unit))
+      };
+      Element elem1d = elem.GetApiElementClone();
+      elem1d.Topology = new ReadOnlyCollection<int>(topo);
+      elem1d.Property = model.AddSection(elem.Section.ApiSection);
+      model.AddElement(elem1d);
+      return model;
+    }
+
+    private static Model AssembleTempModel(GsaMember1d mem) {
+      var model = new Model();
+      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      string topo = string.Empty;
+      for (int i = 0; i < mem.Topology.Count; i++) {
+        int id = model.AddNode(
+          Nodes.NodeFromPoint(mem.Topology[i], unit));
+        topo += $" {mem.TopologyType[i]}{id}";
+      };
+      Member mem1d = mem.GetAPI_MemberClone();
+      mem1d.Topology = topo.Trim();
+      mem1d.Property = model.AddSection(mem.Section.ApiSection);
+      model.AddMember(mem1d);
+      return model;
+    }
+
+    private static Model AssembleTempModel(GsaElement2d elem) {
+      var model = new Model();
+      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      for (int i = 0; i < elem.ApiElements.Count; i++) {
+        var topo = new List<int>();
+        foreach (int id in elem.TopoInt[i]) {
+          topo.Add(model.AddNode(Nodes.NodeFromPoint(elem.Topology[id], unit)));
+        };
+        Element element = elem.GetApiObjectClone(i);
+        element.Topology = new ReadOnlyCollection<int>(topo);
+        element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
+        model.AddElement(element);
+      }
+
+      return model;
+    }
+
+    private static Model AssembleTempModel(GsaMember2d mem) {
+      var model = new Model();
+      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      string topo = string.Empty;
+      for (int i = 0; i < mem.Topology.Count; i++) {
+        int id = model.AddNode(Nodes.NodeFromPoint(mem.Topology[i], unit));
+        topo += $" {mem.TopologyType[i]}{id}";
+      };
+      Member mem2d = mem.GetAPI_MemberClone();
+      mem2d.Topology = topo.Trim();
+      mem2d.Property = model.AddProp2D(mem.Prop2d.ApiProp2d);
+      model.AddMember(mem2d);
+      return model;
+    }
+
+    private static List<Line> CreateOutlines(ReadOnlyCollection<GsaAPI.Line> lines) {
+      var lns = new List<Line>();
+      foreach (GsaAPI.Line line in lines) {
+        var start = new Point3d(line.Start.X, line.Start.Y, line.Start.Z);
+        var end = new Point3d(line.End.X, line.End.Y, line.End.Z);
+        lns.Add(new Line(start, end));
+      }
+      return lns;
+    }
+
+    private static Mesh CreateMeshFromTriangles(ReadOnlyCollection<Triangle> triangles) {
+      var mesh = new Mesh();
+      foreach (Triangle tri in triangles) {
+        var face = new Mesh();
+        foreach (Double3 verticy in tri.Vertices) {
+          face.Vertices.Add(verticy.X, verticy.Y, verticy.Z);
+          face.VertexColors.Add((System.Drawing.Color)tri.Colour);
+        }
+        
+        face.Faces.AddFace(0, 1, 2);
+        mesh.Append(face);
+      }
+
+      mesh.RebuildNormals();
+      mesh.Weld(0.0001);
+      mesh.Compact();
+      return mesh;
+    }
+
+    private void CreateGraphics(Model model, Layer layer, string definition = "all") {
+      GraphicDrawResult graphic = model.Draw(Specification(layer, definition));
+      Mesh = CreateMeshFromTriangles(graphic.Triangles);
+      Outlines = CreateOutlines(graphic.Lines);
+    } 
+
+    private GraphicSpecification Specification(Layer layer, string definition) {
+      if (layer == Layer.Analysis) {
+        return AnalysisLayerSpec(definition);
+      } else {
+        return DesignLayerSpec(definition);
+      }
+    }
+
+    private static GraphicSpecification AnalysisLayerSpec(string definition) {
+      return new GraphicSpecification() {
+        Entities = new EntityList() { 
+          Definition = definition, Name = "AllElements", 
+          Type = GsaAPI.EntityType.Element 
+        },
+        Cases = new EntityList() {
+          Definition = "all", Name = "case",
+          Type = GsaAPI.EntityType.Case
+        },
+        EntityDisplayMethod = new EntityDisplayMethod {
+          for1D = DisplayMethodFor1D.OutLineFilled,
+          for2D = DisplayMethodFor2D.Solid
+                | DisplayMethodFor2D.Thickness
+                | DisplayMethodFor2D.Edge,
+          for3D = DisplayMethodFor3D.Off
+        },
+        ScaleFactor = 1.0,
+        IsNormalised = true
+      };
+  }
+
+    private static GraphicSpecification DesignLayerSpec(string definition) {
+      return new GraphicSpecification() {
+        Entities = new EntityList() { 
+          Definition = definition, Name = "AllMembers", 
+          Type = GsaAPI.EntityType.Member 
+        },
+        Cases = new EntityList() { 
+          Definition = "all", Name = "case", 
+          Type = GsaAPI.EntityType.Case 
+        },
+        EntityDisplayMethod = new EntityDisplayMethod {
+          for1D = DisplayMethodFor1D.OutLineFilled,
+          for2D = DisplayMethodFor2D.Solid 
+                | DisplayMethodFor2D.Thickness 
+                | DisplayMethodFor2D.Edge,
+          for3D = DisplayMethodFor3D.Off
+        },
+        ScaleFactor = 1.0,
+        IsNormalised = true
+      };
+    }
+  }
+}
