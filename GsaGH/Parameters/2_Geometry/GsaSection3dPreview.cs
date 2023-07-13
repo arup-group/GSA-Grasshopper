@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using GsaAPI;
-using OasysGH.Units;
 using GsaGH.Helpers.Export;
-using Rhino.Display;
+using GsaGH.Helpers.Graphics;
+using OasysGH.Units;
+using OasysUnits;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
@@ -13,28 +18,44 @@ namespace GsaGH.Parameters {
     Analysis,
     Design
   }
+  internal enum DimensionType {
+    OneDimensional,
+    TwoDimensional
+  }
+  
   public class GsaSection3dPreview {
     public Mesh Mesh { get; set; }
     public IEnumerable<Line> Outlines { get; set; }
-    public DisplayMaterial PreviewMaterial { get; set; }
 
     public GsaSection3dPreview(GsaElement1d elem) {
       Model model = AssembleTempModel(elem);
-      CreateGraphics(model, Layer.Analysis);
+      CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
     public GsaSection3dPreview(GsaElement2d elem) {
       Model model = AssembleTempModel(elem);
-      CreateGraphics(model, Layer.Analysis);
+      CreateGraphics(model, Layer.Analysis, DimensionType.TwoDimensional);
     }
-
     public GsaSection3dPreview(GsaMember1d mem) {
       Model model = AssembleTempModel(mem);
-      CreateGraphics(model, Layer.Design);
+      CreateGraphics(model, Layer.Design, DimensionType.OneDimensional);
     }
-
     public GsaSection3dPreview(GsaMember2d mem) {
       Model model = AssembleTempModel(mem);
-      CreateGraphics(model, Layer.Design);
+      CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
+    }
+
+    internal static GsaSection3dPreview CreateFromApi(
+      GsaModel model, Layer layer) {
+      var section3dPreview = new GsaSection3dPreview();
+      GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
+      section3dPreview.CreateGraphics(model.Model, spec);
+      if (model.ModelUnit != LengthUnit.Meter) {
+        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, model.ModelUnit);
+        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
+        section3dPreview.Transform(scalar);
+      }
+
+      return section3dPreview;
     }
     private GsaSection3dPreview() { }
 
@@ -42,10 +63,10 @@ namespace GsaGH.Parameters {
       Mesh m = Mesh.DuplicateMesh();
       m.Transform(xform);
       IEnumerable<Line> lns = Outlines.Select(l => new Line(l.From, l.To));
+      lns.Select(l => l.Transform(xform));
       var dup = new GsaSection3dPreview() {
         Mesh = m,
         Outlines = lns,
-        PreviewMaterial = PreviewMaterial
       };
       return dup;
     }
@@ -58,7 +79,6 @@ namespace GsaGH.Parameters {
       var dup = new GsaSection3dPreview() {
         Mesh = m,
         Outlines = lns,
-        PreviewMaterial = PreviewMaterial
       };
       return dup;
     }
@@ -79,7 +99,7 @@ namespace GsaGH.Parameters {
 
     private static Model AssembleTempModel(GsaMember1d mem) {
       var model = new Model();
-      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       string topo = string.Empty;
       for (int i = 0; i < mem.Topology.Count; i++) {
         int id = model.AddNode(
@@ -95,7 +115,7 @@ namespace GsaGH.Parameters {
 
     private static Model AssembleTempModel(GsaElement2d elem) {
       var model = new Model();
-      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       for (int i = 0; i < elem.ApiElements.Count; i++) {
         var topo = new List<int>();
         foreach (int id in elem.TopoInt[i]) {
@@ -125,57 +145,122 @@ namespace GsaGH.Parameters {
       return model;
     }
 
-    private static List<Line> CreateOutlines(ReadOnlyCollection<GsaAPI.Line> lines) {
-      var lns = new List<Line>();
-      foreach (GsaAPI.Line line in lines) {
+    private static ConcurrentBag<Line> CreateOutlines(ReadOnlyCollection<GsaAPI.Line> lines) {
+      var lns = new ConcurrentBag<Line>();
+      Parallel.ForEach(lines, line => {
         var start = new Point3d(line.Start.X, line.Start.Y, line.Start.Z);
         var end = new Point3d(line.End.X, line.End.Y, line.End.Z);
         lns.Add(new Line(start, end));
-      }
+      });
       return lns;
     }
 
     private static Mesh CreateMeshFromTriangles(ReadOnlyCollection<Triangle> triangles) {
-      var mesh = new Mesh();
-      foreach (Triangle tri in triangles) {
-        var face = new Mesh();
-        foreach (Double3 verticy in tri.Vertices) {
-          face.Vertices.Add(verticy.X, verticy.Y, verticy.Z);
-          face.VertexColors.Add((System.Drawing.Color)tri.Colour);
+      var faces = new ConcurrentBag<Mesh>();
+      Parallel.ForEach(triangles, tri => {
+      var face = new Mesh();
+        var col = (Color)tri.Colour;
+        if (col.Name == "ff464646" || col.Name == "ff000000") {
+          col = Colours.Preview3dMeshDefault;
         }
         
-        face.Faces.AddFace(0, 1, 2);
-        mesh.Append(face);
-      }
+        foreach (Double3 verticy in tri.Vertices) {
+          face.Vertices.Add(verticy.X, verticy.Y, verticy.Z);
+          face.VertexColors.Add(col);
+        }
 
-      mesh.RebuildNormals();
-      mesh.Weld(0.0001);
+        face.Faces.AddFace(0, 1, 2);
+        faces.Add(face);
+      });
+      var mesh = new Mesh();
+      mesh.Append(faces);
       mesh.Compact();
       return mesh;
     }
+    
 
-    private void CreateGraphics(Model model, Layer layer, string definition = "all") {
-      GraphicDrawResult graphic = model.Draw(Specification(layer, definition));
+    private void CreateGraphics(Model model, Layer layer, DimensionType type, string definition = "all") {
+      GraphicDrawResult graphic = model.Draw(Specification(layer, definition, type));
       Mesh = CreateMeshFromTriangles(graphic.Triangles);
       Outlines = CreateOutlines(graphic.Lines);
-    } 
+    }
 
-    private GraphicSpecification Specification(Layer layer, string definition) {
+    private void CreateGraphics(Model model, GraphicSpecification spec) {
+      GraphicDrawResult graphic = model.Draw(spec);
+      Mesh = CreateMeshFromTriangles(graphic.Triangles);
+      Outlines = CreateOutlines(graphic.Lines);
+    }
+
+    private GraphicSpecification Specification(Layer layer, string definition, DimensionType type) {
       if (layer == Layer.Analysis) {
-        return AnalysisLayerSpec(definition);
+        return AnalysisLayerSpec(definition, type);
       } else {
-        return DesignLayerSpec(definition);
+        return DesignLayerSpec(definition, type);
       }
     }
 
-    private static GraphicSpecification AnalysisLayerSpec(string definition) {
+    private static GraphicSpecification AnalysisLayerSpec(string definition, DimensionType type) {
       return new GraphicSpecification() {
         Entities = new EntityList() { 
-          Definition = definition, Name = "AllElements", 
+          Definition = definition, 
+          Name = "Name", 
           Type = GsaAPI.EntityType.Element 
         },
         Cases = new EntityList() {
-          Definition = "all", Name = "case",
+          Definition = "none", 
+          Name = "case",
+          Type = GsaAPI.EntityType.Case
+        },
+        EntityDisplayMethod = new EntityDisplayMethod {
+          for1D = type == DimensionType.OneDimensional 
+            ? DisplayMethodFor1D.OutLineFilled : DisplayMethodFor1D.Off,
+          for2D = type == DimensionType.OneDimensional ? DisplayMethodFor2D.Off
+            : DisplayMethodFor2D.Solid
+            | DisplayMethodFor2D.Thickness
+            | DisplayMethodFor2D.Edge,
+          for3D = DisplayMethodFor3D.Off
+        },
+        ScaleFactor = 1.0,
+        IsNormalised = true
+      };
+    }
+
+    private static GraphicSpecification DesignLayerSpec(string definition, DimensionType type) {
+      return new GraphicSpecification() {
+        Entities = new EntityList() { 
+          Definition = definition, 
+          Name = "Name", 
+          Type = GsaAPI.EntityType.Member 
+        },
+        Cases = new EntityList() { 
+          Definition = "none", 
+          Name = "case", 
+          Type = GsaAPI.EntityType.Case 
+        },
+        EntityDisplayMethod = new EntityDisplayMethod {
+          for1D = type == DimensionType.OneDimensional
+            ? DisplayMethodFor1D.OutLineFilled : DisplayMethodFor1D.Off,
+          for2D = type == DimensionType.OneDimensional ? DisplayMethodFor2D.Off
+            : DisplayMethodFor2D.Solid
+            | DisplayMethodFor2D.Thickness
+            | DisplayMethodFor2D.Edge,
+          for3D = DisplayMethodFor3D.Off
+        },
+        ScaleFactor = 1.0,
+        IsNormalised = true
+      };
+    }
+
+    private static GraphicSpecification DesignLayerSpec() {
+      return new GraphicSpecification() {
+        Entities = new EntityList() {
+          Definition = "all",
+          Name = "Name",
+          Type = GsaAPI.EntityType.Member
+        },
+        Cases = new EntityList() {
+          Definition = "none",
+          Name = "case",
           Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
@@ -188,22 +273,24 @@ namespace GsaGH.Parameters {
         ScaleFactor = 1.0,
         IsNormalised = true
       };
-  }
+    }
 
-    private static GraphicSpecification DesignLayerSpec(string definition) {
+    private static GraphicSpecification AnalysisLayerSpec() {
       return new GraphicSpecification() {
-        Entities = new EntityList() { 
-          Definition = definition, Name = "AllMembers", 
-          Type = GsaAPI.EntityType.Member 
+        Entities = new EntityList() {
+          Definition = "all",
+          Name = "Name",
+          Type = GsaAPI.EntityType.Element
         },
-        Cases = new EntityList() { 
-          Definition = "all", Name = "case", 
-          Type = GsaAPI.EntityType.Case 
+        Cases = new EntityList() {
+          Definition = "none",
+          Name = "case",
+          Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
           for1D = DisplayMethodFor1D.OutLineFilled,
-          for2D = DisplayMethodFor2D.Solid 
-                | DisplayMethodFor2D.Thickness 
+          for2D = DisplayMethodFor2D.Solid
+                | DisplayMethodFor2D.Thickness
                 | DisplayMethodFor2D.Edge,
           for3D = DisplayMethodFor3D.Off
         },

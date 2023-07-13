@@ -123,7 +123,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
-    internal GsaSection3dPreview Section3dPreview { get; private set; }
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     private Guid _guid = Guid.NewGuid();
 
     public GsaElement2d() { }
@@ -373,14 +373,7 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (Prop2ds != null && !Prop2ds[0].IsReferencedById) {
-        Section3dPreview = new GsaSection3dPreview(this) {
-          PreviewMaterial = (Color)ApiElements[0].Colour == Color.FromArgb(0, 0, 0)
-            ? Helpers.Graphics.Colours.Element2dFace : new DisplayMaterial {
-              Diffuse = Color.FromArgb(50, 150, 150, 150),
-              Emission = Colours[0],
-              Transparency = 0.1,
-            }
-        };
+        Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;
       }

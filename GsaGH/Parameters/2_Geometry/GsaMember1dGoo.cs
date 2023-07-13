@@ -48,7 +48,7 @@ namespace GsaGH.Parameters {
         return;
       }
 
-      args.Pipeline.DrawMeshShaded(Value.Section3dPreview.Mesh, Value.Section3dPreview.PreviewMaterial);
+      args.Pipeline.DrawMeshFalseColors(Value.Section3dPreview.Mesh);
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {

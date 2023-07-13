@@ -8,14 +8,13 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 2D Member
   /// </summary>
-  public class CreateMember2d : GH_OasysComponent {
+  public class CreateMember2d : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -74,6 +73,9 @@ namespace GsaGH.Components {
       GsaProp2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
           mem.Prop2d = prop2dGoo.Value;
+        if (_preview) {
+          mem.UpdatePreview();
+        }
       }
 
       double meshSize = 0;
@@ -86,7 +88,6 @@ namespace GsaGH.Components {
         mem.AutomaticInternalOffset = internalOffset;
       }
 
-      mem.UpdatePreview();
       da.SetData(0, new GsaMember2dGoo(mem));
     }
   }

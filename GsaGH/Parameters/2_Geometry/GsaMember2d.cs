@@ -407,7 +407,6 @@ namespace GsaGH.Parameters {
     internal void CloneApiObject() {
       ApiMember = GetAPI_MemberClone();
       _guid = Guid.NewGuid();
-      UpdatePreview();
     }
 
     internal Member GetAPI_MemberClone() {
@@ -443,14 +442,7 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (Prop2d != null && !Prop2d.IsReferencedById) {
-        Section3dPreview = new GsaSection3dPreview(this) {
-          PreviewMaterial = (Color)ApiMember.Colour == Color.FromArgb(0, 0, 0)
-            ? Colours.Element2dFace : new DisplayMaterial {
-              Diffuse = Color.FromArgb(50, 150, 150, 150),
-              Emission = Colour,
-              Transparency = 0.1,
-            }
-        };
+        Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;
       }

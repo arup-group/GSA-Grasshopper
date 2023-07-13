@@ -45,9 +45,7 @@ namespace GsaGH.Parameters {
           ? Colours.Element2dFace : Colours.Element2dFaceSelected);
 
       if (Value.Section3dPreview != null) {
-        args.Pipeline.DrawMeshShaded(Value.Section3dPreview.Mesh,
-        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
-          ? Colours.Element2dFace : Colours.Element2dFaceSelected);
+        args.Pipeline.DrawMeshFalseColors(Value.Section3dPreview.Mesh);
       }
     }
 

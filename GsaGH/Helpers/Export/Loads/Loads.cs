@@ -144,7 +144,7 @@ namespace GsaGH.Helpers.Export {
     private static void ConvertBeamLoad(GsaBeamLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.ReferenceType);
       //if (load.BeamLoad.ReferenceType != ReferenceType.None) {
-      string objectElemList = load.BeamLoad.Elements;
+      string objectElemList = load.BeamLoad.EntityList;
 
       if (load.ReferenceType == ReferenceType.List) {
         if (load.ReferenceList == null
@@ -159,7 +159,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (objectElemList.Trim() != string.Empty) {
-        load.BeamLoad.Elements = objectElemList;
+        load.BeamLoad.EntityList = objectElemList;
       } else {
         string warning = "One or more BeamLoads with reference to a "
           + load.ReferenceType
@@ -179,7 +179,7 @@ namespace GsaGH.Helpers.Export {
     private static void ConvertGravityLoad(GsaGravityLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.GravityLoad.Elements;
+        string objectElemList = load.GravityLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
@@ -195,7 +195,7 @@ namespace GsaGH.Helpers.Export {
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.GravityLoad.Elements = objectElemList;
+          load.GravityLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more GravityLoads with reference to a "
             + load.ReferenceType
@@ -215,7 +215,7 @@ namespace GsaGH.Helpers.Export {
     private static void ConvertFaceLoad(GsaFaceLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.FaceLoad.Elements;
+        string objectElemList = load.FaceLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
@@ -231,7 +231,7 @@ namespace GsaGH.Helpers.Export {
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.FaceLoad.Elements = objectElemList;
+          load.FaceLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more FaceLoads with reference to a "
             + load.ReferenceType

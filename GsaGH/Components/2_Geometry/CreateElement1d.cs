@@ -6,14 +6,13 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 1D Element
   /// </summary>
-  public class CreateElement1d : GH_OasysComponent {
+  public class CreateElement1d : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("88c58aae-4cd8-4d37-b63f-d828571e6941");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -42,7 +41,9 @@ namespace GsaGH.Components {
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {
         elem.Section = sectionGoo.Value;
-        elem.UpdatePreview();
+        if (_preview) {
+          elem.UpdatePreview();
+        }
       }
 
       da.SetData(0, new GsaElement1dGoo(elem));

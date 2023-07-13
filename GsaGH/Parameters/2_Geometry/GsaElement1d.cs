@@ -119,7 +119,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Element ApiElement { get; set; } = new Element();
-    internal GsaSection3dPreview Section3dPreview { get; private set; }
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;
@@ -175,7 +175,6 @@ namespace GsaGH.Parameters {
         Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
       LocalAxes = new GsaLocalAxes(localAxes);
       Section = section;
-      UpdatePreview();
     }
 
     public GsaElement1d Clone() {
@@ -286,14 +285,7 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
-        Section3dPreview = new GsaSection3dPreview(this) {
-          PreviewMaterial = (Color)ApiElement.Colour == Color.FromArgb(0, 0, 0)
-            ? Colours.Element2dFace : new DisplayMaterial {
-              Diffuse = Color.FromArgb(50, 150, 150, 150),
-              Emission = Colour,
-              Transparency = 0.1,
-            }
-        };
+        Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;
       }

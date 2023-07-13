@@ -10,6 +10,7 @@ using OasysGH.Parameters;
 using Rhino.DocObjects;
 using Rhino;
 using Rhino.Geometry;
+using System.Windows.Forms;
 
 namespace GsaGH.Parameters {
   /// <summary>

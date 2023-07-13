@@ -356,14 +356,7 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
-        Section3dPreview = new GsaSection3dPreview(this) {
-          PreviewMaterial = (Color)ApiMember.Colour == Color.FromArgb(0, 0, 0)
-            ? Colours.Element2dFace : new DisplayMaterial {
-              Diffuse = Color.FromArgb(50, 150, 150, 150),
-              Emission = Colour,
-              Transparency = 0.1,
-            }
-        };
+        Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;
       }

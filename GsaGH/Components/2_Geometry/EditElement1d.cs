@@ -12,7 +12,6 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using OasysUnits;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -21,7 +20,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Element
   /// </summary>
-  public class EditElement1d : GH_OasysComponent {
+  public class EditElement1d : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -199,7 +198,9 @@ namespace GsaGH.Components {
         elem.IsDummy = dummy;
       }
 
-      elem.UpdatePreview();
+      if (_preview) {
+        elem.UpdatePreview();
+      }
 
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
