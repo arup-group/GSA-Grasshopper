@@ -200,6 +200,8 @@ namespace GsaGH.Components {
 
       if (_preview) {
         elem.UpdatePreview();
+      } else {
+        elem.Section3dPreview = null;
       }
 
       da.SetData(0, new GsaElement1dGoo(elem));

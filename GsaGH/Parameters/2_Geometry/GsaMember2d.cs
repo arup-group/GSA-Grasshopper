@@ -123,7 +123,7 @@ namespace GsaGH.Parameters {
     internal Member ApiMember { get; set; } = new Member() {
       Type = MemberType.GENERIC_2D,
     };
-    internal GsaSection3dPreview Section3dPreview { get; private set; }
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     // list of polyline curve type (arch or line) for member1d/2d
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;

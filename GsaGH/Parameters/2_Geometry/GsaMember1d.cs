@@ -152,7 +152,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Member ApiMember { get; set; } = new Member();
-    internal GsaSection3dPreview Section3dPreview { get; private set; }
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;

@@ -269,6 +269,8 @@ namespace GsaGH.Components {
 
       if (_preview) {
         mem.UpdatePreview();
+      } else {
+        mem.Section3dPreview = null;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

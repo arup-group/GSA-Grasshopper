@@ -232,6 +232,8 @@ namespace GsaGH.Components {
 
       if (_preview) {
         elem.UpdatePreview();
+      } else {
+        elem.Section3dPreview = null;
       }
 
       // #### outputs ####
