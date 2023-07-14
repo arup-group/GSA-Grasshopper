@@ -4,7 +4,7 @@ using GsaGH.Components.GraveyardComp;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests._3_Components {
+namespace GsaGHTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class ComponentsTests {
 
@@ -60,22 +60,7 @@ namespace GsaGHTests._3_Components {
     [InlineData(typeof(SelectResult), 2)]
     [InlineData(typeof(SpringReactionForce), 2)]
     [InlineData(typeof(TotalLoadsAndReactionResults), 2)]
-    //Graveyard
-    [InlineData(typeof(CreateCustomMaterial_OBSOLETE), 4)]
-    [InlineData(typeof(CreateGridPlane_OBSOLETE), 2)]
-    [InlineData(typeof(CreateGridSurface_OBSOLETE), 2)]
-    [InlineData(typeof(CreateMaterial2_OBSOLETE), 1)]
-    [InlineData(typeof(CreateMember2d_OBSOLETE), 1)]
-    [InlineData(typeof(CreateMember3d_OBSOLETE), 1)]
-    [InlineData(typeof(CreateProfile_OBSOLETE), 2)]
-    [InlineData(typeof(Elem1dContourResults_OBSOLETE), 3)]
-    [InlineData(typeof(Elem2dContourResults_OBSOLETE), 3)]
-    [InlineData(typeof(Elem2dFromBrep_OBSOLETE), 1)]
-    [InlineData(typeof(Elem2dFromBrep2_OBSOLETE), 1)]
-    [InlineData(typeof(NodeContourResults_OBSOLETE), 3)]
-    [InlineData(typeof(ReactionForceDiagrams2_OBSOLETE), 1)]
-    [InlineData(typeof(ReactionForceDiagrams_OBSOLETE), 1)]
-    private void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
+    public void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
       Type t, int expectedListCount) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       obj.InitialiseDropdowns();
@@ -90,7 +75,7 @@ namespace GsaGHTests._3_Components {
     [InlineData(typeof(CreateMember1d))]
     [InlineData(typeof(CreateSupport))]
     [InlineData(typeof(CreateMember1d_OBSOLETE))]
-    private void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeNull(Type t) {
+    public void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeNull(Type t) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       obj.InitialiseDropdowns();
 
@@ -149,22 +134,7 @@ namespace GsaGHTests._3_Components {
     [InlineData(typeof(SelectResult), "AnalysisCase", "Combination")]
     [InlineData(typeof(SpringReactionForce), "kN", "tf")]
     [InlineData(typeof(TotalLoadsAndReactionResults), "kN", "tf")]
-    //Graveyard
-    [InlineData(typeof(CreateCustomMaterial_OBSOLETE), "Timber", "Fabric")]
-    [InlineData(typeof(CreateGridPlane_OBSOLETE), "General", "Storey")]
-    [InlineData(typeof(CreateGridSurface_OBSOLETE), "1D, One-way span", "2D")]
-    [InlineData(typeof(CreateMaterial2_OBSOLETE), "Timber", "Fabric")]
-    [InlineData(typeof(CreateMember2d_OBSOLETE), "m", "ft")]
-    [InlineData(typeof(CreateMember3d_OBSOLETE), "m", "ft")]
-    [InlineData(typeof(CreateProfile_OBSOLETE), "Rectangle", "T Section")]
-    [InlineData(typeof(Elem1dContourResults_OBSOLETE), "Displacement", "Strain Energy")]
-    [InlineData(typeof(Elem2dContourResults_OBSOLETE), "Displacement", "Stress")]
-    [InlineData(typeof(Elem2dFromBrep_OBSOLETE), "m", "ft")]
-    [InlineData(typeof(Elem2dFromBrep2_OBSOLETE), "m", "ft")]
-    [InlineData(typeof(NodeContourResults_OBSOLETE), "Displacement", "Reaction")]
-    [InlineData(typeof(ReactionForceDiagrams2_OBSOLETE), "Resolved |F|", "Resolved |M|")]
-    [InlineData(typeof(ReactionForceDiagrams_OBSOLETE), "Resolved |F|", "Resolved |M|")]
-    private void WhenSetSelected_ThenSelectedItems_ShouldBeValid(
+    public void WhenSetSelected_ThenSelectedItems_ShouldBeValid(
       Type t, string defaultValue, string firstValue) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       obj.InitialiseDropdowns();
