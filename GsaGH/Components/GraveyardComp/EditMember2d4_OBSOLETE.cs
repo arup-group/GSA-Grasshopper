@@ -21,14 +21,14 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 2D Member
   /// </summary>
-  public class EditMember2d : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("c68bd350-7bca-4e69-80e6-a142a6abed46");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+  public class EditMember2d4_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("01390fdb-4319-46e9-9ff9-6a5d274e185d");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem2d;
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
-    public EditMember2d() : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
+    public EditMember2d4_OBSOLETE() : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
@@ -94,9 +94,6 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Mesh Mode", "MM", "Mesh mode: 3 for Tri-only, 4 for " +
-        "Quad-only, anything else for mixed (quad dominant)",
-        GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
@@ -144,8 +141,6 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Mesh Mode", "MM", "Mesh mode: Tri-only, Mixed (quad dominant)" +
-        " or Quad-only", GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle", "⭮A",
         "Get Member Orientation Angle in radians", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
@@ -252,32 +247,23 @@ namespace GsaGH.Components {
         mem.MeshWithOthers = intersector;
       }
 
-      int meshMode = 1;
-      if (da.GetData(13, ref meshMode)) {
-        mem.MeshMode = meshMode switch {
-          3 => MeshMode2d.Tri,
-          4 => MeshMode2d.Quad,
-          _ => MeshMode2d.Mixed,
-        };
-      }
-
       double angle = 0;
-      if (da.GetData(14, ref angle)) {
+      if (da.GetData(13, ref angle)) {
         mem.OrientationAngle = new Angle(angle, _angleUnit);
       }
 
       string name = string.Empty;
-      if (da.GetData(15, ref name)) {
+      if (da.GetData(14, ref name)) {
         mem.Name = name;
       }
 
       Color colour = Color.Empty;
-      if (da.GetData(16, ref colour)) {
+      if (da.GetData(15, ref colour)) {
         mem.Colour = colour;
       }
 
       bool dummy = false;
-      if (da.GetData(17, ref dummy)) {
+      if (da.GetData(16, ref dummy)) {
         mem.IsDummy = dummy;
       }
 
@@ -294,12 +280,11 @@ namespace GsaGH.Components {
       da.SetData(10, mem.AutomaticInternalOffset);
       da.SetData(11, mem.MeshSize);
       da.SetData(12, mem.MeshWithOthers);
-      da.SetData(13, mem.MeshMode.ToString());
-      da.SetData(14, mem.OrientationAngle.Radians);
-      da.SetData(15, mem.Name);
-      da.SetData(16, mem.Colour);
-      da.SetData(17, mem.IsDummy);
-      da.SetData(18, mem.ApiMember.Topology);
+      da.SetData(13, mem.OrientationAngle.Radians);
+      da.SetData(14, mem.Name);
+      da.SetData(15, mem.Colour);
+      da.SetData(16, mem.IsDummy);
+      da.SetData(17, mem.ApiMember.Topology);
     }
   }
 }
