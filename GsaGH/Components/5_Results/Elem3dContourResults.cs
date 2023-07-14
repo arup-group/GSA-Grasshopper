@@ -80,11 +80,10 @@ namespace GsaGH.Components {
       "Stress",
     });
     private string _case = string.Empty;
-    private string _scaleLegendTxt = string.Empty;
     private double _defScale = 250;
-    private double _legendScale = 1;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private Bitmap _legend = new Bitmap(15, 120);
+    private double _legendScale = 1;
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -94,6 +93,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private int _noDigits;
     private string _resType;
+    private string _scaleLegendTxt = string.Empty;
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
@@ -114,27 +114,25 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend)) {
+      if (!((_legendValues != null) & _showLegend)) {
         return;
       }
 
       int defaultTextHeight = 12;
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right -
-        (int)(110 * _legendScale), (int)(20 * _legendScale));
+      args.Display.DrawBitmap(new DisplayBitmap(_legend),
+        args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(20 * _legendScale));
       for (int i = 0; i < _legendValues.Count; i++) {
         args.Display.Draw2dText(_legendValues[i], Color.Black,
-          new Point2d(
-            args.Viewport.Bounds.Right - (int)(85 * _legendScale),
-            _legendValuesPosY[i]),
+          new Point2d(args.Viewport.Bounds.Right - (int)(85 * _legendScale), _legendValuesPosY[i]),
           false, (int)(defaultTextHeight * _legendScale));
       }
 
       args.Display.Draw2dText(_resType, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(7 * _legendScale)), false,
-        (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(7 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
       args.Display.Draw2dText(_case, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(145 * _legendScale)),
-        false, (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(145 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
     }
 
     public override bool Read(GH_IReader reader) {
@@ -149,6 +147,7 @@ namespace GsaGH.Components {
       if (reader.ItemExists("legendScale")) {
         _legendScale = reader.GetDouble("legendScale");
       }
+
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -197,12 +196,12 @@ namespace GsaGH.Components {
           bool redraw = false;
           _selectedItems[1] = _dropDownItems[1][j];
           if (_mode == FoldMode.Displacement) {
-            if ((int)_disp > 3 & j < 4) {
+            if (((int)_disp > 3) & (j < 4)) {
               redraw = true;
               _slider = true;
             }
 
-            if ((int)_disp < 4 & j > 3) {
+            if (((int)_disp < 4) & (j > 3)) {
               redraw = true;
               _slider = false;
             }
@@ -283,52 +282,24 @@ namespace GsaGH.Components {
         (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
-          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
-          Enabled = true,
-        };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
+        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      var stressUnitsMenu = new ToolStripMenuItem("Stress") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
-          Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
-          Enabled = true,
-        };
-        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
+        EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnitResult), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
+        stressUnitsMenu,
+      });
       if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-        }
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
 
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          modelUnitsMenu,
-          lengthUnitsMenu,
-          stressUnitsMenu,
-        });
-      } else {
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          lengthUnitsMenu,
-          stressUnitsMenu,
-        });
+        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -343,14 +314,14 @@ namespace GsaGH.Components {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
+      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true,
+        200);
       legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
         UpdateLegendScale();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
         ExpireSolution(true);
       };
       menu.Items.Add(legendScaleMenu);
-
 
       Menu_AppendSeparator(menu);
     }
@@ -512,18 +483,18 @@ namespace GsaGH.Components {
       double dmaxX = res.DmaxX.As(xyzunit);
       double dmaxY = res.DmaxY.As(xyzunit);
       double dmaxZ = res.DmaxZ.As(xyzunit);
-      double dmaxXyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
+      double dmaxXyz = _mode == FoldMode.Displacement ? res.DmaxXyz.As(xyzunit) : 0;
       double dminX = res.DminX.As(xyzunit);
       double dminY = res.DminY.As(xyzunit);
       double dminZ = res.DminZ.As(xyzunit);
-      double dminXyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
-      double dmaxXx = (_mode == FoldMode.Displacement) ? 0 : res.DmaxXx.As(xxyyzzunit);
-      double dmaxYy = (_mode == FoldMode.Displacement) ? 0 : res.DmaxYy.As(xxyyzzunit);
-      double dmaxZz = (_mode == FoldMode.Displacement) ? 0 : res.DmaxZz.As(xxyyzzunit);
+      double dminXyz = _mode == FoldMode.Displacement ? res.DminXyz.As(xyzunit) : 0;
+      double dmaxXx = _mode == FoldMode.Displacement ? 0 : res.DmaxXx.As(xxyyzzunit);
+      double dmaxYy = _mode == FoldMode.Displacement ? 0 : res.DmaxYy.As(xxyyzzunit);
+      double dmaxZz = _mode == FoldMode.Displacement ? 0 : res.DmaxZz.As(xxyyzzunit);
       double dmaxXxyyzz = 0;
-      double dminXx = (_mode == FoldMode.Displacement) ? 0 : res.DminXx.As(xxyyzzunit);
-      double dminYy = (_mode == FoldMode.Displacement) ? 0 : res.DminYy.As(xxyyzzunit);
-      double dminZz = (_mode == FoldMode.Displacement) ? 0 : res.DminZz.As(xxyyzzunit);
+      double dminXx = _mode == FoldMode.Displacement ? 0 : res.DminXx.As(xxyyzzunit);
+      double dminYy = _mode == FoldMode.Displacement ? 0 : res.DminYy.As(xxyyzzunit);
+      double dminZz = _mode == FoldMode.Displacement ? 0 : res.DminZz.As(xxyyzzunit);
       double dminXxyyzz = 0;
 
       #region Result mesh values
@@ -924,12 +895,13 @@ namespace GsaGH.Components {
     private void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
-      _legend = new Bitmap(
-        (int)(15 * _legendScale), (int)(120 * _legendScale));
+
+      _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
 
       ExpirePreview(true);
       base.UpdateUI();
