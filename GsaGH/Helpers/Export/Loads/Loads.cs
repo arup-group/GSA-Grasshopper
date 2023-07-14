@@ -85,8 +85,7 @@ namespace GsaGH.Helpers.Export {
       GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;
 
       if (gridplnsrf.GridPlane != null) {
-        load.GridAreaLoad.GridSurface
-          = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
+        load.GridAreaLoad.GridSurface = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
       }
 
       model.Loads.GridAreas.Add(load.GridAreaLoad);
@@ -125,10 +124,8 @@ namespace GsaGH.Helpers.Export {
 
       var gridptref = (GsaGridPointLoad)load.Duplicate();
       if (model.Unit != LengthUnit.Meter) {
-        gridptref.GridPointLoad.X = new Length(
-          gridptref.GridPointLoad.X, model.Unit).As(LengthUnit.Meter);
-        gridptref.GridPointLoad.Y = new Length(
-          gridptref.GridPointLoad.Y, model.Unit).As(LengthUnit.Meter);
+        gridptref.GridPointLoad.X = new Length(gridptref.GridPointLoad.X, model.Unit).As(LengthUnit.Meter);
+        gridptref.GridPointLoad.Y = new Length(gridptref.GridPointLoad.Y, model.Unit).As(LengthUnit.Meter);
       }
 
       GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
@@ -143,35 +140,34 @@ namespace GsaGH.Helpers.Export {
 
     private static void ConvertBeamLoad(GsaBeamLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.ReferenceType);
-      //if (load.BeamLoad.ReferenceType != ReferenceType.None) {
-      string objectElemList = load.BeamLoad.EntityList;
+      if (load.ReferenceType != ReferenceType.None) {
+        string objectElemList = load.BeamLoad.EntityList;
 
-      if (load.ReferenceType == ReferenceType.List) {
-        if (load.ReferenceList == null
-          && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-          || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
-          owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-            + Environment.NewLine + "Element list has not been set");
-        }
-        objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
-      } else {
-        objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
-      }
-
-      if (objectElemList.Trim() != string.Empty) {
-        load.BeamLoad.EntityList = objectElemList;
-      } else {
-        string warning = "One or more BeamLoads with reference to a "
-          + load.ReferenceType
-          + " could not be added to the model. Ensure the reference "
-          + load.ReferenceType + " has been added to the model.";
-        if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
-          owner.AddRuntimeWarning(warning);
+        if (load.ReferenceType == ReferenceType.List) {
+          if (load.ReferenceList == null
+            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
+            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+              + Environment.NewLine + "Element list has not been set");
+          }
+          objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
+        } else {
+          objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
 
-        return;
+        if (objectElemList.Trim() != string.Empty) {
+          load.BeamLoad.EntityList = objectElemList;
+        } else {
+          string warning = "One or more BeamLoads with reference to a " + load.ReferenceType
+            + " could not be added to the model. Ensure the reference " + load.ReferenceType
+            + " has been added to the model.";
+          if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
+            owner.AddRuntimeWarning(warning);
+          }
+
+          return;
+        }
       }
-      //}
 
       model.Loads.Beams.Add(load.BeamLoad);
     }
@@ -197,10 +193,9 @@ namespace GsaGH.Helpers.Export {
         if (objectElemList.Trim() != string.Empty) {
           load.GravityLoad.EntityList = objectElemList;
         } else {
-          string warning = "One or more GravityLoads with reference to a "
-            + load.ReferenceType
-            + " could not be added to the model. Ensure the reference "
-            + load.ReferenceType + " has been added to the model.";
+          string warning = "One or more GravityLoads with reference to a " + load.ReferenceType
+            + " could not be added to the model. Ensure the reference " + load.ReferenceType
+            + " has been added to the model.";
           if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
             owner.AddRuntimeWarning(warning);
           }
@@ -233,10 +228,9 @@ namespace GsaGH.Helpers.Export {
         if (objectElemList.Trim() != string.Empty) {
           load.FaceLoad.EntityList = objectElemList;
         } else {
-          string warning = "One or more FaceLoads with reference to a "
-            + load.ReferenceType
-            + " could not be added to the model. Ensure the reference "
-            + load.ReferenceType + " has been added to the model.";
+          string warning = "One or more FaceLoads with reference to a " + load.ReferenceType
+            + " could not be added to the model. Ensure the reference " + load.ReferenceType
+            + " has been added to the model.";
           if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
             owner.AddRuntimeWarning(warning);
           }

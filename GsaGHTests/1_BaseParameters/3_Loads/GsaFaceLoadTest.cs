@@ -29,7 +29,8 @@ namespace GsaGHTests.Parameters {
           AxisProperty = 5,
           Case = 6,
           Direction = Direction.ZZ,
-          Elements = "all",
+          EntityList = "all",
+          EntityType = GsaAPI.EntityType.Element,
           Name = "name",
           Type = originalType,
         },
@@ -42,7 +43,8 @@ namespace GsaGHTests.Parameters {
       duplicate.FaceLoad.AxisProperty = 1;
       duplicate.FaceLoad.Case = 1;
       duplicate.FaceLoad.Direction = Direction.XX;
-      duplicate.FaceLoad.Elements = "";
+      duplicate.FaceLoad.EntityList = "";
+      duplicate.FaceLoad.EntityType = GsaAPI.EntityType.Member;
       duplicate.FaceLoad.Name = "";
       duplicate.FaceLoad.IsProjected = true;
       duplicate.FaceLoad.SetValue(0, 99);
@@ -55,7 +57,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(5, original.FaceLoad.AxisProperty);
       Assert.Equal(6, original.FaceLoad.Case);
       Assert.Equal(Direction.ZZ, original.FaceLoad.Direction);
-      Assert.Equal("all", original.FaceLoad.Elements);
+      Assert.Equal("all", original.FaceLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.FaceLoad.EntityType);
       Assert.Equal("name", original.FaceLoad.Name);
 
       switch (original.FaceLoad.Type) {
