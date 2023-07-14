@@ -97,14 +97,14 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      ToolStripMenuItem lengthUnitsMenu = GetToolStripMenuItem("Displacement",
+      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
         EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
-      ToolStripMenuItem forceUnitsMenu = GetToolStripMenuItem("Force", EngineeringUnits.Force,
-        Force.GetAbbreviation(_forceUnit), UpdateForce);
-      ToolStripMenuItem momentUnitsMenu = GetToolStripMenuItem("Moment", EngineeringUnits.Moment,
-        Moment.GetAbbreviation(_momentUnit), UpdateMoment);
-      ToolStripMenuItem stressUnitsMenu = GetToolStripMenuItem("Stress", EngineeringUnits.Stress,
-        Pressure.GetAbbreviation(_stressUnit), UpdateStress);
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
+        EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
+      ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
+        EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnit), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
@@ -116,8 +116,9 @@ namespace GsaGH.Components {
       });
 
       if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GetToolStripMenuItem("Model geometry",
-          EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit), UpdateModel);
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
 
         unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
@@ -416,22 +417,6 @@ namespace GsaGH.Components {
       }
 
       return isStress;
-    }
-
-    private static ToolStripMenuItem GetToolStripMenuItem(
-      string name, EngineeringUnits units, string unitString, Action<string> action) {
-      var menu = new ToolStripMenuItem(name) {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(units)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => action(unit)) {
-          Checked = unit == unitString,
-          Enabled = true,
-        };
-        menu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return menu;
     }
 
     private void UpdateForce(string unit) {
