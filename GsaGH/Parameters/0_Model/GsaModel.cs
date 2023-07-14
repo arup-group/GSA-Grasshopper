@@ -45,13 +45,17 @@ namespace GsaGH.Parameters {
     internal Materials Materials { get; private set; }
     internal GsaSection3dPreview AnalysisLayerPreview {
       get {
-        _analysisLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Analysis);
+        if (Model.Elements().Count > 0) {
+          _analysisLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Analysis);
+        }
         return _analysisLayerPreview;
       }
     }
     internal GsaSection3dPreview DesignLayerPreview {
       get {
-        _designLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Design);
+        if (Model.Members().Count > 0) {
+          _designLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Design);
+        }
         return _designLayerPreview;
       }
     }

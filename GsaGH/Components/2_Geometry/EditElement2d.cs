@@ -230,10 +230,8 @@ namespace GsaGH.Components {
         }
       }
 
-      if (_preview) {
+      if (Preview3dSection || elem.Section3dPreview != null) {
         elem.UpdatePreview();
-      } else {
-        elem.Section3dPreview = null;
       }
 
       // #### outputs ####

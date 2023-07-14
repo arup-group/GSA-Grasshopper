@@ -174,7 +174,8 @@ namespace GsaGH.Parameters {
       });
       var mesh = new Mesh();
       mesh.Append(faces);
-      mesh.Compact();
+      mesh.Vertices.CombineIdentical(true, false);
+      mesh.Faces.ConvertTrianglesToQuads(1, 0.75);
       return mesh;
     }
     

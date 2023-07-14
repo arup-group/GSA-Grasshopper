@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Export;
@@ -33,8 +34,8 @@ namespace GsaGH.Components {
     private Mesh _designMesh;
     private IEnumerable<Line> _designLines;
 
-    public Show3dSections() : base("Show3D", "S3D",
-      "Show the 3D cross-section of 1D/2D Elements and Members",
+    public Show3dSections() : base("Preview3D", "S3D",
+      "Show the 3D cross-section of 1D/2D GSA Elements and Members",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void InitialiseDropdowns() {
@@ -60,7 +61,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Element/Member 1D/2D", "Geo",
-        "Element1D, Element2D, Member1D or Member2D to Show the 3D cross-section for." +
+        "Element1D, Element2D, Member1D or Member2D to preview the 3D cross-section for." +
         $"{Environment.NewLine}You can also input models or lists with geometry to preview.", GH_ParamAccess.list);
     }
 
@@ -174,11 +175,22 @@ namespace GsaGH.Components {
         _designMesh = null;
         _designLines = null;
 
-        _analysisMesh = model.AnalysisLayerPreview.Mesh;
-        _analysisLines = model.AnalysisLayerPreview.Outlines;
+        var steps = new List<int> {
+        0, 1,
+        };
+        Parallel.ForEach(steps, i => {
+          switch (i) {
+            case 0:
+              _analysisMesh = model.AnalysisLayerPreview.Mesh;
+              _analysisLines = model.AnalysisLayerPreview.Outlines;
+              break;
 
-        _designMesh = model.DesignLayerPreview.Mesh;
-        _designLines = model.DesignLayerPreview.Outlines;
+            case 1:
+              _designMesh = model.DesignLayerPreview.Mesh;
+              _designLines = model.DesignLayerPreview.Outlines;
+              break;
+          }
+        });
 
         da.SetData(0, _analysisMesh);
         da.SetDataList(1, _analysisLines);

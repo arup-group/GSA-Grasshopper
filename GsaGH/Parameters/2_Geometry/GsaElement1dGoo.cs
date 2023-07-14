@@ -37,6 +37,11 @@ namespace GsaGH.Parameters {
         return true;
       }
 
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)) && Value.Section3dPreview != null) {
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Section3dPreview.Mesh);
+        return true;
+      }
+
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
           target = (TQ)(object)new GH_Integer(Value.Id);

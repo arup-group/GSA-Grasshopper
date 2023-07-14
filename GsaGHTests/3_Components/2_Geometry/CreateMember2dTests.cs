@@ -1,4 +1,5 @@
-﻿using GsaAPI;
+﻿using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Properties;
@@ -6,6 +7,7 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysUnits;
 using Rhino.Geometry;
+using System.Linq;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -36,6 +38,20 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(Property2D_Type.PLATE, output.Value.Prop2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2d.Thickness);
       Assert.Equal(0.5, output.Value.MeshSize);
+    }
+
+    [Fact]
+    public void CreateComponentWithSection3dPreviewTest() {
+      var comp = (Section3dPreviewComponent)ComponentMother();
+      comp.Preview3dSection = true;
+      comp.ExpireSolution(true);
+
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(10, output.Value.Section3dPreview.Mesh.Vertices.Count);
+      Assert.Equal(12, output.Value.Section3dPreview.Outlines.Count());
+
+      var mesh = new GH_Mesh();
+      Assert.True(output.CastTo(ref mesh));
     }
 
     [Fact]

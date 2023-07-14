@@ -343,10 +343,8 @@ namespace GsaGH.Components {
           Environment.NewLine + $"This may cause model instabilities.");
       }
 
-      if (_preview) {
+      if (Preview3dSection || mem.Section3dPreview != null) {
         mem.UpdatePreview();
-      } else {
-        mem.Section3dPreview = null;
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

@@ -4,7 +4,7 @@ using OasysGH.Components;
 
 namespace GsaGH.Components {
   public abstract class Section3dPreviewDropDownComponent : GH_OasysDropDownComponent {
-    protected internal bool _preview = false;
+    protected internal bool Preview3dSection = false;
     public Section3dPreviewDropDownComponent(string name, string nickname, string description, string category, string subCategory)
      : base(name, nickname, description, category, subCategory) {
     }
@@ -15,24 +15,24 @@ namespace GsaGH.Components {
       }
       
       Menu_AppendSeparator(menu);
-      Menu_AppendItem(menu, "Preview 3D Sections", (s, a) => TogglePreview(), true, _preview);
+      Menu_AppendItem(menu, "Preview 3D Sections", (s, a) => TogglePreview(), true, Preview3dSection);
     }
 
     private void TogglePreview() {
-      _preview = !_preview;
+      Preview3dSection = !Preview3dSection;
       ExpireSolution(true);
     }
 
     public override bool Read(GH_IReader reader) {
       if (reader.ItemExists("Preview3dSection")) {
-        _preview = reader.GetBoolean("Preview3dSection");
+        Preview3dSection = reader.GetBoolean("Preview3dSection");
       }
 
       return base.Read(reader);
     }
 
     public override bool Write(GH_IWriter writer) {
-      writer.SetBoolean("Preview3dSection", _preview);
+      writer.SetBoolean("Preview3dSection", Preview3dSection);
       return base.Write(writer);
     }
   }

@@ -46,7 +46,7 @@ namespace GsaGH.Components {
         }
 
         elem.Prop2ds = prop2Ds;
-        if (_preview) {
+        if (Preview3dSection) {
           elem.UpdatePreview();
         }
       }

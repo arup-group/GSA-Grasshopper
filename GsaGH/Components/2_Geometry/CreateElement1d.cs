@@ -41,7 +41,7 @@ namespace GsaGH.Components {
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {
         elem.Section = sectionGoo.Value;
-        if (_preview) {
+        if (Preview3dSection) {
           elem.UpdatePreview();
         }
       }

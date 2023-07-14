@@ -198,11 +198,9 @@ namespace GsaGH.Components {
         elem.IsDummy = dummy;
       }
 
-      if (_preview) {
+      if (Preview3dSection || elem.Section3dPreview != null) {
         elem.UpdatePreview();
-      } else {
-        elem.Section3dPreview = null;
-      }
+      } 
 
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
