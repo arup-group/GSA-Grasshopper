@@ -18,40 +18,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static string GetReferenceElementIdsDefinition(
-      GsaGridPlaneSurface load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid, 
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
-    }
-
-    internal static string GetReferenceElementIdsDefinition(
-      GsaGravityLoad load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid,
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
-    }
-
-    internal static string GetReferenceElementIdsDefinition(
-      GsaFaceLoad load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid,
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
-    }
-
-    internal static string GetReferenceElementIdsDefinition(
-      GsaBeamLoad load, ModelAssembly model) {
+  GsaGridPlaneSurface load, ModelAssembly model) {
       return GetReferenceDefinition(
         load._refObjectGuid,
         load._referenceType,
@@ -80,11 +47,15 @@ namespace GsaGH.Helpers.Export {
         string.Empty :
         GetMemberChildElementReferenceIdsDefinition(id, memberElementRelationship);
     }
-    
+
+    internal static string GetReferenceDefinition(IGsaLoad load, ModelAssembly model) {
+      return GetReferenceDefinition(load.RefObjectGuid, load.ReferenceType, model.Properties, model.Elements, model.Members, model.MemberElementRelationship);
+    }
+
     internal static string GetReferenceDefinition(
-      Guid guid, 
+      Guid guid,
       ReferenceType referenceType,
-      Properties apiProperties, 
+      Properties apiProperties,
       GsaGuidIntListDictionary<Element> apiElements,
       GsaGuidDictionary<Member> apiMembers,
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
@@ -99,7 +70,7 @@ namespace GsaGH.Helpers.Export {
           return GetMemberChildElementsReferenceDefinition(guid, apiMembers, memberElementRelationship);
 
         case ReferenceType.Member:
-          return apiMembers.GuidDictionary.TryGetValue(guid, out int id) 
+          return apiMembers.GuidDictionary.TryGetValue(guid, out int id)
             ? id.ToString() : string.Empty;
 
         case ReferenceType.None:

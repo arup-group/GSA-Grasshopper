@@ -254,52 +254,52 @@ namespace GsaGH.Components {
           case GsaListGoo value: {
               if (value.Value.EntityType == EntityType.Element
                 || value.Value.EntityType == EntityType.Member) {
-                beamLoad._refList = value.Value;
-                beamLoad._referenceType = ReferenceType.List;
+                beamLoad.ReferenceList = value.Value;
+                beamLoad.ReferenceType = ReferenceType.List;
               } else {
                 this.AddRuntimeWarning(
                   "List must be of type Element or Member to apply to beam loading");
               }
 
-            if (value.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              if (value.Value.EntityType == EntityType.Member) {
+                this.AddRuntimeRemark(
+                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
               break;
             }
 
           case GsaElement1dGoo value: {
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Element;
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.Element;
               break;
             }
           case GsaMember1dGoo value: {
-            beamLoad._refObjectGuid = value.Value.Guid;
-            beamLoad._referenceType = ReferenceType.MemberChildElements;
-            if (_mode != FoldMode.Uniform) {
-              this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-            } else {
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.MemberChildElements;
+              if (_mode != FoldMode.Uniform) {
+                this.AddRuntimeWarning(
+                  "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+              } else {
+                this.AddRuntimeRemark(
+                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
-            break;
-          }
+              break;
+            }
           case GsaMaterialGoo value: {
               if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(
                 "Reference Material must be a Custom Material");
                 return;
               }
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Property;
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.Property;
               break;
             }
           case GsaSectionGoo value: {
-              beamLoad._refObjectGuid = value.Value.Guid;
-              beamLoad._referenceType = ReferenceType.Property;
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.Property;
               break;
             }
           default: {
@@ -450,8 +450,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      var gsaLoad = new GsaLoad(beamLoad);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(beamLoad));
     }
 
     protected override void UpdateUIFromSelectedItems() {

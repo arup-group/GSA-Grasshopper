@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
     ///   or in the format of a OasysUnits.Length ('5 m')
     /// </summary>
     public string Elevation { get; private set; } = "0";
-    
+
     public GridPlane GridPlane {
       get => _gridPln;
       set {

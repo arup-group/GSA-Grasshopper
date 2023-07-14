@@ -5,10 +5,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaGH.Parameters;
 using GsaGH.Helpers.GH;
-using OasysUnits.Units;
+using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -120,7 +120,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void ConvertNodeLoads(List<GsaLoad> loads) {
+    internal void ConvertNodeLoads(List<IGsaLoad> loads) {
       if (loads != null && loads.Count > 0) {
         _deleteResults = true;
       }
