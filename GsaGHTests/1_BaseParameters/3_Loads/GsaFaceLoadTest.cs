@@ -44,7 +44,6 @@ namespace GsaGHTests.Parameters {
       duplicate.FaceLoad.Case = 1;
       duplicate.FaceLoad.Direction = Direction.XX;
       duplicate.FaceLoad.EntityList = "";
-      duplicate.FaceLoad.EntityType = GsaAPI.EntityType.Member;
       duplicate.FaceLoad.Name = "";
       duplicate.FaceLoad.IsProjected = true;
       duplicate.FaceLoad.SetValue(0, 99);

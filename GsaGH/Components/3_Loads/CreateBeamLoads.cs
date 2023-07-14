@@ -26,7 +26,7 @@ namespace GsaGH.Components {
       Trilinear,
     }
 
-    public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
+    public override Guid ComponentGuid => new Guid("63f1940b-34a8-452e-b478-f8a24d415b5c");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamLoad;
@@ -51,7 +51,7 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0) {
-        switch (_selectedItems[1]) {
+        switch (_selectedItems[0]) {
           case "Point":
             Mode1Clicked();
             break;
@@ -73,7 +73,7 @@ namespace GsaGH.Components {
             break;
         }
       } else if (i == 1) {
-        switch (_selectedItems[0]) {
+        switch (_selectedItems[1]) {
           case "Element":
             //Mode1Clicked();
             break;
@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         }
       } else {
         _forcePerLengthUnit
-          = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[1]);
+          = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[2]);
       }
 
       base.UpdateUI();
@@ -266,8 +266,15 @@ namespace GsaGH.Components {
 
       if (_entityType == EntityType.Element) {
         beamLoad.ReferenceType = ReferenceType.Element;
+        beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
       } else if (_entityType == EntityType.Member) {
+        // currently only uniform loading is supported for members
+        if (_mode != FoldMode.Uniform) {
+          this.AddRuntimeError("Members currently support only uniform loading.");
+          return;
+        }
         beamLoad.ReferenceType = ReferenceType.Member;
+        beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Member;
       } else {
         throw new ArgumentException("Entity type " + _entityType.ToString() + " not supported.");
       }
@@ -303,15 +310,11 @@ namespace GsaGH.Components {
 
           case GsaMember1dGoo member1dGoo:
             if (_entityType != EntityType.Member) {
-              this.AddRuntimeWarning("Beam loads can only be applied to members matching the selected enttiy type.");
-              break;
+              this.AddRuntimeError("Beam loads can only be applied to members matching the selected enttiy type.");
+              return;
             }
             beamLoad.RefObjectGuid = member1dGoo.Value.Guid;
             beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Member;
-            if (_mode != FoldMode.Uniform) {
-              this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-            }
             break;
 
           case GsaMaterialGoo materialGoo:
@@ -502,10 +505,12 @@ namespace GsaGH.Components {
           Mode5Clicked();
           break;
       }
-
       _duringLoad = false;
+
+      _entityType = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[1]);
+
       _forcePerLengthUnit
-        = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[1]);
+        = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
 
