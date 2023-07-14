@@ -225,8 +225,10 @@ namespace GsaGHTests.Parameters {
     public void WhenToString_ThenMethod_ShouldReturnValidString() {
       var obj = new DiagramGoo(Point3d.Origin, Vector3d.Zero, ArrowMode.NoArrow);
 
+      var pt = new GH_Point(Point3d.Origin);
+      var vec = new GH_Vector(Vector3d.Zero);
       string expectedString
-        = $"Diagram Result: Starting point: {Point3d.Origin}, Direction:{Vector3d.Zero}";
+        = $"Diagram Result: Starting point: {pt}, Direction:{vec}";
 
       Assert.Equal(expectedString, obj.ToString());
     }
