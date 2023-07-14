@@ -1,8 +1,8 @@
-﻿using GsaAPI;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GsaAPI;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   public class GsaGridLineLoad : IGsaLoad {

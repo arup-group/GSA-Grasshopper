@@ -1,7 +1,7 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using System;
 using Xunit;
 using static GsaAPI.GridLineLoad;
 

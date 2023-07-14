@@ -59,7 +59,7 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
-        gravityLoad.GravityLoad.Elements = string.Empty;
+        gravityLoad.GravityLoad.EntityList = string.Empty;
         if (ghTyp.Value is GsaElement1dGoo goo) {
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Element;
@@ -136,14 +136,14 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                gravityLoad.GravityLoad.Elements = elemList;
+                gravityLoad.GravityLoad.EntityList = elemList;
               }
 
               break;
             }
         }
       } else {
-        gravityLoad.GravityLoad.Elements = "All";
+        gravityLoad.GravityLoad.EntityList = "All";
       }
 
       var ghName = new GH_String();

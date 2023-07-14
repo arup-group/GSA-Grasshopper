@@ -236,10 +236,10 @@ namespace GsaGH.Components {
                   "List must be of type Element or Member to apply to beam loading");
               }
 
-            if (value.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              if (value.Value.EntityType == EntityType.Member) {
+                this.AddRuntimeRemark(
+                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
               break;
             }
@@ -249,26 +249,26 @@ namespace GsaGH.Components {
               break;
             }
           case GsaMember1dGoo value: {
-            gps._refObjectGuid = value.Value.Guid;
-            gps._referenceType = ReferenceType.MemberChildElements;
-            this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.MemberChildElements;
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
           case GsaMember2dGoo value: {
-            gps._refObjectGuid = value.Value.Guid;
-            gps._referenceType = ReferenceType.MemberChildElements;
-            this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.MemberChildElements;
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
           case GsaMember3dGoo value: {
-            gps._refObjectGuid = value.Value.Guid;
-            gps._referenceType = ReferenceType.MemberChildElements;
-            this.AddRuntimeRemark(
-              "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            break;
-          }
+              gps._refObjectGuid = value.Value.Guid;
+              gps._referenceType = ReferenceType.MemberChildElements;
+              this.AddRuntimeRemark(
+                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
           case GsaMaterialGoo value: {
               if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(

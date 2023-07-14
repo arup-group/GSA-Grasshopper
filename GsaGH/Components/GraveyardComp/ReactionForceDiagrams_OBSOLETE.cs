@@ -114,8 +114,10 @@ namespace GsaGH.Components {
       Menu_AppendItem(menu, "Show Text", ShowText, true, _showText);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
-      ToolStripMenuItem forceUnitsMenu = GenerateForceUnitsMenu("Force");
-      ToolStripMenuItem momentUnitsMenu = GenerateMomentUnitsMenu("Moment");
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
+        EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
 
       var toolStripItems = new List<ToolStripItem> {
         forceUnitsMenu,
@@ -123,7 +125,9 @@ namespace GsaGH.Components {
       };
 
       if (_lengthUnit == LengthUnit.Undefined) {
-        ToolStripMenuItem modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
         toolStripItems.Insert(0, modelUnitsMenu);
       }
 
@@ -209,7 +213,7 @@ namespace GsaGH.Components {
 
       _reactionForceVectors = new ConcurrentDictionary<int, (DiagramGoo, IQuantity)>();
       Parallel.ForEach(nodes, node => {
-        (DiagramGoo reactionForceVector, IQuantity forceValue) 
+        (DiagramGoo reactionForceVector, IQuantity forceValue)
           = CreateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) {
           _reactionForceVectors.TryAdd(node.Key, (reactionForceVector, forceValue));
@@ -261,55 +265,6 @@ namespace GsaGH.Components {
 
       double factor = 0.1; // maxVector = 10% of bbox diagonal
       return bbox.Diagonal.Length * factor / maxValue;
-    }
-
-    private ToolStripMenuItem GenerateForceUnitsMenu(string menuTitle) {
-      var forceUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Force).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
-            Checked = unit == Force.GetAbbreviation(_forceUnit),
-            Enabled = true,
-          })) {
-        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return forceUnitsMenu;
-    }
-
-    private ToolStripMenuItem GenerateModelGeometryUnitsMenu(string menuTitle) {
-      var modelUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Length).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          })) {
-        modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return modelUnitsMenu;
-    }
-
-    private ToolStripMenuItem GenerateMomentUnitsMenu(string menuTitle) {
-      var momentUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Moment).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-            Checked = unit == Moment.GetAbbreviation(_momentUnit),
-            Enabled = true,
-          })) {
-        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return momentUnitsMenu;
     }
 
     private (DiagramGoo diagram, IQuantity quantity) CreateReactionForceVector(
@@ -381,7 +336,7 @@ namespace GsaGH.Components {
 
       var vectorResult = new DiagramGoo(node.Value.Value.Point, direction,
         isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
-      
+
       return (isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold), forceValue);
     }
 
@@ -421,7 +376,8 @@ namespace GsaGH.Components {
       var vectors = new List<DiagramGoo>();
       var forces = new List<IQuantity>();
 
-      foreach (KeyValuePair<int, (DiagramGoo diagram, IQuantity force)> keyValuePair in orderedDict) {
+      foreach (KeyValuePair<int, (DiagramGoo diagram, IQuantity force)> keyValuePair in
+        orderedDict) {
         startingPoints.Add(keyValuePair.Value.diagram.StartingPoint);
         vectors.Add(keyValuePair.Value.diagram);
         forces.Add(keyValuePair.Value.force);

@@ -301,7 +301,7 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                faceLoad.FaceLoad.Elements = elemList;
+                faceLoad.FaceLoad.EntityList = elemList;
               }
 
               break;

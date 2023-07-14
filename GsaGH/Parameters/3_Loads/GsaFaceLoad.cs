@@ -1,5 +1,5 @@
-﻿using GsaAPI;
-using System;
+﻿using System;
+using GsaAPI;
 
 namespace GsaGH.Parameters {
   public class GsaFaceLoad : IGsaLoad {
@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
           AxisProperty = FaceLoad.AxisProperty,
           Case = FaceLoad.Case,
           Direction = FaceLoad.Direction,
-          Elements = FaceLoad.Elements.ToString(),
+          EntityList = FaceLoad.EntityList.ToString(),
           Name = FaceLoad.Name.ToString(),
           Type = FaceLoad.Type,
         },

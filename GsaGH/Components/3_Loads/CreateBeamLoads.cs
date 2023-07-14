@@ -301,7 +301,7 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
-                beamLoad.BeamLoad.Elements = beamList;
+                beamLoad.BeamLoad.EntityList = beamList;
               }
 
               break;

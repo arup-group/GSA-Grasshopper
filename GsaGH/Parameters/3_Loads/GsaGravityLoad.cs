@@ -1,5 +1,5 @@
-﻿using GsaAPI;
-using System;
+﻿using System;
+using GsaAPI;
 
 namespace GsaGH.Parameters {
   public class GsaGravityLoad : IGsaLoad {
@@ -16,7 +16,7 @@ namespace GsaGH.Parameters {
         Z = -1,
       };
       GravityLoad.Case = 1;
-      GravityLoad.Elements = "all";
+      GravityLoad.EntityList = "all";
       GravityLoad.Nodes = "all";
     }
 
@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaGravityLoad {
         GravityLoad = {
           Case = GravityLoad.Case,
-          Elements = GravityLoad.Elements.ToString(),
+          EntityList = GravityLoad.EntityList.ToString(),
           Nodes = GravityLoad.Nodes.ToString(),
           Name = GravityLoad.Name.ToString(),
           Factor = GravityLoad.Factor,

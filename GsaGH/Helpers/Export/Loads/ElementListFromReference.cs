@@ -16,9 +16,9 @@ namespace GsaGH.Helpers.Export {
          .Add(item.Key));
       return relationships;
     }
-    
-        internal static string GetReferenceElementIdsDefinition(
-      GsaGridPlaneSurface load, ModelAssembly model) {
+
+    internal static string GetReferenceElementIdsDefinition(
+  GsaGridPlaneSurface load, ModelAssembly model) {
       return GetReferenceDefinition(
         load._refObjectGuid,
         load._referenceType,

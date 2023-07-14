@@ -1,5 +1,5 @@
-﻿using GsaAPI;
-using System;
+﻿using System;
+using GsaAPI;
 
 namespace GsaGH.Parameters {
   public class GsaBeamLoad : IGsaLoad {
@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
           AxisProperty = BeamLoad.AxisProperty,
           Case = BeamLoad.Case,
           Direction = BeamLoad.Direction,
-          Elements = BeamLoad.Elements.ToString(),
+          EntityList = BeamLoad.EntityList.ToString(),
           Name = BeamLoad.Name.ToString(),
           IsProjected = BeamLoad.IsProjected,
           Type = BeamLoad.Type,
