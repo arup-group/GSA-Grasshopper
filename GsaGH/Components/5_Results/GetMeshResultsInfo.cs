@@ -46,22 +46,6 @@ namespace GsaGH.Components {
       for (int i = 0; i < res.ResultValues.Count; i++) {
         vertices.AddRange(res.Vertices[i]);
         values.AddRange(res.ResultValues[i].Select(r => new GH_UnitNumber(r)));
-        if (res.Vertices[i].Count >= res.ResultValues[i].Count) {
-          continue;
-        }
-
-        double x = 0;
-        double y = 0;
-        double z = 0;
-        foreach (Point3d p in res.Vertices[i]) {
-          x += p.X;
-          y += p.Y;
-          z += p.Z;
-        }
-
-        var pt = new Point3d(x / res.Vertices[i].Count, y / res.Vertices[i].Count,
-          z / res.Vertices[i].Count);
-        vertices.Add(pt);
       }
 
       da.SetDataList(1, vertices);
