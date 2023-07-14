@@ -15,7 +15,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, load.GravityLoad.Factor.Y);
       Assert.Equal(-1, load.GravityLoad.Factor.Z);
       Assert.Equal(1, load.GravityLoad.Case);
-      Assert.Equal("all", load.GravityLoad.Elements);
+      Assert.Equal("all", load.GravityLoad.EntityList);
       Assert.Equal("all", load.GravityLoad.Nodes);
     }
 
@@ -36,7 +36,7 @@ namespace GsaGHTests.Parameters {
         Z = 1,
       };
       duplicate.GravityLoad.Case = 3;
-      duplicate.GravityLoad.Elements = "";
+      duplicate.GravityLoad.EntityList = "";
       duplicate.GravityLoad.Nodes = "";
       duplicate.GravityLoad.Name = "";
 
@@ -45,7 +45,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.GravityLoad.Factor.Y);
       Assert.Equal(-1, original.GravityLoad.Factor.Z);
       Assert.Equal(1, original.GravityLoad.Case);
-      Assert.Equal("all", original.GravityLoad.Elements);
+      Assert.Equal("all", original.GravityLoad.EntityList);
       Assert.Equal("all", original.GravityLoad.Nodes);
       Assert.Equal("name", original.GravityLoad.Name);
     }
