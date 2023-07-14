@@ -89,7 +89,6 @@ namespace GsaGH.Components {
       "Moment Mzz",
       "Res. Moment |Myz|",
     });
-    private Bitmap _legend = new Bitmap(15, 120);
     private readonly List<string> _strainenergy = new List<string>(new[] {
       "Intermediate Pts",
       "Average",
@@ -101,12 +100,12 @@ namespace GsaGH.Components {
       "Footfall",
     });
     private string _case = string.Empty;
-    private string _scaleLegendTxt = string.Empty;
     private double _defScale = 250;
-    private double _legendScale = 1;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private EnergyUnit _energyResultUnit = DefaultUnits.EnergyUnit;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private Bitmap _legend = new Bitmap(15, 120);
+    private double _legendScale = 1;
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -117,6 +116,7 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private int _noDigits;
     private string _resType;
+    private string _scaleLegendTxt = string.Empty;
     private bool _showLegend = true;
     private bool _slider = true;
     private bool _undefinedModelLengthUnit;
@@ -136,27 +136,25 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend)) {
+      if (!((_legendValues != null) & _showLegend)) {
         return;
       }
 
       int defaultTextHeight = 12;
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right -
-        (int)(110 * _legendScale), (int)(20 * _legendScale));
+      args.Display.DrawBitmap(new DisplayBitmap(_legend),
+        args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(20 * _legendScale));
       for (int i = 0; i < _legendValues.Count; i++) {
         args.Display.Draw2dText(_legendValues[i], Color.Black,
-          new Point2d(
-            args.Viewport.Bounds.Right - (int)(85 * _legendScale),
-            _legendValuesPosY[i]),
+          new Point2d(args.Viewport.Bounds.Right - (int)(85 * _legendScale), _legendValuesPosY[i]),
           false, (int)(defaultTextHeight * _legendScale));
       }
 
       args.Display.Draw2dText(_resType, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(7 * _legendScale)), false,
-        (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(7 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
       args.Display.Draw2dText(_case, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(145 * _legendScale)),
-        false, (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(145 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
     }
 
     public override bool Read(GH_IReader reader) {
@@ -171,6 +169,7 @@ namespace GsaGH.Components {
       if (reader.ItemExists("legendScale")) {
         _legendScale = reader.GetDouble("legendScale");
       }
+
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -359,78 +358,33 @@ namespace GsaGH.Components {
         (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
-          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
-          Enabled = true,
-        };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
+        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      var forceUnitsMenu = new ToolStripMenuItem("Force") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
-          Checked = unit == Force.GetAbbreviation(_forceUnit),
-          Enabled = true,
-        };
-        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
 
-      var momentUnitsMenu = new ToolStripMenuItem("Moment") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-          Checked = unit == Moment.GetAbbreviation(_momentUnit),
-          Enabled = true,
-        };
-        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
+        EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
 
-      var energyUnitsMenu = new ToolStripMenuItem("Energy") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Energy)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateEnergy(unit)) {
-          Checked = unit == Energy.GetAbbreviation(_energyResultUnit),
-          Enabled = true,
-        };
-        energyUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem energyUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Energy",
+        EngineeringUnits.Energy, Energy.GetAbbreviation(_energyResultUnit), UpdateEnergy);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
-      if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-        }
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
+        forceUnitsMenu,
+        momentUnitsMenu,
+        energyUnitsMenu,
+      });
 
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          modelUnitsMenu,
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-          energyUnitsMenu,
-        });
-      } else {
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-          energyUnitsMenu,
-        });
+      if (_undefinedModelLengthUnit) {
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
+
+        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -445,14 +399,14 @@ namespace GsaGH.Components {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
+      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true,
+        200);
       legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
         UpdateLegendScale();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
         ExpireSolution(true);
       };
       menu.Items.Add(legendScaleMenu);
-
 
       Menu_AppendSeparator(menu);
     }
@@ -585,7 +539,6 @@ namespace GsaGH.Components {
         return;
       }
 
-
       var ghDiv = new GH_Integer();
       da.GetData(2, ref ghDiv);
       GH_Convert.ToInt32(ghDiv, out int positionsCount, GH_Conversion.Both);
@@ -673,6 +626,7 @@ namespace GsaGH.Components {
         if (elementlist.ToLower() != "all") {
           filter = " for element list " + elementlist;
         }
+
         this.AddRuntimeWarning("Case " + acase + " contains no Element1D results" + filter);
         return;
       }
@@ -825,7 +779,7 @@ namespace GsaGH.Components {
         int key = element.Key;
 
         for (int i = 0; i < positionsCount - 1; i++) {
-          if (dmin == 0 & dmax == 0) {
+          if ((dmin == 0) & (dmax == 0)) {
             continue;
           }
 
@@ -968,16 +922,14 @@ namespace GsaGH.Components {
           Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : ghGradient.ColourAt(tnorm1);
           Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : ghGradient.ColourAt(tnorm2);
 
-          float size1 = (t1.Value >= 0 && dmax != 0) ?
-            Math.Max(2, (float)(t1.Value / dmax * scale)) : Math.Max(2,
-              (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
+          float size1 = t1.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t1.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
           if (double.IsNaN(size1)) {
             size1 = 1;
           }
 
-          float size2 = (t2.Value >= 0 && dmax != 0) ?
-            Math.Max(2, (float)(t2.Value / dmax * scale)) : Math.Max(2,
-              (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
+          float size2 = t2.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t2.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
           if (double.IsNaN(size2)) {
             size2 = 1;
           }
@@ -1213,12 +1165,13 @@ namespace GsaGH.Components {
     private void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
-      _legend = new Bitmap(
-        (int)(15 * _legendScale), (int)(120 * _legendScale));
+
+      _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
 
       ExpirePreview(true);
       base.UpdateUI();

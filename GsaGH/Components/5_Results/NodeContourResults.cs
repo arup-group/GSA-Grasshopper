@@ -93,12 +93,11 @@ namespace GsaGH.Components {
       "Footfall",
     });
     private string _case = string.Empty;
-    private string _scaleLegendTxt = string.Empty;
     private double _defScale = 250;
-    private double _legendScale = 1;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private Bitmap _legend = new Bitmap(15, 120);
+    private double _legendScale = 1;
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -109,6 +108,7 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private int _noDigits;
     private string _resType;
+    private string _scaleLegendTxt = string.Empty;
     private bool _showLegend = true;
     private bool _slider = true;
     private bool _undefinedModelLengthUnit;
@@ -128,27 +128,25 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend)) {
+      if (!((_legendValues != null) & _showLegend)) {
         return;
       }
 
       int defaultTextHeight = 12;
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right -
-        (int)(110 * _legendScale), (int)(20 * _legendScale));
+      args.Display.DrawBitmap(new DisplayBitmap(_legend),
+        args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(20 * _legendScale));
       for (int i = 0; i < _legendValues.Count; i++) {
         args.Display.Draw2dText(_legendValues[i], Color.Black,
-          new Point2d(
-            args.Viewport.Bounds.Right - (int)(85 * _legendScale),
-            _legendValuesPosY[i]),
+          new Point2d(args.Viewport.Bounds.Right - (int)(85 * _legendScale), _legendValuesPosY[i]),
           false, (int)(defaultTextHeight * _legendScale));
       }
 
       args.Display.Draw2dText(_resType, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(7 * _legendScale)), false,
-        (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(7 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
       args.Display.Draw2dText(_case, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(145 * _legendScale)),
-        false, (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(145 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
     }
 
     public override bool Read(GH_IReader reader) {
@@ -162,14 +160,14 @@ namespace GsaGH.Components {
       if (reader.ItemExists("legendScale")) {
         _legendScale = reader.GetDouble("legendScale");
       }
+
       _showLegend = reader.GetBoolean("legend");
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
-      _legend = new Bitmap(
-        (int)(15 * _legendScale), (int)(120 * _legendScale));
+      _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
       return base.Read(reader);
     }
 
@@ -181,41 +179,41 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       switch (i) {
         case 0: {
-            switch (j) {
-              case 0: {
-                  if (_dropDownItems[1] != _displacement) {
-                    _dropDownItems[1] = _displacement;
-                    _selectedItems[0] = _dropDownItems[0][0];
-                    _selectedItems[1] = _dropDownItems[1][3];
-                    Mode1Clicked();
-                  }
+          switch (j) {
+            case 0: {
+              if (_dropDownItems[1] != _displacement) {
+                _dropDownItems[1] = _displacement;
+                _selectedItems[0] = _dropDownItems[0][0];
+                _selectedItems[1] = _dropDownItems[1][3];
+                Mode1Clicked();
+              }
 
-                  break;
-                }
-              case 1: {
-                  if (_dropDownItems[1] != _reaction) {
-                    _dropDownItems[1] = _reaction;
-                    _selectedItems[0] = _dropDownItems[0][1];
-                    _selectedItems[1] = _dropDownItems[1][3];
-                    Mode2Clicked();
-                  }
-
-                  break;
-                }
-              case 2: {
-                  if (_dropDownItems[1] != _footfall) {
-                    _dropDownItems[1] = _footfall;
-                    _selectedItems[0] = _dropDownItems[0][2];
-                    _selectedItems[1] = _dropDownItems[1][0];
-                    Mode3Clicked();
-                  }
-
-                  break;
-                }
+              break;
             }
+            case 1: {
+              if (_dropDownItems[1] != _reaction) {
+                _dropDownItems[1] = _reaction;
+                _selectedItems[0] = _dropDownItems[0][1];
+                _selectedItems[1] = _dropDownItems[1][3];
+                Mode2Clicked();
+              }
 
-            break;
+              break;
+            }
+            case 2: {
+              if (_dropDownItems[1] != _footfall) {
+                _dropDownItems[1] = _footfall;
+                _selectedItems[0] = _dropDownItems[0][2];
+                _selectedItems[1] = _dropDownItems[1][0];
+                Mode3Clicked();
+              }
+
+              break;
+            }
           }
+
+          break;
+        }
         case 1:
           _disp = (DisplayValue)j;
           _selectedItems[1] = _dropDownItems[1][j];
@@ -296,65 +294,28 @@ namespace GsaGH.Components {
         (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
-          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
-          Enabled = true,
-        };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
+        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      var forceUnitsMenu = new ToolStripMenuItem("Force") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
-          Checked = unit == Force.GetAbbreviation(_forceUnit),
-          Enabled = true,
-        };
-        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
 
-      var momentUnitsMenu = new ToolStripMenuItem("Moment") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-          Checked = unit == Moment.GetAbbreviation(_momentUnit),
-          Enabled = true,
-        };
-        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
+        EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
 
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
+        forceUnitsMenu,
+        momentUnitsMenu,
+      });
       if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-        }
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
 
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          modelUnitsMenu,
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-        });
-      } else {
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-        });
+        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -369,7 +330,8 @@ namespace GsaGH.Components {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
+      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true,
+        200);
       legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
         UpdateLegendScale();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -468,35 +430,35 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-            result = goo.Value;
-            if (result.Type == GsaResult.CaseType.Combination
-              && result.SelectedPermutationIds.Count > 1) {
-              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-                + result.SelectedPermutationIds.Count
-                + " permutations - only one permutation can be displayed at a time."
-                + Environment.NewLine
-                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-            }
-
-            if (result.Type == GsaResult.CaseType.Combination) {
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-            }
-
-            if (result.Type == GsaResult.CaseType.AnalysisCase) {
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-            }
-
-            break;
+          result = goo.Value;
+          if (result.Type == GsaResult.CaseType.Combination
+            && result.SelectedPermutationIds.Count > 1) {
+            this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
+              + result.SelectedPermutationIds.Count
+              + " permutations - only one permutation can be displayed at a time."
+              + Environment.NewLine
+              + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           }
+
+          if (result.Type == GsaResult.CaseType.Combination) {
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+          }
+
+          if (result.Type == GsaResult.CaseType.AnalysisCase) {
+            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+          }
+
+          break;
+        }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
       }
 
       string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(nodeList)) { 
-        return; 
+      if (string.IsNullOrEmpty(nodeList)) {
+        return;
       }
 
       var ghColours = new List<GH_Colour>();
@@ -675,7 +637,7 @@ namespace GsaGH.Components {
         }
 
         int nodeId = node.Value.Value.Id;
-        if (!xyzResults.ContainsKey(nodeId) || (dmin == 0 & dmax == 0)) {
+        if (!xyzResults.ContainsKey(nodeId) || (dmin == 0) & (dmax == 0)) {
           return;
         }
 
@@ -772,7 +734,7 @@ namespace GsaGH.Components {
 
         double tnorm = (2 * (t.Value - dmin) / (dmax - dmin)) - 1;
         Color valcol = ghGradient.ColourAt(tnorm);
-        float size = (t.Value >= 0 && dmax != 0) ? Math.Max(2, (float)(t.Value / dmax * scale)) :
+        float size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t.Value / dmax * scale)) :
           Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
 
         pts[nodeId] = new PointResultGoo(def, t, valcol, size, nodeId);
@@ -813,31 +775,31 @@ namespace GsaGH.Components {
 
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-              var displacement = new Length(t, _lengthResultUnit);
-              _legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-              break;
-            }
+            var displacement = new Length(t, _lengthResultUnit);
+            _legendValues.Add(displacement.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(displacement));
+            break;
+          }
           case FoldMode.Displacement: {
-              var rotation = new Angle(t, AngleUnit.Radian);
-              _legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-              break;
-            }
+            var rotation = new Angle(t, AngleUnit.Radian);
+            _legendValues.Add(rotation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(rotation));
+            break;
+          }
           case FoldMode.Reaction when (int)_disp < 4: {
-              var reactionForce = new Force(t, _forceUnit);
-              _legendValues.Add(reactionForce.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(reactionForce));
-              Message = Force.GetAbbreviation(_forceUnit);
-              break;
-            }
+            var reactionForce = new Force(t, _forceUnit);
+            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(reactionForce));
+            Message = Force.GetAbbreviation(_forceUnit);
+            break;
+          }
           case FoldMode.Reaction: {
-              var reactionMoment = new Moment(t, _momentUnit);
-              _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(reactionMoment));
-              Message = Moment.GetAbbreviation(_momentUnit);
-              break;
-            }
+            var reactionMoment = new Moment(t, _momentUnit);
+            _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(reactionMoment));
+            Message = Moment.GetAbbreviation(_momentUnit);
+            break;
+          }
           case FoldMode.Footfall: {
             var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
             _legendValues.Add(responseFactor.ToString("s" + significantDigits));
@@ -977,12 +939,13 @@ namespace GsaGH.Components {
     private void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
-      _legend = new Bitmap(
-        (int)(15 * _legendScale), (int)(120 * _legendScale));
+
+      _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
 
       ExpirePreview(true);
       base.UpdateUI();
