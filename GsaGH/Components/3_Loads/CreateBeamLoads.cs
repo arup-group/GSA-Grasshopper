@@ -75,11 +75,11 @@ namespace GsaGH.Components {
       } else if (i == 1) {
         switch (_selectedItems[1]) {
           case "Element":
-            //Mode1Clicked();
+            _entityType = EntityType.Element;
             break;
 
           case "Member":
-            //Mode2Clicked();
+            _entityType = EntityType.Member;
             break;
         }
       } else {
