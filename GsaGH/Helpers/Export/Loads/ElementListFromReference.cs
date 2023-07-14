@@ -1,9 +1,9 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal class ElementListFromReference {
