@@ -1,9 +1,12 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
 using OasysGH.Units;
+using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -16,9 +19,39 @@ namespace GsaGH.Parameters {
     public AnnotationGoo(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
     }
+    public override bool CastTo<TQ>(out TQ target) {
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_UnitNumber))) {
+        var types = Quantity.Infos.Select(x => x.ValueType).ToList();
+        foreach (Type type in types) {
+          if (Quantity.TryParse(type, Value.Text, out IQuantity quantity)) {
+            target = (TQ)(object)new GH_UnitNumber(quantity);
+            return true;
+          }
+        }
+      }
 
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Number))) {
+        
+        if (double.TryParse(Value.Text, out double number)) {
+          target = (TQ)(object)new GH_Number(number);
+          return true;
+        } else {
+          var types = Quantity.Infos.Select(x => x.ValueType).ToList();
+          foreach (Type type in types) {
+            if (Quantity.TryParse(type, Value.Text, out IQuantity quantity)) {
+              target = (TQ)(object)new GH_Number(quantity.Value);
+              return true;
+            }
+          }
+        }
+
+      }
+
+      target = default;
+      return false;
+    }
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Color != Color.Empty) { 
+      if (Color != Color.Empty) {
         args.Pipeline.Draw2dText(Value.Text, Color, Value.Point, true);
       } else {
         args.Pipeline.Draw2dText(Value.Text, args.Color, Value.Point, true);
@@ -31,7 +64,10 @@ namespace GsaGH.Parameters {
       return new AnnotationGoo(Value.Point, Color, Value.Text);
     }
 
-    public override string ToString() { return $"Position {Value.Point}, Value: {Value.Text}"; }
+    public override string ToString() { 
+      var pt = new GH_Point(Value.Point);
+      return $"{pt}, Value: {Value.Text}"; 
+    }
 
     public override GeometryBase GetGeometry() {
       if (Value?.Point == null) {
