@@ -7,7 +7,7 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Interop.Gsa_10_1;
+using Interop.Gsa_10_2;
 using OasysGH;
 using OasysGH.Components;
 

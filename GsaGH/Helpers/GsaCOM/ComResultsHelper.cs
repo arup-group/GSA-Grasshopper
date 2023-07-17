@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using GsaAPI;
 using GsaGH.Parameters;
-using Interop.Gsa_10_1;
+using Interop.Gsa_10_2;
 using OasysUnits;
 using OasysUnits.Units;
 

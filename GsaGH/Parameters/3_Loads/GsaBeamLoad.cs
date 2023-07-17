@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
           AxisProperty = BeamLoad.AxisProperty,
           Case = BeamLoad.Case,
           Direction = BeamLoad.Direction,
-          Elements = BeamLoad.Elements.ToString(),
+          EntityList = BeamLoad.EntityList.ToString(),
           Name = BeamLoad.Name.ToString(),
           IsProjected = BeamLoad.IsProjected,
           Type = BeamLoad.Type,

@@ -58,11 +58,11 @@ Copyright © Oasys 1985 - 2022</Description>
   
   <ItemGroup>
     <Reference Include="GsaAPI">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.Gsa_10_1">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\Interop.Gsa_10_1.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />

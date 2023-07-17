@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using Grasshopper.Plugin;
 using GsaGH.Helpers;
-using Interop.Gsa_10_1;
+using Interop.Gsa_10_2;
 using OasysGH.Units;
 using Rhino;
 using Rhino.Runtime.InProcess;
@@ -31,7 +31,7 @@ namespace IntegrationTests {
       }
     }
     public static string InstallPath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.2");
 
     private object Doc { get; set; }
     private object DocIo { get; set; }

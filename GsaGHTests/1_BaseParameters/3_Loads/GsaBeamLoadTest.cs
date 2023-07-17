@@ -31,7 +31,7 @@ namespace GsaGHTests.Parameters {
           AxisProperty = 5,
           Case = 6,
           Direction = Direction.ZZ,
-          Elements = "all",
+          EntityList = "all",
           Name = "name",
           IsProjected = true,
         },
@@ -45,7 +45,7 @@ namespace GsaGHTests.Parameters {
       duplicate.BeamLoad.AxisProperty = 1;
       duplicate.BeamLoad.Case = 1;
       duplicate.BeamLoad.Direction = Direction.XX;
-      duplicate.BeamLoad.Elements = "";
+      duplicate.BeamLoad.EntityList = "";
       duplicate.BeamLoad.Name = "";
       duplicate.BeamLoad.IsProjected = false;
       duplicate.BeamLoad.SetPosition(0, 99);
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(5, original.BeamLoad.AxisProperty);
       Assert.Equal(6, original.BeamLoad.Case);
       Assert.Equal(Direction.ZZ, original.BeamLoad.Direction);
-      Assert.Equal("all", original.BeamLoad.Elements);
+      Assert.Equal("all", original.BeamLoad.EntityList);
       Assert.Equal("name", original.BeamLoad.Name);
       Assert.True(original.BeamLoad.IsProjected);
       switch (original.BeamLoad.Type) {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using GsaGH.Parameters;
-using Interop.Gsa_10_1;
+using Interop.Gsa_10_2;
 
 namespace GsaGH.Helpers {
   public sealed class GsaComObject {
