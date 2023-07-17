@@ -252,51 +252,51 @@ namespace GsaGH.Components {
           case GsaListGoo value: {
               if (value.Value.EntityType == EntityType.Element
                 || value.Value.EntityType == EntityType.Member) {
-                faceLoad._refList = value.Value;
-                faceLoad._referenceType = ReferenceType.List;
+                faceLoad.ReferenceList = value.Value;
+                faceLoad.ReferenceType = ReferenceType.List;
               } else {
                 this.AddRuntimeWarning(
                   "List must be of type Element or Member to apply to face loading");
               }
 
-            if (value.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              if (value.Value.EntityType == EntityType.Member) {
+                this.AddRuntimeRemark(
+                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
               break;
             }
           case GsaElement2dGoo value: {
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Element;
+              faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.ReferenceType = ReferenceType.Element;
               break;
             }
           case GsaMember2dGoo value: {
-            faceLoad._refObjectGuid = value.Value.Guid;
-            faceLoad._referenceType = ReferenceType.MemberChildElements;
-            if (_mode != FoldMode.Uniform) {
-              this.AddRuntimeWarning(
-                "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-            } else {
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
+              faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.ReferenceType = ReferenceType.MemberChildElements;
+              if (_mode != FoldMode.Uniform) {
+                this.AddRuntimeWarning(
+                  "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+              } else {
+                this.AddRuntimeRemark(
+                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              }
 
-            break;
-          }
+              break;
+            }
           case GsaMaterialGoo value: {
               if (value.Value.Id != 0) {
                 this.AddRuntimeWarning(
                 "Reference Material must be a Custom Material");
                 return;
               }
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Property;
+              faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.ReferenceType = ReferenceType.Property;
               break;
             }
           case GsaProp2dGoo value: {
-              faceLoad._refObjectGuid = value.Value.Guid;
-              faceLoad._referenceType = ReferenceType.Property;
+              faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.ReferenceType = ReferenceType.Property;
               break;
             }
           default: {
@@ -436,8 +436,7 @@ namespace GsaGH.Components {
         default: throw new ArgumentOutOfRangeException();
       }
 
-      var gsaLoad = new GsaLoad(faceLoad);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(faceLoad));
     }
 
     protected override void UpdateUIFromSelectedItems() {

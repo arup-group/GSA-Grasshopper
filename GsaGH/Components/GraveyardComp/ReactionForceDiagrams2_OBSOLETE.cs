@@ -24,6 +24,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using EntityType = GsaGH.Parameters.EntityType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -113,8 +114,10 @@ namespace GsaGH.Components {
       Menu_AppendItem(menu, "Show Text", ShowText, true, _showText);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
-      ToolStripMenuItem forceUnitsMenu = GenerateForceUnitsMenu("Force");
-      ToolStripMenuItem momentUnitsMenu = GenerateMomentUnitsMenu("Moment");
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
+        EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
 
       var toolStripItems = new List<ToolStripItem> {
         forceUnitsMenu,
@@ -122,8 +125,9 @@ namespace GsaGH.Components {
       };
 
       if (_lengthUnit == LengthUnit.Undefined) {
-        ToolStripMenuItem modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
-        toolStripItems.Insert(0, modelUnitsMenu);
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
       }
 
       unitsMenu.DropDownItems.AddRange(toolStripItems.ToArray());
@@ -162,8 +166,8 @@ namespace GsaGH.Components {
         + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
         + "Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
-      pManager.AddColourParameter(
-        "Colour", "Co", "[Optional] Colour to override default colour", GH_ParamAccess.item);
+      pManager.AddColourParameter("Colour", "Co", "[Optional] Colour to override default colour",
+        GH_ParamAccess.item);
       pManager.AddNumberParameter("Scalar", "x:X",
         "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
         GH_ParamAccess.item);
@@ -216,14 +220,16 @@ namespace GsaGH.Components {
         colourInput = true;
       }
 
-      _reactionForceVectors = new ConcurrentDictionary<int, (DiagramGoo, AnnotationGoo, IQuantity)>();
+      _reactionForceVectors
+        = new ConcurrentDictionary<int, (DiagramGoo, AnnotationGoo, IQuantity)>();
       Parallel.ForEach(nodes, node => {
-        (DiagramGoo reactionForceVector, AnnotationGoo annotation, IQuantity forceValue) 
+        (DiagramGoo reactionForceVector, AnnotationGoo annotation, IQuantity forceValue)
           = CreateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) {
           if (colourInput) {
             reactionForceVector.SetColor(color);
           }
+
           _reactionForceVectors.TryAdd(node.Key, (reactionForceVector, annotation, forceValue));
         }
       });
@@ -238,10 +244,10 @@ namespace GsaGH.Components {
       var ghType = new GH_ObjectWrapper();
       if (dataAccess.GetData(1, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-            this.AddRuntimeWarning(
-            "List must be of type Node to apply to node filter");
+          if (listGoo.Value.EntityType != EntityType.Node) {
+            this.AddRuntimeWarning("List must be of type Node to apply to node filter");
           }
+
           nodeList = $"\"{listGoo.Value.Name}\"";
         } else {
           GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
@@ -259,103 +265,47 @@ namespace GsaGH.Components {
       double maxValue = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-          maxValue = Math.Max(
-            forceValues.DmaxX.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxX.As(_forceUnit),
             Math.Abs(forceValues.DminX.As(_forceUnit)));
           break;
         case DisplayValue.Y:
-          maxValue = Math.Max(
-            forceValues.DmaxY.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxY.As(_forceUnit),
             Math.Abs(forceValues.DminY.As(_forceUnit)));
           break;
         case DisplayValue.Z:
-          maxValue = Math.Max(
-            forceValues.DmaxZ.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxZ.As(_forceUnit),
             Math.Abs(forceValues.DminZ.As(_forceUnit)));
           break;
         case DisplayValue.ResXyz:
-          maxValue = Math.Max(
-            forceValues.DmaxXyz.As(_forceUnit),
+          maxValue = Math.Max(forceValues.DmaxXyz.As(_forceUnit),
             Math.Abs(forceValues.DminXyz.As(_forceUnit)));
           break;
 
         case DisplayValue.Xx:
-          maxValue = Math.Max(
-            forceValues.DmaxXx.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXx.As(_momentUnit),
             Math.Abs(forceValues.DminXx.As(_momentUnit)));
           break;
         case DisplayValue.Yy:
-          maxValue = Math.Max(
-            forceValues.DmaxYy.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxYy.As(_momentUnit),
             Math.Abs(forceValues.DminYy.As(_momentUnit)));
           break;
         case DisplayValue.Zz:
-          maxValue = Math.Max(
-            forceValues.DmaxZz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxZz.As(_momentUnit),
             Math.Abs(forceValues.DminZz.As(_momentUnit)));
           break;
         case DisplayValue.ResXxyyzz:
-          maxValue = Math.Max(
-            forceValues.DmaxXxyyzz.As(_momentUnit),
+          maxValue = Math.Max(forceValues.DmaxXxyyzz.As(_momentUnit),
             Math.Abs(forceValues.DminXxyyzz.As(_momentUnit)));
           break;
-      };
+      }
 
       double factor = 0.1; // maxVector = 10% of bbox diagonal
       return bbox.Diagonal.Length * factor / maxValue;
     }
 
-    private ToolStripMenuItem GenerateForceUnitsMenu(string menuTitle) {
-      var forceUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Force).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
-            Checked = unit == Force.GetAbbreviation(_forceUnit),
-            Enabled = true,
-          })) {
-        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return forceUnitsMenu;
-    }
-
-    private ToolStripMenuItem GenerateModelGeometryUnitsMenu(string menuTitle) {
-      var modelUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Length).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          })) {
-        modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return modelUnitsMenu;
-    }
-
-    private ToolStripMenuItem GenerateMomentUnitsMenu(string menuTitle) {
-      var momentUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Moment).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-            Checked = unit == Moment.GetAbbreviation(_momentUnit),
-            Enabled = true,
-          })) {
-        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return momentUnitsMenu;
-    }
-
-    private (DiagramGoo diagram, AnnotationGoo annotation, IQuantity forceValue) CreateReactionForceVector(
-      KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
+    private (DiagramGoo diagram, AnnotationGoo annotation, IQuantity forceValue)
+      CreateReactionForceVector(
+        KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;
@@ -430,7 +380,7 @@ namespace GsaGH.Components {
       Color col = isForce ? Colours.GsaDarkPurple : Colours.GsaGold;
 
       var annotation = new AnnotationGoo(pt, col, forceValue.ToString());
-      return (vectorResult,  annotation, forceValue);
+      return (vectorResult, annotation, forceValue);
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
@@ -469,8 +419,8 @@ namespace GsaGH.Components {
       var vectors = new List<DiagramGoo>();
       var forceValues = new List<IQuantity>();
 
-      foreach (KeyValuePair<int, 
-        (DiagramGoo diagram, AnnotationGoo anno, IQuantity force)> keyValuePair in orderedDict) {
+      foreach (KeyValuePair<int, (DiagramGoo diagram, AnnotationGoo anno, IQuantity force)>
+        keyValuePair in orderedDict) {
         startingPoints.Add(keyValuePair.Value.diagram.StartingPoint);
         vectors.Add(keyValuePair.Value.diagram);
         forceValues.Add(keyValuePair.Value.force);

@@ -106,15 +106,14 @@ namespace GsaGH.Components {
       "Footfall",
     });
     private string _case = string.Empty;
-    private string _scaleLegendTxt = string.Empty;
     private double _defScale = 250;
-    private double _legendScale = 1;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private int _flayer;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private bool _isShear;
     private Bitmap _legend = new Bitmap(15, 120);
+    private double _legendScale = 1;
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -124,6 +123,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private int _noDigits;
     private string _resType;
+    private string _scaleLegendTxt = string.Empty;
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
@@ -144,27 +144,25 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!(_legendValues != null & _showLegend)) {
+      if (!((_legendValues != null) & _showLegend)) {
         return;
       }
 
       int defaultTextHeight = 12;
-      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right -
-        (int)(110 * _legendScale), (int)(20 * _legendScale));
+      args.Display.DrawBitmap(new DisplayBitmap(_legend),
+        args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(20 * _legendScale));
       for (int i = 0; i < _legendValues.Count; i++) {
         args.Display.Draw2dText(_legendValues[i], Color.Black,
-          new Point2d(
-            args.Viewport.Bounds.Right - (int)(85 * _legendScale),
-            _legendValuesPosY[i]),
+          new Point2d(args.Viewport.Bounds.Right - (int)(85 * _legendScale), _legendValuesPosY[i]),
           false, (int)(defaultTextHeight * _legendScale));
       }
 
       args.Display.Draw2dText(_resType, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(7 * _legendScale)), false,
-        (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(7 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
       args.Display.Draw2dText(_case, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(145 * _legendScale)),
-        false, (int)(defaultTextHeight * _legendScale));
+        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
+          (int)(145 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
     }
 
     public override bool Read(GH_IReader reader) {
@@ -180,6 +178,7 @@ namespace GsaGH.Components {
       if (reader.ItemExists("legendScale")) {
         _legendScale = reader.GetDouble("legendScale");
       }
+
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -296,12 +295,12 @@ namespace GsaGH.Components {
           bool redraw = false;
           _selectedItems[1] = _dropDownItems[1][j];
           if (_mode == FoldMode.Displacement) {
-            if ((int)_disp > 3 & j < 4) {
+            if (((int)_disp > 3) & (j < 4)) {
               redraw = true;
               _slider = true;
             }
 
-            if ((int)_disp < 4 & j > 3) {
+            if (((int)_disp < 4) & (j > 3)) {
               redraw = true;
               _slider = false;
             }
@@ -311,7 +310,7 @@ namespace GsaGH.Components {
           if (_dropDownItems[1] != _displacement) {
             _isShear = false;
             if (_mode == FoldMode.Force) {
-              if (j == 3 | j == 4) {
+              if ((j == 3) | (j == 4)) {
                 _disp = (DisplayValue)j - 3;
                 _isShear = true;
               } else if (j > 4) {
@@ -385,7 +384,7 @@ namespace GsaGH.Components {
           Params.Output[2].Name = "Values [rad]";
           break;
 
-        case FoldMode.Force when (int)_disp < 4 | _isShear:
+        case FoldMode.Force when ((int)_disp < 4) | _isShear:
           Params.Output[2].Name = "Legend Values ["
             + ForcePerLength.GetAbbreviation(_forcePerLengthUnit) + "/"
             + Length.GetAbbreviation(_lengthUnit) + "]";
@@ -440,79 +439,33 @@ namespace GsaGH.Components {
         (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
-      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateLength(unit)) {
-          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
-          Enabled = true,
-        };
-        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
+        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      var forceUnitsMenu = new ToolStripMenuItem("Force") {
-        Enabled = true,
-      };
-      foreach (string unit in
-        UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateForce(unit)) {
-          Checked = unit == ForcePerLength.GetAbbreviation(_forcePerLengthUnit),
-          Enabled = true,
-        };
-        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
+        EngineeringUnits.ForcePerLength, ForcePerLength.GetAbbreviation(_forcePerLengthUnit),
+        UpdateForce);
 
-      var momentUnitsMenu = new ToolStripMenuItem("Moment") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateMoment(unit)) {
-          Checked = unit == Force.GetAbbreviation(_forceUnit),
-          Enabled = true,
-        };
-        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
+        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateMoment);
 
-      var stressUnitsMenu = new ToolStripMenuItem("Stress") {
-        Enabled = true,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStress(unit)) {
-          Checked = unit == Pressure.GetAbbreviation(_stressUnitResult),
-          Enabled = true,
-        };
-        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
+      ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
+        EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnitResult), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
+        forceUnitsMenu,
+        momentUnitsMenu,
+        stressUnitsMenu,
+      });
 
       if (_undefinedModelLengthUnit) {
-        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
-          Enabled = true,
-        };
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          };
-          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-        }
+        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
+          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
+          UpdateModel);
 
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          modelUnitsMenu,
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-          stressUnitsMenu,
-        });
-      } else {
-        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-          lengthUnitsMenu,
-          forceUnitsMenu,
-          momentUnitsMenu,
-          stressUnitsMenu,
-        });
+        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
       }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -527,14 +480,14 @@ namespace GsaGH.Components {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
+      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true,
+        200);
       legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
         UpdateLegendScale();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
         ExpireSolution(true);
       };
       menu.Items.Add(legendScaleMenu);
-
 
       Menu_AppendSeparator(menu);
     }
@@ -735,6 +688,7 @@ namespace GsaGH.Components {
         if (elementlist.ToLower() != "all") {
           filter = " for element list " + elementlist;
         }
+
         this.AddRuntimeWarning("Case " + acase + " contains no Element2D results" + filter);
         return;
       }
@@ -758,19 +712,19 @@ namespace GsaGH.Components {
       if (_mode != FoldMode.Footfall) {
         dmaxY = _isShear ? resShear.DmaxY.As(xyzunit) : res.DmaxY.As(xyzunit);
         dmaxZ = res.DmaxZ.As(xyzunit);
-        dmaxXyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
+        dmaxXyz = _mode == FoldMode.Displacement ? res.DmaxXyz.As(xyzunit) : 0;
         dminX = _isShear ? resShear.DminX.As(xyzunit) : res.DminX.As(xyzunit);
         dminY = _isShear ? resShear.DminY.As(xyzunit) : res.DminY.As(xyzunit);
         dminZ = res.DminZ.As(xyzunit);
-        dminXyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
+        dminXyz = _mode == FoldMode.Displacement ? res.DminXyz.As(xyzunit) : 0;
         dmaxXx = _isShear ? 0 : res.DmaxXx.As(xxyyzzunit);
         dmaxYy = _isShear ? 0 : res.DmaxYy.As(xxyyzzunit);
         dmaxZz = _isShear ? 0 : res.DmaxZz.As(xxyyzzunit);
-        dmaxXxyyzz = (_mode == FoldMode.Force) ? res.DmaxXxyyzz.As(xxyyzzunit) : 0;
+        dmaxXxyyzz = _mode == FoldMode.Force ? res.DmaxXxyyzz.As(xxyyzzunit) : 0;
         dminXx = _isShear ? 0 : res.DminXx.As(xxyyzzunit);
         dminYy = _isShear ? 0 : res.DminYy.As(xxyyzzunit);
         dminZz = _isShear ? 0 : res.DminZz.As(xxyyzzunit);
-        dminXxyyzz = (_mode == FoldMode.Force) ? res.DminXxyyzz.As(xxyyzzunit) : 0;
+        dminXxyyzz = _mode == FoldMode.Force ? res.DminXxyyzz.As(xxyyzzunit) : 0;
       }
 
       if (_mode == FoldMode.Force && _disp == DisplayValue.ResXyz) {
@@ -788,9 +742,9 @@ namespace GsaGH.Components {
           dmin = dminX;
           if (_mode == FoldMode.Displacement) {
             _resType = "Translation, Ux";
-          } else if (_mode == FoldMode.Force & !_isShear) {
+          } else if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Force, Nx";
-          } else if (_mode == FoldMode.Force & _isShear) {
+          } else if ((_mode == FoldMode.Force) & _isShear) {
             _resType = "2D Shear, Qx";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, xx";
@@ -805,9 +759,9 @@ namespace GsaGH.Components {
           dmin = dminY;
           if (_mode == FoldMode.Displacement) {
             _resType = "Translation, Uy";
-          } else if (_mode == FoldMode.Force & !_isShear) {
+          } else if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Force, Ny";
-          } else if (_mode == FoldMode.Force & _isShear) {
+          } else if ((_mode == FoldMode.Force) & _isShear) {
             _resType = "2D Shear, Qy";
           } else if (_mode == FoldMode.Stress) {
             _resType = "2D Stress, yy";
@@ -820,7 +774,7 @@ namespace GsaGH.Components {
           dmin = dminZ;
           if (_mode == FoldMode.Displacement) {
             _resType = "Translation, Uz";
-          } else if (_mode == FoldMode.Force & !_isShear) {
+          } else if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Force, Nxy";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, zz";
@@ -846,7 +800,7 @@ namespace GsaGH.Components {
         case DisplayValue.Xx:
           dmax = dmaxXx;
           dmin = dminXx;
-          if (_mode == FoldMode.Force & !_isShear) {
+          if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Moment, Mx";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, xy";
@@ -857,7 +811,7 @@ namespace GsaGH.Components {
         case DisplayValue.Yy:
           dmax = dmaxYy;
           dmin = dminYy;
-          if (_mode == FoldMode.Force & !_isShear) {
+          if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Moment, My";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, yz";
@@ -868,7 +822,7 @@ namespace GsaGH.Components {
         case DisplayValue.Zz:
           dmax = dmaxZz;
           dmin = dminZz;
-          if (_mode == FoldMode.Force & !_isShear) {
+          if ((_mode == FoldMode.Force) & !_isShear) {
             _resType = "2D Moment, Mxy";
           } else if (_mode == FoldMode.Stress) {
             _resType = "Stress, zy";
@@ -1101,7 +1055,7 @@ namespace GsaGH.Components {
             Message = Angle.GetAbbreviation(AngleUnit.Radian);
             break;
           }
-          case FoldMode.Force when (int)_disp < 4 | _isShear: {
+          case FoldMode.Force when ((int)_disp < 4) | _isShear: {
             var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
             _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(forcePerLength));
@@ -1286,12 +1240,13 @@ namespace GsaGH.Components {
     private void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
-      _legend = new Bitmap(
-        (int)(15 * _legendScale), (int)(120 * _legendScale));
+
+      _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
 
       ExpirePreview(true);
       base.UpdateUI();

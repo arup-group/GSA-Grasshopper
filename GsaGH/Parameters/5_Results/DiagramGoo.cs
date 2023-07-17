@@ -101,7 +101,9 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return $"Diagram Result: Starting point: {StartingPoint}, Direction:{Direction}";
+      var pt = new GH_Point(StartingPoint);
+      var vec = new GH_Vector(Direction);
+      return $"Diagram Result: Starting point: {pt}, Direction:{vec}";
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {

@@ -24,7 +24,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditSectionModifier2_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetSectionModifier;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;

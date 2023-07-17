@@ -257,8 +257,7 @@ namespace GsaGH.Components {
       gsaGridPointLoad.GridPointLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
-      var gsaLoad = new GsaLoad(gsaGridPointLoad);
-      da.SetData(0, new GsaLoadGoo(gsaLoad));
+      da.SetData(0, new GsaLoadGoo(gsaGridPointLoad));
     }
 
     protected override void UpdateUIFromSelectedItems() {

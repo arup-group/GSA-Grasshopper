@@ -32,13 +32,13 @@ namespace GsaGH.Helpers.Export {
               break;
 
             default: {
-              string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", string.Empty);
-              type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
-                + " to Analysis Task or Combination Case");
-              return null;
-            }
+                string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.", string.Empty);
+                type = type.Replace("Goo", string.Empty);
+                owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
+                  + " to Analysis Task or Combination Case");
+                return null;
+              }
           }
         }
 
@@ -84,42 +84,42 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaNodeGoo nodeGoo: {
-              inNodes.Add(nodeGoo.Value.Duplicate());
-              break;
-            }
+                inNodes.Add(nodeGoo.Value.Duplicate());
+                break;
+              }
             case GsaElement1dGoo element1dGoo: {
-              inElem1ds.Add(element1dGoo.Value.Duplicate());
-              break;
-            }
+                inElem1ds.Add(element1dGoo.Value.Duplicate());
+                break;
+              }
             case GsaElement2dGoo element2dGoo: {
-              inElem2ds.Add(element2dGoo.Value.Duplicate());
-              break;
-            }
+                inElem2ds.Add(element2dGoo.Value.Duplicate());
+                break;
+              }
             case GsaElement3dGoo element3dGoo: {
-              inElem3ds.Add(element3dGoo.Value.Duplicate());
-              break;
-            }
+                inElem3ds.Add(element3dGoo.Value.Duplicate());
+                break;
+              }
             case GsaMember1dGoo member1dGoo: {
-              inMem1ds.Add(member1dGoo.Value.Duplicate());
-              break;
-            }
+                inMem1ds.Add(member1dGoo.Value.Duplicate());
+                break;
+              }
             case GsaMember2dGoo member2dGoo: {
-              inMem2ds.Add(member2dGoo.Value.Duplicate());
-              break;
-            }
+                inMem2ds.Add(member2dGoo.Value.Duplicate());
+                break;
+              }
             case GsaMember3dGoo member3dGoo: {
-              inMem3ds.Add(member3dGoo.Value.Duplicate());
-              break;
-            }
+                inMem3ds.Add(member3dGoo.Value.Duplicate());
+                break;
+              }
             default: {
-              string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", string.Empty);
-              type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
-                + Environment.NewLine
-                + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
-              return null;
-            }
+                string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.", string.Empty);
+                type = type.Replace("Goo", string.Empty);
+                owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
+                  + Environment.NewLine
+                  + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
+                return null;
+              }
           }
         }
 
@@ -168,11 +168,11 @@ namespace GsaGH.Helpers.Export {
           null, null);
     }
 
-    internal static Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>> GetLoading(
+    internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>> GetLoading(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
-        var inLoads = new List<GsaLoad>();
+        var inLoads = new List<IGsaLoad>();
         var inGps = new List<GsaGridPlaneSurface>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
@@ -183,21 +183,21 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaLoadGoo loadGoo: {
-              inLoads.Add(loadGoo.Value.Duplicate());
-              break;
-            }
+                inLoads.Add(loadGoo.Value.Duplicate());
+                break;
+              }
             case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo: {
-              inGps.Add(gridPlaneSurfaceGoo.Value.Duplicate());
-              break;
-            }
+                inGps.Add(gridPlaneSurfaceGoo.Value.Duplicate());
+                break;
+              }
             default: {
-              string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", string.Empty);
-              type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
-                + " to Load or GridPlaneSurface");
-              return null;
-            }
+                string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.", string.Empty);
+                type = type.Replace("Goo", string.Empty);
+                owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
+                  + " to Load or GridPlaneSurface");
+                return null;
+              }
           }
         }
 
@@ -209,13 +209,13 @@ namespace GsaGH.Helpers.Export {
           inGps = null;
         }
 
-        return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(inLoads, inGps);
+        return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>>(inLoads, inGps);
       } else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(null, null);
+      return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>>(null, null);
     }
 
     internal static Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetMembers(
@@ -235,26 +235,26 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaMember1dGoo member1dGoo: {
-              inMem1ds.Add(member1dGoo.Value.Duplicate());
-              break;
-            }
+                inMem1ds.Add(member1dGoo.Value.Duplicate());
+                break;
+              }
             case GsaMember2dGoo member2dGoo: {
-              inMem2ds.Add(member2dGoo.Value.Duplicate());
-              break;
-            }
+                inMem2ds.Add(member2dGoo.Value.Duplicate());
+                break;
+              }
             case GsaMember3dGoo member3dGoo: {
-              inMem3ds.Add(member3dGoo.Value.Duplicate());
-              break;
-            }
+                inMem3ds.Add(member3dGoo.Value.Duplicate());
+                break;
+              }
             default: {
-              string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", string.Empty);
-              type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
-                + Environment.NewLine
-                + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
-              return null;
-            }
+                string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.", string.Empty);
+                type = type.Replace("Goo", string.Empty);
+                owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
+                  + Environment.NewLine
+                  + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
+                return null;
+              }
           }
         }
 
@@ -342,25 +342,25 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaSectionGoo sectionGoo: {
-              inSect.Add(sectionGoo.Value.Duplicate());
-              break;
-            }
+                inSect.Add(sectionGoo.Value.Duplicate());
+                break;
+              }
             case GsaProp2dGoo prop2dGoo: {
-              inProp2d.Add(prop2dGoo.Value.Duplicate());
-              break;
-            }
+                inProp2d.Add(prop2dGoo.Value.Duplicate());
+                break;
+              }
             case GsaProp3dGoo prop3dGoo: {
-              inProp3d.Add(prop3dGoo.Value.Duplicate());
-              break;
-            }
+                inProp3d.Add(prop3dGoo.Value.Duplicate());
+                break;
+              }
             default: {
-              string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", string.Empty);
-              type = type.Replace("Goo", string.Empty);
-              owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
-                + " to GsaSection or GsaProp2d");
-              return null;
-            }
+                string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.", string.Empty);
+                type = type.Replace("Goo", string.Empty);
+                owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
+                  + " to GsaSection or GsaProp2d");
+                return null;
+              }
           }
         }
 

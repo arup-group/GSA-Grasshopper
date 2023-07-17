@@ -221,11 +221,11 @@ namespace GsaGH.Components {
       dataAccess.GetData(2, ref _showText);
       dataAccess.GetData(3, ref significantDigits);
 
-      var _reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
-      var _annotations = new ConcurrentBag<AnnotationGoo>();
+      var reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
+      var annotations = new ConcurrentDictionary<int, AnnotationGoo>();
       Parallel.ForEach(nodes, node => {
-        DiagramGoo reactionForceVector = CreateReactionForceVectorWithAnnotations(node, forceValues,
-          scale, significantDigits, _annotations);
+        (DiagramGoo reactionForceVector, AnnotationGoo annotation) 
+          = CreateReactionForceVectorWithAnnotations(node, forceValues, scale, significantDigits);
         if (reactionForceVector == null) {
           return;
         }
@@ -234,12 +234,13 @@ namespace GsaGH.Components {
           reactionForceVector.SetColor(color);
         }
 
-        _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
+        reactionForceVectors.TryAdd(node.Key, reactionForceVector);
+        annotations.TryAdd(node.Key, annotation);
 
         ((IGH_PreviewObject)Params.Output[1]).Hidden = !_showText;
       });
 
-      SetOutputs(dataAccess, _reactionForceVectors, _annotations);
+      SetOutputs(dataAccess, reactionForceVectors, annotations);
       PostHog.Result(gsaResult.Type, 0, GsaResultsValues.ResultType.Force,
         _selectedDisplayValue.ToString());
     }
@@ -337,9 +338,9 @@ namespace GsaGH.Components {
       return momentUnitsMenu;
     }
 
-    private DiagramGoo CreateReactionForceVectorWithAnnotations(
+    private (DiagramGoo, AnnotationGoo) CreateReactionForceVectorWithAnnotations(
       KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale,
-      int significantDigits, ConcurrentBag<AnnotationGoo> annotationGoos) {
+      int significantDigits) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;
@@ -347,7 +348,7 @@ namespace GsaGH.Components {
         = forceValues.XxyyzzResults;
 
       if (!xyzResults.ContainsKey(nodeId)) {
-        return null;
+        return (null, null);
       }
 
       bool isForce = (int)_selectedDisplayValue < 4;
@@ -409,10 +410,10 @@ namespace GsaGH.Components {
         isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
       vectorResult = isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
 
-      annotationGoos.Add(new AnnotationGoo(GenerateAnnotationPosition(vectorResult),
-        vectorResult.Color, $"{Math.Round(forceValue.Value, significantDigits)} {Message} "));
+      var annotation = new AnnotationGoo(GenerateAnnotationPosition(vectorResult),
+        vectorResult.Color, $"{Math.Round(forceValue.Value, significantDigits)} {Message}");
 
-      return vectorResult;
+      return (vectorResult, annotation);
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
@@ -446,17 +447,23 @@ namespace GsaGH.Components {
 
     private void SetOutputs(
       IGH_DataAccess dataAccess, ConcurrentDictionary<int, DiagramGoo> reactionForceVectors,
-      ConcurrentBag<AnnotationGoo> annotations) {
+      ConcurrentDictionary<int, AnnotationGoo> annotations) {
       IOrderedEnumerable<KeyValuePair<int, DiagramGoo>> orderedDict
         = reactionForceVectors.OrderBy(index => index.Key);
+      IOrderedEnumerable<KeyValuePair<int, AnnotationGoo>> orderedDict2
+        = annotations.OrderBy(index => index.Key);
       var vectors = new List<DiagramGoo>();
+      var annos = new List<AnnotationGoo>();
 
       foreach (KeyValuePair<int, DiagramGoo> keyValuePair in orderedDict) {
         vectors.Add(keyValuePair.Value);
       }
+      foreach (KeyValuePair<int, AnnotationGoo> keyValuePair in orderedDict2) {
+        annos.Add(keyValuePair.Value);
+      }
 
       dataAccess.SetDataList(0, vectors);
-      dataAccess.SetDataList(1, annotations);
+      dataAccess.SetDataList(1, annos);
     }
 
     private Point3d GenerateAnnotationPosition(DiagramGoo vector) {

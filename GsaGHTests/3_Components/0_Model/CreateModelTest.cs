@@ -15,7 +15,7 @@ namespace GsaGHTests.Model {
       List<GsaModel> models, List<GsaSection> sections, List<GsaProp2d> prop2ds,
       List<GsaProp3d> prop3ds, List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d,
       List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d,
-      List<GsaMember3dGoo> mem3d, ModelUnit unit, List<GsaLoad> loads,
+      List<GsaMember3dGoo> mem3d, ModelUnit unit, List<IGsaLoad> loads,
       List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
@@ -85,7 +85,7 @@ namespace GsaGHTests.Model {
       }
 
       if (loads != null) {
-        foreach (GsaLoad input in loads) {
+        foreach (IGsaLoad input in loads) {
           ComponentTestHelper.SetInput(comp, input, 3);
         }
       }
@@ -147,12 +147,12 @@ namespace GsaGHTests.Model {
     }
 
     public static GH_OasysDropDownComponent CreateModelFromLoads(
-      List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces) {
+      List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
       comp.Params.Input[3].DataMapping = GH_DataMapping.Flatten;
       if (loads != null) {
-        foreach (GsaLoad input in loads) {
+        foreach (IGsaLoad input in loads) {
           ComponentTestHelper.SetInput(comp, input, 3);
         }
       }

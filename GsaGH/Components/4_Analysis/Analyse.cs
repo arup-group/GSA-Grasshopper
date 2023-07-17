@@ -186,13 +186,13 @@ namespace GsaGH.Components {
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
         List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
-      (List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
+      (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
         = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & nodes is null & elem1ds is null & elem2ds is null 
-        & mem1ds is null & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null 
+      if (models is null & lists is null & nodes is null & elem1ds is null & elem2ds is null
+        & mem1ds is null & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null
         & loads is null & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
