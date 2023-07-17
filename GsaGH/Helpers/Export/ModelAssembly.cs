@@ -46,6 +46,7 @@ namespace GsaGH.Helpers.Export {
 
     internal void ConvertNodes(List<GsaNode> nodes) {
       Export.Nodes.ConvertNodes(nodes, ref Nodes, ref Axes, Unit);
+      Nodes.UpdateFirstEmptyKeyToMaxKey();
     }
 
     internal void ConvertProperties(List<GsaSection> sections,
