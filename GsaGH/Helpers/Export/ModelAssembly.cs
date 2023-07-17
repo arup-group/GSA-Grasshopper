@@ -222,7 +222,9 @@ namespace GsaGH.Helpers.Export {
       // Set API Axis, GridPlanes and GridSurface in model
       Model.SetAxes(Axes.ReadOnlyDictionary);
       Model.SetGridPlanes(Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary);
-      Model.SetGridSurfaces(Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary);
+      foreach (int gridSurfaceId in Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary.Keys) {
+        Model.SetGridSurface(gridSurfaceId, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
+      }
       // Set API list in model
       Model.SetLists(Lists.ReadOnlyDictionary);
     }
