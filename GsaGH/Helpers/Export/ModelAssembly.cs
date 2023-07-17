@@ -255,7 +255,7 @@ namespace GsaGH.Helpers.Export {
       // Add Combination Cases to model
       if (combinations != null && combinations.Count > 0) {
         foreach (GsaCombinationCase co in combinations) {
-          Model.AddCombinationCase(co.Name, co.Description);
+          Model.AddCombinationCase(new CombinationCase(co.Name, co.Description));
         }
       }
     }
