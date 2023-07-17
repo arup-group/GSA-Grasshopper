@@ -37,7 +37,7 @@ namespace GsaGH.Graphics.Menu {
       Instances.CanvasCreated -= OnStartup;
     }
 
-    private static void PopulateSub(ToolStripMenuItem menuItem) {
+    internal static void PopulateSub(ToolStripMenuItem menuItem) {
       menuItem.DropDown.Items.Add("GsaGH Documentation", Resources.Documentation, (s, a)
         => Process.Start(new ProcessStartInfo {
           FileName
