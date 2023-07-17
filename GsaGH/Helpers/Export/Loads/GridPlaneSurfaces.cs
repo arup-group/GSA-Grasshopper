@@ -180,12 +180,6 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      if (model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].
-        Name == string.Empty) {
-        model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].
-          Name = "Grid surface " + gridSurfaceId;
-      }
-
       return gridSurfaceId;
     }
 

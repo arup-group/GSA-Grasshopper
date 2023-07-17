@@ -209,8 +209,17 @@ namespace GsaGH.Components {
         gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
       }
 
+
+      var ghtxt = new GH_String();
+      string name = "";
       bool changeGs = false;
-      var gs = new GridSurface();
+      if (da.GetData(3, ref ghtxt)) {
+        if (GH_Convert.ToString(ghtxt, out  name, GH_Conversion.Both)) {
+          changeGs = true;
+        }
+      }
+
+      var gs = new GridSurface(name);
       if (idSet) {
         gs.GridPlane = gsaGridPlaneSurface.GridSurface.GridPlane;
       }
@@ -239,14 +248,6 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string elem, GH_Conversion.Both)) {
           gs.Elements = elem;
-          changeGs = true;
-        }
-      }
-
-      var ghtxt = new GH_String();
-      if (da.GetData(3, ref ghtxt)) {
-        if (GH_Convert.ToString(ghtxt, out string name, GH_Conversion.Both)) {
-          gs.Name = name;
           changeGs = true;
         }
       }
