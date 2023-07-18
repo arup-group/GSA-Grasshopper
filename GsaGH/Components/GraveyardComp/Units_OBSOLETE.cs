@@ -8,16 +8,15 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysUnits.Units;
 
 namespace GsaGH.Components {
-  public class Units : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("82d4a7c0-802e-4ad6-ba4b-b0a68f7191bb");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+  public class Units_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("2eb77ab2-6ea1-4899-ab95-6ae8a36d9d23");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Units;
 
-    public Units() : base("Model Units", "Units",
+    public Units_OBSOLETE() : base("Model Units", "Units",
       "Get or set the units used by GSA when opening this Model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
@@ -44,10 +43,6 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Mass", "M", "Set Mass Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Stress", "S", "Set Stress Unit for this GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Strain", "Sn", "Set Strain Unit for this GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Temperature", "T", "Set Temperature Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Time Long", "TL", "Set Time Long Unit for this GSA Model",
         GH_ParamAccess.item);
@@ -81,10 +76,6 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Mass", "M", "Get Mass Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Stress", "S", "Get Stress Unit for this GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Strain", "Sn", "Get Strain Unit for this GSA Model",
-        GH_ParamAccess.item);
-      pManager.AddTextParameter("Temperature", "T", "Get Temperature Unit for this GSA Model",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Time Long", "TL", "Get Time Long Unit for this GSA Model",
         GH_ParamAccess.item);
@@ -179,22 +170,6 @@ namespace GsaGH.Components {
 
       ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {
-        Tuple<bool, Enum> result = ParseUnit(ghString, typeof(StrainUnit));
-        if (result.Item1) {
-          units.Strain = (StrainUnit)result.Item2;
-        }
-      }
-
-      ghString = new GH_String();
-      if (da.GetData(i++, ref ghString)) {
-        Tuple<bool, Enum> result = ParseUnit(ghString, typeof(TemperatureUnit));
-        if (result.Item1) {
-          units.Temperature = (TemperatureUnit)result.Item2;
-        }
-      }
-
-      ghString = new GH_String();
-      if (da.GetData(i++, ref ghString)) {
         Tuple<bool, Enum> result = ParseUnit(ghString, typeof(TimeUnit));
         if (result.Item1) {
           units.TimeLong = (TimeUnit)result.Item2;
@@ -237,8 +212,6 @@ namespace GsaGH.Components {
       da.SetData(i++, units.LengthSmall.ToString());
       da.SetData(i++, units.Mass.ToString());
       da.SetData(i++, units.Stress.ToString());
-      da.SetData(i++, units.Strain.ToString());
-      da.SetData(i++, units.Temperature.ToString());
       da.SetData(i++, units.TimeLong.ToString());
       da.SetData(i++, units.TimeMedium.ToString());
       da.SetData(i++, units.TimeShort.ToString());
