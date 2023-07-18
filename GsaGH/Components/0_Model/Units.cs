@@ -8,7 +8,6 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysUnits.Units;
 
 namespace GsaGH.Components {
   public class Units : GH_OasysComponent {
