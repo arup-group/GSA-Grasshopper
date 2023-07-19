@@ -95,6 +95,11 @@ namespace GsaGH.Helpers.Export {
     internal ReadOnlyDictionary<int, T> ReadOnlyDictionary => new ReadOnlyDictionary<int, T>(_dictionary);
     private readonly IDictionary<int, T> _dictionary;
     private int _firstEmptyKey = 1;
+    internal void UpdateFirstEmptyKeyToMaxKey() {
+      if (Count > 0) {
+        _firstEmptyKey = _dictionary.Keys.Max() + 1;
+      }
+    }
 
     internal GsaIntDictionary(IDictionary<int, T> dictionary) {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
