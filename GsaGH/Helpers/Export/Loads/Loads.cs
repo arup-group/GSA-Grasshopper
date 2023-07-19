@@ -214,37 +214,62 @@ namespace GsaGH.Helpers.Export {
 
     private static void ConvertFaceLoad(GsaFaceLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.ReferenceType);
-      if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.FaceLoad.Elements;
 
-        if (load.ReferenceType == ReferenceType.List) {
-          if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
-            owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
-              + Environment.NewLine + "Element list has not been set");
-          }
-          objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
-        } else {
-          objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
-        }
-
-        if (objectElemList.Trim() != string.Empty) {
-          load.FaceLoad.Elements = objectElemList;
-        } else {
-          string warning = "One or more FaceLoads with reference to a "
-            + load.ReferenceType
-            + " could not be added to the model. Ensure the reference "
-            + load.ReferenceType + " has been added to the model.";
-          if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
-            owner.AddRuntimeWarning(warning);
-          }
-          return;
-        }
+      if (load is GsaDiaphragmLoad diaphragm) {
+        ConvertDiaphragmLoad(diaphragm, ref model, owner);
+        return;
       }
 
+        if (load.ReferenceType != ReferenceType.None) {
+          string objectElemList = load.FaceLoad.Elements;
+
+          if (load.ReferenceType == ReferenceType.List) {
+            if (load.ReferenceList == null
+              && (load.ReferenceList.EntityType != Parameters.EntityType.Element
+              || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+              owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
+                + Environment.NewLine + "Element list has not been set");
+            }
+            objectElemList +=
+              Lists.GetElementList(load.ReferenceList, ref model, owner);
+          } else {
+            objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
+          }
+
+          if (objectElemList.Trim() != string.Empty) {
+            load.FaceLoad.Elements = objectElemList;
+          } else {
+            string warning = "One or more FaceLoads with reference to a "
+              + load.ReferenceType
+              + " could not be added to the model. Ensure the reference "
+              + load.ReferenceType + " has been added to the model.";
+            if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning)) {
+              owner.AddRuntimeWarning(warning);
+            }
+            return;
+          }
+        }
+
       model.Loads.Faces.Add(load.FaceLoad);
+    }
+
+    private static void ConvertDiaphragmLoad(GsaDiaphragmLoad load, ref ModelAssembly model, GH_Component owner) {
+      // do magic
+
+      //get elements in model:
+      GsaGuidIntListDictionary<Element> elements = model.Elements;
+
+      // set a warning for the user:
+      owner.AddRuntimeWarning("warning message text");
+
+      // you will need to create a bunch of new api face load objects:
+      var apiLoad = new FaceLoad();
+
+      // you can get the element list from the component like this:
+      string elementList = load.FaceLoad.Elements;
+
+      // you set them in the model like this:
+      model.Loads.Faces.Add(apiLoad);
     }
   }
 }
