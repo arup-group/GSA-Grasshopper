@@ -222,7 +222,9 @@ namespace GsaGH.Helpers.Export {
       // Set API Axis, GridPlanes and GridSurface in model
       Model.SetAxes(Axes.ReadOnlyDictionary);
       Model.SetGridPlanes(Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary);
-      Model.SetGridSurfaces(Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary);
+      foreach (int gridSurfaceId in Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary.Keys) {
+        Model.SetGridSurface(gridSurfaceId, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
+      }
       // Set API list in model
       Model.SetLists(Lists.ReadOnlyDictionary);
     }
@@ -254,7 +256,7 @@ namespace GsaGH.Helpers.Export {
       // Add Combination Cases to model
       if (combinations != null && combinations.Count > 0) {
         foreach (GsaCombinationCase co in combinations) {
-          Model.AddCombinationCase(co.Name, co.Description);
+          Model.AddCombinationCase(new CombinationCase(co.Name, co.Description));
         }
       }
     }

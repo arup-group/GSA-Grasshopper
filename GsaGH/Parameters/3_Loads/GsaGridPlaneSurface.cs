@@ -88,7 +88,7 @@ namespace GsaGH.Parameters {
     private GridPlane _gridPln = new GridPlane();
     private Guid _gridPlnGuid = Guid.NewGuid();
     private int _gridPlnId = 0;
-    private GridSurface _gridSrf = new GridSurface();
+    private GridSurface _gridSrf = new GridSurface("");
     private Guid _gridSrfGuid = Guid.NewGuid();
     private int _gridSrfId;
     private Plane _pln = Plane.WorldXY;
@@ -100,7 +100,7 @@ namespace GsaGH.Parameters {
       _gridPlnGuid = tryUseExisting ? new Guid() // will create 0000-00000-00000-00000
         : Guid.NewGuid(); // will create random guid
 
-      _gridSrf = new GridSurface {
+      _gridSrf = new GridSurface("") {
         Direction = 0,
         Elements = "all",
         ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL,
@@ -121,15 +121,14 @@ namespace GsaGH.Parameters {
           ToleranceAbove = _gridPln.ToleranceAbove,
           ToleranceBelow = _gridPln.ToleranceBelow,
         },
-        GridSurface = new GridSurface {
+        GridSurface = new GridSurface(_gridSrf.Name) {
           Direction = _gridSrf.Direction,
           Elements = _gridSrf.Elements.ToString(),
           ElementType = _gridSrf.ElementType,
           ExpansionType = _gridSrf.ExpansionType,
           GridPlane = _gridSrf.GridPlane,
-          Name = _gridSrf.Name.ToString(),
           SpanType = _gridSrf.SpanType,
-          Tolerance = _gridSrf.Tolerance,
+          Tolerance = _gridSrf.Tolerance
         },
         Elevation = Elevation,
         Tolerance = Tolerance,
