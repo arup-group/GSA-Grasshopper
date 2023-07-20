@@ -18,6 +18,7 @@ namespace GsaGH.Helpers.Export {
     internal List<GridLineLoad> GridLines;
     internal List<GridAreaLoad> GridAreas;
     internal GridPlaneSurfaces GridPlaneSurfaces;
+    internal Dictionary<int, LoadCase> LoadCases;
 
     internal Loads(Model model) {
       Nodes = new Load.NodeLoads();
@@ -28,6 +29,7 @@ namespace GsaGH.Helpers.Export {
       GridLines = new List<GridLineLoad>();
       GridAreas = new List<GridAreaLoad>();
       GridPlaneSurfaces = new GridPlaneSurfaces(model);
+      LoadCases = model.LoadCases().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
 
     internal static void ConvertLoad(List<IGsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
@@ -41,6 +43,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void ConvertLoad(IGsaLoad load, ref ModelAssembly model, GH_Component owner) {
+      ConvertLoadCase(load.LoadCase, ref model, owner);
       switch (load.LoadType) {
         case LoadType.Gravity:
           ConvertGravityLoad((GsaGravityLoad)load, ref model, owner);
@@ -65,6 +68,26 @@ namespace GsaGH.Helpers.Export {
         case LoadType.GridArea:
           ConvertGridAreaLoad((GsaGridAreaLoad)load, ref model, owner);
           break;
+      }
+    }
+
+    internal static void ConvertLoadCase(
+      GsaLoadCase loadCase, ref ModelAssembly model, GH_Component owner) {
+      if (loadCase == null) {
+        return;
+      }
+
+      if (model.Loads.LoadCases.ContainsKey(loadCase.Id)) {
+        LoadCase existingCase = model.Loads.LoadCases[loadCase.Id];
+        LoadCase newCase = loadCase.LoadCase;
+        if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
+          model.Loads.LoadCases[loadCase.Id] = newCase;
+          owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
+           $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
+           $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
+        }
+      } else {
+        model.Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
       }
     }
 

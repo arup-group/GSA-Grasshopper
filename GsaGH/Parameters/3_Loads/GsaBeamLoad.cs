@@ -4,6 +4,7 @@ using GsaAPI;
 namespace GsaGH.Parameters {
   public class GsaBeamLoad : IGsaLoad {
     public BeamLoad BeamLoad { get; set; }
+    public GsaLoadCase LoadCase { get; set; }
     public LoadType LoadType => LoadType.Beam;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
@@ -71,6 +72,10 @@ namespace GsaGH.Parameters {
       } else {
         dup.RefObjectGuid = new Guid(RefObjectGuid.ToString());
         dup.ReferenceType = ReferenceType;
+      }
+
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
       }
 
       return dup;

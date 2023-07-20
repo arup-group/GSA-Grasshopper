@@ -213,6 +213,7 @@ namespace GsaGH.Helpers.Export {
 
     internal void AssemblePostMeshing() {
       // Add API Loads in model
+      Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
       Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
       Model.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(Loads.Beams));
       Model.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(Loads.Faces));

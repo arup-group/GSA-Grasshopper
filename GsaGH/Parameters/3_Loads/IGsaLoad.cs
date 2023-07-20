@@ -7,6 +7,7 @@ namespace GsaGH.Parameters {
     GsaList ReferenceList { get; }
     ReferenceType ReferenceType { get; }
     Guid RefObjectGuid { get; }
+    GsaLoadCase LoadCase { get; }
     int CaseId();
     IGsaLoad Duplicate();
   }

@@ -983,6 +983,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LoadCaseParam {
+            get {
+                object obj = ResourceManager.GetObject("LoadCaseParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LoadInfo {
             get {
                 object obj = ResourceManager.GetObject("LoadInfo", resourceCulture);

@@ -15,6 +15,7 @@ namespace GsaGH.Parameters {
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
     public NodeLoadType Type;
+    public GsaLoadCase LoadCase { get; set; }
     public LoadType LoadType => LoadType.Node;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
@@ -49,6 +50,10 @@ namespace GsaGH.Parameters {
 
       if (ReferenceList != null) {
         dup.ReferenceList = ReferenceList.Duplicate();
+      }
+
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
       }
 
       return dup;
