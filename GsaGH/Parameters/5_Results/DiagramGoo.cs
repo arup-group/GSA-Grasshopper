@@ -54,7 +54,7 @@ namespace GsaGH.Parameters {
       ReadOnlyCollection<Triangle> triangles, ReadOnlyCollection<Polygon> polygons,
       double scalingFactor) {
       _arrowHead = CreateMeshFromTriangles(triangles);
-
+      scalingFactor *= 0.1;
       var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), scalingFactor);
       _arrowHead.Transform(scalar);
 
@@ -75,7 +75,6 @@ namespace GsaGH.Parameters {
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
 
       switch (ArrowMode) {
         case ArrowMode.NoArrow:
@@ -85,12 +84,13 @@ namespace GsaGH.Parameters {
           args.Pipeline.DrawArrow(_reactionForceLine, Color);
           break;
         case ArrowMode.DoubleArrow: {
-          args.Pipeline.DrawArrow(_reactionForceLine, Color);
-          const int arrowHeadScreenSize = 20;
-          Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
-          args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
-          break;
-        }
+            args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
+            args.Pipeline.DrawArrow(_reactionForceLine, Color);
+            const int arrowHeadScreenSize = 20;
+            Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
+            args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
+            break;
+          }
       }
 
       if (_arrowHeadOutlines == null) {
