@@ -54,7 +54,7 @@ namespace GsaGH.Parameters {
       ReadOnlyCollection<Triangle> triangles, ReadOnlyCollection<Polygon> polygons,
       double scalingFactor) {
       _arrowHead = CreateMeshFromTriangles(triangles);
-      scalingFactor *= 0.1;
+      
       var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), scalingFactor);
       _arrowHead.Transform(scalar);
 
