@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using Rhino.Geometry;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   public enum ArrowMode {
@@ -27,6 +33,9 @@ namespace GsaGH.Parameters {
     public Color Color { get; private set; } = Colours.GsaDarkPurple;
     public readonly ArrowMode ArrowMode;
     public readonly Point3d StartingPoint;
+    private Mesh _arrowHead;
+    private List<Color> _arrowHeadOutlineColors;
+    private List<Polyline> _arrowHeadOutlines;
     private Line _reactionForceLine;
 
     /// <summary>
@@ -41,9 +50,29 @@ namespace GsaGH.Parameters {
       Value = GetGhVector();
     }
 
+    internal DiagramGoo(
+      ReadOnlyCollection<Triangle> triangles, ReadOnlyCollection<Polygon> polygons,
+      double scalingFactor) {
+      _arrowHead = CreateMeshFromTriangles(triangles);
+
+      var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), scalingFactor);
+      _arrowHead.Transform(scalar);
+
+      _arrowHeadOutlines = CreatePolylinesFromPolygon(polygons);
+      _arrowHeadOutlines.ForEach(item => item.Transform(scalar));
+
+      _arrowHeadOutlineColors = polygons.Select(item => (Color)item.Colour).ToList();
+    }
+
+    private DiagramGoo() { }
+
     public BoundingBox ClippingBox => Boundingbox;
 
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (_arrowHead != null) {
+        args.Pipeline.DrawMeshFalseColors(_arrowHead);
+      }
+    }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
@@ -63,6 +92,14 @@ namespace GsaGH.Parameters {
           break;
         }
       }
+
+      if (_arrowHeadOutlines == null) {
+        return;
+      }
+
+      for (int i = 0; i < _arrowHeadOutlines.Count; i++) {
+        args.Pipeline.DrawPolyline(_arrowHeadOutlines[i], _arrowHeadOutlineColors[i]);
+      }
     }
 
     public override bool CastTo<TQ>(out TQ target) {
@@ -76,6 +113,14 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
+      if (_arrowHeadOutlines != null) {
+        return new DiagramGoo() {
+          _arrowHead = _arrowHead,
+          _arrowHeadOutlines = _arrowHeadOutlines,
+          _arrowHeadOutlineColors = _arrowHeadOutlineColors,
+        };
+      }
+
       return new DiagramGoo(StartingPoint, Direction, ArrowMode);
     }
 
@@ -87,8 +132,29 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      Point3d sPoint = xmorph.MorphPoint(StartingPoint);
-      return new DiagramGoo(sPoint, Direction, ArrowMode);
+      if (_arrowHeadOutlines != null) {
+        Point3d sPoint = xmorph.MorphPoint(StartingPoint);
+        return new DiagramGoo(sPoint, Direction, ArrowMode);
+      }
+
+      Mesh mesh = _arrowHead.DuplicateMesh();
+      xmorph.Morph(mesh);
+
+      var polylines = new List<Polyline>();
+      _arrowHeadOutlines?.ForEach(item => {
+        var polyline = new Polyline();
+        foreach (Point3d point in item) {
+          polyline.Add(xmorph.MorphPoint(point));
+        }
+
+        polylines.Add(polyline);
+      });
+
+      return new DiagramGoo() {
+        _arrowHead = mesh,
+        _arrowHeadOutlines = polylines,
+        _arrowHeadOutlineColors = _arrowHeadOutlineColors,
+      };
     }
 
     public override object ScriptVariable() {
@@ -107,9 +173,23 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      Point3d sPoint = StartingPoint;
-      sPoint.Transform(xform);
-      return new DiagramGoo(sPoint, Direction, ArrowMode);
+      if (_arrowHeadOutlines != null) {
+        Point3d sPoint = StartingPoint;
+        sPoint.Transform(xform);
+        return new DiagramGoo(sPoint, Direction, ArrowMode);
+      }
+
+      Mesh mesh = _arrowHead.DuplicateMesh();
+      mesh.Transform(xform);
+
+      var polylines = _arrowHeadOutlines?.ToList();
+      polylines?.ForEach(item => item.Transform(xform));
+
+      return new DiagramGoo() {
+        _arrowHead = mesh,
+        _arrowHeadOutlines = polylines,
+        _arrowHeadOutlineColors = _arrowHeadOutlineColors,
+      };
     }
 
     private Point3d CalculateExtraStartOffsetPoint(double pixelsPerUnit, int offset) {
@@ -143,6 +223,46 @@ namespace GsaGH.Parameters {
       point.Transform(t);
 
       return point;
+    }
+
+    private static Mesh CreateMeshFromTriangles(ReadOnlyCollection<Triangle> triangles) {
+      var faces = new ConcurrentBag<Mesh>();
+      Parallel.ForEach(triangles, tri => {
+        var face = new Mesh();
+        var col = (Color)tri.Colour;
+
+        foreach (Double3 verticy in tri.Vertices) {
+          face.Vertices.Add(verticy.X, verticy.Y, verticy.Z);
+          face.VertexColors.Add(col);
+        }
+
+        face.Faces.AddFace(0, 1, 2);
+        faces.Add(face);
+      });
+      var mesh = new Mesh();
+      mesh.Append(faces);
+      mesh.Vertices.CombineIdentical(true, false);
+      return mesh;
+    }
+
+    private static List<Polyline> CreatePolylinesFromPolygon(ReadOnlyCollection<Polygon> polygons) {
+      var polylines = new List<Polyline>();
+
+      foreach (Polygon polygon in polygons) {
+        var polyline = new Polyline();
+        foreach (Vector3 polygonPoint in polygon.Points) {
+          polyline.Add(polygonPoint.X, polygonPoint.Y, polygonPoint.Z);
+        }
+
+        if (!polyline.IsClosed) {
+          Vector3 point = polygon.Points[0];
+          polyline.Add(point.X, point.Y, point.Z);
+        }
+
+        polylines.Add(polyline);
+      }
+
+      return polylines;
     }
   }
 }

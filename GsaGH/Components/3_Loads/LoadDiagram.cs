@@ -225,8 +225,6 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Polygons", "Po", "Polygons of the diagram",
-        GH_ParamAccess.list);
       pManager.HideParameter(1);
     }
 
@@ -307,11 +305,11 @@ namespace GsaGH.Components {
         line.Flip();
 
         diagramLines.Add(
-          new DiagramGoo(endPoint, line.Direction * -1, ArrowMode.OneArrow).SetColor(color));
+          new DiagramGoo(endPoint, line.Direction * -1, ArrowMode.NoArrow).SetColor(color));
       }
 
-      var polygons = diagramResults.Polygons
-       .Select(polygon => new PolygonGoo(polygon.Points, (Color)polygon.Colour)).ToList();
+      diagramLines.Add(new DiagramGoo(diagramResults.Triangles, diagramResults.Polygons,
+        lengthScaleFactor));
 
       bool showAnnotations = true;
       int significantDigits = 3;
@@ -326,7 +324,6 @@ namespace GsaGH.Components {
 
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
-      da.SetDataList(2, polygons);
 
       //PostHog.Result(modelGoo.Value.Model.case, 1, "Diagram", type.ToString());
     }
