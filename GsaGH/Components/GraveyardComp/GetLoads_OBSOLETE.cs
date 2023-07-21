@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
@@ -94,21 +95,21 @@ namespace GsaGH.Components {
       da.GetData(0, ref modelGoo);
 
       Model model = modelGoo.Value.Model;
-
-      List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads());
-      List<GsaLoadGoo> node = Loads.GetNodeLoads(model);
-      List<GsaLoadGoo> beam = Loads.GetBeamLoads(model.BeamLoads());
-      List<GsaLoadGoo> face = Loads.GetFaceLoads(model.FaceLoads());
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+      List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads(), loadCases);
+      List<GsaLoadGoo> node = Loads.GetNodeLoads(model, loadCases);
+      List<GsaLoadGoo> beam = Loads.GetBeamLoads(model.BeamLoads(), loadCases);
+      List<GsaLoadGoo> face = Loads.GetFaceLoads(model.FaceLoads(), loadCases);
 
       IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
       IReadOnlyDictionary<int, Axis> axDict = model.Axes();
-      List<GsaLoadGoo> point
-        = Loads.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, _lengthUnit);
-      List<GsaLoadGoo> line
-        = Loads.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, _lengthUnit);
-      List<GsaLoadGoo> area
-        = Loads.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, _lengthUnit);
+      List<GsaLoadGoo> point = Loads.GetGridPointLoads(
+        model.GridPointLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
+      List<GsaLoadGoo> line = Loads.GetGridLineLoads(
+        model.GridLineLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
+      List<GsaLoadGoo> area = Loads.GetGridAreaLoads(
+        model.GridAreaLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
 
       var gps = srfDict.Keys.Select(key
         => new GsaGridPlaneSurfaceGoo(Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key,

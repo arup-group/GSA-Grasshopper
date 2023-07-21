@@ -29,7 +29,7 @@ namespace GsaGH.Helpers.Export {
       GridLines = new List<GridLineLoad>();
       GridAreas = new List<GridAreaLoad>();
       GridPlaneSurfaces = new GridPlaneSurfaces(model);
-      LoadCases = model.LoadCases().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      GetLoadCasesFromModel(model);
     }
 
     internal static void ConvertLoad(List<IGsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
@@ -39,6 +39,16 @@ namespace GsaGH.Helpers.Export {
 
       foreach (IGsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
         ConvertLoad(load, ref model, owner);
+      }
+    }
+
+    internal void GetLoadCasesFromModel(Model model) {
+      LoadCases = model.LoadCases().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      foreach (int key in  LoadCases.Keys) { 
+        // some old gwb files stores Dead as (int)0:
+        if ((int)LoadCases[key].CaseType == 0) {
+          LoadCases[key].CaseType = LoadCaseType.Dead;
+        }
       }
     }
 

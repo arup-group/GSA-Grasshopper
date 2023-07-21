@@ -54,6 +54,10 @@ namespace GsaGH.Parameters {
           break;
       }
 
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       if (ReferenceType == ReferenceType.None) {
         return dup;
       }
@@ -64,10 +68,6 @@ namespace GsaGH.Parameters {
       } else {
         dup.RefObjectGuid = new Guid(RefObjectGuid.ToString());
         dup.ReferenceType = ReferenceType;
-      }
-
-      if (LoadCase != null) {
-        dup.LoadCase = LoadCase;
       }
 
       return dup;

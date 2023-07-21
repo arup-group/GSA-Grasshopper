@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
   ///   This class provides a parameter interface for the <see cref="GsaLoadCaseGoo" /> type.
   /// </summary>
   public class GsaLoadCaseParameter : GH_OasysPersistentParam<GsaLoadCaseGoo> {
-    public override Guid ComponentGuid => new Guid("2833ef04-c595-4b05-8db3-622c75fa9a25");
+    public override Guid ComponentGuid => new Guid("5e21f03d-8851-495b-9837-122c9a3a0d67");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaLoadGoo.Name + " parameter" :

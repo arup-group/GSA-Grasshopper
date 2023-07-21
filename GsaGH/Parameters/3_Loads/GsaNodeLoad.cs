@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
       AppliedDisp = 1,
       Settlement = 2,
       Gravity = 3,
-      NumTypes = 4, W
+      NumTypes = 4,
     }
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
@@ -44,16 +44,17 @@ namespace GsaGH.Parameters {
         },
         Type = Type,
       };
+
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       if (_refPoint != Point3d.Unset) {
         dup._refPoint = new Point3d(_refPoint);
       }
 
       if (ReferenceList != null) {
         dup.ReferenceList = ReferenceList.Duplicate();
-      }
-
-      if (LoadCase != null) {
-        dup.LoadCase = LoadCase;
       }
 
       return dup;
