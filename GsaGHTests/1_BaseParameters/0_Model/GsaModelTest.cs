@@ -30,7 +30,7 @@ namespace GsaGHTests.Parameters {
 
       var assembled = new GsaModel {
         Model = AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null), };
+          null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null), };
 
       Duplicates.AreEqual(original, assembled, true);
     }

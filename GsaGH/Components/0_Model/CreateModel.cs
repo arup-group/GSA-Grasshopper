@@ -192,7 +192,7 @@ namespace GsaGH.Components {
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
         List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
-      (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces)
+      (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases)
         = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
@@ -217,7 +217,7 @@ namespace GsaGH.Components {
 
       // Assemble model
       model.Model = AssembleModel.Assemble(model, lists, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds,
-        mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks,
+        mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, analysisTasks,
         combinationCases, _lengthUnit, _tolerance, _reMesh, this);
 
       UpdateMessage();

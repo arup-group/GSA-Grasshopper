@@ -7,9 +7,11 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using OasysUnits;
 using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using LoadCase = GsaAPI.LoadCase;
 
 namespace GsaGH.Helpers.Export {
   internal class ModelAssembly {
@@ -127,6 +129,27 @@ namespace GsaGH.Helpers.Export {
       }
 
       Load.NodeLoads.ConvertNodeLoads(loads, ref Loads.Nodes, ref Nodes, ref Lists, Unit);
+    }
+
+    internal void ConvertLoadCases(List<GsaLoadCase> loadCases, GH_Component owner) {
+      if (loadCases == null || loadCases.Count == 0) {
+        return;
+      }
+
+      foreach (GsaLoadCase loadCase in loadCases) {
+        if (Loads.LoadCases.ContainsKey(loadCase.Id)) {
+          LoadCase existingCase = Loads.LoadCases[loadCase.Id];
+          LoadCase newCase = loadCase.LoadCase;
+          if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
+            Loads.LoadCases[loadCase.Id] = newCase;
+            owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
+             $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
+             $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
+          }
+        } else {
+          Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+        }
+      }
     }
 
     internal void AssemblePreMeshing() {

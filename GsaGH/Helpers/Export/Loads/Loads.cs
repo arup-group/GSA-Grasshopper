@@ -7,6 +7,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using LoadCase = GsaAPI.LoadCase;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
