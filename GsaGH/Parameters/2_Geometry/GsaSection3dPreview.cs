@@ -213,13 +213,13 @@ namespace GsaGH.Parameters {
           Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
-          for1D = type == DimensionType.OneDimensional 
-            ? DisplayMethodFor1D.OutLineFilled : DisplayMethodFor1D.Off,
-          for2D = type == DimensionType.OneDimensional ? DisplayMethodFor2D.Off
-            : DisplayMethodFor2D.Solid
-            | DisplayMethodFor2D.Thickness
-            | DisplayMethodFor2D.Edge,
-          for3D = DisplayMethodFor3D.Off
+          For1d = type == DimensionType.OneDimensional 
+            ? DisplayMethodFor1d.OutLineFilled : DisplayMethodFor1d.Off,
+          For2d = type == DimensionType.OneDimensional ? DisplayMethodFor2d.Off
+            : DisplayMethodFor2d.Solid
+            | DisplayMethodFor2d.Thickness
+            | DisplayMethodFor2d.Edge,
+          For3d = DisplayMethodFor3d.Off
         },
         ScaleFactor = 1.0,
         IsNormalised = true
@@ -239,13 +239,13 @@ namespace GsaGH.Parameters {
           Type = GsaAPI.EntityType.Case 
         },
         EntityDisplayMethod = new EntityDisplayMethod {
-          for1D = type == DimensionType.OneDimensional
-            ? DisplayMethodFor1D.OutLineFilled : DisplayMethodFor1D.Off,
-          for2D = type == DimensionType.OneDimensional ? DisplayMethodFor2D.Off
-            : DisplayMethodFor2D.Solid
-            | DisplayMethodFor2D.Thickness
-            | DisplayMethodFor2D.Edge,
-          for3D = DisplayMethodFor3D.Off
+          For1d = type == DimensionType.OneDimensional
+            ? DisplayMethodFor1d.OutLineFilled : DisplayMethodFor1d.Off,
+          For2d = type == DimensionType.OneDimensional ? DisplayMethodFor2d.Off
+            : DisplayMethodFor2d.Solid
+            | DisplayMethodFor2d.Thickness
+            | DisplayMethodFor2d.Edge,
+          For3d = DisplayMethodFor3d.Off
         },
         ScaleFactor = 1.0,
         IsNormalised = true
@@ -265,11 +265,11 @@ namespace GsaGH.Parameters {
           Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
-          for1D = DisplayMethodFor1D.OutLineFilled,
-          for2D = DisplayMethodFor2D.Solid
-                | DisplayMethodFor2D.Thickness
-                | DisplayMethodFor2D.Edge,
-          for3D = DisplayMethodFor3D.Off
+          For1d = DisplayMethodFor1d.OutLineFilled,
+          For2d = DisplayMethodFor2d.Solid
+                | DisplayMethodFor2d.Thickness
+                | DisplayMethodFor2d.Edge,
+          For3d = DisplayMethodFor3d.Off
         },
         ScaleFactor = 1.0,
         IsNormalised = true
@@ -289,11 +289,11 @@ namespace GsaGH.Parameters {
           Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
-          for1D = DisplayMethodFor1D.OutLineFilled,
-          for2D = DisplayMethodFor2D.Solid
-                | DisplayMethodFor2D.Thickness
-                | DisplayMethodFor2D.Edge,
-          for3D = DisplayMethodFor3D.Off
+          For1d = DisplayMethodFor1d.OutLineFilled,
+          For2d = DisplayMethodFor2d.Solid
+                | DisplayMethodFor2d.Thickness
+                | DisplayMethodFor2d.Edge,
+          For3d = DisplayMethodFor3d.Off
         },
         ScaleFactor = 1.0,
         IsNormalised = true
