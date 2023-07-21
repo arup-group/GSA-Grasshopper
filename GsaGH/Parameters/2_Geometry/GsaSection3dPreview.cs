@@ -44,6 +44,11 @@ namespace GsaGH.Parameters {
       CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
     }
 
+    public GsaSection3dPreview(GsaResult res, string elementList, double scale) {
+      GraphicSpecification spec = ResultSpec(res, elementList, scale);
+      CreateGraphics(res.Model.Model, spec);
+    }
+
     internal static GsaSection3dPreview CreateFromApi(
       GsaModel model, Layer layer) {
       var section3dPreview = new GsaSection3dPreview();
@@ -221,8 +226,10 @@ namespace GsaGH.Parameters {
             | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 1.0,
-        IsNormalised = true
+        ScaleFactor = 0,
+        IsNormalised = false,
+        DrawInitialState = true,
+        DrawDeformedShape = false
       };
     }
 
@@ -247,8 +254,10 @@ namespace GsaGH.Parameters {
             | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 1.0,
-        IsNormalised = true
+        ScaleFactor = 0,
+        IsNormalised = false,
+        DrawInitialState = true,
+        DrawDeformedShape = false
       };
     }
 
@@ -271,8 +280,10 @@ namespace GsaGH.Parameters {
                 | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 1.0,
-        IsNormalised = true
+        ScaleFactor = 0,
+        IsNormalised = false,
+        DrawInitialState = true,
+        DrawDeformedShape = false
       };
     }
 
@@ -295,8 +306,39 @@ namespace GsaGH.Parameters {
                 | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 1.0,
-        IsNormalised = true
+        ScaleFactor = 0,
+        IsNormalised = false,
+        DrawInitialState = true,
+        DrawDeformedShape = false
+      };
+    }
+
+    private static GraphicSpecification ResultSpec(
+      GsaResult res, string elementList = "all", double scaleFactor = 1.0) {
+      string caseType = res.Type == GsaResult.CaseType.AnalysisCase ? "A" : "C";
+      string caseDefinition = $"{caseType}{res.CaseId}";
+      return new GraphicSpecification() {
+        Entities = new EntityList() {
+          Definition = elementList,
+          Name = "Name",
+          Type = GsaAPI.EntityType.Element
+        },
+        Cases = new EntityList() {
+          Definition = caseDefinition,
+          Name = "case",
+          Type = GsaAPI.EntityType.Case
+        },
+        EntityDisplayMethod = new EntityDisplayMethod {
+          For1d = DisplayMethodFor1d.OutLineFilled,
+          For2d = DisplayMethodFor2d.Solid
+                | DisplayMethodFor2d.Thickness
+                | DisplayMethodFor2d.Edge,
+          For3d = DisplayMethodFor3d.Off
+        },
+        ScaleFactor = scaleFactor,
+        IsNormalised = true,
+        DrawInitialState = false,
+        DrawDeformedShape = true
       };
     }
   }
