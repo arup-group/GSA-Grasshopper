@@ -252,12 +252,20 @@ namespace GsaGH.Helpers.Export {
         }
       }
     }
+
     internal void ConvertCombinations(List<GsaCombinationCase> combinations) {
-      // Add Combination Cases to model
       if (combinations != null && combinations.Count > 0) {
+        var existing = Model.CombinationCases()
+          .ToDictionary(k  => k.Key, k => k.Value);
         foreach (GsaCombinationCase co in combinations) {
-          Model.AddCombinationCase(new CombinationCase(co.Name, co.Definition));
+          var apiCase = new CombinationCase(co.Name, co.Definition);
+          if (co.Id > 0 && existing.ContainsKey(co.Id)) {
+            existing[co.Id] = apiCase;
+          } else {
+            existing.Add(co.Id, apiCase);
+          }
         }
+        Model.SetCombinationCases(new ReadOnlyDictionary<int, CombinationCase>(existing));
       }
     }
 

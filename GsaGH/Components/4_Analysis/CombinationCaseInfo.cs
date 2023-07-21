@@ -27,7 +27,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("ID", "ID", "Combination Case number", GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "Combination Case Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Description", "De",
         "The description should take the form: 1.5A1 + 0.4A3." + Environment.NewLine
         + "Use 'or' for enveloping cases eg (1 or -1.4)A1," + Environment.NewLine
@@ -37,8 +38,9 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaCombinationCaseGoo caseGoo = null;
       da.GetData(0, ref caseGoo);
-      da.SetData(0, caseGoo.Value.Name);
-      da.SetData(1, caseGoo.Value.Definition);
+      da.SetData(0, caseGoo.Value.Id);
+      da.SetData(1, caseGoo.Value.Name);
+      da.SetData(2, caseGoo.Value.Definition);
     }
   }
 }
