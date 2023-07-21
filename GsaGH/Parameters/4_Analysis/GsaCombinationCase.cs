@@ -1,4 +1,7 @@
-﻿namespace GsaGH.Parameters {
+﻿using System.Collections.Generic;
+using GsaAPI;
+
+namespace GsaGH.Parameters {
   public class GsaCombinationCase {
     public string Description { get; set; }
     public string Name { get; set; }
@@ -16,6 +19,9 @@
       Name = name;
       Description = description;
     }
+
+    internal GsaCombinationCase(KeyValuePair<int, CombinationCase> keyValuePair) : this(
+      keyValuePair.Key, keyValuePair.Value.Name, keyValuePair.Value.Definition) { }
 
     public GsaCombinationCase Duplicate() {
       return new GsaCombinationCase(Id, Name, Description);
