@@ -8,17 +8,19 @@ namespace GsaGH.Parameters {
     public LoadCase LoadCase;
     private GsaLoadCase() { }
     public GsaLoadCase(int id) {
+      if (id < 1) {
+        throw new ArgumentException("LoadCase ID cannot be zero or negative");
+      }
+
       Id = id;
     }
-    public GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) {
+    public GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) : this(id) {
       LoadCase = new LoadCase() {
         CaseType = (LoadCaseType)Enum.Parse(typeof(LoadCaseType), type.ToString()),
         Name = name
       };
-      Id = id;
     }
-    internal GsaLoadCase(int id, ReadOnlyDictionary<int, LoadCase> loadCases) {
-      Id = id;
+    internal GsaLoadCase(int id, ReadOnlyDictionary<int, LoadCase> loadCases) : this(id) {
       if (loadCases != null && loadCases.ContainsKey(Id)) {
         LoadCase = loadCases[id];
       }

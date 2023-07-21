@@ -24,6 +24,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
     [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
     [InlineData(typeof(GsaSectionModifierGoo), typeof(GsaSectionModifier))]
+    [InlineData(typeof(GsaLoadCaseGoo), typeof(GsaLoadCase))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaBeamLoad))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaFaceLoad))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaGravityLoad))]
