@@ -7,9 +7,9 @@ namespace GsaGHTests.Helper {
     internal static string SteelDesignComplex {
       get {
         if (steelDesignComplex == "") {
-          steelDesignComplex
-            = DownloadFile(
-              "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
+          steelDesignComplex = FilePath("Steel_Design_Complex.gwb");
+          //= DownloadFile(
+          //  "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
         }
 
         return steelDesignComplex;
@@ -18,9 +18,9 @@ namespace GsaGHTests.Helper {
     internal static string SteelDesignSimple {
       get {
         if (steelDesignSimple == "") {
-          steelDesignSimple
-            = DownloadFile(
-              "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Simple.gwb");
+          steelDesignSimple = FilePath("Steel_Design_Simple.gwb");
+            //= DownloadFile(
+            //  "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Simple.gwb");
         }
 
         return steelDesignSimple;
@@ -35,6 +35,16 @@ namespace GsaGHTests.Helper {
       var webClient = new WebClient();
       webClient.DownloadFile(url, path + fileName);
       return path + fileName;
+    }
+
+    private static string FilePath(string fileName) {
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
+        .FullName;
+      return Path.Combine(new string[] {
+        solutiondir,
+        "TestHelpers",
+        fileName
+      });
     }
   }
 }
