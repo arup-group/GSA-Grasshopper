@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     //protected override Bitmap Icon => Resources.FaceLoad;
 
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
-
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     public CreateDiaphragmLoads() : base("Create Diaphragm Load", "DiaphragmLoad", "Create GSA Diaphragm Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
@@ -50,6 +50,12 @@ namespace GsaGH.Components {
       Params.Input[6].Description = "Load Value";
       Params.Input[6].Access = GH_ParamAccess.item;
       Params.Input[6].Optional = false;
+
+      Params.Input[6].NickName = "C";
+      Params.Input[6].Name = "Centroid [" + unitAbbreviation + "]";
+      Params.Input[6].Description = "Perpendicular Centroid of Load";
+      Params.Input[6].Access = GH_ParamAccess.item;
+      Params.Input[6].Optional = false;
     }
 
     protected override void InitialiseDropdowns() {
@@ -67,7 +73,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
+      string unitAbbreviation2 = Pressure.GetAbbreviation(_forcePerAreaUnit);
+      string unitAbbreviation = Force.GetAbbreviation(_forceUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
         GH_ParamAccess.item, 1);
@@ -85,12 +92,14 @@ namespace GsaGH.Components {
         + Environment.NewLine + "0 : Global" + Environment.NewLine + "-1 : Local",
         GH_ParamAccess.item, -1);
       pManager.AddTextParameter("Direction", "Di",
-        "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"
-        + Environment.NewLine + "x" + Environment.NewLine + "y" + Environment.NewLine + "z",
-        GH_ParamAccess.item, "z");
+        "Load direction (default x)." + Environment.NewLine + "Accepted inputs are:"
+        + Environment.NewLine + "x" + Environment.NewLine + "y",
+        GH_ParamAccess.item, "x");
       pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)",
         GH_ParamAccess.item, false);
       pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Centroid [" + unitAbbreviation + "]", "C", "Perpendicular Centroid of Load",
         GH_ParamAccess.item);
 
       pManager[0].Optional = true;
