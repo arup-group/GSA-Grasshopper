@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
-using System.Net;
 
 namespace GsaGHTests.Helper {
   internal static class GsaFile {
@@ -29,13 +27,13 @@ namespace GsaGHTests.Helper {
     private static string steelDesignComplex = "";
     private static string steelDesignSimple = "";
 
-    private static string DownloadFile(string url) {
-      string path = Path.GetTempPath();
-      string fileName = url.Split('/').Last();
-      var webClient = new WebClient();
-      webClient.DownloadFile(url, path + fileName);
-      return path + fileName;
-    }
+    //private static string DownloadFile(string url) {
+    //  string path = Path.GetTempPath();
+    //  string fileName = url.Split('/').Last();
+    //  var webClient = new WebClient();
+    //  webClient.DownloadFile(url, path + fileName);
+    //  return path + fileName;
+    //}
 
     private static string FilePath(string fileName) {
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
