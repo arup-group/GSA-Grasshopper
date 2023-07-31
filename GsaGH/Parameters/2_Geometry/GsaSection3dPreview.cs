@@ -169,7 +169,7 @@ namespace GsaGH.Parameters {
           col = Colours.Preview3dMeshDefault;
         }
         
-        foreach (Double3 verticy in tri.Vertices) {
+        foreach (Vector3 verticy in tri.Vertices) {
           face.Vertices.Add(verticy.X, verticy.Y, verticy.Z);
           face.VertexColors.Add(col);
         }
@@ -226,9 +226,9 @@ namespace GsaGH.Parameters {
             | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 0,
-        IsNormalised = false,
-        DrawInitialState = true,
+        DeformationScaleFactor = 0,
+        IsDeformationNormalised = false,
+        DrawInitialState = false,
         DrawDeformedShape = false
       };
     }
@@ -254,9 +254,9 @@ namespace GsaGH.Parameters {
             | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 0,
-        IsNormalised = false,
-        DrawInitialState = true,
+        DeformationScaleFactor = 0,
+        IsDeformationNormalised = false,
+        DrawInitialState = false,
         DrawDeformedShape = false
       };
     }
@@ -280,9 +280,9 @@ namespace GsaGH.Parameters {
                 | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 0,
-        IsNormalised = false,
-        DrawInitialState = true,
+        DeformationScaleFactor = 0,
+        IsDeformationNormalised = false,
+        DrawInitialState = false,
         DrawDeformedShape = false
       };
     }
@@ -306,9 +306,9 @@ namespace GsaGH.Parameters {
                 | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = 0,
-        IsNormalised = false,
-        DrawInitialState = true,
+        DeformationScaleFactor = 0,
+        IsDeformationNormalised = false,
+        DrawInitialState = false,
         DrawDeformedShape = false
       };
     }
@@ -335,8 +335,8 @@ namespace GsaGH.Parameters {
                 | DisplayMethodFor2d.Edge,
           For3d = DisplayMethodFor3d.Off
         },
-        ScaleFactor = scaleFactor,
-        IsNormalised = true,
+        DeformationScaleFactor = scaleFactor,
+        IsDeformationNormalised = false,
         DrawInitialState = false,
         DrawDeformedShape = true
       };
