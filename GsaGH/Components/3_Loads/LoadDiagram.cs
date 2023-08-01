@@ -336,6 +336,9 @@ namespace GsaGH.Components {
       var diagramLines = new ConcurrentBag<DiagramGoo>();
       var diagramAnnotations = new ConcurrentBag<AnnotationGoo>();
 
+      double arrowScale = _gsaModel.BoundingBox.Diagonal.Length * 
+      (autoScale ? 0.00025 : computedScale);
+
       Parallel.ForEach(types, type => {
         var graphic = new DiagramSpecification() {
           ListDefinition = elementlist,
@@ -343,6 +346,7 @@ namespace GsaGH.Components {
           Cases = _caseId,
           ScaleFactor = computedScale,
           IsNormalised = autoScale,
+          StructuralScale = arrowScale,
         };
 
         GraphicDrawResult diagramResults = _gsaModel.Model.GetDiagrams(graphic);
@@ -364,7 +368,7 @@ namespace GsaGH.Components {
         }
 
         if (diagramResults.Triangles.Count > 0) {
-          diagramLines.Add(new DiagramGoo(diagramResults.Triangles, diagramResults.Polygons,
+          diagramLines.Add(new DiagramGoo(diagramResults.Triangles, diagramResults.Lines,
             lengthScaleFactor));
         }
 
