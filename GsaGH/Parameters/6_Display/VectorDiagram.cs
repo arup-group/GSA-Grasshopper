@@ -49,7 +49,7 @@ namespace GsaGH.Parameters {
         Color = Colours.GsaDarkPurple;
       }
 
-      if (ArrowMode == ArrowType.OneArrow) {
+      if (ArrowMode == ArrowType.DoubleArrow) {
         Color = Colours.GsaGold;
       }
     }
