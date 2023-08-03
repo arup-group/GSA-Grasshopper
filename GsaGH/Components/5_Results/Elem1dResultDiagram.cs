@@ -21,6 +21,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = GsaAPI.Line;
@@ -171,7 +172,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Diagram lines", "L", "Lines of the diagram",
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines of the GSA Result Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
@@ -259,8 +260,8 @@ namespace GsaGH.Components {
         IsNormalised = autoScale,
       };
 
-      var diagramLines = new List<DiagramGoo>();
-      var diagramAnnotations = new List<AnnotationGoo>();
+      var diagramLines = new List<GsaDiagramGoo>();
+      var diagramAnnotations = new List<GsaAnnotationGoo>();
 
       GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
@@ -270,17 +271,7 @@ namespace GsaGH.Components {
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
-        var startPoint = new Point3d(item.Start.X, item.Start.Y, item.Start.Z);
-        var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
-        startPoint *= lengthScaleFactor;
-        endPoint *= lengthScaleFactor;
-        color = color != Color.Empty ? color : (Color)item.Colour;
-
-        var line = new Rhino.Geometry.Line(startPoint, endPoint);
-        line.Flip();
-
-        diagramLines.Add(
-          new DiagramGoo(startPoint, line.Direction, ArrowMode.NoArrow).SetColor(color));
+        diagramLines.Add(new GsaDiagramGoo(new LineDiagram(item, lengthScaleFactor, color)));
       }
 
       bool showAnnotations = true;
@@ -300,10 +291,10 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 1, "Diagram", type.ToString());
     }
 
-    private List<AnnotationGoo> GenerateAnnotations(
+    private List<GsaAnnotationGoo> GenerateAnnotations(
       IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
       int significantDigits, Color color) {
-      var diagramAnnotations = new List<AnnotationGoo>();
+      var diagramAnnotations = new List<GsaAnnotationGoo>();
 
       foreach (Annotation annotation in annotationsFromModel) {
         {
@@ -320,7 +311,7 @@ namespace GsaGH.Components {
               = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
           }
 
-          diagramAnnotations.Add(new AnnotationGoo(location, color, valueToAnnotate));
+          diagramAnnotations.Add(new GsaAnnotationGoo(location, color, valueToAnnotate));
         }
       }
 

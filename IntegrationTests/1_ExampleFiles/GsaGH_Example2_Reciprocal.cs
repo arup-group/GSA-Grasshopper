@@ -47,7 +47,7 @@ namespace IntegrationTests.ExampleFiles {
     public void VectorResultGooTest() {
       IGH_Param param = Helper.FindParameter(Document(), "ReactionForceVector");
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
-        var item = (DiagramGoo)data;
+        var item = (IGsaDiagram)data;
         Assert.True(item.Value.IsValid);
         Assert.True(item.Boundingbox.IsValid);
         Assert.True(item.ClippingBox.IsValid);

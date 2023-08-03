@@ -10,13 +10,13 @@ using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class AnnotationGoo : GH_OasysGeometricGoo<TextDot>, IGH_PreviewData {
+  public class GsaAnnotationGoo : GH_OasysGeometricGoo<TextDot>, IGH_PreviewData {
     public override string TypeName => "Annotation";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public override string TypeDescription => "Annotation any GSA object for ID or result value";
     public Color Color { get; private set; } = Color.Empty;
 
-    public AnnotationGoo(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
+    public GsaAnnotationGoo(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
     }
     public override bool CastTo<TQ>(out TQ target) {
@@ -61,7 +61,7 @@ namespace GsaGH.Parameters {
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override IGH_GeometricGoo Duplicate() {
-      return new AnnotationGoo(Value.Point, Color, Value.Text);
+      return new GsaAnnotationGoo(Value.Point, Color, Value.Text);
     }
 
     public override string ToString() { 
@@ -86,13 +86,13 @@ namespace GsaGH.Parameters {
       TextDot value = Value;
       Point3d point = Value.Point;
       point.Transform(xform);
-      return new AnnotationGoo(point, Color, Value.Text);
+      return new GsaAnnotationGoo(point, Color, Value.Text);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       TextDot value = Value;
       Point3d point = xmorph.MorphPoint(Value.Point);
-      return new AnnotationGoo(point, Color, Value.Text);
+      return new GsaAnnotationGoo(point, Color, Value.Text);
     }
   }
 }

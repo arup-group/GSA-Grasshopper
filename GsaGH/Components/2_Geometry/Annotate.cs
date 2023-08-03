@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowID;
-    private GH_Structure<AnnotationGoo> _annotations = new GH_Structure<AnnotationGoo>();
+    private GH_Structure<GsaAnnotationGoo> _annotations = new GH_Structure<GsaAnnotationGoo>();
     private Color _color = Color.Empty;
     private GH_Structure<GH_Point> _points = new GH_Structure<GH_Point>();
     private GH_Structure<GH_String> _texts = new GH_Structure<GH_String>();
@@ -50,7 +50,7 @@ namespace GsaGH.Components {
         color = _color;
       }
 
-      _annotations.Append(new AnnotationGoo(pt, color == Color.Empty ? _color : color, txt), path);
+      _annotations.Append(new GsaAnnotationGoo(pt, color == Color.Empty ? _color : color, txt), path);
       _points.Append(new GH_Point(pt), path);
       _texts.Append(new GH_String(txt), path);
     }
@@ -64,14 +64,14 @@ namespace GsaGH.Components {
         _color = Color.Empty;
       }
 
-      _annotations = new GH_Structure<AnnotationGoo>();
+      _annotations = new GH_Structure<GsaAnnotationGoo>();
       _points = new GH_Structure<GH_Point>();
       _texts = new GH_Structure<GH_String>();
 
       foreach (GH_Path path in tree.Paths) {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
           switch (goo) {
-            case AnnotationGoo annotationGoo:
+            case GsaAnnotationGoo annotationGoo:
               AddAnnotation(annotationGoo.Value.Point, annotationGoo.Value.Text,
                 annotationGoo.Color, path);
               break;
@@ -138,8 +138,16 @@ namespace GsaGH.Components {
                 Color.Empty, path);
               break;
 
-            case DiagramGoo resVector:
-              AddAnnotation(resVector.StartingPoint, string.Empty, Color.Empty, path);
+            case VectorDiagram diagramVector:
+              AddAnnotation(diagramVector.AnchorPoint, string.Empty, Color.Empty, path);
+              break;
+
+            case LineDiagram diagramLine:
+              AddAnnotation(diagramLine.Value.PointAt(0.5), string.Empty, Color.Empty, path);
+              break;
+
+            case ArrowheadDiagram arrowhead:
+              // do nothing
               break;
 
             default:

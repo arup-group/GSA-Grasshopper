@@ -15,6 +15,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -23,6 +24,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
+using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = GsaAPI.Line;
@@ -40,7 +42,6 @@ namespace GsaGH.Components {
     private List<string> _2dDiagramTypes;
     private List<string> _3dDiagramTypes;
     private List<string> _beamDiagramTypes;
-    // private List<string> _gravityDiagramTypes;
     private List<string> _gridDiagramTypes;
     private List<string> _nodalDiagramTypes;
     private GsaModel _gsaModel;
@@ -49,7 +50,6 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private List<string> _loadTypes = new List<string>() {
       "All",
-      //"Gravity",
       "Nodal",
       "Beam",
       "2D",
@@ -57,7 +57,7 @@ namespace GsaGH.Components {
       "Grid",
     };
     private bool _undefinedModelLengthUnit;
-
+    private Guid _modelGuid = new Guid();
 
     public LoadDiagram() : base("Load Diagram", "LoadDiagram", "Displays GSA Load Diagram",
       CategoryName.Name(), SubCategoryName.Cat3()) { }
@@ -82,7 +82,6 @@ namespace GsaGH.Components {
               _caseId = _selectedItems[i];
             }
 
-            UpdateCaseDropdown();
             break;
           }
         case 1: { // Load Type
@@ -103,10 +102,6 @@ namespace GsaGH.Components {
             }
 
             switch (_selectedItems[i]) {
-              //case "Gravity": {
-              //    _dropDownItems[k] = _gravityDiagramTypes;
-              //    break;
-              //  }
               case "Grid": {
                   _dropDownItems[k] = _gridDiagramTypes;
                   break;
@@ -199,40 +194,7 @@ namespace GsaGH.Components {
       _isInitialised = true;
     }
 
-    private void PreparedDropdownLists() {
-      _2dDiagramTypes = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description.Contains("2d")).Select(item => item.Description).ToList();
-      _2dDiagramTypes = _2dDiagramTypes.Select(x => x.Replace("2d ", string.Empty)).ToList();
-      _2dDiagramTypes.Insert(0, "All");
-
-      _3dDiagramTypes = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description.Contains("3d")).Select(item => item.Description).ToList();
-      _3dDiagramTypes = _3dDiagramTypes.Select(x => x.Replace("3d ", string.Empty)).ToList();
-      _3dDiagramTypes.Insert(0, "All");
-
-      _beamDiagramTypes = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description.Contains("Beam")).Select(item => item.Description).ToList();
-      _beamDiagramTypes = _beamDiagramTypes.Select(x => x.Replace("Beam ", string.Empty)).ToList();
-      _beamDiagramTypes.Insert(0, "All");
-
-      //_gravityDiagramTypes = new List<string>() {
-      //  "All",
-      //  "Nodal",
-      //  "Beam",
-      //  "2D",
-      //  "3D"
-      //};
-
-      _gridDiagramTypes = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description.Contains("Grid")).Select(item => item.Description).ToList();
-      _gridDiagramTypes = _gridDiagramTypes.Select(x => x.Replace("Grid ", string.Empty)).ToList();
-      _gridDiagramTypes.Insert(0, "All");
-
-      _nodalDiagramTypes = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description.Contains("Nodal")).Select(item => item.Description).ToList();
-      _nodalDiagramTypes = _nodalDiagramTypes.Select(x => x.Replace("Nodal ", string.Empty)).ToList();
-      _nodalDiagramTypes.Insert(0, "All");
-    }
+    
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA model", "GSA",
@@ -258,7 +220,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Diagram lines", "L", "Lines of the diagram",
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
@@ -277,7 +239,10 @@ namespace GsaGH.Components {
       }
 
       _gsaModel = modelGoo.Value;
-      UpdateCaseDropdown();
+      if (_gsaModel.Guid != _modelGuid) {
+        UpdateCaseDropdown();
+        _modelGuid = _gsaModel.Guid;
+      }
 
       string caseList = string.Empty;
       if (da.GetData(1, ref caseList)) {
@@ -306,39 +271,26 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
-      var types = new List<DiagramType>();
-      if (_selectedItems[1] == "All") {
-        types.AddRange(Mappings.diagramTypeMappingLoads.Select(x => x.GsaApiEnum).ToList());
-      } else {
-        if (_selectedItems[2] == "All") {
-          types.AddRange(Mappings.diagramTypeMappingLoads.Where(
-            item => item.Description.StartsWith(_selectedItems[1])).Select(item => item.GsaApiEnum).ToList());
-        } else {
-          string type = $"{_selectedItems[1]} {_selectedItems[2]}";
-          types.Add(Mappings.diagramTypeMappingLoads.Where(
-            item => item.Description.Contains(type)).Select(item => item.GsaApiEnum).FirstOrDefault());
-        }
-      }
-
       bool showAnnotations = true;
       da.GetData(3, ref showAnnotations);
       ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
       int significantDigits = 3;
       da.GetData(4, ref significantDigits);
 
-      Color color = Colours.GsaDarkPurple;
+      Color color = Color.Empty;
       da.GetData(5, ref color);
 
       double unitScale = ComputeUnitScale(autoScale);
       double unitScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
       double computedScale
         = GraphicsScalar.ComputeScale(_gsaModel, scale, _lengthUnit, autoScale, unitScale);
-      var diagramLines = new ConcurrentBag<DiagramGoo>();
-      var diagramAnnotations = new ConcurrentBag<AnnotationGoo>();
+      var diagramLines = new ConcurrentBag<GsaDiagramGoo>();
+      var diagramAnnotations = new ConcurrentBag<GsaAnnotationGoo>();
 
       double arrowScale = _gsaModel.BoundingBox.Diagonal.Length * 
       (autoScale ? 0.00025 : computedScale);
 
+      List<DiagramType> types = GetSelectedDiagramTypes();
       Parallel.ForEach(types, type => {
         var graphic = new DiagramSpecification() {
           ListDefinition = elementlist,
@@ -354,22 +306,13 @@ namespace GsaGH.Components {
 
         double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
         foreach (Line item in linesFromModel) {
-          var startPoint = new Point3d(item.Start.X, item.Start.Y, item.Start.Z);
-          var endPoint = new Point3d(item.End.X, item.End.Y, item.End.Z);
-          startPoint *= lengthScaleFactor;
-          endPoint *= lengthScaleFactor;
-          color = color != Color.Empty ? color : (Color)item.Colour;
-
-          var line = new Rhino.Geometry.Line(startPoint, endPoint);
-          line.Flip();
-
-          diagramLines.Add(
-            new DiagramGoo(endPoint, line.Direction * -1, ArrowMode.NoArrow).SetColor(color));
+          diagramLines.Add(new GsaDiagramGoo(
+            new LineDiagram(item, lengthScaleFactor, color)));
         }
 
         if (diagramResults.Triangles.Count > 0) {
-          diagramLines.Add(new DiagramGoo(diagramResults.Triangles, diagramResults.Lines,
-            lengthScaleFactor));
+          diagramLines.Add(new GsaDiagramGoo(
+            new ArrowheadDiagram(diagramResults.Triangles, lengthScaleFactor, color)));
         }
 
         foreach (Annotation annotation in diagramResults.Annotations) {
@@ -395,7 +338,7 @@ namespace GsaGH.Components {
       return valid;
     }
 
-    private AnnotationGoo GenerateAnnotation(
+    private GsaAnnotationGoo GenerateAnnotation(
       Annotation annotation, double lengthScaleFactor,
       int significantDigits, Color color, double valueScaleFactor) {
 
@@ -411,7 +354,7 @@ namespace GsaGH.Components {
           = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
       }
 
-      return new AnnotationGoo(location, color, valueToAnnotate);
+      return new GsaAnnotationGoo(location, color, valueToAnnotate);
     }
 
     private double ComputeUnitScale(bool autoScale = false) {
@@ -421,6 +364,38 @@ namespace GsaGH.Components {
       }
 
       return unitScaleFactor;
+    }
+
+    private List<DiagramType> GetSelectedDiagramTypes() {
+      var types = new List<DiagramType>();
+      if (_selectedItems[1] == "All") {
+        types.AddRange(Mappings.diagramTypeMappingLoads.Select(x => x.GsaApiEnum).ToList());
+      } else {
+        if (_selectedItems[2] == "All") {
+          types.AddRange(Mappings.diagramTypeMappingLoads.Where(
+            item => item.Description.StartsWith(_selectedItems[1])).Select(item => item.GsaApiEnum).ToList());
+        } else {
+          string type = $"{_selectedItems[1]} {_selectedItems[2]}";
+          types.Add(Mappings.diagramTypeMappingLoads.Where(
+            item => item.Description.Contains(type)).Select(item => item.GsaApiEnum).FirstOrDefault());
+        }
+      }
+      return types;
+    }
+
+    private void PreparedDropdownLists() {
+      PopulateTypeNames(ref _nodalDiagramTypes, "Nodal");
+      PopulateTypeNames(ref _beamDiagramTypes, "Beam");
+      PopulateTypeNames(ref _2dDiagramTypes, "2d");
+      PopulateTypeNames(ref _3dDiagramTypes, "3d");
+      PopulateTypeNames(ref _gridDiagramTypes, "Grid");
+    }
+
+    private void PopulateTypeNames(ref List<string> list, string typeIdentifier) {
+      list = Mappings.diagramTypeMappingLoads
+       .Where(item => item.Description.Contains(typeIdentifier)).Select(item => item.Description).ToList();
+      list = list.Select(x => x.Replace(typeIdentifier + " ", string.Empty)).ToList();
+      list.Insert(0, "All");
     }
 
     private void UpdateForce(string unit) {
@@ -442,19 +417,31 @@ namespace GsaGH.Components {
 
       Tuple<List<string>, List<int>, DataTree<int?>> modelResults
         = ResultHelper.GetAvalailableResults(_gsaModel);
-      string type = "Analysis";
-
       var cases = new List<string>();
+
+      List<int> caseIds = Loads.GetLoadCases(_gsaModel.Model);
+      foreach (int caseId in caseIds) {
+        cases.Add($"L{caseId}");
+      }
+
       for (int i = 0; i < modelResults.Item1.Count; i++) {
-        if (modelResults.Item1[i] != type) {
+        if (modelResults.Item1[i] != "Analysis") {
           continue;
         }
 
-        cases.Add(type[0] + modelResults.Item2[i].ToString());
+        cases.Add($"A{modelResults.Item2[i]}");
+      }
+
+      for (int i = 0; i < modelResults.Item1.Count; i++) {
+        if (modelResults.Item1[i] != "Combination") {
+          continue;
+        }
+
+        cases.Add($"C{modelResults.Item2[i]}");
       }
 
       _dropDownItems[0] = cases;
-      _selectedItems[0] = _caseId;
+      _selectedItems[0] = _dropDownItems[0][0];
     }
   }
 }

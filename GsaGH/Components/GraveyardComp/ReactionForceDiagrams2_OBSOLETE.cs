@@ -62,8 +62,8 @@ namespace GsaGH.Components {
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private ConcurrentDictionary<int, (DiagramGoo, AnnotationGoo, IQuantity)> _reactionForceVectors
-      = new ConcurrentDictionary<int, (DiagramGoo, AnnotationGoo, IQuantity)>();
+    private ConcurrentDictionary<int, (VectorDiagram, GsaAnnotationGoo, IQuantity)> _reactionForceVectors
+      = new ConcurrentDictionary<int, (VectorDiagram, GsaAnnotationGoo, IQuantity)>();
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
     private bool _showText = true;
 
@@ -215,21 +215,14 @@ namespace GsaGH.Components {
       }
 
       Color color = Color.Empty;
-      bool colourInput = false;
-      if (dataAccess.GetData(2, ref color)) {
-        colourInput = true;
-      }
+      dataAccess.GetData(2, ref color);
 
       _reactionForceVectors
-        = new ConcurrentDictionary<int, (DiagramGoo, AnnotationGoo, IQuantity)>();
+        = new ConcurrentDictionary<int, (VectorDiagram, GsaAnnotationGoo, IQuantity)>();
       Parallel.ForEach(nodes, node => {
-        (DiagramGoo reactionForceVector, AnnotationGoo annotation, IQuantity forceValue)
-          = CreateReactionForceVector(node, forceValues, scale);
+        (VectorDiagram reactionForceVector, GsaAnnotationGoo annotation, IQuantity forceValue)
+          = CreateReactionForceVector(node, forceValues, scale, color);
         if (reactionForceVector != null) {
-          if (colourInput) {
-            reactionForceVector.SetColor(color);
-          }
-
           _reactionForceVectors.TryAdd(node.Key, (reactionForceVector, annotation, forceValue));
         }
       });
@@ -303,9 +296,9 @@ namespace GsaGH.Components {
       return bbox.Diagonal.Length * factor / maxValue;
     }
 
-    private (DiagramGoo diagram, AnnotationGoo annotation, IQuantity forceValue)
+    private (VectorDiagram diagram, GsaAnnotationGoo annotation, IQuantity forceValue)
       CreateReactionForceVector(
-        KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
+        KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale, Color color) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;
@@ -371,15 +364,15 @@ namespace GsaGH.Components {
           break;
       }
 
-      ArrowMode arrowhead = isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow;
-      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction, arrowhead);
+      ArrowType arrowhead = isForce ? ArrowType.OneArrow : ArrowType.DoubleArrow;
+      var vectorResult = new VectorDiagram(node.Value.Value.Point, direction, arrowhead, color);
 
       var pt = new Point3d(node.Value.Value.Point);
       var move = Transform.Translation(direction);
       pt.Transform(move);
       Color col = isForce ? Colours.GsaDarkPurple : Colours.GsaGold;
 
-      var annotation = new AnnotationGoo(pt, col, forceValue.ToString());
+      var annotation = new GsaAnnotationGoo(pt, col, forceValue.ToString());
       return (vectorResult, annotation, forceValue);
     }
 
@@ -413,15 +406,15 @@ namespace GsaGH.Components {
     }
 
     private void SetOutputs(IGH_DataAccess dataAccess) {
-      IOrderedEnumerable<KeyValuePair<int, (DiagramGoo, AnnotationGoo, IQuantity)>> orderedDict
+      IOrderedEnumerable<KeyValuePair<int, (VectorDiagram, GsaAnnotationGoo, IQuantity)>> orderedDict
         = _reactionForceVectors.OrderBy(index => index.Key);
       var startingPoints = new List<Point3d>();
-      var vectors = new List<DiagramGoo>();
+      var vectors = new List<IGsaDiagram>();
       var forceValues = new List<IQuantity>();
 
-      foreach (KeyValuePair<int, (DiagramGoo diagram, AnnotationGoo anno, IQuantity force)>
+      foreach (KeyValuePair<int, (VectorDiagram diagram, GsaAnnotationGoo anno, IQuantity force)>
         keyValuePair in orderedDict) {
-        startingPoints.Add(keyValuePair.Value.diagram.StartingPoint);
+        startingPoints.Add(keyValuePair.Value.diagram.AnchorPoint);
         vectors.Add(keyValuePair.Value.diagram);
         forceValues.Add(keyValuePair.Value.force);
       }
