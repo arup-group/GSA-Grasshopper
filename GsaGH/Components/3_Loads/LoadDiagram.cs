@@ -220,7 +220,9 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
+      var param = new GsaDiagramParameter();
+      param.SetIconOverride(Icon);
+      pManager.AddParameter(param, "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);

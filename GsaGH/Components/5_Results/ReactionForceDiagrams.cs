@@ -12,7 +12,6 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -175,7 +174,9 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Vectors of the GSA Result Diagram",
+      var param = new GsaDiagramParameter();
+      param.SetIconOverride(Icon);
+      pManager.AddParameter(param, "Diagram lines", "Dgm", "Vectors of the GSA Result Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);
