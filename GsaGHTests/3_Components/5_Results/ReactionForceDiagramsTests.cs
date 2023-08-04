@@ -22,7 +22,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void WhenCreated_ThenExposureValue_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      Assert.Equal(GH_Exposure.secondary, obj.Exposure);
+      Assert.Equal(GH_Exposure.tertiary, obj.Exposure);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ namespace GsaGHTests.Components.Results {
       string expectedNickName = "ReactionForce";
       string expectedDesc = "Diplays GSA Node Reaction Force Results as Vector Diagrams";
       string expectedCategory = CategoryName.Name();
-      string expectedSubCategory = SubCategoryName.Cat5();
+      string expectedSubCategory = SubCategoryName.Cat6();
 
       Assert.Equal(expectedName, obj.Name);
       Assert.Equal(expectedNickName, obj.NickName);
@@ -130,7 +130,7 @@ namespace GsaGHTests.Components.Results {
       var obj = new ReactionForceDiagrams();
       var expectedLinesParam = new Param_GenericObject() {
         Name = "Diagram lines",
-        NickName = "L",
+        NickName = "Dgm",
         Description = "Lines of the diagram",
         Access = GH_ParamAccess.list,
       };

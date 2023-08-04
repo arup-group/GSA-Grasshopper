@@ -45,7 +45,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(EditSection))]
     [InlineData(typeof(GetSectionModifier))]
     [InlineData(typeof(GetMaterialProperties))]
-    [InlineData(typeof(GetSectionDimensions))]
+    [InlineData(typeof(GetProfileDimensions))]
     [InlineData(typeof(GetSectionProperties))]
     [InlineData(typeof(TaperProfile))]
     // 2_Geometry
@@ -79,7 +79,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateNodeLoad))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
     [InlineData(typeof(LoadProperties))]
-    [InlineData(typeof(LoadDiagram))]
+    [InlineData(typeof(LoadDiagrams))]
     // 4_Analysis
     [InlineData(typeof(GhAnalyse))]
     [InlineData(typeof(AnalysisCaseInfo))]
