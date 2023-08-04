@@ -7,12 +7,6 @@ using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
-  public enum ArrowType {
-    NoArrow,
-    OneArrow,
-    DoubleArrow,
-  }
-
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="Vector3d" /> can be used in Grasshopper.
   /// </summary>
@@ -28,14 +22,13 @@ namespace GsaGH.Parameters {
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; }
     public DiagramType DiagramType => DiagramType.Vector;
-    public readonly ArrowType ArrowMode;
     public readonly Point3d AnchorPoint;
     internal Line DisplayLine;
+    private bool _doubleArrow = false;
 
-    public VectorDiagram(Point3d anchor, Vector3d direction, ArrowType arrowMode, Color color) {
+    public VectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
       AnchorPoint = anchor;
       Direction = direction;
-      ArrowMode = arrowMode;
       
       DisplayLine = CreateReactionForceLine(anchor, direction);
       Value = direction;
@@ -45,12 +38,10 @@ namespace GsaGH.Parameters {
         return;
       }
       
-      if (ArrowMode == ArrowType.OneArrow) {
-        Color = Colours.GsaDarkPurple;
-      }
-
-      if (ArrowMode == ArrowType.DoubleArrow) {
+      if (doubleArrow) {
         Color = Colours.GsaGold;
+      } else {
+        Color = Colours.GsaDarkPurple;
       }
     }
     private VectorDiagram() { }
@@ -58,21 +49,14 @@ namespace GsaGH.Parameters {
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      switch (ArrowMode) {
-        case ArrowType.NoArrow:
-          args.Pipeline.DrawLine(DisplayLine, Color);
-          break;
-        case ArrowType.OneArrow:
-          args.Pipeline.DrawArrow(DisplayLine, Color);
-          break;
-        case ArrowType.DoubleArrow: {
-            args.Viewport.GetWorldToScreenScale(DisplayLine.To, out double pixelsPerUnit);
-            args.Pipeline.DrawArrow(DisplayLine, Color);
-            const int arrowHeadScreenSize = 20;
-            Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
-            args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
-            break;
-          }
+      if (_doubleArrow) {
+        args.Viewport.GetWorldToScreenScale(DisplayLine.To, out double pixelsPerUnit);
+        args.Pipeline.DrawArrow(DisplayLine, Color);
+        const int arrowHeadScreenSize = 20;
+        Point3d point = CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
+        args.Pipeline.DrawArrowHead(point, Direction, Color, arrowHeadScreenSize, 0);
+      } else {
+        args.Pipeline.DrawArrow(DisplayLine, Color);
       }
     }
 
@@ -97,7 +81,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new VectorDiagram(AnchorPoint, Direction, ArrowMode, Color);
+      return new VectorDiagram(AnchorPoint, Direction, _doubleArrow, Color);
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
@@ -114,7 +98,7 @@ namespace GsaGH.Parameters {
       Point3d anchor = xmorph.MorphPoint(AnchorPoint);
       var fakeVector = new Point3d(Value);
       var vec = new Vector3d(xmorph.MorphPoint(fakeVector));
-      return new VectorDiagram(anchor, vec, ArrowMode, Color);
+      return new VectorDiagram(anchor, vec, _doubleArrow, Color);
     }
 
     public override object ScriptVariable() {
@@ -132,7 +116,7 @@ namespace GsaGH.Parameters {
       anchor.Transform(xform);
       var vec = new Vector3d(Value);
       vec.Transform(xform);
-      return new VectorDiagram(anchor, vec, ArrowMode, Color);
+      return new VectorDiagram(anchor, vec, _doubleArrow, Color);
     }
 
     private Point3d CalculateExtraStartOffsetPoint(double pixelsPerUnit, int offset) {

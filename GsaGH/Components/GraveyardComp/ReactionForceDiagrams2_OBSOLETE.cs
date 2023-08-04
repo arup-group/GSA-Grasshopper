@@ -364,8 +364,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      ArrowType arrowhead = isForce ? ArrowType.OneArrow : ArrowType.DoubleArrow;
-      var vectorResult = new VectorDiagram(node.Value.Value.Point, direction, arrowhead, color);
+      var vectorResult = new VectorDiagram(node.Value.Value.Point, direction, !isForce, color);
 
       var pt = new Point3d(node.Value.Value.Point);
       var move = Transform.Translation(direction);

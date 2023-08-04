@@ -404,8 +404,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      var vectorResult = new VectorDiagram(node.Value.Value.Point, direction,
-        isForce ? ArrowType.OneArrow : ArrowType.DoubleArrow, color);
+      var vectorResult = new VectorDiagram(node.Value.Value.Point, direction, !isForce, color);
 
       var annotation = new GsaAnnotationGoo(GenerateAnnotationPosition(vectorResult),
         vectorResult.Color, $"{Math.Round(forceValue.Value, significantDigits)} {Message}");

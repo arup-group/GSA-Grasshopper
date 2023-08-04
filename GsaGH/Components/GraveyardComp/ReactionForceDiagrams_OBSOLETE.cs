@@ -334,9 +334,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      ArrowType arrow = isForce ? ArrowType.OneArrow : ArrowType.DoubleArrow;
-      Color color = isForce ? Colours.GsaDarkPurple : Colours.GsaGold;
-      return (new VectorDiagram(node.Value.Value.Point, direction, arrow, color), forceValue);
+      return (new VectorDiagram(node.Value.Value.Point, direction, !isForce, Color.Empty), forceValue);
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
