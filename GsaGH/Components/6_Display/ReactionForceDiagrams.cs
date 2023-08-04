@@ -44,7 +44,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("2c9d902f-931f-4d42-904e-ea1f2448aadb");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ReactionForceDiagram;
     private readonly List<string> _reactionStringList = new List<string>(new[] {
@@ -65,7 +65,7 @@ namespace GsaGH.Components {
 
     public ReactionForceDiagrams() : base("Reaction Force Diagrams", "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams", CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
+      SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {
@@ -174,9 +174,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      var param = new GsaDiagramParameter();
-      param.SetIconOverride(Icon);
-      pManager.AddParameter(param, "Diagram lines", "Dgm", "Vectors of the GSA Result Diagram",
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Vectors of the GSA Result Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);

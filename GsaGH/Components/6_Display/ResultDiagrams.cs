@@ -30,9 +30,9 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get Element1D results
   /// </summary>
-  public class Elem1dResultDiagram : GH_OasysDropDownComponent {
+  public class ResultDiagrams : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("7ae7ac36-f811-4c20-911f-ddb119f45644");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Elem1dDiagram;
 
@@ -44,8 +44,8 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
 
-    public Elem1dResultDiagram() : base("1D Element Result Diagram", "ResultElem1dDiagram",
-      "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat5()) { }
+    public ResultDiagrams() : base("Result Diagrams", "ResultDiagram",
+      "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override bool Read(GH_IReader reader) {
       //warning - sensitive for description string! do not change description if not needed!
@@ -172,9 +172,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      var param = new GsaDiagramParameter();
-      param.SetIconOverride(Icon);
-      pManager.AddParameter(param, "Diagram lines", "Dgm", "Lines of the GSA Result Diagram",
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines of the GSA Result Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);

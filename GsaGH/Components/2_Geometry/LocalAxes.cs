@@ -19,7 +19,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class LocalAxes : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     internal Line _previewXaxis;
     internal Line _previewYaxis;

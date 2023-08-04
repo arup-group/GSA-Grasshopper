@@ -33,9 +33,9 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get Load Diagram
   /// </summary>
-  public class LoadDiagram : GH_OasysDropDownComponent {
+  public class LoadDiagrams : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("5ea823af-a567-40a6-8e82-0e14eb8dda0e");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowLoadDiagrams;
     private string _caseId = "A1";
@@ -59,8 +59,8 @@ namespace GsaGH.Components {
     private bool _undefinedModelLengthUnit;
     private Guid _modelGuid = new Guid();
 
-    public LoadDiagram() : base("Load Diagram", "LoadDiagram", "Displays GSA Load Diagram",
-      CategoryName.Name(), SubCategoryName.Cat3()) { }
+    public LoadDiagrams() : base("Load Diagrams", "LoadDiagram", "Displays GSA Load Diagram",
+      CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override bool Read(GH_IReader reader) {
       //warning - sensitive for description string! do not change description if not needed!
@@ -220,9 +220,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      var param = new GsaDiagramParameter();
-      param.SetIconOverride(Icon);
-      pManager.AddParameter(param, "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
         GH_ParamAccess.list);

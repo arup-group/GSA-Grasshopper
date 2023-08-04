@@ -26,7 +26,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class ReactionForce : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ReactionForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;

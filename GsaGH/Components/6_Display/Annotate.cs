@@ -15,7 +15,7 @@ using Rhino.Input.Custom;
 namespace GsaGH.Components {
   public class Annotate : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("fcad844d-a044-4064-8c6e-f3ea47553941");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowID;
     private GH_Structure<GsaAnnotationGoo> _annotations = new GH_Structure<GsaAnnotationGoo>();
@@ -25,7 +25,7 @@ namespace GsaGH.Components {
 
     public Annotate() : base("Annotate", "A",
       "Show the ID of a Node, Element, or Member parameters, or get Result or Diagram values",
-      CategoryName.Name(), SubCategoryName.Cat2()) { }
+      CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddGenericParameter("Node/Element/Member/Load/Result/Diagram", "Geo",

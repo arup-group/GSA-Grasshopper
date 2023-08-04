@@ -26,7 +26,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class BeamForces : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;

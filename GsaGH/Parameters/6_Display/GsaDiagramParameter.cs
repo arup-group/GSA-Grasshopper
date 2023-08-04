@@ -26,7 +26,7 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaDiagramGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.Mem3dParam;
+    protected override Bitmap Icon => Resources.DiagramParam;
 
     public GsaDiagramParameter() : base(new GH_InstanceDescription(GsaDiagramGoo.Name,
       GsaDiagramGoo.NickName, GsaDiagramGoo.Description + " parameter", CategoryName.Name(),
@@ -36,7 +36,7 @@ namespace GsaGH.Parameters {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
       att ??= doc.CreateDefaultAttributes();
 
-      foreach (GsaDiagramGoo data in m_data.AllData(true)) {
+      foreach (GsaDiagramGoo data in m_data.AllData(true).Cast<GsaDiagramGoo>()) {
         IGsaDiagram diagram = data.Value;
         switch (diagram) {
           case VectorDiagram diagramVector:

@@ -15,7 +15,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateAnalysisTask : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisTask;
     private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;

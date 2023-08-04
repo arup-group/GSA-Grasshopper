@@ -103,6 +103,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AnnotateParam {
+            get {
+                object obj = ResourceManager.GetObject("AnnotateParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap AreaLoad {
             get {
                 object obj = ResourceManager.GetObject("AreaLoad", resourceCulture);
@@ -456,6 +466,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CustomMaterial {
             get {
                 object obj = ResourceManager.GetObject("CustomMaterial", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DiagramParam {
+            get {
+                object obj = ResourceManager.GetObject("DiagramParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
