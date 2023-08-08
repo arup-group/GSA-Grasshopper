@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ShowLoadDiagrams;
-    private string _caseId = "A1";
+    private string _caseId = "L1";
     private List<string> _2dDiagramTypes;
     private List<string> _3dDiagramTypes;
     private List<string> _beamDiagramTypes;
@@ -193,8 +193,6 @@ namespace GsaGH.Components {
 
       _isInitialised = true;
     }
-
-    
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA model", "GSA",
@@ -441,7 +439,11 @@ namespace GsaGH.Components {
       }
 
       _dropDownItems[0] = cases;
-      _selectedItems[0] = _dropDownItems[0][0];
+      if (!_dropDownItems[0].Contains(_selectedItems[0])) {
+        _selectedItems[0] = _dropDownItems[0][0];
+      }
+      
+      _caseId = _selectedItems[0];
     }
   }
 }
