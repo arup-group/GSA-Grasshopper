@@ -179,7 +179,7 @@ namespace GsaGH.Components {
             case GsaElement1dGoo e1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  TangentToNormal(e1d.Value.Line, size), CreateText(e1d, path), e1d.Value.Colour, size, path);
+                  CreateLocalAxis(e1d.Value.Line), CreateText(e1d, path), e1d.Value.Colour, size, path);
               } else {
                 AddAnnotationDot(e1d.Value.Line.PointAtNormalizedLength(0.5),
                 CreateText(e1d, path), e1d.Value.Colour, size, path);
@@ -189,7 +189,7 @@ namespace GsaGH.Components {
             case GsaMember1dGoo m1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  TangentToNormal(m1d.Value.PolyCurve, size), CreateText(m1d, path), m1d.Value.Colour,
+                  CreateLocalAxis(m1d.Value.PolyCurve), CreateText(m1d, path), m1d.Value.Colour,
                   size, path);
               } else {
                 AddAnnotationDot(m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
@@ -238,10 +238,6 @@ namespace GsaGH.Components {
       AddAnnotation3d(pln, txt, color, size, path);
     }
 
-    private void AddAnnotation3d(Point3d origin, Vector3d xAxis, Vector3d yAxis, string txt, Color color, double size, GH_Path path) {
-      var pln = new Plane(origin, xAxis, yAxis);
-      AddAnnotation3d(pln, txt, color, size, path);
-    }
     private void AddAnnotation3d(Plane pln, string txt, Color color, double size, GH_Path path) {
       if (_color != Color.Empty) {
         color = _color;
@@ -262,33 +258,23 @@ namespace GsaGH.Components {
       _points.Append(new GH_Point(pt), path);
     }
 
-    private Plane TangentToNormal(LineCurve line, double size) {
+    private Plane CreateLocalAxis(LineCurve line) {
       var tangent = new Vector3d(
         line.PointAtEnd.X - line.PointAtStart.X,
         line.PointAtEnd.Y - line.PointAtStart.Y,
         line.PointAtEnd.Z - line.PointAtStart.Z);
-      Plane pln = TangentToNormal(tangent);
+      Plane pln = CreateLocalAxis(tangent);
       pln.Origin = line.PointAtNormalizedLength(0.5);
-      var offset = new Vector3d(pln.Normal);
-      offset.Unitize();
-      offset *= size;
-      var transform = Transform.Translation(offset);
-      pln.Transform(transform);
       return pln;
     }
 
-    private Plane TangentToNormal(PolyCurve crv, double size) {
-      Plane pln = TangentToNormal(crv.TangentAt(0.5));
+    private Plane CreateLocalAxis(PolyCurve crv) {
+      Plane pln = CreateLocalAxis(crv.TangentAt(0.5));
       pln.Origin = crv.PointAtNormalizedLength(0.5);
-      var offset = new Vector3d(pln.Normal);
-      offset.Unitize();
-      offset *= size;
-      var transform = Transform.Translation(offset);
-      pln.Transform(transform);
       return pln;
     }
 
-    private Plane TangentToNormal(Vector3d tangent) {
+    private Plane CreateLocalAxis(Vector3d tangent) {
       tangent.Unitize();
       Vector3d dotVec = Math.Round(tangent.Z, 6) == 1.0 ? Vector3d.XAxis : Vector3d.ZAxis;
       var dotVec2 = Vector3d.CrossProduct(dotVec, tangent);
@@ -304,43 +290,43 @@ namespace GsaGH.Components {
       switch (goo) {
         case GsaElement2dGoo e2d:
           id = e2d.Value.Ids[i];
-          name = e2d.Value.Names[i];
-          prop = e2d.Value.Prop2ds[i].ToString();
-          mat = e2d.Value.Prop2ds[i].Material.ToString();
+          name = GeometryToString(e2d.Value.Names[i], e2d.Value.Types[i]);
+          prop = Prop2dToString(e2d.Value.Prop2ds[i]);
+          mat = MaterialToString(e2d.Value.Prop2ds[i].Material);
           break;
 
         case GsaElement3dGoo e3d:
           id = e3d.Value.Ids[i];
-          name = e3d.Value.Names[i];
-          prop = e3d.Value.Prop3ds[i].ToString();
-          mat = e3d.Value.Prop3ds[i].Material.ToString();
+          name = GeometryToString(e3d.Value.Names[i], e3d.Value.Types[i]);
+          prop = Prop3dToString(e3d.Value.Prop3ds[i]);
+          mat = MaterialToString(e3d.Value.Prop3ds[i].Material);
           break;
 
         case GsaElement1dGoo e1d:
           id = e1d.Value.Id;
-          name = e1d.Value.Name;
-          prop = e1d.Value.Section.ToString();
-          mat = e1d.Value.Section.Material.ToString();
+          name = GeometryToString(e1d.Value.Name, e1d.Value.Type);
+          prop = SectionToString(e1d.Value.Section);
+          mat = MaterialToString(e1d.Value.Section.Material);
           break;
 
         case GsaMember1dGoo m1d:
           id = m1d.Value.Id;
-          name = m1d.Value.Name;
-          prop = m1d.Value.Section.ToString();
-          mat = m1d.Value.Section.Material.ToString();
+          name = GeometryToString(m1d.Value.Name, m1d.Value.Type);
+          prop = SectionToString(m1d.Value.Section);
+          mat = MaterialToString(m1d.Value.Section.Material);
           break;
 
         case GsaMember2dGoo m2d:
           id = m2d.Value.Id;
-          name = m2d.Value.Name;
-          prop = m2d.Value.Prop2d.ToString();
-          mat = m2d.Value.Prop2d.Material.ToString();
+          name = GeometryToString(m2d.Value.Name, m2d.Value.Type);
+          prop = Prop2dToString(m2d.Value.Prop2d);
+          mat = MaterialToString(m2d.Value.Prop2d.Material);
           break;
         case GsaMember3dGoo m3d:
           id = m3d.Value.Id;
-          name = m3d.Value.Name;
-          prop = m3d.Value.Prop3d.ToString();
-          mat = m3d.Value.Prop3d.Material.ToString();
+          name = GeometryToString(m3d.Value.Name, string.Empty);
+          prop = Prop3dToString(m3d.Value.Prop3d);
+          mat = MaterialToString(m3d.Value.Prop3d.Material);
           break;
 
         default:
@@ -349,20 +335,78 @@ namespace GsaGH.Components {
 
       string spacer = " -- ";
       string outputText =
-        (_showId ? $"ID: {id}{spacer}" : string.Empty) +
-        (_showName ? $"Name: {name}{spacer}" : string.Empty) +
-        (_showProperty ? $"Property: {prop}{spacer}" : string.Empty) +
-        (_showMaterial ? $"Material: {mat}" : string.Empty);
+        (_showId ? $"ID: {id}" : string.Empty) +
+        (_showName ? $"{spacer}Name: {name}" : string.Empty) +
+        (_showProperty ? $"{spacer}Property: {prop}" : string.Empty) +
+        (_showMaterial ? $"{spacer}Material: {mat}" : string.Empty);
 
       if (_text3d) {
         _texts.Append(new GH_String(outputText), path);
       }
 
-      return 
+      return "\n" +
         (_showId ? $"{id}\n" : string.Empty) +
         (_showName ? $"{name}\n" : string.Empty) +
         (_showProperty ? $"{prop}\n" : string.Empty) +
         (_showMaterial ? $"{mat}" : string.Empty);
+    }
+
+    private static string MaterialToString(GsaMaterial mat) {
+      string s = string.Empty;
+      s += mat.MaterialType.ToString();
+      AddSeparator(ref s);
+      s += mat.Id == 0 ? string.Empty : $"Grd:{mat.Id}";
+      AddSeparator(ref s);
+      s += mat.Name ?? string.Empty;
+      return s.Trim();
+    }
+
+    private static string GeometryToString(string name, object type) {
+      string s = string.Empty;
+      s += name;
+      AddSeparator(ref s);
+      s += type.ToString().ToPascalCase();
+      return s.Trim();
+    }
+
+    private static string Prop2dToString(GsaProp2d prop) {
+      string s = string.Empty;
+      s += prop.Id > 0 ? $"PA{prop.Id}" : string.Empty;
+      AddSeparator(ref s);
+      s += prop.Name;
+      AddSeparator(ref s);
+      s += prop.Description;
+      if (prop.Type != GsaAPI.Property2D_Type.SHELL) {
+        AddSeparator(ref s);
+        s += prop.Type.ToString().ToPascalCase();
+      }
+      return s.Trim();
+    }
+
+    private static string Prop3dToString(GsaProp3d prop) {
+      string s = string.Empty;
+      s += prop.Id > 0 ? $"PV{prop.Id}" : string.Empty;
+      AddSeparator(ref s);
+      s += prop.Name;
+      return s.Trim();
+    }
+
+    private static string SectionToString(GsaSection section) {
+      string s = string.Empty;
+      s += section.Id > 0 ? $"PB{section.Id}" : string.Empty;
+      AddSeparator(ref s);
+      s += section.Name;
+      AddSeparator(ref s);
+      s += section.Profile;
+      return s.Trim();
+    }
+
+    private static void AddSeparator(ref string s) {
+      if (s.Length == 0 || s[s.Length - 1] == ' ') {
+        return;
+      }
+
+      s += " ";
     }
   }
 }

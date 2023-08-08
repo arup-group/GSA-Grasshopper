@@ -20,7 +20,6 @@ namespace GsaGH.Parameters {
     public AnnotationType AnnotationType => AnnotationType.TextDot;
     public string Text => Value.Text;
     public Point3d Location => Value.TextPlane.Origin;
-    private TextEntity _previewText;
 
     public GsaAnnotation3d(Plane plane, Color color, string text, double height)
       : base(new Text3d(text, plane, height)) {
