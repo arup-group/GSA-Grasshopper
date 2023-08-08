@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     private GH_Structure<GH_Point> _points = new GH_Structure<GH_Point>();
     private GH_Structure<GH_String> _texts = new GH_Structure<GH_String>();
 
-    public Annotate() : base("Annotate", "A",
+    public Annotate() : base("Annotate", "An",
       "Show the ID of a Node, Element, or Member parameters, or get Result or Diagram values",
       CategoryName.Name(), SubCategoryName.Cat6()) { }
 
@@ -36,23 +36,13 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the GSA object",
-        GH_ParamAccess.tree);
+      pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
+        "An", "Annotations for the GSA object", GH_ParamAccess.tree);
       pManager.AddPointParameter("Position", "P", "The (centre/mid) location(s) of the object(s)",
         GH_ParamAccess.tree);
       pManager.HideParameter(1);
       pManager.AddTextParameter("Text", "T", "The objects ID(s) or the result/diagram value(s)",
         GH_ParamAccess.tree);
-    }
-
-    private void AddAnnotation(Point3d pt, string txt, Color color, GH_Path path) {
-      if (_color != Color.Empty) {
-        color = _color;
-      }
-
-      _annotations.Append(new GsaAnnotationGoo(pt, color == Color.Empty ? _color : color, txt), path);
-      _points.Append(new GH_Point(pt), path);
-      _texts.Append(new GH_String(txt), path);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -72,8 +62,13 @@ namespace GsaGH.Components {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
           switch (goo) {
             case GsaAnnotationGoo annotationGoo:
-              AddAnnotation(annotationGoo.Value.Point, annotationGoo.Value.Text,
-                annotationGoo.Color, path);
+              switch (annotationGoo.Value) {
+                case GsaAnnotationDot annotationDot:
+                  AddAnnotation(annotationDot.Location, annotationDot.Text,
+                                  annotationDot.Color, path);
+                  break;
+              }
+              
               break;
 
             case GsaElement2dGoo e2d:
@@ -138,15 +133,15 @@ namespace GsaGH.Components {
                 Color.Empty, path);
               break;
 
-            case VectorDiagram diagramVector:
+            case GsaVectorDiagram diagramVector:
               AddAnnotation(diagramVector.AnchorPoint, string.Empty, Color.Empty, path);
               break;
 
-            case LineDiagram diagramLine:
+            case GsaLineDiagram diagramLine:
               AddAnnotation(diagramLine.Value.PointAt(0.5), string.Empty, Color.Empty, path);
               break;
 
-            case ArrowheadDiagram arrowhead:
+            case GsaArrowheadDiagram arrowhead:
               // do nothing
               break;
 
@@ -164,6 +159,17 @@ namespace GsaGH.Components {
       da.SetDataTree(0, _annotations);
       da.SetDataTree(1, _points);
       da.SetDataTree(2, _texts);
+    }
+
+    private void AddAnnotation(Point3d pt, string txt, Color color, GH_Path path) {
+      if (_color != Color.Empty) {
+        color = _color;
+      }
+
+      _annotations.Append(new GsaAnnotationGoo(
+        new GsaAnnotationDot(pt, color == Color.Empty ? _color : color, txt)), path);
+      _points.Append(new GH_Point(pt), path);
+      _texts.Append(new GH_String(txt), path);
     }
   }
 }

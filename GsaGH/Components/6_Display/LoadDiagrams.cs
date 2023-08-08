@@ -222,8 +222,8 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
+        "An", "Annotations for the diagram", GH_ParamAccess.list);
       pManager.HideParameter(1);
     }
 
@@ -307,12 +307,12 @@ namespace GsaGH.Components {
         double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
         foreach (Line item in linesFromModel) {
           diagramLines.Add(new GsaDiagramGoo(
-            new LineDiagram(item, lengthScaleFactor, color)));
+            new GsaLineDiagram(item, lengthScaleFactor, color)));
         }
 
         if (diagramResults.Triangles.Count > 0) {
           diagramLines.Add(new GsaDiagramGoo(
-            new ArrowheadDiagram(diagramResults.Triangles, lengthScaleFactor, color)));
+            new GsaArrowheadDiagram(diagramResults.Triangles, lengthScaleFactor, color)));
         }
 
         foreach (Annotation annotation in diagramResults.Annotations) {
@@ -354,7 +354,7 @@ namespace GsaGH.Components {
           = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
       }
 
-      return new GsaAnnotationGoo(location, color, valueToAnnotate);
+      return new GsaAnnotationGoo(new GsaAnnotationDot(location, color, valueToAnnotate));
     }
 
     private double ComputeUnitScale(bool autoScale = false) {

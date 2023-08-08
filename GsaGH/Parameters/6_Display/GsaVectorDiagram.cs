@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   Goo wrapper class, makes sure <see cref="Vector3d" /> can be used in Grasshopper.
   /// </summary>
-  public class VectorDiagram : GH_GeometricGoo<Vector3d>, IGsaDiagram, IGH_PreviewData {
+  public class GsaVectorDiagram : GH_GeometricGoo<Vector3d>, IGsaDiagram, IGH_PreviewData {
     public override BoundingBox Boundingbox
       => new BoundingBox(new List<Point3d>() {
         DisplayLine.From,
@@ -26,7 +26,7 @@ namespace GsaGH.Parameters {
     internal Line DisplayLine;
     private bool _doubleArrow = false;
 
-    public VectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
+    public GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
       AnchorPoint = anchor;
       Direction = direction;
       
@@ -44,7 +44,7 @@ namespace GsaGH.Parameters {
         Color = Colours.GsaDarkPurple;
       }
     }
-    private VectorDiagram() { }
+    private GsaVectorDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
@@ -81,7 +81,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new VectorDiagram(AnchorPoint, Direction, _doubleArrow, Color);
+      return new GsaVectorDiagram(AnchorPoint, Direction, _doubleArrow, Color);
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
@@ -98,7 +98,7 @@ namespace GsaGH.Parameters {
       Point3d anchor = xmorph.MorphPoint(AnchorPoint);
       var fakeVector = new Point3d(Value);
       var vec = new Vector3d(xmorph.MorphPoint(fakeVector));
-      return new VectorDiagram(anchor, vec, _doubleArrow, Color);
+      return new GsaVectorDiagram(anchor, vec, _doubleArrow, Color);
     }
 
     public override object ScriptVariable() {
@@ -116,7 +116,7 @@ namespace GsaGH.Parameters {
       anchor.Transform(xform);
       var vec = new Vector3d(Value);
       vec.Transform(xform);
-      return new VectorDiagram(anchor, vec, _doubleArrow, Color);
+      return new GsaVectorDiagram(anchor, vec, _doubleArrow, Color);
     }
 
     private Point3d CalculateExtraStartOffsetPoint(double pixelsPerUnit, int offset) {

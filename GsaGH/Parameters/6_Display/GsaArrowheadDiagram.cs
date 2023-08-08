@@ -7,18 +7,18 @@ using GsaGH.Helpers.Import;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class ArrowheadDiagram : GH_GeometricGoo<Mesh>, IGsaDiagram, IGH_PreviewData {
+  public class GsaArrowheadDiagram : GH_GeometricGoo<Mesh>, IGsaDiagram, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
     public override string TypeDescription => "A GSA arrowhead diagram.";
     public override string TypeName => "Arrowhead Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public DiagramType DiagramType => DiagramType.ArrowHead;
 
-    internal ArrowheadDiagram(
+    internal GsaArrowheadDiagram(
       ReadOnlyCollection<Triangle> faces, double scaleFactor, Color customColor) {
       Value = Diagrams.CreateMeshFromTriangles(faces, scaleFactor, customColor);
     }
-    private ArrowheadDiagram() { }
+    private GsaArrowheadDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       if (Value != null) {
@@ -39,7 +39,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new ArrowheadDiagram() {
+      return new GsaArrowheadDiagram() {
         Value = Value,
       };
     }
@@ -57,7 +57,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       Mesh m = Value.DuplicateMesh();
       xmorph.Morph(m);
-      return new ArrowheadDiagram() {
+      return new GsaArrowheadDiagram() {
         Value = m,
       };
     }
@@ -74,7 +74,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       Mesh m = Value.DuplicateMesh();
       m.Transform(xform);
-      return new ArrowheadDiagram() {
+      return new GsaArrowheadDiagram() {
         Value = m,
       };
     }

@@ -52,11 +52,11 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddVectorParameter("Local X", "X", "Element1D or Member1D's local X-axis",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item);
       pManager.AddVectorParameter("Local Y", "Y", "Element1D or Member1D's local X-axis",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item);
       pManager.AddVectorParameter("Local Z", "Z", "Element1D or Member1D's local X-axis",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

@@ -103,6 +103,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AnnotateDetailed {
+            get {
+                object obj = ResourceManager.GetObject("AnnotateDetailed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap AnnotateParam {
             get {
                 object obj = ResourceManager.GetObject("AnnotateParam", resourceCulture);

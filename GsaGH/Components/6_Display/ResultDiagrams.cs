@@ -174,8 +174,8 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines of the GSA Result Diagram",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
+        "An", "Annotations for the diagram", GH_ParamAccess.list);
       pManager.HideParameter(1);
     }
 
@@ -271,7 +271,7 @@ namespace GsaGH.Components {
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
       foreach (Line item in linesFromModel) {
-        diagramLines.Add(new GsaDiagramGoo(new LineDiagram(item, lengthScaleFactor, color)));
+        diagramLines.Add(new GsaDiagramGoo(new GsaLineDiagram(item, lengthScaleFactor, color)));
       }
 
       bool showAnnotations = true;
@@ -311,7 +311,8 @@ namespace GsaGH.Components {
               = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
           }
 
-          diagramAnnotations.Add(new GsaAnnotationGoo(location, color, valueToAnnotate));
+          diagramAnnotations.Add(new GsaAnnotationGoo(
+            new GsaAnnotationDot(location, color, valueToAnnotate)));
         }
       }
 

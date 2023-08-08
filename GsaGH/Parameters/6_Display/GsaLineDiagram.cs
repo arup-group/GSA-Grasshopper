@@ -5,7 +5,7 @@ using GsaGH.Helpers.Import;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class LineDiagram : GH_GeometricGoo<Line>, IGsaDiagram, IGH_PreviewData {
+  public class GsaLineDiagram : GH_GeometricGoo<Line>, IGsaDiagram, IGH_PreviewData {
     public override BoundingBox Boundingbox => Value.BoundingBox;
     public override string TypeDescription => "A GSA line diagram.";
     public override string TypeName => "Line Diagram";
@@ -13,7 +13,7 @@ namespace GsaGH.Parameters {
     public Color Color { get; private set; }
     public DiagramType DiagramType => DiagramType.Line;
 
-    internal LineDiagram(GsaAPI.Line line, double scaleFactor, Color customColor) {
+    internal GsaLineDiagram(GsaAPI.Line line, double scaleFactor, Color customColor) {
       Value = Diagrams.ConvertLine(line, scaleFactor);
       if (customColor.IsEmpty) {
         Color = (Color)line.Colour;
@@ -22,7 +22,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private LineDiagram() { }
+    private GsaLineDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new LineDiagram() {
+      return new GsaLineDiagram() {
         Value = Value,
         Color = Color
       };
@@ -66,7 +66,7 @@ namespace GsaGH.Parameters {
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var ln = new Line(xmorph.MorphPoint(Value.From), xmorph.MorphPoint(Value.To));
-      return new LineDiagram() {
+      return new GsaLineDiagram() {
         Value = ln,
         Color = Color
       };
@@ -84,7 +84,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       var ln = new Line(Value.From, Value.To);
       ln.Transform(xform);
-      return new LineDiagram() {
+      return new GsaLineDiagram() {
         Value = ln,
         Color = Color
       };

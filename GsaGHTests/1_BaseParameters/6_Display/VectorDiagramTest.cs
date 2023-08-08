@@ -17,7 +17,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenCreateInstance_ThenObject_ShouldNotBeNull() {
-      var obj = new VectorDiagram(Point3d.Unset, Vector3d.Unset, false, Color.Empty);
+      var obj = new GsaVectorDiagram(Point3d.Unset, Vector3d.Unset, false, Color.Empty);
       Assert.NotNull(obj);
     }
 
@@ -32,7 +32,7 @@ namespace GsaGHTests.Parameters {
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ));
 
-      var obj = new VectorDiagram(expectedPoint, expectedVector, false, Color.Empty);
+      var obj = new GsaVectorDiagram(expectedPoint, expectedVector, false, Color.Empty);
 
       Assert.Equal(expectedPoint, obj.AnchorPoint);
       Assert.Equal(expectedVector, obj.Direction);
@@ -50,7 +50,7 @@ namespace GsaGHTests.Parameters {
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ));
 
-      var obj = new VectorDiagram(expectedPoint, expectedVector, false, Color.Empty);
+      var obj = new GsaVectorDiagram(expectedPoint, expectedVector, false, Color.Empty);
 
       Assert.Equal(expectedPoint, obj.AnchorPoint);
       Assert.Equal(expectedVector, obj.Direction);
@@ -68,7 +68,7 @@ namespace GsaGHTests.Parameters {
         expectedReactionForceLine.ToX - expectedReactionForceLine.FromX,
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ));
-      var obj = new VectorDiagram(expectedPoint, expectedVector, true, Color.Empty);
+      var obj = new GsaVectorDiagram(expectedPoint, expectedVector, true, Color.Empty);
 
       Assert.Equal(expectedPoint, obj.AnchorPoint);
       Assert.Equal(expectedVector, obj.Direction);
@@ -78,9 +78,9 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenDuplicateGeometry_ThenMethod_ShouldReturnDuplicatedObject() {
-      var obj = new VectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
+      var obj = new GsaVectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
 
-      var expectedObj = new VectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
+      var expectedObj = new GsaVectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
 
       IGH_GeometricGoo actualObj = obj.DuplicateGeometry();
 
@@ -97,7 +97,7 @@ namespace GsaGHTests.Parameters {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       string force = new Force(4, ForceUnit.Kilonewton).ToString();
-      var obj = new VectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       BoundingBox expectedBoundingBox = obj.Boundingbox;
       BoundingBox actualResult = obj.ClippingBox;
@@ -107,7 +107,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetBoundingBox_ThenMethod_ShouldReturnValidValue() {
-      var obj = new VectorDiagram(
+      var obj = new GsaVectorDiagram(
         new Point3d(3, 3, 3), new Vector3d(3, 3, 3), false, Color.Empty);
 
       BoundingBox actualBoundingBox = obj.Boundingbox;
@@ -129,7 +129,7 @@ namespace GsaGHTests.Parameters {
     public void WhenGetBoundingBoxWithTransform_ThenMethod_ShouldReturnValidValue() {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
-      var obj = new VectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       BoundingBox actualBoundingBox = obj.Boundingbox;
       var expectedBoundingBox = new BoundingBox(new List<Point3d>() {
@@ -148,7 +148,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetTypeDescription_ThenShouldReturnValidString() {
-      var obj = new VectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
+      var obj = new GsaVectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
 
       string expectedString = "A GSA vector diagram.";
 
@@ -157,7 +157,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenGetTypeName_ThenShouldReturnValidString() {
-      var obj = new VectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
+      var obj = new GsaVectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
 
       string expectedString = "Vector Diagram";
 
@@ -166,7 +166,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenSetColor_ThenColorOfDiagramShoouldBeChanged() {
-      var obj = new VectorDiagram(Point3d.Unset, Vector3d.Unset, false, Color.Aqua);
+      var obj = new GsaVectorDiagram(Point3d.Unset, Vector3d.Unset, false, Color.Aqua);
       Assert.Equal(Color.Aqua, obj.Color);
     }
 
@@ -175,10 +175,10 @@ namespace GsaGHTests.Parameters {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       string force = new Force(4, ForceUnit.Kilonewton).ToString();
-      var obj = new VectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       IGH_GeometricGoo actualObject = obj.Morph(new TwistSpaceMorph());
-      var expectedObject = new VectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var expectedObject = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       Assert.Equal(expectedObject.Boundingbox.Diagonal, actualObject.Boundingbox.Diagonal);
       Assert.Equal(expectedObject.Boundingbox.Max, actualObject.Boundingbox.Max);
@@ -190,7 +190,7 @@ namespace GsaGHTests.Parameters {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       string force = new Force(4, ForceUnit.Kilonewton).ToString();
-      var obj = new VectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       object actualObject = obj.ScriptVariable();
 
@@ -199,7 +199,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void WhenToString_ThenMethod_ShouldReturnValidString() {
-      var obj = new VectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
+      var obj = new GsaVectorDiagram(Point3d.Origin, Vector3d.Zero, false, Color.Empty);
 
       var pt = new GH_Point(Point3d.Origin);
       var vec = new GH_Vector(Vector3d.Zero);
@@ -213,7 +213,7 @@ namespace GsaGHTests.Parameters {
     public void WhenTransform_ThenMethod_ShouldReturnValidObject() {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
-      var obj = new VectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       IGH_GeometricGoo actualObject
         = obj.Transform(new Transform(Transform.Mirror(startingPoint, vector3d)));

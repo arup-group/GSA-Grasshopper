@@ -142,7 +142,7 @@ namespace GsaGH.Components.GraveyardComp {
               pt = resLine.Value.PointAt(0.5);
               break;
 
-            case VectorDiagram resVector:
+            case GsaVectorDiagram resVector:
               pt = resVector.AnchorPoint;
               break;
 

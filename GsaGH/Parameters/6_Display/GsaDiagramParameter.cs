@@ -39,7 +39,7 @@ namespace GsaGH.Parameters {
       foreach (GsaDiagramGoo data in m_data.AllData(true).Cast<GsaDiagramGoo>()) {
         IGsaDiagram diagram = data.Value;
         switch (diagram) {
-          case VectorDiagram diagramVector:
+          case GsaVectorDiagram diagramVector:
             ObjectAttributes vectorAtt = att.Duplicate();
             vectorAtt.ObjectColor = diagramVector.Color;
             vectorAtt.ColorSource = ObjectColorSource.ColorFromObject;
@@ -47,14 +47,14 @@ namespace GsaGH.Parameters {
             gH_BakeUtility.BakeObject(new GH_Line(diagramVector.DisplayLine), vectorAtt, doc);
             break;
 
-          case LineDiagram diagramLine:
+          case GsaLineDiagram diagramLine:
             ObjectAttributes lineAtt = att.Duplicate();
             lineAtt.ObjectColor = diagramLine.Color;
             lineAtt.ColorSource = ObjectColorSource.ColorFromObject;
             gH_BakeUtility.BakeObject(new GH_Line(diagramLine.Value), lineAtt, doc);
             break;
 
-          case ArrowheadDiagram arrowhead:
+          case GsaArrowheadDiagram arrowhead:
             ObjectAttributes arrowheadAtt = att.Duplicate();
             arrowheadAtt.ColorSource = ObjectColorSource.ColorFromObject;
             gH_BakeUtility.BakeObject(new GH_Mesh(arrowhead.Value), arrowheadAtt, doc);
