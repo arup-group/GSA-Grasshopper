@@ -94,7 +94,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
         "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations in Global Axis." + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
         "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
@@ -102,7 +102,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
         "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations in Global Axis." + note, GH_ParamAccess.tree);
+        "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
