@@ -424,9 +424,9 @@ namespace GsaGH.Parameters {
     }
 
     /// <summary>
-    ///   Get beam displacement values
+    ///   Get beam displacement values in local axis of 1D element
     ///   For analysis case the length of the list will be 1
-    ///   This method will use cache data if it exists
+    ///   This method will use cached data if it exists
     /// </summary>
     /// <param name="elementlist"></param>
     /// <param name="positionsCount"></param>
