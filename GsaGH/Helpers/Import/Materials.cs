@@ -49,7 +49,11 @@ namespace GsaGH.Helpers.Import {
     private GsaMaterial GetMaterial(MaterialType type, int analysisProp, int gradeProp) {
       int id = analysisProp;
       if (id != 0) { // it is a custom material
-        return AnalysisMaterials[id];
+        if (AnalysisMaterials.ContainsKey(id)) {
+          return AnalysisMaterials[id];
+        } else { 
+          return null; // cannot import non-linear elastic material
+        }
       }
 
       id = gradeProp;
