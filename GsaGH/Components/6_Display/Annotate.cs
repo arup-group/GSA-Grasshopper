@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Security.Cryptography;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
@@ -10,7 +9,6 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
-using Rhino.Input.Custom;
 
 namespace GsaGH.Components {
   public class Annotate : GH_OasysComponent {
@@ -61,14 +59,12 @@ namespace GsaGH.Components {
       foreach (GH_Path path in tree.Paths) {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
           switch (goo) {
-            case GsaAnnotationGoo annotationGoo:
-              switch (annotationGoo.Value) {
-                case GsaAnnotationDot annotationDot:
-                  AddAnnotation(annotationDot.Location, annotationDot.Text,
-                                  annotationDot.Color, path);
-                  break;
-              }
-              
+            case GsaAnnotationDot annotationDot:
+              AddAnnotation(annotationDot.Location, annotationDot.Text,
+                              annotationDot.Color, path);
+              break;
+            case GsaAnnotation3d annotation3d:
+              AddAnnotation(annotation3d, path);
               break;
 
             case GsaElement2dGoo e2d:
@@ -160,7 +156,7 @@ namespace GsaGH.Components {
       da.SetDataTree(1, _points);
       da.SetDataTree(2, _texts);
     }
-
+    
     private void AddAnnotation(Point3d pt, string txt, Color color, GH_Path path) {
       if (_color != Color.Empty) {
         color = _color;
@@ -170,6 +166,18 @@ namespace GsaGH.Components {
         new GsaAnnotationDot(pt, color == Color.Empty ? _color : color, txt)), path);
       _points.Append(new GH_Point(pt), path);
       _texts.Append(new GH_String(txt), path);
+    }
+
+    private void AddAnnotation(GsaAnnotation3d annotation3d, GH_Path path) {
+      _annotations.Append(new GsaAnnotationGoo(
+        new GsaAnnotation3d(
+          annotation3d.Value.TextPlane,
+          _color == Color.Empty ? _color : annotation3d.Color,
+          annotation3d.Value.Text,
+          annotation3d.Value.Height)), 
+        path);
+      _points.Append(new GH_Point(annotation3d.Location), path);
+      _texts.Append(new GH_String(annotation3d.Value.Text), path);
     }
   }
 }
