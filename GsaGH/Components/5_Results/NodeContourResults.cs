@@ -431,7 +431,7 @@ namespace GsaGH.Components {
 
         case GsaResultGoo goo: {
           result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination
+          if (result.Type == CaseType.Combination
             && result.SelectedPermutationIds.Count > 1) {
             this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
               + result.SelectedPermutationIds.Count
@@ -441,11 +441,11 @@ namespace GsaGH.Components {
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           }
 
-          if (result.Type == GsaResult.CaseType.Combination) {
+          if (result.Type == CaseType.Combination) {
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           }
 
-          if (result.Type == GsaResult.CaseType.AnalysisCase) {
+          if (result.Type == CaseType.AnalysisCase) {
             _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
           }
 

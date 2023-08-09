@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
     private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
     private Guid _modelGuid;
-    private Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult> _result;
+    private Dictionary<Tuple<CaseType, int>, GsaResult> _result;
     private int _tempNodeId;
 
     public GetResult() : base("Get Results", "GetRes",
@@ -61,14 +61,14 @@ namespace GsaGH.Components {
         if (_modelGuid == new Guid()) {
           if (modelGoo.Value.Guid != _modelGuid) {
             model = modelGoo.Value;
-            _result = new Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>();
+            _result = new Dictionary<Tuple<CaseType, int>, GsaResult>();
             _analysisCaseResults = null;
             _combinationCaseResults = null;
           }
         } else {
           model = modelGoo.Value;
           _modelGuid = model.Guid;
-          _result = new Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>();
+          _result = new Dictionary<Tuple<CaseType, int>, GsaResult>();
         }
       } else {
         this.AddRuntimeError("Error converting input " + Params.Input[0].NickName
@@ -76,14 +76,14 @@ namespace GsaGH.Components {
         return;
       }
 
-      GsaResult.CaseType resultType = GsaResult.CaseType.AnalysisCase;
+      CaseType resultType = CaseType.AnalysisCase;
       var ghType = new GH_String();
       if (da.GetData(1, ref ghType)) {
         if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
           if (type.ToUpper().StartsWith("A")) {
-            resultType = GsaResult.CaseType.AnalysisCase;
+            resultType = CaseType.AnalysisCase;
           } else if (type.ToUpper().StartsWith("C")) {
-            resultType = GsaResult.CaseType.Combination;
+            resultType = CaseType.Combination;
           } else {
             this.AddRuntimeError("Error converting input " + Params.Input[1].NickName
               + " to 'Analysis' or 'Combination'");
@@ -106,7 +106,7 @@ namespace GsaGH.Components {
       }
 
       var permutationIDs = new List<int>();
-      if (resultType != GsaResult.CaseType.AnalysisCase) {
+      if (resultType != CaseType.AnalysisCase) {
         var ghPerms = new List<int>();
         if (da.GetDataList(3, ghPerms)) {
           permutationIDs = ghPerms;
@@ -123,7 +123,7 @@ namespace GsaGH.Components {
       }
 
       switch (resultType) {
-        case GsaResult.CaseType.AnalysisCase:
+        case CaseType.AnalysisCase:
           if (_analysisCaseResults == null) {
             _analysisCaseResults = model.Model.Results();
             if (_analysisCaseResults == null || _analysisCaseResults.Count == 0) {
@@ -138,14 +138,14 @@ namespace GsaGH.Components {
           }
 
           if (!_result.ContainsKey(
-            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseId))) {
-            _result.Add(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseId),
+            new Tuple<CaseType, int>(CaseType.AnalysisCase, caseId))) {
+            _result.Add(new Tuple<CaseType, int>(CaseType.AnalysisCase, caseId),
               new GsaResult(model, _analysisCaseResults[caseId], caseId));
           }
 
           break;
 
-        case GsaResult.CaseType.Combination:
+        case CaseType.Combination:
           if (_combinationCaseResults == null) {
             _combinationCaseResults = model.Model.CombinationCaseResults();
             if (_combinationCaseResults == null || _combinationCaseResults.Count == 0) {
@@ -177,8 +177,8 @@ namespace GsaGH.Components {
           }
 
           if (!_result.ContainsKey(
-            new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseId))) {
-            _result.Add(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseId),
+            new Tuple<CaseType, int>(CaseType.Combination, caseId))) {
+            _result.Add(new Tuple<CaseType, int>(CaseType.Combination, caseId),
               new GsaResult(model, _combinationCaseResults[caseId], caseId, permutationIDs));
           }
 
@@ -186,7 +186,7 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0,
-        new GsaResultGoo(_result[new Tuple<GsaResult.CaseType, int>(resultType, caseId)]));
+        new GsaResultGoo(_result[new Tuple<CaseType, int>(resultType, caseId)]));
     }
 
     // this is the cache object!

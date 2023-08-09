@@ -509,7 +509,7 @@ namespace GsaGH.Components {
         case GsaResultGoo goo: {
           result = goo.Value;
           switch (result.Type) {
-            case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+            case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
               this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIds.Count
                 + " permutations - only one permutation can be displayed at a time."
@@ -518,11 +518,11 @@ namespace GsaGH.Components {
               _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
               break;
 
-            case GsaResult.CaseType.Combination:
+            case CaseType.Combination:
               _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
               break;
 
-            case GsaResult.CaseType.AnalysisCase:
+            case CaseType.AnalysisCase:
               _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
               break;
           }

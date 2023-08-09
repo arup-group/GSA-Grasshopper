@@ -203,18 +203,18 @@ namespace GsaGH.Components {
       if (ghTyp?.Value is GsaResultGoo goo) {
         result = goo.Value;
         switch (result.Type) {
-          case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+          case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
             string warningText
               = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
             this.AddRuntimeWarning(warningText);
             _case = $"C{result.CaseId}";
             break;
 
-          case GsaResult.CaseType.Combination:
+          case CaseType.Combination:
             _case = $"C{result.CaseId}";
             break;
 
-          case GsaResult.CaseType.AnalysisCase:
+          case CaseType.AnalysisCase:
             _case = $"A{result.CaseId}";
             break;
         }
