@@ -24,14 +24,14 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get GSA beam displacement values
   /// </summary>
-  public class BeamDisplacement : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("1b7e99e8-c3c9-42c3-9474-792ddd17388d");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+  public class BeamDisplacement_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("21ec9005-1b2f-4eb8-8171-b2c0190a4a54");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamDisplacement;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public BeamDisplacement() : base("Beam Displacements", "BeamDisp",
+    public BeamDisplacement_OBSOLETE() : base("Beam Displacements", "BeamDisp",
       "Element1D Translation and Rotation result values", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
@@ -108,6 +108,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
+      this.AddRuntimeError("Beam Displacements are now in local axis - please update your script accordingly!");
       var result = new GsaResult();
 
       string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
