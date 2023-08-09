@@ -47,12 +47,12 @@ namespace IntegrationTests.ExampleFiles {
     public void VectorResultGooTest() {
       IGH_Param param = Helper.FindParameter(Document(), "ReactionForceVector");
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
-        var item = (IGsaDiagram)data;
+        var item = (GsaDiagramGoo)data;
         Assert.True(item.IsValid);
         Assert.True(item.Boundingbox.IsValid);
         Assert.True(item.ClippingBox.IsValid);
-        Assert.Equal("A GSA result diagram type.", item.TypeDescription);
-        Assert.Equal("Diagram Vector", item.TypeName);
+        Assert.Equal("GSA Diagram Parameter", item.TypeDescription);
+        Assert.Equal("Diagram", item.TypeName);
       }
     }
 

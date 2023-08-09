@@ -16,6 +16,9 @@ namespace GsaGH.Parameters {
 
     public GsaDiagramGoo(IGsaDiagram item) : base(item) { }
 
+    public override bool CastTo<TQ>(ref TQ target) {
+      return Value.CastTo(ref target);
+    }
     public override IGH_GeometricGoo Duplicate() {
       return new GsaDiagramGoo(Value);
     }

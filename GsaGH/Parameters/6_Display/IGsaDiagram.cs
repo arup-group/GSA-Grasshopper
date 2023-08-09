@@ -1,17 +1,13 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Parameters.Enums;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public enum DiagramType {
-    Vector,
-    Line,
-    ArrowHead,
-    Load
-  }
+  
   public interface IGsaDiagram : IGH_GeometricGoo, IGH_PreviewData {
-    public DiagramType DiagramType { get; }
-
+    public GsaDiagramType DiagramType { get; }
+    public bool CastTo<TQ>(ref TQ target);
     public GeometryBase GetGeometry();
   }
 }

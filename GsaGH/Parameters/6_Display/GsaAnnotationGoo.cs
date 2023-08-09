@@ -16,6 +16,10 @@ namespace GsaGH.Parameters {
 
     public GsaAnnotationGoo(IGsaAnnotation item) : base(item) { }
 
+    public override bool CastTo<TQ>(ref TQ target) {
+      return Value.CastTo(ref target);
+    }
+
     public override IGH_GeometricGoo Duplicate() {
       return new GsaAnnotationGoo(Value);
     }

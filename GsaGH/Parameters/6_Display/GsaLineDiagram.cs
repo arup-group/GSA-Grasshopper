@@ -2,6 +2,7 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Import;
+using GsaGH.Parameters.Enums;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -11,7 +12,7 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Line Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; }
-    public DiagramType DiagramType => DiagramType.Line;
+    public GsaDiagramType DiagramType => GsaDiagramType.Line;
 
     internal GsaLineDiagram(GsaAPI.Line line, double scaleFactor, Color customColor) {
       Value = Diagrams.ConvertLine(line, scaleFactor);

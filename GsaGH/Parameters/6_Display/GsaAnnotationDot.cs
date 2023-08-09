@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Parameters.Enums;
 using OasysGH;
 using OasysGH.Parameters;
 using OasysGH.Units;
@@ -16,7 +17,7 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Annotation";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; }
-    public AnnotationType AnnotationType => AnnotationType.TextDot;
+    public GsaAnnotationType AnnotationType => GsaAnnotationType.TextDot;
     public string Text => Value.Text;
     public Point3d Location => Value.Point;
 

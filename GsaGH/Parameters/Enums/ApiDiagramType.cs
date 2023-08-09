@@ -1,5 +1,5 @@
 ﻿namespace GsaGH.Parameters.Enums {
-  public enum DiagramType {
+  public enum ApiDiagramType {
     AxialForceFx,
     ShearForceFy,
     ShearForceFz,
