@@ -8,14 +8,6 @@ using GsaGH.Helpers.Import;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
-  public enum EntityType {
-    Undefined,
-    Node,
-    Element,
-    Member,
-    Case,
-  }
-
   /// <summary>
   ///   EntityList class, this class defines the basic properties and methods for any Gsa List
   /// </summary>
