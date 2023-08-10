@@ -41,6 +41,7 @@ namespace GsaGHTests.Parameters {
           Case = 6,
           Direction = Direction.ZZ,
           EntityList = "all",
+          EntityType = GsaAPI.EntityType.Element,
           Name = "name",
           IsProjected = true,
         },
@@ -68,6 +69,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(6, original.BeamLoad.Case);
       Assert.Equal(Direction.ZZ, original.BeamLoad.Direction);
       Assert.Equal("all", original.BeamLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.BeamLoad.EntityType);
       Assert.Equal("name", original.BeamLoad.Name);
       Assert.True(original.BeamLoad.IsProjected);
       switch (original.BeamLoad.Type) {
