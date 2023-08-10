@@ -13,7 +13,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateProp3d : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
-    public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateProp3d;
 

@@ -20,12 +20,12 @@ namespace GsaGH.Helpers.GsaApi {
       var type = new List<string>();
       var caseIds = new List<int>();
       var perm = new DataTree<int?>();
-      foreach (int caseId in analysisCaseResults.Keys) {
+      foreach (int caseId in analysisCaseResults.Keys.OrderBy(x => x)) {
         type.Add("Analysis");
         caseIds.Add(caseId);
       }
 
-      foreach (int caseId in combinationCaseResults.Keys.OrderByDescending(x => -x)) {
+      foreach (int caseId in combinationCaseResults.Keys.OrderBy(x => x)) {
         type.Add("Combination");
         caseIds.Add(caseId);
         IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult

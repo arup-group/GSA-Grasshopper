@@ -17,7 +17,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateMember2d : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateMem2d;
 

@@ -22,14 +22,14 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get geometric dimensions of a section
   /// </summary>
-  public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent {
+  public class GetProfileDimensions : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SectionDimensions;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public GetSectionDimensions() : base("Section Dimensions", "SectDims",
+    public GetProfileDimensions() : base("Profile Dimensions", "PfDims",
       "Get GSA Section Dimensions", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

@@ -17,14 +17,13 @@ namespace GsaGHTests.Helpers.GsaAPITests {
   public class MappingsTests {
 
     [Theory]
-    [InlineData("Linear", 0)]
-    [InlineData("Quadratic", 1)]
-    [InlineData("Rigid Diaphragm", 2)]
-    [InlineData("rIgId diAphrAgm", 2)]
-    public void GetAnalysisOrderTest(string input, int expected) {
+    [InlineData("Linear")]
+    [InlineData("Quadratic")]
+    [InlineData("Rigid Diaphragm")]
+    [InlineData("rIgId diAphrAgm")]
+    public void GetAnalysisOrderTest(string input) {
       AnalysisOrder actual = Mappings.GetAnalysisOrder(input);
-
-      Assert.Equal(expected, (int)actual);
+      Assert.Equal(input.ToLower(), actual.ToString().ToLower().Replace("_", " "));
     }
 
     [Theory]

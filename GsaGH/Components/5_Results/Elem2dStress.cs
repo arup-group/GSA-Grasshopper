@@ -26,7 +26,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Elem2dStress : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("b5eb8a78-e0dd-442b-bbd7-0384d6c944cb");
-    public override GH_Exposure Exposure => GH_Exposure.quinary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Stress2D;
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;

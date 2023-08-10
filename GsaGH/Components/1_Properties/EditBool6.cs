@@ -13,7 +13,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditBool6 : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBool6;
 

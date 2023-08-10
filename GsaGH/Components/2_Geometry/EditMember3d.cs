@@ -15,7 +15,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditMember3d : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("e7d66219-2243-4108-9d6e-4a84dbf07d55");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem3d;
 
