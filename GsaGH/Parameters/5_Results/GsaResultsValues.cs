@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 using GsaAPI;
 using OasysUnits;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -49,8 +51,7 @@ namespace GsaGH.Parameters {
 
     internal void CoordinateTransformationTo(Plane plane, Model model) {
       // coordinate transformation
-      foreach (int elementId in XyzResults.Keys) {
-
+      Parallel.ForEach(XyzResults.Keys, elementId => {
         var localAxes = new GsaLocalAxes(model.ElementDirectionCosine(elementId));
         var local = new Plane(Point3d.Origin, localAxes.X, localAxes.Y);
         // create quaternion from two planes
@@ -64,16 +65,24 @@ namespace GsaGH.Parameters {
           angle -= 2 * Math.PI;
         }
 
-        // this should run in parallel!
         foreach (GsaResultQuantity results in XyzResults[elementId].Values) {
-          var p = new Point3d(results.X.Value, results.Y.Value, results.Z.Value);
-          p.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
+          var displacements = new Point3d(results.X.Value, results.Y.Value, results.Z.Value);
+          displacements.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
 
-          results.X = new Length(p.X, (LengthUnit)results.X.Unit);
-          results.Y = new Length(p.Y, (LengthUnit)results.Y.Unit);
-          results.Z = new Length(p.Z, (LengthUnit)results.Z.Unit);
+          results.X = new Length(displacements.X, (LengthUnit)results.X.Unit);
+          results.Y = new Length(displacements.Y, (LengthUnit)results.Y.Unit);
+          results.Z = new Length(displacements.Z, (LengthUnit)results.Z.Unit);
         }
-      }
+
+        foreach (GsaResultQuantity results in XxyyzzResults[elementId].Values) {
+          var rotations = new Point3d(results.X.Value, results.Y.Value, results.Z.Value);
+          rotations.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
+
+          results.X = new Angle(rotations.X, (AngleUnit)results.X.Unit);
+          results.Y = new Angle(rotations.Y, (AngleUnit)results.Y.Unit);
+          results.Z = new Angle(rotations.Z, (AngleUnit)results.Z.Unit);
+        }
+      });
     }
 
     internal void UpdateMinMax() {
