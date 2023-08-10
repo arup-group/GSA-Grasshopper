@@ -217,7 +217,17 @@ namespace GsaGH.Components {
       ghstring = null;
       if (da.GetData(8, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
-          mem.Type2D = (AnalysisOrder)typeInt;
+          switch (typeInt) {
+            case 0:
+              mem.Type2D = AnalysisOrder.LINEAR;
+              break;
+            case 1:
+              mem.Type2D = AnalysisOrder.QUADRATIC;
+              break;
+            case 2:
+              mem.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
+              break;
+          }
         } else {
           try {
             mem.Type2D = Mappings.GetAnalysisOrder(ghstring.Value);
