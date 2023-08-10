@@ -22,7 +22,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(EditProp2d))]
     [InlineData(typeof(GetMaterialProperties))]
     [InlineData(typeof(GetProp2dModifier))]
-    [InlineData(typeof(GetSectionDimensions))]
+    [InlineData(typeof(GetProfileDimensions))]
     [InlineData(typeof(GetSectionModifier))]
     [InlineData(typeof(GetSectionProperties))]
     //Geometry
@@ -44,7 +44,7 @@ namespace GsaGHTests.CustomComponent {
     //Results
     [InlineData(typeof(BeamStrainEnergy))]
     [InlineData(typeof(Elem1dContourResults))]
-    [InlineData(typeof(Elem1dResultDiagram))]
+    [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(Elem2dContourResults))]
     [InlineData(typeof(Elem3dContourResults))]
     [InlineData(typeof(NodeContourResults))]

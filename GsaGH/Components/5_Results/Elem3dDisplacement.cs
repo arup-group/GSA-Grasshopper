@@ -26,7 +26,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Elem3dDisplacement : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("b24e0b5d-6376-43bf-9844-15443ce3b9dd");
-    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Displacement3D;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
@@ -94,7 +94,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
         "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations in Global Axis." + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
         "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
@@ -102,7 +102,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
         "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations in Global Axis." + note, GH_ParamAccess.tree);
+        "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
