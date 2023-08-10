@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits.Units;
+using Rhino.Geometry;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -16,11 +17,11 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Analysis Case 1DElement Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple<elementList, numberOfDivisions>
+    ///   key = Tuple<elementList, numberOfDivisions, axisId>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, GsaResultsValues>
+    internal Dictionary<Tuple<string, int, int>, GsaResultsValues>
       ACaseElement1DDisplacementValues { get; set; }
-      = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+      = new Dictionary<Tuple<string, int, int>, GsaResultsValues>();
     /// <summary>
     ///   Analysis Case 1DElement Footfall Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -32,27 +33,27 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Analysis Case 1DElement Force Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple<elementList, numberOfDivisions>
+    ///   key = Tuple<elementList, numberOfDivisions, axisId>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, GsaResultsValues>
+    internal Dictionary<Tuple<string, int, int>, GsaResultsValues>
       ACaseElement1DForceValues { get; set; }
-      = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+      = new Dictionary<Tuple<string, int, int>, GsaResultsValues>();
     /// <summary>
     ///   Analysis Case 1DElement API Result Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple<elementList, numberOfDivisions>
+    ///   key = Tuple<elementList, numberOfDivisions, axisId>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, Element1DResult>>
+    internal Dictionary<Tuple<string, int, int>, ReadOnlyDictionary<int, Element1DResult>>
       ACaseElement1DResults { get; set; }
-      = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, Element1DResult>>();
+      = new Dictionary<Tuple<string, int, int>, ReadOnlyDictionary<int, Element1DResult>>();
     /// <summary>
     ///   Analysis Case 1DElement Strain Energy Density Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple<elementList, numberOfDivisions>
+    ///   key = Tuple<elementList, numberOfDivisions, axisId>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, GsaResultsValues>
+    internal Dictionary<Tuple<string, int, int>, GsaResultsValues>
       ACaseElement1DStrainEnergyDensityValues { get; set; }
-      = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+      = new Dictionary<Tuple<string, int, int>, GsaResultsValues>();
     /// <summary>
     ///   Analysis Case 2DElement Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -162,57 +163,52 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Combination Case 1DElement Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple
-    ///   <elementList, permutations>
-    ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    ///   key = Tuple<elementList, permutations, axisId>
+    ///   value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>
+    internal Dictionary<Tuple<string, int, int>, ConcurrentDictionary<int, GsaResultsValues>>
       ComboElement1DDisplacementValues { get; set; }
-      = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+      = new Dictionary<Tuple<string, int, int>, ConcurrentDictionary<int, GsaResultsValues>>();
     /// <summary>
     ///   Combination Case 1DElement Forces Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple
-    ///   <elementList, permutations>
-    ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    ///   key = Tuple<elementList, permutations, axisId>
+    ///   value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>
+    internal Dictionary<Tuple<string, int, int>, ConcurrentDictionary<int, GsaResultsValues>>
       ComboElement1DForceValues { get; set; }
-      = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+      = new Dictionary<Tuple<string, int, int>, ConcurrentDictionary<int, GsaResultsValues>>();
     /// <summary>
     ///   Combination Case 1DElement API Result Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple
-    ///   <elementList, permutations>
-    ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    ///   key = Tuple<elementList, permutations, axisId>
+    ///   value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
     internal
-      Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
+      Dictionary<Tuple<string, int, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
       ComboElement1DResults { get; set; }
-      = new Dictionary<Tuple<string, int>,
+      = new Dictionary<Tuple<string, int, int>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
     /// <summary>
     ///   Combination Case 1DElement API Result Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple
-    ///   <elementList, permutations>
-    ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    ///   key = Tuple<elementList, permutations, axisId>
+    ///   value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
     internal
-      Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
+      Dictionary<Tuple<string, int, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
       ComboElement1DResultsInclStrainEnergyDensity { get; set; }
-      = new Dictionary<Tuple<string, int>,
+      = new Dictionary<Tuple<string, int, int>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
     /// <summary>
     ///   Combination Case 1DElement Strain Energy Density Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple
-    ///   <elementList, permutations>
-    ///     value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    ///   key = Tuple <elementList, permutations, axisId>
+    ///   value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
-    internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>
+    internal Dictionary<Tuple<string, int, int>, ConcurrentDictionary<int, GsaResultsValues>>
       ComboElement1DStrainEnergyDensityValues { get; set; }
-      = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+      = new Dictionary<Tuple<string, int, int>, ConcurrentDictionary<int, GsaResultsValues>>();
     /// <summary>
     ///   Combination Case 2DElement Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -234,9 +230,8 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Combination Case 2DElement API Result Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = Tuple
-    ///   <elementList, layer>
-    ///     value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
+    ///   key = Tuple<elementList, layer>
+    ///   value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
     /// </summary>
     internal Dictionary<Tuple<string, double>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>>>
@@ -255,9 +250,8 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Combination Case 2DElement Stress Result VALUES Dictionary
     ///   Append to this dictionary to chache results
-    ///   key = tuple
-    ///   <elementList, layer>
-    ///     value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
+    ///   key = tuple<elementList, layer>
+    ///   value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
     /// </summary>
     internal Dictionary<Tuple<string, double>, ConcurrentDictionary<int, GsaResultsValues>>
       ComboElement2DStressValues { get; set; }
@@ -364,14 +358,14 @@ namespace GsaGH.Parameters {
           break;
 
         case CaseType.Combination: {
-          txt = "C" + CaseId;
-          if (SelectedPermutationIds.Count > 0) {
-            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
-              txt + " p" + SelectedPermutationIds[0];
-          }
+            txt = "C" + CaseId;
+            if (SelectedPermutationIds.Count > 0) {
+              txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
+                txt + " p" + SelectedPermutationIds[0];
+            }
 
-          break;
-        }
+            break;
+          }
       }
 
       return txt.Trim().Replace("  ", " ");
@@ -386,12 +380,12 @@ namespace GsaGH.Parameters {
     /// <param name="energyUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DAverageStrainEnergyDensityValues(
-      string elementlist, EnergyUnit energyUnit) {
+      string elementlist, int axisId, EnergyUnit energyUnit) {
       if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
-      var key = new Tuple<string, int>(elementlist, 1);
+      var key = new Tuple<string, int, int>(elementlist, 1, axisId);
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
@@ -424,7 +418,7 @@ namespace GsaGH.Parameters {
     }
 
     /// <summary>
-    ///   Get beam displacement values in local axis of 1D element
+    ///   Get beam displacement values
     ///   For analysis case the length of the list will be 1
     ///   This method will use cached data if it exists
     /// </summary>
@@ -433,25 +427,35 @@ namespace GsaGH.Parameters {
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DDisplacementValues(
-      string elementlist, int positionsCount, LengthUnit lengthUnit) {
+      string elementlist, int positionsCount, int axisId, LengthUnit lengthUnit) {
       if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
+      Plane global = Plane.WorldXY;
 
-      var key = new Tuple<string, int>(elementlist, positionsCount);
+      var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
       if (Type == CaseType.AnalysisCase) {
-        if (!ACaseElement1DDisplacementValues.ContainsKey(key)) {
-          if (!ACaseElement1DResults.ContainsKey(key)) {
-            ACaseElement1DResults.Add(key,
-              AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
-          }
+        //if (!ACaseElement1DDisplacementValues.ContainsKey(key)) {
+        if (!ACaseElement1DResults.ContainsKey(key)) {
+          ACaseElement1DResults.Add(key,
+            AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
+        }
 
-          ACaseElement1DDisplacementValues.Add(key,
-            ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit));
+        GsaResultsValues res = ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit);
+
+        if (axisId == 0) {
+          res.CoordinateTransformationTo(global, Model.Model);
         }
 
         return new List<GsaResultsValues> {
-          ACaseElement1DDisplacementValues[key],
+          res
+        };
+
+        //ACaseElement1DDisplacementValues.Add(key, res);
+        //}
+
+        return new List<GsaResultsValues> {
+          ACaseElement1DDisplacementValues[key]
         };
       }
 
@@ -511,12 +515,12 @@ namespace GsaGH.Parameters {
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DForceValues(
-      string elementlist, int positionsCount, ForceUnit forceUnit, MomentUnit momentUnit) {
+      string elementlist, int positionsCount, int axisId, ForceUnit forceUnit, MomentUnit momentUnit) {
       if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
-      var key = new Tuple<string, int>(elementlist, positionsCount);
+      var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement1DForceValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
@@ -558,12 +562,12 @@ namespace GsaGH.Parameters {
     /// <param name="energyUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(
-      string elementlist, int positionsCount, EnergyUnit energyUnit) {
+      string elementlist, int positionsCount, int axisId, EnergyUnit energyUnit) {
       if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
 
-      var key = new Tuple<string, int>(elementlist, positionsCount);
+      var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
       if (Type == CaseType.AnalysisCase) {
         if (!ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {

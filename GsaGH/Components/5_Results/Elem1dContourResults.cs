@@ -572,46 +572,18 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.Displacement:
-          res = result.Element1DDisplacementValues(elementlist, positionsCount, _lengthResultUnit)[0];
-
-          // coordinate transformation local to global coordinates
-          Plane global = Plane.WorldXY;
-          foreach (int elementId in res.XyzResults.Keys) {
-
-            var localAxes = new GsaLocalAxes(result.Model.Model.ElementDirectionCosine(elementId));
-            var local = new Rhino.Geometry.Plane(Point3d.Origin, localAxes.X, localAxes.Y);
-            // create quaternion from two planes
-            var q = Rhino.Geometry.Quaternion.Rotation(local, global);
-
-            double angle = new double();
-            var axis = new Vector3d();
-            q.GetRotation(out angle, out axis);
-
-            Rhino.Geometry.Plane OutputPlane = Rhino.Geometry.Plane.WorldXY;
-            angle = (angle > Math.PI) ? angle - (2 * Math.PI) : angle;
-
-            // need to run in parallel!
-            foreach (GsaResultQuantity results in res.XyzResults[elementId].Values) {
-              var p = new Point3d(results.X.Value, results.Y.Value, results.Z.Value);
-              p.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
-
-              results.X = new Length(p.X, (LengthUnit)results.X.Unit);
-              results.Y = new Length(p.Y, (LengthUnit)results.Y.Unit);
-              results.Z = new Length(p.Z, (LengthUnit)results.Z.Unit);
-              results.Xyz = new Length(Math.Sqrt((p.X * p.X) + (p.Y * p.Y) + (p.Z * p.Z)), (LengthUnit)results.X.Unit);
-            }
-          }
+          res = result.Element1DDisplacementValues(elementlist, positionsCount, 0, _lengthResultUnit)[0];
           break;
 
         case FoldMode.Force:
-          res = result.Element1DForceValues(elementlist, positionsCount, _forceUnit, _momentUnit)[0];
+          res = result.Element1DForceValues(elementlist, positionsCount, 0, _forceUnit, _momentUnit)[0];
           break;
 
         case FoldMode.StrainEnergy:
           res = _disp == DisplayValue.X ?
-            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount,
+            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, 0,
               _energyResultUnit)[0] :
-            result.Element1DAverageStrainEnergyDensityValues(elementlist, _energyResultUnit)[0];
+            result.Element1DAverageStrainEnergyDensityValues(elementlist, 0, _energyResultUnit)[0];
           break;
 
         case FoldMode.Footfall:

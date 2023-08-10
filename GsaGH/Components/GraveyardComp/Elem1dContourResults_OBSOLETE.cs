@@ -409,20 +409,20 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.Displacement:
-          res = result.Element1DDisplacementValues(elementlist, positionsCount, _lengthUnit)[0];
+          res = result.Element1DDisplacementValues(elementlist, positionsCount, 0, _lengthUnit)[0];
 
           break;
 
         case FoldMode.Force:
-          res = result.Element1DForceValues(elementlist, positionsCount, DefaultUnits.ForceUnit,
+          res = result.Element1DForceValues(elementlist, positionsCount, 0, DefaultUnits.ForceUnit,
             DefaultUnits.MomentUnit)[0];
           break;
 
         case FoldMode.StrainEnergy:
           res = _disp == DisplayValue.X ?
-            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount,
+            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, 0,
               _energyResultUnit)[0] :
-            result.Element1DAverageStrainEnergyDensityValues(elementlist, _energyResultUnit)[0];
+            result.Element1DAverageStrainEnergyDensityValues(elementlist, 0, _energyResultUnit)[0];
           break;
       }
 

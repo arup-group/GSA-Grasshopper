@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using GsaAPI;
 using OasysUnits;
+using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   internal class GsaResultsValues {
@@ -43,6 +46,37 @@ namespace GsaGH.Parameters {
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
 
     internal GsaResultsValues() { }
+
+    internal void CoordinateTransformationTo(Plane plane, Model model) {
+      // coordinate transformation
+      foreach (int elementId in XyzResults.Keys) {
+
+        var localAxes = new GsaLocalAxes(model.ElementDirectionCosine(elementId));
+        var local = new Plane(Point3d.Origin, localAxes.X, localAxes.Y);
+        // create quaternion from two planes
+        var q = Quaternion.Rotation(plane, local);
+
+        //q = q.Inverse;
+
+        double angle = new double();
+        var axis = new Vector3d();
+        q.GetRotation(out angle, out axis);
+
+        if (angle > Math.PI) {
+          angle -= 2 * Math.PI;
+        }
+
+        // should run in parallel!
+        foreach (GsaResultQuantity results in XyzResults[elementId].Values) {
+          var p = new Point3d(results.X.Value, results.Y.Value, results.Z.Value);
+          //p.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
+
+          results.X = new Length(p.X, (LengthUnit)results.X.Unit);
+          results.Y = new Length(p.Y, (LengthUnit)results.Y.Unit);
+          results.Z = new Length(p.Z, (LengthUnit)results.Z.Unit);
+        }
+      }
+    }
 
     internal void UpdateMinMax() {
       if (XyzResults.Count > 0) {
