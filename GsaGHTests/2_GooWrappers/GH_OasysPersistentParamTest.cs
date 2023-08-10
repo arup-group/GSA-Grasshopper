@@ -30,6 +30,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaNodeParameter))]
     // 3_Loads
     [InlineData(typeof(GsaLoadParameter))]
+    [InlineData(typeof(GsaLoadCaseParameter))]
     [InlineData(typeof(GsaGridPlaneSurfaceParameter))]
     // 4_Analysis
     [InlineData(typeof(GsaAnalysisCaseParameter))]

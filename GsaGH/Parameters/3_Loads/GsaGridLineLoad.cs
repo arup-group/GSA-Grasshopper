@@ -8,6 +8,7 @@ namespace GsaGH.Parameters {
   public class GsaGridLineLoad : IGsaLoad {
     public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+    public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
@@ -40,6 +41,11 @@ namespace GsaGH.Parameters {
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
         Points = Points.ToList(),
       };
+      
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       return dup;
     }
 

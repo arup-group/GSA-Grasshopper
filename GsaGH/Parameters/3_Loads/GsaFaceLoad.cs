@@ -4,6 +4,7 @@ using GsaAPI;
 namespace GsaGH.Parameters {
   public class GsaFaceLoad : IGsaLoad {
     public FaceLoad FaceLoad { get; set; }
+    public GsaLoadCase LoadCase { get; set; }
     public LoadType LoadType => LoadType.Face;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
@@ -51,6 +52,10 @@ namespace GsaGH.Parameters {
           //note Vector2 currently only get in GsaAPI
           // duplicate Position.X and Position.Y when fixed
           break;
+      }
+
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
       }
 
       if (ReferenceType == ReferenceType.None) {
