@@ -2,13 +2,11 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using static System.Net.WebRequestMethods;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -16,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditMaterial : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("70750300-2ec7-42a1-88ea-9e189e767544");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMaterial;
 

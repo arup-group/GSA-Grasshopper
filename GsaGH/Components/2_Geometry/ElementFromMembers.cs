@@ -29,7 +29,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class ElementFromMembers : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateElemsFromMems;
     private ConcurrentBag<GsaElement2dGoo> _element2ds;

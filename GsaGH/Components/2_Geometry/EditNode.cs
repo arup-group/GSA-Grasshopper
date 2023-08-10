@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("418e222d-16b8-4a8e-bb3d-98ad72b913d8");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditNode;
     private FoldMode _mode = FoldMode.DoNotGetConnected;

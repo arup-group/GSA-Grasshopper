@@ -308,5 +308,39 @@ namespace GsaGH.Helpers.Import {
 
       return loads;
     }
+
+    internal static List<int> GetLoadCases(Model model) {
+      var caseIDs = new List<int>();
+      ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
+      caseIDs.AddRange(gravities.Select(x => x.Case));
+
+      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
+        ReadOnlyCollection<NodeLoad> nodeLoads;
+        try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
+        {
+          nodeLoads = model.NodeLoads(typ);
+          caseIDs.AddRange(nodeLoads.Select(x => x.Case));
+        } catch (Exception) {
+          // ignored
+        }
+      }
+
+      ReadOnlyCollection<BeamLoad> beamLoads = model.BeamLoads();
+      caseIDs.AddRange(beamLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<FaceLoad> faceLoads = model.FaceLoads();
+      caseIDs.AddRange(faceLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<GridPointLoad> gridPointLoads = model.GridPointLoads();
+      caseIDs.AddRange(gridPointLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<GridLineLoad> gridLineLoads = model.GridLineLoads();
+      caseIDs.AddRange(gridLineLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<GridAreaLoad> gridAreaLoads = model.GridAreaLoads();
+      caseIDs.AddRange(gridAreaLoads.Select(x => x.Case));
+
+      return caseIDs.GroupBy(x => x).Select(y => y.First()).OrderBy(z => z).ToList();
+    }
   }
 }

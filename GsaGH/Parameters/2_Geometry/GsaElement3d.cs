@@ -168,16 +168,16 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaElement3d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, List<GsaProp3d> prop3ds) {
-      ApiElements = elements.Values.ToList();
+      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProp3d> prop3ds) {
       NgonMesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       FaceInt = convertMesh.Item4;
-      Ids = elements.Keys.ToList();
-      Prop3ds = prop3ds;
+      ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
+      Prop3ds = prop3ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList(); ;
       UpdatePreview();
     }
 
