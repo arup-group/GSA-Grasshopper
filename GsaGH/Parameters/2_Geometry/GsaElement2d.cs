@@ -153,13 +153,13 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaElement2d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, List<GsaProp2d> prop2ds) {
+      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProp2d> prop2ds) {
       Mesh = mesh;
       Topology = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
-      ApiElements = elements.Values.ToList();
-      Ids = elements.Keys.ToList();
-      Prop2ds = prop2ds;
+      ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
+      Prop2ds = prop2ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
     }
 
     public static Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
