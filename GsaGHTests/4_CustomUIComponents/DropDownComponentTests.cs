@@ -16,6 +16,7 @@ namespace GsaGHTests.CustomComponent {
     //prop
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
+    [InlineData(typeof(CreateMember2d))]
     [InlineData(typeof(CreateOffset))]
     [InlineData(typeof(CreateProp2d))]
     [InlineData(typeof(CreateProp2dModifier))]
