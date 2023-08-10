@@ -1,24 +1,31 @@
-﻿namespace GsaGH.Parameters {
+﻿using System.Collections.Generic;
+using System.Linq;
+using GsaAPI;
+
+namespace GsaGH.Parameters {
   public class GsaCombinationCase {
-    public string Description { get; set; }
+    public string Definition { get; set; }
     public string Name { get; set; }
     internal int Id { get; set; } = 0;
 
     public GsaCombinationCase() { }
 
-    public GsaCombinationCase(string name, string description) {
+    public GsaCombinationCase(string name, string definition) {
       Name = name;
-      Description = description;
+      Definition = definition;
+      ValidateDefinition(name, definition);
     }
 
-    internal GsaCombinationCase(int id, string name, string description) {
+    internal GsaCombinationCase(int id, string name, string definition) 
+      : this (name, definition) {
       Id = id;
-      Name = name;
-      Description = description;
     }
+
+    internal GsaCombinationCase(KeyValuePair<int, CombinationCase> keyValuePair) : this(
+      keyValuePair.Key, keyValuePair.Value.Name, keyValuePair.Value.Definition) { }
 
     public GsaCombinationCase Duplicate() {
-      return new GsaCombinationCase(Id, Name, Description);
+      return new GsaCombinationCase(Id, Name, Definition);
     }
 
     public override string ToString() {
@@ -27,12 +34,17 @@
         s += " '" + Name.ToString() + "'";
       }
 
-      if (Description != null) {
-        s += " " + Description.ToString();
+      if (Definition != null) {
+        s += " " + Definition.ToString();
       }
 
       return string.Join(" ", (Id > 0 ? "ID:" + Id : string.Empty).Trim(), s.Trim()).Trim()
        .Replace("  ", " ");
+    }
+
+    private void ValidateDefinition(string name, string definition) {
+      // this should throw an exception when definition is invalid [GSA-7113]
+      var combinationCase = new CombinationCase(name, definition);
     }
   }
 }
