@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>0.9.54-beta</Version>
+    <Version>0.9.55-beta</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	   <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <LangVersion>8.0</LangVersion>
