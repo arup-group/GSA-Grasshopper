@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
@@ -10,17 +9,17 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 
-namespace GsaGH.Components {
+namespace GsaGH.Components.GraveyardComp {
   /// <summary>
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class GetAnalysis : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("f71f0d68-f121-4081-b53d-896676c34ddb");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+  public class GetAnalysis2_OBSOLETE : GH_OasysComponent {
+    public override Guid ComponentGuid => new Guid("566a94d2-a022-4f12-a645-0366deb1476c");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAnalysisTask;
 
-    public GetAnalysis() : base("Get Model Analysis Tasks", "GetAnalysisTasks",
+    public GetAnalysis2_OBSOLETE() : base("Get Model Analysis Tasks", "GetAnalysisTasks",
       "Get Analysis Tasks and their Cases from GSA model", CategoryName.Name(),
       SubCategoryName.Cat0()) {
       Hidden = true;
@@ -36,8 +35,6 @@ namespace GsaGH.Components {
         "List of Analysis Tasks in model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaAnalysisCaseParameter(), "Analysis Cases", "ΣA",
         "List of Analysis Cases in model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaCombinationCaseParameter(), "Combination Cases", "ΣC",
-        "List of Combination Cases in model", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -46,12 +43,9 @@ namespace GsaGH.Components {
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = Analyses.GetAnalysisTasksAndCombinations(modelGoo.Value);
-      var combinationCaseGoos = modelGoo.Value.Model.CombinationCases().Select(keyValuePair
-        => new GsaCombinationCaseGoo(new GsaCombinationCase(keyValuePair))).ToList();
 
       da.SetDataList(0, tuple.Item1);
       da.SetDataList(1, tuple.Item2);
-      da.SetDataList(2, combinationCaseGoos);
     }
   }
 }
