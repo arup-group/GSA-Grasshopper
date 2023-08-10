@@ -30,6 +30,7 @@ namespace GsaGHTests.Parameters {
           Case = 6,
           Direction = Direction.ZZ,
           EntityList = "all",
+          EntityType = GsaAPI.EntityType.Element,
           Name = "name",
           Type = originalType,
         },
@@ -56,6 +57,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(6, original.FaceLoad.Case);
       Assert.Equal(Direction.ZZ, original.FaceLoad.Direction);
       Assert.Equal("all", original.FaceLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.FaceLoad.EntityType);
       Assert.Equal("name", original.FaceLoad.Name);
 
       switch (original.FaceLoad.Type) {

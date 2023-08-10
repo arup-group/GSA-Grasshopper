@@ -47,7 +47,7 @@ namespace GsaGHTests.Model {
       Assert.Equal("Kilogram", mass);
       Assert.Equal("Pascal", stress);
       Assert.Equal("Ratio", strain);
-      Assert.Equal("Celcius", temperature); // this typo is currently being fixed
+      Assert.Equal("Celsius", temperature);
       Assert.Equal("Day", timeLong);
       Assert.Equal("Minute", timeMedium);
       Assert.Equal("Second", timeShort);
