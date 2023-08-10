@@ -44,14 +44,9 @@ namespace GsaGH.Parameters {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
       att ??= doc.CreateDefaultAttributes();
       att.ColorSource = ObjectColorSource.ColorFromObject;
-      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.Mesh)), att, doc);
-      if (Value.Section3dPreview != null) {
-        ObjectAttributes meshAtt = att.Duplicate();
-        gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Section3dPreview.Mesh), meshAtt, doc);
-        foreach (Line ln in goo.Value.Section3dPreview.Outlines) {
-          ObjectAttributes lnAtt = att.Duplicate();
-          gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
-        }
+      foreach (GsaElement2dGoo goo in m_data.AllData(true).Cast<GsaElement2dGoo>()) {
+        gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.Mesh), att, doc);
+        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }

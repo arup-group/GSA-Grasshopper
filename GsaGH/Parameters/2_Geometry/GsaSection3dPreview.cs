@@ -1,17 +1,22 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.Graphics;
 using OasysGH.Units;
 using OasysUnits;
+using Rhino.DocObjects;
+using Rhino;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
+using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters {
   internal enum Layer {
@@ -22,7 +27,7 @@ namespace GsaGH.Parameters {
     OneDimensional,
     TwoDimensional
   }
-  
+
   public class GsaSection3dPreview {
     public Mesh Mesh { get; set; }
     public IEnumerable<Line> Outlines { get; set; }
@@ -86,6 +91,18 @@ namespace GsaGH.Parameters {
         Outlines = lns,
       };
       return dup;
+    }
+
+    public void BakeGeometry(
+      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      ObjectAttributes meshAtt = att.Duplicate();
+      gH_BakeUtility.BakeObject(new GH_Mesh(Mesh), meshAtt, doc);
+      foreach (Line ln in Outlines) {
+        ObjectAttributes lnAtt = att.Duplicate();
+        gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
+      }
     }
 
     private static Model AssembleTempModel(GsaElement1d elem) {
@@ -163,12 +180,12 @@ namespace GsaGH.Parameters {
     private static Mesh CreateMeshFromTriangles(ReadOnlyCollection<Triangle> triangles) {
       var faces = new ConcurrentBag<Mesh>();
       Parallel.ForEach(triangles, tri => {
-      var face = new Mesh();
+        var face = new Mesh();
         var col = (Color)tri.Colour;
         if (col.Name == "ff464646" || col.Name == "ff000000") {
           col = Colours.Preview3dMeshDefault;
         }
-        
+
         foreach (Vector3 verticy in tri.Vertices) {
           face.Vertices.Add(verticy.X, verticy.Y, verticy.Z);
           face.VertexColors.Add(col);
@@ -183,7 +200,7 @@ namespace GsaGH.Parameters {
       mesh.Faces.ConvertTrianglesToQuads(1, 0.75);
       return mesh;
     }
-    
+
 
     private void CreateGraphics(Model model, Layer layer, DimensionType type, string definition = "all") {
       GraphicDrawResult graphic = model.Draw(Specification(layer, definition, type));
@@ -207,18 +224,18 @@ namespace GsaGH.Parameters {
 
     private static GraphicSpecification AnalysisLayerSpec(string definition, DimensionType type) {
       return new GraphicSpecification() {
-        Entities = new EntityList() { 
-          Definition = definition, 
-          Name = "Name", 
-          Type = GsaAPI.EntityType.Element 
+        Entities = new EntityList() {
+          Definition = definition,
+          Name = "Name",
+          Type = GsaAPI.EntityType.Element
         },
         Cases = new EntityList() {
-          Definition = "none", 
+          Definition = "none",
           Name = "case",
           Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
-          For1d = type == DimensionType.OneDimensional 
+          For1d = type == DimensionType.OneDimensional
             ? DisplayMethodFor1d.OutLineFilled : DisplayMethodFor1d.Off,
           For2d = type == DimensionType.OneDimensional ? DisplayMethodFor2d.Off
             : DisplayMethodFor2d.Solid
@@ -235,15 +252,15 @@ namespace GsaGH.Parameters {
 
     private static GraphicSpecification DesignLayerSpec(string definition, DimensionType type) {
       return new GraphicSpecification() {
-        Entities = new EntityList() { 
-          Definition = definition, 
-          Name = "Name", 
-          Type = GsaAPI.EntityType.Member 
+        Entities = new EntityList() {
+          Definition = definition,
+          Name = "Name",
+          Type = GsaAPI.EntityType.Member
         },
-        Cases = new EntityList() { 
-          Definition = "none", 
-          Name = "case", 
-          Type = GsaAPI.EntityType.Case 
+        Cases = new EntityList() {
+          Definition = "none",
+          Name = "case",
+          Type = GsaAPI.EntityType.Case
         },
         EntityDisplayMethod = new EntityDisplayMethod {
           For1d = type == DimensionType.OneDimensional

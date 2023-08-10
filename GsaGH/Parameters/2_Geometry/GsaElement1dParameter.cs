@@ -10,7 +10,6 @@ using OasysGH.Parameters;
 using Rhino.DocObjects;
 using Rhino;
 using Rhino.Geometry;
-using System.Windows.Forms;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -49,14 +48,7 @@ namespace GsaGH.Parameters {
         ObjectAttributes objAtt = att.Duplicate();
         objAtt.ObjectColor = goo.Value.Colour;
         gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Line.Line), objAtt, doc);
-        if (Value.Section3dPreview != null) {
-          ObjectAttributes meshAtt = att.Duplicate();
-          gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Section3dPreview.Mesh), meshAtt, doc);
-          foreach (Line ln in goo.Value.Section3dPreview.Outlines) {
-            ObjectAttributes lnAtt = att.Duplicate();
-            gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
-          }
-        }
+        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
