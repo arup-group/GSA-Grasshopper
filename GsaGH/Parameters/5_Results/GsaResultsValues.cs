@@ -56,8 +56,6 @@ namespace GsaGH.Parameters {
         // create quaternion from two planes
         var q = Quaternion.Rotation(plane, local);
 
-        //q = q.Inverse;
-
         double angle = new double();
         var axis = new Vector3d();
         q.GetRotation(out angle, out axis);
@@ -66,10 +64,10 @@ namespace GsaGH.Parameters {
           angle -= 2 * Math.PI;
         }
 
-        // should run in parallel!
+        // this should run in parallel!
         foreach (GsaResultQuantity results in XyzResults[elementId].Values) {
           var p = new Point3d(results.X.Value, results.Y.Value, results.Z.Value);
-          //p.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
+          p.Transform(Transform.Rotation(angle, axis, Point3d.Origin));
 
           results.X = new Length(p.X, (LengthUnit)results.X.Unit);
           results.Y = new Length(p.Y, (LengthUnit)results.Y.Unit);

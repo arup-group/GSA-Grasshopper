@@ -435,24 +435,19 @@ namespace GsaGH.Parameters {
 
       var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
       if (Type == CaseType.AnalysisCase) {
-        //if (!ACaseElement1DDisplacementValues.ContainsKey(key)) {
-        if (!ACaseElement1DResults.ContainsKey(key)) {
-          ACaseElement1DResults.Add(key,
-            AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
+        if (!ACaseElement1DDisplacementValues.ContainsKey(key)) {
+          if (!ACaseElement1DResults.ContainsKey(key)) {
+            ACaseElement1DResults.Add(key,
+              AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
+          }
+
+          GsaResultsValues res = ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit);
+          if (axisId == 0) {
+            res.CoordinateTransformationTo(global, Model.Model);
+          }
+
+          ACaseElement1DDisplacementValues.Add(key, res);
         }
-
-        GsaResultsValues res = ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit);
-
-        if (axisId == 0) {
-          res.CoordinateTransformationTo(global, Model.Model);
-        }
-
-        return new List<GsaResultsValues> {
-          res
-        };
-
-        //ACaseElement1DDisplacementValues.Add(key, res);
-        //}
 
         return new List<GsaResultsValues> {
           ACaseElement1DDisplacementValues[key]
