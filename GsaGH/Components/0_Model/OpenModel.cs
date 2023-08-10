@@ -111,57 +111,31 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new Model();
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        switch (ghTyp.Value) {
-          case GH_String _: {
-            if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both)) {
-              _fileName = tempFile;
-            }
-
-            if (!_fileName.EndsWith(".gwb")) {
-              _fileName += ".gwb";
-            }
-
-            ReturnValue status = model.Open(_fileName);
-
-            if (status == 0) {
-              var gsaModel = new GsaModel(model) {
-                FileNameAndPath = _fileName,
-                ModelUnit = UnitMapping.GetUnit(model)
-              };
-
-              UpdateMessage();
-
-              da.SetData(0, new GsaModelGoo(gsaModel));
-
-              PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
-                (int)(new FileInfo(_fileName).Length / 1024));
-
-              return;
-            }
-
-            this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
-            return;
+      da.GetData(0, ref ghTyp);
+      switch (ghTyp.Value) {
+        case GH_String _:
+          if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both)) {
+            _fileName = tempFile;
           }
-          default:
-            this.AddRuntimeError("Unable to open Model");
-            return;
-        }
-      } else {
-        ReturnValue status = model.Open(_fileName);
 
-        if (status == 0) {
+          if (!_fileName.EndsWith(".gwb")) {
+            _fileName += ".gwb";
+          }
+
+          model.Open(_fileName);
           var gsaModel = new GsaModel(model) {
             FileNameAndPath = _fileName,
             ModelUnit = UnitMapping.GetUnit(model)
           };
-
           UpdateMessage();
-
           da.SetData(0, new GsaModelGoo(gsaModel));
-        } else {
-          this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
-        }
+          PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
+            (int)(new FileInfo(_fileName).Length / 1024));
+          return;
+
+        default:
+          this.AddRuntimeError("Unable to open Model");
+          return;
       }
     }
 
