@@ -26,7 +26,6 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.OpenModel;
-    private string _fileName;
     private Guid _panelGuid = Guid.NewGuid();
 
     public OpenModel() : base("Open Model", "Open", "Open an existing GSA model",
@@ -48,7 +47,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      _fileName = fdi.FileName;
+      string fileName = fdi.FileName;
 
       var panel = new GH_Panel();
       panel.CreateAttributes();
@@ -60,14 +59,14 @@ namespace GsaGH.Components {
         IGH_Param input = Params.Input[0].Sources[0];
         if (Params.Input[0].Sources[0].InstanceGuid == _panelGuid) {
           panel = input as GH_Panel;
-          panel.UserText = _fileName;
+          panel.UserText = fileName;
           panel.ExpireSolution(true);
         }
 
         Params.Input[0].RemoveSource(input);
       }
 
-      panel.UserText = _fileName;
+      panel.UserText = fileName;
       _panelGuid = panel.InstanceGuid;
       Instances.ActiveCanvas.Document.AddObject(panel, false);
       Params.Input[0].AddSource(panel);
@@ -78,27 +77,12 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    public override bool Read(GH_IReader reader) {
-      _fileName = reader.GetString("File");
-      return base.Read(reader);
-    }
-
     public override void SetSelected(int i, int j) { }
-
-    public override void VariableParameterMaintenance() {
-      Params.Input[0].Optional = _fileName != null;
-      Params.Input[0].ClearRuntimeMessages();
-    }
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("File", _fileName);
-      return base.Write(writer);
-    }
 
     protected override void InitialiseDropdowns() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Filename and path", "File",
+      pManager.AddTextParameter("Filename and path", "File",
         "GSA model to open and work with." + Environment.NewLine
         + "Input either path component, a text string with path and " + Environment.NewLine
         + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
@@ -111,62 +95,25 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var model = new Model();
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        switch (ghTyp.Value) {
-          case GH_String _: {
-            if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both)) {
-              _fileName = tempFile;
-            }
-
-            if (!_fileName.EndsWith(".gwb")) {
-              _fileName += ".gwb";
-            }
-
-            ReturnValue status = model.Open(_fileName);
-
-            if (status == 0) {
-              var gsaModel = new GsaModel(model) {
-                FileNameAndPath = _fileName,
-                ModelUnit = UnitMapping.GetUnit(model)
-              };
-
-              UpdateMessage();
-
-              da.SetData(0, new GsaModelGoo(gsaModel));
-
-              PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
-                (int)(new FileInfo(_fileName).Length / 1024));
-
-              return;
-            }
-
-            this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
-            return;
-          }
-          default:
-            this.AddRuntimeError("Unable to open Model");
-            return;
-        }
-      } else {
-        ReturnValue status = model.Open(_fileName);
-
-        if (status == 0) {
-          var gsaModel = new GsaModel(model) {
-            FileNameAndPath = _fileName,
-            ModelUnit = UnitMapping.GetUnit(model)
-          };
-
-          UpdateMessage();
-
-          da.SetData(0, new GsaModelGoo(gsaModel));
-        } else {
-          this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
-        }
+      string fileName = string.Empty;
+      da.GetData(0, ref fileName);
+      if (!fileName.EndsWith(".gwb")) {
+        fileName += ".gwb";
       }
+
+      model.Open(fileName);
+      var gsaModel = new GsaModel(model) {
+        FileNameAndPath = fileName,
+        ModelUnit = UnitMapping.GetUnit(model)
+      };
+      UpdateMessage(fileName);
+      da.SetData(0, new GsaModelGoo(gsaModel));
+      PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
+        (int)(new FileInfo(fileName).Length / 1024));
     }
 
-    private void UpdateMessage() {
-      string mes = Path.GetFileName(_fileName);
+    private void UpdateMessage(string fileName) {
+      string mes = Path.GetFileName(fileName);
       mes = mes.Substring(0, mes.Length - 4);
       Message = mes;
     }

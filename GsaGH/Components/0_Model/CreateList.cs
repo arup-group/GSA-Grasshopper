@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateList;
     private EntityType _type = EntityType.Node;

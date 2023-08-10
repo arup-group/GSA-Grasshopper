@@ -43,7 +43,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(BeamForces))]
     [InlineData(typeof(BeamStrainEnergy), true)]
     [InlineData(typeof(Elem1dContourResults), true)]
-    [InlineData(typeof(Elem1dResultDiagram))]
+    [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(Elem2dContourResults), true)]
     [InlineData(typeof(Elem2dDisplacement))]
     [InlineData(typeof(Elem2dForces))]

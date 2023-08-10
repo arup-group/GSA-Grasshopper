@@ -6,7 +6,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaLoad" /> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="IGsaLoad" /> can be used in Grasshopper.
   /// </summary>
   public class GsaLoadGoo : GH_OasysGoo<IGsaLoad> {
     public static string Description => "GSA Load";

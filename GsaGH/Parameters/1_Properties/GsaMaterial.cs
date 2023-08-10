@@ -456,8 +456,13 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string code = string.Empty;
+      string code = GetCodeName();
+      string id = Id == 0 ? string.Empty : " Grd:" + Id;
+      return (code + " " + MaterialType + id + " " + (Name ?? string.Empty)).Trim();
+    }
 
+    internal string GetCodeName() {
+      string code = string.Empty;
       if (MaterialType == MatType.Concrete && !AnalysisMaterialsModified) {
         code = ConcreteDesignCodeName;
       }
@@ -469,9 +474,7 @@ namespace GsaGH.Parameters {
       if (IsCustom) {
         code = "Custom";
       }
-
-      string id = Id == 0 ? string.Empty : " Grd:" + Id;
-      return (code + " " + MaterialType + id + " " + (Name ?? string.Empty)).Trim();
+      return code;
     }
 
     internal static List<string> GetGradeNames(
