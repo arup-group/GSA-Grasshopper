@@ -183,6 +183,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CombinationCaseInfo {
+            get {
+                object obj = ResourceManager.GetObject("CombinationCaseInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CombinationCaseParam {
             get {
                 object obj = ResourceManager.GetObject("CombinationCaseParam", resourceCulture);
