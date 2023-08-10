@@ -185,6 +185,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess dataAccess) {
+      this.AddRuntimeError("Reaction Force results are now in Global axis - please update your script accordingly!");
       var gsaResult = new GsaResult();
       var ghObject = new GH_ObjectWrapper();
 

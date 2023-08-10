@@ -24,15 +24,15 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get GSA reaction forces
   /// </summary>
-  public class ReactionForce : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("37274bd4-aea7-4377-8462-c9035e75e316");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+  public class ReactionForce_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ReactionForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public ReactionForce() : base("Reaction Forces", "ReacForce", "Reaction Force result values",
+    public ReactionForce_OBSOLETE() : base("Reaction Forces", "ReacForce", "Reaction Force result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -97,6 +97,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      this.AddRuntimeError("Reaction Force results are now in Global axis - please update your script accordingly!");
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
 
@@ -106,19 +107,19 @@ namespace GsaGH.Components {
       string axis = " in Node's Local Axis (Global Axis is no Local Axis has been set).";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Reaction Forces in Global X-direction" + axis + note, GH_ParamAccess.tree);
+        "Reaction Forces in X-direction" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Reaction Forces in Global Y-direction" + axis + note, GH_ParamAccess.tree);
+        "Reaction Forces in Y-direction" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Reaction Forces in Global Z-direction" + axis + note, GH_ParamAccess.tree);
+        "Reaction Forces in Z-direction" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|",
         "Combined |XYZ| Reaction Forces" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Reaction Moments around Global X-axis" + axis + note, GH_ParamAccess.tree);
+        "Reaction Moments around X-axis" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Reaction Moments around Global Y-axis" + axis + note, GH_ParamAccess.tree);
+        "Reaction Moments around Y-axis" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Reaction Moments around Global Z-axis" + axis + note, GH_ParamAccess.tree);
+        "Reaction Moments around Z-axis" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
         "Combined |XXYYZZ| Reaction Moments" + axis + note, GH_ParamAccess.tree);
       pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",

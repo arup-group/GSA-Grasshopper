@@ -362,15 +362,9 @@ namespace GsaGH.Components {
       var direction = new Vector3d();
       IQuantity forceValue = null;
 
-      Vector3d xAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.XAxis :
-        node.Value.Value.LocalAxis.XAxis;
-      xAxis.Unitize();
-      Vector3d yAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.YAxis :
-        node.Value.Value.LocalAxis.YAxis;
-      yAxis.Unitize();
-      Vector3d zAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.ZAxis :
-        node.Value.Value.LocalAxis.ZAxis;
-      zAxis.Unitize();
+      Vector3d xAxis = Vector3d.XAxis;
+      Vector3d yAxis = Vector3d.YAxis;
+      Vector3d zAxis = Vector3d.ZAxis;
 
       xAxis *= quantity.X.As(unit) * scale;
       yAxis *= quantity.Y.As(unit) * scale;
