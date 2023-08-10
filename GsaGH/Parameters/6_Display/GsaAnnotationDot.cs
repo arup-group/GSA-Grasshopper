@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Parameters.Enums;
 using OasysGH;
 using OasysGH.Parameters;
 using OasysGH.Units;
@@ -10,13 +11,17 @@ using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  public class AnnotationGoo : GH_OasysGeometricGoo<TextDot>, IGH_PreviewData {
+  public class GsaAnnotationDot : GH_GeometricGoo<TextDot>, IGsaAnnotation, IGH_PreviewData {
+    public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
+    public override string TypeDescription => "A GSA Annotation.";
     public override string TypeName => "Annotation";
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public override string TypeDescription => "Annotation any GSA object for ID or result value";
-    public Color Color { get; private set; } = Color.Empty;
+    public BoundingBox ClippingBox => Boundingbox;
+    public Color Color { get; private set; }
+    public GsaAnnotationType AnnotationType => GsaAnnotationType.TextDot;
+    public string Text => Value.Text;
+    public Point3d Location => Value.Point;
 
-    public AnnotationGoo(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
+    public GsaAnnotationDot(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
     }
     public override bool CastTo<TQ>(out TQ target) {
@@ -31,7 +36,6 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Number))) {
-        
         if (double.TryParse(Value.Text, out double number)) {
           target = (TQ)(object)new GH_Number(number);
           return true;
@@ -44,13 +48,13 @@ namespace GsaGH.Parameters {
             }
           }
         }
-
       }
 
       target = default;
       return false;
     }
-    public override void DrawViewportWires(GH_PreviewWireArgs args) {
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Color != Color.Empty) {
         args.Pipeline.Draw2dText(Value.Text, Color, Value.Point, true);
       } else {
@@ -58,10 +62,8 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
-
-    public override IGH_GeometricGoo Duplicate() {
-      return new AnnotationGoo(Value.Point, Color, Value.Text);
+    public override IGH_GeometricGoo DuplicateGeometry() {
+      return new GsaAnnotationDot(Value.Point, Color, Value.Text);
     }
 
     public override string ToString() { 
@@ -69,7 +71,7 @@ namespace GsaGH.Parameters {
       return $"{pt}, Value: {Value.Text}"; 
     }
 
-    public override GeometryBase GetGeometry() {
+    public GeometryBase GetGeometry() {
       if (Value?.Point == null) {
         return null;
       }
@@ -83,16 +85,19 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      TextDot value = Value;
-      Point3d point = Value.Point;
+      var point = new Point3d(Value.Point);
       point.Transform(xform);
-      return new AnnotationGoo(point, Color, Value.Text);
+      return new GsaAnnotationDot(point, Color, Value.Text);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       TextDot value = Value;
       Point3d point = xmorph.MorphPoint(Value.Point);
-      return new AnnotationGoo(point, Color, Value.Text);
+      return new GsaAnnotationDot(point, Color, Value.Text);
+    }
+
+    public override BoundingBox GetBoundingBox(Transform xform) {
+      return Value.GetBoundingBox(xform);
     }
   }
 }

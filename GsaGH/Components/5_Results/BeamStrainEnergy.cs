@@ -28,7 +28,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class BeamStrainEnergy : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.StrainEnergyDensity;
     private readonly List<string> _checkboxText = new List<string>() {

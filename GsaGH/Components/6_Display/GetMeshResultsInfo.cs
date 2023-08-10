@@ -14,13 +14,13 @@ using Rhino.Geometry;
 namespace GsaGH.Components {
   public class GetMeshResultsInfo : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("4089b9d6-490d-4491-b623-f99ed01630aa");
-    public override GH_Exposure Exposure => GH_Exposure.quinary;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Result2dInfo;
 
-    public GetMeshResultsInfo() : base("MeshResultInfo", "MeshResInfo",
+    public GetMeshResultsInfo() : base("Mesh Result Info", "MeshResInfo",
       "Get Element 2D or Element 3D Contour Result values", CategoryName.Name(),
-      SubCategoryName.Cat5()) {
+      SubCategoryName.Cat6()) {
       Hidden = true;
     }
 

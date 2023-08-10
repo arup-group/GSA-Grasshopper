@@ -142,8 +142,8 @@ namespace GsaGH.Components.GraveyardComp {
               pt = resLine.Value.PointAt(0.5);
               break;
 
-            case DiagramGoo resVector:
-              pt = resVector.StartingPoint;
+            case GsaVectorDiagram resVector:
+              pt = resVector.AnchorPoint;
               break;
 
             default:

@@ -42,6 +42,13 @@ namespace GsaGH.Parameters {
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      foreach (GsaMember2dGoo goo in m_data.AllData(true).Cast<GsaMember2dGoo>()) {
+        ObjectAttributes objAtt = att.Duplicate();
+        objAtt.ObjectColor = goo.Value.Colour;
+        gH_BakeUtility.BakeObject(new GH_Brep(goo.Value.Brep), objAtt, doc);
+      }
       gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Brep(x.Value.Brep)), att, doc);
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
