@@ -294,7 +294,7 @@ namespace GsaGH.Helpers.Import {
     private static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
       ConcurrentDictionary<int, Element> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis > axDict = model.Model.Axes();
+      ReadOnlyDictionary<int, Axis> axDict = model.Model.Axes();
 
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
       Parallel.ForEach(elements, elem => {
@@ -346,23 +346,15 @@ namespace GsaGH.Helpers.Import {
             apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
             prop2Ds.TryGetValue(key, out GsaProp2d prop);
-            var propList = new List<GsaProp2d>() { 
-              prop 
-            };
-
-            var singleelement2D = new GsaElement2d(apiElems, mesh, propList) {
-              //Section3dPreview = GsaSection3dPreview.CreateFromApi(
-              //  model, Layer.Analysis, DimensionType.TwoDimensional, key.ToString())
-            };
+            var propList = new ConcurrentDictionary<int, GsaProp2d>();
+            propList.TryAdd(key, prop);
+            var singleelement2D = new GsaElement2d(apiElems, mesh, propList);
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
           }
         } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          string ids = string.Join(" ", elems.Keys.ToArray());
-          var element2D = new GsaElement2d(elems, m, prop2Ds.Values.ToList()) {
-            //Section3dPreview = GsaSection3dPreview.CreateFromApi(
-            //  model, Layer.Analysis, DimensionType.TwoDimensional, ids)
-          };
+          var element2D = new GsaElement2d(elems, m, prop2Ds);
+
           elem2dGoos.Add(new GsaElement2dGoo(element2D));
         }
       });

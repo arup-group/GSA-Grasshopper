@@ -44,16 +44,17 @@ namespace GsaGH.Components {
   /// </summary>
   public class ShowDeformed3dSections : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("f1a7f1b4-8c34-43c0-a4f0-6dd207cbf48b");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowSection3d;
+    protected override Bitmap Icon => Resources.DeformedSection3d;
     private double _defScale = 250;
     private double _maxValue = 1000;
     private double _minValue;
     private int _noDigits;
     private GsaSection3dPreview _section3dPreview;
-    public ShowDeformed3dSections() : base("1D Contour Results", "ContourElem1d",
-      "Displays GSA 1D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat5()) { }
+    public ShowDeformed3dSections() : base("Preview Deformed 3D Sections", "DeformedPreview3d",
+      "Show the deformed 3D cross-section of 1D/2D GSA Elements and Members from a GSA Result.", 
+      CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
       m_attributes = new SliderComponentAttributes(this, SetVal, SetMaxMin, _defScale, _minValue, _maxValue, _noDigits,

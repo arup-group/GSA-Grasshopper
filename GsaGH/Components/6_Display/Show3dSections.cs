@@ -25,18 +25,18 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class Show3dSections : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("a3f80eb4-c876-4582-ad7a-d2bb9acf5c8d");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowSection3d;
+    protected override Bitmap Icon => Resources.Section3d;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Mesh _analysisMesh;
     private IEnumerable<Line> _analysisLines;
     private Mesh _designMesh;
     private IEnumerable<Line> _designLines;
 
-    public Show3dSections() : base("Preview3D", "S3D",
-      "Show the 3D cross-section of 1D/2D GSA Elements and Members",
-      CategoryName.Name(), SubCategoryName.Cat2()) { }
+    public Show3dSections() : base("Preview 3D Sections", "Preview3d",
+      "Show the 3D cross-section of 1D/2D GSA Elements and Members in a GSA model.",
+      CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {

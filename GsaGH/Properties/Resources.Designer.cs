@@ -483,6 +483,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap DeformedSection3d {
+            get {
+                object obj = ResourceManager.GetObject("DeformedSection3d", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DiagramParam {
             get {
                 object obj = ResourceManager.GetObject("DiagramParam", resourceCulture);
@@ -1153,16 +1163,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap path1220 {
-            get {
-                object obj = ResourceManager.GetObject("path1220", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap PointLoad {
             get {
                 object obj = ResourceManager.GetObject("PointLoad", resourceCulture);
@@ -1343,6 +1343,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Section3d {
+            get {
+                object obj = ResourceManager.GetObject("Section3d", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SectionAlignment {
             get {
                 object obj = ResourceManager.GetObject("SectionAlignment", resourceCulture);
@@ -1406,16 +1416,6 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap ShowID {
             get {
                 object obj = ResourceManager.GetObject("ShowID", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ShowSection3d {
-            get {
-                object obj = ResourceManager.GetObject("ShowSection3d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
