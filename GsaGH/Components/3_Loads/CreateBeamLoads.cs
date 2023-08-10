@@ -27,8 +27,8 @@ namespace GsaGH.Components {
       Trilinear,
     }
 
-    public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override Guid ComponentGuid => new Guid("63f1940b-34a8-452e-b478-f8a24d415b5c");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
@@ -262,8 +262,6 @@ namespace GsaGH.Components {
       } else {
         beamLoad.LoadCase = new GsaLoadCase(1);
       }
-
-      beamLoad.BeamLoad.Case = loadCase;
 
       if (_entityType == EntityType.Element) {
         beamLoad.ReferenceType = ReferenceType.Element;
