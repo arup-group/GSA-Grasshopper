@@ -13,7 +13,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateBucklingFactors : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("0c32af28-5057-4649-bd56-0850541c954b");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBucklingLengthFactors;
 
@@ -21,7 +21,7 @@ namespace GsaGH.Components {
       "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
       GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBucklingLengthFactorsGoo.Description, CategoryName.Name(),
-      SubCategoryName.Cat1()) {
+      SubCategoryName.Cat2()) {
       Hidden = true;
     }
 

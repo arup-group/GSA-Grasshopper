@@ -326,14 +326,13 @@ namespace GsaGH.Helpers.Import {
           }
 
           mList[elementId] = faceMesh;
-
           prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
         });
 
         // create one large mesh from single mesh face using
         // append list of meshes (faster than appending each mesh one by one)
         var m = new Mesh();
-        m.Append(mList.Values);
+        m.Append(mList.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value));
 
         // if parent member value is 0 then no parent member exist for element
         // we can therefore not be sure all elements with parent member = 0 are
@@ -417,7 +416,7 @@ namespace GsaGH.Helpers.Import {
         // create one large mesh from single mesh face using
         // append list of meshes (faster than appending each mesh one by one)
         var m = new Mesh();
-        m.Append(mList.Values.ToList());
+        m.Append(mList.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value));
 
         // if parent member value is 0 then no parent member exist for element
         // we can therefore not be sure all elements with parent member = 0 are
@@ -435,7 +434,7 @@ namespace GsaGH.Helpers.Import {
           }
         } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          var element3D = new GsaElement3d(elems, m, prop3Ds.Values.ToList());
+          var element3D = new GsaElement3d(elems, m, prop3Ds);
           elem3dGoos.Add(new GsaElement3dGoo(element3D));
         }
       });

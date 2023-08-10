@@ -25,7 +25,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditMember1d : Section3dPreviewComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("32e744e5-7352-4308-81d0-13bf06db5e82");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem1d;
     private AngleUnit _angleUnit = AngleUnit.Radian;

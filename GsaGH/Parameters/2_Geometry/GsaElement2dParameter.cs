@@ -41,12 +41,18 @@ namespace GsaGH.Parameters {
     }
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
-      var objs = new List<object>();
-      objs.AddRange(m_data.Select(x => new GH_Mesh(x.Value.Mesh)));
-      objs.AddRange(m_data.Select(x => new GH_Mesh(x.Value.Section3dPreview?.Mesh)));
-      objs.AddRange(m_data.Select(x => x.Value.Section3dPreview?.Outlines.Select(y => new GH_Line(y))));
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
-      gH_BakeUtility.BakeObjects(objs, att, doc);
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.Mesh)), att, doc);
+      if (Value.Section3dPreview != null) {
+        ObjectAttributes meshAtt = att.Duplicate();
+        gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Section3dPreview.Mesh), meshAtt, doc);
+        foreach (Line ln in goo.Value.Section3dPreview.Outlines) {
+          ObjectAttributes lnAtt = att.Duplicate();
+          gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
+        }
+      }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 

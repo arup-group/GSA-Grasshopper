@@ -2,10 +2,10 @@
 using Diagram = GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.GsaApi.EnumMappings {
-  internal class DiagramTypeMapping : EnumMapping<DiagramType, Diagram.DiagramType> {
+  internal class DiagramTypeMapping : EnumMapping<DiagramType, Diagram.ApiDiagramType> {
 
     public DiagramTypeMapping(
-      string description, DiagramType gsaApiEnum, Diagram.DiagramType gsaGhEnum) : base(description,
+      string description, DiagramType gsaApiEnum, Diagram.ApiDiagramType gsaGhEnum) : base(description,
       gsaApiEnum, gsaGhEnum) { }
   }
 }

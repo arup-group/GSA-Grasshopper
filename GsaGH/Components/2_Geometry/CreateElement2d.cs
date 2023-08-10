@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateElement2d : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     protected override Bitmap Icon => Resources.CreateElem2d;

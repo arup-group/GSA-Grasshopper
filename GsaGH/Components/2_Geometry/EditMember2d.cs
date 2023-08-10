@@ -23,7 +23,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditMember2d : Section3dPreviewComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("01390fdb-4319-46e9-9ff9-6a5d274e185d");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMem2d;
     private AngleUnit _angleUnit = AngleUnit.Radian;
@@ -217,7 +217,17 @@ namespace GsaGH.Components {
       ghstring = null;
       if (da.GetData(8, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
-          mem.Type2D = (AnalysisOrder)typeInt;
+          switch (typeInt) {
+            case 0:
+              mem.Type2D = AnalysisOrder.LINEAR;
+              break;
+            case 1:
+              mem.Type2D = AnalysisOrder.QUADRATIC;
+              break;
+            case 2:
+              mem.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
+              break;
+          }
         } else {
           try {
             mem.Type2D = Mappings.GetAnalysisOrder(ghstring.Value);
