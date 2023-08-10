@@ -4,6 +4,7 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Xunit;
 using static GsaAPI.GridLineLoad;
+using LoadCase = GsaGH.Parameters.Enums.LoadCase;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -14,6 +15,14 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(LoadType.GridLine, load.LoadType);
       Assert.Equal(0, load.GridLineLoad.PolyLineReference);
+    }
+
+    [Fact]
+    public void LoadCaseTest() {
+      var load = new GsaGridLineLoad();
+      Assert.Null(load.LoadCase);
+      load.LoadCase = new GsaLoadCase(99);
+      Assert.Equal(99, load.LoadCase.Id);
     }
 
     [Theory]
@@ -66,6 +75,25 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(type, original.GridLineLoad.Type);
       Assert.Equal(10, original.GridLineLoad.ValueAtStart);
       Assert.Equal(20, original.GridLineLoad.ValueAtEnd);
+    }
+
+    [Fact]
+    public void DuplicateLoadCaseTest() {
+      var load = new GsaGridLineLoad();
+      Assert.Null(load.LoadCase);
+      var duplicate = (GsaGridLineLoad)load.Duplicate();
+      Assert.Null(duplicate.LoadCase);
+
+      load.LoadCase = new GsaLoadCase(99);
+
+      duplicate = (GsaGridLineLoad)load.Duplicate();
+      Assert.Equal(99, duplicate.LoadCase.Id);
+
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCase.LoadCaseType.Dead, "DeadLoad");
+      Assert.Equal(99, load.LoadCase.Id);
+      Assert.Equal(1, duplicate.LoadCase.Id);
+      Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());
+      Assert.Equal("DeadLoad", duplicate.LoadCase.LoadCase.Name);
     }
   }
 }

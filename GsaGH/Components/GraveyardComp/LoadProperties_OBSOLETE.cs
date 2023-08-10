@@ -17,15 +17,15 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
-  public class LoadProperties : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("6b62f438-444a-4036-885f-d7582c590b2d");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+  public class LoadProperties_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.LoadInfo;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public LoadProperties() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
+    public LoadProperties_OBSOLETE() : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
@@ -98,7 +98,7 @@ namespace GsaGH.Components {
       string lengthUnitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
 
-      pManager.AddParameter(new GsaLoadCaseParameter());
+      pManager.AddIntegerParameter("Load case", "LC", "Load case number", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Elements/Nodes/Definition", "Def",
         "Element/Node list that load is applied to or Grid point / polygon definition",
@@ -138,8 +138,7 @@ namespace GsaGH.Components {
         switch (gsaLoad.LoadType) {
           case LoadType.Gravity:
             var gravityLoad = (GsaGravityLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(gravityLoad.LoadCase 
-              ?? new GsaLoadCase(gravityLoad.GravityLoad.Case)));
+            da.SetData(0, gravityLoad.GravityLoad.Case);
             da.SetData(1, gravityLoad.GravityLoad.Name);
             da.SetData(2, gravityLoad.GravityLoad.EntityList);
             da.SetData(6, gravityLoad.GravityLoad.Factor.X);
@@ -149,8 +148,7 @@ namespace GsaGH.Components {
 
           case LoadType.Node:
             var nodeLoad = (GsaNodeLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(nodeLoad.LoadCase
-              ?? new GsaLoadCase(nodeLoad.NodeLoad.Case)));
+            da.SetData(0, nodeLoad.NodeLoad.Case);
             da.SetData(1, nodeLoad.NodeLoad.Name);
             da.SetData(2, nodeLoad.NodeLoad.Nodes);
             da.SetData(3, nodeLoad.NodeLoad.AxisProperty);
@@ -162,8 +160,7 @@ namespace GsaGH.Components {
 
           case LoadType.Beam:
             var beamLoad = (GsaBeamLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(beamLoad.LoadCase
-              ?? new GsaLoadCase(beamLoad.BeamLoad.Case)));
+            da.SetData(0, beamLoad.BeamLoad.Case);
             da.SetData(1, beamLoad.BeamLoad.Name);
             da.SetData(2, beamLoad.BeamLoad.EntityList);
             da.SetData(3, beamLoad.BeamLoad.AxisProperty);
@@ -183,8 +180,7 @@ namespace GsaGH.Components {
 
           case LoadType.Face:
             var faceLoad = (GsaFaceLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(faceLoad.LoadCase
-              ?? new GsaLoadCase(faceLoad.FaceLoad.Case)));
+            da.SetData(0, faceLoad.FaceLoad.Case);
             da.SetData(1, faceLoad.FaceLoad.Name);
             da.SetData(2, faceLoad.FaceLoad.EntityList);
             da.SetData(3, faceLoad.FaceLoad.AxisProperty);
@@ -210,8 +206,7 @@ namespace GsaGH.Components {
 
           case LoadType.GridPoint:
             var gridPointLoad = (GsaGridPointLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(gridPointLoad.LoadCase
-              ?? new GsaLoadCase(gridPointLoad.GridPointLoad.Case)));
+            da.SetData(0, gridPointLoad.GridPointLoad.Case);
             da.SetData(1, gridPointLoad.GridPointLoad.Name);
             da.SetData(2, new GH_Point(gridPointLoad.GetPoint(_lengthUnit)));
             da.SetData(3, gridPointLoad.GridPointLoad.AxisProperty);
@@ -224,8 +219,7 @@ namespace GsaGH.Components {
 
           case LoadType.GridLine:
             var gridLineLoad = (GsaGridLineLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(gridLineLoad.LoadCase
-              ?? new GsaLoadCase(gridLineLoad.GridLineLoad.Case)));
+            da.SetData(0, gridLineLoad.GridLineLoad.Case);
             da.SetData(1, gridLineLoad.GridLineLoad.Name);
             da.SetData(2, new Polyline(gridLineLoad.Points));
             da.SetData(3, gridLineLoad.GridLineLoad.AxisProperty);
@@ -245,8 +239,7 @@ namespace GsaGH.Components {
 
           case LoadType.GridArea:
             var gridAreaLoad = (GsaGridAreaLoad)gsaLoad;
-            da.SetData(0, new GsaLoadCaseGoo(gridAreaLoad.LoadCase
-              ?? new GsaLoadCase(gridAreaLoad.GridAreaLoad.Case)));
+            da.SetData(0, gridAreaLoad.GridAreaLoad.Case);
             da.SetData(1, gridAreaLoad.GridAreaLoad.Name);
             var polyline = new Polyline(gridAreaLoad.Points);
             if (!polyline.IsClosed) {
