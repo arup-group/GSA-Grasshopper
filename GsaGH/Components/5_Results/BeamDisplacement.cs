@@ -148,7 +148,7 @@ namespace GsaGH.Components {
         }
 
         List<GsaResultsValues> vals
-          = result.Element1DDisplacementValues(elementlist, positionsCount, _lengthUnit);
+          = result.Element1DDisplacementValues(elementlist, positionsCount, 0, _lengthUnit);
 
         List<int> permutations = result.SelectedPermutationIds is null ? new List<int>() {
           1,
