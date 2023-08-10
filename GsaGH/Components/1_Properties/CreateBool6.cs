@@ -16,7 +16,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateBool6 : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBool6;
     private bool _x;

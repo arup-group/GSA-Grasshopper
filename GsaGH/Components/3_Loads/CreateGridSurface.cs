@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GridSurface;
     private readonly List<string> _type = new List<string>(new[] {
@@ -205,8 +205,16 @@ namespace GsaGH.Components {
         gps = new GsaGridPlaneSurface(plane);
       }
 
+      var ghString = new GH_String();
+      string name = "";
       bool changeGs = false;
-      var gs = new GsaAPI.GridSurface();
+      if (da.GetData(3, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out name, GH_Conversion.Both)) {
+          changeGs = true;
+        }
+      }
+
+      var gs = new GsaAPI.GridSurface(name);
       if (idSet) {
         gs.GridPlane = gps.GridSurface.GridPlane;
       }
@@ -304,14 +312,6 @@ namespace GsaGH.Components {
         }
       } else {
         gps.GridSurface.Elements = "All";
-      }
-
-      var ghString = new GH_String();
-      if (da.GetData(3, ref ghString)) {
-        if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-          gs.Name = name;
-          changeGs = true;
-        }
       }
 
       ghTyp = new GH_ObjectWrapper();

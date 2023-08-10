@@ -20,7 +20,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("7504a99f-a4e2-4e30-8251-de31ea83e8cb");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.MaterialProperties;
     private DensityUnit _densityUnit = DefaultUnits.DensityUnit;

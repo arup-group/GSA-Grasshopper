@@ -19,7 +19,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateMember2d : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("097037ce-bfc7-44c0-bc96-dc8c52466249");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateMem2d;
 

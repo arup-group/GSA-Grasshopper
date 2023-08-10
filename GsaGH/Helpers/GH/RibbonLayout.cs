@@ -42,6 +42,10 @@
       return new string(' ', 2) + "Results";
     }
 
+    public static string Cat6() {
+      return new string(' ', 1) + "Display";
+    }
+
     public static string Cat9() {
       return "Params";
     }
