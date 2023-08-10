@@ -10,7 +10,6 @@ namespace GsaGH.Helpers.Import {
   ///   Class containing functions to import various object types from GSA
   /// </summary>
   internal class Analyses {
-
     internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>
       GetAnalysisTasksAndCombinations(GsaModel gsaModel) {
       return GetAnalysisTasksAndCombinations(gsaModel.Model);
@@ -30,36 +29,7 @@ namespace GsaGH.Helpers.Import {
         caseIDs.AddRange(task.Cases.Select(acase => acase.Id));
       }
 
-      ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
-      caseIDs.AddRange(gravities.Select(x => x.Case));
-
-      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
-        ReadOnlyCollection<NodeLoad> nodeLoads;
-        try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
-        {
-          nodeLoads = model.NodeLoads(typ);
-          caseIDs.AddRange(nodeLoads.Select(x => x.Case));
-        } catch (Exception) {
-          // ignored
-        }
-      }
-
-      ReadOnlyCollection<BeamLoad> beamLoads = model.BeamLoads();
-      caseIDs.AddRange(beamLoads.Select(x => x.Case));
-
-      ReadOnlyCollection<FaceLoad> faceLoads = model.FaceLoads();
-      caseIDs.AddRange(faceLoads.Select(x => x.Case));
-
-      ReadOnlyCollection<GridPointLoad> gridPointLoads = model.GridPointLoads();
-      caseIDs.AddRange(gridPointLoads.Select(x => x.Case));
-
-      ReadOnlyCollection<GridLineLoad> gridLineLoads = model.GridLineLoads();
-      caseIDs.AddRange(gridLineLoads.Select(x => x.Case));
-
-      ReadOnlyCollection<GridAreaLoad> gridAreaLoads = model.GridAreaLoads();
-      caseIDs.AddRange(gridAreaLoads.Select(x => x.Case));
-
-      caseIDs = caseIDs.GroupBy(x => x).Select(y => y.First()).ToList();
+      caseIDs.AddRange(Loads.GetLoadCases(model));
 
       foreach (int caseId in caseIDs) {
         string caseName = model.AnalysisCaseName(caseId);

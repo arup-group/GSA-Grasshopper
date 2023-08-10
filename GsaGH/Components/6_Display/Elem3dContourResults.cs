@@ -34,14 +34,13 @@ using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
-using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get Element2d results
+  ///   Component to get Element3d results
   /// </summary>
-  public class Elem2dContourResults : GH_OasysDropDownComponent {
+  public class Elem3dContourResults : GH_OasysDropDownComponent {
     private enum DisplayValue {
       X,
       Y,
@@ -55,41 +54,18 @@ namespace GsaGH.Components {
 
     private enum FoldMode {
       Displacement,
-      Force,
       Stress,
-      Footfall,
     }
 
-    public override Guid ComponentGuid => new Guid("e2b011dc-c5ca-46fd-87f5-b888b27ef684");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("033035c6-16d9-4cc7-b2b3-cf5d5fac4108");
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result2D;
+    protected override Bitmap Icon => Resources.Result3D;
     private readonly List<string> _displacement = new List<string>(new[] {
       "Translation Ux",
       "Translation Uy",
       "Translation Uz",
       "Resolved |U|",
-    });
-    private readonly List<string> _footfall = new List<string>(new[] {
-      "Resonant",
-      "Transient",
-    });
-    private readonly List<string> _force = new List<string>(new[] {
-      "Force Nx",
-      "Force Ny",
-      "Force Nxy",
-      "Shear Qx",
-      "Shear Qy",
-      "Moment Mx",
-      "Moment My",
-      "Moment Mxy",
-      "Wood-Armer M*x",
-      "Wood-Armer M*y",
-    });
-    private readonly List<string> _layer = new List<string>(new[] {
-      "Top",
-      "Middle",
-      "Bottom",
     });
     private readonly List<string> _stress = new List<string>(new[] {
       "Stress xx",
@@ -101,17 +77,11 @@ namespace GsaGH.Components {
     });
     private readonly List<string> _type = new List<string>(new[] {
       "Displacement",
-      "Force",
       "Stress",
-      "Footfall",
     });
     private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
-    private int _flayer;
-    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
-    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private bool _isShear;
     private Bitmap _legend = new Bitmap(15, 120);
     private double _legendScale = 1;
     private List<string> _legendValues;
@@ -129,8 +99,8 @@ namespace GsaGH.Components {
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private bool _undefinedModelLengthUnit;
 
-    public Elem2dContourResults() : base("2D Contour Results", "ContourElem2d",
-      "Displays GSA 2D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat5()) { }
+    public Elem3dContourResults() : base("3D Contour Results", "Contour3D",
+      "Displays GSA 3D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {
@@ -168,7 +138,6 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
-      _flayer = reader.GetInt32("flayer");
       _slider = reader.GetBoolean("slider");
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
@@ -182,10 +151,6 @@ namespace GsaGH.Components {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
-      _forcePerLengthUnit
-        = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit),
-          reader.GetString("force"));
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("moment"));
       _stressUnitResult
         = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
       return base.Read(reader);
@@ -203,86 +168,22 @@ namespace GsaGH.Components {
           switch (j) {
             case 0: {
               if (_dropDownItems[1] != _displacement) {
-                while (
-                  _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  _dropDownItems.RemoveAt(2);
-                  _selectedItems.RemoveAt(2);
-                  _spacerDescriptions.RemoveAt(2);
-                }
-
                 _dropDownItems[1] = _displacement;
                 _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
 
-                _disp = (DisplayValue)3;
-                _isShear = false;
-                _flayer = 0;
-                Mode1Clicked();
+                _disp = (DisplayValue)3; // Resolved XYZ
+                DeformationModeClicked();
               }
 
               break;
             }
             case 1: {
-              if (_dropDownItems[1] != _force) {
-                while (
-                  _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  _dropDownItems.RemoveAt(2);
-                  _selectedItems.RemoveAt(2);
-                  _spacerDescriptions.RemoveAt(2);
-                }
-
-                _dropDownItems[1] = _force;
-                _selectedItems[1] = _dropDownItems[1][0];
-
-                _disp = 0;
-                _isShear = false;
-                _flayer = 0;
-                Mode2Clicked();
-              }
-
-              break;
-            }
-            case 2: {
               if (_dropDownItems[1] != _stress) {
-                if (_dropDownItems.Count < 3) {
-                  _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
-                  _spacerDescriptions.Insert(2, "Layer");
-                }
-
                 _dropDownItems[1] = _stress;
-                _selectedItems[1] = _dropDownItems[1][0];
+                _selectedItems[1] = _dropDownItems[1][2];
 
-                if (_selectedItems.Count < 3) {
-                  _selectedItems.Insert(2, _dropDownItems[2][1]);
-                } else {
-                  _selectedItems[2] = _dropDownItems[2][1];
-                }
-
-                _disp = 0;
-                _isShear = false;
-                Mode4Clicked();
-              }
-
-              break;
-            }
-            case 3: {
-              if (_dropDownItems[1] != _footfall) {
-                while (
-                  _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  _dropDownItems.RemoveAt(2);
-                  _selectedItems.RemoveAt(2);
-                  _spacerDescriptions.RemoveAt(2);
-                }
-
-                _dropDownItems[1] = _footfall;
-                _selectedItems[1] = _dropDownItems[1][0];
-
-                _disp = 0;
-                _isShear = false;
-                _flayer = 0;
-                Mode5Clicked();
+                _disp = (DisplayValue)2;
+                StressModeClicked();
               }
 
               break;
@@ -304,54 +205,14 @@ namespace GsaGH.Components {
               redraw = true;
               _slider = false;
             }
-          }
 
-          _disp = (DisplayValue)j;
-          if (_dropDownItems[1] != _displacement) {
-            _isShear = false;
-            if (_mode == FoldMode.Force) {
-              if ((j == 3) | (j == 4)) {
-                _disp = (DisplayValue)j - 3;
-                _isShear = true;
-              } else if (j > 4) {
-                _disp = (DisplayValue)j - 1;
-              }
-
-              switch (j) {
-                case 8:
-                  _disp = DisplayValue.ResXyz;
-                  break;
-
-                case 9:
-                  _disp = DisplayValue.ResXxyyzz;
-                  break;
-              }
-            } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
-              if (j > 2) {
-                _disp = (DisplayValue)j + 1;
-              }
-            }
+            _disp = (DisplayValue)j;
+          } else {
+            _disp = j < 3 ? (DisplayValue)j : (DisplayValue)(j + 1);
           }
 
           if (redraw) {
             ReDrawComponent();
-          }
-
-          break;
-        }
-        case 2 when _mode == FoldMode.Stress: {
-          switch (j) {
-            case 0:
-              _flayer = 1;
-              break;
-
-            case 1:
-              _flayer = 0;
-              break;
-
-            case 2:
-              _flayer = -1;
-              break;
           }
 
           break;
@@ -384,24 +245,9 @@ namespace GsaGH.Components {
           Params.Output[2].Name = "Values [rad]";
           break;
 
-        case FoldMode.Force when ((int)_disp < 4) | _isShear:
-          Params.Output[2].Name = "Legend Values ["
-            + ForcePerLength.GetAbbreviation(_forcePerLengthUnit) + "/"
-            + Length.GetAbbreviation(_lengthUnit) + "]";
-          break;
-
-        case FoldMode.Force:
-          Params.Output[2].Name = "Legend Values [" + Force.GetAbbreviation(_forceUnit) + "·"
-            + Length.GetAbbreviation(_lengthUnit) + "/" + Length.GetAbbreviation(_lengthUnit) + "]";
-          break;
-
         case FoldMode.Stress:
           Params.Output[2].Name
             = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
-          break;
-
-        case FoldMode.Footfall:
-          Params.Output[2].Name = "Legend Values [-]";
           break;
       }
     }
@@ -409,7 +255,6 @@ namespace GsaGH.Components {
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
-      writer.SetInt32("flayer", _flayer);
       writer.SetBoolean("slider", _slider);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
@@ -419,8 +264,6 @@ namespace GsaGH.Components {
       writer.SetBoolean("legend", _showLegend);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
-      writer.SetString("force", ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
-      writer.SetString("moment", Force.GetAbbreviation(_forceUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
       return base.Write(writer);
     }
@@ -442,24 +285,15 @@ namespace GsaGH.Components {
       ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
         EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
-        EngineeringUnits.ForcePerLength, ForcePerLength.GetAbbreviation(_forcePerLengthUnit),
-        UpdateForce);
-
-      ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
-        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateMoment);
-
       ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
         EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnitResult), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,
-        forceUnitsMenu,
-        momentUnitsMenu,
         stressUnitsMenu,
       });
-
       if (_undefinedModelLengthUnit) {
         ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
           "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
@@ -495,22 +329,11 @@ namespace GsaGH.Components {
     protected override void BeforeSolveInstance() {
       switch (_mode) {
         case FoldMode.Displacement:
-          Message = (int)_disp < 4 ? Length.GetAbbreviation(_lengthResultUnit) :
-            Angle.GetAbbreviation(AngleUnit.Radian);
-          break;
-
-        case FoldMode.Force:
-          Message = (int)_disp < 4 ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
-            Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/"
-            + Length.GetAbbreviation(_lengthUnit);
+          Message = Length.GetAbbreviation(_lengthResultUnit);
           break;
 
         case FoldMode.Stress:
           Message = Pressure.GetAbbreviation(_stressUnitResult);
-          break;
-
-        case FoldMode.Footfall:
-          Message = string.Empty;
           break;
       }
     }
@@ -558,7 +381,7 @@ namespace GsaGH.Components {
       IQuantity length = new Length(0, _lengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Result Mesh", "M", "Mesh with coloured result values",
+      pManager.AddGenericParameter("Ngon Mesh", "M", "Ngon Mesh with coloured result values",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values",
@@ -567,8 +390,6 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
-      _case = string.Empty;
-      _resType = string.Empty;
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
@@ -577,11 +398,11 @@ namespace GsaGH.Components {
       #region Inputs
 
       switch (ghTyp?.Value) {
-        case GsaResultGoo goo:
-          if (goo.Value == null) {
-            return;
-          }
+        case null:
+          this.AddRuntimeWarning("Input is null");
+          return;
 
+        case GsaResultGoo goo: {
           result = goo.Value;
           switch (result.Type) {
             case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
@@ -603,7 +424,7 @@ namespace GsaGH.Components {
           }
 
           break;
-
+        }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -624,6 +445,7 @@ namespace GsaGH.Components {
       }
 
       GH_Gradient ghGradient = Colours.Stress_Gradient(colors);
+
       var ghInterval = new GH_Interval();
       Interval customMinMax = Interval.Unset;
       if (da.GetData(3, ref ghInterval)) {
@@ -633,25 +455,13 @@ namespace GsaGH.Components {
       #endregion
 
       var res = new GsaResultsValues();
-      var resShear = new GsaResultsValues();
       switch (_mode) {
         case FoldMode.Displacement:
-          res = result.Element2DDisplacementValues(elementlist, _lengthResultUnit)[0];
-          break;
-
-        case FoldMode.Force:
-          res = result.Element2DForceValues(elementlist, _forcePerLengthUnit, _forceUnit)[0];
-          resShear = result.Element2DShearValues(elementlist, _forcePerLengthUnit)[0];
+          res = result.Element3DDisplacementValues(elementlist, _lengthResultUnit)[0];
           break;
 
         case FoldMode.Stress:
-          res = result.Element2DStressValues(elementlist, _flayer, _stressUnitResult)[0];
-          break;
-
-        case FoldMode.Footfall:
-          var footfallType
-            = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), _selectedItems[1]);
-          res = result.Element2DFootfallValues(elementlist, footfallType)[0];
+          res = result.Element3DStressValues(elementlist, _stressUnitResult)[0];
           break;
       }
 
@@ -659,78 +469,33 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
-        = _isShear ? resShear.XyzResults : res.XyzResults;
+        = res.XyzResults;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults
         = res.XxyyzzResults;
 
       Enum xyzunit = _lengthResultUnit;
       Enum xxyyzzunit = AngleUnit.Radian;
-      switch (_mode) {
-        case FoldMode.Force:
-          xyzunit = _forcePerLengthUnit;
-          xxyyzzunit = _forceUnit;
-          break;
-
-        case FoldMode.Stress:
-          xyzunit = _stressUnitResult;
-          xxyyzzunit = _stressUnitResult;
-          break;
-
-        case FoldMode.Footfall:
-          xyzunit = RatioUnit.DecimalFraction;
-          _disp = DisplayValue.X;
-          break;
+      if (_mode == FoldMode.Stress) {
+        xyzunit = _stressUnitResult;
+        xxyyzzunit = _stressUnitResult;
       }
 
-      if ((_isShear ? resShear.DmaxX : res.DmaxX) == null) {
-        string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        string filter = string.Empty;
-        if (elementlist.ToLower() != "all") {
-          filter = " for element list " + elementlist;
-        }
-
-        this.AddRuntimeWarning("Case " + acase + " contains no Element2D results" + filter);
-        return;
-      }
-
-      double dmaxX = _isShear ? resShear.DmaxX.As(xyzunit) : res.DmaxX.As(xyzunit);
-      double dmaxY = 0;
-      double dmaxZ = 0;
-      double dmaxXyz = 0;
-      double dminX = 0;
-      double dminY = 0;
-      double dminZ = 0;
-      double dminXyz = 0;
-      double dmaxXx = 0;
-      double dmaxYy = 0;
-      double dmaxZz = 0;
+      double dmaxX = res.DmaxX.As(xyzunit);
+      double dmaxY = res.DmaxY.As(xyzunit);
+      double dmaxZ = res.DmaxZ.As(xyzunit);
+      double dmaxXyz = _mode == FoldMode.Displacement ? res.DmaxXyz.As(xyzunit) : 0;
+      double dminX = res.DminX.As(xyzunit);
+      double dminY = res.DminY.As(xyzunit);
+      double dminZ = res.DminZ.As(xyzunit);
+      double dminXyz = _mode == FoldMode.Displacement ? res.DminXyz.As(xyzunit) : 0;
+      double dmaxXx = _mode == FoldMode.Displacement ? 0 : res.DmaxXx.As(xxyyzzunit);
+      double dmaxYy = _mode == FoldMode.Displacement ? 0 : res.DmaxYy.As(xxyyzzunit);
+      double dmaxZz = _mode == FoldMode.Displacement ? 0 : res.DmaxZz.As(xxyyzzunit);
       double dmaxXxyyzz = 0;
-      double dminXx = 0;
-      double dminYy = 0;
-      double dminZz = 0;
+      double dminXx = _mode == FoldMode.Displacement ? 0 : res.DminXx.As(xxyyzzunit);
+      double dminYy = _mode == FoldMode.Displacement ? 0 : res.DminYy.As(xxyyzzunit);
+      double dminZz = _mode == FoldMode.Displacement ? 0 : res.DminZz.As(xxyyzzunit);
       double dminXxyyzz = 0;
-      if (_mode != FoldMode.Footfall) {
-        dmaxY = _isShear ? resShear.DmaxY.As(xyzunit) : res.DmaxY.As(xyzunit);
-        dmaxZ = res.DmaxZ.As(xyzunit);
-        dmaxXyz = _mode == FoldMode.Displacement ? res.DmaxXyz.As(xyzunit) : 0;
-        dminX = _isShear ? resShear.DminX.As(xyzunit) : res.DminX.As(xyzunit);
-        dminY = _isShear ? resShear.DminY.As(xyzunit) : res.DminY.As(xyzunit);
-        dminZ = res.DminZ.As(xyzunit);
-        dminXyz = _mode == FoldMode.Displacement ? res.DminXyz.As(xyzunit) : 0;
-        dmaxXx = _isShear ? 0 : res.DmaxXx.As(xxyyzzunit);
-        dmaxYy = _isShear ? 0 : res.DmaxYy.As(xxyyzzunit);
-        dmaxZz = _isShear ? 0 : res.DmaxZz.As(xxyyzzunit);
-        dmaxXxyyzz = _mode == FoldMode.Force ? res.DmaxXxyyzz.As(xxyyzzunit) : 0;
-        dminXx = _isShear ? 0 : res.DminXx.As(xxyyzzunit);
-        dminYy = _isShear ? 0 : res.DminYy.As(xxyyzzunit);
-        dminZz = _isShear ? 0 : res.DminZz.As(xxyyzzunit);
-        dminXxyyzz = _mode == FoldMode.Force ? res.DminXxyyzz.As(xxyyzzunit) : 0;
-      }
-
-      if (_mode == FoldMode.Force && _disp == DisplayValue.ResXyz) {
-        dmaxXyz = res.DmaxXyz.As(xxyyzzunit);
-        dminXyz = res.DminXyz.As(xxyyzzunit);
-      }
 
       #region Result mesh values
 
@@ -740,16 +505,14 @@ namespace GsaGH.Components {
         case DisplayValue.X:
           dmax = dmaxX;
           dmin = dminX;
-          if (_mode == FoldMode.Displacement) {
-            _resType = "Translation, Ux";
-          } else if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Force, Nx";
-          } else if ((_mode == FoldMode.Force) & _isShear) {
-            _resType = "2D Shear, Qx";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, xx";
-          } else if (_mode == FoldMode.Footfall) {
-            _resType = "Response Factor [-]";
+          switch (_mode) {
+            case FoldMode.Displacement:
+              _resType = "Translation, Ux";
+              break;
+
+            case FoldMode.Stress:
+              _resType = "Stress, xx";
+              break;
           }
 
           break;
@@ -757,14 +520,14 @@ namespace GsaGH.Components {
         case DisplayValue.Y:
           dmax = dmaxY;
           dmin = dminY;
-          if (_mode == FoldMode.Displacement) {
-            _resType = "Translation, Uy";
-          } else if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Force, Ny";
-          } else if ((_mode == FoldMode.Force) & _isShear) {
-            _resType = "2D Shear, Qy";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "2D Stress, yy";
+          switch (_mode) {
+            case FoldMode.Displacement:
+              _resType = "Translation, Uy";
+              break;
+
+            case FoldMode.Stress:
+              _resType = "2D Stress, yy";
+              break;
           }
 
           break;
@@ -772,12 +535,14 @@ namespace GsaGH.Components {
         case DisplayValue.Z:
           dmax = dmaxZ;
           dmin = dminZ;
-          if (_mode == FoldMode.Displacement) {
-            _resType = "Translation, Uz";
-          } else if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Force, Nxy";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, zz";
+          switch (_mode) {
+            case FoldMode.Displacement:
+              _resType = "Translation, Uz";
+              break;
+
+            case FoldMode.Stress:
+              _resType = "Stress, zz";
+              break;
           }
 
           break;
@@ -785,56 +550,28 @@ namespace GsaGH.Components {
         case DisplayValue.ResXyz:
           dmax = dmaxXyz;
           dmin = dminXyz;
-          switch (_mode) {
-            case FoldMode.Displacement:
-              _resType = "Res. Trans., |U|";
-              break;
-
-            case FoldMode.Force:
-              _resType = "2D Moment, Mx+sgn(Mx)|Mxy|";
-              break;
-          }
-
+          _resType = "Res. Trans., |U|";
           break;
 
         case DisplayValue.Xx:
           dmax = dmaxXx;
           dmin = dminXx;
-          if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Moment, Mx";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, xy";
-          }
-
+          _resType = "Stress, xy";
           break;
 
         case DisplayValue.Yy:
           dmax = dmaxYy;
           dmin = dminYy;
-          if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Moment, My";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, yz";
-          }
-
+          _resType = "Stress, yz";
           break;
 
         case DisplayValue.Zz:
           dmax = dmaxZz;
           dmin = dminZz;
-          if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Moment, Mxy";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, zy";
-          }
-
+          _resType = "Stress, zy";
           break;
 
         case DisplayValue.ResXxyyzz:
-          if (_mode == FoldMode.Force) {
-            _resType = "2D Moment, My+sgn(My)|Mxy|";
-          }
-
           dmax = dmaxXxyyzz;
           dmin = dminXxyyzz;
           break;
@@ -880,11 +617,11 @@ namespace GsaGH.Components {
 
       Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
-        if (element.Topology.Count < 3) {
+        if (element.Topology.Count < 5) {
           return;
         }
 
-        Mesh tempmesh = Elements.GetMeshFromApiElement2d(element, nodes, lengthUnit);
+        Mesh tempmesh = Elements.GetMeshFromApiElement3d(element, nodes, lengthUnit);
         if (tempmesh == null) {
           return;
         }
@@ -920,8 +657,7 @@ namespace GsaGH.Components {
             break;
 
           case DisplayValue.ResXyz:
-            vals = xyzResults[key].Select(item
-              => item.Value.Xyz.ToUnit(_mode == FoldMode.Force ? xxyyzzunit : xyzunit)).ToList();
+            vals = xyzResults[key].Select(item => item.Value.Xyz.ToUnit(xyzunit)).ToList();
             if (_mode == FoldMode.Displacement) {
               transformation = xyzResults[key].Select(item
                   => new Vector3d(item.Value.X.As(lengthUnit) * _defScale,
@@ -965,20 +701,6 @@ namespace GsaGH.Components {
         }
 
         if (
-          tempmesh.Vertices.Count
-          == 9) // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
-        {
-          double tnorm = (2 * (vals.Last().Value - dmin) / (dmax - dmin)) - 1;
-          Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
-          tempmesh.VertexColors.Add(col);
-          if (transformation != null) {
-            Point3f def = tempmesh.Vertices[8];
-            def.Transform(Transform.Translation(transformation.Last()));
-            tempmesh.Vertices[8] = def;
-          }
-        }
-
-        if (
           vals.Count
           == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
         {
@@ -988,12 +710,10 @@ namespace GsaGH.Components {
             tempmesh.VertexColors.SetColor(i, col);
           }
 
-          verticies[key] = tempmesh.Ngons.Count == 0 ? new List<Point3d>() {
+          verticies[key] = new List<Point3d>() {
             new Point3d(tempmesh.Vertices.Select(pt => pt.X).Average(),
               tempmesh.Vertices.Select(pt => pt.Y).Average(),
-              tempmesh.Vertices.Select(pt => pt.Z).Average()), } : new List<Point3d>() {
-            new Point3d(tempmesh.Vertices.Last().X, tempmesh.Vertices.Last().Y,
-              tempmesh.Vertices.Last().Z), };
+              tempmesh.Vertices.Select(pt => pt.Z).Average()), };
         } else {
           verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
         }
@@ -1055,35 +775,11 @@ namespace GsaGH.Components {
             Message = Angle.GetAbbreviation(AngleUnit.Radian);
             break;
           }
-          case FoldMode.Force when ((int)_disp < 4) | _isShear: {
-            var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-            _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(forcePerLength));
-            Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
-            break;
-          }
-          case FoldMode.Force: {
-            _legendValues.Add(
-              new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
-                "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
-            var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
-            ts.Add(new GH_UnitNumber(moment));
-            Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
-              + "/" + Length.GetAbbreviation(lengthUnit);
-            break;
-          }
           case FoldMode.Stress: {
             var stress = new Pressure(t, _stressUnitResult);
             _legendValues.Add(stress.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(stress));
             Message = Pressure.GetAbbreviation(_stressUnitResult);
-            break;
-          }
-          case FoldMode.Footfall: {
-            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            Message = string.Empty;
             break;
           }
         }
@@ -1105,7 +801,7 @@ namespace GsaGH.Components {
       var resultType
         = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
           _mode.ToString());
-      PostHog.Result(result.Type, 2, resultType, _disp.ToString());
+      PostHog.Result(result.Type, 3, resultType, _disp.ToString());
     }
 
     private void CreateGradient() {
@@ -1137,7 +833,7 @@ namespace GsaGH.Components {
       UpdateUI();
     }
 
-    private void Mode1Clicked() {
+    private void DeformationModeClicked() {
       if (_mode == FoldMode.Displacement) {
         return;
       }
@@ -1147,49 +843,6 @@ namespace GsaGH.Components {
 
       _slider = true;
       _defScale = 100;
-
-      ReDrawComponent();
-    }
-
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Force) {
-        return;
-      }
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Force;
-
-      _slider = false;
-      _defScale = 0;
-      _spacerDescriptions[2] = "Deform Shape";
-
-      ReDrawComponent();
-    }
-
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.Stress) {
-        return;
-      }
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Stress;
-
-      _slider = false;
-      _defScale = 0;
-
-      ReDrawComponent();
-    }
-
-    private void Mode5Clicked() {
-      if (_mode == FoldMode.Footfall) {
-        return;
-      }
-
-      RecordUndoEvent(_mode + " Parameters");
-      _mode = FoldMode.Footfall;
-
-      _slider = false;
-      _defScale = 0;
 
       ReDrawComponent();
     }
@@ -1207,10 +860,18 @@ namespace GsaGH.Components {
       ExpirePreview(true);
     }
 
-    private void UpdateForce(string unit) {
-      _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
+    private void StressModeClicked() {
+      if (_mode == FoldMode.Stress) {
+        return;
+      }
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Stress;
+
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
     }
 
     private void UpdateLength(string unit) {
@@ -1221,12 +882,6 @@ namespace GsaGH.Components {
 
     private void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateMoment(string unit) {
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }

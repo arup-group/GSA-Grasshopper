@@ -25,8 +25,8 @@ namespace GsaGH.Components {
   ///   Component to get GSA beam displacement values
   /// </summary>
   public class BeamDisplacement : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("21ec9005-1b2f-4eb8-8171-b2c0190a4a54");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override Guid ComponentGuid => new Guid("1b7e99e8-c3c9-42c3-9474-792ddd17388d");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamDisplacement;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
@@ -90,21 +90,21 @@ namespace GsaGH.Components {
         + "branch contains a list of results per element position.";
 
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
-        "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Translations in Local Element X-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
-        "Translations in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Translations in Local Element Y-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
-        "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Translations in Local Element Z-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations in Global Axis." + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
+        "Rotations around Local Element X-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Y-axis in Global Axiss." + note, GH_ParamAccess.tree);
+        "Rotations around Local Element Y-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
+        "Rotations around Local Element Z-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations in Global Axis." + note, GH_ParamAccess.tree);
+        "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

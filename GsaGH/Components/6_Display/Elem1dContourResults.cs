@@ -63,7 +63,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("ce7a8f84-4c72-4fd4-a207-485e8bf7ac38");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Result1D;
     private readonly List<string> _displacement = new List<string>(new[] {
@@ -122,8 +122,8 @@ namespace GsaGH.Components {
     private bool _slider = true;
     private bool _undefinedModelLengthUnit;
 
-    public Elem1dContourResults() : base("1D Contour Results", "ContourElem1d",
-      "Displays GSA 1D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat5()) { }
+    public Elem1dContourResults() : base("1D Contour Results", "Contour1d",
+      "Displays GSA 1D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {

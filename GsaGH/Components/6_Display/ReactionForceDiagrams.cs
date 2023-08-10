@@ -12,7 +12,6 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -45,7 +44,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("2c9d902f-931f-4d42-904e-ea1f2448aadb");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ReactionForceDiagram;
     private readonly List<string> _reactionStringList = new List<string>(new[] {
@@ -66,7 +65,7 @@ namespace GsaGH.Components {
 
     public ReactionForceDiagrams() : base("Reaction Force Diagrams", "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams", CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
+      SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {
@@ -175,10 +174,10 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Diagram lines", "L", "Lines of the diagram",
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Vectors of the GSA Result Diagram",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Annotations", "Val", "Annotations for the diagram",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnnotationParameter(), "Annotations", 
+        "An", "Annotations for the diagram", GH_ParamAccess.list);
       pManager.HideParameter(1);
     }
 
@@ -221,17 +220,14 @@ namespace GsaGH.Components {
       dataAccess.GetData(2, ref _showText);
       dataAccess.GetData(3, ref significantDigits);
 
-      var reactionForceVectors = new ConcurrentDictionary<int, DiagramGoo>();
-      var annotations = new ConcurrentDictionary<int, AnnotationGoo>();
+      var reactionForceVectors = new ConcurrentDictionary<int, GsaVectorDiagram>();
+      var annotations = new ConcurrentDictionary<int, GsaAnnotationGoo>();
       Parallel.ForEach(nodes, node => {
-        (DiagramGoo reactionForceVector, AnnotationGoo annotation) 
-          = CreateReactionForceVectorWithAnnotations(node, forceValues, scale, significantDigits);
+        (GsaVectorDiagram reactionForceVector, GsaAnnotationGoo annotation) 
+          = CreateReactionForceVectorWithAnnotations(
+              node, forceValues, scale, significantDigits, color);
         if (reactionForceVector == null) {
           return;
-        }
-
-        if (color != Color.Empty) {
-          reactionForceVector.SetColor(color);
         }
 
         reactionForceVectors.TryAdd(node.Key, reactionForceVector);
@@ -338,9 +334,9 @@ namespace GsaGH.Components {
       return momentUnitsMenu;
     }
 
-    private (DiagramGoo, AnnotationGoo) CreateReactionForceVectorWithAnnotations(
+    private (GsaVectorDiagram, GsaAnnotationGoo) CreateReactionForceVectorWithAnnotations(
       KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale,
-      int significantDigits) {
+      int significantDigits, Color color) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;
@@ -366,15 +362,9 @@ namespace GsaGH.Components {
       var direction = new Vector3d();
       IQuantity forceValue = null;
 
-      Vector3d xAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.XAxis :
-        node.Value.Value.LocalAxis.XAxis;
-      xAxis.Unitize();
-      Vector3d yAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.YAxis :
-        node.Value.Value.LocalAxis.YAxis;
-      yAxis.Unitize();
-      Vector3d zAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.ZAxis :
-        node.Value.Value.LocalAxis.ZAxis;
-      zAxis.Unitize();
+      Vector3d xAxis = Vector3d.XAxis;
+      Vector3d yAxis = Vector3d.YAxis;
+      Vector3d zAxis = Vector3d.ZAxis;
 
       xAxis *= quantity.X.As(unit) * scale;
       yAxis *= quantity.Y.As(unit) * scale;
@@ -406,12 +396,11 @@ namespace GsaGH.Components {
           break;
       }
 
-      var vectorResult = new DiagramGoo(node.Value.Value.Point, direction,
-        isForce ? ArrowMode.OneArrow : ArrowMode.DoubleArrow);
-      vectorResult = isForce ? vectorResult : vectorResult.SetColor(Colours.GsaGold);
+      var vectorResult = new GsaVectorDiagram(node.Value.Value.Point, direction, !isForce, color);
 
-      var annotation = new AnnotationGoo(GenerateAnnotationPosition(vectorResult),
-        vectorResult.Color, $"{Math.Round(forceValue.Value, significantDigits)} {Message}");
+      var annotation = new GsaAnnotationGoo(new GsaAnnotationDot(
+        GenerateAnnotationPosition(vectorResult), vectorResult.Color, 
+        $"{Math.Round(forceValue.Value, significantDigits)} {Message}"));
 
       return (vectorResult, annotation);
     }
@@ -446,19 +435,19 @@ namespace GsaGH.Components {
     }
 
     private void SetOutputs(
-      IGH_DataAccess dataAccess, ConcurrentDictionary<int, DiagramGoo> reactionForceVectors,
-      ConcurrentDictionary<int, AnnotationGoo> annotations) {
-      IOrderedEnumerable<KeyValuePair<int, DiagramGoo>> orderedDict
+      IGH_DataAccess dataAccess, ConcurrentDictionary<int, GsaVectorDiagram> reactionForceVectors,
+      ConcurrentDictionary<int, GsaAnnotationGoo> annotations) {
+      IOrderedEnumerable<KeyValuePair<int, GsaVectorDiagram>> orderedDict
         = reactionForceVectors.OrderBy(index => index.Key);
-      IOrderedEnumerable<KeyValuePair<int, AnnotationGoo>> orderedDict2
+      IOrderedEnumerable<KeyValuePair<int, GsaAnnotationGoo>> orderedDict2
         = annotations.OrderBy(index => index.Key);
-      var vectors = new List<DiagramGoo>();
-      var annos = new List<AnnotationGoo>();
+      var vectors = new List<GsaDiagramGoo>();
+      var annos = new List<GsaAnnotationGoo>();
 
-      foreach (KeyValuePair<int, DiagramGoo> keyValuePair in orderedDict) {
-        vectors.Add(keyValuePair.Value);
+      foreach (KeyValuePair<int, GsaVectorDiagram> keyValuePair in orderedDict) {
+        vectors.Add(new GsaDiagramGoo(keyValuePair.Value));
       }
-      foreach (KeyValuePair<int, AnnotationGoo> keyValuePair in orderedDict2) {
+      foreach (KeyValuePair<int, GsaAnnotationGoo> keyValuePair in orderedDict2) {
         annos.Add(keyValuePair.Value);
       }
 
@@ -466,10 +455,10 @@ namespace GsaGH.Components {
       dataAccess.SetDataList(1, annos);
     }
 
-    private Point3d GenerateAnnotationPosition(DiagramGoo vector) {
-      var line = new Line(vector.StartingPoint, vector.Direction);
+    private Point3d GenerateAnnotationPosition(GsaVectorDiagram vector) {
+      var line = new Line(vector.AnchorPoint, vector.Direction);
       line.Flip();
-      line.Transform(Transform.Scale(vector.StartingPoint, -1));
+      line.Transform(Transform.Scale(vector.AnchorPoint, -1));
       Point3d endPoint = line.From;
 
       int _pixelsPerUnit = 100;

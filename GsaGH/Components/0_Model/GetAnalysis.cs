@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
@@ -14,7 +15,7 @@ namespace GsaGH.Components {
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   public class GetAnalysis : GH_OasysComponent {
-    public override Guid ComponentGuid => new Guid("566a94d2-a022-4f12-a645-0366deb1476c");
+    public override Guid ComponentGuid => new Guid("f71f0d68-f121-4081-b53d-896676c34ddb");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAnalysisTask;
@@ -35,6 +36,8 @@ namespace GsaGH.Components {
         "List of Analysis Tasks in model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaAnalysisCaseParameter(), "Analysis Cases", "ΣA",
         "List of Analysis Cases in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaCombinationCaseParameter(), "Combination Cases", "ΣC",
+        "List of Combination Cases in model", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -43,9 +46,12 @@ namespace GsaGH.Components {
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = Analyses.GetAnalysisTasksAndCombinations(modelGoo.Value);
+      var combinationCaseGoos = modelGoo.Value.Model.CombinationCases().Select(keyValuePair
+        => new GsaCombinationCaseGoo(new GsaCombinationCase(keyValuePair))).ToList();
 
       da.SetDataList(0, tuple.Item1);
       da.SetDataList(1, tuple.Item2);
+      da.SetDataList(2, combinationCaseGoos);
     }
   }
 }
