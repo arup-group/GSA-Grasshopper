@@ -129,11 +129,11 @@ steps:
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   artifact: GsaGHTestsCoverage
-  failOnStderr: false
+  continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
   artifact: IntegrationTestsCoverage
-  failOnStderr: false
+  continueOnError: true
 
 - task: PowerShell@2
   displayName: Check for existing tags
