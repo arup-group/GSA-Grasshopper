@@ -21,10 +21,10 @@ namespace GsaGH.Parameters {
     public string Text => Value.Text;
     public Point3d Location => Value.Point;
 
-    public GsaAnnotationDot(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
+    internal GsaAnnotationDot(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
     }
-    internal GsaAnnotationDot() { }
+    private GsaAnnotationDot() { }
 
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_UnitNumber))) {

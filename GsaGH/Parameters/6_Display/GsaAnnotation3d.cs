@@ -21,14 +21,14 @@ namespace GsaGH.Parameters {
     public string Text => Value.Text;
     public Point3d Location => Value.TextPlane.Origin;
 
-    public GsaAnnotation3d(Plane plane, Color color, string text, double height)
+    internal GsaAnnotation3d(Plane plane, Color color, string text, double height)
       : base(new Text3d(text, plane, height)) {
       Color = color;
       Value.HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Center;
       Value.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
     }
 
-    internal GsaAnnotation3d() { }
+    private GsaAnnotation3d() { }
 
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_UnitNumber))) {

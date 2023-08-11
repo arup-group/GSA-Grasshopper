@@ -19,7 +19,7 @@ namespace GsaGH.Parameters {
         Name = name
       };
     }
-    internal GsaLoadCase() { }
+    private GsaLoadCase() { }
     internal GsaLoadCase(int id, ReadOnlyDictionary<int, LoadCase> loadCases) : this(id) {
       if (loadCases != null && loadCases.ContainsKey(Id)) {
         LoadCase = loadCases[id];

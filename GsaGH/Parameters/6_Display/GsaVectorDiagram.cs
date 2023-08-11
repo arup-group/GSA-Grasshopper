@@ -27,7 +27,7 @@ namespace GsaGH.Parameters {
     internal Line DisplayLine;
     private bool _doubleArrow = false;
 
-    public GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
+    internal GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
       AnchorPoint = anchor;
       Direction = direction;
       
@@ -45,7 +45,7 @@ namespace GsaGH.Parameters {
         Color = Colours.GsaDarkPurple;
       }
     }
-    internal GsaVectorDiagram() { }
+    private GsaVectorDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
