@@ -9,9 +9,6 @@ using GsaGH.Properties;
 using OasysGH.Parameters;
 using Rhino.DocObjects;
 using Rhino;
-using Rhino.Geometry;
-using System.IO;
-using System.Xml.Linq;
 
 namespace GsaGH.Parameters {
   /// <summary>

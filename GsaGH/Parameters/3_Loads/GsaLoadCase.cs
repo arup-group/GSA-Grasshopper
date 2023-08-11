@@ -5,7 +5,7 @@ using GsaAPI;
 namespace GsaGH.Parameters {
   public class GsaLoadCase {
     public int Id { get; private set; }
-    public LoadCase LoadCase;
+    internal LoadCase LoadCase;
     public GsaLoadCase(int id) {
       if (id < 1) {
         throw new ArgumentException("LoadCase ID cannot be zero or negative");
@@ -13,7 +13,7 @@ namespace GsaGH.Parameters {
 
       Id = id;
     }
-    public GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) : this(id) {
+    internal GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) : this(id) {
       LoadCase = new LoadCase() {
         CaseType = (LoadCaseType)Enum.Parse(typeof(LoadCaseType), type.ToString()),
         Name = name

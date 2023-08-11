@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using Rhino.Geometry;
-using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class LoadCaseInfo : GH_OasysComponent {

@@ -37,7 +37,6 @@ using EnergyUnit = OasysUnits.Units.EnergyUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
-using Plane = Rhino.Geometry.Plane;
 
 namespace GsaGH.Components {
   /// <summary>

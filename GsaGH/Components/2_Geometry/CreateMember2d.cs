@@ -9,8 +9,6 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
-using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {

@@ -5,8 +5,6 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GsaGH.Helpers.Export.Load;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -161,7 +159,7 @@ namespace GsaGH.Components {
               gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
               _expansionType = ExpansionType.UseGpsSettings;
               UpdateMessage(gridPlaneSurface.GridSurface.ElementType
-                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+                == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
               break;
             }
           case Plane pln:
@@ -169,7 +167,7 @@ namespace GsaGH.Components {
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
             UpdateMessage(gridPlaneSurface.GridSurface.ElementType
-                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+                == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
           default: {
@@ -204,11 +202,13 @@ namespace GsaGH.Components {
 
         switch (_expansionType) {
           case ExpansionType.To1D:
-            gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+            gridPlaneSurface.GridSurface.ElementType = 
+              GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
             break;
 
           case ExpansionType.To2D:
-            gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
+            gridPlaneSurface.GridSurface.ElementType =
+              GsaAPI.GridSurface.Element_Type.TWO_DIMENSIONAL;
             break;
 
           case ExpansionType.UseGpsSettings:
@@ -218,7 +218,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(3, ref ghDir)) {
@@ -228,11 +228,11 @@ namespace GsaGH.Components {
       dir = dir.ToUpper();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
       }
 

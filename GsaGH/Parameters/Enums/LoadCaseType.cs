@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GsaGH.Parameters.Enums {
+﻿namespace GsaGH.Parameters.Enums {
   public class LoadCase {
     public enum LoadCaseType {
       Dead = 11,

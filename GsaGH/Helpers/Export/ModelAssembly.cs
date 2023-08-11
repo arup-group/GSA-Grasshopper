@@ -7,7 +7,6 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using OasysUnits;
 using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
