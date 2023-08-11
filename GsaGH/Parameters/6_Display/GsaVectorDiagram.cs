@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
     public override string TypeDescription => "A GSA vector diagram.";
     public override string TypeName => "Vector Diagram";
     public BoundingBox ClippingBox => Boundingbox;
-    public Color Color { get; private set; }
+    public Color Color { get; private set; } = Colours.GsaDarkPurple;
     public GsaDiagramType DiagramType => GsaDiagramType.Vector;
     public readonly Point3d AnchorPoint;
     internal Line DisplayLine;
@@ -45,7 +45,7 @@ namespace GsaGH.Parameters {
         Color = Colours.GsaDarkPurple;
       }
     }
-    private GsaVectorDiagram() { }
+    internal GsaVectorDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters.Enums;
 using OasysGH;
 using OasysGH.Parameters;
@@ -16,7 +17,7 @@ namespace GsaGH.Parameters {
     public override string TypeDescription => "A GSA Annotation.";
     public override string TypeName => "Annotation";
     public BoundingBox ClippingBox => Boundingbox;
-    public Color Color { get; private set; }
+    public Color Color { get; private set; } = Colours.GsaDarkBlue;
     public GsaAnnotationType AnnotationType => GsaAnnotationType.TextDot;
     public string Text => Value.Text;
     public Point3d Location => Value.Point;
@@ -24,6 +25,8 @@ namespace GsaGH.Parameters {
     public GsaAnnotationDot(Point3d point, Color color, string text) : base(new TextDot(text, point)) {
       Color = color;
     }
+    internal GsaAnnotationDot() { }
+
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_UnitNumber))) {
         var types = Quantity.Infos.Select(x => x.ValueType).ToList();
@@ -63,10 +66,17 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new GsaAnnotationDot(Value.Point, Color, Value.Text);
+      return new GsaAnnotationDot() {
+        Value = Value,
+        Color = Color
+      };
     }
 
     public override string ToString() { 
+      if (Value == null) {
+        return "Null";
+      }
+
       var pt = new GH_Point(Value.Point);
       return $"{pt}, Value: {Value.Text}"; 
     }

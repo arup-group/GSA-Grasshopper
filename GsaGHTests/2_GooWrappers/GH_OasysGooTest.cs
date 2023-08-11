@@ -35,8 +35,13 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
+    [InlineData(typeof(GsaDiagramGoo), typeof(GsaArrowheadDiagram))]
+    [InlineData(typeof(GsaDiagramGoo), typeof(GsaLineDiagram))]
+    [InlineData(typeof(GsaDiagramGoo), typeof(GsaVectorDiagram))]
+    [InlineData(typeof(GsaAnnotationGoo), typeof(GsaAnnotation3d))]
+    [InlineData(typeof(GsaAnnotationGoo), typeof(GsaAnnotationDot))]
     public void GenericGH_OasysGeometricGooTest(Type gooType, Type wrapType) {
-      object value = Activator.CreateInstance(wrapType);
+      object value = Activator.CreateInstance(wrapType, true);
       object[] parameters = {
         value,
       };

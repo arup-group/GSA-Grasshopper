@@ -14,7 +14,7 @@ namespace GsaGH.Parameters {
     public Color Color { get; private set; }
     public GsaDiagramType DiagramType => GsaDiagramType.Line;
 
-    internal GsaLineDiagram(GsaAPI.Line line, double scaleFactor, Color customColor) {
+    public GsaLineDiagram(GsaAPI.Line line, double scaleFactor, Color customColor) {
       Value = Diagrams.ConvertLine(line, scaleFactor);
       if (customColor.IsEmpty) {
         Color = (Color)line.Colour;
@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private GsaLineDiagram() { }
+    internal GsaLineDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 

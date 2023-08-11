@@ -15,11 +15,11 @@ namespace GsaGH.Parameters {
     public BoundingBox ClippingBox => Boundingbox;
     public GsaDiagramType DiagramType => GsaDiagramType.ArrowHead;
 
-    internal GsaArrowheadDiagram(
+    public GsaArrowheadDiagram(
       ReadOnlyCollection<Triangle> faces, double scaleFactor, Color customColor) {
       Value = Diagrams.CreateMeshFromTriangles(faces, scaleFactor, customColor);
     }
-    private GsaArrowheadDiagram() { }
+    internal GsaArrowheadDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       if (Value != null) {

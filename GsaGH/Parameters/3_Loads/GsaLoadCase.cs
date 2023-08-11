@@ -6,7 +6,6 @@ namespace GsaGH.Parameters {
   public class GsaLoadCase {
     public int Id { get; private set; }
     public LoadCase LoadCase;
-    public GsaLoadCase() { }
     public GsaLoadCase(int id) {
       if (id < 1) {
         throw new ArgumentException("LoadCase ID cannot be zero or negative");
@@ -20,6 +19,7 @@ namespace GsaGH.Parameters {
         Name = name
       };
     }
+    internal GsaLoadCase() { }
     internal GsaLoadCase(int id, ReadOnlyDictionary<int, LoadCase> loadCases) : this(id) {
       if (loadCases != null && loadCases.ContainsKey(Id)) {
         LoadCase = loadCases[id];
