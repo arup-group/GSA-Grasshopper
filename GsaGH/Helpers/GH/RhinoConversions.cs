@@ -204,6 +204,7 @@ namespace GsaGH.Helpers.GH {
       Model model = AssembleModel.Assemble(
         null,
         null,
+        null,
         nodes,
         elem1ds,
         null,

@@ -303,7 +303,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      Model gsa = AssembleModel.Assemble(null, null, inNodes, null, null, null, inMem1ds, inMem2ds,
+      Model gsa = AssembleModel.Assemble(null, null, null, inNodes, null, null, null, inMem1ds, inMem2ds,
         inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
 
       var outModel = new GsaModel {

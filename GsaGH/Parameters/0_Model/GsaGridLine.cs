@@ -3,24 +3,19 @@ using GsaAPI;
 
 namespace GsaGH.Parameters {
   public class GsaGridLine {
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public int Id => _id;
-#pragma warning disable IDE0032 // Use auto property
-    private int _id;
-#pragma warning restore IDE0032 // Use auto property
-    private GridLine _gridLine;
+    public int Id { get; private set; }
+    internal GridLine _gridLine;
 
     public GsaGridLine() { }
 
     internal GsaGridLine(int id, GridLine gridLine) {
-      _id = id;
+      Id = id;
       _gridLine = gridLine;
     }
 
     public GsaGridLine Duplicate() {
       var dup = new GsaGridLine {
-        Guid = new Guid(Guid.ToString()),
-        _id = Id,
+        Id = Id,
         _gridLine = _gridLine
       };
 

@@ -20,6 +20,7 @@ namespace GsaGH.Helpers.Export {
     internal GsaGuidIntListDictionary<Element> Elements;
     internal GsaGuidDictionary<Member> Members;
     internal GsaGuidDictionary<EntityList> Lists;
+    internal GsaIntDictionary<GridLine> _gridLines;
     internal Loads Loads;
     internal ConcurrentDictionary<int, ConcurrentBag<int>> MemberElementRelationship;
     internal LengthUnit Unit = LengthUnit.Meter;
@@ -40,6 +41,7 @@ namespace GsaGH.Helpers.Export {
       Elements = new GsaGuidIntListDictionary<Element>(Model.Elements());
       Members = new GsaGuidDictionary<Member>(Model.Members());
       Lists = new GsaGuidDictionary<EntityList>(Model.Lists());
+      _gridLines = new GsaIntDictionary<GridLine>(Model.GridLines());
       Loads = new Loads(Model);
       CheckIfModelIsEmpty();
     }
@@ -256,7 +258,7 @@ namespace GsaGH.Helpers.Export {
     internal void ConvertCombinations(List<GsaCombinationCase> combinations) {
       if (combinations != null && combinations.Count > 0) {
         var existing = Model.CombinationCases()
-          .ToDictionary(k  => k.Key, k => k.Value);
+          .ToDictionary(k => k.Key, k => k.Value);
         foreach (GsaCombinationCase co in combinations) {
           var apiCase = new CombinationCase(co.Name, co.Definition);
           if (co.Id > 0 && existing.ContainsKey(co.Id)) {
@@ -311,6 +313,13 @@ namespace GsaGH.Helpers.Export {
       Model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
       Properties.Materials.ConcreteDesignCode = concreteCode;
       Properties.Materials.SteelDesignCode = steelCode;
+    }
+
+    internal void ConvertGridLines(List<GsaGridLine> gridLines) {
+      foreach (GsaGridLine gridLine in gridLines) {
+        _gridLines.SetValue(gridLine.Id, gridLine._gridLine);
+      }
+      Model.SetGridLines(_gridLines.ReadOnlyDictionary);
     }
   }
 }

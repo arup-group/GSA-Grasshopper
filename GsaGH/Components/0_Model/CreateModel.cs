@@ -185,7 +185,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       // Collect inputs
-      (List<GsaModel> models, List<GsaList> lists) =
+      (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) =
         GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
       (List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds)
         = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
@@ -197,9 +197,9 @@ namespace GsaGH.Components {
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & nodes is null & elem1ds is null & elem2ds is null
-        & mem1ds is null & mem2ds is null & mem3ds is null & sections is null & prop2Ds is null
-        & loads is null & gridPlaneSurfaces is null) {
+      if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
+        & elem2ds is null & mem1ds is null & mem2ds is null & mem3ds is null & sections is null
+        & prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
@@ -216,9 +216,9 @@ namespace GsaGH.Components {
       }
 
       // Assemble model
-      model.Model = AssembleModel.Assemble(model, lists, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds,
-        mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks,
-        combinationCases, _lengthUnit, _tolerance, _reMesh, this);
+      model.Model = AssembleModel.Assemble(model, lists, gridLines, nodes, elem1ds, elem2ds,
+        elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces,
+        analysisTasks, combinationCases, _lengthUnit, _tolerance, _reMesh, this);
 
       UpdateMessage();
 

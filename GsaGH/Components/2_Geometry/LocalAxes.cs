@@ -81,7 +81,7 @@ namespace GsaGH.Components {
           axes = member.LocalAxes;
           if (axes == null) {
             var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null, null, null, null, 
+            model.Model = AssembleModel.Assemble(model, null, null, null, null, null, null, 
               new List<GsaMember1d>() { 
                 member 
               }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
@@ -106,7 +106,7 @@ namespace GsaGH.Components {
           axes = element.LocalAxes;
           if (axes == null) {
             var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null,
+            model.Model = AssembleModel.Assemble(model, null, null, null,
               new List<GsaElement1d>() {
                 element,
               }, null, null, null, null, null, null, null, null, null, null, null, null,

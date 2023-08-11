@@ -136,7 +136,7 @@ namespace GsaGH.Helpers.Export {
 
       List<GsaList> lists = Import.Lists.GetLists(appendModel);
 
-      mainModel.Model = AssembleModel.Assemble(mainModel, lists, nodes, elem1ds, elem2ds, elem3ds,
+      mainModel.Model = AssembleModel.Assemble(mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds,
         mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gps, null, null, 
         LengthUnit.Meter, tolerance, false, owner);
       return mainModel;
