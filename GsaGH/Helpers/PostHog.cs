@@ -68,7 +68,7 @@ namespace GsaGH.Helpers {
     }
 
     internal static void Result(
-      GsaResult.CaseType caseType, int dimension, GsaResultsValues.ResultType resultType,
+      CaseType caseType, int dimension, GsaResultsValues.ResultType resultType,
       string subType = "-") {
       const string eventName = "Result";
       var properties = new Dictionary<string, object>() {
@@ -86,7 +86,7 @@ namespace GsaGH.Helpers {
     }
 
     internal static void Result(
-      GsaResult.CaseType caseType, int dimension, string resultType, string subType = "-") {
+      CaseType caseType, int dimension, string resultType, string subType = "-") {
       const string eventName = "Result";
       var properties = new Dictionary<string, object>() {
         {

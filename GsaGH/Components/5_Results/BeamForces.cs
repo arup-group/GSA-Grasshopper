@@ -177,7 +177,7 @@ namespace GsaGH.Components {
         }
 
         List<GsaResultsValues> vals
-          = result.Element1DForceValues(elementlist, positionsCount, _forceUnit, _momentUnit);
+          = result.Element1DForceValues(elementlist, positionsCount, 0, _forceUnit, _momentUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,

@@ -176,8 +176,8 @@ namespace GsaGH.Components {
         }
 
         List<GsaResultsValues> vals = _average ?
-          result.Element1DAverageStrainEnergyDensityValues(elementlist, _energyUnit) :
-          result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, _energyUnit);
+          result.Element1DAverageStrainEnergyDensityValues(elementlist, 0, _energyUnit) :
+          result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, 0, _energyUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
