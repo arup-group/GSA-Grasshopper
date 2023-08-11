@@ -184,39 +184,36 @@ namespace GsaGH.Components {
       pManager.HideParameter(0);
     }
 
-    protected override void SolveInstance(IGH_DataAccess dataAccess) {
-      var gsaResult = new GsaResult();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
       var ghObject = new GH_ObjectWrapper();
 
-      if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) {
+      if (!da.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) {
         return;
       }
 
-      gsaResult = (ghObject.Value as GsaResultGoo).Value;
-      string filteredNodes = Inputs.GetNodeListNameForesults(this, dataAccess, 1);
-      if (string.IsNullOrEmpty(filteredNodes)) {
-        return;
-      }
+      result = (ghObject.Value as GsaResultGoo).Value;
+      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1, result.Model);
 
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
-        = gsaResult.NodeReactionForceValues(filteredNodes, _forceUnit, _momentUnit);
+        = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
       GsaResultsValues forceValues = reactionForceValues.Item1[0];
-      filteredNodes = string.Join(" ", reactionForceValues.Item2);
+      nodeList = string.Join(" ", reactionForceValues.Item2);
 
-      LengthUnit lengthUnit = GetLengthUnit(gsaResult);
+      LengthUnit lengthUnit = GetLengthUnit(result);
 
-      ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
+      ReadOnlyDictionary<int, Node> gsaFilteredNodes = result.Model.Model.Nodes(nodeList);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Nodes.GetNodeDictionary(gsaFilteredNodes,
-        lengthUnit, gsaResult.Model.Model.Axes());
+        lengthUnit, result.Model.Model.Axes());
 
       double scale = 1;
-      if (!dataAccess.GetData(3, ref scale)) {
-        scale = ComputeAutoScale(forceValues, gsaResult.Model.BoundingBox);
+      if (!da.GetData(3, ref scale)) {
+        scale = ComputeAutoScale(forceValues, result.Model.BoundingBox);
       }
 
       Color color = Color.Empty;
       bool colourInput = false;
-      if (dataAccess.GetData(2, ref color)) {
+      if (da.GetData(2, ref color)) {
         colourInput = true;
       }
 
@@ -234,8 +231,8 @@ namespace GsaGH.Components {
         }
       });
 
-      SetOutputs(dataAccess);
-      PostHog.Result(gsaResult.Type, 0, GsaResultsValues.ResultType.Force,
+      SetOutputs(da);
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force,
         _selectedDisplayValue.ToString());
     }
 

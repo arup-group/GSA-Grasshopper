@@ -87,13 +87,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElementListParameter());
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
@@ -136,11 +130,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
-
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) {
-        return;
-      }
+      string elementlist = "All";
 
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
@@ -169,6 +159,7 @@ namespace GsaGH.Components {
 
           case GsaResultGoo goo:
             result = goo.Value;
+            elementlist = Inputs.GetElementListNameFoResults(this, da, 1, result.Model);
             break;
 
           default:

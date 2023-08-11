@@ -414,24 +414,9 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Node filter list", "No",
-        "Filter import by list. (by default 'all')" + Environment.NewLine + "Node list should take the form:"
-        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Element filter list", "El",
-        "Filter import by list (by default 'all')." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Member filter list", "Me",
-        "Filter import by list (by default 'all')." + Environment.NewLine + "Member list should take the form:"
-        + Environment.NewLine + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeListParameter());
+      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
@@ -469,42 +454,34 @@ namespace GsaGH.Components {
 
         Task<SolveResults> tsk = null;
 
-        var ghTyp = new GH_ObjectWrapper();
+        GsaListGoo nodeListGoo = null;
         string nodeList = "all";
-        if (data.GetData(1, ref ghTyp)) {
-          if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-              this.AddRuntimeWarning(
-              "List must be of type Node to apply to node filter");
-            }
-            nodeList = $"\"{listGoo.Value.Name}\"";
-          } else {
-            GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
+        if (data.GetData(1, ref nodeListGoo)) {
+          if (!nodeListGoo.IsValid) {
+            return;
           }
+
+          nodeList = nodeListGoo.Value.Definition;
         }
+
+        GsaListGoo elementListGoo = null;
         string elemList = "all";
-        if (data.GetData(2, ref ghTyp)) {
-          if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
-              this.AddRuntimeWarning(
-              "List must be of type Element to apply to element filter");
-            }
-            elemList = $"\"{listGoo.Value.Name}\"";
-          } else {
-            GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
+        if (data.GetData(2, ref elementListGoo)) {
+          if (!elementListGoo.IsValid) {
+            return;
           }
+
+          elemList = elementListGoo.Value.Definition;
         }
+
+        GsaListGoo memberListGoo = null;
         string memList = "all";
-        if (data.GetData(3, ref ghTyp)) {
-          if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Member) {
-              this.AddRuntimeWarning(
-              "List must be of type Member to apply to member filter");
-            }
-            memList = $"\"{listGoo.Value.Name}\"";
-          } else {
-            GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
+        if (data.GetData(1, ref memberListGoo)) {
+          if (!memberListGoo.IsValid) {
+            return;
           }
+
+          memList = memberListGoo.Value.Definition;
         }
 
         tsk = Task.Run(
