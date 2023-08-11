@@ -6,7 +6,7 @@ namespace GsaGH.Parameters {
   public class GsaLoadCase {
     public int Id { get; private set; }
     public LoadCase LoadCase;
-    private GsaLoadCase() { }
+    public GsaLoadCase() { }
     public GsaLoadCase(int id) {
       if (id < 1) {
         throw new ArgumentException("LoadCase ID cannot be zero or negative");
@@ -27,7 +27,9 @@ namespace GsaGH.Parameters {
     }
 
     public GsaLoadCase Duplicate() {
-      return new GsaLoadCase() {
+      return LoadCase == null
+        ? new GsaLoadCase()
+        : new GsaLoadCase() {
         LoadCase = new LoadCase() {
           CaseType = LoadCase.CaseType,
           Name = LoadCase.Name
