@@ -1,32 +1,26 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Import;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   public class GsaGridLine {
+    public Guid Guid { get; set; } = Guid.NewGuid();
+    public int Id => _id;
+#pragma warning disable IDE0032 // Use auto property
+    private int _id;
+#pragma warning restore IDE0032 // Use auto property
     private GridLine _gridLine;
 
     public GsaGridLine() { }
 
-    internal GsaGridLine(GridLine gridLine) {
+    internal GsaGridLine(int id, GridLine gridLine) {
+      _id = id;
       _gridLine = gridLine;
     }
 
-    //internal EntityList GetApiList() {
-    //  return new EntityList {
-    //    Name = Name,
-    //    Definition = Definition,
-    //    Type = GetAPIEntityType(EntityType)
-    //  };
-    //}
-
     public GsaGridLine Duplicate() {
       var dup = new GsaGridLine {
+        Guid = new Guid(Guid.ToString()),
+        _id = Id,
         _gridLine = _gridLine
       };
 
@@ -34,7 +28,11 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return "";
+      string s = "ID:" + Id + " Label:" + _gridLine.Label + " Shape:" + _gridLine.Shape + " X:" + _gridLine.X + " Y:" + _gridLine.Y + " Length:" + _gridLine.Length + " Theta1:" + _gridLine.Theta1;
+      if (_gridLine.Shape == GridLineShape.Arc) {
+        s += " Theta2:" + _gridLine.Theta2;
+      }
+      return s;
     }
   }
 }
