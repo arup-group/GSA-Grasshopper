@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.NodeLoad;
     private readonly List<string> _type = new List<string>(new[] {
@@ -146,8 +146,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddGenericParameter("Node list", "Pt",
         "Node or Point to apply load to; either input Node, Point, or a text string."
         + Environment.NewLine + "Text string with Node list should take the form:"
@@ -189,13 +188,9 @@ namespace GsaGH.Components {
           break;
       }
 
-      int loadCase = 1;
-      var ghInteger = new GH_Integer();
-      if (da.GetData(0, ref ghInteger)) {
-        GH_Convert.ToInt32(ghInteger, out loadCase, GH_Conversion.Both);
-      }
-
-      nodeLoad.NodeLoad.Case = loadCase;
+      GsaLoadCaseGoo loadCaseGoo = null;
+      da.GetData(0, ref loadCaseGoo);
+      nodeLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

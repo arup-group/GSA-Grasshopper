@@ -1,9 +1,7 @@
 ﻿using GsaGH.Components;
-using GsaGH.Helpers.Export;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
-using Oasys.Taxonomy.Profiles;
 using OasysGH.Components;
 using System.Collections.Generic;
 using Xunit;

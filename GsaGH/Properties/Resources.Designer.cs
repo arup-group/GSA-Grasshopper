@@ -333,6 +333,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateLoadCase {
+            get {
+                object obj = ResourceManager.GetObject("CreateLoadCase", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateMaterial {
             get {
                 object obj = ResourceManager.GetObject("CreateMaterial", resourceCulture);
@@ -486,6 +496,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CustomMaterial {
             get {
                 object obj = ResourceManager.GetObject("CustomMaterial", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DeformedSection3d {
+            get {
+                object obj = ResourceManager.GetObject("DeformedSection3d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1016,6 +1036,26 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap ListParam {
             get {
                 object obj = ResourceManager.GetObject("ListParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LoadCaseInfo {
+            get {
+                object obj = ResourceManager.GetObject("LoadCaseInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LoadCaseParam {
+            get {
+                object obj = ResourceManager.GetObject("LoadCaseParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

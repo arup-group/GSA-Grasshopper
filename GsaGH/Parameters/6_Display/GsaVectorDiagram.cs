@@ -21,13 +21,13 @@ namespace GsaGH.Parameters {
     public override string TypeDescription => "A GSA vector diagram.";
     public override string TypeName => "Vector Diagram";
     public BoundingBox ClippingBox => Boundingbox;
-    public Color Color { get; private set; }
+    public Color Color { get; private set; } = Colours.GsaDarkPurple;
     public GsaDiagramType DiagramType => GsaDiagramType.Vector;
     public readonly Point3d AnchorPoint;
     internal Line DisplayLine;
     private bool _doubleArrow = false;
 
-    public GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
+    internal GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
       AnchorPoint = anchor;
       Direction = direction;
       

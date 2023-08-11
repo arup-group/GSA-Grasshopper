@@ -168,12 +168,13 @@ namespace GsaGH.Helpers.Export {
           null, null);
     }
 
-    internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>> GetLoading(
+    internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>> GetLoading(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
         var inLoads = new List<IGsaLoad>();
         var inGps = new List<GsaGridPlaneSurface>();
+        var inCases = new List<GsaLoadCase>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -188,6 +189,10 @@ namespace GsaGH.Helpers.Export {
               }
             case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo: {
                 inGps.Add(gridPlaneSurfaceGoo.Value.Duplicate());
+                break;
+              }
+            case GsaLoadCaseGoo loadCaseGoo: {
+                inCases.Add(loadCaseGoo.Value.Duplicate());
                 break;
               }
             default: {
@@ -209,13 +214,15 @@ namespace GsaGH.Helpers.Export {
           inGps = null;
         }
 
-        return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>>(inLoads, inGps);
+        return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
+          (inLoads, inGps, inCases);
       } else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
           + " failed to collect data!");
       }
 
-      return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>>(null, null);
+      return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
+        (null, null, null);
     }
 
     internal static Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetMembers(

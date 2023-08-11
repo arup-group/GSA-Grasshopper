@@ -1,5 +1,4 @@
 ﻿using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Parameters;
 using System;
 using System.Collections.Generic;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Reflection;
-using GsaGH;
-using GsaGH.Components;
-using GsaGH.Graphics;
-using OasysGH.Components;
-using RhinoWindows.Forms;
+﻿using GsaGH.Graphics;
 using Xunit;
 
 namespace GsaGHTests.UI {
