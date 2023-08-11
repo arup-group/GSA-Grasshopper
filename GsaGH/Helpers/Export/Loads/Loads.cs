@@ -22,6 +22,7 @@ namespace GsaGH.Helpers.Export {
     internal Dictionary<int, LoadCase> LoadCases;
 
     internal Loads(Model model) {
+      GetLoadCasesFromModel(model);
       Nodes = new Load.NodeLoads();
       Gravities = new List<GravityLoad>();
       Beams = new List<BeamLoad>();
@@ -30,7 +31,6 @@ namespace GsaGH.Helpers.Export {
       GridLines = new List<GridLineLoad>();
       GridAreas = new List<GridAreaLoad>();
       GridPlaneSurfaces = new GridPlaneSurfaces(model);
-      GetLoadCasesFromModel(model);
     }
 
     internal static void ConvertLoad(List<IGsaLoad> loads, ref ModelAssembly model, GH_Component owner) {
@@ -55,6 +55,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertLoad(IGsaLoad load, ref ModelAssembly model, GH_Component owner) {
       ConvertLoadCase(load.LoadCase, ref model, owner);
+      load.CaseId = load.LoadCase.Id;
       switch (load.LoadType) {
         case LoadType.Gravity:
           ConvertGravityLoad((GsaGravityLoad)load, ref model, owner);
@@ -98,7 +99,9 @@ namespace GsaGH.Helpers.Export {
            $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
         }
       } else {
-        model.Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+        if (loadCase.LoadCase != null) {
+          model.Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+        }
       }
     }
 

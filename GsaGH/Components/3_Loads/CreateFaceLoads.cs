@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -237,13 +238,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var faceLoad = new GsaFaceLoad();
-      
+
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        faceLoad.LoadCase = loadCaseGoo.Value;
-      } else {
-        faceLoad.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      faceLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

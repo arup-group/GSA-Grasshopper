@@ -12,15 +12,19 @@ namespace GsaGH.Parameters {
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
-    internal List<Point3d> Points { get; set; } = new List<Point3d>();
     public LoadType LoadType => LoadType.GridLine;
+    public int CaseId {
+      get => GridLineLoad.Case;
+      set => GridLineLoad.Case = value;
+    }
+    public string Name {
+      get => GridLineLoad.Name;
+      set => GridLineLoad.Name = value;
+    }
+    internal List<Point3d> Points { get; set; } = new List<Point3d>();
 
     public GsaGridLineLoad() {
       GridLineLoad.PolyLineReference = 0;
-    }
-
-    public int CaseId() {
-      return GridLineLoad.Case;
     }
 
     public IGsaLoad Duplicate() {
@@ -47,10 +51,6 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), GridLineLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

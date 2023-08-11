@@ -5,7 +5,9 @@ using GsaAPI;
 namespace GsaGH.Parameters {
   public class GsaLoadCase {
     public int Id { get; private set; }
-    internal LoadCase LoadCase;
+    public LoadCase LoadCase;
+
+    public GsaLoadCase() { }
     public GsaLoadCase(int id) {
       if (id < 1) {
         throw new ArgumentException("LoadCase ID cannot be zero or negative");
@@ -13,13 +15,12 @@ namespace GsaGH.Parameters {
 
       Id = id;
     }
-    internal GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) : this(id) {
+    public GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) : this(id) {
       LoadCase = new LoadCase() {
         CaseType = (LoadCaseType)Enum.Parse(typeof(LoadCaseType), type.ToString()),
         Name = name
       };
     }
-    private GsaLoadCase() { }
     internal GsaLoadCase(int id, ReadOnlyDictionary<int, LoadCase> loadCases) : this(id) {
       if (loadCases != null && loadCases.ContainsKey(Id)) {
         LoadCase = loadCases[id];
@@ -28,7 +29,9 @@ namespace GsaGH.Parameters {
 
     public GsaLoadCase Duplicate() {
       return LoadCase == null
-        ? new GsaLoadCase()
+        ? new GsaLoadCase() { 
+          Id = Id
+        }
         : new GsaLoadCase() {
         LoadCase = new LoadCase() {
           CaseType = LoadCase.CaseType,
@@ -40,10 +43,10 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       if (LoadCase == null) {
-        return $"ID:{Id}";
+        return $"LC{Id}";
       }
 
-      return $"ID:{Id} {LoadCase.Name} - {LoadCase.CaseType}";
+      return $"LC{Id} {LoadCase.Name} - {LoadCase.CaseType}";
     }
   }
 }

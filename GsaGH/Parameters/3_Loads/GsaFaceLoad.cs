@@ -9,15 +9,18 @@ namespace GsaGH.Parameters {
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
     public Guid RefObjectGuid { get; set; }
-
+    public int CaseId {
+      get => FaceLoad.Case;
+      set => FaceLoad.Case = value;
+    }
+    public string Name {
+      get => FaceLoad.Name;
+      set => FaceLoad.Name = value;
+    }
     public GsaFaceLoad() {
       FaceLoad = new FaceLoad {
         Type = FaceLoadType.CONSTANT,
       };
-    }
-
-    public int CaseId() {
-      return FaceLoad.Case;
     }
 
     public IGsaLoad Duplicate() {
@@ -71,10 +74,6 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), FaceLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

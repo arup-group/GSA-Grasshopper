@@ -50,11 +50,9 @@ namespace GsaGH.Components {
       var gravityLoad = new GsaGravityLoad();
 
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        gravityLoad.LoadCase = loadCaseGoo.Value;
-      } else {
-        gravityLoad.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      gravityLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

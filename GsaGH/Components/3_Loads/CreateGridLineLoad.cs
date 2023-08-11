@@ -141,13 +141,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gridlineload = new GsaGridLineLoad();
-      
+
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        gridlineload.LoadCase = loadCaseGoo.Value;
-      } else {
-        gridlineload.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      gridlineload.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;

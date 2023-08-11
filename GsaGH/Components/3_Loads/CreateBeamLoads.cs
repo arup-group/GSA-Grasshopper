@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -256,11 +257,8 @@ namespace GsaGH.Components {
       var beamLoad = new GsaBeamLoad();
 
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        beamLoad.LoadCase = loadCaseGoo.Value;
-      } else {
-        beamLoad.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      beamLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       if (_entityType == EntityType.Element) {
         beamLoad.ReferenceType = ReferenceType.Element;

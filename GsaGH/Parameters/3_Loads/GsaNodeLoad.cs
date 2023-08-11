@@ -22,14 +22,19 @@ namespace GsaGH.Parameters {
 
     public Guid RefObjectGuid => throw new NotImplementedException();
 
+    public int CaseId { 
+      get => NodeLoad.Case; 
+      set => NodeLoad.Case = value; 
+    }
+    public string Name {
+      get => NodeLoad.Name;
+      set => NodeLoad.Name = value;
+    }
+
     internal Point3d _refPoint = Point3d.Unset;
 
     public GsaNodeLoad() {
       Type = NodeLoadType.NodeLoad;
-    }
-
-    public int CaseId() {
-      return NodeLoad.Case;
     }
 
     public IGsaLoad Duplicate() {
@@ -58,10 +63,6 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), NodeLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

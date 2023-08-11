@@ -144,11 +144,8 @@ namespace GsaGH.Components {
       var gridareaload = new GsaGridAreaLoad();
 
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        gridareaload.LoadCase = loadCaseGoo.Value;
-      } else {
-        gridareaload.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      gridareaload.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;

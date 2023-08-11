@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -132,13 +133,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaGridPointLoad = new GsaGridPointLoad();
-      
+
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        gsaGridPointLoad.LoadCase = loadCaseGoo.Value;
-      } else {
-        gsaGridPointLoad.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      gsaGridPointLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       var point3d = new Point3d();
       var ghPt = new GH_Point();

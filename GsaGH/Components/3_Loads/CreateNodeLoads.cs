@@ -189,11 +189,8 @@ namespace GsaGH.Components {
       }
 
       GsaLoadCaseGoo loadCaseGoo = null;
-      if (da.GetData(0, ref loadCaseGoo)) {
-        nodeLoad.LoadCase = loadCaseGoo.Value;
-      } else {
-        nodeLoad.LoadCase = new GsaLoadCase(1);
-      }
+      da.GetData(0, ref loadCaseGoo);
+      nodeLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

@@ -13,12 +13,15 @@ namespace GsaGH.Parameters {
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
-
-    public GsaGridPointLoad() { }
-
-    public int CaseId() {
-      return GridPointLoad.Case;
+    public int CaseId {
+      get => GridPointLoad.Case;
+      set => GridPointLoad.Case = value;
     }
+    public string Name {
+      get => GridPointLoad.Name;
+      set => GridPointLoad.Name = value;
+    }
+    public GsaGridPointLoad() { }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridPointLoad {
@@ -48,10 +51,6 @@ namespace GsaGH.Parameters {
               new Length(GridPointLoad.X, m).As(unit),
               new Length(GridPointLoad.Y, m).As(unit),
               new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), GridPointLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

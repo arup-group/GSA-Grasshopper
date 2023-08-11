@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using OasysGH;
 using OasysGH.Parameters;
 using Rhino.Geometry;
@@ -110,7 +111,7 @@ namespace GsaGH.Parameters {
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
-          target = (TQ)(object)new GH_Integer(Value.CaseId());
+          target = (TQ)(object)new GH_Integer(Value.CaseId);
           return true;
         }
       }
@@ -121,6 +122,17 @@ namespace GsaGH.Parameters {
 
     public override IGH_Goo Duplicate() {
       return new GsaLoadGoo(Value);
+    }
+
+    public override string ToString() {
+      if (Value == null) {
+        return "Null";
+      }
+      string caseid = $"LC{Value.CaseId}";
+      string type = Value.LoadType.ToString().Trim();
+      string name = Value.Name.Trim();
+      string value = string.Join(" ", caseid, type, name).Trim().Replace("  ", " ");
+      return PluginInfo.ProductName + " " + TypeName + " (" + value + ")";
     }
   }
 }

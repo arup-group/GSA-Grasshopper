@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
 
@@ -12,8 +13,8 @@ namespace GsaGH.Parameters {
     public static string NickName => "LC";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
+    public GsaLoadCaseGoo() { }
     public GsaLoadCaseGoo(GsaLoadCase item) : base(item) { }
-
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
@@ -23,6 +24,19 @@ namespace GsaGH.Parameters {
       }
 
       target = default;
+      return false;
+    }
+
+    public override bool CastFrom(object source) {
+      if (source == null) {
+        return false;
+      }
+
+      if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both)) {
+        Value = new GsaLoadCase(id);
+        return true;
+      }
+
       return false;
     }
 
