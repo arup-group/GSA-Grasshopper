@@ -21,7 +21,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 2D Member
   /// </summary>
-  public class EditMember2d : GH_OasysComponent, IGH_VariableParameterComponent {
+  public class EditMember2d : Section3dPreviewComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("c68bd350-7bca-4e69-80e6-a142a6abed46");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -289,6 +289,10 @@ namespace GsaGH.Components {
       bool dummy = false;
       if (da.GetData(17, ref dummy)) {
         mem.IsDummy = dummy;
+      }
+
+      if (Preview3dSection || mem.Section3dPreview != null) {
+        mem.UpdatePreview();
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

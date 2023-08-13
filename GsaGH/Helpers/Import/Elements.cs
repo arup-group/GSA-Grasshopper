@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
 using Rhino.Geometry;
+using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {
@@ -15,7 +16,7 @@ namespace GsaGH.Helpers.Import {
     internal ConcurrentBag<GsaElement3dGoo> Element3ds { get; private set; }
     
     internal Elements(GsaModel model, string elementList = "All") {
-      Element1ds = new ConcurrentBag<GsaElement1dGoo>();
+      var elem1dDict = new ConcurrentDictionary<int, Element>();
       var elem2dDict = new ConcurrentDictionary<int, Element>();
       var elem3dDict = new ConcurrentDictionary<int, Element>();
       ReadOnlyDictionary<int, Element> eDict = model.Model.Elements(elementList);
@@ -45,9 +46,8 @@ namespace GsaGH.Helpers.Import {
 
         switch (elemDimension) {
           case 1:
-            GsaSection section = model.Properties.GetSection(item.Value);
-            Element1ds.Add(new GsaElement1dGoo(new GsaElement1d(
-              item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit)));
+            elem1dDict.TryAdd(item.Key, item.Value);
+            
             break;
 
           case 2:
@@ -60,15 +60,33 @@ namespace GsaGH.Helpers.Import {
         }
       });
 
-      Element2ds = new ConcurrentBag<GsaElement2dGoo>();
-      if (elem2dDict.Count > 0) {
-        Element2ds = CreateElement2dFromApi(elem2dDict, model);
-      }
+      var steps = new List<int> {
+        0, 1, 2
+      };
+      Parallel.ForEach(steps, i => {
+        switch (i) {
+          case 0:
+            Element1ds = new ConcurrentBag<GsaElement1dGoo>();
+            if (elem1dDict.Count > 0) {
+              Element1ds = CreateElement1dFromApi(elem1dDict, model);
+            }
+            break;
 
-      Element3ds = new ConcurrentBag<GsaElement3dGoo>();
-      if (elem3dDict.Count > 0) {
-        Element3ds = CreateElement3dFromApi(elem3dDict, model);
-      }
+          case 1:
+            Element2ds = new ConcurrentBag<GsaElement2dGoo>();
+            if (elem2dDict.Count > 0) {
+              Element2ds = CreateElement2dFromApi(elem2dDict, model);
+            }
+            break;
+
+          case 2:
+            Element3ds = new ConcurrentBag<GsaElement3dGoo>();
+            if (elem3dDict.Count > 0) {
+              Element3ds = CreateElement3dFromApi(elem3dDict, model);
+            }
+            break;
+        }
+      });
     }
     internal static Mesh GetMeshFromApiElement2d(
       Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
@@ -258,10 +276,25 @@ namespace GsaGH.Helpers.Import {
       return outMesh;
     }
 
+    private static ConcurrentBag<GsaElement1dGoo> CreateElement1dFromApi(
+      ConcurrentDictionary<int, Element> elements, GsaModel model) {
+      var elem1dGoos = new ConcurrentBag<GsaElement1dGoo>();
+      Parallel.ForEach(elements, item => {
+        GsaSection section = model.Properties.GetSection(item.Value);
+        var elem = new GsaElement1d(
+          item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit) {
+          //Section3dPreview = GsaSection3dPreview.CreateFromApi(
+          //  model, Layer.Analysis, DimensionType.OneDimensional, item.Key.ToString())
+        };
+        elem1dGoos.Add(new GsaElement1dGoo(elem));
+      });
+      return elem1dGoos;
+    }
+
     private static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
       ConcurrentDictionary<int, Element> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis > axDict = model.Model.Axes();
+      ReadOnlyDictionary<int, Axis> axDict = model.Model.Axes();
 
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
       Parallel.ForEach(elements, elem => {

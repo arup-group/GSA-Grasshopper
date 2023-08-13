@@ -1,9 +1,11 @@
-﻿using GsaGH.Components;
+﻿using Grasshopper.Kernel.Types;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -35,6 +37,20 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, output.Value.PolyCurve.PointAtEnd.Z);
       Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.Profile);
       Assert.Equal(0.5, output.Value.MeshSize);
+    }
+
+    [Fact]
+    public void CreateComponentWithSection3dPreviewTest() {
+      var comp = (Section3dPreviewDropDownComponent)ComponentMother();
+      comp.Preview3dSection = true;
+      comp.ExpireSolution(true);
+
+      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(16, output.Value.Section3dPreview.Mesh.Vertices.Count);
+      Assert.Equal(24, output.Value.Section3dPreview.Outlines.Count());
+
+      var mesh = new GH_Mesh();
+      Assert.True(output.CastTo(ref mesh));
     }
 
     [Theory]

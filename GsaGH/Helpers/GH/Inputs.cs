@@ -153,7 +153,6 @@ namespace GsaGH.Helpers.GH {
 
     internal static string GetElementListNameForesults(
       GH_Component owner, IGH_DataAccess da, int inputid) {
-      
       string elementlist = "All";
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(inputid, ref ghType)) {

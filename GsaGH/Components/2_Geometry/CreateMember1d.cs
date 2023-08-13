@@ -16,7 +16,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 1D Member
   /// </summary>
-  public class CreateMember1d : GH_OasysDropDownComponent {
+  public class CreateMember1d : Section3dPreviewDropDownComponent {
     public override Guid ComponentGuid => new Guid("8278b67c-425a-4220-b759-79ecdd6aba55");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -192,6 +192,9 @@ namespace GsaGH.Components {
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {
         mem.Section = sectionGoo.Value;
+        if (Preview3dSection) {
+          mem.UpdatePreview();
+        }
       }
 
       double meshSize = 0;
