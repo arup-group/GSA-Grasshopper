@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("2f28e2d2-5e6b-4931-ae3a-f27e471e053c");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateList;
+    protected override Bitmap Icon => Resources.CreateGridLine;
 
     public CreateGridLine() : base("Create Grid Line", "CreateGridLine",
       "Create a GSA Grid Line from a line or arc.", CategoryName.Name(), SubCategoryName.Cat0()) { }

@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("9def51cc-6166-4c6e-9ca9-2668a08f3dd2");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateList;
+    protected override Bitmap Icon => Resources.GetGridLine;
 
     public GetGridLines() : base("Get Model Grid Lines", "GetGridLines",
       "Get Grid Lines from a GSA model.", CategoryName.Name(), SubCategoryName.Cat0()) { }

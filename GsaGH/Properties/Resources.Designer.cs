@@ -323,6 +323,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateGridLine {
+            get {
+                object obj = ResourceManager.GetObject("CreateGridLine", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateList {
             get {
                 object obj = ResourceManager.GetObject("CreateList", resourceCulture);
@@ -833,6 +843,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GetGridLine {
+            get {
+                object obj = ResourceManager.GetObject("GetGridLine", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GetList {
             get {
                 object obj = ResourceManager.GetObject("GetList", resourceCulture);
@@ -916,6 +936,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap GravityLoad {
             get {
                 object obj = ResourceManager.GetObject("GravityLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GridLineParam {
+            get {
+                object obj = ResourceManager.GetObject("GridLineParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

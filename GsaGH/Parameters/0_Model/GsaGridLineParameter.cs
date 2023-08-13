@@ -16,7 +16,7 @@ namespace GsaGH.Parameters {
       => m_data.DataCount == 0 ? "Empty " + GsaGridLineGoo.Name + " parameter" :
         base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaGridLineGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.ListParam;
+    protected override Bitmap Icon => Resources.GridLineParam;
 
     public GsaGridLineParameter() : base(new GH_InstanceDescription(GsaGridLineGoo.Name,
       GsaGridLineGoo.NickName, GsaGridLineGoo.Description + " parameter", CategoryName.Name(),
