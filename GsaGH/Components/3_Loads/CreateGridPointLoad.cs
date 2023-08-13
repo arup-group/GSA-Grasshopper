@@ -22,7 +22,7 @@ using ForceUnit = OasysUnits.Units.ForceUnit;
 namespace GsaGH.Components {
   public class CreateGridPointLoad : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.PointLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
@@ -100,8 +100,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Force.GetAbbreviation(_forceUnit);
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddPointParameter("Point", "Pt",
         "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane Surface (xy-plane) will be created at the z-elevation of this point.",
         GH_ParamAccess.item);
@@ -134,13 +133,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gsaGridPointLoad = new GsaGridPointLoad();
-      int loadCase = 1;
-      var ghLoadCase = new GH_Integer();
-      if (da.GetData(0, ref ghLoadCase)) {
-        GH_Convert.ToInt32(ghLoadCase, out loadCase, GH_Conversion.Both);
-      }
 
-      gsaGridPointLoad.GridPointLoad.Case = loadCase;
+      GsaLoadCaseGoo loadCaseGoo = null;
+      da.GetData(0, ref loadCaseGoo);
+      gsaGridPointLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       var point3d = new Point3d();
       var ghPt = new GH_Point();
@@ -161,7 +157,7 @@ namespace GsaGH.Components {
               gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
               _expansionType = ExpansionType.UseGpsSettings;
               UpdateMessage(gridPlaneSurface.GridSurface.ElementType
-                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+                == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
               break;
             }
           case Plane pln:
@@ -169,7 +165,7 @@ namespace GsaGH.Components {
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
             UpdateMessage(gridPlaneSurface.GridSurface.ElementType
-                == GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+                == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
           default: {
@@ -204,11 +200,13 @@ namespace GsaGH.Components {
 
         switch (_expansionType) {
           case ExpansionType.To1D:
-            gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+            gridPlaneSurface.GridSurface.ElementType = 
+              GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
             break;
 
           case ExpansionType.To2D:
-            gridPlaneSurface.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
+            gridPlaneSurface.GridSurface.ElementType =
+              GsaAPI.GridSurface.Element_Type.TWO_DIMENSIONAL;
             break;
 
           case ExpansionType.UseGpsSettings:
@@ -218,7 +216,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      Direction direc = Direction.Z;
+      GsaAPI.Direction direc = GsaAPI.Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(3, ref ghDir)) {
@@ -228,11 +226,11 @@ namespace GsaGH.Components {
       dir = dir.ToUpper();
       switch (dir) {
         case "X":
-          direc = Direction.X;
+          direc = GsaAPI.Direction.X;
           break;
 
         case "Y":
-          direc = Direction.Y;
+          direc = GsaAPI.Direction.Y;
           break;
       }
 

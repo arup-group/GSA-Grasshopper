@@ -4,19 +4,23 @@ using GsaAPI;
 namespace GsaGH.Parameters {
   public class GsaBeamLoad : IGsaLoad {
     public BeamLoad BeamLoad { get; set; }
+    public GsaLoadCase LoadCase { get; set; }
     public LoadType LoadType => LoadType.Beam;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
     public Guid RefObjectGuid { get; set; }
-
+    public int CaseId {
+      get => BeamLoad.Case;
+      set => BeamLoad.Case = value;
+    }
+    public string Name {
+      get => BeamLoad.Name;
+      set => BeamLoad.Name = value;
+    }
     public GsaBeamLoad() {
       BeamLoad = new BeamLoad {
         Type = BeamLoadType.UNIFORM,
       };
-    }
-
-    public int CaseId() {
-      return BeamLoad.Case;
     }
 
     public IGsaLoad Duplicate() {
@@ -25,8 +29,9 @@ namespace GsaGH.Parameters {
           AxisProperty = BeamLoad.AxisProperty,
           Case = BeamLoad.Case,
           Direction = BeamLoad.Direction,
-          EntityList = BeamLoad.EntityList.ToString(),
-          Name = BeamLoad.Name.ToString(),
+          EntityList = BeamLoad.EntityList,
+          EntityType = BeamLoad.EntityType,
+          Name = BeamLoad.Name,
           IsProjected = BeamLoad.IsProjected,
           Type = BeamLoad.Type,
         },
@@ -61,6 +66,10 @@ namespace GsaGH.Parameters {
           break;
       }
 
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       if (ReferenceType == ReferenceType.None) {
         return dup;
       }
@@ -74,10 +83,6 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), BeamLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

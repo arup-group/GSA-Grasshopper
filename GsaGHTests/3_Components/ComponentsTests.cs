@@ -1,6 +1,5 @@
 ﻿using System;
 using GsaGH.Components;
-using GsaGH.Components.GraveyardComp;
 using OasysGH.Components;
 using Xunit;
 
@@ -27,7 +26,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ElementFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
     //Loads
-    [InlineData(typeof(CreateBeamLoads), 2)]
+    [InlineData(typeof(CreateBeamLoads), 3)]
     [InlineData(typeof(CreateFaceLoads), 2)]
     [InlineData(typeof(CreateGridAreaLoad), 1)]
     [InlineData(typeof(CreateGridLineLoad), 1)]

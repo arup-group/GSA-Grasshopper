@@ -547,6 +547,15 @@
   <data name="Prop2dModifierParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Prop2dModifierParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="LoadCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LoadCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateLoadCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateLoadCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LoadCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CombinationCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CombinationCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -558,11 +567,5 @@
   </data>
   <data name="AnnotateDetailed" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnnotateDetailed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DeformedSection3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DeformedSection3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Section3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Section3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

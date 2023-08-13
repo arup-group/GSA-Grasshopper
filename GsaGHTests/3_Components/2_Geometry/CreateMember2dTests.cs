@@ -81,5 +81,21 @@ namespace GsaGHTests.Components.Geometry {
       output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(2, output.Value.InclusionPoints.Count);
     }
+
+    [Fact]
+    public void MeshModeTest() {
+      var comp = (GH_OasysDropDownComponent)ComponentMother();
+      comp.CreateAttributes();
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MeshMode2d.Mixed, output.Value.MeshMode);
+
+      comp.SetSelected(0, 0); // tri mode
+      output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MeshMode2d.Tri, output.Value.MeshMode);
+
+      comp.SetSelected(0, 2); // quad mode
+      output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MeshMode2d.Quad, output.Value.MeshMode);
+    }
   }
 }

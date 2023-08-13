@@ -89,6 +89,29 @@ steps:
   displayName: dotnet tests
   failOnStderr: true
 
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+
+- powershell: |
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) { 
+      Write-Output "codecov.yml is invalid"
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+      exit(1)
+    } else { 
+      Write-Output "codecov.yml is valid"
+    }
+  displayName: Validate codecov.yml
+  failOnStderr: true
+  
 - powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
     echo $coverage_file_gsagh
@@ -96,16 +119,53 @@ steps:
     echo $coverage_file_integration
     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  displayName: Copy coverage files
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+    ls $(System.DefaultWorkingDirectory)\
+    cd $(System.DefaultWorkingDirectory)\
+    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+  env:
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
+  displayName: Upload Code Coverage to codecovio
   failOnStderr: true
   
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   artifact: GsaGHTestsCoverage
   displayName: Publish GsaGHTest to Azure
+  continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
   artifact: IntegrationTestsCoverage
   displayName: Publish IntegrationTest to Azure
+  continueOnError: true
+
+- powershell: |
+    cd GsaGH\bin\x64\Release
+    curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+    .\yak version
+    cd net48
+    ..\yak spec
+    Add-Content manifest.yml 'icon: GsaIcon.png'
+    Add-Content manifest.yml 'keywords:'
+    Add-Content manifest.yml '- oasys'
+    Add-Content manifest.yml '- gsa'
+    Add-Content manifest.yml '- gsagh'
+    Add-Content manifest.yml '- fe'
+    Add-Content manifest.yml '- fea'
+    Add-Content manifest.yml '- fem'
+    Add-Content manifest.yml '- structural'
+    Add-Content manifest.yml '- structuralanalysis'
+    ..\yak build --platform win
+    $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+    $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
+    Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
+    ..\yak build --platform win
+  displayName: Package yak
+
+- publish:  $(System.DefaultWorkingDirectory)/**/*.yak
+  artifact: NightlyYakPackage
+  continueOnError: true
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)

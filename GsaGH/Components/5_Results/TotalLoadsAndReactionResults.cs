@@ -142,7 +142,7 @@ namespace GsaGH.Components {
 
         case GsaResultGoo goo: {
           result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination) {
+          if (result.Type == CaseType.Combination) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;
           }

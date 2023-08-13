@@ -8,10 +8,11 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Helpers.Export {
   internal class AssembleModel {
     internal static Model Assemble(
-      GsaModel model, List<GsaList> lists, List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
-      List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
-      List<GsaMember3d> mem3ds, List<GsaSection> sections, List<GsaProp2d> prop2Ds,
-      List<GsaProp3d> prop3Ds, List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
+      GsaModel model, List<GsaList> lists, List<GsaNode> nodes, List<GsaElement1d> elem1ds, 
+      List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, 
+      List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds, List<GsaSection> sections, 
+      List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds, List<IGsaLoad> loads, 
+      List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases,
       List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
       LengthUnit modelUnit, Length toleranceCoincidentNodes, bool createElementsFromMembers,
       GH_Component owner) {
@@ -29,6 +30,7 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertList(lists, loads, ref assembledModel, owner);
       GridPlaneSurfaces.ConvertGridPlaneSurface(gridPlaneSurfaces, ref assembledModel, owner);
       Loads.ConvertLoad(loads, ref assembledModel, owner);
+      assembledModel.ConvertLoadCases(loadCases, owner);
 
       assembledModel.AssemblePostMeshing();
       assembledModel.ConvertAnalysisTasks(analysisTasks);

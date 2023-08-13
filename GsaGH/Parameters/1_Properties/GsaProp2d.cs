@@ -9,7 +9,6 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Geometry;
-using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {

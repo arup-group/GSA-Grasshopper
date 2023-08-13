@@ -10,6 +10,7 @@ using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using LoadCase = GsaAPI.LoadCase;
 
 namespace GsaGH.Helpers.Export {
   internal class ModelAssembly {
@@ -129,6 +130,27 @@ namespace GsaGH.Helpers.Export {
       Load.NodeLoads.ConvertNodeLoads(loads, ref Loads.Nodes, ref Nodes, ref Lists, Unit);
     }
 
+    internal void ConvertLoadCases(List<GsaLoadCase> loadCases, GH_Component owner) {
+      if (loadCases == null || loadCases.Count == 0) {
+        return;
+      }
+
+      foreach (GsaLoadCase loadCase in loadCases) {
+        if (Loads.LoadCases.ContainsKey(loadCase.Id)) {
+          LoadCase existingCase = Loads.LoadCases[loadCase.Id];
+          LoadCase newCase = loadCase.LoadCase;
+          if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
+            Loads.LoadCases[loadCase.Id] = newCase;
+            owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
+             $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
+             $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
+          }
+        } else {
+          Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+        }
+      }
+    }
+
     internal void AssemblePreMeshing() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
@@ -213,6 +235,7 @@ namespace GsaGH.Helpers.Export {
 
     internal void AssemblePostMeshing() {
       // Add API Loads in model
+      Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
       Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
       Model.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(Loads.Beams));
       Model.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(Loads.Faces));

@@ -15,13 +15,32 @@ namespace GsaGH.Components {
   ///   Component to create new 2D Member
   /// </summary>
   public class CreateMember2d : Section3dPreviewComponent {
-    public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
+    public override Guid ComponentGuid => new Guid("097037ce-bfc7-44c0-bc96-dc8c52466249");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateMem2d;
 
     public CreateMember2d() : base("Create 2D Member", "Mem2D", "Create GSA Member 2D",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
+
+    protected override void InitialiseDropdowns() {
+      _spacerDescriptions = new List<string>(new[] {
+        "Mesh mode",
+      });
+
+      _dropDownItems = new List<List<string>>(){
+        new List<string>(){
+          "Tri only",
+          "Quad dominant",
+          "Quad only" } 
+      };
+      _selectedItems = new List<string> {
+        _dropDownItems[0][1]
+      };
+
+      _isInitialised = true;
+    }
+    
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBrepParameter("Brep", "B",
@@ -36,7 +55,7 @@ namespace GsaGH.Components {
       pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size",
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Internal Offset", "IO",
-        "Set Automatic Internal Offset of Member", GH_ParamAccess.item, false);
+        "Set Automatic Internal Offset of Member", GH_ParamAccess.item, true);
 
       pManager.HideParameter(0);
       pManager.HideParameter(1);
@@ -88,7 +107,20 @@ namespace GsaGH.Components {
         mem.AutomaticInternalOffset = internalOffset;
       }
 
+      if (_selectedItems[0] != _dropDownItems[0][1]) {
+        if (_selectedItems[0] == _dropDownItems[0][0]) {
+          mem.MeshMode = GsaAPI.MeshMode2d.Tri;
+        } else {
+          mem.MeshMode = GsaAPI.MeshMode2d.Quad;
+        }
+      }
+
       da.SetData(0, new GsaMember2dGoo(mem));
+    }
+
+    public override void SetSelected(int i, int j) {
+      _selectedItems[i] = _dropDownItems[i][j];
+      base.UpdateUI();
     }
   }
 }

@@ -2,6 +2,7 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Xunit;
+using LoadCase = GsaGH.Parameters.Enums.LoadCase;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -16,7 +17,16 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-1, load.GravityLoad.Factor.Z);
       Assert.Equal(1, load.GravityLoad.Case);
       Assert.Equal("all", load.GravityLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, load.GravityLoad.EntityType);
       Assert.Equal("all", load.GravityLoad.Nodes);
+    }
+
+    [Fact]
+    public void LoadCaseTest() {
+      var load = new GsaGravityLoad();
+      Assert.Null(load.LoadCase);
+      load.LoadCase = new GsaLoadCase(99);
+      Assert.Equal(99, load.LoadCase.Id);
     }
 
     [Fact]
@@ -37,6 +47,7 @@ namespace GsaGHTests.Parameters {
       };
       duplicate.GravityLoad.Case = 3;
       duplicate.GravityLoad.EntityList = "";
+      duplicate.GravityLoad.EntityType = GsaAPI.EntityType.Member;
       duplicate.GravityLoad.Nodes = "";
       duplicate.GravityLoad.Name = "";
 
@@ -46,8 +57,28 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-1, original.GravityLoad.Factor.Z);
       Assert.Equal(1, original.GravityLoad.Case);
       Assert.Equal("all", original.GravityLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.GravityLoad.EntityType);
       Assert.Equal("all", original.GravityLoad.Nodes);
       Assert.Equal("name", original.GravityLoad.Name);
+    }
+
+    [Fact]
+    public void DuplicateLoadCaseTest() {
+      var load = new GsaGravityLoad();
+      Assert.Null(load.LoadCase);
+      var duplicate = (GsaGravityLoad)load.Duplicate();
+      Assert.Null(duplicate.LoadCase);
+
+      load.LoadCase = new GsaLoadCase(99);
+
+      duplicate = (GsaGravityLoad)load.Duplicate();
+      Assert.Equal(99, duplicate.LoadCase.Id);
+
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCase.LoadCaseType.Dead, "DeadLoad");
+      Assert.Equal(99, load.LoadCase.Id);
+      Assert.Equal(1, duplicate.LoadCase.Id);
+      Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());
+      Assert.Equal("DeadLoad", duplicate.LoadCase.LoadCase.Name);
     }
   }
 }

@@ -58,6 +58,13 @@ namespace GsaGH.Parameters {
         ApiMember.IsDummy = value;
       }
     }
+    public GsaAPI.MeshMode2d MeshMode {
+      get => ApiMember.MeshMode2d;
+      set {
+        CloneApiObject();
+        ApiMember.MeshMode2d = value;
+      }
+    }
     // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
     public double MeshSize { get; set; } = 0;
     public bool MeshWithOthers {
@@ -422,6 +429,7 @@ namespace GsaGH.Parameters {
         Type2D = ApiMember.Type2D,
         AutomaticOffset = ApiMember.AutomaticOffset,
         IsIntersector = ApiMember.IsIntersector,
+        MeshMode2d = ApiMember.MeshMode2d,
       };
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;

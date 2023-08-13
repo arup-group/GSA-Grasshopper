@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
@@ -20,7 +20,7 @@ namespace GsaGH.Components {
   ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
   public class GetLoads : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("87ff28e5-a1a6-4d78-ba71-e930e01dca13");
+    public override Guid ComponentGuid => new Guid("97f5f7ac-4e3f-410e-9d47-c4b85caa307e");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetLoads;
@@ -68,7 +68,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
+      pManager.AddParameter(new GsaLoadCaseParameter(), "Load Cases", "LC",
+        "Load Cases from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaLoadParameter(), "Gravity Loads", "Gr",
         "Gravity Loads from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaLoadParameter(), "Node Loads", "No", "Node Loads from GSA Model",
@@ -93,35 +94,37 @@ namespace GsaGH.Components {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
 
-      Model model = modelGoo.Value.Model;
+      GsaAPI.Model model = modelGoo.Value.Model;
+      ReadOnlyDictionary<int, GsaAPI.LoadCase> loadCases = model.LoadCases();
+      List<GsaLoadCaseGoo> cases = Loads.GetLoadCases(loadCases);
+      List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads(), loadCases);
+      List<GsaLoadGoo> node = Loads.GetNodeLoads(model, loadCases);
+      List<GsaLoadGoo> beam = Loads.GetBeamLoads(model.BeamLoads(), loadCases);
+      List<GsaLoadGoo> face = Loads.GetFaceLoads(model.FaceLoads(), loadCases);
 
-      List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads());
-      List<GsaLoadGoo> node = Loads.GetNodeLoads(model);
-      List<GsaLoadGoo> beam = Loads.GetBeamLoads(model.BeamLoads());
-      List<GsaLoadGoo> face = Loads.GetFaceLoads(model.FaceLoads());
-
-      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
-      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
-      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
-      List<GsaLoadGoo> point
-        = Loads.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, _lengthUnit);
-      List<GsaLoadGoo> line
-        = Loads.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, _lengthUnit);
-      List<GsaLoadGoo> area
-        = Loads.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, _lengthUnit);
+      IReadOnlyDictionary<int, GsaAPI.GridSurface> srfDict = model.GridSurfaces();
+      IReadOnlyDictionary<int, GsaAPI.GridPlane> plnDict = model.GridPlanes();
+      IReadOnlyDictionary<int, GsaAPI.Axis> axDict = model.Axes();
+      List<GsaLoadGoo> point = Loads.GetGridPointLoads(
+        model.GridPointLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
+      List<GsaLoadGoo> line = Loads.GetGridLineLoads(
+        model.GridLineLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
+      List<GsaLoadGoo> area = Loads.GetGridAreaLoads(
+        model.GridAreaLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
 
       var gps = srfDict.Keys.Select(key
         => new GsaGridPlaneSurfaceGoo(Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key,
           _lengthUnit))).ToList();
 
-      da.SetDataList(0, gravity);
-      da.SetDataList(1, node);
-      da.SetDataList(2, beam);
-      da.SetDataList(3, face);
-      da.SetDataList(4, point);
-      da.SetDataList(5, line);
-      da.SetDataList(6, area);
-      da.SetDataList(7, gps);
+      da.SetDataList(0, cases);
+      da.SetDataList(1, gravity);
+      da.SetDataList(2, node);
+      da.SetDataList(3, beam);
+      da.SetDataList(4, face);
+      da.SetDataList(5, point);
+      da.SetDataList(6, line);
+      da.SetDataList(7, area);
+      da.SetDataList(8, gps);
     }
 
     protected override void UpdateUIFromSelectedItems() {

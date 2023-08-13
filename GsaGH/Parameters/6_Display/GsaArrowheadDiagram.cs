@@ -14,7 +14,7 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Arrowhead Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public GsaDiagramType DiagramType => GsaDiagramType.ArrowHead;
-
+    
     internal GsaArrowheadDiagram(
       ReadOnlyCollection<Triangle> faces, double scaleFactor, Color customColor) {
       Value = Diagrams.CreateMeshFromTriangles(faces, scaleFactor, customColor);
