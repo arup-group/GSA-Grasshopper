@@ -30,9 +30,7 @@ namespace GsaGH.Helpers.Export {
     private bool _isSeedModel = true;
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
-      if (model == null) {
-        model = new GsaModel();
-      }
+      model ??= new GsaModel();
 
       Model = model.Model;
       Unit = unit;
@@ -149,6 +147,38 @@ namespace GsaGH.Helpers.Export {
           }
         } else {
           Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+        }
+      }
+    }
+
+    internal void ConvertLists(List<GsaList> lists) {
+      if (lists == null || lists.Count == 0) {
+        return;
+      }
+
+      foreach (GsaList list in lists) {
+        switch (list.EntityType) {
+          case Parameters.EntityType.Element:
+            if (list._elements == (null, null, null)) {
+              continue;
+            }
+
+            ConvertElements(
+              list._elements.e1d.Select(x => x.Value).ToList(),
+              list._elements.e2d.Select(x => x.Value).ToList(),
+              list._elements.e3d.Select(x => x.Value).ToList());
+            break;
+
+          case Parameters.EntityType.Member:
+            if (list._members == (null, null, null)) {
+              continue;
+            }
+
+            ConvertMembers(
+              list._members.m1d.Select(x => x.Value).ToList(),
+              list._members.m2d.Select(x => x.Value).ToList(),
+              list._members.m3d.Select(x => x.Value).ToList());
+            break;
         }
       }
     }

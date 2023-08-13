@@ -80,12 +80,9 @@ namespace GsaGH.Components {
           member = memberGoo.Value;
           axes = member.LocalAxes;
           if (axes == null) {
-            var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null, null, null, null, null, 
-              new List<GsaMember1d>() { 
-                member 
-              }, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
-              Length.Zero, false, null);
+            var model = new GsaModel {
+              Model = AssembleModel.AssembleForLocalAxis(member)
+            };
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
             this.AddRuntimeWarning(
@@ -105,12 +102,9 @@ namespace GsaGH.Components {
           element = elementGoo.Value;
           axes = element.LocalAxes;
           if (axes == null) {
-            var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null, null,
-              new List<GsaElement1d>() {
-                element,
-              }, null, null, null, null, null, null, null, null, null, null, null, null, null,
-              LengthUnit.Meter, Length.Zero, false, null);
+            var model = new GsaModel() {
+              Model = AssembleModel.AssembleForLocalAxis(element)
+            };
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
             this.AddRuntimeWarning(
