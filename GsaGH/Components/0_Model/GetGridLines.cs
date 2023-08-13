@@ -16,7 +16,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class GetGridLines : GH_OasysComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("9def51cc-6166-4c6e-9ca9-2668a08f3dd2");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateList;
 

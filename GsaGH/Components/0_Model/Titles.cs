@@ -12,7 +12,7 @@ namespace GsaGH.Components {
   // ReSharper disable once InconsistentNaming
   public class Titles : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("a0e55eed-fc36-4919-8107-9caad67d5681");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Titles;
 
