@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Import;
+using GsaGH.Parameters;
+using GsaGH.Properties;
+using OasysGH;
+using OasysGH.Components;
+using Rhino.Geometry;
+
+namespace GsaGH.Components {
+  /// <summary>
+  /// Component to retrieve Grid Lines from a GSA model
+  /// </summary>
+  public class GridLineInfo : GH_OasysComponent, IGH_PreviewObject {
+    public override Guid ComponentGuid => new Guid("5f287f54-e461-4579-b414-9298f213074b");
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.GridLineInfo;
+
+    public GridLineInfo() : base("Grid Line Info", "GridLineInfo",
+      "Get the information of a GSA Grid Line", CategoryName.Name(), SubCategoryName.Cat0()) { }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaGridLineParameter());
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddIntegerParameter("ID", "ID", "The grid line ID", GH_ParamAccess.item);
+      pManager.AddTextParameter("Label", "Lb", "Grid Line label", GH_ParamAccess.item);
+      pManager.AddPointParameter("Starting Point", "Pt", "The Grid Line starting point",
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Length", "L", "The Length of the Grid Line",
+        GH_ParamAccess.item);
+      pManager.AddTextParameter("Shape", "S", "Line or Arc shape", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation", "θ1", "The orientation angle", 
+        GH_ParamAccess.item);
+      pManager.AddNumberParameter("Angle", "θ2", "The second orientation angle if the Grid Line is" +
+        " an Arc",
+        GH_ParamAccess.item);
+    }
+
+    protected override void SolveInstance(IGH_DataAccess da) {
+      GsaGridLineGoo gridGoo = null;
+      da.GetData(0, ref gridGoo);
+      da.SetData(0, gridGoo.Value.Id);
+      da.SetData(1, gridGoo.Value._gridLine.Label);
+      var pt = new Point3d(gridGoo.Value._gridLine.X, gridGoo.Value._gridLine.Y, 0);
+      da.SetData(2, pt);
+      da.SetData(3, gridGoo.Value._gridLine.Length);
+      da.SetData(4, gridGoo.Value._gridLine.Shape);
+      da.SetData(5, gridGoo.Value._gridLine.Theta1);
+      da.SetData(6, gridGoo.Value._gridLine.Theta2);
+    }
+  }
+}

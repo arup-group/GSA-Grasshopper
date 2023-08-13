@@ -23,10 +23,15 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string s = "ID:" + Id + " Label:" + _gridLine.Label + " Shape:" + _gridLine.Shape + " X:" + _gridLine.X + " Y:" + _gridLine.Y + " Length:" + _gridLine.Length + " Theta1:" + _gridLine.Theta1;
+      string id = Id > 0 ? $"{Id} " : string.Empty;
+      string type = _gridLine.Shape == GridLineShape.Arc ? " Shape: Arc " : string.Empty;
+      string s = $"{id}{_gridLine.Label}{type}X:{_gridLine.X} Y:{_gridLine.Y} Length:" +
+        $"{_gridLine.Length} Orientation:{_gridLine.Theta1}";
       if (_gridLine.Shape == GridLineShape.Arc) {
+        s.Replace("Orientation", "Theta1");
         s += " Theta2:" + _gridLine.Theta2;
       }
+
       return s;
     }
   }
