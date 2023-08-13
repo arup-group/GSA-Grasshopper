@@ -141,11 +141,13 @@ namespace GsaGH.Helpers.Export {
 
       List<GsaList> lists = Import.Lists.GetLists(appendModel);
       List<GsaGridLine> gridLines = Import.GridLines.GetGridLines(appendModel);
+      var gsaLoadCases = 
+        Import.Loads.GetLoadCases(loadCases).Select(n => n.Value).ToList();
 
       mainModel.Model = AssembleModel.Assemble(
         mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
-        sections, prop2Ds, prop3Ds, loads, gps, null, null, null, LengthUnit.Meter, tolerance, 
-        false, owner);
+        sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, LengthUnit.Meter,
+        tolerance, false, owner);
       return mainModel;
     }
   }
