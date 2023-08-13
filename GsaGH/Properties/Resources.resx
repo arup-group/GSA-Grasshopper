@@ -457,9 +457,6 @@
   <data name="Units" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Units.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="unused" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\unused.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="GlobalPerformance" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GlobalPerformance.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -567,5 +564,11 @@
   </data>
   <data name="AnnotateDetailed" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnnotateDetailed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeformedSection3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\DeformedSection3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Section3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Section3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

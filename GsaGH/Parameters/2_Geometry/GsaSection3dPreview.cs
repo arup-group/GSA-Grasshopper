@@ -332,7 +332,7 @@ namespace GsaGH.Parameters {
 
     private static GraphicSpecification ResultSpec(
       GsaResult res, string elementList = "all", double scaleFactor = 1.0) {
-      string caseType = res.Type == GsaResult.CaseType.AnalysisCase ? "A" : "C";
+      string caseType = res.Type == CaseType.AnalysisCase ? "A" : "C";
       string caseDefinition = $"{caseType}{res.CaseId}";
       return new GraphicSpecification() {
         Entities = new EntityList() {

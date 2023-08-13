@@ -167,8 +167,7 @@ namespace GsaGH.Components {
 
         // Assemble model
         model.Model = AssembleModel.Assemble(model, lists, null, elem1ds, elem2ds, null, mem1ds, mem2ds,
-        null, null, null, null, null, null, null,
-          null, _lengthUnit, Length.Zero, false, this);
+        null, null, null, null, null, null, null, null, null, _lengthUnit, Length.Zero, false, this);
 
         _analysisMesh = null;
         _analysisLines = null;
@@ -181,11 +180,19 @@ namespace GsaGH.Components {
         Parallel.ForEach(steps, i => {
           switch (i) {
             case 0:
+              if (model.AnalysisLayerPreview == null) {
+                break;
+              }
+
               _analysisMesh = model.AnalysisLayerPreview.Mesh;
               _analysisLines = model.AnalysisLayerPreview.Outlines;
               break;
 
             case 1:
+              if (model.DesignLayerPreview == null) {
+                break;
+              }
+
               _designMesh = model.DesignLayerPreview.Mesh;
               _designLines = model.DesignLayerPreview.Outlines;
               break;

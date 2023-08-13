@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 2D Member
   /// </summary>
-  public class CreateMember2d : Section3dPreviewComponent {
+  public class CreateMember2d : Section3dPreviewDropDownComponent {
     public override Guid ComponentGuid => new Guid("097037ce-bfc7-44c0-bc96-dc8c52466249");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

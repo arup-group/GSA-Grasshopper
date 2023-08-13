@@ -42,7 +42,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void CreateComponentWithSection3dPreviewTest() {
-      var comp = (Section3dPreviewComponent)ComponentMother();
+      var comp = (Section3dPreviewDropDownComponent)ComponentMother();
       comp.Preview3dSection = true;
       comp.ExpireSolution(true);
 
