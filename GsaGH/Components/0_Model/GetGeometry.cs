@@ -494,7 +494,7 @@ namespace GsaGH.Components {
 
         GsaListGoo memberListGoo = null;
         string memList = "all";
-        if (data.GetData(1, ref memberListGoo)) {
+        if (data.GetData(3, ref memberListGoo)) {
           if (!memberListGoo.IsValid) {
             return;
           }
@@ -539,7 +539,7 @@ namespace GsaGH.Components {
 
         GsaListGoo memberListGoo = null;
         string memList = "all";
-        if (data.GetData(1, ref memberListGoo)) {
+        if (data.GetData(3, ref memberListGoo)) {
           if (!memberListGoo.IsValid) {
             return;
           }
