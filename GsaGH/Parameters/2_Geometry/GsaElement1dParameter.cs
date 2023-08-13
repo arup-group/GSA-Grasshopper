@@ -48,6 +48,7 @@ namespace GsaGH.Parameters {
         ObjectAttributes objAtt = att.Duplicate();
         objAtt.ObjectColor = goo.Value.Colour;
         gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Line.Line), objAtt, doc);
+        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }

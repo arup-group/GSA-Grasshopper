@@ -7,7 +7,9 @@ using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
+using OasysGH.Units;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -52,7 +54,6 @@ namespace GsaGH.Parameters {
       set {
         _line = value;
         _guid = Guid.NewGuid();
-        UpdatePreview();
       }
     }
     public string Name {
@@ -96,7 +97,7 @@ namespace GsaGH.Parameters {
 
         CloneApiObject();
         ApiElement.SetEndRelease(1, new EndRelease(_rel2._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaBool6 ReleaseStart {
@@ -106,7 +107,7 @@ namespace GsaGH.Parameters {
 
         CloneApiObject();
         ApiElement.SetEndRelease(0, new EndRelease(_rel1._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaSection Section { get; set; } = new GsaSection();
@@ -118,6 +119,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Element ApiElement { get; set; } = new Element();
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;
@@ -138,7 +140,7 @@ namespace GsaGH.Parameters {
       Id = Id;
       Section = new GsaSection(prop);
       _orientationNode = orientationNode;
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     internal GsaElement1d(
@@ -150,7 +152,7 @@ namespace GsaGH.Parameters {
       Id = id;
       Section = section;
       _orientationNode = orientationNode;
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     internal GsaElement1d(
@@ -173,7 +175,6 @@ namespace GsaGH.Parameters {
         Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
       LocalAxes = new GsaLocalAxes(localAxes);
       Section = section;
-      UpdatePreview();
     }
 
     public GsaElement1d Clone() {
@@ -198,7 +199,10 @@ namespace GsaGH.Parameters {
         dup._orientationNode = _orientationNode.Duplicate();
       }
 
-      UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview;
+      }
+
       return dup;
     }
 
@@ -214,6 +218,9 @@ namespace GsaGH.Parameters {
       LineCurve xLn = Line;
       xmorph.Morph(xLn);
       elem.Line = xLn;
+      if (Section3dPreview != null) {
+        elem.Section3dPreview = Section3dPreview.Morph(xmorph);
+      }
 
       return elem;
     }
@@ -234,6 +241,10 @@ namespace GsaGH.Parameters {
       xLn.Transform(xform);
       elem.Line = xLn;
 
+      if (Section3dPreview != null) {
+        elem.Section3dPreview = Section3dPreview.Transform(xform);
+      }
+      
       return elem;
     }
 
@@ -273,6 +284,15 @@ namespace GsaGH.Parameters {
     }
 
     internal void UpdatePreview() {
+      if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
+        Section3dPreview = new GsaSection3dPreview(this);
+      } else {
+        Section3dPreview = null;
+      }
+      UpdateReleasesPreview();
+    }
+
+    internal void UpdateReleasesPreview() {
       if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }

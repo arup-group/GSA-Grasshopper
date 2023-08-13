@@ -8,16 +8,20 @@ namespace GsaGH.Parameters {
   public class GsaGridPointLoad : IGsaLoad {
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
     public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
+    public GsaLoadCase LoadCase { get; set; }
     public LoadType LoadType => LoadType.GridPoint;
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
-
-    public GsaGridPointLoad() { }
-
-    public int CaseId() {
-      return GridPointLoad.Case;
+    public int CaseId {
+      get => GridPointLoad.Case;
+      set => GridPointLoad.Case = value;
     }
+    public string Name {
+      get => GridPointLoad.Name;
+      set => GridPointLoad.Name = value;
+    }
+    public GsaGridPointLoad() { }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridPointLoad {
@@ -33,6 +37,11 @@ namespace GsaGH.Parameters {
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
       };
+      
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       return dup;
     }
 
@@ -42,10 +51,6 @@ namespace GsaGH.Parameters {
               new Length(GridPointLoad.X, m).As(unit),
               new Length(GridPointLoad.Y, m).As(unit),
               new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), GridPointLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

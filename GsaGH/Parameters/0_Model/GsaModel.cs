@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -31,6 +30,8 @@ namespace GsaGH.Parameters {
       set {
         _lengthUnit = value;
         Units.LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
+        _analysisLayerPreview = null;
+        _designLayerPreview = null;
       }
     }
     public string FileNameAndPath { get; set; }
@@ -42,17 +43,37 @@ namespace GsaGH.Parameters {
     internal ReadOnlyDictionary<int, Node> ApiNodes { get; private set; }
     internal ReadOnlyDictionary<int, Axis> ApiAxis { get; private set; }
     internal Materials Materials { get; private set; }
+    internal GsaSection3dPreview AnalysisLayerPreview {
+      get {
+        if (Model.Elements().Count > 0) {
+          _analysisLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Analysis);
+        }
+        return _analysisLayerPreview;
+      }
+    }
+    internal GsaSection3dPreview DesignLayerPreview {
+      get {
+        if (Model.Members().Count > 0) {
+          _designLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Design);
+        }
+        return _designLayerPreview;
+      }
+    }
     public Model Model {
       get => _model;
       set {
         _model = value;
         InstantiateApiFields();
+        _analysisLayerPreview = null;
+        _designLayerPreview = null;
       }
     }
     internal Helpers.Import.Properties Properties { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
     private Model _model = new Model();
+    private GsaSection3dPreview _analysisLayerPreview;
+    private GsaSection3dPreview _designLayerPreview;
 
     public GsaModel() {
       SetUserDefaultUnits(Model.UiUnits());

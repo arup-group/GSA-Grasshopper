@@ -8,11 +8,15 @@ using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
+using OasysGH.UI;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -46,8 +50,7 @@ namespace GsaGH.Parameters {
 
         return cols;
       }
-      set
-        => CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
+      set => CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
           value);
     }
     public int Count => ApiElements.Count;
@@ -71,7 +74,10 @@ namespace GsaGH.Parameters {
         => (from element in ApiElements where element != null
             select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
               element.Offset.Z)).ToList();
-      set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
+        UpdatePreview();
+      }
     }
     public List<Angle> OrientationAngles {
       get
@@ -111,10 +117,13 @@ namespace GsaGH.Parameters {
     }
     public List<ElementType> Types {
       get => (from t in ApiElements where t != null select t.Type).ToList();
-      set => CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
+        UpdatePreview();
+      }
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
-
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     private Guid _guid = Guid.NewGuid();
 
     public GsaElement2d() { }
@@ -177,7 +186,6 @@ namespace GsaGH.Parameters {
       gsaElement2D.Topology = convertMesh.Item2;
       gsaElement2D.TopoInt = convertMesh.Item3;
       gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
-
       return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2,
         tuple.Item3);
     }
@@ -190,9 +198,13 @@ namespace GsaGH.Parameters {
 
       dup.Ids = Ids.ToList();
       dup.Mesh = (Mesh)Mesh.DuplicateShallow();
-      dup.Prop2ds = Prop2ds.ConvertAll(x => x.Duplicate());
       dup.Topology = Topology;
       dup.TopoInt = TopoInt;
+      dup.Prop2ds = Prop2ds;
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview;
+      }
+
       return dup;
     }
 
@@ -210,6 +222,10 @@ namespace GsaGH.Parameters {
 
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xmorph.Morph(xMs);
+
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+      }
 
       return dup.UpdateGeometry(xMs);
     }
@@ -236,6 +252,10 @@ namespace GsaGH.Parameters {
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xMs.Transform(xform);
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Transform(xform);
+      }
+
       return dup.UpdateGeometry(xMs);
     }
 
@@ -244,14 +264,13 @@ namespace GsaGH.Parameters {
         return null; // the logic below assumes the number of elements is equal to number of faces
       }
 
-      GsaElement2d dup = Clone();
       Mesh = newMesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, 0);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
-      return dup;
+      return this;
     }
 
     internal void CloneApiElements() {
@@ -350,6 +369,14 @@ namespace GsaGH.Parameters {
       }
 
       ApiElements = elems;
+    }
+
+    internal void UpdatePreview() {
+      if (Prop2ds != null && !Prop2ds[0].IsReferencedById) {
+        Section3dPreview = new GsaSection3dPreview(this);
+      } else {
+        Section3dPreview = null;
+      }
     }
   }
 }

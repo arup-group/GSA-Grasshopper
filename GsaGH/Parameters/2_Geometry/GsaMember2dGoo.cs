@@ -40,6 +40,11 @@ namespace GsaGH.Parameters {
         }
       }
 
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)) && Value.Section3dPreview != null) {
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Section3dPreview.Mesh);
+        return true;
+      }
+
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
           target = (TQ)(object)new GH_Integer(Value.Id);
@@ -70,6 +75,10 @@ namespace GsaGH.Parameters {
           == Color.FromArgb(255, 150, 0,
             0) // this is a workaround to change colour between selected and not
             ? Colours.Member2dFace : Colours.Member2dFaceSelected); //UI.Colour.Member2dFace
+      }
+
+      if (Value.Section3dPreview != null) {
+        args.Pipeline.DrawMeshFalseColors(Value.Section3dPreview.Mesh);
       }
     }
 
@@ -156,14 +165,19 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.InclusionPoints == null) {
-        return;
-      }
-
-      {
+      if (Value.InclusionPoints != null) {
         foreach (Point3d point3d in Value.InclusionPoints) {
           args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 3,
             Value.IsDummy ? Colours.Dummy1D : Colours.Member2dInclPt);
+        }
+
+      }
+
+      if (Value.Section3dPreview != null) {
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member2dEdge);
+        } else {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member2dEdgeSelected);
         }
       }
     }

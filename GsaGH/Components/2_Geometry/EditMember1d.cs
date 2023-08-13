@@ -12,7 +12,6 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -24,7 +23,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Member
   /// </summary>
-  public class EditMember1d : GH_OasysComponent, IGH_VariableParameterComponent {
+  public class EditMember1d : Section3dPreviewComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("32e744e5-7352-4308-81d0-13bf06db5e82");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -39,9 +38,8 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-
-      Menu_AppendSeparator(menu);
-
+      
+      base.AppendAdditionalMenuItems(menu);
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
@@ -55,7 +53,6 @@ namespace GsaGH.Components {
       }
 
       menu.Items.Add(unitsMenu);
-
       Menu_AppendSeparator(menu);
     }
 
@@ -344,6 +341,10 @@ namespace GsaGH.Components {
         || mem.Type1D == ElementType.STRUT) && mem.MeshSize != 0) {
         this.AddRuntimeWarning($"Element type is {mem.Type1D} and mesh size is not zero. " +
           Environment.NewLine + $"This may cause model instabilities.");
+      }
+
+      if (Preview3dSection || mem.Section3dPreview != null) {
+        mem.UpdatePreview();
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

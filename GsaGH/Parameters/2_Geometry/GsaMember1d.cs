@@ -9,6 +9,7 @@ using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Collections;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -40,7 +41,6 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         ApiMember.Colour = value;
-        UpdatePreview();
       }
     }
     public int Group {
@@ -63,7 +63,6 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         ApiMember.IsDummy = value;
-        UpdatePreview();
       }
     }
     public double MeshSize { get; set; } = 0;
@@ -115,7 +114,6 @@ namespace GsaGH.Parameters {
         _crv = convertCrv.Item1;
         Topology = convertCrv.Item2;
         TopologyType = convertCrv.Item3;
-        UpdatePreview();
       }
     }
     public GsaBool6 ReleaseEnd {
@@ -124,7 +122,7 @@ namespace GsaGH.Parameters {
         _rel2 = value ?? new GsaBool6();
         CloneApiObject();
         ApiMember.SetEndRelease(1, new EndRelease(_rel2._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaBool6 ReleaseStart {
@@ -133,7 +131,7 @@ namespace GsaGH.Parameters {
         _rel1 = value ?? new GsaBool6();
         CloneApiObject();
         ApiMember.SetEndRelease(0, new EndRelease(_rel1._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaSection Section { get; set; } = new GsaSection();
@@ -154,6 +152,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Member ApiMember { get; set; } = new Member();
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;
@@ -178,7 +177,7 @@ namespace GsaGH.Parameters {
       Topology = convertCrv.Item2;
       TopologyType = convertCrv.Item3;
       Section = new GsaSection(prop);
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     internal GsaMember1d(
@@ -198,7 +197,7 @@ namespace GsaGH.Parameters {
       _rel2 = new GsaBool6(ApiMember.GetEndRelease(1).Releases);
       LocalAxes = new GsaLocalAxes(localAxis);
       Section = section;
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     public GsaMember1d Clone() {
@@ -226,7 +225,18 @@ namespace GsaGH.Parameters {
         dup._orientationNode = _orientationNode.Duplicate();
       }
 
-      dup.UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview;
+      }
+
+      if (_previewGreenLines != null) {
+        dup._previewGreenLines = _previewGreenLines.ToList();
+      }
+
+      if (_previewRedLines != null) {
+        dup._previewRedLines = _previewRedLines.ToList();
+      }
+
       return dup;
     }
 
@@ -252,7 +262,11 @@ namespace GsaGH.Parameters {
         dup._crv = crv;
       }
 
-      dup.UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+      }
+
+      dup.UpdateReleasesPreview();
       return dup;
     }
 
@@ -279,7 +293,11 @@ namespace GsaGH.Parameters {
         dup._crv = crv;
       }
 
-      dup.UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Transform(xform);
+      }
+
+      dup.UpdateReleasesPreview();
       return dup;
     }
 
@@ -336,8 +354,17 @@ namespace GsaGH.Parameters {
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(Topology, TopologyType);
     }
 
-    // list of polyline curve type (arch or line) for member1d/2d
-    private void UpdatePreview() {
+    internal void UpdatePreview() {
+      if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
+        Section3dPreview = new GsaSection3dPreview(this);
+      } else {
+        Section3dPreview = null;
+      }
+
+      UpdateReleasesPreview();
+    }
+
+    private void UpdateReleasesPreview() {
       if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }

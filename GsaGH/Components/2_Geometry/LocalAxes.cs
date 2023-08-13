@@ -84,7 +84,7 @@ namespace GsaGH.Components {
             model.Model = AssembleModel.Assemble(model, null, null, null, null, null, null, 
               new List<GsaMember1d>() { 
                 member 
-              }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
+              }, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
               Length.Zero, false, null);
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
@@ -109,7 +109,7 @@ namespace GsaGH.Components {
             model.Model = AssembleModel.Assemble(model, null, null, null,
               new List<GsaElement1d>() {
                 element,
-              }, null, null, null, null, null, null, null, null, null, null, null, null,
+              }, null, null, null, null, null, null, null, null, null, null, null, null, null,
               LengthUnit.Meter, Length.Zero, false, null);
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));

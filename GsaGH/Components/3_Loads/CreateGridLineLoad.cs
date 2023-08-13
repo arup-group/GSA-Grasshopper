@@ -23,7 +23,7 @@ using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 namespace GsaGH.Components {
   public class CreateGridLineLoad : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.LineLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
@@ -102,8 +102,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddCurveParameter("PolyLine", "L",
         "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.",
         GH_ParamAccess.item);
@@ -142,13 +141,10 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var gridlineload = new GsaGridLineLoad();
-      int loadCase = 1;
-      var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc)) {
-        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
-      }
 
-      gridlineload.GridLineLoad.Case = loadCase;
+      GsaLoadCaseGoo loadCaseGoo = null;
+      da.GetData(0, ref loadCaseGoo);
+      gridlineload.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;

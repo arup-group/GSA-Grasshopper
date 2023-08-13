@@ -7,6 +7,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using LoadCase = GsaAPI.LoadCase;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
@@ -18,8 +19,10 @@ namespace GsaGH.Helpers.Export {
     internal List<GridLineLoad> GridLines;
     internal List<GridAreaLoad> GridAreas;
     internal GridPlaneSurfaces GridPlaneSurfaces;
+    internal Dictionary<int, LoadCase> LoadCases;
 
     internal Loads(Model model) {
+      GetLoadCasesFromModel(model);
       Nodes = new Load.NodeLoads();
       Gravities = new List<GravityLoad>();
       Beams = new List<BeamLoad>();
@@ -40,7 +43,19 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
+    internal void GetLoadCasesFromModel(Model model) {
+      LoadCases = model.LoadCases().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      foreach (int key in  LoadCases.Keys) { 
+        // some old gwb files stores Dead as (int)0:
+        if ((int)LoadCases[key].CaseType == 0) {
+          LoadCases[key].CaseType = LoadCaseType.Dead;
+        }
+      }
+    }
+
     internal static void ConvertLoad(IGsaLoad load, ref ModelAssembly model, GH_Component owner) {
+      ConvertLoadCase(load.LoadCase, ref model, owner);
+      load.CaseId = load.LoadCase.Id;
       switch (load.LoadType) {
         case LoadType.Gravity:
           ConvertGravityLoad((GsaGravityLoad)load, ref model, owner);
@@ -65,6 +80,28 @@ namespace GsaGH.Helpers.Export {
         case LoadType.GridArea:
           ConvertGridAreaLoad((GsaGridAreaLoad)load, ref model, owner);
           break;
+      }
+    }
+
+    internal static void ConvertLoadCase(
+      GsaLoadCase loadCase, ref ModelAssembly model, GH_Component owner) {
+      if (loadCase == null) {
+        return;
+      }
+
+      if (model.Loads.LoadCases.ContainsKey(loadCase.Id)) {
+        LoadCase existingCase = model.Loads.LoadCases[loadCase.Id];
+        LoadCase newCase = loadCase.LoadCase;
+        if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
+          model.Loads.LoadCases[loadCase.Id] = newCase;
+          owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
+           $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
+           $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
+        }
+      } else {
+        if (loadCase.LoadCase != null) {
+          model.Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+        }
       }
     }
 

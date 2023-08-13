@@ -44,7 +44,10 @@ namespace GsaGH.Parameters {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
       att ??= doc.CreateDefaultAttributes();
       att.ColorSource = ObjectColorSource.ColorFromObject;
-      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Mesh(x.Value.Mesh)), att, doc);
+      foreach (GsaElement2dGoo goo in m_data.AllData(true).Cast<GsaElement2dGoo>()) {
+        gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.Mesh), att, doc);
+        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
+      }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 

@@ -7,13 +7,12 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
   ///   Component to create new 2D Element
   /// </summary>
-  public class CreateElement2d : GH_OasysComponent {
+  public class CreateElement2d : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -47,6 +46,9 @@ namespace GsaGH.Components {
         }
 
         elem.Prop2ds = prop2Ds;
+        if (Preview3dSection) {
+          elem.UpdatePreview();
+        }
       }
 
       da.SetData(0, new GsaElement2dGoo(elem));

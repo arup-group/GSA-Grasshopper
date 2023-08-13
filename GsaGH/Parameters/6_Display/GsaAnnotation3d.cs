@@ -3,10 +3,9 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters.Enums;
-using OasysGH;
 using OasysGH.Parameters;
-using OasysGH.Units;
 using OasysUnits;
 using Rhino.Display;
 using Rhino.Geometry;
@@ -17,17 +16,19 @@ namespace GsaGH.Parameters {
     public override string TypeDescription => "A GSA 3D Annotation.";
     public override string TypeName => "Annotation3D";
     public BoundingBox ClippingBox => Boundingbox;
-    public Color Color { get; private set; }
+    public Color Color { get; private set; } = Colours.GsaDarkBlue;
     public GsaAnnotationType AnnotationType => GsaAnnotationType.TextDot;
     public string Text => Value.Text;
     public Point3d Location => Value.TextPlane.Origin;
 
-    public GsaAnnotation3d(Plane plane, Color color, string text, double height)
+    internal GsaAnnotation3d(Plane plane, Color color, string text, double height)
       : base(new Text3d(text, plane, height)) {
       Color = color;
       Value.HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Center;
       Value.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
     }
+
+    private GsaAnnotation3d() { }
 
     public override bool CastTo<TQ>(out TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_UnitNumber))) {
@@ -73,10 +74,17 @@ namespace GsaGH.Parameters {
     public void DrawViewportWires(GH_PreviewWireArgs args) { }
 
     public override IGH_GeometricGoo DuplicateGeometry() {
-      return new GsaAnnotation3d(Value.TextPlane, Color, Value.Text, Value.Height);
+      return new GsaAnnotation3d() {
+        Value = Value,
+        Color = Color,
+      };
     }
 
     public override string ToString() {
+      if (Value == null) {
+        return "Null";
+      }
+
       var pt = new GH_Point(Value.TextPlane.Origin);
       return $"{pt}, Value: {Value.Text}";
     }

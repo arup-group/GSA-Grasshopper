@@ -9,7 +9,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -17,7 +16,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 2D Element
   /// </summary>
-  public class EditElement2d : GH_OasysComponent {
+  public class EditElement2d : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("0b4ecb0e-ef8f-4b42-bcf2-de940594fada");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -229,6 +228,10 @@ namespace GsaGH.Components {
           }
           elem.IsDummies = ghdummies.Select(x => x.Value).ToList();
         }
+      }
+
+      if (Preview3dSection || elem.Section3dPreview != null) {
+        elem.UpdatePreview();
       }
 
       // #### outputs ####
