@@ -70,8 +70,6 @@ namespace GsaGH.Components {
     private List<Mesh> _cachedDisplayMeshWithParent;
     private List<Mesh> _cachedDisplayNgonMeshWithoutParent;
     private List<Mesh> _cachedDisplayNgonMeshWithParent;
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    private ConcurrentBag<GsaElement3dGoo> _element3ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
     private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
