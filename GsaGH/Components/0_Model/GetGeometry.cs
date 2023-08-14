@@ -65,10 +65,12 @@ namespace GsaGH.Components {
     private static readonly OasysUnitsIQuantityJsonConverter converter
       = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;
-    private Mesh _cachedDisplayMeshWithoutParent;
-    private Mesh _cachedDisplayMeshWithParent;
-    private Mesh _cachedDisplayNgonMeshWithoutParent;
-    private Mesh _cachedDisplayNgonMeshWithParent;
+    private List<Mesh> _cachedDisplayMeshWithoutParent;
+    private List<Mesh> _cachedDisplayMeshWithParent;
+    private List<Mesh> _cachedDisplayNgonMeshWithoutParent;
+    private List<Mesh> _cachedDisplayNgonMeshWithParent;
+    private ConcurrentBag<GsaElement2dGoo> _element2ds;
+    private ConcurrentBag<GsaElement3dGoo> _element3ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
     private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
@@ -108,21 +110,27 @@ namespace GsaGH.Components {
       base.DrawViewportMeshes(args);
       if (Attributes.Selected) {
         if (_cachedDisplayMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent, Colours.Element2dFace);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
+          }
         }
 
         if (_cachedDisplayNgonMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dFace);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
+          }
         }
       } else {
         if (_cachedDisplayMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent,
-            Colours.Element2dFaceSelected);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
+          }
         }
 
         if (_cachedDisplayNgonMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent,
-            Colours.Element2dFaceSelected);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
+          }
         }
       }
     }
@@ -131,30 +139,38 @@ namespace GsaGH.Components {
       base.DrawViewportWires(args);
 
       if (_cachedDisplayMeshWithParent != null) {
-        args.Display.DrawMeshWires(_cachedDisplayMeshWithParent, Color.FromArgb(255, 229, 229, 229),
-          1);
+        foreach (Mesh mesh in _cachedDisplayMeshWithParent) {
+          args.Display.DrawMeshWires(mesh, Color.FromArgb(255, 229, 229, 229), 1);
+        }
       }
 
       if (_cachedDisplayNgonMeshWithParent != null) {
-        args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithParent,
-          Color.FromArgb(255, 229, 229, 229), 1);
+        foreach (Mesh mesh in _cachedDisplayNgonMeshWithParent) {
+          args.Display.DrawMeshWires(mesh, Color.FromArgb(255, 229, 229, 229), 1);
+        }
       }
 
       if (_cachedDisplayMeshWithoutParent != null) {
         if (Attributes.Selected) {
-          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdgeSelected,
-            2);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
+          }
         } else {
-          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdge, 1);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
+          }
         }
       }
 
       if (_cachedDisplayNgonMeshWithoutParent != null) {
         if (Attributes.Selected) {
-          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent,
-            Colours.Element2dEdgeSelected, 2);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
+          }
         } else {
-          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dEdge, 1);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
+          }
         }
       }
 
@@ -558,6 +574,94 @@ namespace GsaGH.Components {
         data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.Id));
         _supportNodes = results.DisplaySupports;
         _boundingBox = new BoundingBox(results.Nodes.Select(n => n.Value.Point).ToArray());
+      }
+
+      if (!(results.Elem1ds is null)) {
+        var invalid1dElem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
+        if (invalid1dElem.Count > 0) {
+          this.AddRuntimeWarning("Invalid Element1D definition for Element IDs:");
+          this.AddRuntimeWarning(string.Join(" ", invalid1dElem.OrderBy(x => x)));
+        }
+
+        if (_mode == FoldMode.List) {
+          data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
+        } else {
+          var tree = new DataTree<GsaElement1dGoo>();
+          foreach (GsaElement1dGoo element in results.Elem1ds) {
+            tree.Add(element, new GH_Path(element.Value.Section.Id));
+          }
+
+          data.SetDataTree(1, tree);
+        }
+      }
+
+      if (!(results.Elem2ds is null)) {
+        if (_mode == FoldMode.List) {
+          data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
+        } else {
+          var tree = new DataTree<GsaElement2dGoo>();
+          foreach (GsaElement2dGoo element in results.Elem2ds) {
+            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
+          }
+
+          data.SetDataTree(2, tree);
+        }
+
+        _element2ds = results.Elem2ds;
+
+        var element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
+        var element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
+        Parallel.ForEach(_element2ds, elem => {
+          try {
+            int parent = elem.Value.ApiElements[0].ParentMember.Member;
+            if (parent > 0 && memberKeys.Contains(parent)) {
+              element2dsShaded.Add(elem);
+            } else {
+              element2dsNotShaded.Add(elem);
+            }
+          } catch (Exception) {
+            element2dsNotShaded.Add(elem);
+          }
+        });
+        _cachedDisplayMeshWithParent = new List<Mesh>();
+        _cachedDisplayMeshWithParent.AddRange(element2dsShaded.Select(e => e.Value.Mesh));
+        _cachedDisplayMeshWithoutParent = new List<Mesh>();
+        _cachedDisplayMeshWithoutParent.AddRange(element2dsNotShaded.Select(e => e.Value.Mesh));
+      }
+
+      if (!(results.Elem3ds is null)) {
+        if (_mode == FoldMode.List) {
+          data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
+        } else {
+          var tree = new DataTree<GsaElement3dGoo>();
+          foreach (GsaElement3dGoo element in results.Elem3ds) {
+            tree.Add(element, new GH_Path(element.Value.PropertyIDs.First()));
+          }
+
+          data.SetDataTree(3, tree);
+        }
+
+        _element3ds = results.Elem3ds;
+        var element3dsShaded = new ConcurrentBag<GsaElement3dGoo>();
+        var element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
+        Parallel.ForEach(_element3ds, elem => {
+          try {
+            int parent = elem.Value.ApiElements[0].ParentMember.Member;
+            if (parent > 0 && memberKeys.Contains(parent)) {
+              element3dsShaded.Add(elem);
+            } else {
+              element3dsNotShaded.Add(elem);
+            }
+          } catch (Exception) {
+            element3dsNotShaded.Add(elem);
+          }
+        });
+        _cachedDisplayNgonMeshWithParent = new List<Mesh>();
+        _cachedDisplayNgonMeshWithParent.AddRange(
+          element3dsShaded.Select(e => e.Value.DisplayMesh));
+        _cachedDisplayNgonMeshWithoutParent = new List<Mesh>();
+        _cachedDisplayNgonMeshWithoutParent.AddRange(
+          element3dsNotShaded.Select(e => e.Value.DisplayMesh));
       }
 
       if (!(results.Mem1ds is null)) {
