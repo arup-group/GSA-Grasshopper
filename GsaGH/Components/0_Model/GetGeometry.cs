@@ -77,6 +77,7 @@ namespace GsaGH.Components {
     private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
     private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
+    private bool _showSupports = true;
 
     public GetGeometry() : base("Get Model Geometry", "GetGeo",
       "Get nodes, elements and members from GSA model", CategoryName.Name(),
@@ -461,18 +462,13 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess data) {
       if (InPreSolve) {
-        // set default display options
-        ((IGH_PreviewObject)Params.Output[0]).Hidden = true;
-        ((IGH_PreviewObject)Params.Output[1]).Hidden = false;
-        ((IGH_PreviewObject)Params.Output[2]).Hidden = true;
-        ((IGH_PreviewObject)Params.Output[3]).Hidden = false;
-        ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
-        ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
-        ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
-
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
         _boundingBox = modelGoo.Value.BoundingBox;
+
+        bool nodeFilterHasInput = false;
+        bool elementFilterHasInput = false;
+        bool memberFilterHasInput = false;
 
         GsaListGoo nodeListGoo = null;
         string nodeList = "all";
@@ -482,14 +478,7 @@ namespace GsaGH.Components {
           }
 
           nodeList = nodeListGoo.Value.Definition;
-          // if nodelist is set, hide all but nodes
-          ((IGH_PreviewObject)Params.Output[0]).Hidden = false;
-          ((IGH_PreviewObject)Params.Output[1]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[2]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[3]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[4]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[5]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[6]).Hidden = true;
+          nodeFilterHasInput = true;
         }
 
         GsaListGoo elementListGoo = null;
@@ -500,13 +489,7 @@ namespace GsaGH.Components {
           }
 
           elemList = elementListGoo.Value.Definition;
-          // if elementlist is set, hide all members
-          ((IGH_PreviewObject)Params.Output[1]).Hidden = false;
-          ((IGH_PreviewObject)Params.Output[2]).Hidden = false;
-          ((IGH_PreviewObject)Params.Output[3]).Hidden = false;
-          ((IGH_PreviewObject)Params.Output[4]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[5]).Hidden = true;
-          ((IGH_PreviewObject)Params.Output[6]).Hidden = true;
+          elementFilterHasInput = true;
         }
 
         GsaListGoo memberListGoo = null;
@@ -517,11 +500,10 @@ namespace GsaGH.Components {
           }
 
           memList = memberListGoo.Value.Definition;
-          // if memberlist is set, show members
-          ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
-          ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
-          ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
+          memberFilterHasInput = true;
         }
+
+        UpdateHiddenOutputs(nodeFilterHasInput, elementFilterHasInput, memberFilterHasInput);
 
         Task<SolveResults> tsk = null;
         tsk = Task.Run(
@@ -531,6 +513,7 @@ namespace GsaGH.Components {
         return;
       }
 
+      bool showSupportNodes = true;
       if (!GetSolveResults(data, out SolveResults results)) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
@@ -572,9 +555,10 @@ namespace GsaGH.Components {
         return;
       }
 
+      _supportNodes = new ConcurrentBag<GsaNodeGoo>();
       if (!(results.Nodes is null)) {
         data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.Id));
-        if (((IGH_PreviewObject)Params.Output[0]).Hidden) {
+        if (_showSupports) {
           _supportNodes = results.DisplaySupports;
         }
       }
@@ -641,6 +625,8 @@ namespace GsaGH.Components {
         }
       }
 
+      _cachedDisplayMeshWithParent = new List<Mesh>();
+      _cachedDisplayMeshWithoutParent = new List<Mesh>();
       if (!(results.Elem2ds is null) || results.Elem2ds.Count == 0) {
         if (_mode == FoldMode.List) {
           data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
@@ -653,8 +639,6 @@ namespace GsaGH.Components {
           data.SetDataTree(2, tree);
         }
 
-        _cachedDisplayMeshWithParent = new List<Mesh>();
-        _cachedDisplayMeshWithoutParent = new List<Mesh>();
         if (!((IGH_PreviewObject)Params.Output[5]).Hidden) {
           member2dKeys = results.Mem2ds.Select(item => item.Value.Id).ToList();
 
@@ -702,6 +686,8 @@ namespace GsaGH.Components {
         }
       }
 
+      _cachedDisplayNgonMeshWithParent = new List<Mesh>();
+      _cachedDisplayNgonMeshWithoutParent = new List<Mesh>();
       if (!(results.Elem3ds is null) || results.Elem3ds.Count == 0) {
         if (_mode == FoldMode.List) {
           data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
@@ -714,8 +700,6 @@ namespace GsaGH.Components {
           data.SetDataTree(3, tree);
         }
 
-        _cachedDisplayNgonMeshWithParent = new List<Mesh>();
-        _cachedDisplayNgonMeshWithoutParent = new List<Mesh>();
         if (!((IGH_PreviewObject)Params.Output[6]).Hidden) {
           var element3dsShaded = new ConcurrentBag<GsaElement3dGoo>();
           var element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
@@ -823,6 +807,42 @@ namespace GsaGH.Components {
         } else {
           _outputIsExpired.Add(i, true);
         }
+      }
+    }
+
+    private void UpdateHiddenOutputs(bool nodeFilter, bool elementFilter, bool memberFilter) {
+      if (!nodeFilter && !elementFilter && !memberFilter) {
+        // set default display options
+        _showSupports = true;
+        ((IGH_PreviewObject)Params.Output[0]).Hidden = true;
+        ((IGH_PreviewObject)Params.Output[1]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[2]).Hidden = true;
+        ((IGH_PreviewObject)Params.Output[3]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
+      } else {
+        // set all to hidden
+        _showSupports = false;
+        for (int i = 0; i < Params.Output.Count - 1; i++) {
+          ((IGH_PreviewObject)Params.Output[i]).Hidden = true;
+        }
+      }
+
+      if (nodeFilter) {
+        ((IGH_PreviewObject)Params.Output[0]).Hidden = false;
+      }
+
+      if (elementFilter) {
+        ((IGH_PreviewObject)Params.Output[1]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[2]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[3]).Hidden = false;
+      }
+
+      if (memberFilter) {
+        ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
       }
     }
   }
