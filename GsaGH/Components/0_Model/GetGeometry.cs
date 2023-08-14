@@ -513,7 +513,6 @@ namespace GsaGH.Components {
         return;
       }
 
-      bool showSupportNodes = true;
       if (!GetSolveResults(data, out SolveResults results)) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
