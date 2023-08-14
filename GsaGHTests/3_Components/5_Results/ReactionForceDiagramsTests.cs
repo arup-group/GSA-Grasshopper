@@ -66,10 +66,10 @@ namespace GsaGHTests.Components.Results {
       var expectedStringParam = new Param_String() {
         Name = "Node filter list",
         NickName = "No",
-        Description = "Filter results by list (by default 'all')" + Environment.NewLine
-          + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-          + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-          + "Refer to GSA help file for definition of lists and full vocabulary.",
+        Description = $"Filter the Nodes by list. (by default 'all'){Environment.NewLine}" +
+      $"Node list should take the form:{Environment.NewLine}" +
+      $" 1 11 to 72 step 2 not (XY3 31 to 45){Environment.NewLine}" +
+      "Refer to GSA help file for definition of lists and full vocabulary.",
         Access = GH_ParamAccess.item,
         Optional = true,
       };
@@ -115,11 +115,11 @@ namespace GsaGHTests.Components.Results {
       List<IGH_Param> actualInputs = obj.Params.Input;
 
       for (int i = 0; i < actualInputs.Count; i++) {
-        Assert.Equal(actualInputs[i].Name, expectedInputs[i].Name);
-        Assert.Equal(actualInputs[i].NickName, expectedInputs[i].NickName);
-        Assert.Equal(actualInputs[i].Description, expectedInputs[i].Description);
-        Assert.Equal(actualInputs[i].Access, expectedInputs[i].Access);
-        Assert.Equal(actualInputs[i].Optional, expectedInputs[i].Optional);
+        Assert.Equal(expectedInputs[i].Name, actualInputs[i].Name);
+        Assert.Equal(expectedInputs[i].NickName, actualInputs[i].NickName);
+        Assert.Equal(expectedInputs[i].Description, actualInputs[i].Description);
+        Assert.Equal(expectedInputs[i].Access, actualInputs[i].Access);
+        Assert.Equal(expectedInputs[i].Optional, actualInputs[i].Optional);
       }
 
       Assert.Equal(actualInputs.Count, expectedInputs.Count);

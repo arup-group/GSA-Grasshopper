@@ -153,9 +153,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Element filter list", "El",
-        $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElementListParameter());
       pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
         false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
@@ -220,10 +218,7 @@ namespace GsaGH.Components {
         }
       }
 
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) {
-        return;
-      }
+      string elementlist = Inputs.GetElementListNameFoResults(this, da, 1, result.Model);
 
       var ghScale = new GH_Number();
       double scale = 1;

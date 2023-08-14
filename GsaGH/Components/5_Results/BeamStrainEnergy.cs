@@ -135,11 +135,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
-
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) {
-        return;
-      }
+      string elementlist = "All";
 
       int positionsCount = 3;
       if (!_average) {
@@ -168,6 +164,7 @@ namespace GsaGH.Components {
 
           case GsaResultGoo goo:
             result = goo.Value;
+            elementlist = Inputs.GetElementListNameFoResults(this, da, 1, result.Model);
             break;
 
           default:
