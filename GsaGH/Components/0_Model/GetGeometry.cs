@@ -65,10 +65,10 @@ namespace GsaGH.Components {
     private static readonly OasysUnitsIQuantityJsonConverter converter
       = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;
-    private Mesh _cachedDisplayMeshWithoutParent;
-    private Mesh _cachedDisplayMeshWithParent;
-    private Mesh _cachedDisplayNgonMeshWithoutParent;
-    private Mesh _cachedDisplayNgonMeshWithParent;
+    private List<Mesh> _cachedDisplayMeshWithoutParent;
+    private List<Mesh> _cachedDisplayMeshWithParent;
+    private List<Mesh> _cachedDisplayNgonMeshWithoutParent;
+    private List<Mesh> _cachedDisplayNgonMeshWithParent;
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
     private ConcurrentBag<GsaElement3dGoo> _element3ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -110,21 +110,27 @@ namespace GsaGH.Components {
       base.DrawViewportMeshes(args);
       if (Attributes.Selected) {
         if (_cachedDisplayMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent, Colours.Element2dFace);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
+          }
         }
 
         if (_cachedDisplayNgonMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dFace);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
+          }
         }
       } else {
         if (_cachedDisplayMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayMeshWithoutParent,
-            Colours.Element2dFaceSelected);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
+          }
         }
 
         if (_cachedDisplayNgonMeshWithoutParent != null) {
-          args.Display.DrawMeshShaded(_cachedDisplayNgonMeshWithoutParent,
-            Colours.Element2dFaceSelected);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
+          }
         }
       }
     }
@@ -133,30 +139,38 @@ namespace GsaGH.Components {
       base.DrawViewportWires(args);
 
       if (_cachedDisplayMeshWithParent != null) {
-        args.Display.DrawMeshWires(_cachedDisplayMeshWithParent, Color.FromArgb(255, 229, 229, 229),
-          1);
+        foreach (Mesh mesh in _cachedDisplayMeshWithParent) {
+          args.Display.DrawMeshWires(mesh, Color.FromArgb(255, 229, 229, 229), 1);
+        }
       }
 
       if (_cachedDisplayNgonMeshWithParent != null) {
-        args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithParent,
-          Color.FromArgb(255, 229, 229, 229), 1);
+        foreach (Mesh mesh in _cachedDisplayNgonMeshWithParent) {
+          args.Display.DrawMeshWires(mesh, Color.FromArgb(255, 229, 229, 229), 1);
+        }
       }
 
       if (_cachedDisplayMeshWithoutParent != null) {
         if (Attributes.Selected) {
-          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdgeSelected,
-            2);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
+          }
         } else {
-          args.Display.DrawMeshWires(_cachedDisplayMeshWithoutParent, Colours.Element2dEdge, 1);
+          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
+          }
         }
       }
 
       if (_cachedDisplayNgonMeshWithoutParent != null) {
         if (Attributes.Selected) {
-          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent,
-            Colours.Element2dEdgeSelected, 2);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
+          }
         } else {
-          args.Display.DrawMeshWires(_cachedDisplayNgonMeshWithoutParent, Colours.Element2dEdge, 1);
+          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
+            args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
+          }
         }
       }
 
@@ -586,10 +600,10 @@ namespace GsaGH.Components {
             element2dsNotShaded.Add(elem);
           }
         });
-        _cachedDisplayMeshWithParent = new Mesh();
-        _cachedDisplayMeshWithParent.Append(element2dsShaded.Select(e => e.Value.Mesh));
-        _cachedDisplayMeshWithoutParent = new Mesh();
-        _cachedDisplayMeshWithoutParent.Append(element2dsNotShaded.Select(e => e.Value.Mesh));
+        _cachedDisplayMeshWithParent = new List<Mesh>();
+        _cachedDisplayMeshWithParent.AddRange(element2dsShaded.Select(e => e.Value.Mesh));
+        _cachedDisplayMeshWithoutParent = new List<Mesh>();
+        _cachedDisplayMeshWithoutParent.AddRange(element2dsNotShaded.Select(e => e.Value.Mesh));
       }
 
       if (!(results.Elem3ds is null)) {
@@ -619,10 +633,11 @@ namespace GsaGH.Components {
             element3dsNotShaded.Add(elem);
           }
         });
-        _cachedDisplayNgonMeshWithParent = new Mesh();
-        _cachedDisplayNgonMeshWithParent.Append(element3dsShaded.Select(e => e.Value.DisplayMesh));
-        _cachedDisplayNgonMeshWithoutParent = new Mesh();
-        _cachedDisplayNgonMeshWithoutParent.Append(
+        _cachedDisplayNgonMeshWithParent = new List<Mesh>();
+        _cachedDisplayNgonMeshWithParent.AddRange(
+          element3dsShaded.Select(e => e.Value.DisplayMesh));
+        _cachedDisplayNgonMeshWithoutParent = new List<Mesh>();
+        _cachedDisplayNgonMeshWithoutParent.AddRange(
           element3dsNotShaded.Select(e => e.Value.DisplayMesh));
       }
 
