@@ -369,10 +369,21 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertGridLines(List<GsaGridLine> gridLines) {
-      foreach (GsaGridLine gridLine in gridLines) {
-        _gridLines.SetValue(gridLine.Id, gridLine._gridLine);
+      if (gridLines != null) {
+        int maxId = 0;
+        foreach (GsaGridLine gridLine in gridLines) {
+          if (gridLine.Id > 0) {
+            if (gridLine.Id > maxId) {
+              maxId = gridLine.Id;
+            }
+            _gridLines.SetValue(gridLine.Id, gridLine._gridLine);
+          } else if (gridLine.Id == 0) {
+            maxId++;
+            _gridLines.SetValue(maxId, gridLine._gridLine);
+          }
+        }
+        Model.SetGridLines(_gridLines.ReadOnlyDictionary);
       }
-      Model.SetGridLines(_gridLines.ReadOnlyDictionary);
     }
   }
 }

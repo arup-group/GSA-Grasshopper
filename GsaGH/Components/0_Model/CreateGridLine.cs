@@ -61,7 +61,7 @@ namespace GsaGH.Components {
             X = line.From.X,
             Y = line.From.Y,
             Length = line.Length,
-            Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent)
+            Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
           };
         } else if (ghArc.CastFrom(curve)) {
           Point3d startPoint = ghArc.Value.StartPoint;
@@ -74,11 +74,11 @@ namespace GsaGH.Components {
 
           gridLine = new GridLine(label) {
             Shape = GridLineShape.Arc,
-            X = arc.StartPoint.X,
-            Y = arc.EndPoint.Y,
+            X = arc.Center.X,
+            Y = arc.Center.Y,
             Length = arc.Length,
-            Theta1 = arc.StartAngle,
-            Theta2 = arc.EndAngle
+            Theta1 = arc.StartAngleDegrees,
+            Theta2 = arc.EndAngleDegrees
           };
         } else {
           string message = "Invalid input geometry, curve needs to be a line or an arc.";
