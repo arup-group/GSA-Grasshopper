@@ -156,8 +156,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Model(s) and Lists", "GSA",
-        "Existing GSA Model(s) to append to and Lists" + Environment.NewLine
+      pManager.AddGenericParameter("Model(s), Lists and Grid Lines", "GSA",
+        "Existing GSA Model(s) to append to, Lists and Grid Lines" + Environment.NewLine
         + "If you input more than one model they will be merged" + Environment.NewLine
         + "with first model in list taking priority for IDs", GH_ParamAccess.list);
       pManager.AddGenericParameter("Properties", "Pro",

@@ -1,5 +1,4 @@
-﻿using System;
-using GsaAPI;
+﻿using GsaAPI;
 
 namespace GsaGH.Parameters {
   public class GsaGridLine {
