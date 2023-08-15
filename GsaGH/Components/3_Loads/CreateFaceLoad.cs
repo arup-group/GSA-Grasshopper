@@ -18,7 +18,7 @@ using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
-  public class CreateFaceLoads : GH_OasysDropDownComponent {
+  public class CreateFaceLoad : GH_OasysDropDownComponent {
     private enum FoldMode {
       Uniform,
       Variable,
@@ -26,7 +26,7 @@ namespace GsaGH.Components {
       Edge, //note implementation of edge-load is not yet supported in GsaAPI
     }
 
-    public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
+    public override Guid ComponentGuid => new Guid("c9a37942-4728-4052-b732-7eec92981ca7");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FaceLoad;
@@ -40,7 +40,7 @@ namespace GsaGH.Components {
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
     private FoldMode _mode = FoldMode.Uniform;
 
-    public CreateFaceLoads() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
+    public CreateFaceLoad() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }

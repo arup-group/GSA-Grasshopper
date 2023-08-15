@@ -4,7 +4,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -18,7 +17,7 @@ using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
-  public class CreateBeamLoads : GH_OasysDropDownComponent {
+  public class CreateBeamLoads2_OBSOLETE : GH_OasysDropDownComponent {
     private enum FoldMode {
       Point,
       Uniform,
@@ -28,7 +27,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("63f1940b-34a8-452e-b478-f8a24d415b5c");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
@@ -43,7 +42,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Uniform;
     private EntityType _entityType = EntityType.Member;
 
-    public CreateBeamLoads() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
+    public CreateBeamLoads2_OBSOLETE() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }

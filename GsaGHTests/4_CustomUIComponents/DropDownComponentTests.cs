@@ -27,8 +27,8 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ElementFromMembers))]
     [InlineData(typeof(SectionAlignment))]
     //loads
-    [InlineData(typeof(CreateBeamLoads))]
-    [InlineData(typeof(CreateFaceLoads))]
+    [InlineData(typeof(CreateBeamLoad))]
+    [InlineData(typeof(CreateFaceLoad))]
     [InlineData(typeof(CreateGridAreaLoad))]
     [InlineData(typeof(CreateGridLineLoad))]
     [InlineData(typeof(CreateGridPlane))]

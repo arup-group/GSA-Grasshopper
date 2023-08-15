@@ -17,7 +17,7 @@ using Rhino.Geometry;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
-  public class CreateNodeLoad : GH_OasysDropDownComponent {
+  public class CreateNodeLoad_OBSOLETE : GH_OasysDropDownComponent {
     private enum FoldMode {
       NodeForce,
       NodeMoment,
@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.NodeLoad;
     private readonly List<string> _type = new List<string>(new[] {
@@ -40,7 +40,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.NodeForce;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public CreateNodeLoad() : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
+    public CreateNodeLoad_OBSOLETE() : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }

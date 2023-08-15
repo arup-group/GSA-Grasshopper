@@ -68,8 +68,8 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SectionAlignment))]
     [InlineData(typeof(Annotate))]
     // 3_Loads
-    [InlineData(typeof(CreateBeamLoads))]
-    [InlineData(typeof(CreateFaceLoads))]
+    [InlineData(typeof(CreateBeamLoad))]
+    [InlineData(typeof(CreateFaceLoad))]
     [InlineData(typeof(CreateGravityLoad))]
     [InlineData(typeof(CreateGridAreaLoad))]
     [InlineData(typeof(CreateGridLineLoad))]

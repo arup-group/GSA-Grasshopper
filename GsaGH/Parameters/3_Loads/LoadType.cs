@@ -8,5 +8,7 @@
     GridPoint,
     GridLine,
     GridArea,
+    Prestress,
+    Thermal
   }
 }

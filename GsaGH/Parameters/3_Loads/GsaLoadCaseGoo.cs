@@ -14,7 +14,9 @@ namespace GsaGH.Parameters {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaLoadCaseGoo() { }
+
     public GsaLoadCaseGoo(GsaLoadCase item) : base(item) { }
+
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
