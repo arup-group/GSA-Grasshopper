@@ -69,6 +69,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Annotate))]
     // 3_Loads
     [InlineData(typeof(CreateBeamLoad))]
+    [InlineData(typeof(CreateBeamThermalLoad))]
     [InlineData(typeof(CreateFaceLoad))]
     [InlineData(typeof(CreateGravityLoad))]
     [InlineData(typeof(CreateGridAreaLoad))]
