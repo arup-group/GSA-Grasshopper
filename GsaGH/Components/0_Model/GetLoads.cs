@@ -100,7 +100,9 @@ namespace GsaGH.Components {
       List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads(), loadCases);
       List<GsaLoadGoo> node = Loads.GetNodeLoads(model, loadCases);
       List<GsaLoadGoo> beam = Loads.GetBeamLoads(model.BeamLoads(), loadCases);
+      List<GsaLoadGoo> beamThermal = Loads.GetBeamThermalLoads(model.BeamThermalLoads(), loadCases);
       List<GsaLoadGoo> face = Loads.GetFaceLoads(model.FaceLoads(), loadCases);
+      List<GsaLoadGoo> faceThermal = Loads.GetFaceThermalLoads(model.FaceThermalLoads(), loadCases);
 
       IReadOnlyDictionary<int, GsaAPI.GridSurface> srfDict = model.GridSurfaces();
       IReadOnlyDictionary<int, GsaAPI.GridPlane> plnDict = model.GridPlanes();

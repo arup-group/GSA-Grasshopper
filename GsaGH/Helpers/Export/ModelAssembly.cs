@@ -238,7 +238,9 @@ namespace GsaGH.Helpers.Export {
       Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
       Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
       Model.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(Loads.Beams));
+      Model.AddBeamThermalLoads(new ReadOnlyCollection<BeamThermalLoad>(Loads.BeamThermals));
       Model.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(Loads.Faces));
+      Model.AddFaceThermalLoads(new ReadOnlyCollection<FaceThermalLoad>(Loads.FaceThermals));
       Model.AddGridPointLoads(new ReadOnlyCollection<GridPointLoad>(Loads.GridPoints));
       Model.AddGridLineLoads(new ReadOnlyCollection<GridLineLoad>(Loads.GridLines));
       Model.AddGridAreaLoads(new ReadOnlyCollection<GridAreaLoad>(Loads.GridAreas));

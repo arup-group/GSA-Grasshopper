@@ -32,7 +32,6 @@ namespace GsaGH.Components {
       //"GradientInY",
       //"GradientInZ"
     });
-    private bool _duringLoad;
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
     private FoldMode _mode = FoldMode.Uniform;
     private EntityType _entityType = EntityType.Member;
@@ -232,13 +231,6 @@ namespace GsaGH.Components {
 
     protected override void UpdateUIFromSelectedItems() {
       _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
-      _duringLoad = true;
-      switch (_selectedItems[0]) {
-        case "Uniform":
-          //Mode1Clicked();
-          break;
-      }
-      _duringLoad = false;
 
       _entityType = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[1]);
 
