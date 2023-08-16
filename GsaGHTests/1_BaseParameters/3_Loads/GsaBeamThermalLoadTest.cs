@@ -12,7 +12,7 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest() {
       var load = new GsaBeamThermalLoad();
 
-      Assert.Equal(LoadType.Thermal, load.LoadType);
+      Assert.Equal(LoadType.BeamThermal, load.LoadType);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ namespace GsaGHTests.Parameters {
       duplicate.BeamThermalLoad.Name = "";
       duplicate.BeamThermalLoad.UniformTemperature = 99;
 
-      Assert.Equal(LoadType.Thermal, original.LoadType);
+      Assert.Equal(LoadType.BeamThermal, original.LoadType);
 
       Assert.Equal(6, original.BeamThermalLoad.Case);
       Assert.Equal("all", original.BeamThermalLoad.EntityList);

@@ -4,11 +4,12 @@
     Gravity,
     Node,
     Beam,
+    BeamThermal,
     Face,
+    FaceThermal,
     GridPoint,
     GridLine,
     GridArea,
     Prestress,
-    Thermal
   }
 }

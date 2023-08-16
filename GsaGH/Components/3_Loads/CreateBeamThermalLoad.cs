@@ -126,7 +126,6 @@ namespace GsaGH.Components {
 
       pManager[0].Optional = true;
       pManager[2].Optional = true;
-      pManager[3].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {

@@ -71,6 +71,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateBeamLoad))]
     [InlineData(typeof(CreateBeamThermalLoad))]
     [InlineData(typeof(CreateFaceLoad))]
+    [InlineData(typeof(CreateFaceThermalLoad))]
     [InlineData(typeof(CreateGravityLoad))]
     [InlineData(typeof(CreateGridAreaLoad))]
     [InlineData(typeof(CreateGridLineLoad))]
