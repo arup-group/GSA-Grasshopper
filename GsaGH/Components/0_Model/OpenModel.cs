@@ -100,7 +100,11 @@ namespace GsaGH.Components {
         fileName += ".gwb";
       }
 
-      model.Open(fileName);
+      try {
+        model.Open(fileName);
+      } catch (GsaApiException) {
+        throw new GsaApiException("Unable to open model: file version newer than installed GSA version");
+      }
       var gsaModel = new GsaModel(model) {
         FileNameAndPath = fileName,
         ModelUnit = UnitMapping.GetUnit(model)
