@@ -7,7 +7,9 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaProp3d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaProp3dGoo : GH_OasysGoo<GsaProp3d> {
-    public static string Description => "GSA Volume Property";
+    public static string Description => 
+      "A 3D Property is used by Element3D and Member3D and \n" +
+      "simply contain information about Materials.";
     public static string Name => "Prop3D";
     public static string NickName => "PV";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

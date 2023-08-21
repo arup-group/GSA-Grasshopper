@@ -18,8 +18,8 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaBool6Goo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Bool6Param;
 
-    public GsaBool6Parameter() : base(new GH_InstanceDescription(GsaBool6Goo.Name,
-      GsaBool6Goo.NickName, GsaBool6Goo.Description + " parameter", CategoryName.Name(),
+    public GsaBool6Parameter() : base(new GH_InstanceDescription(GsaBool6Goo.Name + " parameter",
+      GsaBool6Goo.NickName, GsaBool6Goo.Description, CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaBool6Goo PreferredCast(object data) {

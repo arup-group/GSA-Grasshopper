@@ -19,8 +19,8 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaOffsetGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.OffsetParam;
 
-    public GsaOffsetParameter() : base(new GH_InstanceDescription(GsaOffsetGoo.Name,
-      GsaOffsetGoo.NickName, GsaOffsetGoo.Description + " parameter", CategoryName.Name(),
+    public GsaOffsetParameter() : base(new GH_InstanceDescription(GsaOffsetGoo.Name + " parameter",
+      GsaOffsetGoo.NickName, GsaOffsetGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaOffsetGoo PreferredCast(object data) {

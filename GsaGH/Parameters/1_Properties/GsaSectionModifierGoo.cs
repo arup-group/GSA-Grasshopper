@@ -7,7 +7,10 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaSectionModifier" /> can be used in Grasshopper.
   /// </summary>
   public class GsaSectionModifierGoo : GH_OasysGoo<GsaSectionModifier> {
-    public static string Description => "GSA Section Modifier";
+    public static string Description => 
+      "A Section Modifier is part of a Section and can be used to \n" +
+      "modify section's analytical properties without changing the \n" +
+      "profile. By default the Section Modifier is unmodified.";
     public static string Name => "Section Modifier";
     public static string NickName => "PBM";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

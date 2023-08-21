@@ -9,7 +9,9 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="IGsaDiagram" /> can be used in Grasshopper.
   /// </summary>
   public class GsaDiagramGoo : GH_OasysGeometricGoo<IGsaDiagram> {
-    public static string Description => "GSA Diagram";
+    public static string Description => 
+      "A Diagram parameter is used to visualise loading or results. \n" +
+      "The diagram geometry consist of either an Arrowhead, Line or Vector.";
     public static string Name => "Diagram";
     public static string NickName => "Dgm";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

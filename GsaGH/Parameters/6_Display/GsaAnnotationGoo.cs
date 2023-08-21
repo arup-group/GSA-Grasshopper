@@ -9,7 +9,9 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="IGsaAnnotation" /> can be used in Grasshopper.
   /// </summary>
   public class GsaAnnotationGoo : GH_OasysGeometricGoo<IGsaAnnotation> {
-    public static string Description => "GSA Annotation";
+    public static string Description => 
+      "An Annotation parameter can display IDs of objects or values of results. \n" +
+      "The Annotation parameter can be either a TextDot or a Text3d type.";
     public static string Name => "Annotation";
     public static string NickName => "An";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

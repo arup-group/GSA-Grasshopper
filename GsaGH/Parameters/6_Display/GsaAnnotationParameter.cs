@@ -24,8 +24,9 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaAnnotationGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.AnnotateParam;
 
-    public GsaAnnotationParameter() : base(new GH_InstanceDescription(GsaAnnotationGoo.Name,
-      GsaAnnotationGoo.NickName, GsaAnnotationGoo.Description + " parameter", CategoryName.Name(),
+    public GsaAnnotationParameter() : base(new GH_InstanceDescription(
+      GsaAnnotationGoo.Name + " parameter", GsaAnnotationGoo.NickName, 
+      GsaAnnotationGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {

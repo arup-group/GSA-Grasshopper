@@ -12,8 +12,8 @@ namespace GsaGhDocs {
       Assembly gsaGH = dll.Load();
       Type[] typelist = gsaGH.GetTypes();
 
-      List<Parameter> parameters = Parameter.GetParameters(typelist);
       List<Component> components = Component.GetComponents(typelist);
+      List<Parameter> parameters = Parameter.GetParameters(typelist, components);
     }
   }
 }

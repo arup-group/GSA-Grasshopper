@@ -14,7 +14,14 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaMember2d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2d>, IGH_PreviewData {
-    public static string Description => "GSA 2D Member";
+    public static string Description => 
+      "Members in GSA are geometrical objects used for Design \n" +
+      "that can automatically find intersections with other members. \n" +
+      "From those members we can create the elements used for analysis. \n" +
+      "Members are as such more closely related to building objects, \n" +
+      "like a beam, column, slab or wall.\n" +
+      "A Member2D is the planar/area geometry resembling for instance a \n" +
+      "slab or a wall. They can be defined geometrically by a planar Brep.";
     public static string Name => "Member2D";
     public static string NickName => "M2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

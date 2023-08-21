@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.GetProp2dModifier;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public GetProp2dModifier() : base("Get 2D Property Modifier", "GetModifier",
+    public GetProp2dModifier() : base("Get Property 2D Modifier", "Get2dModifier",
       "Get GSA 2D Property Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -84,10 +84,6 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaProp2dModifierParameter(), GsaProp2dModifierGoo.Name,
-        GsaProp2dModifierGoo.NickName, GsaProp2dModifierGoo.Description +
-        " with applied changes.", GH_ParamAccess.item);
-
       pManager.AddGenericParameter("In-plane Modifier", "Ip", "Effective in-plane stiffness",
         GH_ParamAccess.item);
 
@@ -112,12 +108,11 @@ namespace GsaGH.Components {
         modifier = modifierGoo.Value.Duplicate();
       }
 
-      da.SetData(0, new GsaProp2dModifierGoo(modifier));
-      da.SetData(1, new GH_UnitNumber(modifier.InPlane));
-      da.SetData(2, new GH_UnitNumber(modifier.Bending));
-      da.SetData(3, new GH_UnitNumber(modifier.Shear));
-      da.SetData(4, new GH_UnitNumber(modifier.Volume));
-      da.SetData(5, new GH_UnitNumber(modifier.AdditionalMass.ToUnit(AreaDensityUnit.KilogramPerSquareMeter)));
+      da.SetData(0, new GH_UnitNumber(modifier.InPlane));
+      da.SetData(1, new GH_UnitNumber(modifier.Bending));
+      da.SetData(2, new GH_UnitNumber(modifier.Shear));
+      da.SetData(3, new GH_UnitNumber(modifier.Volume));
+      da.SetData(4, new GH_UnitNumber(modifier.AdditionalMass.ToUnit(AreaDensityUnit.KilogramPerSquareMeter)));
     }
 
     private void Update() {

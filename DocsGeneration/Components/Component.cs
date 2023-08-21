@@ -33,9 +33,13 @@ namespace GsaGhDocs.Components {
         }
 
         if (type.Namespace.StartsWith("GsaGH.Components")) {
-          var comp = new Component(type);
-          if (!comp.Name.Contains("OBSOLETE")) {
-            components.Add(comp);
+          try {
+            var comp = new Component(type);
+            if (!comp.Name.Contains("OBSOLETE")) {
+              components.Add(comp);
+            }
+          } catch (Exception) {
+            continue;
           }
         }
       }
@@ -46,9 +50,14 @@ namespace GsaGhDocs.Components {
     private List<Parameter> GetParameters(List<IGH_Param> parameters) {
       var outparams = new List<Parameter>();
       foreach (IGH_Param param in parameters) {
-        outparams.Add(new Parameter(param.GetType()));
+        var parameter = new Parameter(param.GetType());
+        parameter.Name = param.Name;
+        parameter.NickName = param.NickName;
+        parameter.Description = param.Description;
+        outparams.Add(parameter);
       }
       return outparams;
     }
   }
 }
+

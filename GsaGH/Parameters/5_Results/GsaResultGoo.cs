@@ -7,7 +7,9 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaResult" /> can be used in Grasshopper.
   /// </summary>
   public class GsaResultGoo : GH_OasysGoo<GsaResult> {
-    public static string Description => "GSA Result";
+    public static string Description =>
+      "Result parameter is used to select an Analysis Case or a Combination Case \n" +
+      "from a Model and extract the values for post-processing or visualisation.";
     public static string Name => "Result";
     public static string NickName => "Res";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

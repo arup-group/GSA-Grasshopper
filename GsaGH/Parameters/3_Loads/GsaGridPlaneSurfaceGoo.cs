@@ -13,7 +13,9 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaGridPlaneSurface" /> can be used in Grasshopper.
   /// </summary>
   public class GsaGridPlaneSurfaceGoo : GH_OasysGeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData {
-    public static string Description => "GSA Grid Plane Surface";
+    public static string Description =>
+      "A grid plane defines the geometry of a surface, and the load \n" +
+      "behaviour of the grid plane is defined by a grid surface.";
     public static string Name => "GridPlaneSurface";
     public static string NickName => "GPS";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

@@ -30,15 +30,12 @@ namespace GsaGHTests.Properties {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, new GsaProp2dModifierGoo(modifier), 0);
 
-      var modifierGoo = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 0);
-      var inplane = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1);
-      var bending = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 2);
-      var shear = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 3);
-      var volume = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 4);
-      var addMass = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 5);
+      var inplane = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 0);
+      var bending = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1);
+      var shear = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 2);
+      var volume = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 3);
+      var addMass = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 4);
 
-      Duplicates.AreEqual(modifier, modifierGoo.Value);
-      Assert.NotEqual(modifier, modifierGoo.Value);
       Assert.Equal(1.2, inplane.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(1.3, bending.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(1.4, shear.Value.As(RatioUnit.DecimalFraction), 6);

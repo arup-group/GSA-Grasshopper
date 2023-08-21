@@ -11,15 +11,16 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaAnalysisCaseParameter : GH_OasysPersistentParam<GsaAnalysisCaseGoo> {
     public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaAnalysisCaseGoo.Name + " parameter" :
         base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaAnalysisCaseGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.AnalysisCaseParam;
 
-    public GsaAnalysisCaseParameter() : base(new GH_InstanceDescription(GsaAnalysisCaseGoo.Name,
-      GsaAnalysisCaseGoo.NickName, GsaAnalysisCaseGoo.Description + " parameter",
+    public GsaAnalysisCaseParameter() : base(new GH_InstanceDescription(
+      GsaAnalysisCaseGoo.Name + " parameter", GsaAnalysisCaseGoo.NickName, 
+      GsaAnalysisCaseGoo.Description,
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaAnalysisCaseGoo PreferredCast(object data) {

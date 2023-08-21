@@ -12,7 +12,14 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaMember3d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>, IGH_PreviewData {
-    public static string Description => "GSA 3D Member";
+    public static string Description =>
+      "Members in GSA are geometrical objects used for Design \n" +
+      "that can automatically find intersections with other members. \n" +
+      "From those members we can create the elements used for analysis. \n" +
+      "Members are as such more closely related to building objects, \n" +
+      "like a beam, column, slab or wall.\n" +
+      "A Member3D is the volumetric geometry resembling for instance \n" +
+      "soil. They can be defined geometrically by a closed Solid.";
     public static string Name => "Member3D";
     public static string NickName => "M3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

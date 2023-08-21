@@ -8,7 +8,14 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaLoadCase" /> can be used in Grasshopper.
   /// </summary>
   public class GsaLoadCaseGoo : GH_OasysGoo<GsaLoadCase> {
-    public static string Description => "GSA Load Case";
+    public static string Description =>
+      "When loads are applied to the model they are assigned to a load case. \n" +
+      "Load cases are a convenient way of grouping together a collection of \n" +
+      "loads that are to be considered together. Thus a load case may be set \n" +
+      "up to contain all the loads associated with dead loads, another to \n" +
+      "contain all the loads associated with live loads etc.\n" +
+      "In GSA the load cases are only used to group loading and are not used \n" +
+      "directly for analysis.";
     public static string Name => "LoadCase";
     public static string NickName => "LC";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
