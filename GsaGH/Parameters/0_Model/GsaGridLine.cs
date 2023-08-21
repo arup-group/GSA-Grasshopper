@@ -5,19 +5,13 @@ namespace GsaGH.Parameters {
     public int Id { get; private set; }
     internal GridLine _gridLine;
 
-    public GsaGridLine() { }
-
     internal GsaGridLine(int id, GridLine gridLine) {
       Id = id;
       _gridLine = gridLine;
     }
 
     public GsaGridLine Duplicate() {
-      var dup = new GsaGridLine {
-        Id = Id,
-        _gridLine = _gridLine
-      };
-
+      var dup = new GsaGridLine(Id, _gridLine);
       return dup;
     }
 
@@ -26,7 +20,7 @@ namespace GsaGH.Parameters {
       string label = _gridLine.Label != "" ? $"{_gridLine.Label} " : string.Empty;
       string type = _gridLine.Shape == GridLineShape.Arc ? "Shape: Arc " : string.Empty;
       string s = $"{id}{label}{type}X:{_gridLine.X} Y:{_gridLine.Y} Length:" +
-        $"{_gridLine.Length} Orientation:{_gridLine.Theta1}°" ;
+        $"{_gridLine.Length} Orientation:{_gridLine.Theta1}°";
       if (_gridLine.Shape == GridLineShape.Arc) {
         s.Replace("Orientation", "Theta1");
         s += " Theta2:" + _gridLine.Theta2 + "°";

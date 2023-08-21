@@ -23,6 +23,9 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(SaveModel))]
     [InlineData(typeof(Titles))]
+    [InlineData(typeof(CreateGridLine))]
+    [InlineData(typeof(GetGridLines))]
+    [InlineData(typeof(GridLineInfo))]
     // 1_Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(CreateBucklingFactors))]
