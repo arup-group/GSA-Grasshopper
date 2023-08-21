@@ -66,7 +66,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
 
       GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
       GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);

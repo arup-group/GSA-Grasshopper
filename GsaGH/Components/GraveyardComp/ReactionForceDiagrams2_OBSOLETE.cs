@@ -194,7 +194,7 @@ namespace GsaGH.Components {
       }
 
       result = (ghObject.Value as GsaResultGoo).Value;
-      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
 
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
         = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
@@ -213,10 +213,7 @@ namespace GsaGH.Components {
       }
 
       Color color = Color.Empty;
-      bool colourInput = false;
-      if (da.GetData(2, ref color)) {
-        colourInput = true;
-      }
+      da.GetData(2, ref color);
 
       _reactionForceVectors
         = new ConcurrentDictionary<int, (GsaVectorDiagram, GsaAnnotationGoo, IQuantity)>();
@@ -231,28 +228,6 @@ namespace GsaGH.Components {
       SetOutputs(da);
       PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force,
         _selectedDisplayValue.ToString());
-    }
-
-    private string GetNodeFilters(IGH_DataAccess dataAccess) {
-      string nodeList = "All";
-      var ghType = new GH_ObjectWrapper();
-      if (dataAccess.GetData(1, ref ghType)) {
-        if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != EntityType.Node) {
-            this.AddRuntimeWarning("List must be of type Node to apply to node filter");
-          }
-
-          nodeList = $"\"{listGoo.Value.Name}\"";
-        } else {
-          GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
-        }
-      }
-
-      if (string.IsNullOrEmpty(nodeList) || nodeList.ToLower() == "all") {
-        nodeList = "All";
-      }
-
-      return nodeList;
     }
 
     private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {

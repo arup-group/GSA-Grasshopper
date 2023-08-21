@@ -112,7 +112,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref resultGoo);
       GsaResult result = resultGoo.Value;
 
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
+      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, resultGoo.Value.Model);
       _section3dPreview = new GsaSection3dPreview(result, elementlist, _defScale);
 
       da.SetData(0, _section3dPreview.Mesh);

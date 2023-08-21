@@ -159,7 +159,7 @@ namespace GsaGH.Components {
 
           case GsaResultGoo goo:
             result = goo.Value;
-            elementlist = Inputs.GetElementListNameFoResults(this, da, 1, result.Model);
+            elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
             break;
 
           default:

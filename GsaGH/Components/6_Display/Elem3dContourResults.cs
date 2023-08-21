@@ -424,7 +424,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string elementlist = Inputs.GetElementListNameFoResults(this, da, 1, result.Model);
+      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();

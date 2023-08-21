@@ -133,7 +133,7 @@ namespace GsaGH.Components {
 
         if (ghTyp.Value is GsaResultGoo goo) {
           result = goo.Value;
-          elementlist = Inputs.GetElementListNameFoResults(this, da, 1, result.Model);
+          elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
         } else {
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
