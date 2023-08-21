@@ -81,7 +81,7 @@ namespace GsaGH.Components {
           axes = member.LocalAxes;
           if (axes == null) {
             var model = new GsaModel {
-              Model = AssembleModel.AssembleForLocalAxis(member)
+              Model = Assemble.AssembleForLocalAxis(member)
             };
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
@@ -103,7 +103,7 @@ namespace GsaGH.Components {
           axes = element.LocalAxes;
           if (axes == null) {
             var model = new GsaModel() {
-              Model = AssembleModel.AssembleForLocalAxis(element)
+              Model = Assemble.AssembleForLocalAxis(element)
             };
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));

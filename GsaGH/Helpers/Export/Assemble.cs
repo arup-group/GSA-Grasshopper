@@ -7,13 +7,14 @@ using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
-  internal class AssembleModel {
+  internal class Assemble {
     internal static Model AssembleForLocalAxis(GsaMember1d member) {
       var assembledModel = new ModelAssembly(null, LengthUnit.Meter);
       var mem1ds = new List<GsaMember1d>() {
         member
       };
       assembledModel.ConvertMembers(mem1ds, null, null);
+      assembledModel.AssembleNodesElementsMembersAndLists();
       return assembledModel.Model;
     }
 
@@ -23,6 +24,7 @@ namespace GsaGH.Helpers.Export {
         element
       };
       assembledModel.ConvertElements(elem1ds, null, null);
+      assembledModel.AssembleNodesElementsMembersAndLists();
       return assembledModel.Model;
     }
 
@@ -33,10 +35,11 @@ namespace GsaGH.Helpers.Export {
       assembledModel.ConvertElements(elem1ds, elem2ds, null);
       assembledModel.ConvertMembers(mem1ds, mem2ds, null);
       assembledModel.ConvertLists(lists);
+      assembledModel.AssembleNodesElementsMembersAndLists();
       return assembledModel.Model;
     }
 
-    internal static Model Assemble(
+    internal static Model AssembleModel(
       GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, List<GsaNode> nodes, 
       List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds, 
       List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds, 
@@ -53,7 +56,7 @@ namespace GsaGH.Helpers.Export {
       assembledModel.ConvertMembers(mem1ds, mem2ds, mem3ds);
       assembledModel.ConvertNodeList(lists);
       assembledModel.ConvertNodeLoads(loads);
-      assembledModel.AssemblePreMeshing();
+      assembledModel.AssembleNodesElementsMembersAndLists();
 
       assembledModel.ElementsFromMembers(
         createElementsFromMembers, toleranceCoincidentNodes, owner);
@@ -63,10 +66,10 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertLoad(loads, ref assembledModel, owner);
       assembledModel.ConvertLoadCases(loadCases, owner);
 
-      assembledModel.AssemblePostMeshing();
-      assembledModel.ConvertGridLines(gridLines);
-      assembledModel.ConvertAnalysisTasks(analysisTasks);
-      assembledModel.ConvertCombinations(combinations);
+      assembledModel.AssembleLoadsCasesAxesGridPlaneSurfacesAndLists();
+      assembledModel.ConvertAndAssembleGridLines(gridLines);
+      assembledModel.ConvertAndAssembleAnalysisTasks(analysisTasks);
+      assembledModel.ConvertAndAssembleCombinations(combinations);
 
       assembledModel.DeleteExistingResults();
       return assembledModel.Model;

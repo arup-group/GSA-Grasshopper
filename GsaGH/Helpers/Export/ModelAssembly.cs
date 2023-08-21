@@ -183,7 +183,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void AssemblePreMeshing() {
+    internal void AssembleNodesElementsMembersAndLists() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
       }
@@ -265,7 +265,7 @@ namespace GsaGH.Helpers.Export {
       MemberElementRelationship = ElementListFromReference.GetMemberElementRelationship(Model);
     }
 
-    internal void AssemblePostMeshing() {
+    internal void AssembleLoadsCasesAxesGridPlaneSurfacesAndLists() {
       // Add API Loads in model
       Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
       Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
@@ -284,7 +284,7 @@ namespace GsaGH.Helpers.Export {
       Model.SetLists(Lists.ReadOnlyDictionary);
     }
 
-    internal void ConvertAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
+    internal void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = Model.AnalysisTasks();
@@ -308,7 +308,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void ConvertCombinations(List<GsaCombinationCase> combinations) {
+    internal void ConvertAndAssembleCombinations(List<GsaCombinationCase> combinations) {
       if (combinations != null && combinations.Count > 0) {
         var existing = Model.CombinationCases()
           .ToDictionary(k => k.Key, k => k.Value);
@@ -368,7 +368,7 @@ namespace GsaGH.Helpers.Export {
       Properties.Materials.SteelDesignCode = steelCode;
     }
 
-    internal void ConvertGridLines(List<GsaGridLine> gridLines) {
+    internal void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {
       if (gridLines != null) {
         int maxId = 0;
         foreach (GsaGridLine gridLine in gridLines) {

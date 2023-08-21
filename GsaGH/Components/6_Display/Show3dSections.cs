@@ -166,7 +166,7 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        model.Model = AssembleModel.AssembleForPreview(
+        model.Model = Assemble.AssembleForPreview(
           model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
 
         _analysisMesh = null;
