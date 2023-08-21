@@ -537,13 +537,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElementListParameter());
       pManager[1].Optional = true;
       pManager.AddColourParameter("Colour", "Co",
         "Optional list of colours to override default colours" + Environment.NewLine
@@ -573,8 +567,6 @@ namespace GsaGH.Components {
       if (!da.GetData(0, ref ghTyp)) {
         return;
       }
-
-      #region Inputs
 
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
@@ -609,10 +601,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) {
-        return;
-      }
+      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -629,8 +618,6 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref ghInterval)) {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
-
-      #endregion
 
       var res = new GsaResultsValues();
       var resShear = new GsaResultsValues();

@@ -29,12 +29,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Node filter list", "No",
-        "Filter results by list (by default 'all')" + Environment.NewLine 
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine 
-        + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeListParameter());
       pManager[1].Optional = true;
     }
 
@@ -71,10 +66,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(nodeList)) { 
-        return; 
-      }
+      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
 
       GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
       GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);

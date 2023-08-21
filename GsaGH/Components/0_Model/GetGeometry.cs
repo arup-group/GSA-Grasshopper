@@ -16,6 +16,7 @@ using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -69,13 +70,12 @@ namespace GsaGH.Components {
     private List<Mesh> _cachedDisplayMeshWithParent;
     private List<Mesh> _cachedDisplayNgonMeshWithoutParent;
     private List<Mesh> _cachedDisplayNgonMeshWithParent;
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    private ConcurrentBag<GsaElement3dGoo> _element3ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
     private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
     private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
+    private bool _showSupports = true;
 
     public GetGeometry() : base("Get Model Geometry", "GetGeo",
       "Get nodes, elements and members from GSA model", CategoryName.Name(),
@@ -428,24 +428,9 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Node filter list", "No",
-        "Filter import by list. (by default 'all')" + Environment.NewLine + "Node list should take the form:"
-        + Environment.NewLine + " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Element filter list", "El",
-        "Filter import by list (by default 'all')." + Environment.NewLine + "Element list should take the form:"
-        + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Member filter list", "Me",
-        "Filter import by list (by default 'all')." + Environment.NewLine + "Member list should take the form:"
-        + Environment.NewLine + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeListParameter());
+      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
@@ -456,7 +441,6 @@ namespace GsaGH.Components {
 
       pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No", "Nodes from GSA Model",
         GH_ParamAccess.list);
-      pManager.HideParameter(0);
       pManager.AddParameter(new GsaElement1dParameter(), "1D Elements [" + unitAbbreviation + "]", "E1D",
         "1D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
@@ -466,7 +450,6 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaElement3dParameter(), "3D Elements [" + unitAbbreviation + "]", "E3D",
         "3D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
-      pManager.HideParameter(2);
       pManager.AddParameter(new GsaMember1dParameter(), "1D Members [" + unitAbbreviation + "]", "M1D",
         "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
       pManager.AddParameter(new GsaMember2dParameter(), "2D Members [" + unitAbbreviation + "]", "M2D",
@@ -476,54 +459,53 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess data) {
-      var memberKeys = new List<int>();
       if (InPreSolve) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
+        _boundingBox = modelGoo.Value.BoundingBox;
+
+        bool nodeFilterHasInput = false;
+        bool elementFilterHasInput = false;
+        bool memberFilterHasInput = false;
+
+        GsaListGoo nodeListGoo = null;
+        string nodeList = "all";
+        if (data.GetData(1, ref nodeListGoo)) {
+          if (!nodeListGoo.IsValid) {
+            return;
+          }
+
+          nodeList = nodeListGoo.Value.Definition;
+          nodeFilterHasInput = true;
+        }
+
+        GsaListGoo elementListGoo = null;
+        string elemList = "all";
+        if (data.GetData(2, ref elementListGoo)) {
+          if (!elementListGoo.IsValid) {
+            return;
+          }
+
+          elemList = elementListGoo.Value.Definition;
+          elementFilterHasInput = true;
+        }
+
+        GsaListGoo memberListGoo = null;
+        string memList = "all";
+        if (data.GetData(3, ref memberListGoo)) {
+          if (!memberListGoo.IsValid) {
+            return;
+          }
+
+          memList = memberListGoo.Value.Definition;
+          memberFilterHasInput = true;
+        }
+
+        UpdateHiddenOutputs(nodeFilterHasInput, elementFilterHasInput, memberFilterHasInput);
 
         Task<SolveResults> tsk = null;
-
-        var ghTyp = new GH_ObjectWrapper();
-        string nodeList = "all";
-        if (data.GetData(1, ref ghTyp)) {
-          if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Node) {
-              this.AddRuntimeWarning(
-              "List must be of type Node to apply to node filter");
-            }
-            nodeList = $"\"{listGoo.Value.Name}\"";
-          } else {
-            GH_Convert.ToString(ghTyp.Value, out nodeList, GH_Conversion.Both);
-          }
-        }
-        string elemList = "all";
-        if (data.GetData(2, ref ghTyp)) {
-          if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Element) {
-              this.AddRuntimeWarning(
-              "List must be of type Element to apply to element filter");
-            }
-            elemList = $"\"{listGoo.Value.Name}\"";
-          } else {
-            GH_Convert.ToString(ghTyp.Value, out elemList, GH_Conversion.Both);
-          }
-        }
-        string memList = "all";
-        if (data.GetData(3, ref ghTyp)) {
-          if (ghTyp.Value is GsaListGoo listGoo) {
-            if (listGoo.Value.EntityType != Parameters.EntityType.Member) {
-              this.AddRuntimeWarning(
-              "List must be of type Member to apply to member filter");
-            }
-            memList = $"\"{listGoo.Value.Name}\"";
-          } else {
-            GH_Convert.ToString(ghTyp.Value, out memList, GH_Conversion.Both);
-          }
-        }
-
         tsk = Task.Run(
           () => Compute(modelGoo.Value, nodeList, elemList, memList), CancelToken);
-
 
         TaskList.Add(tsk);
         return;
@@ -533,12 +515,35 @@ namespace GsaGH.Components {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
 
+        GsaListGoo nodeListGoo = null;
         string nodeList = "all";
-        data.GetData(1, ref nodeList);
+        if (data.GetData(1, ref nodeListGoo)) {
+          if (!nodeListGoo.IsValid) {
+            return;
+          }
+
+          nodeList = nodeListGoo.Value.Definition;
+        }
+
+        GsaListGoo elementListGoo = null;
         string elemList = "all";
-        data.GetData(2, ref elemList);
+        if (data.GetData(2, ref elementListGoo)) {
+          if (!elementListGoo.IsValid) {
+            return;
+          }
+
+          elemList = elementListGoo.Value.Definition;
+        }
+
+        GsaListGoo memberListGoo = null;
         string memList = "all";
-        data.GetData(3, ref memList);
+        if (data.GetData(3, ref memberListGoo)) {
+          if (!memberListGoo.IsValid) {
+            return;
+          }
+
+          memList = memberListGoo.Value.Definition;
+        }
 
         results = Compute(modelGoo.Value, nodeList, elemList, memList);
       }
@@ -547,101 +552,15 @@ namespace GsaGH.Components {
         return;
       }
 
+      _supportNodes = new ConcurrentBag<GsaNodeGoo>();
       if (!(results.Nodes is null)) {
         data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.Id));
-        _supportNodes = results.DisplaySupports;
-        _boundingBox = new BoundingBox(results.Nodes.Select(n => n.Value.Point).ToArray());
-      }
-
-      if (!(results.Elem1ds is null)) {
-        var invalid1dElem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
-        if (invalid1dElem.Count > 0) {
-          this.AddRuntimeWarning("Invalid Element1D definition for Element IDs:");
-          this.AddRuntimeWarning(string.Join(" ", invalid1dElem.OrderBy(x => x)));
-        }
-
-        if (_mode == FoldMode.List) {
-          data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
-        } else {
-          var tree = new DataTree<GsaElement1dGoo>();
-          foreach (GsaElement1dGoo element in results.Elem1ds) {
-            tree.Add(element, new GH_Path(element.Value.Section.Id));
-          }
-
-          data.SetDataTree(1, tree);
+        if (_showSupports) {
+          _supportNodes = results.DisplaySupports;
         }
       }
 
-      if (!(results.Elem2ds is null)) {
-        if (_mode == FoldMode.List) {
-          data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
-        } else {
-          var tree = new DataTree<GsaElement2dGoo>();
-          foreach (GsaElement2dGoo element in results.Elem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
-          }
-
-          data.SetDataTree(2, tree);
-        }
-
-        _element2ds = results.Elem2ds;
-
-        var element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
-        var element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
-        Parallel.ForEach(_element2ds, elem => {
-          try {
-            int parent = elem.Value.ApiElements[0].ParentMember.Member;
-            if (parent > 0 && memberKeys.Contains(parent)) {
-              element2dsShaded.Add(elem);
-            } else {
-              element2dsNotShaded.Add(elem);
-            }
-          } catch (Exception) {
-            element2dsNotShaded.Add(elem);
-          }
-        });
-        _cachedDisplayMeshWithParent = new List<Mesh>();
-        _cachedDisplayMeshWithParent.AddRange(element2dsShaded.Select(e => e.Value.Mesh));
-        _cachedDisplayMeshWithoutParent = new List<Mesh>();
-        _cachedDisplayMeshWithoutParent.AddRange(element2dsNotShaded.Select(e => e.Value.Mesh));
-      }
-
-      if (!(results.Elem3ds is null)) {
-        if (_mode == FoldMode.List) {
-          data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
-        } else {
-          var tree = new DataTree<GsaElement3dGoo>();
-          foreach (GsaElement3dGoo element in results.Elem3ds) {
-            tree.Add(element, new GH_Path(element.Value.PropertyIDs.First()));
-          }
-
-          data.SetDataTree(3, tree);
-        }
-
-        _element3ds = results.Elem3ds;
-        var element3dsShaded = new ConcurrentBag<GsaElement3dGoo>();
-        var element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
-        Parallel.ForEach(_element3ds, elem => {
-          try {
-            int parent = elem.Value.ApiElements[0].ParentMember.Member;
-            if (parent > 0 && memberKeys.Contains(parent)) {
-              element3dsShaded.Add(elem);
-            } else {
-              element3dsNotShaded.Add(elem);
-            }
-          } catch (Exception) {
-            element3dsNotShaded.Add(elem);
-          }
-        });
-        _cachedDisplayNgonMeshWithParent = new List<Mesh>();
-        _cachedDisplayNgonMeshWithParent.AddRange(
-          element3dsShaded.Select(e => e.Value.DisplayMesh));
-        _cachedDisplayNgonMeshWithoutParent = new List<Mesh>();
-        _cachedDisplayNgonMeshWithoutParent.AddRange(
-          element3dsNotShaded.Select(e => e.Value.DisplayMesh));
-      }
-
-      if (!(results.Mem1ds is null)) {
+      if (!(results.Mem1ds is null) || results.Mem1ds.Count == 0) {
         var invalid1dMem = results.Mem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid1dMem.Count > 0) {
           this.AddRuntimeWarning("Invalid Member1D definition for Member IDs:");
@@ -660,11 +579,35 @@ namespace GsaGH.Components {
         }
       }
 
-      if (!(results.Mem2ds is null)) {
+      if (!(results.Elem1ds is null) || results.Elem1ds.Count == 0) {
+        var invalid1dElem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
+        if (invalid1dElem.Count > 0) {
+          this.AddRuntimeWarning("Invalid Element1D definition for Element IDs:");
+          this.AddRuntimeWarning(string.Join(" ", invalid1dElem.OrderBy(x => x)));
+        }
+
+        if (_mode == FoldMode.List) {
+          data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
+        } else {
+          var tree = new DataTree<GsaElement1dGoo>();
+          foreach (GsaElement1dGoo element in results.Elem1ds) {
+            tree.Add(element, new GH_Path(element.Value.Section.Id));
+          }
+
+          data.SetDataTree(1, tree);
+        }
+      }
+
+      var member2dKeys = new List<int>();
+      if (!(results.Mem2ds is null) || results.Mem2ds.Count == 0) {
         var invalid2dMem = results.Mem2ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid2dMem.Count > 0) {
           this.AddRuntimeWarning("Invalid Member2D definition for Member IDs:");
           this.AddRuntimeWarning(string.Join(" ", invalid2dMem.OrderBy(x => x)));
+        }
+
+        if (!((IGH_PreviewObject)Params.Output[5]).Hidden) {
+          member2dKeys = results.Mem2ds.Select(item => item.Value.Id).ToList();
         }
 
         if (_mode == FoldMode.List) {
@@ -679,14 +622,53 @@ namespace GsaGH.Components {
         }
       }
 
-      if (results.Mem3ds is null) {
-        return;
+      _cachedDisplayMeshWithParent = new List<Mesh>();
+      _cachedDisplayMeshWithoutParent = new List<Mesh>();
+      if (!(results.Elem2ds is null) || results.Elem2ds.Count == 0) {
+        if (_mode == FoldMode.List) {
+          data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
+        } else {
+          var tree = new DataTree<GsaElement2dGoo>();
+          foreach (GsaElement2dGoo element in results.Elem2ds) {
+            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
+          }
+
+          data.SetDataTree(2, tree);
+        }
+
+        if (!((IGH_PreviewObject)Params.Output[5]).Hidden) {
+          member2dKeys = results.Mem2ds.Select(item => item.Value.Id).ToList();
+
+          var element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
+          var element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
+          Parallel.ForEach(results.Elem2ds, elem => {
+            try {
+              int parent = elem.Value.ApiElements[0].ParentMember.Member;
+              if (parent > 0 && member2dKeys.Contains(parent)) {
+                element2dsShaded.Add(elem);
+              } else {
+                element2dsNotShaded.Add(elem);
+              }
+            } catch (Exception) {
+              element2dsNotShaded.Add(elem);
+            }
+          });
+
+          _cachedDisplayMeshWithParent.AddRange(element2dsShaded.Select(e => e.Value.Mesh));
+          _cachedDisplayMeshWithoutParent.AddRange(element2dsNotShaded.Select(e => e.Value.Mesh));
+        }
       }
-      {
+
+      var member3dKeys = new List<int>();
+      if (!(results.Mem3ds is null) || results.Mem3ds.Count == 0) {
         var invalid3dMem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid3dMem.Count > 0) {
           this.AddRuntimeWarning("Invalid Member3D definition for Member IDs:");
           this.AddRuntimeWarning(string.Join(" ", invalid3dMem.OrderBy(x => x)));
+        }
+
+        if (!((IGH_PreviewObject)Params.Output[6]).Hidden) {
+          member3dKeys = results.Mem3ds.Select(item => item.Value.Id).ToList();
         }
 
         if (_mode == FoldMode.List) {
@@ -700,9 +682,45 @@ namespace GsaGH.Components {
           data.SetDataTree(6, tree);
         }
       }
+
+      _cachedDisplayNgonMeshWithParent = new List<Mesh>();
+      _cachedDisplayNgonMeshWithoutParent = new List<Mesh>();
+      if (!(results.Elem3ds is null) || results.Elem3ds.Count == 0) {
+        if (_mode == FoldMode.List) {
+          data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
+        } else {
+          var tree = new DataTree<GsaElement3dGoo>();
+          foreach (GsaElement3dGoo element in results.Elem3ds) {
+            tree.Add(element, new GH_Path(element.Value.PropertyIDs.First()));
+          }
+
+          data.SetDataTree(3, tree);
+        }
+
+        if (!((IGH_PreviewObject)Params.Output[6]).Hidden) {
+          var element3dsShaded = new ConcurrentBag<GsaElement3dGoo>();
+          var element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
+          Parallel.ForEach(results.Elem3ds, elem => {
+            try {
+              int parent = elem.Value.ApiElements[0].ParentMember.Member;
+              if (parent > 0 && member3dKeys.Contains(parent)) {
+                element3dsShaded.Add(elem);
+              } else {
+                element3dsNotShaded.Add(elem);
+              }
+            } catch (Exception) {
+              element3dsNotShaded.Add(elem);
+            }
+          });
+          _cachedDisplayNgonMeshWithParent.AddRange(
+            element3dsShaded.Select(e => e.Value.DisplayMesh));
+          _cachedDisplayNgonMeshWithoutParent.AddRange(
+            element3dsNotShaded.Select(e => e.Value.DisplayMesh));
+        }
+      }
     }
 
-    private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) { 
+    private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) {
       var results = new SolveResults();
       var steps = new List<int> {
         0, 1, 2,
@@ -717,8 +735,8 @@ namespace GsaGH.Components {
           switch (i) {
             case 0:
               results.Nodes = Nodes.GetNodes(
-                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList), 
-                model.ModelUnit, 
+                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList),
+                model.ModelUnit,
                 model.ApiAxis);
               results.DisplaySupports
                 = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
@@ -733,8 +751,8 @@ namespace GsaGH.Components {
 
             case 2:
               var members = new Members(model, memList, this);
-              results.Mem1ds = members.Member1ds; 
-              results.Mem2ds = members.Member2ds; 
+              results.Mem1ds = members.Member1ds;
+              results.Mem2ds = members.Member2ds;
               results.Mem3ds = members.Member3ds;
               break;
           }
@@ -786,6 +804,42 @@ namespace GsaGH.Components {
         } else {
           _outputIsExpired.Add(i, true);
         }
+      }
+    }
+
+    private void UpdateHiddenOutputs(bool nodeFilter, bool elementFilter, bool memberFilter) {
+      if (!nodeFilter && !elementFilter && !memberFilter) {
+        // set default display options
+        _showSupports = true;
+        ((IGH_PreviewObject)Params.Output[0]).Hidden = true;
+        ((IGH_PreviewObject)Params.Output[1]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[2]).Hidden = true;
+        ((IGH_PreviewObject)Params.Output[3]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
+      } else {
+        // set all to hidden
+        _showSupports = false;
+        for (int i = 0; i < Params.Output.Count - 1; i++) {
+          ((IGH_PreviewObject)Params.Output[i]).Hidden = true;
+        }
+      }
+
+      if (nodeFilter) {
+        ((IGH_PreviewObject)Params.Output[0]).Hidden = false;
+      }
+
+      if (elementFilter) {
+        ((IGH_PreviewObject)Params.Output[1]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[2]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[3]).Hidden = false;
+      }
+
+      if (memberFilter) {
+        ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
+        ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
       }
     }
   }

@@ -129,10 +129,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var result = new GsaResult();
 
-      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(nodeList)) {
-        return;
-      }
+      string nodeList = string.Empty;
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -157,6 +154,7 @@ namespace GsaGH.Components {
 
           case GsaResultGoo goo:
             result = goo.Value;
+            nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
             break;
 
           default:
