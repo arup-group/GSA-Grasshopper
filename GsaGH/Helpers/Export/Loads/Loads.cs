@@ -178,7 +178,8 @@ namespace GsaGH.Helpers.Export {
       model.Loads.GridPoints.Add(gridptref.GridPointLoad);
     }
 
-    private static void ConvertBeamLoad(GsaBeamLoad load, ref ModelAssembly model, GH_Component owner) {
+    private static void ConvertBeamLoad(
+      GsaBeamLoad load, ref ModelAssembly model, GH_Component owner) {
       PostHog.Load(load.LoadType, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
         string objectElemList = load.BeamLoad.EntityList;

@@ -111,10 +111,7 @@ namespace GsaGH.Components {
       this.AddRuntimeError("Beam Displacements are now in local axis - please update your script accordingly!");
       var result = new GsaResult();
 
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 1);
-      if (string.IsNullOrEmpty(elementlist)) { 
-        return; 
-      }
+      string elementlist = string.Empty;
 
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
@@ -143,6 +140,7 @@ namespace GsaGH.Components {
 
         if (ghTyp.Value is GsaResultGoo goo) {
           result = goo.Value;
+          elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
         } else {
           this.AddRuntimeError("Error converting input to GSA Result");
           return;

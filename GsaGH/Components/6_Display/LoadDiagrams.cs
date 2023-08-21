@@ -246,7 +246,7 @@ namespace GsaGH.Components {
         _selectedItems[0] = caseList;
       }
 
-      string elementlist = Inputs.GetElementListNameForesults(this, da, 2);
+      string elementlist = Inputs.GetElementListNameForResults(this, da, 2, _gsaModel);
       if (string.IsNullOrEmpty(elementlist)) {
         return;
       }
