@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
@@ -151,26 +152,35 @@ namespace GsaGH.Helpers.GH {
       return list;
     }
 
-    internal static string GetElementListNameForesults(
-      GH_Component owner, IGH_DataAccess da, int inputid) {
+    internal static string GetElementListNameFoResults(
+      GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
+      // to-do GSAGH-350
       string elementlist = "All";
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(inputid, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
           if (listGoo.Value.EntityType != EntityType.Element
             && listGoo.Value.EntityType != EntityType.Member) {
-            owner.AddRuntimeWarning(
-            "List must be of type Element to apply to element filter");
+            owner.AddRuntimeWarning("List must be of type Element to apply to element filter");
             return string.Empty;
           }
+
           if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
-            owner.AddRuntimeWarning(
-            "List must have a name - please give your list a name!");
-            return string.Empty;
+            return listGoo.Value.Definition;
           }
-          elementlist = listGoo.Value.EntityType == EntityType.Member
-            ? "\"" + "Children of '" + listGoo.Value.Name + "'\""
-            : "\"" + listGoo.Value.Name + "\"";
+
+          if (model.Model.Lists().Values.Where(
+            x => x.Type == GsaAPI.EntityType.Element && x.Name == listGoo.Value.Name).Any()) {
+            return "\"" + listGoo.Value.Name + "\"";
+          }
+
+          if (model.Model.Lists().Values.Where(
+            x => x.Type == GsaAPI.EntityType.Member && x.Name == listGoo.Value.Name).Any()) {
+            return "\"" + "Children of '" + listGoo.Value.Name + "'\"";
+          }
+          
+          return listGoo.Value.Definition;
+          
         } else {
           GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
         }
@@ -184,22 +194,26 @@ namespace GsaGH.Helpers.GH {
     }
 
     internal static string GetNodeListNameForesults(
-      GH_Component owner, IGH_DataAccess da, int inputid) {
-
+      GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
       string nodeList = "All";
       var ghType = new GH_ObjectWrapper();
       if (da.GetData(inputid, ref ghType)) {
         if (ghType.Value is GsaListGoo listGoo) {
           if (listGoo.Value.EntityType != EntityType.Node) {
-            owner.AddRuntimeWarning(
-            "List must be of type Node to apply to node filter");
+            owner.AddRuntimeWarning("List must be of type Node to apply to node filter");
           }
+
           if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
-            owner.AddRuntimeWarning(
-            "List must have a name - please give your list a name!");
-            return string.Empty;
+            return listGoo.Value.Definition;
           }
-          nodeList = "\"" + listGoo.Value.Name + "\"";
+
+          if (model.Model.Lists().Values.Where(
+            x => x.Type == GsaAPI.EntityType.Node && x.Name == listGoo.Value.Name).Any()) {
+            return "\"" + listGoo.Value.Name + "\"";
+          }
+
+          return listGoo.Value.Definition;
+
         } else {
           GH_Convert.ToString(ghType.Value, out nodeList, GH_Conversion.Both);
         }
