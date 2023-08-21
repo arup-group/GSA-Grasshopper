@@ -39,7 +39,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-       string label = "";
+      string label = "";
       var ghLabel = new GH_String();
       if (da.GetData(1, ref ghLabel)) {
         GH_Convert.ToString(ghLabel, out label, GH_Conversion.Both);
@@ -53,6 +53,7 @@ namespace GsaGH.Components {
         GridLine gridLine;
         if (ghLine.CastFrom(curve)) {
           Line line = ghLine.Value;
+          // project onto WorldXY
           line.FromZ = 0;
           line.ToZ = 0;
 
@@ -64,6 +65,7 @@ namespace GsaGH.Components {
             Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
           };
         } else if (ghArc.CastFrom(curve)) {
+          // project onto WorldXY
           Point3d startPoint = ghArc.Value.StartPoint;
           startPoint.Z = 0;
           Point3d midPoint = ghArc.Value.MidPoint;
@@ -72,13 +74,16 @@ namespace GsaGH.Components {
           endPoint.Z = 0;
           var arc = new Arc(startPoint, midPoint, endPoint);
 
+          Plane plane = arc.Plane;
+          double arcAngle = Vector3d.VectorAngle(arc.Plane.XAxis, Plane.WorldXY.XAxis) * 180 / Math.PI;
+
           gridLine = new GridLine(label) {
             Shape = GridLineShape.Arc,
             X = arc.Center.X,
             Y = arc.Center.Y,
             Length = arc.Length,
-            Theta1 = arc.StartAngleDegrees,
-            Theta2 = arc.EndAngleDegrees
+            Theta1 = -arcAngle + arc.StartAngleDegrees,
+            Theta2 = -arcAngle + arc.EndAngleDegrees
           };
         } else {
           string message = "Invalid input geometry, curve needs to be a line or an arc.";
