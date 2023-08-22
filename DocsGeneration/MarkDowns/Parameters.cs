@@ -80,7 +80,7 @@ namespace GsaGhDocs.MarkDowns {
           "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection [Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge).\r\n![Kingsgate Footbridge Durham](./images/gsagh/Kingsgate-Footbridge-Durham.jpg)\r\n*(c) Giles Rocholl / Arup*");
       }
 
-      text += StringHelper.Description(parameter.Summary);
+      text += StringHelper.SummaryDescription(parameter.Summary);
 
       if (parameter.Properties != null && parameter.Properties.Count != 0) {
         var headers = new List<string>() {

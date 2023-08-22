@@ -7,6 +7,7 @@ using GsaGhDocs.Components;
 using System.Xml.Linq;
 using System.Linq;
 using System.Security.Cryptography;
+using static Rhino.Render.PhysicallyBasedMaterial;
 
 namespace GsaGhDocs.MarkDowns {
   public class Components {
@@ -19,12 +20,18 @@ namespace GsaGhDocs.MarkDowns {
       "![GsaGH-Ribbon](./images/gsagh/RibbonScreenshot.png)\n" +
       "\n"; 
 
-    public static void CreateOverview(Dictionary<string, List<Component>> components) {
+    public static void CreateOverview(
+      Dictionary<string, List<Component>> components, List<Parameter> parameters) {
       string componentsOverview = StringHelper.FileName("components", string.Empty);
       CreateComponentOverview(components.Keys.ToList());
 
+      var parameterNames = new List<string>();
+      foreach (Parameter parameter in parameters) {
+        parameterNames.Add(parameter.Name.ToUpper());
+      }
+
       foreach (KeyValuePair<string, List<Component>> kvp in components) {
-        CreateComponentOverview(kvp.Key, kvp.Value);
+        CreateComponentOverview(kvp.Key, kvp.Value, parameterNames);
       }
     }
 
@@ -116,7 +123,7 @@ namespace GsaGhDocs.MarkDowns {
     }
 
     private static void CreateComponentOverview(
-      string category, List<Component> components) {
+      string category, List<Component> components, List<string> parameterNames) {
       string filePath = $@"Output\gsagh-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
@@ -148,7 +155,7 @@ namespace GsaGhDocs.MarkDowns {
           table.AddRow(new List<string>(){
             StringHelper.Icon(component.Name),
             StringHelper.Link(component.Name, "Component"),
-            component.Description
+            StringHelper.ComponentDescription(component.Description, parameterNames)
           });
         }
         text += table.Finalise();

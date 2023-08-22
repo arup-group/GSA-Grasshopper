@@ -22,6 +22,10 @@ namespace GsaGhDocs.Parameters {
     public Parameter(Type type, bool summary = false) {
       var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
       Name = persistentParam.Name.Replace("parameter", string.Empty).Trim();
+      if (Name.Contains('[')) {
+        Name = Name.Split('[')[0];
+      }
+
       NickName = persistentParam.NickName;
       Description = persistentParam.Description;
       SubCategory = Exposure.GetExposure(persistentParam.Exposure);

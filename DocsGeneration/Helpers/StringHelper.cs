@@ -2,18 +2,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using static Rhino.Render.RenderEnvironment;
 using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGhDocs.Helpers {
   public class StringHelper {
-    public static string Description(string str) {
+    public static string SummaryDescription(string str) {
       string markdown = ConvertSummaryToMarkup(str);
       return $"## Description\n\n{markdown}\n\n";
     }
 
-    private static string ConvertSummaryToMarkup(string str) {
+    public static string ComponentDescription(string str, List<string> parameterNames) {
+      if (str.Contains("GSA ")) {
+        StringSplitOptions opt = StringSplitOptions.None;
+        string[] split = str.Split(new string[] { "GSA " }, opt);
+        str = split[0];
+        for (int i = 1; i < split.Length; i++) {
+          string[] parameterNameAndRest = split[i].Split(' ');
+          string parmeterName = parameterNameAndRest[0];
+          if (parameterNames.Contains(parmeterName.ToUpper())) {
+            string markDownName = parmeterName[0].ToString().ToUpper() + parmeterName.Substring(1);
+            string markdownLink =
+              $"[{markDownName}](gsagh-{parmeterName.ToLower()}-parameter.html) ";
+            str += markdownLink;
+            for (int j = 1; j < parameterNameAndRest.Length; j++) {
+              str += $"{parameterNameAndRest[j]} ";
+            }
+          } else {
+            str += split[i];
+          }
+        }
+      }
 
+      return str;
+    }
+
+    private static string ConvertSummaryToMarkup(string str) {
       // <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>
       if (str.Contains("<see href=\"")) {
         StringSplitOptions opt = StringSplitOptions.None;
@@ -131,7 +156,7 @@ namespace GsaGhDocs.Helpers {
     }
 
     public static string FileName(string text, string postfix) {
-      string name = text.Replace(" ", "-");
+      string name = text.Replace(" ", string.Empty);
       return $@"Output\gsagh-{name.ToLower()}-{postfix.ToLower()}.md";
     }
 
