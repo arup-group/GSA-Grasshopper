@@ -62,8 +62,17 @@ namespace GsaGhDocs.Helpers {
     private static string SortReference(string @namespace, string type, string name) {
       switch (@namespace) {
         case "GsaAPI":
-          string link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/types.html#"
+          string link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/data-classes.html#"
           + name.ToLower();
+          if (name == "Bool6" 
+            || name == "Annotation"
+            || name == "AutomaticOffset"
+            || name == "SectionModifierAttribute"
+            || name == "Prop2DModifierAttribute"
+            || name == "EndRelease") {
+            link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/types.html#"
+          + name.ToLower();
+          }
           return $"[GsaAPI {name}]({link})";
 
         case "GsaGH":
