@@ -245,6 +245,8 @@ namespace GsaGhDocs.Parameters {
         if (parameter.Name.Contains("[")) {
           parameter.Name = parameter.Name.Split('[')[0].Trim();
         }
+
+        parameter.Name = parameter.Name.Replace("parameter", string.Empty).Trim();
                 
         cleaned.Add(parameter);
       }
