@@ -152,9 +152,9 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaProp2dParameter(), GsaProp2dGoo.Name, GsaProp2dGoo.NickName,
         GsaProp2dGoo.Description + " with applied changes.", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number", GH_ParamAccess.item);
-      pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
-      pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Prop2d ID", "ID", "2D Property ID", GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
+      pManager.AddColourParameter("Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddGenericParameter("Axis", "Ax",
         "Get Local Axis either as Plane for custom or an integer (Global (0) or Topological (1)) for referenced Axis.",
         GH_ParamAccess.item);

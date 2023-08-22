@@ -6,6 +6,9 @@ using RatioUnit = OasysUnits.Units.RatioUnit;
 using VolumeUnit = OasysUnits.Units.VolumeUnit;
 
 namespace GsaGH.Parameters {
+  /// <summary>
+  /// A 2D Property Modifier is part of a <see cref="GsaProp2d"/> and can be used to modify property's analytical properties without changing the `Thickness` or <see cref="GsaMaterial"/>. By default the 2D Property Modifier is unmodified.
+  /// </summary>
   public class GsaProp2dModifier {
     public IQuantity AdditionalMass { get; set; } = new AreaDensity();
     public IQuantity Bending { get; set; } = new Ratio(100, RatioUnit.Percent);

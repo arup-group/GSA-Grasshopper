@@ -3,7 +3,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Offset class, this class defines the basic properties and methods for any Gsa Offset
+  /// An Offset will locally move the <see cref="GsaSection"/> or <see cref="GsaProp2d"/> away from the centre of the local axis in <see cref="GsaElement1d"/>, <see cref="GsaMember1d"/>, <see cref="GsaElement2d"/>, or <see cref="GsaMember2d"/>.
   /// </summary>
   public class GsaOffset {
     public enum AlignmentType {

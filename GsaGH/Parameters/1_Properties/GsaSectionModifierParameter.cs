@@ -20,8 +20,8 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.SectionModifierParam;
 
     public GsaSectionModifierParameter() : base(new GH_InstanceDescription(
-      GsaSectionModifierGoo.Name + " parameter", GsaSectionModifierGoo.NickName,
-      GsaSectionModifierGoo.Description, CategoryName.Name(),
+      GsaSectionModifierGoo.Name, GsaSectionModifierGoo.NickName,
+      GsaSectionModifierGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionModifierGoo PreferredCast(object data) {

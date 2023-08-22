@@ -26,7 +26,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to assemble and analyse a GSA model
   /// </summary>
-  public class GhAnalyse : GH_OasysDropDownComponent {
+  public class Analyse : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -45,7 +45,7 @@ namespace GsaGH.Components {
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = string.Empty;
 
-    public GhAnalyse() : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
+    public Analyse() : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }

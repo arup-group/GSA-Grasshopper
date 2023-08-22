@@ -7,10 +7,8 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaProp2d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaProp2dGoo : GH_OasysGoo<GsaProp2d> {
-    public static string Description => 
-      "A 2D property is used by Element2D and Member2D and \n" +
-      "contains information about it's thickness and material.";
-    public static string Name => "Prop2D";
+    public static string Description => "GSA 2D Property (Area)";
+    public static string Name => "Prop2d";
     public static string NickName => "PA";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

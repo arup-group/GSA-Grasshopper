@@ -13,7 +13,8 @@ using AngleUnit = OasysUnits.Units.AngleUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section" />
+  /// A Section is used by <see cref="GsaElement1d"/> and <see cref="GsaMember1d"/> and generally contains information about it's `Profile` and <see cref="GsaMaterial"/>. Use the <see cref="Components.CreateProfile"/> component to create Catalogue and custom profiles.
+  /// Refer to <see href="/references/hidr-data-sect-lib.html">Sections</see> to read more.
   /// </summary>
   public class GsaSection {
     public Length AdditionalOffsetY {

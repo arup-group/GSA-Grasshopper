@@ -37,7 +37,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateNodeLoad))]
     [InlineData(typeof(LoadProperties))]
     //analysis
-    [InlineData(typeof(GhAnalyse), true)]
+    [InlineData(typeof(Analyse), true)]
     [InlineData(typeof(CreateAnalysisTask))]
     //results
     [InlineData(typeof(BeamDisplacement), true)]

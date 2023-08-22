@@ -9,7 +9,8 @@ using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop3D" />
+  /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contain information about <see cref="GsaMaterial"/>.
+  /// Refer to <see href="/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.
   /// </summary>
   public class GsaProp3d {
     public int AxisProperty {

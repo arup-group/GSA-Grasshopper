@@ -40,7 +40,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateGridSurface))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
     //Analysis
-    [InlineData(typeof(GhAnalyse))]
+    [InlineData(typeof(Analyse))]
     //Results
     [InlineData(typeof(BeamStrainEnergy))]
     [InlineData(typeof(Elem1dContourResults))]

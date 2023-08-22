@@ -18,8 +18,8 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaProp3dGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Prop3dParam;
 
-    public GsaProp3dParameter() : base(new GH_InstanceDescription(GsaProp3dGoo.Name + " parameter",
-      GsaProp3dGoo.NickName, GsaProp3dGoo.Description, CategoryName.Name(),
+    public GsaProp3dParameter() : base(new GH_InstanceDescription(GsaProp3dGoo.Name,
+      GsaProp3dGoo.NickName, GsaProp3dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaProp3dGoo PreferredCast(object data) {

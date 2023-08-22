@@ -9,7 +9,13 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   EntityList class, this class defines the basic properties and methods for any Gsa List
+  /// A GSA Entity List is expressed as a string of text in a specific syntax along with the List
+  /// Type. In Grasshopper, a Entity List can also contain a copy of all the items in the list. 
+  /// 
+  /// Lists (of nodes, elements, members or cases) are used, for example, when a particular load
+  /// is to be applied to one or several elements. To define a series of items the list can either
+  /// specify each individually or, if applicable, use a more concise 
+  /// <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>.
   /// </summary>
   public class GsaList {
     public string Definition {

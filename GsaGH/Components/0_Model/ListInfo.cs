@@ -35,7 +35,7 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      Params.Output[4].Name = "List Objects [" + unitAbbreviation + "]";
+      Params.Output[4].Name = "List Objects in [" + unitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -64,7 +64,7 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Type", "Ty", "Entity Type", GH_ParamAccess.item);
       pManager.AddTextParameter("Definition", "Def", "List Definition", GH_ParamAccess.item);
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      pManager.AddGenericParameter("List Objects [" + unitAbbreviation + "]", "Obj",
+      pManager.AddGenericParameter("List Objects in [" + unitAbbreviation + "]", "Obj",
         "Expanded objects contained in the input list", GH_ParamAccess.list);
     }
 

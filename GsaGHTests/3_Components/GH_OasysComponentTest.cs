@@ -81,7 +81,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(LoadProperties))]
     [InlineData(typeof(LoadDiagrams))]
     // 4_Analysis
-    [InlineData(typeof(GhAnalyse))]
+    [InlineData(typeof(Analyse))]
     [InlineData(typeof(AnalysisCaseInfo))]
     [InlineData(typeof(CreateAnalysisCase))]
     [InlineData(typeof(CreateAnalysisTask))]

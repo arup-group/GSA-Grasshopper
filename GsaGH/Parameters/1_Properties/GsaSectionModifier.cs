@@ -5,6 +5,10 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
+  /// <summary>
+  /// A Section Modifier is part of a <see cref="GsaSection"/> and can be used to modify property's analytical properties without changing the `Profile` or <see cref="GsaMaterial"/>. By default the Section Modifier is unmodified.
+  /// Refer to <see href="/references/hidr-data-sect-lib.html#modifiers">Section Modifiers</see> to read more.
+  /// </summary>
   public class GsaSectionModifier {
     public enum StressOptionType {
       NoCalculation,

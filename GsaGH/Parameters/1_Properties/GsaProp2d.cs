@@ -13,7 +13,8 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D" />
+  /// A 2D property is used by <see cref="GsaElement2d"/> and <see cref="GsaMember2d"/> and generally contains information about it's the Area Property's `Thickness` and <see cref="GsaMaterial"/>. 2D Properties can also be used to create LoadPanels, use the <see cref="Components.CreateProp2d"/> component and select `LoadPanel` from the dropdown list. 
+  /// Refer to <see href="/references/hidr-data-pr-2d.html">2D Element Properties</see> to read more.
   /// </summary>
   public class GsaProp2d {
     public int AxisProperty {

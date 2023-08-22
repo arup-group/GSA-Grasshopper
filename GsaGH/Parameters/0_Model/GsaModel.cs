@@ -13,7 +13,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Model class, this class defines the basic properties and methods for any Gsa Model
+  /// A GSA model is the main parameter that associates with a GSA model file. Data and results can be extracted from an opened model. A model contains all the constituent parts (Properties, Elements/Members, Loads, Cases, Tasks, etc). Use the <see cref="Components.CreateModel"/> or <see cref="Components.Analyse"/> components to assemble a new Model or use the <see cref="Components.OpenModel"/> to work with an existing Model. You can use the <see cref="Components.GetProperties"/> or <see cref="Components.GetGeometry"/> to start editing the objects from an existing model. If the model has been analysed you can use the <see cref="Components.SelectResult"/> component to explore the Models structural performance and behaviour.";
   /// </summary>
   public class GsaModel {
     public BoundingBox BoundingBox {

@@ -36,7 +36,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateNodeLoad), 2)]
     [InlineData(typeof(LoadProperties), 2)]
     //Analysis
-    [InlineData(typeof(GhAnalyse), 1)]
+    [InlineData(typeof(Analyse), 1)]
     [InlineData(typeof(CreateAnalysisTask), 1)]
     //Results
     [InlineData(typeof(BeamDisplacement), 1)]
@@ -110,7 +110,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateNodeLoad), "NodeForce", "Settlement")]
     [InlineData(typeof(LoadProperties), "kN", "kipf")]
     //Analysis
-    [InlineData(typeof(GhAnalyse), "m", "ft")]
+    [InlineData(typeof(Analyse), "m", "ft")]
     [InlineData(typeof(CreateAnalysisTask), "Static", "Static")]
     //Results
     [InlineData(typeof(BeamDisplacement), "mm", "ft")]

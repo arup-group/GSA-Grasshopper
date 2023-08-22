@@ -5,7 +5,9 @@ using GsaAPI.Materials;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial" />
+  /// "A Material is used by <see cref="GsaSection"/>s, <see cref="GsaProp2d"/>s and <see cref="GsaProp3d"/>s. It is only possible to work with elastic isotropic material types. A Material can either be created as a Standard Material (<see cref="Components.CreateMaterial"/>) from design code and grade, or as a custom material <see cref="Components.CreateCustomMaterial"/>).
+  /// Use the <see cref="Components.GetMaterials"/> to get all materials in a <see cref="GsaModel"/> and then use <see cref="Components.EditMaterial"/> in combination with <see cref="Components.GetMaterialProperties"/> to get information about material properties.
+  /// Refer to <see href="/references/hidr-data-mat-steel.html">Materials</see> to read more.
   /// </summary>
   public class GsaMaterial {
     public enum MatType {
