@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace GsaGhDocs.Parameters {
   public class Parameter {
@@ -55,27 +56,27 @@ namespace GsaGhDocs.Parameters {
       }
 
       if (s.Contains("[m]") || s.Contains("[cm]") || s.Contains("[mm]")) {
-        return "UnitNumber [Length]";
+        return "UnitNumber `Length`";
       }
 
       if (s.Contains("[kN]")) {
-        return "UnitNumber [Force]";
+        return "UnitNumber `Force`";
       }
 
       if (s.Contains("[kN/m]")) {
-        return "UnitNumber [ForcePerLength]";
+        return "UnitNumber `ForcePerLength`";
       }
 
       if (s.Contains("[kN/m²]") || s.Contains("[MPa]")) {
-        return "UnitNumber [Pressure]";
+        return "UnitNumber `Pressure`";
       }
 
       if (s.Contains("[kN·m]")) {
-        return "UnitNumber [Moment]";
+        return "UnitNumber `Moment`";
       }
 
       if (s.Contains("[MJ/m³]")) {
-        return "UnitNumber [EnergyDensity]";
+        return "UnitNumber `EnergyDensity`";
       }
 
       return s;
@@ -241,6 +242,10 @@ namespace GsaGhDocs.Parameters {
       var cleaned = new List<Parameter>();
       foreach (Parameter parameter in outputParams) {
         parameter.Description = parameter.Description.Replace("Get", string.Empty).Trim();
+        if (parameter.Name.Contains("[")) {
+          parameter.Name = parameter.Name.Split('[')[0].Trim();
+        }
+                
         cleaned.Add(parameter);
       }
 

@@ -145,6 +145,9 @@ namespace GsaGhDocs.Helpers {
         return $"[{parameterName}](gsagh-{name.ToLower()}-parameter.html)" + list + tree;
       }
 
+      string link = $"[UnitNumber](gsagh-unitnumber-parameter.html.html)";
+      parameterType = parameterType.Replace("UnitNumber", link);
+
       return parameterType;
     }
 
