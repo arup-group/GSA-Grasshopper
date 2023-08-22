@@ -1,81 +1,256 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGhDocs.Components;
 using GsaGhDocs.Helpers;
+using Rhino.PlugIns;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace GsaGhDocs.Parameters {
   public class Parameter {
     public string Name { get; set; }
     public string NickName { get; set; }
     public string Description { get; set; }
+    public string Summary { get; set; }
     public int SubCategory { get; set; }
-    public List<Parameter> Parameters { get; set; }
-    public Parameter(Type type) {
-      var paramObject = (IGH_Param)Activator.CreateInstance(type, null);
-      Name = paramObject.Name;
-      NickName = paramObject.NickName;
-      Description = paramObject.Description;
-      SubCategory = Exposure.GetExposure(paramObject.Exposure);
+    public string ParameterType { get; set; }
+    public List<Parameter> Properties { get; set; }
+    public Parameter(Type type, bool summary = false) {
+      var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
+      Name = persistentParam.Name.Replace("parameter", string.Empty).Trim();
+      NickName = persistentParam.NickName;
+      Description = persistentParam.Description;
+      SubCategory = Exposure.GetExposure(persistentParam.Exposure);
+      ParameterType = GetParameterType(type);
+      if (persistentParam.Access == GH_ParamAccess.list) {
+        ParameterType += " (List)";
+      }
+
+      if (persistentParam.Access == GH_ParamAccess.tree) {
+        ParameterType += " (Tree)";
+      }
+
+      if (summary && SubCategory > 0) {
+        Summary = GetClassSummary(persistentParam.GetType());
+      }
     }
 
-    public static List<Parameter> GetParameters(Type[] typelist, List<Component> components) {
-      var parameters = new List<Parameter>();
+    private string GetParameterType(Type type) {
+      if (type.BaseType.GenericTypeArguments[0].Name == "IGH_Goo") {
+        return "Generic";
+      }
 
-      foreach (Type type in typelist) {
-        if (type.Namespace == null) {
-          continue;
-        }
+      string s = type.BaseType.GenericTypeArguments[0].Name
+        .Replace("Goo", string.Empty).Replace("Gsa", string.Empty)
+        .Replace("GH_", string.Empty).Replace("String", "Text"); ;
+      s = CheckIfUnitNumber(s);
 
-        if (type.Namespace.StartsWith("GsaGH.Parameter")) {
-          try {
-            var param = new Parameter(type);
-            if (param.SubCategory > 0) {
-              param.UpdateParameters(components);
-              parameters.Add(param);
+      return s;
+    }
+
+    internal static string CheckIfUnitNumber(string s) {
+      if (s.Contains(" in [")) {
+        s.Replace(" in [m]", " in selected unit");
+        s.Replace(" in [cm]", " in selected unit");
+        s.Replace(" in [mm]", " in selected unit");
+        return s;
+      }
+
+      if (s.Contains("[m]") || s.Contains("[cm]") || s.Contains("[mm]")) {
+        return "UnitNumber [Length]";
+      }
+
+      if (s.Contains("[kN]")) {
+        return "UnitNumber [Force]";
+      }
+
+      if (s.Contains("[kN/m]")) {
+        return "UnitNumber [ForcePerLength]";
+      }
+
+      if (s.Contains("[kN/m²]") || s.Contains("[MPa]")) {
+        return "UnitNumber [Pressure]";
+      }
+
+      if (s.Contains("[kN·m]")) {
+        return "UnitNumber [Moment]";
+      }
+
+      if (s.Contains("[MJ/m³]")) {
+        return "UnitNumber [EnergyDensity]";
+      }
+
+      return s;
+    }
+
+    private string GetClassSummary(Type paramType) {
+      PropertyInfo[] paramPropertyInfo = paramType.GetProperties(
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+      foreach (PropertyInfo paramProperty in paramPropertyInfo) {
+        if (paramProperty.Name == "PersistentData") {
+          Type gooType = paramProperty.DeclaringType.GenericTypeArguments[0];
+          PropertyInfo[] gooPropertyInfo = gooType.GetProperties(
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+          foreach (PropertyInfo gooProperty in gooPropertyInfo) {
+            if (gooProperty.Name == "Value") {
+              //object gooValue = gooProperty.GetValue(gooType, null);
+              Type valueType = gooProperty.PropertyType;
+              string path = "T:" + valueType.FullName;
+              XmlNode xmlDocuOfMethod = GsaGhDll.GsaGhXml.SelectSingleNode(
+                  "//member[starts-with(@name, '" + path + "')]");
+              string text = xmlDocuOfMethod.InnerXml
+                .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
+              string cleanStr = Regex.Replace(text, @"\s+", " ");
+              return cleanStr.Trim();
             }
-          } catch (Exception) {
-            continue;
           }
         }
       }
+      return string.Empty;
+    }
 
+    public override string ToString() {
+      return Name;
+    }
+
+    public static List<Parameter> GetParameters(Type[] typelist, List<Component> components) {
+      Console.WriteLine($"Finding parameters...");
+      var parameters = new List<Parameter>();
+      foreach (Type type in typelist) {
+        if (type.BaseType == null || !type.BaseType.Name.StartsWith("GH_OasysPersistent")) {
+          continue;
+        }
+
+        try {
+          var param = new Parameter(type, true);
+          if (param.SubCategory > 0) {
+            param.UpdateParameters(components);
+            parameters.Add(param);
+            Console.WriteLine($"Added {param.Name} parameter");
+          }
+        } catch (Exception) {
+          continue;
+        }
+      }
+
+      Console.WriteLine($"Completed finding parameters - found {parameters.Count}");
       return parameters;
+    }
+
+    public static Dictionary<string, List<Parameter>> SortParameters(List<Parameter> parameters) {
+      Console.WriteLine($"Sorting parameters by sub-category");
+      var dict = new Dictionary<string, List<Parameter>>() {
+        {
+          "Model", new List<Parameter>()
+        }, {
+          "Properties", new List<Parameter>()
+        }, {
+          "Geometry", new List<Parameter>()
+        }, {
+          "Loads", new List<Parameter>()
+        }, {
+          "Analysis", new List<Parameter>()
+        }, {
+          "Results", new List<Parameter>()
+        }, {
+          "Display", new List<Parameter>()
+        },
+      };
+
+      foreach (Parameter parameter in parameters) {
+        switch (parameter.SubCategory) {
+          case 1:
+            dict["Model"].Add(parameter);
+            break;
+          case 2:
+            dict["Properties"].Add(parameter);
+            break;
+          case 3:
+            dict["Geometry"].Add(parameter);
+            break;
+          case 4:
+            dict["Loads"].Add(parameter);
+            break;
+          case 5:
+            dict["Analysis"].Add(parameter);
+            break;
+          case 6:
+            dict["Results"].Add(parameter);
+            break;
+          case 7:
+            dict["Display"].Add(parameter);
+            break;
+        }
+      }
+
+      return dict;
     }
 
     private void UpdateParameters(List<Component> components) {
       if (Name == "Model") {
         return;
       }
-      
+
+      string parameterName = Name.ToUpper().Replace(" ", string.Empty);
+      if (parameterName.ToUpper().Contains("1D")) {
+        // fx Element1D => 1D Element
+        parameterName = "1D" + parameterName.ToUpper().Replace("1D", string.Empty);
+      }
+
+      if (parameterName.ToUpper().Contains("2D")) {
+        parameterName = "2D" + parameterName.ToUpper().Replace("2D", string.Empty);
+      }
+
+      if (parameterName.ToUpper().Contains("3D")) {
+        parameterName = "3D" + parameterName.ToUpper().Replace("3D", string.Empty);
+      }
+
       foreach (Component component in components) {
-        if (component.Name.Contains("Edit") && component.Name.Contains(Name)) {
-          Parameters = component.Outputs.GetRange(1, component.Outputs.Count - 1);
+        string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
+        if (componentName.Contains("EDIT") && componentName.Contains(parameterName)) {
+          Properties = CleanOutputParams(
+            component.Outputs.GetRange(1, component.Outputs.Count - 1));
           return;
         }
       }
 
       foreach (Component component in components) {
-        if (component.Name.Contains("Properties") && component.Name.Contains(Name)) {
-          Parameters = component.Outputs.ToList();
+        string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
+        if (componentName.Contains("PROPERTIES") && componentName.Contains(parameterName)) {
+          Properties = CleanOutputParams(component.Outputs.ToList());
           return;
         }
       }
 
       foreach (Component component in components) {
-        if (component.Name.Contains("Info") && component.Name.Contains(Name)) {
-          Parameters = component.Outputs.ToList();
+        string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
+        if (componentName.Contains("INFO") && componentName.Contains(parameterName)) {
+          Properties = CleanOutputParams(component.Outputs.ToList());
           return;
         }
       }
 
       foreach (Component component in components) {
-        if (component.Name.Contains("Get") && component.Name.Contains(Name)) {
-          Parameters = component.Outputs.ToList();
+        string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
+        if (componentName.Contains("GET") && componentName.Contains(parameterName)) {
+          Properties = CleanOutputParams(component.Outputs.ToList());
           return;
         }
       }
+    }
+
+    private List<Parameter> CleanOutputParams(List<Parameter> outputParams) {
+      var cleaned = new List<Parameter>();
+      foreach (Parameter parameter in outputParams) {
+        parameter.Description = parameter.Description.Replace("Get", string.Empty).Trim();
+        cleaned.Add(parameter);
+      }
+
+      return cleaned;
     }
   }
 }

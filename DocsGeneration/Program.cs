@@ -14,6 +14,11 @@ namespace GsaGhDocs {
 
       List<Component> components = Component.GetComponents(typelist);
       List<Parameter> parameters = Parameter.GetParameters(typelist, components);
+
+      MarkDowns.Components.CreateOverview(Component.SortComponents(components));
+      MarkDowns.Components.CreateComponents(components, parameters);
+      MarkDowns.Parameters.CreateParameters(parameters);
+      MarkDowns.Parameters.CreateOverview(Parameter.SortParameters(parameters));
     }
   }
 }
