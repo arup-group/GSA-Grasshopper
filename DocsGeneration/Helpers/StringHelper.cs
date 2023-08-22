@@ -101,6 +101,7 @@ namespace GsaGhDocs.Helpers {
           return $"[GsaAPI {name}]({link})";
 
         case "GsaGH":
+          name = name.Replace("Gsa", string.Empty);
           if (type == "Parameters") {
             return $"[{name}](gsagh-{name.ToLower()}-parameter.html)";
           }
