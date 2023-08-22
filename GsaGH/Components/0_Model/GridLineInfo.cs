@@ -29,7 +29,6 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddIntegerParameter("ID", "ID", "The grid line ID", GH_ParamAccess.item);
       pManager.AddTextParameter("Label", "Lb", "Grid Line label", GH_ParamAccess.item);
       pManager.AddPointParameter("Starting Point", "Pt", "The Grid Line starting point",
         GH_ParamAccess.item);
@@ -46,14 +45,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaGridLineGoo gridGoo = null;
       da.GetData(0, ref gridGoo);
-      da.SetData(0, gridGoo.Value.Id);
-      da.SetData(1, gridGoo.Value._gridLine.Label);
+      da.SetData(0, gridGoo.Value._gridLine.Label);
       var pt = new Point3d(gridGoo.Value._gridLine.X, gridGoo.Value._gridLine.Y, 0);
-      da.SetData(2, pt);
-      da.SetData(3, gridGoo.Value._gridLine.Length);
-      da.SetData(4, gridGoo.Value._gridLine.Shape);
-      da.SetData(5, gridGoo.Value._gridLine.Theta1);
-      da.SetData(6, gridGoo.Value._gridLine.Theta2);
+      da.SetData(1, pt);
+      da.SetData(2, gridGoo.Value._gridLine.Length);
+      da.SetData(3, gridGoo.Value._gridLine.Shape);
+      da.SetData(4, gridGoo.Value._gridLine.Theta1);
+      da.SetData(5, gridGoo.Value._gridLine.Theta2);
     }
   }
 }

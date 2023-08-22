@@ -7,7 +7,7 @@ using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
-  internal class Assemble {
+  internal class Assembler {
     internal static Model AssembleForLocalAxis(GsaMember1d member) {
       var assembledModel = new ModelAssembly(null, LengthUnit.Meter);
       var mem1ds = new List<GsaMember1d>() {

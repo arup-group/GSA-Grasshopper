@@ -27,11 +27,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddCurveParameter("Curve", "C", "Line or Arc to create a GSA Grid Line", GH_ParamAccess.item);
       pManager.AddTextParameter("Label", "L", "Grid Line Label", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Index", "ID",
-        "(Optional) Grid Line Number - set this to 0 to append it to the end of the list of lists," +
-        "or set the ID to overwrite an existing Grid Line.", GH_ParamAccess.item, 0);
       pManager[1].Optional = true;
-      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -91,10 +87,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        int id = 0;
-        da.GetData(2, ref id);
-
-        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(id, gridLine)));
+        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine)));
       }
     }
   }

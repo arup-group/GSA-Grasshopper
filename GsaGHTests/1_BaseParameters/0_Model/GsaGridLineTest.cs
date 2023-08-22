@@ -8,15 +8,15 @@ namespace GsaGHTests.Parameters {
   public class GsaGridLineTest {
     [Fact]
     public void ConstructorTest() {
-      var gridLine = new GsaGridLine(7, new GsaAPI.GridLine("label"));
+      var gridLine = new GsaGridLine(new GsaAPI.GridLine("label"));
 
-      Assert.Equal(7, gridLine.Id);
+      Assert.NotNull(gridLine._gridLine);
       Assert.Equal("label", gridLine._gridLine.Label);
     }
 
     [Fact]
     public void DuplicateTest() {
-      var original = new GsaGridLine(7, new GsaAPI.GridLine("label1"));
+      var original = new GsaGridLine(new GsaAPI.GridLine("label1"));
 
       var duplicate = (GsaGridLine)original.Duplicate();
 
@@ -24,7 +24,7 @@ namespace GsaGHTests.Parameters {
 
       duplicate._gridLine = new GridLine("label2");
 
-      Assert.Equal(7, original.Id);
+      Assert.NotNull(original._gridLine);
       Assert.Equal("label1", original._gridLine.Label);
     }
   }

@@ -26,7 +26,6 @@ namespace GsaGHTests.Model {
       };
       ComponentTestHelper.SetInput(comp, line, 0);
       ComponentTestHelper.SetInput(comp, "Line", 1);
-      ComponentTestHelper.SetInput(comp, 1, 2);
 
       return comp;
     }
@@ -38,7 +37,6 @@ namespace GsaGHTests.Model {
       var arc = new Arc(new Point3d(0, 0, 0), new Point3d(1, 1, 0), new Point3d(2, 0, 0));
       ComponentTestHelper.SetInput(comp, arc, 0);
       ComponentTestHelper.SetInput(comp, "Arc", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
 
       return comp;
     }
@@ -48,7 +46,6 @@ namespace GsaGHTests.Model {
       GH_OasysComponent comp = GridLineComponentMother();
 
       var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(1, output.Value.Id);
       Assert.NotNull(output.Value._gridLine);
     }
 
@@ -57,7 +54,6 @@ namespace GsaGHTests.Model {
       GH_OasysComponent comp = GridArcComponentMother();
 
       var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(2, output.Value.Id);
       Assert.NotNull(output.Value._gridLine);
     }
   }

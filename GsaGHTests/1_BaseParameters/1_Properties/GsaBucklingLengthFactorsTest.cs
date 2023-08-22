@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = Assemble.AssembleForLocalAxis(m1d),
+        Model = Assembler.AssembleForLocalAxis(m1d),
       };
 
       Member assembledMem1d = assembled.Model.Members()[1];

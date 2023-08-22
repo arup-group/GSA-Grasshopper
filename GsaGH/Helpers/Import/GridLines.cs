@@ -11,7 +11,7 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaGridLine> GetGridLines(GsaModel model) {
       var gridLines = new List<GsaGridLine>();
       foreach (KeyValuePair<int, GridLine> gridLine in model.Model.GridLines()) {
-        gridLines.Add(new GsaGridLine(gridLine.Key, gridLine.Value));
+        gridLines.Add(new GsaGridLine(gridLine.Value));
       }
       return gridLines;
     }

@@ -144,7 +144,7 @@ namespace GsaGH.Helpers.Export {
       var gsaLoadCases = 
         Import.Loads.GetLoadCases(loadCases).Select(n => n.Value).ToList();
 
-      mainModel.Model = Assemble.AssembleModel(
+      mainModel.Model = Assembler.AssembleModel(
         mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
         sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, LengthUnit.Meter,
         tolerance, false, owner);
