@@ -7,6 +7,9 @@ namespace GsaGhDocs.Helpers {
       if (iconName.StartsWith("UnitNumber")) {
         return $"![UnitNumber](./images/gsagh/UnitParam.png)";
       }
+
+      iconName = iconName.Replace(" (List)", string.Empty);
+      iconName = iconName.Replace(" (Tree)", string.Empty);
       
       // ![Material](./images/gsagh/MaterialParam.png)
       string name = iconName.Replace(" ", string.Empty);
@@ -20,8 +23,15 @@ namespace GsaGhDocs.Helpers {
     }
 
     public static string ParameterLink(string parameterType, List<string> parameterNames) {
-      if (parameterNames.Contains(parameterType)) {
-        return Link(parameterType, "parameter");
+      string parameterName = parameterType;
+      parameterName = parameterName.Replace(" (List)", string.Empty);
+      parameterName = parameterName.Replace(" (Tree)", string.Empty);
+      string list = parameterType.Contains(" (List)") ? " (List)" : string.Empty;
+      string tree = parameterType.Contains(" (Tree)") ? " (Tree)" : string.Empty;
+
+      if (parameterNames.Contains(parameterName.ToUpper())) {
+        string name = parameterName.Replace(" ", "-");
+        return $"[{parameterName}](gsagh-{name.ToLower()}-parameter.html)" + list + tree;
       }
 
       return parameterType;

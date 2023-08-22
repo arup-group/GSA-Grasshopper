@@ -26,13 +26,6 @@ namespace GsaGhDocs.Parameters {
       Description = persistentParam.Description;
       SubCategory = Exposure.GetExposure(persistentParam.Exposure);
       ParameterType = GetParameterType(type);
-      if (persistentParam.Access == GH_ParamAccess.list) {
-        ParameterType += " (List)";
-      }
-
-      if (persistentParam.Access == GH_ParamAccess.tree) {
-        ParameterType += " (Tree)";
-      }
 
       if (summary && SubCategory > 0) {
         Summary = GetClassSummary(persistentParam.GetType());
@@ -54,10 +47,7 @@ namespace GsaGhDocs.Parameters {
 
     internal static string CheckIfUnitNumber(string s) {
       if (s.Contains(" in [")) {
-        s.Replace(" in [m]", " in selected unit");
-        s.Replace(" in [cm]", " in selected unit");
-        s.Replace(" in [mm]", " in selected unit");
-        return s;
+        return "Generic";
       }
 
       if (s.Contains("[m]") || s.Contains("[cm]") || s.Contains("[mm]")) {

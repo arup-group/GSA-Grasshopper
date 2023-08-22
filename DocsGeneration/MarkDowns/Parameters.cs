@@ -50,7 +50,7 @@ namespace GsaGhDocs.MarkDowns {
     public static void CreateParameters(List<Parameter> parameters) {
       var parameterNames = new List<string>();
       foreach (Parameter parameter in parameters) {
-        parameterNames.Add(parameter.Name);
+        parameterNames.Add(parameter.Name.ToUpper());
       }
 
       foreach (Parameter parameter in parameters) {

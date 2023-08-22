@@ -95,11 +95,20 @@ namespace GsaGhDocs.Components {
         if (parameter.ParameterType == "Generic" &&
           parameter.Name.Contains("[")) {
           parameter.ParameterType = Parameter.CheckIfUnitNumber(parameter.Name);
-          parameter.Name = parameter.Name.Replace("[m]",string.Empty);
-          parameter.Name = parameter.Name.Replace("[cm]", string.Empty);
-          parameter.Name = parameter.Name.Replace("[mm]", string.Empty);
+          parameter.Name = parameter.Name.Replace(" in [m]",string.Empty);
+          parameter.Name = parameter.Name.Replace(" in [cm]", string.Empty);
+          parameter.Name = parameter.Name.Replace(" in [mm]", string.Empty);
           parameter.Name = parameter.Name.Trim();
         }
+
+        if (param.Access == GH_ParamAccess.list) {
+          parameter.ParameterType += " (List)";
+        }
+
+        if (param.Access == GH_ParamAccess.tree) {
+          parameter.ParameterType += " (Tree)";
+        }
+
         outparams.Add(parameter);
       }
       return outparams;
