@@ -1,8 +1,84 @@
-﻿using Eto.Drawing;
+﻿using GsaGhDocs.Parameters;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using static Rhino.Render.RenderEnvironment;
+using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGhDocs.Helpers {
   public class StringHelper {
+    public static string Description(string str) {
+      string markdown = ConvertSummaryToMarkup(str);
+      return $"## Description\n\n{markdown}\n\n";
+    }
+
+    private static string ConvertSummaryToMarkup(string str) {
+
+      // <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>
+      if (str.Contains("<see href=\"")) {
+        StringSplitOptions opt = StringSplitOptions.None;
+        string[] split = str.Split(new string[] { "<see href=\"" }, opt);
+        str = split[0];
+        for (int i = 1; i < split.Length; i++) {
+          string[] htmlLinkAndRest = split[i].Split(new string[] { "\">" }, opt);
+          string htmlAddress = htmlLinkAndRest[0];
+          string[] htmlNameAndRest = htmlLinkAndRest[1].Split(new string[] { "</see>" }, opt);
+          string htmlName = htmlNameAndRest[0];
+          string markdownLink = $"[{htmlName}]({htmlAddress})";
+          str += markdownLink + htmlNameAndRest[1];
+        }
+      }
+
+      // <see cref="GsaAPI.Bool6" />
+      if (str.Contains("<see cref=\"")) {
+        StringSplitOptions opt = StringSplitOptions.None;
+        string[] split = str.Split(new string[] { "<see cref=\"" }, opt);
+        str = split[0];
+        for (int i = 1; i < split.Length; i++) {
+          string[] refAndRest = split[i].Split(new string[] { "/>" }, opt);
+          string reference = refAndRest[0];
+          switch (reference[0]) {
+            case 'T':
+              reference = reference.Replace("T:", string.Empty)
+                .Replace("\"", string.Empty).Replace(" ", string.Empty); ;
+              string[] typeSplit = reference.Split('.');
+              string markdownLink = SortReference(typeSplit[0], typeSplit[1], typeSplit.Last());
+              str += markdownLink + refAndRest[1];
+              break;
+
+            case 'M':
+              reference = reference.Replace("M:", string.Empty)
+                .Replace("\"", string.Empty).Replace(" ", string.Empty); ;
+              string[] typeSplit2 = reference.Split('.');
+              str += typeSplit2.Last() + refAndRest[1];
+              break;
+          }
+        }
+      }
+
+      return str;
+    }
+
+    private static string SortReference(string @namespace, string type, string name) {
+      switch (@namespace) {
+        case "GsaAPI":
+          string link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/types.html#"
+          + name.ToLower();
+          return $"[GsaAPI {name}]({link})";
+
+        case "GsaGH":
+          if (type == "Parameters") {
+            return $"[{name}](gsagh-{name.ToLower()}-parameter.html)";
+          }
+          if (type == "Components") {
+            return $"[{name}](gsagh-{name.ToLower()}-component.html)";
+          }
+          break;
+      }
+
+      return string.Empty;
+    }
+    
     public static string Icon(string iconName, string postfix = "") {
       if (iconName.StartsWith("UnitNumber")) {
         return $"![UnitNumber](./images/gsagh/UnitParam.png)";
