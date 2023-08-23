@@ -46,6 +46,7 @@ namespace GsaGhDocs.MarkDowns.Helpers {
         for (int i = 1; i < split.Length; i++) {
           string[] htmlLinkAndRest = split[i].Split(new string[] { "\">" }, opt);
           string htmlAddress = htmlLinkAndRest[0];
+          htmlAddress = htmlAddress.Replace("https://docs.oasys-software.com/structural/gsa/", "/");
           string[] htmlNameAndRest = htmlLinkAndRest[1].Split(new string[] { "</see>" }, opt);
           string htmlName = htmlNameAndRest[0];
           string markdownLink = $"[{htmlName}]({htmlAddress})";
