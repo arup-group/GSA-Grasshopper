@@ -9,7 +9,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   /// This class provides a parameter interface for the <see cref="GsaGridLineGoo" /> type.
   /// </summary>
-  public class GsaGridLineParameter : GH_OasysPersistentParam<GsaGridLineGoo> {
+  public class GsaGridLineParameter : GH_OasysPersistentGeometryParam<GsaGridLineGoo> {
     public override Guid ComponentGuid => new Guid("e5e50621-12c9-4ac4-abb0-926d60414ea7");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override string InstanceDescription

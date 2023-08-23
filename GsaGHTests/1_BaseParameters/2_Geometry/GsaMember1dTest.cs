@@ -22,6 +22,17 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
+    public void CloneTest() {
+      var original = new GsaMember1d {
+        Name = "Name",
+      };
+
+      GsaMember1d duplicate = original.Clone();
+
+      Duplicates.AreEqual(original, duplicate);
+    }
+
+    [Fact]
     public void DuplicateTest() {
       var original = new GsaMember1d {
         Name = "Name",
@@ -29,7 +40,7 @@ namespace GsaGHTests.Parameters {
 
       GsaMember1d duplicate = original.Duplicate();
 
-      Duplicates.AreEqual(original, duplicate);
+      Assert.Equal(original, duplicate);
     }
 
     [Fact]

@@ -43,10 +43,10 @@ namespace GsaGH.Components {
 
       GH_Curve curve = null;
       if (da.GetData(0, ref curve)) {
-
         var ghLine = new GH_Line();
         var ghArc = new GH_Arc();
         GridLine gridLine;
+        var polyCurve = new PolyCurve();
         if (ghLine.CastFrom(curve)) {
           Line line = ghLine.Value;
           // project onto WorldXY
@@ -60,6 +60,8 @@ namespace GsaGH.Components {
             Length = line.Length,
             Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
           };
+
+          polyCurve.Append(line);
         } else if (ghArc.CastFrom(curve)) {
           // project onto WorldXY
           Point3d startPoint = ghArc.Value.StartPoint;
@@ -70,24 +72,36 @@ namespace GsaGH.Components {
           endPoint.Z = 0;
           var arc = new Arc(startPoint, midPoint, endPoint);
 
-          Plane plane = arc.Plane;
-          double arcAngle = Vector3d.VectorAngle(arc.Plane.XAxis, Plane.WorldXY.XAxis) * 180 / Math.PI;
+          if (arc.Plane.ZAxis.Z < 0) {
+            arc = new Arc(endPoint, midPoint, startPoint);
+          }
+
+          double arcAngleRadians = Vector3d.VectorAngle(arc.Plane.XAxis, Vector3d.XAxis);
+          var x = Vector3d.CrossProduct(Vector3d.XAxis, arc.Plane.XAxis);
+          if (x.Z < 0) {
+            arcAngleRadians *= -1;
+          }
+
+          double startAngleDegrees = arcAngleRadians * 180 / Math.PI;
+          double endAngleDegrees = startAngleDegrees + arc.EndAngleDegrees;
 
           gridLine = new GridLine(label) {
             Shape = GridLineShape.Arc,
             X = arc.Center.X,
             Y = arc.Center.Y,
-            Length = arc.Length,
-            Theta1 = -arcAngle + arc.StartAngleDegrees,
-            Theta2 = -arcAngle + arc.EndAngleDegrees
+            Length = arc.Diameter / 2.0,
+            Theta1 = startAngleDegrees,
+            Theta2 = endAngleDegrees
           };
+
+          polyCurve.Append(arc);
         } else {
           string message = "Invalid input geometry, curve needs to be a line or an arc.";
           this.AddRuntimeWarning(message);
           return;
         }
 
-        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine)));
+        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine, polyCurve)));
       }
     }
   }

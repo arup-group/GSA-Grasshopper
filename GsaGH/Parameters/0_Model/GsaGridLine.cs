@@ -1,16 +1,34 @@
 ﻿using GsaAPI;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   public class GsaGridLine {
     internal GridLine _gridLine;
+    internal PolyCurve _curve;
 
-    internal GsaGridLine(GridLine gridLine) {
+    internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
       _gridLine = gridLine;
+      _curve = curve;
+    }
+
+    public GsaGridLine Clone() {
+      var gridLine = new GridLine(_gridLine.Label) {
+        X = _gridLine.X,
+        Y = _gridLine.Y,
+        Length = _gridLine.Length,
+        Shape = _gridLine.Shape,
+        Theta1 = _gridLine.Theta1,
+      };
+      if(_gridLine.Shape == GridLineShape.Arc) {
+        gridLine.Theta2 = _gridLine.Theta2;
+      }
+      PolyCurve curve = _curve.DuplicatePolyCurve();
+      var dup = new GsaGridLine(gridLine, curve);
+      return dup;
     }
 
     public GsaGridLine Duplicate() {
-      var dup = new GsaGridLine(_gridLine);
-      return dup;
+      return this;
     }
 
     public override string ToString() {

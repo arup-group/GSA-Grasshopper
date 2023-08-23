@@ -10,7 +10,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d> {
     public static string Description => "GSA 1D Member";
