@@ -6,9 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
-using GsaGhDocs.Data.Helpers;
+using DocsGeneration.Data.Helpers;
 
-namespace GsaGhDocs.Data {
+namespace DocsGeneration.Data {
   public class Parameter {
     public string Name { get; set; }
     public string NickName { get; set; }
@@ -17,6 +17,7 @@ namespace GsaGhDocs.Data {
     public int SubCategory { get; set; }
     public string ParameterType { get; set; }
     public List<Parameter> Properties { get; set; }
+    public string PropertiesComponent { get; set; }
     public Parameter(Type type, bool summary = false) {
       var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
       Name = persistentParam.Name.Replace("parameter", string.Empty).Trim();
@@ -52,28 +53,33 @@ namespace GsaGhDocs.Data {
         return "Generic";
       }
 
+      string un = "UnitNumber";
       if (s.Contains("[m]") || s.Contains("[cm]") || s.Contains("[mm]")) {
-        return "UnitNumber `Length`";
+        return un + " `Length`";
       }
 
       if (s.Contains("[kN]")) {
-        return "UnitNumber `Force`";
+        return un + " `Force`";
       }
 
       if (s.Contains("[kN/m]")) {
-        return "UnitNumber `ForcePerLength`";
+        return un + " `ForcePerLength`";
       }
 
       if (s.Contains("[kN/m²]") || s.Contains("[MPa]")) {
-        return "UnitNumber `Pressure`";
+        return un + " `Pressure`";
       }
 
       if (s.Contains("[kN·m]")) {
-        return "UnitNumber `Moment`";
+        return un + " `Moment`";
       }
 
       if (s.Contains("[MJ/m³]")) {
-        return "UnitNumber `EnergyDensity`";
+        return un + " `EnergyDensity`";
+      }
+
+      if (s.Contains("[{ forceUnitAbbreviation = kN, forcePerLengthUnit = kN/m, forcePerAreaUnit = kN/m² }]")){
+        return un;
       }
 
       return s;
@@ -207,6 +213,7 @@ namespace GsaGhDocs.Data {
         if (componentName.Contains("EDIT") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(
             component.Outputs.GetRange(1, component.Outputs.Count - 1));
+          PropertiesComponent = component.Name;
           return;
         }
       }
@@ -215,6 +222,7 @@ namespace GsaGhDocs.Data {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("PROPERTIES") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(component.Outputs.ToList());
+          PropertiesComponent = component.Name;
           return;
         }
       }
@@ -223,6 +231,7 @@ namespace GsaGhDocs.Data {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("INFO") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(component.Outputs.ToList());
+          PropertiesComponent = component.Name;
           return;
         }
       }
@@ -231,6 +240,7 @@ namespace GsaGhDocs.Data {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("GET") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(component.Outputs.ToList());
+          PropertiesComponent = component.Name;
           return;
         }
       }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GsaGhDocs.MarkDowns.Helpers {
+namespace DocsGeneration.MarkDowns.Helpers {
   public class StringHelper {
     public static string SummaryDescription(string str) {
       string markdown = ConvertSummaryToMarkup(str);
@@ -25,8 +25,7 @@ namespace GsaGhDocs.MarkDowns.Helpers {
             for (int j = 1; j < parameterNameAndRest.Length; j++) {
               str += $"{parameterNameAndRest[j]} ";
             }
-          }
-          else {
+          } else {
             str += split[i];
           }
         }
@@ -50,7 +49,10 @@ namespace GsaGhDocs.MarkDowns.Helpers {
           string[] htmlNameAndRest = htmlLinkAndRest[1].Split(new string[] { "</see>" }, opt);
           string htmlName = htmlNameAndRest[0];
           string markdownLink = $"[{htmlName}]({htmlAddress})";
-          str += markdownLink + htmlNameAndRest[1];
+          str += markdownLink;
+          if (htmlNameAndRest.Length > 1) {
+            str += htmlNameAndRest[1];
+          }
         }
       }
 
@@ -68,15 +70,42 @@ namespace GsaGhDocs.MarkDowns.Helpers {
                 .Replace("\"", string.Empty).Replace(" ", string.Empty); ;
               string[] typeSplit = reference.Split('.');
               string markdownLink = SortReference(typeSplit[0], typeSplit[1], typeSplit.Last());
-              str += markdownLink + refAndRest[1];
+              str += markdownLink;
+              if (refAndRest.Length > 1) {
+                str += refAndRest[1];
+              }
               break;
 
             case 'M':
               reference = reference.Replace("M:", string.Empty)
                 .Replace("\"", string.Empty).Replace(" ", string.Empty); ;
               string[] typeSplit2 = reference.Split('.');
-              str += typeSplit2.Last() + refAndRest[1];
+              str += typeSplit2.Last();
+              if (refAndRest.Length > 1) {
+                str += refAndRest[1];
+              }
               break;
+
+            default:
+              str += refAndRest.Last();
+              break;
+          }
+        }
+      }
+
+      if (str.Contains("<list type=\"bullet\">")) {
+        StringSplitOptions opt = StringSplitOptions.RemoveEmptyEntries;
+        string[] split = str.Split(new string[] { "<list type=\"bullet\">" }, opt);
+        str = split[0];
+        for (int i = 1; i < split.Length; i++) {
+          string[] listsAndRest = split[i].Split(new string[] { "<item><description>" }, opt);
+          for (int j = 0; j < listsAndRest.Length - 1; j++) {
+            str += "\n- " + listsAndRest[j].Replace("</description></item>", string.Empty);
+          }
+          string[] lastItemAndRest = listsAndRest.Last().Split(new string[] { "</list>" }, opt);
+          str += "\n- " + lastItemAndRest[0].Replace("</description></item>", "\n\n");
+          if (lastItemAndRest.Length > 1) {
+            str += lastItemAndRest[1].TrimStart();
           }
         }
       }
@@ -159,9 +188,13 @@ namespace GsaGhDocs.MarkDowns.Helpers {
       return $"_{text}_";
     }
 
+    public static string CreateMarkDownFileName(string text, string postfix) {
+      string fileLink = CreateFileName(text, postfix);
+      return $@"Output\{fileLink}.md";
+    }
     public static string CreateFileName(string text, string postfix) {
       string name = text.Replace(" ", string.Empty);
-      return $@"Output\gsagh-{name.ToLower()}-{postfix.ToLower()}.md";
+      return $@"gsagh-{name.ToLower()}-{postfix.ToLower()}";
     }
 
     public static string Warning(string text) {

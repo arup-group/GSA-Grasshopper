@@ -1,9 +1,9 @@
 ﻿using Grasshopper.Kernel;
-using GsaGhDocs.Data.Helpers;
+using DocsGeneration.Data.Helpers;
 using System;
 using System.Collections.Generic;
 
-namespace GsaGhDocs.Data {
+namespace DocsGeneration.Data {
   public class Component {
     public string Name { get; set; }
     public string NickName { get; set; }
@@ -99,6 +99,8 @@ namespace GsaGhDocs.Data {
           parameter.Name = parameter.Name.Replace(" in [m]", string.Empty);
           parameter.Name = parameter.Name.Replace(" in [cm]", string.Empty);
           parameter.Name = parameter.Name.Replace(" in [mm]", string.Empty);
+          string loadSpecific = "[{ forceUnitAbbreviation = kN, forcePerLengthUnit = kN/m, forcePerAreaUnit = kN/m² }]";
+          parameter.Name = parameter.Name.Replace(loadSpecific, string.Empty);
           parameter.Name = parameter.Name.Trim();
         }
 

@@ -2,16 +2,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace GsaGhDocs.MarkDowns {
+namespace DocsGeneration.MarkDowns {
   public class Table {
     public string Name { get; set; }
     public List<string> Headers { get; set; }
     private string _table = string.Empty;
     private bool _hasRows = false;
-    public Table(string name, List<string> headers) {
+    public Table(string name, List<string> headers, int heading = 2) {
       Name = name;
       if (!string.IsNullOrEmpty(name)) {
-        _table += $"## {name}\n\n";
+        _table += $"{new string('#', heading)} {name}\n\n";
       }
 
       Headers = headers;

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System;
-using GsaGhDocs.Data;
-using GsaGhDocs.MarkDowns.Helpers;
-using GsaGhDocs.MarkDowns;
+using DocsGeneration.Data;
+using DocsGeneration.MarkDowns.Helpers;
+using DocsGeneration.MarkDowns;
+using GsaGH.Components;
 
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
@@ -60,7 +61,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateParameter(Parameter parameter, List<string> parmeterNames) {
-      string filePath = StringHelper.CreateFileName(parameter.Name, "Parameter");
+      string filePath = StringHelper.CreateMarkDownFileName(parameter.Name, "Parameter");
       Console.WriteLine($"Writing {filePath}");
       
       string text = $"# {parameter.Name}\n\n";
@@ -101,6 +102,12 @@ namespace DocsGeneration.MarkDowns {
         }
 
         text += table.Finalise();
+
+        if (!string.IsNullOrEmpty(parameter.PropertiesComponent)) {
+          string link = StringHelper.CreateLink(parameter.PropertiesComponent, "component");
+          string note = $"Note: the above properties can be retrieved using the {link} component";
+          text += StringHelper.MakeItalic(note);
+        }
       }
 
       Writer.Write(filePath, text);

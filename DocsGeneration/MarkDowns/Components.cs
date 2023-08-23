@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
-using GsaGhDocs.Data;
-using GsaGhDocs.MarkDowns.Helpers;
-using GsaGhDocs.MarkDowns;
+using DocsGeneration.Data;
+using DocsGeneration.MarkDowns.Helpers;
 using GsaGH.Components.Helpers;
 
 namespace DocsGeneration.MarkDowns {
@@ -19,7 +18,6 @@ namespace DocsGeneration.MarkDowns {
 
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters) {
-      string componentsOverview = StringHelper.CreateFileName("components", string.Empty);
       CreateComponentOverview(components.Keys.ToList());
 
       var parameterNames = new List<string>();
@@ -45,7 +43,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponent(Component component, List<string> parmeterNames) {
-      string filePath = StringHelper.CreateFileName(component.Name, "Component");
+      string filePath = StringHelper.CreateMarkDownFileName(component.Name, "Component");
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
@@ -90,7 +88,7 @@ namespace DocsGeneration.MarkDowns {
           "Name",
           "Description"
         };
-        var table = new Table("Inputs", headers);
+        var table = new Table("Input parameters", headers, 3);
         foreach (Parameter property in component.Inputs) {
           table.AddRow(new List<string>() {
             StringHelper.CreateIconLink(property.ParameterType, "Param"),
@@ -111,7 +109,7 @@ namespace DocsGeneration.MarkDowns {
           "Name",
           "Description"
         };
-        var table = new Table("Outputs", headers);
+        var table = new Table("Output parameters", headers, 3);
 
         string note = string.Empty;
         foreach (Parameter property in component.Outputs) {
@@ -182,7 +180,6 @@ namespace DocsGeneration.MarkDowns {
       var tableHeaders = new List<string>() {
         " ", // icon
         "Name",
-        "Type",
         "Description"
       };
 
@@ -197,7 +194,7 @@ namespace DocsGeneration.MarkDowns {
       };
 
       for (int i = 0; i < subCategories.Count; i++) {
-        var table = new Table(subCategories[i], tableHeaders);
+        var table = new Table(subCategories[i], tableHeaders, 4);
         foreach (Component component in components) {
           if (component.SubCategory - 1 != i) {
             continue;
@@ -206,10 +203,10 @@ namespace DocsGeneration.MarkDowns {
           table.AddRow(new List<string>(){
             StringHelper.CreateIconLink(component.Name),
             StringHelper.CreateLink(component.Name, "Component"),
-            component.ComponentType,
             StringHelper.ComponentDescription(component.Description, parameterNames)
           });
         }
+
         text += table.Finalise();
       }
 
