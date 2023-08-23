@@ -27,7 +27,9 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddCurveParameter("Curve", "C", "Line or Arc to create a GSA Grid Line", GH_ParamAccess.item);
       pManager.AddTextParameter("Label", "L", "Grid Line Label", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Pattern", "P", "Pattern", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -101,7 +103,13 @@ namespace GsaGH.Components {
           return;
         }
 
-        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine, polyCurve)));
+        var ghPattern = new GH_Number();
+        int pattern = 0;
+        if (da.GetData(2, ref ghPattern)) {
+          GH_Convert.ToInt32(ghPattern, out pattern, GH_Conversion.Both);
+        }
+
+        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine, polyCurve, pattern)));
       }
     }
   }

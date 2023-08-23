@@ -56,8 +56,11 @@ namespace GsaGH.Parameters {
       //}
 
       Color color = Color.Black;
-      int pattern = 111111110;
-      int thickness = 2;
+      int pattern = 999999;
+      if(Value._pattern != 0) {
+        pattern = Value._pattern;
+      }
+      int thickness = 1;
       Point3d[] points;
       if (Value._curve.IsLinear()) {
         points = new Point3d[2] { Value._curve.SegmentCurve(0).PointAtStart, Value._curve.SegmentCurve(0).PointAtEnd };
