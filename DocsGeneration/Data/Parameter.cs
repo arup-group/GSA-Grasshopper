@@ -1,17 +1,14 @@
 ﻿using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaGhDocs.Components;
-using GsaGhDocs.Helpers;
-using Rhino.PlugIns;
+using DocsGeneration.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Linq;
+using GsaGhDocs.Data.Helpers;
 
-namespace GsaGhDocs.Parameters {
+namespace GsaGhDocs.Data {
   public class Parameter {
     public string Name { get; set; }
     public string NickName { get; set; }
@@ -127,7 +124,8 @@ namespace GsaGhDocs.Parameters {
             parameters.Add(param);
             Console.WriteLine($"Added {param.Name} parameter");
           }
-        } catch (Exception) {
+        }
+        catch (Exception) {
           continue;
         }
       }
@@ -247,7 +245,7 @@ namespace GsaGhDocs.Parameters {
         }
 
         parameter.Name = parameter.Name.Replace("parameter", string.Empty).Trim();
-                
+
         cleaned.Add(parameter);
       }
 

@@ -1,9 +1,10 @@
-﻿using GsaGhDocs.Parameters;
-using GsaGhDocs.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
+using GsaGhDocs.Data;
+using GsaGhDocs.MarkDowns.Helpers;
+using GsaGhDocs.MarkDowns;
 
-namespace GsaGhDocs.MarkDowns {
+namespace DocsGeneration.MarkDowns {
   public class Parameters {
     public static readonly string ParametersOverview =
       "# Parameters\n" +
@@ -35,9 +36,9 @@ namespace GsaGhDocs.MarkDowns {
         var table = new Table(header, tableHeaders);
         foreach (Parameter parameter in parameters[header]) {
           table.AddRow(new List<string>(){
-            StringHelper.Icon(parameter.Name, "Param"),
+            StringHelper.CreateIconLink(parameter.Name, "Param"),
             parameter.NickName,
-            StringHelper.Link(parameter.Name, "Param"),
+            StringHelper.CreateLink(parameter.Name, "Param"),
             parameter.Description
           });
         }
@@ -59,18 +60,18 @@ namespace GsaGhDocs.MarkDowns {
     }
 
     private static void CreateParameter(Parameter parameter, List<string> parmeterNames) {
-      string filePath = StringHelper.FileName(parameter.Name, "Parameter");
+      string filePath = StringHelper.CreateFileName(parameter.Name, "Parameter");
       Console.WriteLine($"Writing {filePath}");
       
       string text = $"# {parameter.Name}\n\n";
-      text += StringHelper.BetaWarning();
+      text += StringHelper.AddBetaWarning();
 
       var iconHeaders = new List<string>() {
         "Icon"
       };
       var iconTable = new Table(string.Empty, iconHeaders);
       iconTable.AddRow(new List<string>() {
-        StringHelper.Icon(parameter.Name, "Param"),
+        StringHelper.CreateIconLink(parameter.Name, "Param"),
       });
 
       text += iconTable.Finalise();
@@ -92,9 +93,9 @@ namespace GsaGhDocs.MarkDowns {
         var table = new Table("Properties", headers);
         foreach (Parameter property in parameter.Properties) {
           table.AddRow(new List<string>() {
-            StringHelper.Icon(property.ParameterType, "Param"),
-            StringHelper.ParameterLink(property.ParameterType, parmeterNames),
-            StringHelper.Bold(property.Name),
+            StringHelper.CreateIconLink(property.ParameterType, "Param"),
+            StringHelper.CreateParameterLink(property.ParameterType, parmeterNames),
+            StringHelper.MakeBold(property.Name),
             property.Description,
          });
         }

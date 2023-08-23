@@ -1,10 +1,9 @@
-﻿using GsaGhDocs.Helpers;
-using GsaGhDocs.Parameters;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
+using GsaGhDocs.Data.Helpers;
 using System;
 using System.Collections.Generic;
 
-namespace GsaGhDocs.Components {
+namespace GsaGhDocs.Data {
   public class Component {
     public string Name { get; set; }
     public string NickName { get; set; }
@@ -22,9 +21,10 @@ namespace GsaGhDocs.Components {
       Category = componentObject.SubCategory.Trim();
       SubCategory = Exposure.GetExposure(componentObject.Exposure);
       ComponentType = type.BaseType.Name
-        .Replace("GH_", string.Empty).Replace("Oasys", string.Empty);
-      Inputs = GetParameters(componentObject.Params.Input);
-      Outputs = GetParameters(componentObject.Params.Output);
+        .Replace("GH_", string.Empty).Replace("Oasys", string.Empty)
+        .Replace("TaskCapableComponent`1", "DropDownComponent");
+      Inputs = GetInputOutputParameters(componentObject.Params.Input);
+      Outputs = GetInputOutputParameters(componentObject.Params.Output);
     }
 
     public override string ToString() {
@@ -48,7 +48,8 @@ namespace GsaGhDocs.Components {
             var comp = new Component(type);
             components.Add(comp);
             Console.WriteLine($"Added {comp.Name} component");
-          } catch (Exception) {
+          }
+          catch (Exception) {
             continue;
           }
         }
@@ -84,7 +85,7 @@ namespace GsaGhDocs.Components {
       return dict;
     }
 
-    private List<Parameter> GetParameters(List<IGH_Param> parameters) {
+    public List<Parameter> GetInputOutputParameters(List<IGH_Param> parameters) {
       var outparams = new List<Parameter>();
       foreach (IGH_Param param in parameters) {
         var parameter = new Parameter(param.GetType()) {
@@ -95,7 +96,7 @@ namespace GsaGhDocs.Components {
         if (parameter.ParameterType == "Generic" &&
           parameter.Name.Contains("[")) {
           parameter.ParameterType = Parameter.CheckIfUnitNumber(parameter.Name);
-          parameter.Name = parameter.Name.Replace(" in [m]",string.Empty);
+          parameter.Name = parameter.Name.Replace(" in [m]", string.Empty);
           parameter.Name = parameter.Name.Replace(" in [cm]", string.Empty);
           parameter.Name = parameter.Name.Replace(" in [mm]", string.Empty);
           parameter.Name = parameter.Name.Trim();

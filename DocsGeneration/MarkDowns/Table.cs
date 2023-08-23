@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Eto.Forms;
+using System;
+using System.Collections.Generic;
 
-namespace GsaGhDocs.Helpers {
+namespace GsaGhDocs.MarkDowns {
   public class Table {
     public string Name { get; set; }
     public List<string> Headers { get; set; }
@@ -21,14 +23,17 @@ namespace GsaGhDocs.Helpers {
       foreach (string header in Headers) {
         _table += $"| ----------- ";
       }
-      
+
       _table += $"|\n";
     }
 
     public void AddRow(List<string> items) {
       _hasRows = true;
       foreach (string item in items) {
-        _table += $"|{item.Replace("\n", string.Empty)} ";
+        string row = item
+          .Replace(Environment.NewLine, "<br />")
+          .Replace("|", string.Empty);
+        _table += $"|{row} ";
       }
 
       _table += $"|\n";

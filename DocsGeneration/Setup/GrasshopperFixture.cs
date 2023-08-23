@@ -7,7 +7,7 @@ using Rhino;
 using Rhino.Runtime.InProcess;
 using RhinoInside;
 
-namespace GsaGhDocs {
+namespace DocsGeneration {
   public class GrasshopperFixture : IDisposable {
     public RhinoCore Core {
       get {

@@ -1,12 +1,8 @@
-﻿using GsaGhDocs.Parameters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using static Rhino.Render.RenderEnvironment;
-using static System.Collections.Specialized.BitVector32;
 
-namespace GsaGhDocs.Helpers {
+namespace GsaGhDocs.MarkDowns.Helpers {
   public class StringHelper {
     public static string SummaryDescription(string str) {
       string markdown = ConvertSummaryToMarkup(str);
@@ -29,7 +25,8 @@ namespace GsaGhDocs.Helpers {
             for (int j = 1; j < parameterNameAndRest.Length; j++) {
               str += $"{parameterNameAndRest[j]} ";
             }
-          } else {
+          }
+          else {
             str += split[i];
           }
         }
@@ -39,6 +36,8 @@ namespace GsaGhDocs.Helpers {
     }
 
     private static string ConvertSummaryToMarkup(string str) {
+      str = str.Replace("</para>", "\n\n").Replace("<para>", string.Empty);
+
       // <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>
       if (str.Contains("<see href=\"")) {
         StringSplitOptions opt = StringSplitOptions.None;
@@ -89,7 +88,7 @@ namespace GsaGhDocs.Helpers {
         case "GsaAPI":
           string link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/data-classes.html#"
           + name.ToLower();
-          if (name == "Bool6" 
+          if (name == "Bool6"
             || name == "Annotation"
             || name == "AutomaticOffset"
             || name == "SectionModifierAttribute"
@@ -113,27 +112,27 @@ namespace GsaGhDocs.Helpers {
 
       return string.Empty;
     }
-    
-    public static string Icon(string iconName, string postfix = "") {
+
+    public static string CreateIconLink(string iconName, string postfix = "") {
       if (iconName.StartsWith("UnitNumber")) {
         return $"![UnitNumber](./images/gsagh/UnitParam.png)";
       }
 
       iconName = iconName.Replace(" (List)", string.Empty);
       iconName = iconName.Replace(" (Tree)", string.Empty);
-      
+
       // ![Material](./images/gsagh/MaterialParam.png)
       string name = iconName.Replace(" ", string.Empty);
       return $"![{name}](./images/gsagh/{name}{postfix}.png)";
     }
 
-    public static string Link(string linkName, string postfix) {
+    public static string CreateLink(string linkName, string postfix) {
       // [Material](gsagh-material-parameter.html)
       string name = linkName.Replace(" ", "-");
       return $"[{linkName}](gsagh-{name.ToLower()}-{postfix.ToLower()}.html)";
     }
 
-    public static string ParameterLink(string parameterType, List<string> parameterNames) {
+    public static string CreateParameterLink(string parameterType, List<string> parameterNames) {
       string parameterName = parameterType;
       parameterName = parameterName.Replace(" (List)", string.Empty);
       parameterName = parameterName.Replace(" (Tree)", string.Empty);
@@ -151,15 +150,15 @@ namespace GsaGhDocs.Helpers {
       return parameterType;
     }
 
-    public static string Bold(string text) {
+    public static string MakeBold(string text) {
       return $"**{text}**";
     }
 
-    public static string Italic(string text) {
+    public static string MakeItalic(string text) {
       return $"_{text}_";
     }
 
-    public static string FileName(string text, string postfix) {
+    public static string CreateFileName(string text, string postfix) {
       string name = text.Replace(" ", string.Empty);
       return $@"Output\gsagh-{name.ToLower()}-{postfix.ToLower()}.md";
     }
@@ -171,7 +170,7 @@ namespace GsaGhDocs.Helpers {
       return $"::: warning\n{text}\n:::\n\n";
     }
 
-    public static string BetaWarning() {
+    public static string AddBetaWarning() {
       string txt = "GSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.";
       return Warning(txt);
     }

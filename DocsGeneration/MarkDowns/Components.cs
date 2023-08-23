@@ -1,15 +1,12 @@
-﻿using GsaGhDocs.Parameters;
-using GsaGhDocs.Helpers;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System;
-using GsaGhDocs.Components;
-using System.Xml.Linq;
 using System.Linq;
-using System.Security.Cryptography;
-using static Rhino.Render.PhysicallyBasedMaterial;
+using GsaGhDocs.Data;
+using GsaGhDocs.MarkDowns.Helpers;
+using GsaGhDocs.MarkDowns;
+using GsaGH.Components.Helpers;
 
-namespace GsaGhDocs.MarkDowns {
+namespace DocsGeneration.MarkDowns {
   public class Components {
     public static readonly string ComponentsOverview =
       "# Components\n" +
@@ -22,7 +19,7 @@ namespace GsaGhDocs.MarkDowns {
 
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters) {
-      string componentsOverview = StringHelper.FileName("components", string.Empty);
+      string componentsOverview = StringHelper.CreateFileName("components", string.Empty);
       CreateComponentOverview(components.Keys.ToList());
 
       var parameterNames = new List<string>();
@@ -48,23 +45,43 @@ namespace GsaGhDocs.MarkDowns {
     }
 
     private static void CreateComponent(Component component, List<string> parmeterNames) {
-      string filePath = StringHelper.FileName(component.Name, "Component");
+      string filePath = StringHelper.CreateFileName(component.Name, "Component");
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
-      text += StringHelper.BetaWarning();
+      text += StringHelper.AddBetaWarning();
 
       var iconHeaders = new List<string>() {
         "Icon"
       };
       var iconTable = new Table(string.Empty, iconHeaders);
       iconTable.AddRow(new List<string>() {
-        StringHelper.Icon(component.Name),
+        StringHelper.CreateIconLink(component.Name),
       });
 
       text += iconTable.Finalise();
 
       text += $"## Description\n\n{component.Description}\n\n";
+
+      switch (component.ComponentType) {
+        case "DropDownComponent":
+          text += StringHelper.MakeItalic("Note: This is a dropdown component and input/output " +
+            "may vary depending on the selected dropdown") + "\n\n";
+          break;
+
+        case "Section3dPreviewComponent":
+          text += StringHelper.MakeItalic(
+            "Note: This component can preview 3D Sections, right-click the middle of the " +
+            "component to toggle the section preview.") + "\n\n";
+          break;
+
+        case "Section3dPreviewDropDownComponent":
+          text += StringHelper.MakeItalic("Note: This is a dropdown component and input/output " +
+            "may vary depending on the selected dropdown") + "\n" +
+            StringHelper.MakeItalic("This component can preview 3D Sections, right-click the middle of the " +
+            "component to toggle the section preview.") + "\n\n";
+          break;
+      }
 
       if (component.Inputs != null && component.Inputs.Count != 0) {
         var headers = new List<string>() {
@@ -76,9 +93,9 @@ namespace GsaGhDocs.MarkDowns {
         var table = new Table("Inputs", headers);
         foreach (Parameter property in component.Inputs) {
           table.AddRow(new List<string>() {
-            StringHelper.Icon(property.ParameterType, "Param"),
-            StringHelper.ParameterLink(property.ParameterType, parmeterNames),
-            StringHelper.Bold(property.Name),
+            StringHelper.CreateIconLink(property.ParameterType, "Param"),
+            StringHelper.CreateParameterLink(property.ParameterType, parmeterNames),
+            StringHelper.MakeBold(property.Name),
             property.Description,
          });
         }
@@ -86,6 +103,7 @@ namespace GsaGhDocs.MarkDowns {
         text += table.Finalise();
       }
 
+      
       if (component.Outputs != null && component.Outputs.Count != 0) {
         var headers = new List<string>() {
           "Icon",
@@ -94,19 +112,51 @@ namespace GsaGhDocs.MarkDowns {
           "Description"
         };
         var table = new Table("Outputs", headers);
+
+        string note = string.Empty;
         foreach (Parameter property in component.Outputs) {
+          string description = property.Description;
+          note = CheckForResultNote(ref description);
+
           table.AddRow(new List<string>() {
-            StringHelper.Icon(property.ParameterType, "Param"),
-            StringHelper.ParameterLink(property.ParameterType, parmeterNames),
-            StringHelper.Bold(property.Name),
-            property.Description,
-         });
+            StringHelper.CreateIconLink(property.ParameterType, "Param"),
+            StringHelper.CreateParameterLink(property.ParameterType, parmeterNames),
+            StringHelper.MakeBold(property.Name),
+            description,
+          });
+        }
+
+        if (!string.IsNullOrEmpty(note)) {
+          note = note.Replace(Environment.NewLine, " ").Replace("  ", " ");
+          text += "\n\n" + StringHelper.MakeItalic("Output note:" + note) + "\n";
         }
 
         text += table.Finalise();
       }
 
       Writer.Write(filePath, text);
+    }
+
+    private static string CheckForResultNote(ref string description) {
+      string noteOut = string.Empty;
+
+      var notesToCheckFor = new List<string>() {
+        ResultNotes.NoteNodeResults,
+        ResultNotes.Note1dResults,
+        ResultNotes.Note2dForceResults,
+        ResultNotes.Note2dStressResults,
+        ResultNotes.Note3dStressResults,
+        ResultNotes.Note2dResults,
+      };
+
+      foreach (string note in notesToCheckFor) {
+        if (description.Contains(note)) {
+          description = description.Replace(note, string.Empty);
+          noteOut = note;
+        }
+      }
+
+      return noteOut;
     }
 
     private static void CreateComponentOverview(List<string> categories) {
@@ -132,6 +182,7 @@ namespace GsaGhDocs.MarkDowns {
       var tableHeaders = new List<string>() {
         " ", // icon
         "Name",
+        "Type",
         "Description"
       };
 
@@ -153,8 +204,9 @@ namespace GsaGhDocs.MarkDowns {
           }
 
           table.AddRow(new List<string>(){
-            StringHelper.Icon(component.Name),
-            StringHelper.Link(component.Name, "Component"),
+            StringHelper.CreateIconLink(component.Name),
+            StringHelper.CreateLink(component.Name, "Component"),
+            component.ComponentType,
             StringHelper.ComponentDescription(component.Description, parameterNames)
           });
         }

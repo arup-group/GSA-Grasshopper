@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Xml;
 
-namespace GsaGhDocs.Helpers {
+namespace DocsGeneration.Helpers {
   public class GsaGhDll {
     public static Assembly GsaGH;
     public static string PluginPath;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GsaGhDocs.Helpers {
+namespace GsaGhDocs.Data.Helpers {
   public class Exposure {
     public static int GetExposure(GH_Exposure exposure) {
       if (exposure.HasFlag(GH_Exposure.hidden)) {

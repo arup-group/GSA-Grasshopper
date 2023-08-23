@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GsaGhDocs.Helpers {
+namespace GsaGhDocs.MarkDowns.Helpers {
   public class Writer {
     public static void Write(string filePath, string text) {
       string directory = Path.GetDirectoryName(filePath);

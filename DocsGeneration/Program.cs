@@ -1,11 +1,10 @@
-﻿using GsaGhDocs.Components;
-using GsaGhDocs.Parameters;
-using GsaGhDocs.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DocsGeneration.Helpers;
+using GsaGhDocs.Data;
 
-namespace GsaGhDocs {
+namespace DocsGeneration {
   public class Program {
     public static void Main() {
       var dll = new GsaGhDll();
