@@ -12,7 +12,9 @@ namespace DocsGeneration.MarkDowns {
       Dictionary<string, List<Parameter>> parameters) {
       
       // intro
-      string sb = "/*\nThis part of the sidebar file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
+      string sb = "/*\n --- Start of auto-generated text --- \n" +
+        "This part of the sidebar file has been auto-generated, do not change it manually! Edit" +
+        " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
       sb += "{\r\n";
       sb += "\ttitle: 'GSA Grasshopper plugin',\r\n";
       int ind = 4;
@@ -32,7 +34,7 @@ namespace DocsGeneration.MarkDowns {
       foreach(string key in parameters.Keys) {
         foreach (Parameter parameter in parameters[key]) {
           string file = StringHelper.CreateFileName(parameter.Name, "parameter");
-          sb += AddLine(ind, $"'{page}{file},");
+          sb += AddLine(ind, $"'{page}{file}',");
         }
       }
       sb = sb.TrimEnd(',');
@@ -68,7 +70,7 @@ namespace DocsGeneration.MarkDowns {
             }
 
             string file = StringHelper.CreateFileName(component.Name, "component");
-            sb += AddLine(ind, $"'{page}{file},");
+            sb += AddLine(ind, $"'{page}{file}',");
           }
         }
 
@@ -88,7 +90,7 @@ namespace DocsGeneration.MarkDowns {
       ind -= 4;
       sb += AddLine(0, "},");
 
-      sb = "/*\n--- End of auto-generated text ---\n*/\n";
+      sb += "/*\n--- End of auto-generated text ---\n*/\n";
 
       var js = new StreamWriter($@"Output\sidebar-gsagh.js");
       js.Write(sb);
