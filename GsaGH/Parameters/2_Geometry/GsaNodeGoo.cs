@@ -14,17 +14,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaNode" /> can be used in Grasshopper.
   /// </summary>
   public class GsaNodeGoo : GH_OasysGeometricGoo<GsaNode>, IGH_PreviewData {
-    public static string Description =>
-      "In GSA, Nodes are the only objects containing spacial geometrical \n" +
-      "information (X, Y, Z coordinates). The node numbers are referred to \n" +
-      "by elements and members in their topology lists. This is possible \n" +
-      "because everything belongs to a single model, and the information \n" +
-      "does not need to be duplicated in the elements and members.\n" +
-      "In Grasshopper, on the other hand, all parameters (nodes, elements \n" +
-      "and members) exist independently from each other. For instance, an \n" +
-      "Element1D in GsaGH keeps a copy of its start and end points, which \n" +
-      "is taken care of by the plugin. Nodes almost only need to be used \n" +
-      "for defining supports.";
+    public static string Description => "GSA Node";
     public static string Name => "Node";
     public static string NickName => "No";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

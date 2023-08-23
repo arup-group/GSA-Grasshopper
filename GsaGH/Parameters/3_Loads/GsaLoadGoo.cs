@@ -10,22 +10,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="IGsaLoad" /> can be used in Grasshopper.
   /// </summary>
   public class GsaLoadGoo : GH_OasysGoo<IGsaLoad> {
-    public static string Description =>
-      "GSA provides a number of different ways to apply loads to a model. \n" +
-      "The simplest option is nodal loading where forces are applied \n" +
-      "directly to nodes. This is not recommended for 2D and 3D elements. \n" +
-      "The next level of loading applies loads to the elements, either beam \n" +
-      "loading, 2D element loading or 3D element loading. In the solver these \n" +
-      "use shape functions to give loading on the nodes compatible with the \n" +
-      "elements to which the load is applied. Grid loading is a different type \n" +
-      "of loading which is applied to a grid surface. An algorithm then \n" +
-      "distributes this loading from the grid surface to the surrounding beam \n" +
-      "elements. This is useful for models where floor slabs are not modelled \n" +
-      "explicitly.\n" +
-      "Gravity is the final load type. This is different from the other load \n" +
-      "types as it is specified as an acceleration (in g). This is normally \n" +
-      "used to model the dead weight of the structure by specifying a gravity \n" +
-      "load of −1 × g in the z direction.";
+    public static string Description => "GSA Load";
     public static string Name => "Load";
     public static string NickName => "Ld";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

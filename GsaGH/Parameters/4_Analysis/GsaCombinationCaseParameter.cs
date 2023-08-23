@@ -20,8 +20,8 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.CombinationCaseParam;
 
     public GsaCombinationCaseParameter() : base(new GH_InstanceDescription(
-      GsaCombinationCaseGoo.Name + " parameter", GsaCombinationCaseGoo.NickName,
-      GsaCombinationCaseGoo.Description, CategoryName.Name(),
+      GsaCombinationCaseGoo.Name, GsaCombinationCaseGoo.NickName,
+      GsaCombinationCaseGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaCombinationCaseGoo PreferredCast(object data) {

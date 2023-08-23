@@ -19,8 +19,8 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.AnalysisCaseParam;
 
     public GsaAnalysisCaseParameter() : base(new GH_InstanceDescription(
-      GsaAnalysisCaseGoo.Name + " parameter", GsaAnalysisCaseGoo.NickName, 
-      GsaAnalysisCaseGoo.Description,
+      GsaAnalysisCaseGoo.Name, GsaAnalysisCaseGoo.NickName, 
+      GsaAnalysisCaseGoo.Description + " parameter",
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaAnalysisCaseGoo PreferredCast(object data) {

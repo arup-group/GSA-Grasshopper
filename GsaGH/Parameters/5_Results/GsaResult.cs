@@ -13,6 +13,10 @@ using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
+  /// <summary>
+  /// <para>A Result is used to select Cases from an analysed <see cref="GsaModel"/> and extract the values for post-processing or visualisation.</para>
+  /// <para>The Result parameter caches the result values</para>
+  /// </summary>
   public class GsaResult {
     /// <summary>
     ///   Analysis Case 1DElement Displacement Result VALUES Dictionary

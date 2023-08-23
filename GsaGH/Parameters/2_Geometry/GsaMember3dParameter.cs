@@ -27,8 +27,8 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.Mem3dParam;
 
     public GsaMember3dParameter() : base(new GH_InstanceDescription(
-      GsaMember3dGoo.Name + " parameter", GsaMember3dGoo.NickName, 
-      GsaMember3dGoo.Description, CategoryName.Name(),
+      GsaMember3dGoo.Name, GsaMember3dGoo.NickName, 
+      GsaMember3dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaMember3dGoo PreferredCast(object data) {

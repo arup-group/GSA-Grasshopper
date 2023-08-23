@@ -280,7 +280,7 @@ namespace GsaGH.Helpers.GsaApi {
     }
 
     /// <summary>
-    ///   Returns force & moment result values
+    ///   Returns force and moment result values
     /// </summary>
     /// <param name="globalResults"></param>
     /// <param name="forceUnit"></param>

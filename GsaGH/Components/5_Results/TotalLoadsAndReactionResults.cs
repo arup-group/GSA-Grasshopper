@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public TotalLoadsAndReactionResults() : base("Total Loads & Reactions", "TotalResults",
+    public TotalLoadsAndReactionResults() : base("Total Loads and Reactions", "TotalResults",
       "Get Total Loads and Reaction Results from a GSA model", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;

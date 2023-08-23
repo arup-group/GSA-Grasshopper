@@ -7,7 +7,11 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
+  /// <para>A Grid Plane Surface is used by <see href="https://docs.oasys-software.com/structural/gsa/explanations/grid-loads.html">Grid Loads</see>.</para>
+  /// <para>A grid plane defines the geometry of a surface, and the load behaviour of the grid plane is defined by a grid surface.</para>
+  /// <para>In Grasshopper, a Grid Plane Surface contains both the information of what in GSA is known as a <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-grid-plane.html">Grid Plane</see> and a <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-grid-surface.html">Grid Surface</see></para>
+  /// <para>The Grasshopper plugin will automatically create a fitting Grid Plane Surface when using the <see cref="Components.CreateGridPointLoad"/>, <see cref="Components.CreateGridLineLoad"/> or <see cref="Components.CreateGridAreaLoad"/> components. </para>
+  /// <para>Grid Plane Surfaces can also be created independently using the <see cref="Components.CreateGridPlane"/> and <see cref="Components.CreateGridSurface"/> components.</para>
   /// </summary>
   public class GsaGridPlaneSurface {
     public int AxisId {

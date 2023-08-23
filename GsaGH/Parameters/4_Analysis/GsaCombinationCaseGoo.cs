@@ -7,13 +7,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaCombinationCase" /> can be used in Grasshopper.
   /// </summary>
   public class GsaCombinationCaseGoo : GH_OasysGoo<GsaCombinationCase> {
-    public static string Description =>
-      "Combination cases are similar to analysis cases but differ \n" +
-      "in two respects:\n" +
-      " - Results for combination cases are inferred from analysis \n" +
-      "case results and not calculated explicitly.\n" +
-      " - Combination cases can be enveloping cases, as described \n" +
-      "in Enveloping in GSA.";
+    public static string Description => "GSA Combination Case";
     public static string Name => "Combination Case";
     public static string NickName => "ΣC";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

@@ -13,15 +13,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d> {
-    public static string Description => 
-      "Members in GSA are geometrical objects used for Design \n" +
-      "that can automatically find intersections with other members. \n" +
-      "From those members we can create the elements used for analysis. \n" +
-      "Members are as such more closely related to building objects, \n" +
-      "like a beam, column, slab or wall.\n" +
-      "A Member1D is the linear geometry resembling for instance a column \n" +
-      "or a beam. They can be defined geometrically by a PolyCurve \n" +
-      "consisting of lines and arcs.";
+    public static string Description => "GSA 1D Member";
     public static string Name => "Member1D";
     public static string NickName => "M1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

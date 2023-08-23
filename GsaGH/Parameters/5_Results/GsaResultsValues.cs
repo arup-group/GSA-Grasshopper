@@ -41,7 +41,7 @@ namespace GsaGH.Parameters {
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
     /// <summary>
     ///   Translation, forces, etc results
-    ///   dictionary< key = node/ elementID, value= dictionary< key = position on element, value= value>>
+    ///   dictionary (key = node/ elementID, value= dictionary( key = position on element, value= value))
     /// </summary>
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XyzResults { get; set; }

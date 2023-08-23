@@ -26,8 +26,8 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaNodeGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.NodeParam;
 
-    public GsaNodeParameter() : base(new GH_InstanceDescription(GsaNodeGoo.Name + " parameter",
-      GsaNodeGoo.NickName, GsaNodeGoo.Description, CategoryName.Name(),
+    public GsaNodeParameter() : base(new GH_InstanceDescription(GsaNodeGoo.Name,
+      GsaNodeGoo.NickName, GsaNodeGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) { }
