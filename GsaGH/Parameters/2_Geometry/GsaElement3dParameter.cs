@@ -26,9 +26,8 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaElement3dGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Elem3dParam;
 
-    public GsaElement3dParameter() : base(new GH_InstanceDescription(
-      GsaElement3dGoo.Name + " parameter", GsaElement3dGoo.NickName, 
-      GsaElement3dGoo.Description, CategoryName.Name(),
+    public GsaElement3dParameter() : base(new GH_InstanceDescription(GsaElement3dGoo.Name, 
+      GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaElement3dGoo PreferredCast(object data) {

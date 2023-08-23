@@ -8,6 +8,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -95,10 +96,8 @@ namespace GsaGH.Components {
       string forceunitAbbreviation = Force.GetAbbreviation(_forceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
 
-      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } "
-        + Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch "
-        + Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
-      string axis = " in Node's Local Axis (Global Axis is no Local Axis has been set).";
+      string note = ResultNotes.NoteNodeResults;
+      string axis = " in Global Axis.";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
         "Reaction Forces in X-direction" + axis + note, GH_ParamAccess.tree);

@@ -8,6 +8,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -75,9 +76,7 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } "
-        + Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch "
-        + Environment.NewLine + "contains a list matching the NodeIDs in the ID output.";
+      string note = ResultNotes.NoteNodeResults;
 
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
         "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);

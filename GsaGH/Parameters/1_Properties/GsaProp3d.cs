@@ -10,7 +10,7 @@ using GsaGH.Helpers.GsaApi;
 namespace GsaGH.Parameters {
   /// <summary>
   /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contain information about <see cref="GsaMaterial"/>.
-  /// Refer to <see href="/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.</para>
   /// </summary>
   public class GsaProp3d {
     public int AxisProperty {

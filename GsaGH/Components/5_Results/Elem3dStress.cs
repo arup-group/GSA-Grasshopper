@@ -8,6 +8,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -77,12 +78,7 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Pressure.GetAbbreviation(_stresshUnit);
 
-      string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results in the following order:" + Environment.NewLine
-        + "Vertex(1), Vertex(2), ..., Vertex(i), Centre." + Environment.NewLine
-        + "+ve stresses: tensile (ie. +ve direct strain)";
+      string note = ResultNotes.Note3dStressResults;
 
       pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx",
         "Stress in XX-direction in Global Axis." + note, GH_ParamAccess.tree);

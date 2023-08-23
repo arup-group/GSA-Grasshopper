@@ -11,12 +11,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaElement1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
-    public static string Description => 
-      "Elements in GSA are geometrical objects used for Analysis. \n" +
-      "Elements must be split at intersections with other elements \n" +
-      "to connect to each other or 'node out'.\n" +
-      "Element1Ds are essentially (one-dimensional) stick elements \n" +
-      "used for FE analysis.";
+    public static string Description => "GSA 1D Element";
     public static string Name => "Element1D";
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

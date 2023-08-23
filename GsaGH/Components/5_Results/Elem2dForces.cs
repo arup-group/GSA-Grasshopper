@@ -3,6 +3,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -62,12 +63,7 @@ namespace GsaGH.Components {
         Params.RegisterOutputParam(new Param_GenericObject());
         string momentrule = Environment.NewLine
           + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
-        string note = Environment.NewLine
-          + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-          + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-          + "branch contains a list of results in the following order: " + Environment.NewLine
-          + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" + Environment.NewLine
-          + "Element results are NOT averaged at nodes";
+        string note = ResultNotes.Note2dForceResults;
         Params.Output[8].NickName = "M*x";
         Params.Output[8].Description
           = "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis."

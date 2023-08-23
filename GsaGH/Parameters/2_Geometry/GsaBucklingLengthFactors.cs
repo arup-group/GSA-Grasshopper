@@ -1,6 +1,7 @@
 ﻿namespace GsaGH.Parameters {
   /// <summary>
-  ///   Buckling Length Factors for a <see cref="GsaAPI.Member" />
+  /// Buckling Factors are part of a <see cref="GsaMember1d"/> and can be used to override the automatically calculated factors that accounts for the shape of the moment diagram in lateral torsional buckling design equations. This override is applied for all bending segments in the member.
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidd-page-member-steel.html#equivalent-uniform-moment-factor-for-ltb">Equivalent uniform moment factor for LTB</see> to read more.</para>
   /// </summary>
   public class GsaBucklingLengthFactors {
     public double? EquivalentUniformMomentFactor { get; set; }

@@ -12,15 +12,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaElement3d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>, IGH_PreviewData {
-    public static string Description => 
-      "Elements in GSA are geometrical objects used for Analysis. \n" +
-      "Elements must be split at intersections with other elements \n" +
-      "to connect to them or 'node out'.\n\nIn GsaGH, an Element3D \n" +
-      "is a collection of 3D Elements (mesh solids) used for FE \n" +
-      "analysis. In GSA, a 3D Element is just a single closed mesh, \n" +
-      "but to speed things up inside Rhino (mainly for display reasons) \n" +
-      "we have made the Element3D parameter an Ngon mesh (opens new \n" +
-      "window) that can contain more than one closed mesh.";
+    public static string Description => "GSA 3D Element(s)";
     public static string Name => "Element3D";
     public static string NickName => "E3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

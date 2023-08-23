@@ -8,6 +8,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -99,10 +100,7 @@ namespace GsaGH.Components {
 
       string forcerule = Environment.NewLine + "+ve axial forces are tensile";
       string momentrule = Environment.NewLine + "Moments follow the right hand grip rule";
-      string note = Environment.NewLine
-        + "DataTree organised as { CaseID ; Permutation ; ElementID } " + Environment.NewLine
-        + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " + Environment.NewLine
-        + "branch contains a list of results per element position.";
+      string note = ResultNotes.Note1dResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
         "Element Axial Forces in Local Element X-direction." + forcerule + note,

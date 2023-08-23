@@ -12,15 +12,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaElement2d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaElement2dGoo : GH_OasysGeometricGoo<GsaElement2d>, IGH_PreviewData {
-    public static string Description => 
-      "Elements in GSA are geometrical objects used for Analysis. \n" +
-      "Elements must be split at intersections with other elements \n" +
-      "to connect to them or 'node out'.\n" +
-      "In Grasshopper, an Element2D parameter is a collection of 2D \n" +
-      "Elements (mesh faces) used for FE analysis. In GSA a 2D element \n" +
-      "is just a single face, but to speed things up inside Rhino \n" +
-      "(mainly for display reasons) we have made the Element2D parameter \n" +
-      "a mesh that can contain more than one face.";
+    public static string Description => "GSA 2D Element(s)";
     public static string Name => "Element2D";
     public static string NickName => "E2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
