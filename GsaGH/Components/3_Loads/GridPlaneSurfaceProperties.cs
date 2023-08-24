@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridPlaneProperties;
+    protected override Bitmap Icon => Resources.GridPlaneSurfaceProperties;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public GridPlaneSurfaceProperties() : base("Grid Plane Surface Properties",
@@ -33,7 +33,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };

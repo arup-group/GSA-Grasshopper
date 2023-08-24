@@ -17,7 +17,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    protected override Bitmap Icon => Resources.CreateElem2d;
+    protected override Bitmap Icon => Resources.Create2DElement;
 
     public CreateElement2d() : base("Create 2D Element", "Elem2D", "Create GSA 2D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }

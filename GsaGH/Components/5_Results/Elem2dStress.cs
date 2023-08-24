@@ -29,7 +29,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("b5eb8a78-e0dd-442b-bbd7-0384d6c944cb");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Stress2D;
+    protected override Bitmap Icon => Resources._2DStresses;
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
 
     public Elem2dStress() : base("2D Stresses", "Stress2D", "2D Projected Stress result values",

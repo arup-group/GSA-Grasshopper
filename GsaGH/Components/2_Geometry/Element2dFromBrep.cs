@@ -27,7 +27,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("18c5913e-cbce-42e8-8563-18e28b079d34");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    protected override Bitmap Icon => Resources.Element2dfromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = string.Empty;
@@ -48,7 +48,7 @@ namespace GsaGH.Components {
       tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocsGeneration.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -143,42 +144,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return string.Empty;
     }
 
-    public static string CreateIconLink(string iconName, string postfix = "") {
-      if (iconName.StartsWith("UnitNumber")) {
-        return $"![UnitNumber](./images/gsagh/UnitParam.png)";
-      }
-
-      iconName = iconName.Replace(" (List)", string.Empty);
-      iconName = iconName.Replace(" (Tree)", string.Empty);
-
-      // ![Material](./images/gsagh/MaterialParam.png)
-      string name = iconName.Replace(" ", string.Empty);
-      return $"![{name}](./images/gsagh/{name}{postfix}.png)";
-    }
-
-    public static string CreateLink(string linkName, string postfix) {
-      // [Material](gsagh-material-parameter.html)
-      string name = linkName.Replace(" ", "-");
-      return $"[{linkName}](gsagh-{name.ToLower()}-{postfix.ToLower()}.html)";
-    }
-
-    public static string CreateParameterLink(string parameterType, List<string> parameterNames) {
-      string parameterName = parameterType;
-      parameterName = parameterName.Replace(" (List)", string.Empty);
-      parameterName = parameterName.Replace(" (Tree)", string.Empty);
-      string list = parameterType.Contains(" (List)") ? " (List)" : string.Empty;
-      string tree = parameterType.Contains(" (Tree)") ? " (Tree)" : string.Empty;
-
-      if (parameterNames.Contains(parameterName.ToUpper())) {
-        string name = parameterName.Replace(" ", "-");
-        return $"[{parameterName}](gsagh-{name.ToLower()}-parameter.html)" + list + tree;
-      }
-
-      string link = $"[UnitNumber](gsagh-unitnumber-parameter.html.html)";
-      parameterType = parameterType.Replace("UnitNumber", link);
-
-      return parameterType;
-    }
+      
 
     public static string MakeBold(string text) {
       return $"**{text}**";
@@ -188,14 +154,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return $"_{text}_";
     }
 
-    public static string CreateMarkDownFileName(string text, string postfix) {
-      string fileLink = CreateFileName(text, postfix);
-      return $@"Output\{fileLink}.md";
-    }
-    public static string CreateFileName(string text, string postfix) {
-      string name = text.Replace(" ", string.Empty);
-      return $@"gsagh-{name.ToLower()}-{postfix.ToLower()}";
-    }
+    
 
     public static string Warning(string text) {
       // ::: warning

@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    protected override Bitmap Icon => Resources.Element2dfromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep", "Elem2dFromBrep",

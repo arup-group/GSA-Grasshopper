@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.PointLoad;
+    protected override Bitmap Icon => Resources.CreateGridPointLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;

@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem3d;
+    protected override Bitmap Icon => Resources.Create3DMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public CreateMember3d_OBSOLETE() : base("Create 3D Member", "Mem3D", "Create GSA Member 3D",

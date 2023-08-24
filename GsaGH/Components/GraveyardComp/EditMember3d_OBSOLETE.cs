@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem3d;
+    protected override Bitmap Icon => Resources.Edit3DMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public EditMember3d_OBSOLETE() : base("Edit 3D Member", "Mem3dEdit", "Modify GSA 3D Member",
@@ -39,7 +39,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };

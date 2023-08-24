@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
     public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Footfall;
+    protected override Bitmap Icon => Resources.FootfallResult;
 
     public FootfallResults() : base("Footfall Result", "Footfall",
       "Get the maximum response factor for a footfall analysis case", CategoryName.Name(),

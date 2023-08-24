@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public override string TypeName
       => SourceCount == 0 ? GsaGridPlaneSurfaceGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.GridPlaneParam;
+    protected override Bitmap Icon => Resources.GridPlaneSurfaceParam;
 
     public GsaGridPlaneSurfaceParameter() : base(new GH_InstanceDescription(
       GsaGridPlaneSurfaceGoo.Name, GsaGridPlaneSurfaceGoo.NickName, 

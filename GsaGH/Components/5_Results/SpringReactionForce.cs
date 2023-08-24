@@ -29,7 +29,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SpringReactionForces;
+    protected override Bitmap Icon => Resources.SpringForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 

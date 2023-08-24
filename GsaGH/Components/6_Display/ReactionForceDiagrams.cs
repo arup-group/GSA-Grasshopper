@@ -47,7 +47,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("2c9d902f-931f-4d42-904e-ea1f2448aadb");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ReactionForceDiagram;
+    protected override Bitmap Icon => Resources.ReactionForceDiagrams;
     private readonly List<string> _reactionStringList = new List<string>(new[] {
       "Reaction Fx",
       "Reaction Fy",
@@ -109,7 +109,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       ToolStripMenuItem forceUnitsMenu = GenerateForceUnitsMenu("Force");
       ToolStripMenuItem momentUnitsMenu = GenerateMomentUnitsMenu("Moment");
 

@@ -26,7 +26,7 @@ namespace GsaGH.Components.GraveyardComp {
     public override Guid ComponentGuid => new Guid("dfb17a0f-a856-4a54-ae5c-d794961f3c52");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditProp2d;
+    protected override Bitmap Icon => Resources.Edit2DProperty;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
     public EditProp2d4_OBSOLETE() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
@@ -41,7 +41,7 @@ namespace GsaGH.Components.GraveyardComp {
       
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };

@@ -20,7 +20,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("8278b67c-425a-4220-b759-79ecdd6aba55");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem1d;
+    protected override Bitmap Icon => Resources.Create1DMember;
     private bool _x1;
     private bool _x2;
     private bool _xx1;

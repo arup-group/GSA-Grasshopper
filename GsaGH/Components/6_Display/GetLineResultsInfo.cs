@@ -13,7 +13,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("89f754b4-48a1-4cb8-980b-9ac7c51e101e");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result1dInfo;
+    protected override Bitmap Icon => Resources.LineResultInfo;
 
     public GetLineResultsInfo() : base("Line Result Info", "LnResInfo",
       "Get Element 1D Contour Result values", CategoryName.Name(), SubCategoryName.Cat6()) {

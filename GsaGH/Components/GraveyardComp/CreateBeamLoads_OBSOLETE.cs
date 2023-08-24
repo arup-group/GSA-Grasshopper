@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamLoad;
+    protected override Bitmap Icon => Resources.CreateBeamLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
       "Point",
       "Uniform",

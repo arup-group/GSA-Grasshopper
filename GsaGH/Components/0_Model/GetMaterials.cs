@@ -14,7 +14,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c5f1ff5e-ae9d-4f85-b765-1b139cd10bcd");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetMaterials;
+    protected override Bitmap Icon => Resources.GetModelMaterials;
 
     public GetMaterials() : base("Get Model Materials", "GetMats",
       "Get Standard and Custom Materials from a GSA model", CategoryName.Name(),

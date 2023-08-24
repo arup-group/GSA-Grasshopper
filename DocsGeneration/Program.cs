@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using DocsGeneration.Helpers;
 using DocsGeneration.Data;
+using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration {
   public class Program {
@@ -28,6 +29,7 @@ namespace DocsGeneration {
 
       // write sidebar
       MarkDowns.SideBar.CreateSideBar(sortedComponents, sortedParameters);
+      FileHelper.WriteIconNames();
     }
   }
 }

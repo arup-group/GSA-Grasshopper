@@ -17,7 +17,7 @@ namespace GsaGH.Components.GraveyardComp {
     public override Guid ComponentGuid => new Guid("e7914f27-ea03-48e4-b7bd-a87121141f1e");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetSection;
+    protected override Bitmap Icon => Resources.GetModelProperties;
 
     public GetProperties_OBSOLETE() : base("Get Model Properties", "GetProps",
       "Get Sections, 2D Properties and Springs from GSA model", CategoryName.Name(),

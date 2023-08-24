@@ -27,7 +27,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5aa4635c-b60e-4812-ab45-6af9437255e4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditElem1d;
+    protected override Bitmap Icon => Resources.Edit1DElement;
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
     public EditElement1d2_OBSOLETE() : base("Edit 1D Element", "Elem1dEdit",

@@ -13,7 +13,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("9bcce796-5524-40ab-a779-2947af9b18d2");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result0dInfo;
+    protected override Bitmap Icon => Resources.PointResultsInfo;
 
     public GetPointResultsInfo() : base("Point Results Info", "PtResInfo",
       "Get Node Contour Result values", CategoryName.Name(), SubCategoryName.Cat6()) {

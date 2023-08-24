@@ -46,7 +46,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f1a7f1b4-8c34-43c0-a4f0-6dd207cbf48b");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.DeformedSection3d;
+    protected override Bitmap Icon => Resources.PreviewDeformed3DSections;
     private double _defScale = 250;
     private double _maxValue = 1000;
     private double _minValue;

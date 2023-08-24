@@ -74,7 +74,7 @@ namespace GsaGH.Components {
         temperatureUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         stressUnitsMenu,
         densityUnitsMenu,

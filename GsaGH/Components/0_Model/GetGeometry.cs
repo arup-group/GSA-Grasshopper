@@ -62,7 +62,7 @@ namespace GsaGH.Components {
     public bool AlwaysExpireDownStream;
     public Dictionary<int, List<string>> ExistingOutputsSerialized
       = new Dictionary<int, List<string>>();
-    protected override Bitmap Icon => Resources.GetGeometry;
+    protected override Bitmap Icon => Resources.GetModelGeometry;
     private static readonly OasysUnitsIQuantityJsonConverter converter
       = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;

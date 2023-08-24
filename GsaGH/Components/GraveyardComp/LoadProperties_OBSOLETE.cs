@@ -21,7 +21,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.LoadInfo;
+    protected override Bitmap Icon => Resources.LoadProperties;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 

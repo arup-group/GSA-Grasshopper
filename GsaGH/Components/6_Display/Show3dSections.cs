@@ -27,7 +27,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("a3f80eb4-c876-4582-ad7a-d2bb9acf5c8d");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Section3d;
+    protected override Bitmap Icon => Resources.Preview3DSections;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Mesh _analysisMesh;
     private IEnumerable<Line> _analysisLines;

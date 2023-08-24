@@ -15,7 +15,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp3d;
+    protected override Bitmap Icon => Resources.Create3DProperty;
 
     public CreateProp3d() : base("Create 3D Property", "Prop3d", "Create GSA 3D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {

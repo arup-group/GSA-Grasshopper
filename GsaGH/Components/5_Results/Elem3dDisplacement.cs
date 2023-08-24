@@ -29,7 +29,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("b24e0b5d-6376-43bf-9844-15443ce3b9dd");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Displacement3D;
+    protected override Bitmap Icon => Resources._3DDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
     public Elem3dDisplacement() : base("3D Displacements", "Disp3D",

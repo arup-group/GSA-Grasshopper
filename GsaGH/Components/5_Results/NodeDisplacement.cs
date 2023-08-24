@@ -29,7 +29,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.NodeDisplacement;
+    protected override Bitmap Icon => Resources.NodeDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
     public NodeDisplacement() : base("Node Displacements", "NodeDisp",

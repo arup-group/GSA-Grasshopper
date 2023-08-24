@@ -25,7 +25,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem2d;
+    protected override Bitmap Icon => Resources.Edit2DMember;
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
     public EditMember2d3_OBSOLETE() : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",

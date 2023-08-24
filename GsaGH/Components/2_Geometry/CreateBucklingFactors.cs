@@ -15,7 +15,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("0c32af28-5057-4649-bd56-0850541c954b");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateBucklingLengthFactors;
+    protected override Bitmap Icon => Resources.CreateBucklingFactors;
 
     public CreateBucklingFactors() : base(
       "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),

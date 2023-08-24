@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c803bba4-a026-4f95-b588-9d76455a53fa");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SelectResult;
+    protected override Bitmap Icon => Resources.SelectResults;
     private readonly List<string> _type = new List<string>(new[] {
       "AnalysisCase",
       "Combination",

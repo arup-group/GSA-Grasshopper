@@ -2,8 +2,6 @@
 using System;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
-using DocsGeneration.MarkDowns;
-using GsaGH.Components;
 
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
@@ -37,9 +35,9 @@ namespace DocsGeneration.MarkDowns {
         var table = new Table(header, tableHeaders);
         foreach (Parameter parameter in parameters[header]) {
           table.AddRow(new List<string>(){
-            StringHelper.CreateIconLink(parameter.Name, "Param"),
+            FileHelper.CreateIconLink(parameter),
             parameter.NickName,
-            StringHelper.CreateLink(parameter.Name, "Param"),
+            FileHelper.CreatePageLink(parameter),
             parameter.Description
           });
         }
@@ -61,7 +59,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateParameter(Parameter parameter, List<string> parmeterNames) {
-      string filePath = StringHelper.CreateMarkDownFileName(parameter.Name, "Parameter");
+      string filePath = FileHelper.CreateMarkDownFileName(parameter);
       Console.WriteLine($"Writing {filePath}");
       
       string text = $"# {parameter.Name}\n\n";
@@ -72,7 +70,7 @@ namespace DocsGeneration.MarkDowns {
       };
       var iconTable = new Table(string.Empty, iconHeaders);
       iconTable.AddRow(new List<string>() {
-        StringHelper.CreateIconLink(parameter.Name, "Param"),
+        FileHelper.CreateIconLink(parameter),
       });
 
       text += iconTable.Finalise();
@@ -94,8 +92,8 @@ namespace DocsGeneration.MarkDowns {
         var table = new Table("Properties", headers);
         foreach (Parameter property in parameter.Properties) {
           table.AddRow(new List<string>() {
-            StringHelper.CreateIconLink(property.ParameterType, "Param"),
-            StringHelper.CreateParameterLink(property.ParameterType, parmeterNames),
+            FileHelper.CreateIconLink(property),
+            FileHelper.CreateParameterLink(property, parmeterNames),
             StringHelper.MakeBold(property.Name),
             property.Description,
          });
@@ -103,8 +101,8 @@ namespace DocsGeneration.MarkDowns {
 
         text += table.Finalise();
 
-        if (!string.IsNullOrEmpty(parameter.PropertiesComponent)) {
-          string link = StringHelper.CreateLink(parameter.PropertiesComponent, "component");
+        if (parameter.PropertiesComponent != null) {
+          string link = FileHelper.CreatePageLink(parameter.PropertiesComponent);
           string note = $"Note: the above properties can be retrieved using the {link} component";
           text += StringHelper.MakeItalic(note);
         }

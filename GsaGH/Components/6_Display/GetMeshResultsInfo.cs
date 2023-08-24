@@ -16,7 +16,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4089b9d6-490d-4491-b623-f99ed01630aa");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result2dInfo;
+    protected override Bitmap Icon => Resources.MeshResultInfo;
 
     public GetMeshResultsInfo() : base("Mesh Result Info", "MeshResInfo",
       "Get Element 2D or Element 3D Contour Result values", CategoryName.Name(),

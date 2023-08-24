@@ -14,7 +14,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("82d4a7c0-802e-4ad6-ba4b-b0a68f7191bb");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Units;
+    protected override Bitmap Icon => Resources.ModelUnits;
 
     public Units() : base("Model Units", "Units",
       "Get or set the units used by GSA when opening this Model",

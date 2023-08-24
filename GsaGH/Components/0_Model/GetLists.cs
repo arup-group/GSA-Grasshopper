@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("43495cf4-f2eb-4b14-9b1a-5f91972546ca");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetList;
+    protected override Bitmap Icon => Resources.GetModelLists;
 
     public GetLists() : base("Get Model Lists", "GetLists", "Get Entity Lists from GSA model",
       CategoryName.Name(), SubCategoryName.Cat0()) {

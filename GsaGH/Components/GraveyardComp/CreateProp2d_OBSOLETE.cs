@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp2d;
+    protected override Bitmap Icon => Resources.Create2DProperty;
     private readonly List<string> _dropdownTopList = new List<string>(new[] {
       "Plane Stress",
       "Fabric",

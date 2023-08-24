@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("9c7d8fef-12f9-4165-b151-fd59521b447c");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp2d;
+    protected override Bitmap Icon => Resources.Create2DProperty;
     private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel
       = new Dictionary<Prop2dType, string> {
         { Prop2dType.PlaneStress, "Plane Stress" },

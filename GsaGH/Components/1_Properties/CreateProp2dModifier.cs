@@ -22,7 +22,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("7399c0a4-7395-4e25-a615-be6c5803ecb7");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp2dModifier;
+    protected override Bitmap Icon => Resources.Create2DPropertyModifier;
     private readonly List<string> _optionTypes = new List<string>(new[] {
       "Modify by",
       "Modify to",

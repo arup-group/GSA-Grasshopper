@@ -81,7 +81,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SaveModel;
+    protected override Bitmap Icon => Resources.SaveGSAModel;
 
     public SaveModel() : base("Save GSA Model", "Save",
       "Saves your GSA model from this parametric nightmare", CategoryName.Name(),

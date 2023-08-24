@@ -24,7 +24,7 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaMember1dGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.Mem1dParam;
+    protected override Bitmap Icon => Resources.Member1dParam;
 
     public GsaMember1dParameter() : base(new GH_InstanceDescription(
       GsaMember1dGoo.Name, GsaMember1dGoo.NickName, 

@@ -29,7 +29,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.FaceLoad;
+    protected override Bitmap Icon => Resources.CreateFaceLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
       "Uniform",
       "Variable",

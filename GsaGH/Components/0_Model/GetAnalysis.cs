@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f71f0d68-f121-4081-b53d-896676c34ddb");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetAnalysisTask;
+    protected override Bitmap Icon => Resources.GetModelAnalysisTasks;
 
     public GetAnalysis() : base("Get Model Analysis Tasks", "GetAnalysisTasks",
       "Get Analysis Tasks and their Cases from GSA model", CategoryName.Name(),

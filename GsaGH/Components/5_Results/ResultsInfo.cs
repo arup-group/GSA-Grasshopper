@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6874415d-a86c-4a0d-8c84-36b39f2e5255");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ResultsInfo;
+    protected override Bitmap Icon => Resources.GetResultCases;
     private Guid _modelGuid;
 
     public ResultsInfo() : base("Get Result Cases", "GetCases",

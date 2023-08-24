@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using DocsGeneration.Data.Helpers;
+using OasysUnits;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DocsGeneration.Data {
   public class Parameter {
@@ -17,7 +19,7 @@ namespace DocsGeneration.Data {
     public int SubCategory { get; set; }
     public string ParameterType { get; set; }
     public List<Parameter> Properties { get; set; }
-    public string PropertiesComponent { get; set; }
+    public Component PropertiesComponent { get; set; }
     public Parameter(Type type, bool summary = false) {
       var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
       Name = persistentParam.Name.Replace("parameter", string.Empty).Trim();
@@ -54,28 +56,53 @@ namespace DocsGeneration.Data {
       }
 
       string un = "UnitNumber";
-      if (s.Contains("[m]") || s.Contains("[cm]") || s.Contains("[mm]")) {
-        return un + " `Length`";
-      }
+      
+      if (s.Contains("[")) {
+        string measure = s.Split('[')[1];
+        measure = "1 " + measure.Split(']')[0];
 
-      if (s.Contains("[kN]")) {
-        return un + " `Force`";
-      }
+        var types = Quantity.Infos.Select(x => x.ValueType).ToList();
 
-      if (s.Contains("[kN/m]")) {
-        return un + " `ForcePerLength`";
-      }
+        Type axialStiffness = types.Where(t => t.Name == "AxialStiffness").ToList()[0];
+        types.Remove(axialStiffness);
+        Type bendingStiffness = types.Where(t => t.Name == "BendingStiffness").ToList()[0];
+        types.Remove(bendingStiffness);
+        Type duration = types.Where(t => t.Name == "Duration").ToList()[0];
+        Type massFraction = types.Where(t => t.Name == "MassFraction").ToList()[0];
+        types.Remove(duration);
 
-      if (s.Contains("[kN/m²]") || s.Contains("[MPa]")) {
-        return un + " `Pressure`";
-      }
+        foreach (Type type in types) {
+          if (Quantity.TryParse(type, measure, out IQuantity quantity)) {
+            return $"{un} `{quantity.QuantityInfo.Name}`";
+          }
+        }
 
-      if (s.Contains("[kN·m]")) {
-        return un + " `Moment`";
+        var alternativeTypes = new List<Type>();
+        types.Add(axialStiffness);
+        types.Add(bendingStiffness);
+        types.Add(duration);
+        types.Add(massFraction);
+        foreach (Type type in alternativeTypes) {
+          if (Quantity.TryParse(type, measure, out IQuantity quantity)) {
+            return $"{un} `{quantity.QuantityInfo.Name}`";
+          }
+        }
       }
-
+      
       if (s.Contains("[MJ/m³]")) {
         return un + " `EnergyDensity`";
+      }
+
+      if (s.Contains("[cm²/cm]")) {
+        return un + " `SurfaceArea/UnitLength`";
+      }
+
+      if (s.Contains("[cm³/cm]")) {
+        return un + " `Volume/UnitLength`";
+      }
+
+      if (s.Contains("[/°C]")) {
+        return un + " `ThermalExpansion`";
       }
 
       if (s.Contains("[{ forceUnitAbbreviation = kN, forcePerLengthUnit = kN/m, forcePerAreaUnit = kN/m² }]")){
@@ -213,7 +240,7 @@ namespace DocsGeneration.Data {
         if (componentName.Contains("EDIT") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(
             component.Outputs.GetRange(1, component.Outputs.Count - 1));
-          PropertiesComponent = component.Name;
+          PropertiesComponent = component;
           return;
         }
       }
@@ -222,7 +249,7 @@ namespace DocsGeneration.Data {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("PROPERTIES") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(component.Outputs.ToList());
-          PropertiesComponent = component.Name;
+          PropertiesComponent = component;
           return;
         }
       }
@@ -231,7 +258,7 @@ namespace DocsGeneration.Data {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("INFO") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(component.Outputs.ToList());
-          PropertiesComponent = component.Name;
+          PropertiesComponent = component;
           return;
         }
       }
@@ -240,7 +267,7 @@ namespace DocsGeneration.Data {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("GET") && componentName.Contains(parameterName)) {
           Properties = CleanOutputParams(component.Outputs.ToList());
-          PropertiesComponent = component.Name;
+          PropertiesComponent = component;
           return;
         }
       }

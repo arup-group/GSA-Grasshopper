@@ -34,7 +34,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("7ae7ac36-f811-4c20-911f-ddb119f45644");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Elem1dDiagram;
+    protected override Bitmap Icon => Resources.ResultDiagrams;
 
     private string _case = string.Empty;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -107,7 +107,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
         EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnit), UpdateStress);
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
 
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,

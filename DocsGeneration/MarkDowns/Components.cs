@@ -43,7 +43,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponent(Component component, List<string> parmeterNames) {
-      string filePath = StringHelper.CreateMarkDownFileName(component.Name, "Component");
+      string filePath = FileHelper.CreateMarkDownFileName(component);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
@@ -54,7 +54,7 @@ namespace DocsGeneration.MarkDowns {
       };
       var iconTable = new Table(string.Empty, iconHeaders);
       iconTable.AddRow(new List<string>() {
-        StringHelper.CreateIconLink(component.Name),
+        FileHelper.CreateIconLink(component),
       });
 
       text += iconTable.Finalise();
@@ -91,8 +91,8 @@ namespace DocsGeneration.MarkDowns {
         var table = new Table("Input parameters", headers, 3);
         foreach (Parameter property in component.Inputs) {
           table.AddRow(new List<string>() {
-            StringHelper.CreateIconLink(property.ParameterType, "Param"),
-            StringHelper.CreateParameterLink(property.ParameterType, parmeterNames),
+            FileHelper.CreateIconLink(property),
+            FileHelper.CreateParameterLink(property, parmeterNames),
             StringHelper.MakeBold(property.Name),
             property.Description,
          });
@@ -117,8 +117,8 @@ namespace DocsGeneration.MarkDowns {
           note = CheckForResultNote(ref description);
 
           table.AddRow(new List<string>() {
-            StringHelper.CreateIconLink(property.ParameterType, "Param"),
-            StringHelper.CreateParameterLink(property.ParameterType, parmeterNames),
+            FileHelper.CreateIconLink(property),
+            FileHelper.CreateParameterLink(property, parmeterNames),
             StringHelper.MakeBold(property.Name),
             description,
           });
@@ -172,7 +172,7 @@ namespace DocsGeneration.MarkDowns {
 
     private static void CreateComponentOverview(
       string category, List<Component> components, List<string> parameterNames) {
-      string filePath = $@"Output\gsagh-{category.ToLower()}-components-overview.md";
+      string filePath = $@"Output\gsagh\components\gsagh-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {category} components \n\n";
@@ -201,8 +201,8 @@ namespace DocsGeneration.MarkDowns {
           }
 
           table.AddRow(new List<string>(){
-            StringHelper.CreateIconLink(component.Name),
-            StringHelper.CreateLink(component.Name, "Component"),
+            FileHelper.CreateIconLink(component),
+            FileHelper.CreatePageLink(component),
             StringHelper.ComponentDescription(component.Description, parameterNames)
           });
         }

@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     internal Line _previewXaxis;
     internal Line _previewYaxis;
     internal Line _previewZaxis;
-    protected override Bitmap Icon => Resources.LocalAxes;
+    protected override Bitmap Icon => Resources.LocalAxis;
     public LocalAxes() : base("Local Axis", "Axis", "Get Element1D or Member1D local axes",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 

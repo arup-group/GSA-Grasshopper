@@ -22,7 +22,7 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaAnnotationGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.AnnotateParam;
+    protected override Bitmap Icon => Resources.AnnotationParam;
 
     public GsaAnnotationParameter() : base(new GH_InstanceDescription(
       GsaAnnotationGoo.Name + " parameter", GsaAnnotationGoo.NickName, 

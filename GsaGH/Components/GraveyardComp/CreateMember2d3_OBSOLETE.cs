@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("d996b426-9655-4abf-af0d-3e206d252b00");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem2d;
+    protected override Bitmap Icon => Resources.Create2DMember;
 
     public CreateMember2d3_OBSOLETE() : base("Create 2D Member", "Mem2D", "Create GSA Member 2D",
       CategoryName.Name(), SubCategoryName.Cat2()) { }

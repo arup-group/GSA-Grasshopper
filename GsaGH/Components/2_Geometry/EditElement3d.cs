@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditElem3d;
+    protected override Bitmap Icon => Resources.Edit3DElement;
 
     public EditElement3d() : base("Edit 3D Element", "Elem3dEdit", "Modify GSA 3D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
