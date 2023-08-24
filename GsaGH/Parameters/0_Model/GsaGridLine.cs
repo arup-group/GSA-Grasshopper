@@ -18,33 +18,24 @@ namespace GsaGH.Parameters {
 
     internal static GridLine FromArc(Arc arc, string label = "") {
       GridLine gridLine;
-      // project onto WorldXY
-      Point3d startPoint = arc.StartPoint;
-      startPoint.Z = 0;
-      Point3d midPoint = arc.MidPoint;
-      midPoint.Z = 0;
-      Point3d endPoint = arc.EndPoint;
-      endPoint.Z = 0;
-      var planarArc = new Arc(startPoint, midPoint, endPoint);
-
-      if (planarArc.Plane.ZAxis.Z < 0) {
-        planarArc = new Arc(endPoint, midPoint, startPoint);
+      if (arc.Plane.ZAxis.Z < 0) {
+        arc = new Arc(arc.EndPoint, arc.MidPoint, arc.StartPoint);
       }
 
-      double arcAngleRadians = Vector3d.VectorAngle(planarArc.Plane.XAxis, Vector3d.XAxis);
-      var x = Vector3d.CrossProduct(Vector3d.XAxis, planarArc.Plane.XAxis);
+      double arcAngleRadians = Vector3d.VectorAngle(arc.Plane.XAxis, Vector3d.XAxis);
+      var x = Vector3d.CrossProduct(Vector3d.XAxis, arc.Plane.XAxis);
       if (x.Z < 0) {
         arcAngleRadians *= -1;
       }
 
       double startAngleDegrees = arcAngleRadians * 180 / Math.PI;
-      double endAngleDegrees = startAngleDegrees + planarArc.EndAngleDegrees;
+      double endAngleDegrees = startAngleDegrees + arc.EndAngleDegrees;
 
       gridLine = new GridLine(label) {
         Shape = GridLineShape.Arc,
-        X = planarArc.Center.X,
-        Y = planarArc.Center.Y,
-        Length = planarArc.Diameter / 2.0,
+        X = arc.Center.X,
+        Y = arc.Center.Y,
+        Length = arc.Diameter / 2.0,
         Theta1 = startAngleDegrees,
         Theta2 = endAngleDegrees
       };
@@ -54,10 +45,6 @@ namespace GsaGH.Parameters {
     internal static GridLine FromLine(Line line, string label = "") {
       GridLine gridLine;
       var polyCurve = new PolyCurve();
-      // project onto WorldXY
-      line.FromZ = 0;
-      line.ToZ = 0;
-
       gridLine = new GridLine(label) {
         Shape = GridLineShape.Line,
         X = line.From.X,

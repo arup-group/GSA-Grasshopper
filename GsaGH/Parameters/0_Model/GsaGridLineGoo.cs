@@ -75,12 +75,15 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      Point3d[] points;
+      Point3d[] points = null;
+      Curve segment = Value._curve.SegmentCurve(0);
+      if (segment != null) {
+        return;
+      }
       if (Value._curve.IsLinear()) {
-        points = new Point3d[2] { Value._curve.SegmentCurve(0).PointAtStart, Value._curve.SegmentCurve(0).PointAtEnd };
-
+        points = new Point3d[2] { segment.PointAtStart, segment.PointAtEnd };
       } else {
-        points = Value._curve.SegmentCurve(0).DivideEquidistant(Value._curve.SegmentCurve(0).GetLength() / 360.0);
+        points = segment.DivideEquidistant(segment.GetLength() / 360.0);
       }
       if (points != null) {
         int thickness = 1;

@@ -51,10 +51,30 @@ namespace GsaGH.Components {
         var polyCurve = new PolyCurve();
         if (ghLine.CastFrom(curve)) {
           Line line = ghLine.Value;
+          // project onto WorldXY
+          line.FromZ = 0;
+          line.ToZ = 0;
+          if (line.Length == 0) {
+            string message = "Invalid input geometry, projected line has zero length.";
+            this.AddRuntimeWarning(message);
+            return;
+          }
           gridLine = GsaGridLine.FromLine(line, label);
           polyCurve.Append(line);
         } else if (ghArc.CastFrom(curve)) {
           Arc arc = ghArc.Value;
+          // project onto WorldXY
+          Point3d startPoint = arc.StartPoint;
+          startPoint.Z = 0;
+          Point3d midPoint = arc.MidPoint;
+          midPoint.Z = 0;
+          Point3d endPoint = arc.EndPoint;
+          endPoint.Z = 0;
+          if (arc.Length == 0) {
+            string message = "Invalid input geometry, projected arc has zero length.";
+            this.AddRuntimeWarning(message);
+            return;
+          }
           gridLine = GsaGridLine.FromArc(arc, label);
           polyCurve.Append(arc);
         } else {
