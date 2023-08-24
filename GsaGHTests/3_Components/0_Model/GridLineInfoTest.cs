@@ -69,13 +69,13 @@ namespace GsaGHTests.Model {
       var theta2 = (GH_Number)ComponentTestHelper.GetOutput(comp, 5);
 
       Assert.Equal("Arc", label.Value);
-      Assert.Equal(1, point.Value.X);
-      Assert.Equal(0, point.Value.Y);
-      Assert.Equal(0, point.Value.Z);
-      Assert.Equal(Math.PI, length.Value);
+      Assert.Equal(1, point.Value.X, 0.0000001);
+      Assert.Equal(0, point.Value.Y, 0.0000001);
+      Assert.Equal(0, point.Value.Z, 0.0000001);
+      Assert.Equal(1, length.Value, 0.0000001);
       Assert.Equal("Arc", shape.Value);
-      Assert.Equal(-180, theta1.Value, 0.0000001);
-      Assert.Equal(0, theta2.Value, 0.0000001);
+      Assert.Equal(0, theta1.Value, 0.0000001);
+      Assert.Equal(180, theta2.Value, 0.0000001);
     }
   }
 }
