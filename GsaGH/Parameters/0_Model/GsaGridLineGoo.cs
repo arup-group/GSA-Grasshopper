@@ -77,7 +77,7 @@ namespace GsaGH.Parameters {
 
       Point3d[] points = null;
       Curve segment = Value._curve.SegmentCurve(0);
-      if (segment != null) {
+      if (segment == null) {
         return;
       }
       if (Value._curve.IsLinear()) {
