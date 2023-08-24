@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysGH;
@@ -30,7 +29,7 @@ namespace GsaGH.Parameters {
       if (Value != null) {
         if (typeof(Q).IsAssignableFrom(typeof(GH_Line))) {
           if (Value._gridLine.Shape == GsaAPI.GridLineShape.Line) {
-            var line = Helpers.Import.GridLines.ToLine(Value._gridLine);
+            var line = GsaGridLine.ToLine(Value._gridLine);
             var ghLine = new GH_Line();
             GH_Convert.ToGHLine(line, GH_Conversion.Both, ref ghLine);
             target = (Q)(object)ghLine;
@@ -39,7 +38,7 @@ namespace GsaGH.Parameters {
         }
         if (typeof(Q).IsAssignableFrom(typeof(GH_Arc))) {
           if (Value._gridLine.Shape == GsaAPI.GridLineShape.Arc) {
-            var arc = Helpers.Import.GridLines.ToArc(Value._gridLine);
+            var arc = GsaGridLine.ToArc(Value._gridLine);
             var ghArc = new GH_Arc();
             GH_Convert.ToGHArc(arc, GH_Conversion.Both, ref ghArc);
             target = (Q)(object)ghArc;
@@ -54,6 +53,10 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+
+    }
+
+    public override void DrawViewportWires(GH_PreviewWireArgs args) {
       // we need to scale grid lines according to the users unit settings
       double unitLength = 1;
       LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -109,22 +112,24 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override void DrawViewportWires(GH_PreviewWireArgs args) {
-
-    }
-
     public override GeometryBase GetGeometry() {
       return Value == null ? null : (GeometryBase)Value._curve;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      //  return new GsaMember1dGoo(Value.Morph(xmorph));
-      throw new NotImplementedException();
+      var duplicateCurve = (PolyCurve)Value._curve.Duplicate();
+      xmorph.Morph(duplicateCurve);
+      GsaGridLine duplicate = Value.Clone();
+      duplicate._curve = duplicateCurve;
+      return new GsaGridLineGoo(duplicate);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      //return new GsaGridLineGoo(Value.Transform(xform));
-      throw new NotImplementedException();
+      var duplicateCurve = (PolyCurve)Value._curve.Duplicate();
+      duplicateCurve.Transform(xform);
+      GsaGridLine duplicate = Value.Clone();
+      duplicate._curve = duplicateCurve;
+      return new GsaGridLineGoo(duplicate);
     }
   }
 }

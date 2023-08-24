@@ -51,51 +51,11 @@ namespace GsaGH.Components {
         var polyCurve = new PolyCurve();
         if (ghLine.CastFrom(curve)) {
           Line line = ghLine.Value;
-          // project onto WorldXY
-          line.FromZ = 0;
-          line.ToZ = 0;
-
-          gridLine = new GridLine(label) {
-            Shape = GridLineShape.Line,
-            X = line.From.X,
-            Y = line.From.Y,
-            Length = line.Length,
-            Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
-          };
-
+          gridLine = GsaGridLine.FromLine(line, label);
           polyCurve.Append(line);
         } else if (ghArc.CastFrom(curve)) {
-          // project onto WorldXY
-          Point3d startPoint = ghArc.Value.StartPoint;
-          startPoint.Z = 0;
-          Point3d midPoint = ghArc.Value.MidPoint;
-          midPoint.Z = 0;
-          Point3d endPoint = ghArc.Value.EndPoint;
-          endPoint.Z = 0;
-          var arc = new Arc(startPoint, midPoint, endPoint);
-
-          if (arc.Plane.ZAxis.Z < 0) {
-            arc = new Arc(endPoint, midPoint, startPoint);
-          }
-
-          double arcAngleRadians = Vector3d.VectorAngle(arc.Plane.XAxis, Vector3d.XAxis);
-          var x = Vector3d.CrossProduct(Vector3d.XAxis, arc.Plane.XAxis);
-          if (x.Z < 0) {
-            arcAngleRadians *= -1;
-          }
-
-          double startAngleDegrees = arcAngleRadians * 180 / Math.PI;
-          double endAngleDegrees = startAngleDegrees + arc.EndAngleDegrees;
-
-          gridLine = new GridLine(label) {
-            Shape = GridLineShape.Arc,
-            X = arc.Center.X,
-            Y = arc.Center.Y,
-            Length = arc.Diameter / 2.0,
-            Theta1 = startAngleDegrees,
-            Theta2 = endAngleDegrees
-          };
-
+          Arc arc = ghArc.Value;
+          gridLine = GsaGridLine.FromArc(arc, label);
           polyCurve.Append(arc);
         } else {
           string message = "Invalid input geometry, curve needs to be a line or an arc.";
