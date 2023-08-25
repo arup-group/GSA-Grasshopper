@@ -103,8 +103,7 @@ namespace GsaGH.Parameters {
         origin.Transform(Rhino.Geometry.Transform.Translation(distance));
         plane.Origin = origin;
 
-        // we need to shorten text if it´s too long
-        var text = new Text3d(Value._gridLine.Label.Substring(0, 4), plane, 0.381982059 * unitLength) { // golden ratio
+        var text = new Text3d(Value._gridLine.Label, plane, 0.381982059 * unitLength) { // golden ratio
           HorizontalAlignment = TextHorizontalAlignment.Center,
           VerticalAlignment = TextVerticalAlignment.Middle
         };

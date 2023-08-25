@@ -13,7 +13,7 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to create a new EntityList
+  /// Component to create a new <see cref="GsaGridLine" />
   /// </summary>
   public class CreateGridLine : GH_OasysComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("2f28e2d2-5e6b-4931-ae3a-f27e471e053c");
