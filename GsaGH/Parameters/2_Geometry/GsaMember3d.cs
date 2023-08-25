@@ -60,7 +60,7 @@ namespace GsaGH.Parameters {
         ApiMember.Name = value;
       }
     }
-    public GsaProp3d Prop3d { get; set; } = new GsaProp3d();
+    public GsaProperty3d Prop3d { get; set; } = new GsaProperty3d();
     public Mesh SolidMesh {
       get => _mesh;
       set {
@@ -86,7 +86,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
-      Prop3d = new GsaProp3d(0);
+      Prop3d = new GsaProperty3d(0);
       UpdatePreview();
     }
 
@@ -95,11 +95,11 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
-      Prop3d = new GsaProp3d(0);
+      Prop3d = new GsaProperty3d(0);
       UpdatePreview();
     }
 
-    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop, double meshSize) {
+    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProperty3d prop, double meshSize) {
       ApiMember = member;
       _id = id;
       _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);

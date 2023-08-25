@@ -222,18 +222,6 @@ namespace DocsGeneration.Data {
       }
 
       string parameterName = Name.ToUpper().Replace(" ", string.Empty);
-      if (parameterName.ToUpper().Contains("1D")) {
-        // fx Element1D => 1D Element
-        parameterName = "1D" + parameterName.ToUpper().Replace("1D", string.Empty);
-      }
-
-      if (parameterName.ToUpper().Contains("2D")) {
-        parameterName = "2D" + parameterName.ToUpper().Replace("2D", string.Empty);
-      }
-
-      if (parameterName.ToUpper().Contains("3D")) {
-        parameterName = "3D" + parameterName.ToUpper().Replace("3D", string.Empty);
-      }
 
       foreach (Component component in components) {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);

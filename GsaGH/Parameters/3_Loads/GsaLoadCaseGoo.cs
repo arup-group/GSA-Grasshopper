@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
   public class GsaLoadCaseGoo : GH_OasysGoo<GsaLoadCase> {
     public static string Description => "GSA Load Case";
       
-    public static string Name => "LoadCase";
+    public static string Name => "Load Case";
     public static string NickName => "LC";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

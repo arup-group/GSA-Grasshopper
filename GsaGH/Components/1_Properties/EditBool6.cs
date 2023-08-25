@@ -17,8 +17,8 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBool6;
 
-    public EditBool6() : base("Edit Bool6", "Bool6Edit",
-      "Modify GSA Bool6 or just get information about existing", CategoryName.Name(),
+    public EditBool6() : base("Edit Bool6", "EditB6",
+      "Modify a GSA Bool6 or just get information about existing", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
     }

@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GWACommand;
+    protected override Bitmap Icon => Resources.GwaCommand;
 
     public GwaCommand() : base("GWA Command", "GWA",
       "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",

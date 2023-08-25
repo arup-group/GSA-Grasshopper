@@ -12,8 +12,8 @@ namespace GsaGHTests.Model {
   public class CreateModelTest {
 
     public static GH_OasysDropDownComponent CreateModel(
-      List<GsaModel> models, List<GsaSection> sections, List<GsaProp2d> prop2ds,
-      List<GsaProp3d> prop3ds, List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d,
+      List<GsaModel> models, List<GsaSection> sections, List<GsaProperty2d> prop2ds,
+      List<GsaProperty3d> prop3ds, List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d,
       List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d,
       List<GsaMember3dGoo> mem3d, ModelUnit unit, List<IGsaLoad> loads,
       List<GsaGridPlaneSurface> gridPlaneSurfaces) {
@@ -37,13 +37,13 @@ namespace GsaGHTests.Model {
       }
 
       if (prop2ds != null) {
-        foreach (GsaProp2d input in prop2ds) {
+        foreach (GsaProperty2d input in prop2ds) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }
 
       if (prop3ds != null) {
-        foreach (GsaProp3d input in prop3ds) {
+        foreach (GsaProperty3d input in prop3ds) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }
@@ -182,7 +182,7 @@ namespace GsaGHTests.Model {
     }
 
     public static GH_OasysDropDownComponent CreateModelFromProperties(
-      List<GsaSectionGoo> sections, List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) {
+      List<GsaSectionGoo> sections, List<GsaProperty2dGoo> prop2ds, List<GsaProperty3dGoo> prop3ds) {
       var comp = new CreateModel();
       comp.CreateAttributes();
       comp.Params.Input[1].DataMapping = GH_DataMapping.Flatten;
@@ -193,13 +193,13 @@ namespace GsaGHTests.Model {
       }
 
       if (prop2ds != null) {
-        foreach (GsaProp2dGoo input in prop2ds) {
+        foreach (GsaProperty2dGoo input in prop2ds) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }
 
       if (prop3ds != null) {
-        foreach (GsaProp3dGoo input in prop3ds) {
+        foreach (GsaProperty3dGoo input in prop3ds) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }

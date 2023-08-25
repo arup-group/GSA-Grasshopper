@@ -21,7 +21,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Edit2DElement;
+    protected override Bitmap Icon => Resources.Edit2dElement;
 
     public EditElement2d_OBSOLETE() : base("Edit 2D Element", "Elem2dEdit", "Modify GSA 2D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -34,7 +34,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Element2d Number", "ID",
         "Set Element Number. If ID is set it will replace any existing 2D Element in the model",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA",
+      pManager.AddParameter(new GsaProperty2dParameter(), "2D Property", "PA",
         "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Element2d Group", "Gr", "Set Element Group",
@@ -61,7 +61,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
       pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA",
+      pManager.AddParameter(new GsaProperty2dParameter(), "2D Property", "PA",
         "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
         GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
@@ -121,7 +121,7 @@ namespace GsaGH.Components {
 
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(2, ghTypes)) {
-        var prop2Ds = new List<GsaProp2d>();
+        var prop2Ds = new List<GsaProperty2d>();
         for (int i = 0; i < ghTypes.Count; i++) {
           if (i > elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input List Length is longer than number of elements."
@@ -129,11 +129,11 @@ namespace GsaGH.Components {
           }
 
           GH_ObjectWrapper ghTyp = ghTypes[i];
-          if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
+          if (ghTyp.Value is GsaProperty2dGoo prop2DGoo) {
             prop2Ds.Add(prop2DGoo.Value);
           } else {
             if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-              prop2Ds.Add(new GsaProp2d(id));
+              prop2Ds.Add(new GsaProperty2d(id));
             } else {
               this.AddRuntimeError(
                 "Unable to convert PA input to a 2D Property of reference integer");
@@ -254,7 +254,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
       da.SetDataList(3,
-        new List<GsaProp2dGoo>(elem.Prop2ds.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
+        new List<GsaProperty2dGoo>(elem.Prop2ds.ConvertAll(prop2d => new GsaProperty2dGoo(prop2d))));
       da.SetDataList(4, elem.Groups);
       da.SetDataList(5, elem.Types);
       da.SetDataList(6,

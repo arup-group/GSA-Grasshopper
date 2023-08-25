@@ -13,7 +13,7 @@ namespace DocsGeneration.MarkDowns {
       "::: warning" +
       "\nGSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \\\"as-is\\\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.\n:::\n" +
       "\n" +
-      "![GsaGH-Ribbon](./images/gsagh/RibbonScreenshot.png)\n" +
+      "![GsaGH-Ribbon](./images/RibbonScreenshot.png)\n" +
       "\n"; 
 
     public static void CreateOverview(
@@ -52,7 +52,7 @@ namespace DocsGeneration.MarkDowns {
       var iconHeaders = new List<string>() {
         "Icon"
       };
-      var iconTable = new Table(string.Empty, iconHeaders);
+      var iconTable = new Table(string.Empty, 2, iconHeaders, new List<int>() { 150 });
       iconTable.AddRow(new List<string>() {
         FileHelper.CreateIconLink(component),
       });
@@ -81,14 +81,23 @@ namespace DocsGeneration.MarkDowns {
           break;
       }
 
-      if (component.Inputs != null && component.Inputs.Count != 0) {
-        var headers = new List<string>() {
+      var headers = new List<string>() {
           "Icon",
           "Type",
           "Name",
           "Description"
         };
-        var table = new Table("Input parameters", headers, 3);
+
+      var widths = new List<int>() { 
+        Table.IconWidth,
+        Table.NameWidth,
+        Table.NameWidth, 
+        Table.DescriptionWidth 
+      };
+
+      if (component.Inputs != null && component.Inputs.Count != 0) {
+        
+        var table = new Table("Input parameters", 3, headers, widths);
         foreach (Parameter property in component.Inputs) {
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
@@ -103,13 +112,7 @@ namespace DocsGeneration.MarkDowns {
 
       
       if (component.Outputs != null && component.Outputs.Count != 0) {
-        var headers = new List<string>() {
-          "Icon",
-          "Type",
-          "Name",
-          "Description"
-        };
-        var table = new Table("Output parameters", headers, 3);
+        var table = new Table("Output parameters", 3, headers, widths);
 
         string note = string.Empty;
         foreach (Parameter property in component.Outputs) {
@@ -172,7 +175,7 @@ namespace DocsGeneration.MarkDowns {
 
     private static void CreateComponentOverview(
       string category, List<Component> components, List<string> parameterNames) {
-      string filePath = $@"Output\gsagh\components\gsagh-{category.ToLower()}-components-overview.md";
+      string filePath = $@"Output\gsagh-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {category} components \n\n";
@@ -181,6 +184,12 @@ namespace DocsGeneration.MarkDowns {
         " ", // icon
         "Name",
         "Description"
+      };
+
+      var widths = new List<int>() {
+        Table.IconWidth,
+        Table.NameWidth,
+        Table.DescriptionWidth
       };
 
       var subCategories = new List<string>() {
@@ -194,7 +203,7 @@ namespace DocsGeneration.MarkDowns {
       };
 
       for (int i = 0; i < subCategories.Count; i++) {
-        var table = new Table(subCategories[i], tableHeaders, 4);
+        var table = new Table(subCategories[i], 4, tableHeaders, widths);
         foreach (Component component in components) {
           if (component.SubCategory - 1 != i) {
             continue;

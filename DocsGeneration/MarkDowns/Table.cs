@@ -4,19 +4,27 @@ using System.Collections.Generic;
 
 namespace DocsGeneration.MarkDowns {
   public class Table {
+    public const int IconWidth = 20;
+    public const int NameWidth = 200;
+    public const int DescriptionWidth = 1000;
+
     public string Name { get; set; }
     public List<string> Headers { get; set; }
     private string _table = string.Empty;
     private bool _hasRows = false;
-    public Table(string name, List<string> headers, int heading = 2) {
+    public Table(string name, int headingSize, List<string> headers, List<int> columnWidths) {
       Name = name;
       if (!string.IsNullOrEmpty(name)) {
-        _table += $"{new string('#', heading)} {name}\n\n";
+        _table += $"{new string('#', headingSize)} {name}\n\n";
       }
 
       Headers = headers;
+      for (int i = 0; i < headers.Count; i++) {
+        string width = $"<img width={columnWidths[i]}/>";
+        _table += $"|{width} {headers[i]} ";
+      }
       foreach (string header in Headers) {
-        _table += $"|{header} ";
+        
       }
 
       _table += $"|\n";

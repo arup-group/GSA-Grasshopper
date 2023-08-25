@@ -1,10 +1,37 @@
-﻿using DocsGeneration.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DocsGeneration.MarkDowns.Helpers {
   public class StringHelper {
+    public static string AddBetaWarning() {
+      string txt = "GSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.";
+      return Warning(txt);
+    }
+    public static string Tip(string headline, string text) {
+      // ::: tip Did you know?
+      // The `Bool6` icon takes inspiration from the central pin / hinge / charnier connection[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge).
+      // ![Kingsgate Footbridge Durham](./ images / gsagh / Kingsgate - Footbridge - Durham.jpg)
+      // * (c)Giles Rocholl / Arup *
+      // :::
+      return $"::: tip {headline}\n{text}\n:::\n\n";
+    }
+    public static string Warning(string text) {
+      // ::: warning
+      // GSA - Grasshopper plugin[GsaGH] is pre - release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
+      // :::
+      return $"::: warning\n{text}\n:::\n\n";
+    }
+
+    public static string MakeBold(string text) {
+      return $"**{text}**";
+    }
+    public static string MakeItalic(string text) {
+      return $"_{text}_";
+    }
+
+
     public static string SummaryDescription(string str) {
       string markdown = ConvertSummaryToMarkup(str);
       return $"## Description\n\n{markdown}\n\n";
@@ -38,6 +65,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
     private static string ConvertSummaryToMarkup(string str) {
       str = str.Replace("</para>", "\n\n").Replace("<para>", string.Empty);
 
+      // For example:
       // <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>
       if (str.Contains("<see href=\"")) {
         StringSplitOptions opt = StringSplitOptions.None;
@@ -57,7 +85,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
         }
       }
 
+      // For example:
+      // <see cref="GsaSection"/>
       // <see cref="GsaAPI.Bool6" />
+      // <see cref="Components.CreateModel"/>
+      // xml summary will come through with prefix T for type or M for method
       if (str.Contains("<see cref=\"")) {
         StringSplitOptions opt = StringSplitOptions.None;
         string[] split = str.Split(new string[] { "<see cref=\"" }, opt);
@@ -94,6 +126,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
         }
       }
 
+      // For example:
+      // <list type="bullet">
+      // <item><description>Item 1.</description></item>
+      // <item><description>Item 2.</description></item>
+      // </list>
       if (str.Contains("<list type=\"bullet\">")) {
         StringSplitOptions opt = StringSplitOptions.RemoveEmptyEntries;
         string[] split = str.Split(new string[] { "<list type=\"bullet\">" }, opt);
@@ -114,10 +151,10 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return str;
     }
 
-    private static string SortReference(string @namespace, string type, string name) {
-      switch (@namespace) {
+    private static string SortReference(string nameSpace, string type, string name) {
+      switch (nameSpace) {
         case "GsaAPI":
-          string link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/data-classes.html#"
+          string apiLink = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/data-classes.html#"
           + name.ToLower();
           if (name == "Bool6"
             || name == "Annotation"
@@ -125,56 +162,19 @@ namespace DocsGeneration.MarkDowns.Helpers {
             || name == "SectionModifierAttribute"
             || name == "Prop2DModifierAttribute"
             || name == "EndRelease") {
-            link = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/types.html#"
+            apiLink = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/types.html#"
           + name.ToLower();
           }
-          return $"[GsaAPI {name}]({link})";
+          return $"[GsaAPI {name}]({apiLink})";
 
         case "GsaGH":
           name = name.Replace("Gsa", string.Empty);
-          if (type == "Parameters") {
-            return $"[{name}](gsagh-{name.ToLower()}-parameter.html)";
-          }
-          if (type == "Components") {
-            return $"[{name}](gsagh-{name.ToLower()}-component.html)";
-          }
-          break;
+          string link = FileHelper.CreateFileName(FileHelper.SplitCamelCase(name, "-"), type.TrimEnd('s'));
+          name = FileHelper.SplitCamelCase(name, " ");
+          return $"[{name}]({link}.html)";
       }
 
       return string.Empty;
-    }
-
-      
-
-    public static string MakeBold(string text) {
-      return $"**{text}**";
-    }
-
-    public static string MakeItalic(string text) {
-      return $"_{text}_";
-    }
-
-    
-
-    public static string Warning(string text) {
-      // ::: warning
-      // GSA - Grasshopper plugin[GsaGH] is pre - release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
-      // :::
-      return $"::: warning\n{text}\n:::\n\n";
-    }
-
-    public static string AddBetaWarning() {
-      string txt = "GSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.";
-      return Warning(txt);
-    }
-
-    public static string Tip(string headline, string text) {
-      // ::: tip Did you know?
-      // The `Bool6` icon takes inspiration from the central pin / hinge / charnier connection[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge).
-      // ![Kingsgate Footbridge Durham](./ images / gsagh / Kingsgate - Footbridge - Durham.jpg)
-      // * (c)Giles Rocholl / Arup *
-      // :::
-      return $"::: tip {headline}\n{text}\n:::\n\n";
     }
   }
 }

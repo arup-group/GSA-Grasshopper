@@ -11,7 +11,7 @@ namespace GsaGHTests.Components.Properties {
   public class GetSectionDimensionsTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new GetProfileDimensions();
+      var comp = new ProfileDimensions();
       comp.CreateAttributes();
       return comp;
     }

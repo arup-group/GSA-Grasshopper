@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Create2DMember;
+    protected override Bitmap Icon => Resources.Create2dMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public CreateMember2d_OBSOLETE() : base("Create 2D Member", "Mem2D", "Create GSA Member 2D",
@@ -82,7 +82,7 @@ namespace GsaGH.Components {
       pManager.AddCurveParameter("Incl. Curves", "(C)",
         "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddParameter(new GsaProperty2dParameter());
       pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Target mesh size",
         GH_ParamAccess.item);
 
@@ -139,7 +139,7 @@ namespace GsaGH.Components {
 
       var mem = new GsaMember2d(brep, curves, point3ds);
 
-      GsaProp2dGoo prop2dGoo = null;
+      GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
         mem.Prop2d = prop2dGoo.Value;
       }

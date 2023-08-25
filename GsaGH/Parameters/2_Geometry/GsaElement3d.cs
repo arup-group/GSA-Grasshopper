@@ -103,7 +103,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp3d> Prop3ds { get; set; } = new List<GsaProp3d>();
+    public List<GsaProperty3d> Prop3ds { get; set; } = new List<GsaProperty3d>();
     public List<int> PropertyIDs {
       get => (from element in ApiElements where element != null select element.Property).ToList();
       set => CloneApiElements(ApiObjectMember.Property, null, null, null, null, null, value);
@@ -143,15 +143,15 @@ namespace GsaGH.Parameters {
 
       Ids = new List<int>(new int[NgonMesh.Faces.Count]);
 
-      Prop3ds = new List<GsaProp3d>();
+      Prop3ds = new List<GsaProperty3d>();
       for (int i = 0; i < NgonMesh.Faces.Count; i++) {
-        Prop3ds.Add(new GsaProp3d(0));
+        Prop3ds.Add(new GsaProperty3d(0));
       }
 
       UpdatePreview();
     }
 
-    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProp3d prop3d) {
+    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProperty3d prop3d) {
       ApiElements = new List<Element>() {
         element,
       };
@@ -164,14 +164,14 @@ namespace GsaGH.Parameters {
       Ids = new List<int>() {
         id,
       };
-      Prop3ds = new List<GsaProp3d>() {
+      Prop3ds = new List<GsaProperty3d>() {
         prop3d,
       };
       UpdatePreview();
     }
 
     internal GsaElement3d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProp3d> prop3ds) {
+      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);

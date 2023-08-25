@@ -33,9 +33,9 @@ namespace GsaGH.Components.GraveyardComp {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(), "Sections", "PB",
         "Section Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter(), "2D Properties", "PA",
+      pManager.AddParameter(new GsaProperty2dParameter(), "2D Properties", "PA",
         "2D Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp3dParameter(), "3D Properties", "PV",
+      pManager.AddParameter(new GsaProperty3dParameter(), "3D Properties", "PV",
         "3D Properties from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaMaterialParameter(), "Custom Materials", "Mat",
         "Custom Materials from GSA Model", GH_ParamAccess.list);

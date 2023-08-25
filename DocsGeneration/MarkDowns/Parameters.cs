@@ -26,17 +26,21 @@ namespace DocsGeneration.MarkDowns {
 
       var tableHeaders = new List<string>() {
         " ", // icon
-        "NickName",
         "Name",
         "Description"
       };
 
+      var widths = new List<int>() {
+        Table.IconWidth,
+        Table.NameWidth,
+        Table.DescriptionWidth
+      };
+
       foreach (string header in parameters.Keys) {
-        var table = new Table(header, tableHeaders);
+        var table = new Table(header, 2, tableHeaders, widths);
         foreach (Parameter parameter in parameters[header]) {
           table.AddRow(new List<string>(){
             FileHelper.CreateIconLink(parameter),
-            parameter.NickName,
             FileHelper.CreatePageLink(parameter),
             parameter.Description
           });
@@ -68,7 +72,7 @@ namespace DocsGeneration.MarkDowns {
       var iconHeaders = new List<string>() {
         "Icon"
       };
-      var iconTable = new Table(string.Empty, iconHeaders);
+      var iconTable = new Table(string.Empty, 2, iconHeaders, new List<int>() { 150 });
       iconTable.AddRow(new List<string>() {
         FileHelper.CreateIconLink(parameter),
       });
@@ -77,7 +81,10 @@ namespace DocsGeneration.MarkDowns {
 
       if (parameter.Name == "Bool6") {
         text += StringHelper.Tip("Did you know?",
-          "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection [Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge).\r\n![Kingsgate Footbridge Durham](./images/gsagh/Kingsgate-Footbridge-Durham.jpg)\r\n*(c) Giles Rocholl / Arup*");
+          "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection " +
+          "[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge" +
+          ").\r\n![Kingsgate Footbridge Durham](./images/Kingsgate-Footbridge-Durham.jpg)\r\n" +
+          "*(c) Giles Rocholl / Arup*");
       }
 
       text += StringHelper.SummaryDescription(parameter.Summary);
@@ -89,7 +96,15 @@ namespace DocsGeneration.MarkDowns {
           "Name",
           "Description"
         };
-        var table = new Table("Properties", headers);
+      
+        var widths = new List<int>() {
+          Table.IconWidth,
+          Table.NameWidth,
+          Table.NameWidth,
+          Table.DescriptionWidth
+        };
+
+        var table = new Table("Properties", 2, headers, widths);
         foreach (Parameter property in parameter.Properties) {
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),

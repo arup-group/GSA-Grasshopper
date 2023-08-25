@@ -121,12 +121,12 @@ namespace GsaGH.Components {
               gravityLoad.ReferenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp2dGoo value: {
+          case GsaProperty2dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp3dGoo value: {
+          case GsaProperty3dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
               break;

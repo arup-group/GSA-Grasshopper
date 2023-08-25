@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("c803bba4-a026-4f95-b588-9d76455a53fa");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SelectResults;
+    protected override Bitmap Icon => Resources.SelectResult;
     private readonly List<string> _type = new List<string>(new[] {
       "AnalysisCase",
       "Combination",
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     private Dictionary<Tuple<CaseType, int>, GsaResult> _resultCache;
     private CaseType _resultType = CaseType.AnalysisCase;
 
-    public SelectResult() : base("Select Results", "SelRes",
+    public SelectResult() : base("Select Result", "SelRes",
       "Select AnalysisCase or Combination Result from an analysed GSA model", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;

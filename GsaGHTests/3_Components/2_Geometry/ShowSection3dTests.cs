@@ -17,7 +17,7 @@ namespace GsaGHTests.Components.Geometry {
   public class ShowSection3dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new Show3dSections();
+      var comp = new Preview3dSections();
       comp.CreateAttributes();
       comp.Params.Input[0].DataMapping = GH_DataMapping.Flatten;
       ComponentTestHelper.SetInput(comp,
@@ -47,7 +47,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void CreateComponentFromModelTest() {
-      var comp = new Show3dSections();
+      var comp = new Preview3dSections();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, ModelTests.GsaModelGooMother, 0);
       var analysisMesh = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 0);

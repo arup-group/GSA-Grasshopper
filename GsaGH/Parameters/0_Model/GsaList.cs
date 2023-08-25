@@ -53,7 +53,7 @@ namespace GsaGH.Parameters {
     internal string _definition;
     internal List<int> _cases;
     internal (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
-      List<GsaProp2dGoo> prop2ds, List<GsaProp3dGoo> prop3ds) _properties;
+      List<GsaProperty2dGoo> prop2ds, List<GsaProperty3dGoo> prop3ds) _properties;
     internal ConcurrentBag<GsaNodeGoo> _nodes;
     internal (ConcurrentBag<GsaElement1dGoo> e1d, ConcurrentBag<GsaElement2dGoo> e2d,
       ConcurrentBag<GsaElement3dGoo> e3d) _elements;
@@ -99,8 +99,8 @@ namespace GsaGH.Parameters {
           if (_properties != (null, null, null, null)) {
             dup._properties = (new List<GsaMaterialGoo>(_properties.materials.ToList()),
               new List<GsaSectionGoo>(_properties.sections.ToList()),
-              new List<GsaProp2dGoo>(_properties.prop2ds.ToList()),
-              new List<GsaProp3dGoo>(_properties.prop3ds.ToList()));
+              new List<GsaProperty2dGoo>(_properties.prop2ds.ToList()),
+              new List<GsaProperty3dGoo>(_properties.prop3ds.ToList()));
           }
           if (_elements != (null, null, null)) {
             dup._elements = (new ConcurrentBag<GsaElement1dGoo>(_elements.e1d.ToList()),
@@ -119,8 +119,8 @@ namespace GsaGH.Parameters {
           if (_properties != (null, null, null, null)) {
             dup._properties = (new List<GsaMaterialGoo>(_properties.materials.ToList()),
               new List<GsaSectionGoo>(_properties.sections.ToList()),
-              new List<GsaProp2dGoo>(_properties.prop2ds.ToList()),
-              new List<GsaProp3dGoo>(_properties.prop3ds.ToList()));
+              new List<GsaProperty2dGoo>(_properties.prop2ds.ToList()),
+              new List<GsaProperty3dGoo>(_properties.prop3ds.ToList()));
           }
           if (_members != (null, null, null)) {
             dup._members = (new ConcurrentBag<GsaMember1dGoo>(_members.m1d.ToList()),
@@ -318,8 +318,8 @@ namespace GsaGH.Parameters {
         case EntityType.Element:
           _properties.materials = new List<GsaMaterialGoo>();
           _properties.sections = new List<GsaSectionGoo>();
-          _properties.prop2ds = new List<GsaProp2dGoo>();
-          _properties.prop3ds = new List<GsaProp3dGoo>();
+          _properties.prop2ds = new List<GsaProperty2dGoo>();
+          _properties.prop3ds = new List<GsaProperty3dGoo>();
           _elements.e1d = new ConcurrentBag<GsaElement1dGoo>();
           _elements.e2d = new ConcurrentBag<GsaElement2dGoo>();
           _elements.e3d = new ConcurrentBag<GsaElement3dGoo>();
@@ -336,11 +336,11 @@ namespace GsaGH.Parameters {
                 _properties.sections.Add(sectionGoo);
                 break;
 
-              case GsaProp2dGoo prop2dGoo:
+              case GsaProperty2dGoo prop2dGoo:
                 _properties.prop2ds.Add(prop2dGoo);
                 break;
 
-              case GsaProp3dGoo prop3dGoo:
+              case GsaProperty3dGoo prop3dGoo:
                 _properties.prop3ds.Add(prop3dGoo);
                 break;
 
@@ -374,8 +374,8 @@ namespace GsaGH.Parameters {
         case EntityType.Member:
           _properties.materials = new List<GsaMaterialGoo>();
           _properties.sections = new List<GsaSectionGoo>();
-          _properties.prop2ds = new List<GsaProp2dGoo>();
-          _properties.prop3ds = new List<GsaProp3dGoo>();
+          _properties.prop2ds = new List<GsaProperty2dGoo>();
+          _properties.prop3ds = new List<GsaProperty3dGoo>();
           _members.m1d = new ConcurrentBag<GsaMember1dGoo>();
           _members.m2d = new ConcurrentBag<GsaMember2dGoo>();
           _members.m3d = new ConcurrentBag<GsaMember3dGoo>();
@@ -389,11 +389,11 @@ namespace GsaGH.Parameters {
                 _properties.sections.Add(sectionGoo);
                 break;
 
-              case GsaProp2dGoo prop2dGoo:
+              case GsaProperty2dGoo prop2dGoo:
                 _properties.prop2ds.Add(prop2dGoo);
                 break;
 
-              case GsaProp3dGoo prop3dGoo:
+              case GsaProperty3dGoo prop3dGoo:
                 _properties.prop3ds.Add(prop3dGoo);
                 break;
 
@@ -436,8 +436,8 @@ namespace GsaGH.Parameters {
           // TO-DO: GSA-6773: add way to get properties/materials by list
           _properties.materials = new List<GsaMaterialGoo>();
           _properties.sections = new List<GsaSectionGoo>();
-          _properties.prop2ds = new List<GsaProp2dGoo>();
-          _properties.prop3ds = new List<GsaProp3dGoo>();
+          _properties.prop2ds = new List<GsaProperty2dGoo>();
+          _properties.prop3ds = new List<GsaProperty3dGoo>();
 
           var elements = new Elements(_model, Definition);
           _elements.e1d = elements.Element1ds;
@@ -453,8 +453,8 @@ namespace GsaGH.Parameters {
           // TO-DO: GSA-6773: add way to get properties/materials by list
           _properties.materials = new List<GsaMaterialGoo>();
           _properties.sections = new List<GsaSectionGoo>();
-          _properties.prop2ds = new List<GsaProp2dGoo>();
-          _properties.prop3ds = new List<GsaProp3dGoo>();
+          _properties.prop2ds = new List<GsaProperty2dGoo>();
+          _properties.prop3ds = new List<GsaProperty3dGoo>();
 
           var members = new Members(_model, Definition);
           _members.m1d = members.Member1ds;

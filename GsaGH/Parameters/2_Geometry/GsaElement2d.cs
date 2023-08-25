@@ -102,7 +102,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp2d> Prop2ds { get; set; } = new List<GsaProp2d>();
+    public List<GsaProperty2d> Prop2ds { get; set; } = new List<GsaProperty2d>();
     public List<List<int>> TopoInt { get; private set; }
     public List<Point3d> Topology { get; private set; }
     public DataTree<int> TopologyIDs {
@@ -139,7 +139,7 @@ namespace GsaGH.Parameters {
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       Ids = new List<int>(new int[Mesh.Faces.Count]);
-      var singleProp = new GsaProp2d(prop);
+      var singleProp = new GsaProperty2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
@@ -157,14 +157,14 @@ namespace GsaGH.Parameters {
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       Ids = new List<int>(new int[Mesh.Faces.Count]);
-      var singleProp = new GsaProp2d(prop);
+      var singleProp = new GsaProperty2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
         Prop2ds.Add(singleProp.Duplicate());
       }
     }
 
     internal GsaElement2d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProp2d> prop2ds) {
+      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty2d> prop2ds) {
       Mesh = mesh;
       Topology = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);

@@ -20,7 +20,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateSection;
 
-    public CreateSection() : base("Create Section", "Section", "Create GSA Section",
+    public CreateSection() : base("Create Section", "Section", "Create a GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

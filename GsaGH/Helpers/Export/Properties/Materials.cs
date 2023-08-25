@@ -130,7 +130,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void AddMaterial(
-      ref GsaProp2d prop2d, ref Materials apiMaterials) {
+      ref GsaProperty2d prop2d, ref Materials apiMaterials) {
       if (prop2d.Material != null) {
         // set material type in API prop
         prop2d.ApiProp2d.MaterialType = GetMaterialType(prop2d.Material);
@@ -150,7 +150,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static void AddMaterial(
-      ref GsaProp3d prop3d, ref Materials apiMaterials) {
+      ref GsaProperty3d prop3d, ref Materials apiMaterials) {
       if (prop3d.Material != null) {
         // set material type in API prop
         prop3d.ApiProp3d.MaterialType = GetMaterialType(prop3d.Material);

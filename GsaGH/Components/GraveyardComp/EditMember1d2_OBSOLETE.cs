@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("2a121578-f9ff-4d80-ae90-2982faa425a6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Edit1DMember;
+    protected override Bitmap Icon => Resources.Edit1dMember;
 
     public EditMember1d2_OBSOLETE() : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }

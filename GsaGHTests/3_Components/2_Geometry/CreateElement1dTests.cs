@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Geometry {
   public class CreateElement1dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateElement1d();
+      var comp = new Create1dElement();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(

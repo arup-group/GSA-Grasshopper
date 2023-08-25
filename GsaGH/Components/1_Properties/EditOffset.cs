@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.EditOffset;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public EditOffset() : base("Edit Offset", "OffsetEdit",
+    public EditOffset() : base("Edit Offset", "EditOff",
       "Modify GSA Offset or just get information about existing", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;

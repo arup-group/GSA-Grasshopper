@@ -292,12 +292,12 @@ namespace GsaGH.Components {
               gps._referenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp2dGoo value: {
+          case GsaProperty2dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp3dGoo value: {
+          case GsaProperty3dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.Property;
               break;

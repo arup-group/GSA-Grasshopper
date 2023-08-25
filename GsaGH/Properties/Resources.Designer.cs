@@ -63,86 +63,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _1DContourResults {
-            get {
-                object obj = ResourceManager.GetObject("_1DContourResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _2DContourResults {
-            get {
-                object obj = ResourceManager.GetObject("_2DContourResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _2DDisplacements {
-            get {
-                object obj = ResourceManager.GetObject("_2DDisplacements", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _2DForcesandMoments {
-            get {
-                object obj = ResourceManager.GetObject("_2DForcesandMoments", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _2DStresses {
-            get {
-                object obj = ResourceManager.GetObject("_2DStresses", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _3DContourResults {
-            get {
-                object obj = ResourceManager.GetObject("_3DContourResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _3DDisplacements {
-            get {
-                object obj = ResourceManager.GetObject("_3DDisplacements", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _3DStresses {
-            get {
-                object obj = ResourceManager.GetObject("_3DStresses", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap AddList {
             get {
                 object obj = ResourceManager.GetObject("AddList", resourceCulture);
@@ -233,9 +153,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BeamForcesandMoments {
+        internal static System.Drawing.Bitmap BeamForcesAndMoments {
             get {
-                object obj = ResourceManager.GetObject("BeamForcesandMoments", resourceCulture);
+                object obj = ResourceManager.GetObject("BeamForcesAndMoments", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -263,9 +183,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BucklingLengthFactorsParam {
+        internal static System.Drawing.Bitmap BucklingFactorsParam {
             get {
-                object obj = ResourceManager.GetObject("BucklingLengthFactorsParam", resourceCulture);
+                object obj = ResourceManager.GetObject("BucklingFactorsParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -293,9 +213,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create1DElement {
+        internal static System.Drawing.Bitmap Contour1dResults {
             get {
-                object obj = ResourceManager.GetObject("Create1DElement", resourceCulture);
+                object obj = ResourceManager.GetObject("Contour1dResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -303,9 +223,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create1DMember {
+        internal static System.Drawing.Bitmap Contour2dResults {
             get {
-                object obj = ResourceManager.GetObject("Create1DMember", resourceCulture);
+                object obj = ResourceManager.GetObject("Contour2dResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -313,9 +233,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create2DElement {
+        internal static System.Drawing.Bitmap Contour3dResults {
             get {
-                object obj = ResourceManager.GetObject("Create2DElement", resourceCulture);
+                object obj = ResourceManager.GetObject("Contour3dResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,9 +243,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create2DMember {
+        internal static System.Drawing.Bitmap ContourNodeResults {
             get {
-                object obj = ResourceManager.GetObject("Create2DMember", resourceCulture);
+                object obj = ResourceManager.GetObject("ContourNodeResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -333,9 +253,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create2DProperty {
+        internal static System.Drawing.Bitmap Create1dElement {
             get {
-                object obj = ResourceManager.GetObject("Create2DProperty", resourceCulture);
+                object obj = ResourceManager.GetObject("Create1dElement", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -343,9 +263,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create2DPropertyModifier {
+        internal static System.Drawing.Bitmap Create1dMember {
             get {
-                object obj = ResourceManager.GetObject("Create2DPropertyModifier", resourceCulture);
+                object obj = ResourceManager.GetObject("Create1dMember", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -353,9 +273,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create3DMember {
+        internal static System.Drawing.Bitmap Create2dElement {
             get {
-                object obj = ResourceManager.GetObject("Create3DMember", resourceCulture);
+                object obj = ResourceManager.GetObject("Create2dElement", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -363,9 +283,59 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Create3DProperty {
+        internal static System.Drawing.Bitmap Create2dElementsFromBrep {
             get {
-                object obj = ResourceManager.GetObject("Create3DProperty", resourceCulture);
+                object obj = ResourceManager.GetObject("Create2dElementsFromBrep", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Create2dMember {
+            get {
+                object obj = ResourceManager.GetObject("Create2dMember", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Create2dProperty {
+            get {
+                object obj = ResourceManager.GetObject("Create2dProperty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Create2dPropertyModifier {
+            get {
+                object obj = ResourceManager.GetObject("Create2dPropertyModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Create3dMember {
+            get {
+                object obj = ResourceManager.GetObject("Create3dMember", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Create3dProperty {
+            get {
+                object obj = ResourceManager.GetObject("Create3dProperty", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -433,9 +403,29 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateCustomMaterial {
+            get {
+                object obj = ResourceManager.GetObject("CreateCustomMaterial", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateElem3d {
             get {
                 object obj = ResourceManager.GetObject("CreateElem3d", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateElementsFromMembers {
+            get {
+                object obj = ResourceManager.GetObject("CreateElementsFromMembers", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -633,16 +623,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap CustomMaterial {
-            get {
-                object obj = ResourceManager.GetObject("CustomMaterial", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap DiagramParam {
             get {
                 object obj = ResourceManager.GetObject("DiagramParam", resourceCulture);
@@ -663,9 +643,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit1DElement {
+        internal static System.Drawing.Bitmap Edit1dElement {
             get {
-                object obj = ResourceManager.GetObject("Edit1DElement", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit1dElement", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -673,9 +653,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit1DMember {
+        internal static System.Drawing.Bitmap Edit1dMember {
             get {
-                object obj = ResourceManager.GetObject("Edit1DMember", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit1dMember", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -683,9 +663,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit2DElement {
+        internal static System.Drawing.Bitmap Edit2dElement {
             get {
-                object obj = ResourceManager.GetObject("Edit2DElement", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit2dElement", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -693,9 +673,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit2DMember {
+        internal static System.Drawing.Bitmap Edit2dMember {
             get {
-                object obj = ResourceManager.GetObject("Edit2DMember", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit2dMember", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -703,9 +683,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit2DProperty {
+        internal static System.Drawing.Bitmap Edit2dProperty {
             get {
-                object obj = ResourceManager.GetObject("Edit2DProperty", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit2dProperty", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -713,9 +693,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit3DElement {
+        internal static System.Drawing.Bitmap Edit3dElement {
             get {
-                object obj = ResourceManager.GetObject("Edit3DElement", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit3dElement", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -723,9 +703,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit3DMember {
+        internal static System.Drawing.Bitmap Edit3dMember {
             get {
-                object obj = ResourceManager.GetObject("Edit3DMember", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit3dMember", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -733,9 +713,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Edit3DProperty {
+        internal static System.Drawing.Bitmap Edit3dProperty {
             get {
-                object obj = ResourceManager.GetObject("Edit3DProperty", resourceCulture);
+                object obj = ResourceManager.GetObject("Edit3dProperty", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -843,9 +823,19 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Element2dfromBrep {
+        internal static System.Drawing.Bitmap Element2dDisplacements {
             get {
-                object obj = ResourceManager.GetObject("Element2dfromBrep", resourceCulture);
+                object obj = ResourceManager.GetObject("Element2dDisplacements", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Element2dForcesAndMoments {
+            get {
+                object obj = ResourceManager.GetObject("Element2dForcesAndMoments", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -863,6 +853,26 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Element2dStresses {
+            get {
+                object obj = ResourceManager.GetObject("Element2dStresses", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Element3dDisplacements {
+            get {
+                object obj = ResourceManager.GetObject("Element3dDisplacements", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Element3dParam {
             get {
                 object obj = ResourceManager.GetObject("Element3dParam", resourceCulture);
@@ -873,9 +883,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ElementsfromMembers {
+        internal static System.Drawing.Bitmap Element3dStresses {
             get {
-                object obj = ResourceManager.GetObject("ElementsfromMembers", resourceCulture);
+                object obj = ResourceManager.GetObject("Element3dStresses", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -903,9 +913,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap FootfallResult {
+        internal static System.Drawing.Bitmap FootfallResults {
             get {
-                object obj = ResourceManager.GetObject("FootfallResult", resourceCulture);
+                object obj = ResourceManager.GetObject("FootfallResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -943,9 +953,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GetModelAnalysisTasks {
+        internal static System.Drawing.Bitmap GetModelAnalysis {
             get {
-                object obj = ResourceManager.GetObject("GetModelAnalysisTasks", resourceCulture);
+                object obj = ResourceManager.GetObject("GetModelAnalysis", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1003,9 +1013,19 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GetProperty2DModifier {
+        internal static System.Drawing.Bitmap GetProperty2dModifier {
             get {
-                object obj = ResourceManager.GetObject("GetProperty2DModifier", resourceCulture);
+                object obj = ResourceManager.GetObject("GetProperty2dModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GetResult {
+            get {
+                object obj = ResourceManager.GetObject("GetResult", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1016,16 +1036,6 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap GetResultCases {
             get {
                 object obj = ResourceManager.GetObject("GetResultCases", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap GetResults {
-            get {
-                object obj = ResourceManager.GetObject("GetResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1123,9 +1133,19 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GWACommand {
+        internal static System.Drawing.Bitmap GsaLogo64 {
             get {
-                object obj = ResourceManager.GetObject("GWACommand", resourceCulture);
+                object obj = ResourceManager.GetObject("GsaLogo64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GwaCommand {
+            get {
+                object obj = ResourceManager.GetObject("GwaCommand", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1213,9 +1233,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap LocalAxis {
+        internal static System.Drawing.Bitmap LocalAxes {
             get {
-                object obj = ResourceManager.GetObject("LocalAxis", resourceCulture);
+                object obj = ResourceManager.GetObject("LocalAxes", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1313,16 +1333,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NodeContourResults {
-            get {
-                object obj = ResourceManager.GetObject("NodeContourResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap NodeDisplacements {
             get {
                 object obj = ResourceManager.GetObject("NodeDisplacements", resourceCulture);
@@ -1363,9 +1373,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap path1220 {
+        internal static System.Drawing.Bitmap PointResultInfo {
             get {
-                object obj = ResourceManager.GetObject("path1220", resourceCulture);
+                object obj = ResourceManager.GetObject("PointResultInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1373,9 +1383,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap PointResultsInfo {
+        internal static System.Drawing.Bitmap Preview3dSections {
             get {
-                object obj = ResourceManager.GetObject("PointResultsInfo", resourceCulture);
+                object obj = ResourceManager.GetObject("Preview3dSections", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1383,19 +1393,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Preview3DSections {
+        internal static System.Drawing.Bitmap PreviewDeformed3dSections {
             get {
-                object obj = ResourceManager.GetObject("Preview3DSections", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap PreviewDeformed3DSections {
-            get {
-                object obj = ResourceManager.GetObject("PreviewDeformed3DSections", resourceCulture);
+                object obj = ResourceManager.GetObject("PreviewDeformed3dSections", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1413,9 +1413,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Prop2dModifierParam {
+        internal static System.Drawing.Bitmap Property2dModifierParam {
             get {
-                object obj = ResourceManager.GetObject("Prop2dModifierParam", resourceCulture);
+                object obj = ResourceManager.GetObject("Property2dModifierParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1423,9 +1423,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Prop2dParam {
+        internal static System.Drawing.Bitmap Property2dParam {
             get {
-                object obj = ResourceManager.GetObject("Prop2dParam", resourceCulture);
+                object obj = ResourceManager.GetObject("Property2dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1433,9 +1433,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Prop3dParam {
+        internal static System.Drawing.Bitmap Property3dParam {
             get {
-                object obj = ResourceManager.GetObject("Prop3dParam", resourceCulture);
+                object obj = ResourceManager.GetObject("Property3dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1503,9 +1503,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SaveGSAModel {
+        internal static System.Drawing.Bitmap SaveGsaModel {
             get {
-                object obj = ResourceManager.GetObject("SaveGSAModel", resourceCulture);
+                object obj = ResourceManager.GetObject("SaveGsaModel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1553,19 +1553,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SelectResults {
+        internal static System.Drawing.Bitmap SelectResult {
             get {
-                object obj = ResourceManager.GetObject("SelectResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap SpringForces {
-            get {
-                object obj = ResourceManager.GetObject("SpringForces", resourceCulture);
+                object obj = ResourceManager.GetObject("SelectResult", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1583,6 +1573,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SpringReactionForces {
+            get {
+                object obj = ResourceManager.GetObject("SpringReactionForces", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap TaperProfile {
             get {
                 object obj = ResourceManager.GetObject("TaperProfile", resourceCulture);
@@ -1593,9 +1593,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TotalLoadsandReactions {
+        internal static System.Drawing.Bitmap TotalLoadsAndReactions {
             get {
-                object obj = ResourceManager.GetObject("TotalLoadsandReactions", resourceCulture);
+                object obj = ResourceManager.GetObject("TotalLoadsAndReactions", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1606,16 +1606,6 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap unused {
             get {
                 object obj = ResourceManager.GetObject("unused", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Vector_184 {
-            get {
-                object obj = ResourceManager.GetObject("Vector_184", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

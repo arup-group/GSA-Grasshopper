@@ -110,7 +110,7 @@ namespace GsaGH.Parameters {
       }
     }
     public PolyCurve PolyCurve { get; private set; }
-    public GsaProp2d Prop2d { get; set; } = new GsaProp2d();
+    public GsaProperty2d Prop2d { get; set; } = new GsaProperty2d();
     public List<Point3d> Topology { get; private set; }
     public List<string> TopologyType { get; private set; }
     public MemberType Type {
@@ -173,7 +173,7 @@ namespace GsaGH.Parameters {
           + "Settings or if unset under Rhino unit settings");
       }
 
-      Prop2d = new GsaProp2d(prop);
+      Prop2d = new GsaProperty2d(prop);
     }
 
     internal GsaMember2d(
@@ -185,7 +185,7 @@ namespace GsaGH.Parameters {
       List<List<Point3d>> inlcusionLinesTopology,
       List<List<string>> inclusionTopologyType,
       List<Point3d> includePoints,
-      GsaProp2d prop2d,
+      GsaProperty2d prop2d,
       LengthUnit modelUnit) {
       ApiMember = mem.Value;
       MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);

@@ -31,7 +31,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("955e572d-1293-4ac6-b436-54135f7714f6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Edit2DMember;
+    protected override Bitmap Icon => Resources.Edit2dMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public EditMember2d_OBSOLETE() : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
@@ -98,7 +98,7 @@ namespace GsaGH.Components {
       pManager.AddCurveParameter("Incl. Curves", "(C)",
         "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA", "Set new 2D Property.",
+      pManager.AddParameter(new GsaProperty2dParameter(), "2D Property", "PA", "Set new 2D Property.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group",
         GH_ParamAccess.item);
@@ -149,7 +149,7 @@ namespace GsaGH.Components {
       pManager.AddCurveParameter("Incl. Curves", "(C)", "Get Inclusion curves",
         GH_ParamAccess.list);
       pManager.HideParameter(4);
-      pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA",
+      pManager.AddParameter(new GsaProperty2dParameter(), "2D Property", "PA",
         "Get 2D Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
 
@@ -226,7 +226,7 @@ namespace GsaGH.Components {
         mem = mem.UpdateGeometry(brep, curves, pts);
       }
 
-      GsaProp2dGoo prop2dGoo = null;
+      GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(5, ref prop2dGoo)) {
         mem.Prop2d = prop2dGoo.Value;
       }
@@ -313,7 +313,7 @@ namespace GsaGH.Components {
       da.SetDataList(3, mem.InclusionPoints);
       da.SetDataList(4, mem.InclusionLines);
 
-      da.SetData(5, new GsaProp2dGoo(mem.Prop2d));
+      da.SetData(5, new GsaProperty2dGoo(mem.Prop2d));
       da.SetData(6, mem.Group);
 
       da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);

@@ -19,8 +19,8 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.LoadCaseParam;
 
     public GsaLoadCaseParameter() : base(new GH_InstanceDescription(
-      GsaLoadCaseGoo.Name + " parameter", GsaLoadCaseGoo.NickName, 
-      GsaLoadCaseGoo.Description, CategoryName.Name(),
+      GsaLoadCaseGoo.Name, GsaLoadCaseGoo.NickName, 
+      GsaLoadCaseGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaLoadCaseGoo PreferredCast(object data) {

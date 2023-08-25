@@ -6,7 +6,7 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class SideBar {
-    public static string page = "/references/";
+    public static string page = "/references/gsagh/";
 
     public static void CreateSideBar(
       Dictionary<string, List<Component>> components,
@@ -16,13 +16,11 @@ namespace DocsGeneration.MarkDowns {
       string sb = "/*\n --- Start of auto-generated text --- \n" +
         "This part of the sidebar file has been auto-generated, do not change it manually! Edit" +
         " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
-      sb += "{\r\n";
+      sb += ",{\r\n";
       sb += "\ttitle: 'GSA Grasshopper plugin',\r\n";
       int ind = 4;
-      sb += AddLine(ind, "collapsable: false,");
       sb += AddLine(ind, "children: [");
       ind += 2;
-      sb += AddLine(ind, $"'{page}gsagh-introduction',");
 
       // Parameter sidebar
       sb += AddLine(ind, "{");
@@ -37,8 +35,7 @@ namespace DocsGeneration.MarkDowns {
           sb += AddLine(ind, $"'{page}{file}',");
         }
       }
-      string folder = "gsagh/parameters/";
-      sb += AddLine(ind, $"'{page}{folder}gsagh-unitnumber-parameter'");
+      sb += AddLine(ind, $"'{page}gsagh-unitnumber-parameter'");
       ind -= 2;
       sb += AddLine(ind, "]");
       ind -= 2;
@@ -57,8 +54,7 @@ namespace DocsGeneration.MarkDowns {
         sb += AddLine(ind, "{");
         ind += 2;
         sb += AddLine(ind, $"title: '{key}',");
-        folder = "gsagh/components/";
-        sb += AddLine(ind, $"path: '{page}{folder}gsagh-{key.ToLower()}-components-overview',");
+        sb += AddLine(ind, $"path: '{page}gsagh-{key.ToLower()}-components-overview',");
         sb += AddLine(ind, "children: [");
         ind += 2;
 
@@ -87,11 +83,16 @@ namespace DocsGeneration.MarkDowns {
       ind -= 2;
       sb += AddLine(ind, "]");
       ind -= 4;
-      sb += AddLine(0, "},");
+      sb += AddLine(0, "}");
 
       sb += "/*\n--- End of auto-generated text ---\n*/\n";
 
-      var js = new StreamWriter($@"Output\sidebar-gsagh.js");
+      string filePath = $@"Output\Helper\sidebar-gsagh.js";
+      string directory = Path.GetDirectoryName(filePath);
+      if (!Directory.Exists(directory)) {
+        Directory.CreateDirectory(directory);
+      }
+      var js = new StreamWriter(filePath);
       js.Write(sb);
       js.Close();
     }

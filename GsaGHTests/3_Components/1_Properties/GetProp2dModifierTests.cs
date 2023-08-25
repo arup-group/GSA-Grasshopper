@@ -12,14 +12,14 @@ namespace GsaGHTests.Properties {
   public class GetProp2dModifierTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new GetProp2dModifier();
+      var comp = new GetProperty2dModifier();
       comp.CreateAttributes();
       return comp;
     }
 
     [Fact]
     public void GetValuesFromExistingComponent() {
-      var modifier = new GsaProp2dModifier {
+      var modifier = new GsaProperty2dModifier {
         InPlane = new Ratio(1.2, RatioUnit.DecimalFraction),
         Bending = new Ratio(1.3, RatioUnit.DecimalFraction),
         Shear = new Ratio(1.4, RatioUnit.DecimalFraction),
@@ -28,7 +28,7 @@ namespace GsaGHTests.Properties {
       };
 
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, new GsaProp2dModifierGoo(modifier), 0);
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dModifierGoo(modifier), 0);
 
       var inplane = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 0);
       var bending = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1);

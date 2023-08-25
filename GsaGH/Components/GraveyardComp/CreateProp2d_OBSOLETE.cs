@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Create2DProperty;
+    protected override Bitmap Icon => Resources.Create2dProperty;
     private readonly List<string> _dropdownTopList = new List<string>(new[] {
       "Plane Stress",
       "Fabric",
@@ -336,7 +336,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var prop = new GsaProp2d();
+      var prop = new GsaProperty2d();
 
       switch (_mode) {
         case FoldMode.PlaneStress:
@@ -381,7 +381,7 @@ namespace GsaGH.Components {
         } 
       }
 
-      da.SetData(0, new GsaProp2dGoo(prop));
+      da.SetData(0, new GsaProperty2dGoo(prop));
     }
 
     private void Mode1Clicked() {

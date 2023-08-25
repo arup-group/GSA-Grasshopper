@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DocsGeneration.Data;
 
 namespace DocsGeneration.MarkDowns.Helpers {
   public class FileHelper {
+    public static string iconPath = "./images/";
     public static List<string> iconNames = new List<string>();
     public static string CreateMarkDownFileName(Parameter parameter) {
       string fileLink = CreateFileName(parameter);
@@ -18,12 +19,12 @@ namespace DocsGeneration.MarkDowns.Helpers {
     public static string CreateIconLink(Component component) {
       string name = component.Name.Replace(" ", string.Empty);
       iconNames.Add(name);
-      return $"![{component.Name}](./images/gsagh/{name}.png)";
+      return $"![{component.Name}]({iconPath}{name}.png)";
     }
     public static string CreateIconLink(Parameter parameter) {
       if (parameter.ParameterType.StartsWith("UnitNumber")) {
         iconNames.Add("UnitParam");
-        return $"![UnitNumber](./images/gsagh/UnitParam.png)";
+        return $"![UnitNumber]({iconPath}UnitParam.png)";
       }
 
       string name = parameter.ParameterType.Replace(" (List)", string.Empty);
@@ -32,64 +33,75 @@ namespace DocsGeneration.MarkDowns.Helpers {
       name = $"{name}Param";
       iconNames.Add(name);
       // ![Material](./images/gsagh/MaterialParam.png)
-      return $"![{name}](./images/gsagh/{name}.png)";
+      return $"![{name}]({iconPath}{name}.png)";
     }
 
     public static void WriteIconNames() {
       string text = string.Join("\r\n", iconNames.Distinct().OrderBy(x => x));
-      Writer.Write($@"Output\iconNames.txt", text);
-    }
-
-    public static string CreatePageLink(Parameter parameter) {
-      // [Material](gsagh-material-parameter.html)
-      string name = parameter.Name.Replace(" ", "-");
-      return $"[{parameter.Name}](./gsagh/parameters/gsagh-{name.ToLower()}-parameter.html)";
-    }
-    public static string CreatePageLink(Component component) {
-      string name = component.Name.Replace(" ", "-");
-      return $"[{component.Name}]" +
-        $"(./gsagh/components/{component.Category.ToLower()}/gsagh-{name.ToLower()}-parameter.html)";
+      Writer.Write($@"Output\Helper\iconNames.txt", text);
     }
 
     public static string CreateParameterLink(Parameter parameter, List<string> parameterNames) {
       string parameterName = parameter.ParameterType;
       parameterName = parameterName.Replace(" (List)", string.Empty);
       parameterName = parameterName.Replace(" (Tree)", string.Empty);
-      string list = parameter.ParameterType.Contains(" (List)") ? " (List)" : string.Empty;
-      string tree = parameter.ParameterType.Contains(" (Tree)") ? " (Tree)" : string.Empty;
+      string list = parameter.ParameterType.Contains(" (List)") ? " `List`" : string.Empty;
+      string tree = parameter.ParameterType.Contains(" (Tree)") ? " `Tree`" : string.Empty;
 
       if (parameterNames.Contains(parameterName.ToUpper())) {
-        string name = parameterName.Replace(" ", "-");
-        return
-          $"[{parameterName}](./gsagh/parameters/gsagh-{name.ToLower()}-parameter.html)" + list + tree;
+        string fileName = CreateFileName(parameterName, "parameter");
+        return $"[{parameterName}]({fileName}.html)" + list + tree;
       }
 
-      string link = $"[UnitNumber](gsagh-unitnumber-parameter.html)";
+      string link = $"[Unit Number](gsagh-unitnumber-parameter.html)";
       string unitNumber = parameter.ParameterType.Replace("UnitNumber", link);
 
       return unitNumber;
     }
 
     public static string CreateSideBarFileName(Component component) {
-      string fileLink = CreateFileName(component);
-      fileLink = fileLink.Replace(@"\", "/");
-      return fileLink.TrimStart('/');
+      return CreateSideBarFileName(CreateFileName(component));
     }
     public static string CreateSideBarFileName(Parameter parameter) {
-      string fileLink = CreateFileName(parameter);
+      return CreateSideBarFileName(CreateFileName(parameter));
+    }
+
+    private static string CreateSideBarFileName(string fileLink) {
       fileLink = fileLink.Replace(@"\", "/");
       return fileLink.TrimStart('/');
     }
 
+    public static string CreatePageLink(Parameter parameter) {
+      string fileName = CreateFileName(parameter);
+      return $"[{parameter.Name}]({fileName}.html)";
+    }
+    public static string CreatePageLink(Component component) {
+      string fileName = CreateFileName(component);
+      return $"[{component.Name}]({fileName}.html)";
+    }
+
     private static string CreateFileName(Component component) {
-      string path = $@"\gsagh\components\{component.Category.ToLower()}\";
-      string name = component.Name.Replace(" ", string.Empty);
-      return $"{path}gsagh-{name.ToLower()}-component";
+      return CreateFileName(component.Name, "component");
     }
     private static string CreateFileName(Parameter parameter) {
-      string path = $@"\gsagh\parameters\";
-      string name = parameter.Name.Replace(" ", string.Empty);
-      return $"{path}gsagh-{name.ToLower()}-parameter";
+      return CreateFileName(parameter.Name, "parameter");
+    }
+    internal static string CreateFileName(string name, string postfix, string prefix = "gsagh") {
+      string spacer = "-";
+      return 
+        $"{prefix.ToLower()}{spacer}" +
+        $"{name.Replace(" ", "-").ToLower()}{spacer}" +
+        $"{postfix.ToLower()}";
+    }
+
+    internal static string SplitCamelCase(string s, string spacer) {
+      // `CreateModel` => `Create Model`
+      var r = new Regex(@"
+        (?<=[A-Z])(?=[A-Z][a-z]) |
+        (?<=[^A-Z])(?=[A-Z]) |
+        (?<=[A-Za-z])(?=[^A-Za-z])",
+        RegexOptions.IgnorePatternWhitespace);
+      return r.Replace(s, spacer).Replace("Bool 6", "Bool6");
     }
   }
 }

@@ -134,7 +134,7 @@ namespace GsaGHTests.Helpers.Export {
     [Fact]
     public void AssembleModelWithElement2dsTest() {
       var thickness1 = new Length(200, LengthUnit.Millimeter);
-      GsaProp2dGoo prop1 = Prop2d(thickness1, true);
+      GsaProperty2dGoo prop1 = Prop2d(thickness1, true);
       var m1 = new Mesh();
       m1.Vertices.Add(new Point3d(0, 0, 0));
       m1.Vertices.Add(new Point3d(1, 0, 0));
@@ -147,7 +147,7 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement2dGoo elem2d1 = Element2d(mesh1, prop1);
 
       var thickness2 = new Length(2, LengthUnit.Centimeter);
-      GsaProp2dGoo prop2 = Prop2d(thickness2, false);
+      GsaProperty2dGoo prop2 = Prop2d(thickness2, false);
       var m2 = new Mesh();
       m2.Vertices.Add(new Point3d(1, 0, 0));
       m2.Vertices.Add(new Point3d(2, 0, 0));
@@ -178,7 +178,7 @@ namespace GsaGHTests.Helpers.Export {
     [Fact]
     public void AssembleModelWithElement2dsByRefTest() {
       var thickness1 = new Length(200, LengthUnit.Millimeter);
-      GsaProp2dGoo prop1 = Prop2d(thickness1, true);
+      GsaProperty2dGoo prop1 = Prop2d(thickness1, true);
       prop1.Value.Id = 1;
 
       var m1 = new Mesh();
@@ -193,7 +193,7 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement2dGoo elem2d1 = Element2d(mesh1, prop1.Value.Id);
 
       var thickness2 = new Length(2, LengthUnit.Centimeter);
-      GsaProp2dGoo prop2 = Prop2d(thickness2, false);
+      GsaProperty2dGoo prop2 = Prop2d(thickness2, false);
       prop2.Value.Id = 2;
 
       var m2 = new Mesh();
@@ -230,7 +230,7 @@ namespace GsaGHTests.Helpers.Export {
     [Fact]
     public void AssembleModelWithElement2dTest() {
       var thickness = new Length(200, LengthUnit.Millimeter);
-      GsaProp2dGoo prop = Prop2d(thickness, true);
+      GsaProperty2dGoo prop = Prop2d(thickness, true);
       var m = new Mesh();
       m.Vertices.Add(new Point3d(0, 0, 0));
       m.Vertices.Add(new Point3d(10, 0, 0));
@@ -265,7 +265,7 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement1dGoo elem1d2 = Element1d(ln2, section2);
 
       var thickness1 = new Length(200, LengthUnit.Millimeter);
-      GsaProp2dGoo prop1 = Prop2d(thickness1, true);
+      GsaProperty2dGoo prop1 = Prop2d(thickness1, true);
       var m1 = new Mesh();
       m1.Vertices.Add(new Point3d(0, 0, 0));
       m1.Vertices.Add(new Point3d(100, 0, 0));
@@ -278,7 +278,7 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement2dGoo elem2d1 = Element2d(mesh1, prop1);
 
       var thickness2 = new Length(2, LengthUnit.Centimeter);
-      GsaProp2dGoo prop2 = Prop2d(thickness2, false);
+      GsaProperty2dGoo prop2 = Prop2d(thickness2, false);
       var m2 = new Mesh();
       m2.Vertices.Add(new Point3d(100, 0, 0));
       m2.Vertices.Add(new Point3d(200, 0, 0));

@@ -13,11 +13,11 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaModelParameter))]
     // 1_Properties
     [InlineData(typeof(GsaBool6Parameter))]
-    [InlineData(typeof(GsaBucklingLengthFactorsParameter))]
+    [InlineData(typeof(GsaBucklingFactorsParameter))]
     [InlineData(typeof(GsaMaterialParameter))]
     [InlineData(typeof(GsaOffsetParameter))]
-    [InlineData(typeof(GsaProp2dParameter))]
-    [InlineData(typeof(GsaProp3dParameter))]
+    [InlineData(typeof(GsaProperty2dParameter))]
+    [InlineData(typeof(GsaProperty3dParameter))]
     [InlineData(typeof(GsaSectionModifierParameter))]
     [InlineData(typeof(GsaSectionParameter))]
     // 2_Geometry

@@ -28,7 +28,7 @@ namespace GsaGH.Components.GraveyardComp {
     public override Guid ComponentGuid => new Guid("06ae2d01-b152-49c1-9356-c83714c4e5f4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Edit1DMember;
+    protected override Bitmap Icon => Resources.Edit1dMember;
     private AngleUnit _angleUnit = AngleUnit.Radian;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
@@ -137,9 +137,9 @@ namespace GsaGH.Components.GraveyardComp {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
-        GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBucklingFactorsParameter(),
+        "Set " + GsaBucklingFactorsGoo.Name, GsaBucklingFactorsGoo.NickName,
+        GsaBucklingFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour",
         GH_ParamAccess.item);
@@ -182,9 +182,9 @@ namespace GsaGH.Components.GraveyardComp {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
-        GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBucklingFactorsParameter(),
+        "Get " + GsaBucklingFactorsGoo.Name, GsaBucklingFactorsGoo.NickName,
+        GsaBucklingFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -308,8 +308,8 @@ namespace GsaGH.Components.GraveyardComp {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(14, ref ghTyp)) {
-        var bucklingLengthFactors = new GsaBucklingLengthFactors();
-        if (ghTyp.Value is GsaBucklingLengthFactorsGoo blfGoo) {
+        var bucklingLengthFactors = new GsaBucklingFactors();
+        if (ghTyp.Value is GsaBucklingFactorsGoo blfGoo) {
           bucklingLengthFactors = blfGoo.Value.Duplicate();
           mem.ApiMember.MomentAmplificationFactorStrongAxis 
             = bucklingLengthFactors.MomentAmplificationFactorStrongAxis;
@@ -357,7 +357,7 @@ namespace GsaGH.Components.GraveyardComp {
       da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
       da.SetData(12, mem.MeshSize);
       da.SetData(13, mem.MeshWithOthers);
-      da.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem)));
+      da.SetData(14, new GsaBucklingFactorsGoo(new GsaBucklingFactors(mem)));
       da.SetData(15, mem.Name);
       da.SetData(16, mem.Colour);
       da.SetData(17, mem.IsDummy);

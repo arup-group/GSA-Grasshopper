@@ -16,7 +16,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.TaperProfile;
 
-    public TaperProfile() : base("Taper Profile", "Taper",
+    public TaperProfile() : base("Taper Profile", "TaperPf",
       "Create a Profile that tapers along its length from start and end profiles",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;

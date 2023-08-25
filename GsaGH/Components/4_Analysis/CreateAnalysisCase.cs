@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateAnalysisCase;
 
     public CreateAnalysisCase() : base(
-      "Create " + GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty),
+      "Create " + GsaAnalysisCaseGoo.Name,
       GsaAnalysisCaseGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisCaseGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;

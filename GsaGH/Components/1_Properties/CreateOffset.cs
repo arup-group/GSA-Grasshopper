@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateOffset;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public CreateOffset() : base("Create Offset", "Offset", "Create GSA Offset",
+    public CreateOffset() : base("Create Offset", "Offset", "Create an GSA Offset",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

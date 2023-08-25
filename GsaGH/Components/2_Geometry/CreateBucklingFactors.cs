@@ -18,9 +18,9 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateBucklingFactors;
 
     public CreateBucklingFactors() : base(
-      "Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
-      GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBucklingLengthFactorsGoo.Description, CategoryName.Name(),
+      "Create " + GsaBucklingFactorsGoo.Name,
+      GsaBucklingFactorsGoo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaBucklingFactorsGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat2()) {
       Hidden = true;
     }
@@ -39,11 +39,11 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
+      pManager.AddParameter(new GsaBucklingFactorsParameter());
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var fls = new GsaBucklingLengthFactors();
+      var fls = new GsaBucklingFactors();
       double? input = null;
       if (da.GetData(0, ref input)) {
         fls.MomentAmplificationFactorStrongAxis = input;
@@ -57,7 +57,7 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = input;
       }
 
-      da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
+      da.SetData(0, new GsaBucklingFactorsGoo(fls));
     }
   }
 }
