@@ -45,18 +45,29 @@ namespace DocsGeneration.MarkDowns.Helpers {
       string parameterName = parameter.ParameterType;
       parameterName = parameterName.Replace(" (List)", string.Empty);
       parameterName = parameterName.Replace(" (Tree)", string.Empty);
+      parameterName = SplitCamelCase(parameterName, " ");
       string list = parameter.ParameterType.Contains(" (List)") ? " `List`" : string.Empty;
       string tree = parameter.ParameterType.Contains(" (Tree)") ? " `Tree`" : string.Empty;
 
       if (parameterNames.Contains(parameterName.ToUpper())) {
         string fileName = CreateFileName(parameterName, "parameter");
+
+        parameterName = parameterName
+          .Replace(" 3d", " 3D")
+          .Replace(" 2d", " 2D")
+          .Replace(" 1d", " 1D");
+
         return $"[{parameterName}]({fileName}.html)" + list + tree;
       }
 
       string link = $"[Unit Number](gsagh-unitnumber-parameter.html)";
-      string unitNumber = parameter.ParameterType.Replace("UnitNumber", link);
+      string otherParam = parameterName.Replace("UnitNumber", link);
+      otherParam = otherParam.Replace("I Geometric", "Geometry");
+      if (!otherParam.StartsWith("[")) {
+        otherParam = $"`{otherParam}`";
+      }
 
-      return unitNumber;
+      return otherParam + list + tree;
     }
 
     public static string CreateSideBarFileName(Component component) {
