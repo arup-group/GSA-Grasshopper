@@ -25,8 +25,8 @@ namespace GsaGH.Components {
       "Create a GSA Grid Line from a line or arc.", CategoryName.Name(), SubCategoryName.Cat0()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddCurveParameter("Curve", "C", "Line or Arc to create a GSA Grid Line", GH_ParamAccess.item);
-      pManager.AddTextParameter("Label", "L", "Grid Line Label", GH_ParamAccess.item);
+      pManager.AddCurveParameter("Curve", "C", "Straight line or circular arc to create a GSA Grid Line", GH_ParamAccess.item);
+      pManager.AddTextParameter("Label", "L", "The name by which the grid line is referred", GH_ParamAccess.item);
       pManager.AddNumberParameter("Pattern", "P", "Pattern", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -78,7 +78,7 @@ namespace GsaGH.Components {
           gridLine = GsaGridLine.FromArc(arc, label);
           polyCurve.Append(arc);
         } else {
-          string message = "Invalid input geometry, curve needs to be a line or an arc.";
+          string message = "Invalid input geometry, curve needs to be a straight line or a circular arc.";
           this.AddRuntimeWarning(message);
           return;
         }

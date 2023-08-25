@@ -29,16 +29,15 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddTextParameter("Label", "Lb", "Grid Line label", GH_ParamAccess.item);
-      pManager.AddPointParameter("Starting Point", "Pt", "The Grid Line starting point",
+      pManager.AddTextParameter("Label", "Lb", "The name by which the grid line is referred", GH_ParamAccess.item);
+      pManager.AddPointParameter("Starting Point", "Pt", "The start of a straight line or the centre of a circular arc",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Length", "L", "The Length of the Grid Line",
+      pManager.AddNumberParameter("Length", "L", "The length of a straight line or the radius of a circular arc",
         GH_ParamAccess.item);
-      pManager.AddTextParameter("Shape", "S", "Line or Arc shape", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Orientation", "θ1", "The orientation angle", 
+      pManager.AddTextParameter("Shape", "S", "Specifies whether the grid line is a straight line or circular arc", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation", "θ1", "The angle of inclination of a straight line or the start angle of a circular arc", 
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Angle", "θ2", "The second orientation angle if the Grid Line is" +
-        " an Arc",
+      pManager.AddNumberParameter("Angle", "θ2", "The end angle of a circular arc (not required for straight grid lines)",
         GH_ParamAccess.item);
     }
 
