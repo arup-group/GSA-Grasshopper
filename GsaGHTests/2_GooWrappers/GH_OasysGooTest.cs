@@ -105,7 +105,7 @@ namespace GsaGHTests.GooWrappers {
         }
 
         string description = (string)gooProperty.GetValue(objectGoo, null);
-        Assert.Contains("\n", description);
+        Assert.StartsWith("GSA", description);
         Assert.True(description.Length > 7);
         hasDescription = true;
       }
