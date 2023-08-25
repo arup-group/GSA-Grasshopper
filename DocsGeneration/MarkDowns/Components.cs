@@ -13,7 +13,7 @@ namespace DocsGeneration.MarkDowns {
       "::: warning" +
       "\nGSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \\\"as-is\\\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.\n:::\n" +
       "\n" +
-      "![GsaGH-Ribbon](./images/RibbonScreenshot.png)\n" +
+      "![GsaGH-Ribbon](./images/RibbonLayout.gif)\n" +
       "\n"; 
 
     public static void CreateOverview(
