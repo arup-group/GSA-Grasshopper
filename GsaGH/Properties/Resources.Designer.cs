@@ -973,6 +973,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GetModelGridLines {
+            get {
+                object obj = ResourceManager.GetObject("GetModelGridLines", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GetModelLists {
             get {
                 object obj = ResourceManager.GetObject("GetModelLists", resourceCulture);

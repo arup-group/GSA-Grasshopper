@@ -15,7 +15,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaGridLineGoo : GH_OasysGeometricGoo<GsaGridLine> {
     public static string Description => "GSA Grid Line";
-    public static string Name => "GridLine";
+    public static string Name => "Grid Line";
     public static string NickName => "GL";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
