@@ -60,7 +60,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
         return $"[{parameterName}]({fileName}.html)" + list + tree;
       }
 
-      if (parameterName.Contains("UnitNumber")) {
+      if (parameterName.Contains("Unit Number")) {
         string link = $"[Unit Number](gsagh-unitnumber-parameter.html)";
         return parameterName.Replace("UnitNumber", link) + list + tree;
       }

@@ -15,7 +15,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Parameters {
   /// <summary>
   /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
-  /// <para>"A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.</para>
+  /// <para>A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember2d {
