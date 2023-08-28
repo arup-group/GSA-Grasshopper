@@ -12,7 +12,7 @@ using OasysGH.Components;
 namespace GsaGH.Components {
   public class ModelUnits : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("82d4a7c0-802e-4ad6-ba4b-b0a68f7191bb");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ModelUnits;
 

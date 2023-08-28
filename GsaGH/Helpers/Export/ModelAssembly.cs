@@ -21,6 +21,7 @@ namespace GsaGH.Helpers.Export {
     internal GsaGuidIntListDictionary<Element> Elements;
     internal GsaGuidDictionary<Member> Members;
     internal GsaGuidDictionary<EntityList> Lists;
+    internal GsaIntDictionary<GridLine> _gridLines;
     internal Loads Loads;
     internal ConcurrentDictionary<int, ConcurrentBag<int>> MemberElementRelationship;
     internal LengthUnit Unit = LengthUnit.Meter;
@@ -29,9 +30,7 @@ namespace GsaGH.Helpers.Export {
     private bool _isSeedModel = true;
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
-      if (model == null) {
-        model = new GsaModel();
-      }
+      model ??= new GsaModel();
 
       Model = model.Model;
       Unit = unit;
@@ -41,6 +40,7 @@ namespace GsaGH.Helpers.Export {
       Elements = new GsaGuidIntListDictionary<Element>(Model.Elements());
       Members = new GsaGuidDictionary<Member>(Model.Members());
       Lists = new GsaGuidDictionary<EntityList>(Model.Lists());
+      _gridLines = new GsaIntDictionary<GridLine>(Model.GridLines());
       Loads = new Loads(Model);
       CheckIfModelIsEmpty();
     }
@@ -151,7 +151,39 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void AssemblePreMeshing() {
+    internal void ConvertLists(List<GsaList> lists) {
+      if (lists == null || lists.Count == 0) {
+        return;
+      }
+
+      foreach (GsaList list in lists) {
+        switch (list.EntityType) {
+          case Parameters.EntityType.Element:
+            if (list._elements == (null, null, null)) {
+              continue;
+            }
+
+            ConvertElements(
+              list._elements.e1d.Select(x => x.Value).ToList(),
+              list._elements.e2d.Select(x => x.Value).ToList(),
+              list._elements.e3d.Select(x => x.Value).ToList());
+            break;
+
+          case Parameters.EntityType.Member:
+            if (list._members == (null, null, null)) {
+              continue;
+            }
+
+            ConvertMembers(
+              list._members.m1d.Select(x => x.Value).ToList(),
+              list._members.m2d.Select(x => x.Value).ToList(),
+              list._members.m3d.Select(x => x.Value).ToList());
+            break;
+        }
+      }
+    }
+
+    internal void AssembleNodesElementsMembersAndLists() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
       }
@@ -233,7 +265,7 @@ namespace GsaGH.Helpers.Export {
       MemberElementRelationship = ElementListFromReference.GetMemberElementRelationship(Model);
     }
 
-    internal void AssemblePostMeshing() {
+    internal void AssembleLoadsCasesAxesGridPlaneSurfacesAndLists() {
       // Add API Loads in model
       Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
       Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
@@ -252,7 +284,7 @@ namespace GsaGH.Helpers.Export {
       Model.SetLists(Lists.ReadOnlyDictionary);
     }
 
-    internal void ConvertAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
+    internal void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = Model.AnalysisTasks();
@@ -276,10 +308,10 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void ConvertCombinations(List<GsaCombinationCase> combinations) {
+    internal void ConvertAndAssembleCombinations(List<GsaCombinationCase> combinations) {
       if (combinations != null && combinations.Count > 0) {
         var existing = Model.CombinationCases()
-          .ToDictionary(k  => k.Key, k => k.Value);
+          .ToDictionary(k => k.Key, k => k.Value);
         foreach (GsaCombinationCase co in combinations) {
           var apiCase = new CombinationCase(co.Name, co.Definition);
           if (co.Id > 0 && existing.ContainsKey(co.Id)) {
@@ -334,6 +366,17 @@ namespace GsaGH.Helpers.Export {
       Model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
       Properties.Materials.ConcreteDesignCode = concreteCode;
       Properties.Materials.SteelDesignCode = steelCode;
+    }
+
+    internal void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {
+      if (gridLines != null) {
+        int id = 1;
+        foreach (GsaGridLine gridLine in gridLines.OrderBy(x => x._gridLine.Label)) {
+          _gridLines.SetValue(id, gridLine._gridLine);
+          id++;
+        }
+        Model.SetGridLines(_gridLines.ReadOnlyDictionary);
+      }
     }
   }
 }
