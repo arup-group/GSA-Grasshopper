@@ -217,7 +217,7 @@ namespace DocsGeneration.Data {
     }
 
     private void UpdateParameters(List<Component> components) {
-      if (Name == "Model") {
+      if (Name == "Model" || Name == "Result") {
         return;
       }
 
