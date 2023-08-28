@@ -132,11 +132,15 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaGridPointLoad = new GsaGridPointLoad();
+      var gridPointLoad = new GsaGridPointLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      gsaGridPointLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
+
+      gridPointLoad.LoadCase = loadcase;
 
       var point3d = new Point3d();
       var ghPt = new GH_Point();
@@ -144,8 +148,8 @@ namespace GsaGH.Components {
         GH_Convert.ToPoint3d(ghPt, ref point3d, GH_Conversion.Both);
       }
 
-      gsaGridPointLoad.GridPointLoad.X = point3d.X;
-      gsaGridPointLoad.GridPointLoad.Y = point3d.Y;
+      gridPointLoad.GridPointLoad.X = point3d.X;
+      gridPointLoad.GridPointLoad.Y = point3d.Y;
 
       GsaGridPlaneSurface gridPlaneSurface;
       Plane plane = Plane.WorldXY;
@@ -154,7 +158,7 @@ namespace GsaGH.Components {
         switch (ghTyp.Value) {
           case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
               gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-              gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+              gridPointLoad.GridPlaneSurface = gridPlaneSurface;
               _expansionType = ExpansionType.UseGpsSettings;
               UpdateMessage(gridPlaneSurface.GridSurface.ElementType
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
@@ -163,15 +167,15 @@ namespace GsaGH.Components {
           case Plane pln:
             plane = pln;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
-            gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+            gridPointLoad.GridPlaneSurface = gridPlaneSurface;
             UpdateMessage(gridPlaneSurface.GridSurface.ElementType
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
           default: {
               if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                gsaGridPointLoad.GridPointLoad.GridSurface = id;
-                gsaGridPointLoad.GridPlaneSurface = null;
+                gridPointLoad.GridPointLoad.GridSurface = id;
+                gridPointLoad.GridPlaneSurface = null;
               } else {
                 this.AddRuntimeError(
                   "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
@@ -187,7 +191,7 @@ namespace GsaGH.Components {
         plane = Plane.WorldXY;
         plane.Origin = point3d;
         gridPlaneSurface = new GsaGridPlaneSurface(plane, true);
-        gsaGridPointLoad.GridPlaneSurface = gridPlaneSurface;
+        gridPointLoad.GridPlaneSurface = gridPlaneSurface;
 
         if (!_expansionTypeChanged && _expansionType == ExpansionType.UseGpsSettings) {
           _expansionType = ExpansionType.To1D;
@@ -234,28 +238,28 @@ namespace GsaGH.Components {
           break;
       }
 
-      gsaGridPointLoad.GridPointLoad.Direction = direc;
+      gridPointLoad.GridPointLoad.Direction = direc;
 
-      gsaGridPointLoad.GridPointLoad.AxisProperty = 0;
+      gridPointLoad.GridPointLoad.AxisProperty = 0;
       var ghAx = new GH_Integer();
       if (da.GetData(4, ref ghAx)) {
         GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1) {
-          gsaGridPointLoad.GridPointLoad.AxisProperty = axis;
+          gridPointLoad.GridPointLoad.AxisProperty = axis;
         }
       }
 
       var ghName = new GH_String();
       if (da.GetData(5, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          gsaGridPointLoad.GridPointLoad.Name = name;
+          gridPointLoad.GridPointLoad.Name = name;
         }
       }
 
-      gsaGridPointLoad.GridPointLoad.Value
+      gridPointLoad.GridPointLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
-      da.SetData(0, new GsaLoadGoo(gsaGridPointLoad));
+      da.SetData(0, new GsaLoadGoo(gridPointLoad));
     }
 
     protected override void UpdateUIFromSelectedItems() {

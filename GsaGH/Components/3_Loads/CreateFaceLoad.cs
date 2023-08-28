@@ -18,11 +18,7 @@ using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
-<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateFaceLoads_OBSOLETE.cs
-  public class CreateFaceLoads_OBSOLETE : GH_OasysDropDownComponent {
-========
   public class CreateFaceLoad : GH_OasysDropDownComponent {
->>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateFaceLoad.cs
     private enum FoldMode {
       Uniform,
       Variable,
@@ -31,7 +27,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateFaceLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
@@ -44,11 +40,7 @@ namespace GsaGH.Components {
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
     private FoldMode _mode = FoldMode.Uniform;
 
-<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateFaceLoads_OBSOLETE.cs
-    public CreateFaceLoads_OBSOLETE() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
-========
     public CreateFaceLoad() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
->>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateFaceLoad.cs
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
@@ -247,9 +239,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var faceLoad = new GsaFaceLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      faceLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
+
+      faceLoad.LoadCase = loadcase;
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

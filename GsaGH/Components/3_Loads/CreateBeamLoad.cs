@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -17,11 +18,7 @@ using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
-<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateBeamLoads2_OBSOLETE.cs
-  public class CreateBeamLoads2_OBSOLETE : GH_OasysDropDownComponent {
-========
   public class CreateBeamLoad : GH_OasysDropDownComponent {
->>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateBeamLoad.cs
     private enum FoldMode {
       Point,
       Uniform,
@@ -31,7 +28,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("63f1940b-34a8-452e-b478-f8a24d415b5c");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBeamLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
@@ -46,11 +43,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Uniform;
     private EntityType _entityType = EntityType.Member;
 
-<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateBeamLoads2_OBSOLETE.cs
-    public CreateBeamLoads2_OBSOLETE() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
-========
     public CreateBeamLoad() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
->>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateBeamLoad.cs
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
@@ -263,9 +256,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var beamLoad = new GsaBeamLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      beamLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
+
+      beamLoad.LoadCase = loadcase;
 
       if (_entityType == EntityType.Element) {
         beamLoad.ReferenceType = ReferenceType.Element;

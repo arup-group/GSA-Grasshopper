@@ -49,10 +49,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var gravityLoad = new GsaGravityLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      gravityLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
 
+      gravityLoad.LoadCase = loadcase;
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

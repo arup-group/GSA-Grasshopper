@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("efd3c9a5-3bd6-47c1-aedd-510e02c01cf9");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamLoad;
+    protected override Bitmap Icon => Resources.CreateBeamThermalLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
       "Uniform",
       //"GradientInY",
@@ -135,9 +135,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var beamThermalLoad = new GsaBeamThermalLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      beamThermalLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
+      
+      beamThermalLoad.LoadCase = loadcase;
 
       if (_entityType == EntityType.Element) {
         beamThermalLoad.ReferenceType = ReferenceType.Element;

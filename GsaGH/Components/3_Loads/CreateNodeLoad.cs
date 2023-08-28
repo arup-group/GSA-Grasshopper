@@ -25,7 +25,7 @@ namespace GsaGH.Components {
       Settlement,
     }
 
-    public override Guid ComponentGuid => new Guid("12cd0928-4508-4452-8284-4bb827cbfdc2");
+    public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateNodeLoad;
@@ -188,9 +188,13 @@ namespace GsaGH.Components {
           break;
       }
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      nodeLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
+
+      nodeLoad.LoadCase = loadcase;
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {

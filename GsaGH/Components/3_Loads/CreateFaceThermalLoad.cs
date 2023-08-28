@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("0e3fc316-c1cc-4f35-801a-695ad905dc59");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.FaceLoad;
+    protected override Bitmap Icon => Resources.CreateFaceThermalLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
       "Uniform",
       //"Gradient",
@@ -115,9 +115,13 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var faceThermalLoad = new GsaFaceThermalLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      faceThermalLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        loadcase = loadCaseGoo.Value;
+      }
+
+      faceThermalLoad.LoadCase = loadcase;
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
@@ -162,7 +166,7 @@ namespace GsaGH.Components {
               faceThermalLoad.ReferenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp2dGoo value: {
+          case GsaProperty2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
               faceThermalLoad.ReferenceType = ReferenceType.Property;
               break;
