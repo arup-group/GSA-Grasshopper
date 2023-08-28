@@ -83,8 +83,8 @@ namespace GsaGH.Components {
       "Moment Mx",
       "Moment My",
       "Moment Mxy",
-      "Wood-Armer M*x",
-      "Wood-Armer M*y",
+      "Wood-Armer M*x  ",
+      "Wood-Armer M*y  ",
     });
     private readonly List<string> _layer = new List<string>(new[] {
       "Top",
@@ -314,17 +314,19 @@ namespace GsaGH.Components {
                 _disp = (DisplayValue)j - 3;
                 _isShear = true;
               } else if (j > 4) {
-                _disp = (DisplayValue)j - 1;
-              }
+                  switch (j) {
+                    case 8:
+                      _disp = DisplayValue.ResXyz;
+                      break;
 
-              switch (j) {
-                case 8:
-                  _disp = DisplayValue.ResXyz;
-                  break;
+                    case 9:
+                      _disp = DisplayValue.ResXxyyzz;
+                      break;
 
-                case 9:
-                  _disp = DisplayValue.ResXxyyzz;
-                  break;
+                    default:
+                      _disp = (DisplayValue)j - 1;
+                      break;
+                  }
               }
             } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
               if (j > 2) {
@@ -384,7 +386,7 @@ namespace GsaGH.Components {
           Params.Output[2].Name = "Values [rad]";
           break;
 
-        case FoldMode.Force when ((int)_disp < 4) | _isShear:
+        case FoldMode.Force when ((int)_disp < 3) | _isShear:
           Params.Output[2].Name = "Legend Values ["
             + ForcePerLength.GetAbbreviation(_forcePerLengthUnit) + "/"
             + Length.GetAbbreviation(_lengthUnit) + "]";
@@ -500,7 +502,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          Message = (int)_disp < 4 ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
+          Message = ((int)_disp < 3 | _isShear) ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
             Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/"
             + Length.GetAbbreviation(_lengthUnit);
           break;
@@ -1042,7 +1044,7 @@ namespace GsaGH.Components {
             Message = Angle.GetAbbreviation(AngleUnit.Radian);
             break;
           }
-          case FoldMode.Force when ((int)_disp < 4) | _isShear: {
+          case FoldMode.Force when ((int)_disp < 3) | _isShear: {
             var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
             _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(forcePerLength));
