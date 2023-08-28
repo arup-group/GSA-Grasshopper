@@ -27,7 +27,7 @@ namespace GsaGH.Components {
       Trilinear,
     }
 
-    public override Guid ComponentGuid => new Guid("63f1940b-34a8-452e-b478-f8a24d415b5c");
+    public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBeamLoad;
@@ -41,7 +41,6 @@ namespace GsaGH.Components {
     private bool _duringLoad;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private FoldMode _mode = FoldMode.Uniform;
-    private EntityType _entityType = EntityType.Member;
 
     public CreateBeamLoad() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -71,16 +70,6 @@ namespace GsaGH.Components {
 
           case "Trilinear":
             Mode5Clicked();
-            break;
-        }
-      } else if (i == 1) {
-        switch (_selectedItems[1]) {
-          case "Element":
-            _entityType = EntityType.Element;
-            break;
-
-          case "Member":
-            _entityType = EntityType.Member;
             break;
         }
       } else {
@@ -202,12 +191,6 @@ namespace GsaGH.Components {
       _dropDownItems.Add(_loadTypeOptions);
       _selectedItems.Add(_mode.ToString());
 
-      _dropDownItems.Add(new List<string>(new[] {
-        "Element",
-        "Member"
-      }));
-      _selectedItems.Add(_entityType.ToString());
-
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
       _selectedItems.Add(ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
 
@@ -266,21 +249,6 @@ namespace GsaGH.Components {
 
       beamLoad.LoadCase = loadcase;
 
-      if (_entityType == EntityType.Element) {
-        beamLoad.ReferenceType = ReferenceType.Element;
-        beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
-      } else if (_entityType == EntityType.Member) {
-        // currently only uniform loading is supported for members
-        if (_mode != FoldMode.Uniform) {
-          this.AddRuntimeError("Members currently support only uniform loading.");
-          return;
-        }
-        beamLoad.ReferenceType = ReferenceType.Member;
-        beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Member;
-      } else {
-        throw new ArgumentException("Entity type " + _entityType.ToString() + " not supported.");
-      }
-
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
@@ -290,33 +258,22 @@ namespace GsaGH.Components {
               beamLoad.ReferenceList = listGoo.Value;
               beamLoad.ReferenceType = ReferenceType.List;
             } else {
-              this.AddRuntimeWarning(
+              this.AddRuntimeError(
                 "List must be of type Element or Member to apply to beam loading");
-            }
-
-            if (listGoo.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              return;
             }
             break;
 
-
           case GsaElement1dGoo element1dGoo:
-            if (_entityType != EntityType.Element) {
-              this.AddRuntimeWarning("Beam loads can only be applied to elements matching the selected enttiy type.");
-              break;
-            }
             beamLoad.RefObjectGuid = element1dGoo.Value.Guid;
             beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
+            beamLoad.ReferenceType = ReferenceType.Element;
             break;
 
           case GsaMember1dGoo member1dGoo:
-            if (_entityType != EntityType.Member) {
-              this.AddRuntimeError("Beam loads can only be applied to members matching the selected enttiy type.");
-              return;
-            }
             beamLoad.RefObjectGuid = member1dGoo.Value.Guid;
             beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Member;
+            beamLoad.ReferenceType = ReferenceType.Member;
             break;
 
           case GsaMaterialGoo materialGoo:
@@ -326,12 +283,18 @@ namespace GsaGH.Components {
               return;
             }
             beamLoad.RefObjectGuid = materialGoo.Value.Guid;
+            beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
             beamLoad.ReferenceType = ReferenceType.Property;
+            this.AddRuntimeRemark(
+                "Load from Material reference created as Element load");
             break;
 
           case GsaSectionGoo sectionGoo:
             beamLoad.RefObjectGuid = sectionGoo.Value.Guid;
+            beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
             beamLoad.ReferenceType = ReferenceType.Property;
+            this.AddRuntimeRemark(
+                "Load from Section reference created as Element load");
             break;
 
           default:
@@ -509,10 +472,8 @@ namespace GsaGH.Components {
       }
       _duringLoad = false;
 
-      _entityType = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[1]);
-
       _forcePerLengthUnit
-        = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[2]);
+        = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

@@ -134,28 +134,23 @@ namespace GsaGH.Components {
                 faceThermalLoad.ReferenceList = value.Value;
                 faceThermalLoad.ReferenceType = ReferenceType.List;
               } else {
-                this.AddRuntimeWarning(
+                this.AddRuntimeError(
                   "List must be of type Element or Member to apply to face loading");
-              }
-
-              if (value.Value.EntityType == EntityType.Member) {
-                this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                return;
               }
 
               break;
             }
           case GsaElement2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
+              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ReferenceType = ReferenceType.Element;
               break;
             }
           case GsaMember2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
-              faceThermalLoad.ReferenceType = ReferenceType.MemberChildElements;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-
+              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Member;
+              faceThermalLoad.ReferenceType = ReferenceType.Member;
               break;
             }
           case GsaMaterialGoo value: {
@@ -165,12 +160,18 @@ namespace GsaGH.Components {
                 return;
               }
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
+              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ReferenceType = ReferenceType.Property;
+              this.AddRuntimeRemark(
+                "Load from Material reference created as Element load");
               break;
             }
           case GsaProperty2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
+              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ReferenceType = ReferenceType.Property;
+              this.AddRuntimeRemark(
+                "Load from 2D Property reference created as Element load");
               break;
             }
           default: {

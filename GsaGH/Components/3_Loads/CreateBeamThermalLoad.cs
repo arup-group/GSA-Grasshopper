@@ -34,7 +34,6 @@ namespace GsaGH.Components {
     });
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
     private FoldMode _mode = FoldMode.Uniform;
-    private EntityType _entityType = EntityType.Member;
 
     public CreateBeamThermalLoad() : base("Create Beam Thermal Load", "BeamThermalLoad", "Create GSA Beam Thermal Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -50,19 +49,9 @@ namespace GsaGH.Components {
             //Mode1Clicked();
             break;
         }
-      } else if (i == 1) {
-        switch (_selectedItems[1]) {
-          case "Element":
-            _entityType = EntityType.Element;
-            break;
-
-          case "Member":
-            _entityType = EntityType.Member;
-            break;
-        }
       } else {
         _temperatureUnit
-          = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[2]);
+          = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[1]);
       }
 
       base.UpdateUI();
@@ -94,12 +83,6 @@ namespace GsaGH.Components {
 
       _dropDownItems.Add(_loadTypeOptions);
       _selectedItems.Add(_mode.ToString());
-
-      _dropDownItems.Add(new List<string>(new[] {
-        "Element",
-        "Member"
-      }));
-      _selectedItems.Add(_entityType.ToString());
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
       _selectedItems.Add(Temperature.GetAbbreviation(_temperatureUnit));
@@ -145,16 +128,6 @@ namespace GsaGH.Components {
       
       beamThermalLoad.LoadCase = loadcase;
 
-      if (_entityType == EntityType.Element) {
-        beamThermalLoad.ReferenceType = ReferenceType.Element;
-        beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
-      } else if (_entityType == EntityType.Member) {
-        beamThermalLoad.ReferenceType = ReferenceType.Member;
-        beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Member;
-      } else {
-        throw new ArgumentException("Entity type " + _entityType.ToString() + " not supported.");
-      }
-
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
         switch (ghTyp.Value) {
@@ -164,31 +137,20 @@ namespace GsaGH.Components {
               beamThermalLoad.ReferenceList = listGoo.Value;
               beamThermalLoad.ReferenceType = ReferenceType.List;
             } else {
-              this.AddRuntimeWarning(
+              this.AddRuntimeError(
                 "List must be of type Element or Member to apply to beam loading");
+              return;
             }
 
-            if (listGoo.Value.EntityType == EntityType.Member) {
-              this.AddRuntimeRemark(
-                "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-            }
             break;
 
 
           case GsaElement1dGoo element1dGoo:
-            if (_entityType != EntityType.Element) {
-              this.AddRuntimeWarning("Beam loads can only be applied to elements matching the selected enttiy type.");
-              break;
-            }
             beamThermalLoad.RefObjectGuid = element1dGoo.Value.Guid;
             beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
             break;
 
           case GsaMember1dGoo member1dGoo:
-            if (_entityType != EntityType.Member) {
-              this.AddRuntimeError("Beam loads can only be applied to members matching the selected enttiy type.");
-              return;
-            }
             beamThermalLoad.RefObjectGuid = member1dGoo.Value.Guid;
             beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Member;
             break;
@@ -200,12 +162,18 @@ namespace GsaGH.Components {
               return;
             }
             beamThermalLoad.RefObjectGuid = materialGoo.Value.Guid;
+            beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
             beamThermalLoad.ReferenceType = ReferenceType.Property;
+            this.AddRuntimeRemark(
+                "Load from Material reference created as Element load");
             break;
 
           case GsaSectionGoo sectionGoo:
             beamThermalLoad.RefObjectGuid = sectionGoo.Value.Guid;
+            beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
             beamThermalLoad.ReferenceType = ReferenceType.Property;
+            this.AddRuntimeRemark(
+                "Load from Section reference created as Element load");
             break;
 
           default:
@@ -238,10 +206,8 @@ namespace GsaGH.Components {
     protected override void UpdateUIFromSelectedItems() {
       _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
 
-      _entityType = (EntityType)Enum.Parse(typeof(EntityType), _selectedItems[1]);
-
       _temperatureUnit
-        = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[2]);
+        = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
   }
