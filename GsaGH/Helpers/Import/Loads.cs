@@ -97,7 +97,7 @@ namespace GsaGH.Helpers.Import {
     /// </summary>
     /// <param name="faceThermalLoads">Collection of Face Thermal loads to be imported</param>
     /// <param name="loadCases"></param>
-    v/// <returns></returns>
+    /// <returns></returns>
     internal static List<GsaLoadGoo> GetFaceThermalLoads(
       ReadOnlyCollection<FaceThermalLoad> faceThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
