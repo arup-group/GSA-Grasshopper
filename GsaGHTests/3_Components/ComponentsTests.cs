@@ -26,8 +26,10 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
     //Loads
-    [InlineData(typeof(CreateBeamLoad), 3)]
+    [InlineData(typeof(CreateBeamLoad), 2)]
+    [InlineData(typeof(CreateBeamThermalLoad), 2)]
     [InlineData(typeof(CreateFaceLoad), 2)]
+    [InlineData(typeof(CreateFaceThermalLoad), 2)]
     [InlineData(typeof(CreateGridAreaLoad), 1)]
     [InlineData(typeof(CreateGridLineLoad), 1)]
     [InlineData(typeof(CreateGridPlane), 1)]
@@ -101,7 +103,9 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SectionAlignment), "Centroid", "BottomRight")]
     //Loads
     [InlineData(typeof(CreateBeamLoad), "Uniform", "Trilinear")]
+    [InlineData(typeof(CreateBeamThermalLoad), "Uniform", "Uniform")]
     [InlineData(typeof(CreateFaceLoad), "Uniform", "Point")]
+    [InlineData(typeof(CreateFaceThermalLoad), "Uniform", "Uniform")]
     [InlineData(typeof(CreateGridAreaLoad), "kN/m²", "kipf/ft²")]
     [InlineData(typeof(CreateGridLineLoad), "kN/m", "kipf/ft")]
     [InlineData(typeof(CreateGridPlane), "General", "Storey")]

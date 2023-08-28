@@ -118,7 +118,9 @@ namespace GsaGH.Helpers.Export {
       gooloads.AddRange(Import.Loads.GetGravityLoads(appendModel.Model.GravityLoads(), loadCases));
       gooloads.AddRange(Import.Loads.GetNodeLoads(appendModel.Model, loadCases));
       gooloads.AddRange(Import.Loads.GetBeamLoads(appendModel.Model.BeamLoads(), loadCases));
+      gooloads.AddRange(Import.Loads.GetBeamThermalLoads(appendModel.Model.BeamThermalLoads(), loadCases));
       gooloads.AddRange(Import.Loads.GetFaceLoads(appendModel.Model.FaceLoads(), loadCases));
+      gooloads.AddRange(Import.Loads.GetFaceThermalLoads(appendModel.Model.FaceThermalLoads(), loadCases));
 
       IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.Model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.Model.GridPlanes();

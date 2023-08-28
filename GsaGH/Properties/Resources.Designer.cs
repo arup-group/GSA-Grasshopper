@@ -373,6 +373,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateBeamThermalLoad {
+            get {
+                object obj = ResourceManager.GetObject("CreateBeamThermalLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateBool6 {
             get {
                 object obj = ResourceManager.GetObject("CreateBool6", resourceCulture);
@@ -436,6 +446,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CreateFaceLoad {
             get {
                 object obj = ResourceManager.GetObject("CreateFaceLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateFaceThermalLoad {
+            get {
+                object obj = ResourceManager.GetObject("CreateFaceThermalLoad", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

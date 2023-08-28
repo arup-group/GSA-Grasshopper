@@ -239,9 +239,15 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var faceLoad = new GsaFaceLoad();
 
+      var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref loadCaseGoo);
-      faceLoad.LoadCase = loadCaseGoo.IsValid ? loadCaseGoo.Value : new GsaLoadCase(1);
+      if (da.GetData(0, ref loadCaseGoo)) {
+        if (loadCaseGoo.Value != null) {
+          loadcase = loadCaseGoo.Value;
+        }
+      }
+
+      faceLoad.LoadCase = loadcase;
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
@@ -252,33 +258,23 @@ namespace GsaGH.Components {
                 faceLoad.ReferenceList = value.Value;
                 faceLoad.ReferenceType = ReferenceType.List;
               } else {
-                this.AddRuntimeWarning(
+                this.AddRuntimeError(
                   "List must be of type Element or Member to apply to face loading");
-              }
-
-              if (value.Value.EntityType == EntityType.Member) {
-                this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                return;
               }
 
               break;
             }
           case GsaElement2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ReferenceType = ReferenceType.Element;
               break;
             }
           case GsaMember2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Member;
               faceLoad.ReferenceType = ReferenceType.MemberChildElements;
-              if (_mode != FoldMode.Uniform) {
-                this.AddRuntimeWarning(
-                  "Member loading will not automatically redistribute non-linear loading to child elements." + Environment.NewLine + "Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-              } else {
-                this.AddRuntimeRemark(
-                  "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
-
               break;
             }
           case GsaMaterialGoo value: {
@@ -288,12 +284,18 @@ namespace GsaGH.Components {
                 return;
               }
               faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ReferenceType = ReferenceType.Property;
+              this.AddRuntimeRemark(
+                "Load from Material reference created as Element load");
               break;
             }
           case GsaProperty2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
+              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ReferenceType = ReferenceType.Property;
+              this.AddRuntimeRemark(
+                "Load from 2D Property reference created as Element load");
               break;
             }
           default: {

@@ -29,8 +29,9 @@ namespace GsaGH.Parameters {
           AxisProperty = FaceLoad.AxisProperty,
           Case = FaceLoad.Case,
           Direction = FaceLoad.Direction,
-          EntityList = FaceLoad.EntityList.ToString(),
-          Name = FaceLoad.Name.ToString(),
+          EntityList = FaceLoad.EntityList,
+          EntityType = FaceLoad.EntityType,
+          Name = FaceLoad.Name,
           Type = FaceLoad.Type,
         },
       };

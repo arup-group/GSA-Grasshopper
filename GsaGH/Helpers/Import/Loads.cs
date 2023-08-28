@@ -50,6 +50,27 @@ namespace GsaGH.Helpers.Import {
     }
 
     /// <summary>
+    ///   Method to import Beam Thermal Loads from a GSA model.
+    ///   Will output a list of GsaLoads.
+    /// </summary>
+    /// <param name="beamThermalLoads">Collection of beam thermal loads to be imported</param>
+    /// <param name="loadCases"></param>
+    /// <returns></returns>
+    internal static List<GsaLoadGoo> GetBeamThermalLoads(
+      ReadOnlyCollection<BeamThermalLoad> beamThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
+      var loads = new List<GsaLoadGoo>();
+      foreach (BeamThermalLoad gsaLoad in beamThermalLoads) {
+        var load = new GsaBeamThermalLoad {
+          BeamThermalLoad = gsaLoad,
+        };
+        load.LoadCase = new GsaLoadCase(load.BeamThermalLoad.Case, loadCases);
+        loads.Add(new GsaLoadGoo(load));
+      }
+
+      return loads;
+    }
+
+    /// <summary>
     ///   Method to import Face Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
@@ -64,6 +85,27 @@ namespace GsaGH.Helpers.Import {
           FaceLoad = faceLoad,
         };
         load.LoadCase = new GsaLoadCase(load.FaceLoad.Case, loadCases);
+        loads.Add(new GsaLoadGoo(load));
+      }
+
+      return loads;
+    }
+
+    /// <summary>
+    ///   Method to import Face Thermal Loads from a GSA model.
+    ///   Will output a list of GsaLoads.
+    /// </summary>
+    /// <param name="faceThermalLoads">Collection of Face Thermal loads to be imported</param>
+    /// <param name="loadCases"></param>
+    /// <returns></returns>
+    internal static List<GsaLoadGoo> GetFaceThermalLoads(
+      ReadOnlyCollection<FaceThermalLoad> faceThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
+      var loads = new List<GsaLoadGoo>();
+      foreach (FaceThermalLoad faceThermalLoad in faceThermalLoads) {
+        var load = new GsaFaceThermalLoad {
+          FaceThermalLoad = faceThermalLoad,
+        };
+        load.LoadCase = new GsaLoadCase(load.FaceThermalLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -334,8 +376,14 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyCollection<BeamLoad> beamLoads = model.BeamLoads();
       caseIDs.AddRange(beamLoads.Select(x => x.Case));
 
+      ReadOnlyCollection<BeamThermalLoad> beamThermalLoads = model.BeamThermalLoads();
+      caseIDs.AddRange(beamThermalLoads.Select(x => x.Case));
+
       ReadOnlyCollection<FaceLoad> faceLoads = model.FaceLoads();
       caseIDs.AddRange(faceLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<FaceThermalLoad> faceThermalLoads = model.FaceThermalLoads();
+      caseIDs.AddRange(faceThermalLoads.Select(x => x.Case));
 
       ReadOnlyCollection<GridPointLoad> gridPointLoads = model.GridPointLoads();
       caseIDs.AddRange(gridPointLoads.Select(x => x.Case));
