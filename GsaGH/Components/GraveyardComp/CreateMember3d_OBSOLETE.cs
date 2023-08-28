@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem3d;
+    protected override Bitmap Icon => Resources.Create3dMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public CreateMember3d_OBSOLETE() : base("Create 3D Member", "Mem3D", "Create GSA Member 3D",
@@ -59,7 +59,7 @@ namespace GsaGH.Components {
 
       pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter());
+      pManager.AddParameter(new GsaProperty3dParameter());
       pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size",
         GH_ParamAccess.item);
 
@@ -98,7 +98,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      GsaProp3dGoo prop3dGoo = null;
+      GsaProperty3dGoo prop3dGoo = null;
       if (da.GetData(1, ref prop3dGoo)) {
         member.Prop3d = prop3dGoo.Value;
       }

@@ -51,8 +51,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertProperties(List<GsaSection> sections,
-      List<GsaProp2d> prop2Ds,
-      List<GsaProp3d> prop3Ds) {
+      List<GsaProperty2d> prop2Ds,
+      List<GsaProperty3d> prop3Ds) {
       if ((sections != null && sections.Count > 0)
         || (prop2Ds != null && prop2Ds.Count > 0)
         || (prop3Ds != null && prop3Ds.Count > 0)) {

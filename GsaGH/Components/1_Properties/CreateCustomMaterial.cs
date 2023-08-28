@@ -42,16 +42,15 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f2906b65-208f-4a46-8e1f-06d6270cc90c");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CustomMaterial;
+    protected override Bitmap Icon => Resources.CreateCustomMaterial;
     private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
     private FoldMode _mode = FoldMode.Timber;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
 
-    public CreateCustomMaterial() : base("Custom Material", "Material",
-                                         "Create a Custom GSA Analysis Material",
-                                         CategoryName.Name(),
-                                         SubCategoryName.Cat1()) {
+    public CreateCustomMaterial() : base("Create Custom Material", "Material",
+      "Create a Custom GSA Analysis Material",
+      CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 

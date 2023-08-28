@@ -57,7 +57,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static GsaGuidDictionary<Prop2D> GetProp2dDictionary(GsaModel model) {
       var properties = new GsaGuidDictionary<Prop2D>(new Dictionary<int, Prop2D>());
-      foreach (KeyValuePair<int, GsaProp2dGoo> prop in model.Properties.Prop2ds) {
+      foreach (KeyValuePair<int, GsaProperty2dGoo> prop in model.Properties.Prop2ds) {
         properties.SetValue(prop.Key, prop.Value.Value.Guid, prop.Value.Value.ApiProp2d);
       }
       return properties;
@@ -65,7 +65,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static GsaGuidDictionary<Prop3D> GetProp3dDictionary(GsaModel model) {
       var properties = new GsaGuidDictionary<Prop3D>(new Dictionary<int, Prop3D>());
-      foreach (KeyValuePair<int, GsaProp3dGoo> prop in model.Properties.Prop3ds) {
+      foreach (KeyValuePair<int, GsaProperty3dGoo> prop in model.Properties.Prop3ds) {
         properties.SetValue(prop.Key, prop.Value.Value.Guid, prop.Value.Value.ApiProp3d);
       }
       return properties;

@@ -315,7 +315,7 @@ namespace GsaGH.Helpers.Import {
       Parallel.For(0, sortedElements.Count, i => {
         int parentId = sortedElements.Keys.ElementAt(i);
         ConcurrentDictionary<int, Element> elems = sortedElements[parentId];
-        var prop2Ds = new ConcurrentDictionary<int, GsaProp2d>();
+        var prop2Ds = new ConcurrentDictionary<int, GsaProperty2d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j => {
@@ -345,8 +345,8 @@ namespace GsaGH.Helpers.Import {
             var apiElems = new ConcurrentDictionary<int, Element>();
             apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
-            prop2Ds.TryGetValue(key, out GsaProp2d prop);
-            var propList = new ConcurrentDictionary<int, GsaProp2d>();
+            prop2Ds.TryGetValue(key, out GsaProperty2d prop);
+            var propList = new ConcurrentDictionary<int, GsaProperty2d>();
             propList.TryAdd(key, prop);
             var singleelement2D = new GsaElement2d(apiElems, mesh, propList);
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
@@ -390,7 +390,7 @@ namespace GsaGH.Helpers.Import {
         int parentId = sortedElements.Keys.ElementAt(i);
 
         ConcurrentDictionary<int, Element> elems = sortedElements[parentId];
-        var prop3Ds = new ConcurrentDictionary<int, GsaProp3d>();
+        var prop3Ds = new ConcurrentDictionary<int, GsaProperty3d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j => {
@@ -419,7 +419,7 @@ namespace GsaGH.Helpers.Import {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element apiElem);
             mList.TryGetValue(key, out Mesh mesh);
-            prop3Ds.TryGetValue(key, out GsaProp3d prop);
+            prop3Ds.TryGetValue(key, out GsaProperty3d prop);
 
             var singleelement3D = new GsaElement3d(apiElem, key, mesh, prop);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));

@@ -17,7 +17,9 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
+  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
+  /// <para>A Member1D is the linear geometry resembling for instance a column or a beam. They can be defined geometrically by a PolyCurve consisting of either multiple line segments or a single arc.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-1d.html">1D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember1d {
     public bool AutomaticOffsetEnd1 {

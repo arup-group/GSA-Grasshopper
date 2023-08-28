@@ -31,7 +31,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("094f676f-c384-4d49-9d7f-64515004bf4b");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem1d;
+    protected override Bitmap Icon => Resources.Edit1dMember;
     private AngleUnit _angleUnit = AngleUnit.Radian;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
@@ -45,7 +45,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -127,9 +127,9 @@ namespace GsaGH.Components {
         "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
-        GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBucklingFactorsParameter(),
+        "Set " + GsaBucklingFactorsGoo.Name, GsaBucklingFactorsGoo.NickName,
+        GsaBucklingFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour",
         GH_ParamAccess.item);
@@ -172,9 +172,9 @@ namespace GsaGH.Components {
         "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter(),
-        "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName,
-        GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBucklingFactorsParameter(),
+        "Get " + GsaBucklingFactorsGoo.Name, GsaBucklingFactorsGoo.NickName,
+        GsaBucklingFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -299,8 +299,8 @@ namespace GsaGH.Components {
 
       ghTyp = new GH_ObjectWrapper();
       if (da.GetData(14, ref ghTyp)) {
-        var fls = new GsaBucklingLengthFactors();
-        if (ghTyp.Value is GsaBucklingLengthFactorsGoo flsGoo) {
+        var fls = new GsaBucklingFactors();
+        if (ghTyp.Value is GsaBucklingFactorsGoo flsGoo) {
           fls = flsGoo.Value.Duplicate();
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
@@ -352,7 +352,7 @@ namespace GsaGH.Components {
         new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
       da.SetData(13, mem.MeshWithOthers);
 
-      da.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem)));
+      da.SetData(14, new GsaBucklingFactorsGoo(new GsaBucklingFactors(mem)));
 
       da.SetData(15, mem.Name);
 

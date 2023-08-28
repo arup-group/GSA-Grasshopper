@@ -17,7 +17,11 @@ using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
+<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateBeamLoads2_OBSOLETE.cs
+  public class CreateBeamLoads2_OBSOLETE : GH_OasysDropDownComponent {
+========
   public class CreateBeamLoad : GH_OasysDropDownComponent {
+>>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateBeamLoad.cs
     private enum FoldMode {
       Point,
       Uniform,
@@ -26,10 +30,10 @@ namespace GsaGH.Components {
       Trilinear,
     }
 
-    public override Guid ComponentGuid => new Guid("2c73afe2-094c-4243-a333-8b73574a8591");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("63f1940b-34a8-452e-b478-f8a24d415b5c");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamLoad;
+    protected override Bitmap Icon => Resources.CreateBeamLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
       "Point",
       "Uniform",
@@ -42,7 +46,11 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Uniform;
     private EntityType _entityType = EntityType.Member;
 
+<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateBeamLoads2_OBSOLETE.cs
+    public CreateBeamLoads2_OBSOLETE() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
+========
     public CreateBeamLoad() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
+>>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateBeamLoad.cs
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }

@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5ea823af-a567-40a6-8e82-0e14eb8dda0e");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowLoadDiagrams;
+    protected override Bitmap Icon => Resources.LoadDiagrams;
     private string _caseId = "L1";
     private List<string> _2dDiagramTypes;
     private List<string> _3dDiagramTypes;
@@ -150,7 +150,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
         EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
 
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         forceUnitsMenu,

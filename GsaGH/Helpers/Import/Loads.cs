@@ -17,7 +17,7 @@ namespace GsaGH.Helpers.Import {
     ///   Method to import Load Cases from a GSA model.
     ///   Will output a list of GsaLoadCase.
     /// </summary>
-    /// <param name="faceLoads">Collection of Face loads to be imported</param>
+    /// <param name="loadCases"></param>
     /// <returns></returns>
     internal static List<GsaLoadCaseGoo> GetLoadCases(ReadOnlyDictionary<int, LoadCase> loadCases) {
       var cases = new List<GsaLoadCaseGoo>();
@@ -33,6 +33,7 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaLoads.
     /// </summary>
     /// <param name="beamLoads">Collection of beams loads to be imported</param>
+    /// <param name="loadCases"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetBeamLoads(
       ReadOnlyCollection<BeamLoad> beamLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
@@ -73,6 +74,7 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaLoads.
     /// </summary>
     /// <param name="faceLoads">Collection of Face loads to be imported</param>
+    /// <param name="loadCases"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetFaceLoads(
       ReadOnlyCollection<FaceLoad> faceLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
@@ -113,6 +115,7 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaLoadsGoo.
     /// </summary>
     /// <param name="gravityLoads">Collection of gravity loads to import</param>
+    /// <param name="loadCases"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGravityLoads(
       ReadOnlyCollection<GravityLoad> gravityLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
@@ -136,6 +139,7 @@ namespace GsaGH.Helpers.Import {
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="loadCases"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGridAreaLoads(
@@ -171,6 +175,7 @@ namespace GsaGH.Helpers.Import {
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="loadCases"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGridLineLoads(
@@ -267,6 +272,7 @@ namespace GsaGH.Helpers.Import {
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="loadCases"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetGridPointLoads(
@@ -300,6 +306,7 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaLoads.
     /// </summary>
     /// <param name="model">GSA model containing node loads</param>
+    /// <param name="loadCases"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetNodeLoads(Model model, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();

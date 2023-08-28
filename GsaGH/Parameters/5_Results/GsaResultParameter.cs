@@ -11,7 +11,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaResultParameter : GH_OasysPersistentParam<GsaResultGoo> {
     public override Guid ComponentGuid => new Guid("81f6f103-cb53-414c-908b-6adf46c3260d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaResultGoo.Name + " parameter" :
         base.InstanceDescription;

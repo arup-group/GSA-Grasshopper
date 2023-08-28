@@ -439,7 +439,7 @@ namespace GsaGH.Components {
 
           if (elem2d != null) {
             var offsets = new List<GsaOffset>();
-            foreach (GsaProp2d prop in elem2d.Prop2ds) {
+            foreach (GsaProperty2d prop in elem2d.Prop2ds) {
               alignmentOffset = new GsaOffset();
               switch (alignmentType) {
                 case AlignmentType.TopLeft:

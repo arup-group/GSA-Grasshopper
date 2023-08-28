@@ -25,8 +25,8 @@ namespace GsaGH.Components {
     internal Line _previewYaxis;
     internal Line _previewZaxis;
     protected override Bitmap Icon => Resources.LocalAxes;
-
-    public LocalAxes() : base("Local Axis", "Axis", "Get Element1D or Member1D local axes",
+    public LocalAxes() : base("Local Axes", "Axes", 
+      "Get the local axes from a 1D Element or Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {

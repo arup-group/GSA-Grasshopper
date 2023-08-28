@@ -39,7 +39,7 @@ namespace GsaGH.Components {
     private bool _toMode = false;
 
     public CreateSectionModifier() : base("Create Section Modifier", "SectionModifier",
-      "Create GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
+      "Create a GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 

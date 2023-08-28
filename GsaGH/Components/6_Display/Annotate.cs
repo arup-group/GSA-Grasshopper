@@ -15,7 +15,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("fcad844d-a044-4064-8c6e-f3ea47553941");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowID;
+    protected override Bitmap Icon => Resources.Annotate;
     private GH_Structure<GsaAnnotationGoo> _annotations = new GH_Structure<GsaAnnotationGoo>();
     private Color _color = Color.Empty;
     private GH_Structure<GH_Point> _points = new GH_Structure<GH_Point>();

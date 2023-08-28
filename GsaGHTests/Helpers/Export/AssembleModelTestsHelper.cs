@@ -109,7 +109,7 @@ namespace GsaGHTests.Helpers.Export {
           expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
-        GsaProp2d prop = (i > expected.Prop2ds.Count - 1) ? expected.Prop2ds.Last() :
+        GsaProperty2d prop = (i > expected.Prop2ds.Count - 1) ? expected.Prop2ds.Last() :
           expected.Prop2ds[i];
         TestProp2d(prop, api.Property, actualModel);
       }
@@ -284,7 +284,7 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiNode.SpringProperty, expected.SpringProperty);
     }
 
-    internal void TestProp2d(GsaProp2d expected, int expectedId, GsaModel actualModel) {
+    internal void TestProp2d(GsaProperty2d expected, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Prop2D> apiProp2ds = actualModel.Model.Prop2Ds();
       Assert.True(apiProp2ds.ContainsKey(expectedId),
         "Prop2d with id " + expectedId + " is not present in model");
@@ -299,7 +299,7 @@ namespace GsaGHTests.Helpers.Export {
       }
     }
 
-    internal void TestProp3d(GsaProp3d expected, int expectedId, GsaModel actualModel) {
+    internal void TestProp3d(GsaProperty3d expected, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Prop3D> apiProp3ds = actualModel.Model.Prop3Ds();
       Assert.True(apiProp3ds.ContainsKey(expectedId),
         "Prop3d with id " + expectedId + " is not present in model");

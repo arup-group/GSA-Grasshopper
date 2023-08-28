@@ -11,7 +11,9 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
+  /// <para>Members in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
+  /// <para>A Member3D is the volumetric geometry resembling for instance soil. It can be defined geometrically by a closed Solid (either Mesh or Brep).</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> to read more.</para>
   /// </summary>
   public class GsaMember3d {
     public Color Colour {
@@ -58,7 +60,7 @@ namespace GsaGH.Parameters {
         ApiMember.Name = value;
       }
     }
-    public GsaProp3d Prop3d { get; set; } = new GsaProp3d();
+    public GsaProperty3d Prop3d { get; set; } = new GsaProperty3d();
     public Mesh SolidMesh {
       get => _mesh;
       set {
@@ -84,7 +86,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
-      Prop3d = new GsaProp3d(0);
+      Prop3d = new GsaProperty3d(0);
       UpdatePreview();
     }
 
@@ -93,11 +95,11 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_3D,
       };
       _mesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
-      Prop3d = new GsaProp3d(0);
+      Prop3d = new GsaProperty3d(0);
       UpdatePreview();
     }
 
-    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop, double meshSize) {
+    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProperty3d prop, double meshSize) {
       ApiMember = member;
       _id = id;
       _mesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);

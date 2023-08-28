@@ -2,6 +2,9 @@
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
+  /// <summary>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/memberaxes.html">1D member axes</see> to read more.</para>
+  /// </summary>
   public class GsaLocalAxes {
     public Vector3d X { get; }
     public Vector3d Y { get; }

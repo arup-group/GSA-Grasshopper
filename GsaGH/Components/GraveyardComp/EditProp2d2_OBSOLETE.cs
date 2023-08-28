@@ -22,7 +22,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditProp2d;
+    protected override Bitmap Icon => Resources.Edit2dProperty;
 
     public EditProp2d2_OBSOLETE() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
@@ -68,9 +68,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var prop = new GsaProp2d();
+      var prop = new GsaProperty2d();
 
-      GsaProp2dGoo prop2dGoo = null;
+      GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(0, ref prop2dGoo)) {
         prop = prop2dGoo.Value.Clone();
       }
@@ -117,7 +117,7 @@ namespace GsaGH.Components {
       string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
       ValueType colour = prop.ApiProp2d?.Colour;
 
-      da.SetData(0, new GsaProp2dGoo(prop));
+      da.SetData(0, new GsaProperty2dGoo(prop));
       da.SetData(1, prop.Id);
       da.SetData(2, new GsaMaterialGoo(prop.Material));
       da.SetData(3,

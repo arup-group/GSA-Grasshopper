@@ -14,7 +14,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaGridPlaneSurfaceGoo : GH_OasysGeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData {
     public static string Description => "GSA Grid Plane Surface";
-    public static string Name => "GridPlaneSurface";
+    public static string Name => "Grid Plane Surface";
     public static string NickName => "GPS";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

@@ -28,7 +28,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("12cd0928-4508-4452-8284-4bb827cbfdc2");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.NodeLoad;
+    protected override Bitmap Icon => Resources.CreateNodeLoad;
     private readonly List<string> _type = new List<string>(new[] {
       "Node Force",
       "Node Moment",

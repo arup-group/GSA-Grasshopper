@@ -14,7 +14,9 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
+  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
+  /// <para>"A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember2d {
     public bool AutomaticInternalOffset {
@@ -108,7 +110,7 @@ namespace GsaGH.Parameters {
       }
     }
     public PolyCurve PolyCurve { get; private set; }
-    public GsaProp2d Prop2d { get; set; } = new GsaProp2d();
+    public GsaProperty2d Prop2d { get; set; } = new GsaProperty2d();
     public List<Point3d> Topology { get; private set; }
     public List<string> TopologyType { get; private set; }
     public MemberType Type {
@@ -171,7 +173,7 @@ namespace GsaGH.Parameters {
           + "Settings or if unset under Rhino unit settings");
       }
 
-      Prop2d = new GsaProp2d(prop);
+      Prop2d = new GsaProperty2d(prop);
     }
 
     internal GsaMember2d(
@@ -183,7 +185,7 @@ namespace GsaGH.Parameters {
       List<List<Point3d>> inlcusionLinesTopology,
       List<List<string>> inclusionTopologyType,
       List<Point3d> includePoints,
-      GsaProp2d prop2d,
+      GsaProperty2d prop2d,
       LengthUnit modelUnit) {
       ApiMember = mem.Value;
       MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);

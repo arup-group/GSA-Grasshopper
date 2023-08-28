@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -17,7 +18,11 @@ using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
+<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateFaceLoads_OBSOLETE.cs
+  public class CreateFaceLoads_OBSOLETE : GH_OasysDropDownComponent {
+========
   public class CreateFaceLoad : GH_OasysDropDownComponent {
+>>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateFaceLoad.cs
     private enum FoldMode {
       Uniform,
       Variable,
@@ -25,10 +30,10 @@ namespace GsaGH.Components {
       Edge, //note implementation of edge-load is not yet supported in GsaAPI
     }
 
-    public override Guid ComponentGuid => new Guid("c9a37942-4728-4052-b732-7eec92981ca7");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.FaceLoad;
+    protected override Bitmap Icon => Resources.CreateFaceLoad;
     private readonly List<string> _loadTypeOptions = new List<string>(new[] {
       "Uniform",
       "Variable",
@@ -39,7 +44,11 @@ namespace GsaGH.Components {
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
     private FoldMode _mode = FoldMode.Uniform;
 
+<<<<<<<< HEAD:GsaGH/Components/GraveyardComp/CreateFaceLoads_OBSOLETE.cs
+    public CreateFaceLoads_OBSOLETE() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
+========
     public CreateFaceLoad() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
+>>>>>>>> release/gsa_10_2_x:GsaGH/Components/3_Loads/CreateFaceLoad.cs
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
     }
@@ -290,7 +299,7 @@ namespace GsaGH.Components {
               faceLoad.ReferenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp2dGoo value: {
+          case GsaProperty2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
               faceLoad.ReferenceType = ReferenceType.Property;
               break;

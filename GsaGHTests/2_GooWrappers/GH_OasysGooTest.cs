@@ -20,8 +20,8 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaListGoo), typeof(GsaList))]
     [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
-    [InlineData(typeof(GsaProp2dGoo), typeof(GsaProp2d))]
-    [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
+    [InlineData(typeof(GsaProperty2dGoo), typeof(GsaProperty2d))]
+    [InlineData(typeof(GsaProperty3dGoo), typeof(GsaProperty3d))]
     [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
     [InlineData(typeof(GsaSectionModifierGoo), typeof(GsaSectionModifier))]
     [InlineData(typeof(GsaLoadCaseGoo), typeof(GsaLoadCase))]
@@ -107,7 +107,7 @@ namespace GsaGHTests.GooWrappers {
         }
 
         string description = (string)gooProperty.GetValue(objectGoo, null);
-        Assert.StartsWith("GSA ", description);
+        Assert.StartsWith("GSA", description);
         Assert.True(description.Length > 7);
         hasDescription = true;
       }

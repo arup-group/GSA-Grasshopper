@@ -16,7 +16,7 @@ namespace GsaGHTests.Components.Geometry {
   public class EditMember2dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new EditMember2d();
+      var comp = new Edit2dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
@@ -32,7 +32,7 @@ namespace GsaGHTests.Components.Geometry {
       var output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Brep)ComponentTestHelper.GetOutput(comp, 2);
-      var output5 = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 5);
+      var output5 = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GH_String)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
@@ -83,7 +83,7 @@ namespace GsaGHTests.Components.Geometry {
         Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0),
           new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
       ComponentTestHelper.SetInput(comp,
-        new GsaProp2dGoo(new GsaProp2d(new Length(200, LengthUnit.Millimeter))), 5);
+        new GsaProperty2dGoo(new GsaProperty2d(new Length(200, LengthUnit.Millimeter))), 5);
       ComponentTestHelper.SetInput(comp, 1, 6);
       ComponentTestHelper.SetInput(comp, "Ribbed Slab", 7);
       ComponentTestHelper.SetInput(comp, "Rigid Diaphragm", 8);
@@ -99,7 +99,7 @@ namespace GsaGHTests.Components.Geometry {
       var output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Brep)ComponentTestHelper.GetOutput(comp, 2);
-      var output5 = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 5);
+      var output5 = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GH_String)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);

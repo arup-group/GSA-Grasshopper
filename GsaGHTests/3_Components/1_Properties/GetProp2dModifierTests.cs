@@ -12,14 +12,14 @@ namespace GsaGHTests.Properties {
   public class GetProp2dModifierTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new GetProp2dModifier();
+      var comp = new GetProperty2dModifier();
       comp.CreateAttributes();
       return comp;
     }
 
     [Fact]
     public void GetValuesFromExistingComponent() {
-      var modifier = new GsaProp2dModifier {
+      var modifier = new GsaProperty2dModifier {
         InPlane = new Ratio(1.2, RatioUnit.DecimalFraction),
         Bending = new Ratio(1.3, RatioUnit.DecimalFraction),
         Shear = new Ratio(1.4, RatioUnit.DecimalFraction),
@@ -28,17 +28,14 @@ namespace GsaGHTests.Properties {
       };
 
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, new GsaProp2dModifierGoo(modifier), 0);
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dModifierGoo(modifier), 0);
 
-      var modifierGoo = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 0);
-      var inplane = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1);
-      var bending = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 2);
-      var shear = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 3);
-      var volume = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 4);
-      var addMass = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 5);
+      var inplane = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 0);
+      var bending = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1);
+      var shear = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 2);
+      var volume = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 3);
+      var addMass = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 4);
 
-      Duplicates.AreEqual(modifier, modifierGoo.Value);
-      Assert.NotEqual(modifier, modifierGoo.Value);
       Assert.Equal(1.2, inplane.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(1.3, bending.Value.As(RatioUnit.DecimalFraction), 6);
       Assert.Equal(1.4, shear.Value.As(RatioUnit.DecimalFraction), 6);
