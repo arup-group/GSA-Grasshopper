@@ -54,6 +54,7 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaLoads.
     /// </summary>
     /// <param name="beamThermalLoads">Collection of beam thermal loads to be imported</param>
+    /// <param name="loadCases"></param>
     /// <returns></returns>
     internal static List<GsaLoadGoo> GetBeamThermalLoads(
       ReadOnlyCollection<BeamThermalLoad> beamThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
@@ -95,7 +96,8 @@ namespace GsaGH.Helpers.Import {
     ///   Will output a list of GsaLoads.
     /// </summary>
     /// <param name="faceThermalLoads">Collection of Face Thermal loads to be imported</param>
-    /// <returns></returns>
+    /// <param name="loadCases"></param>
+    v/// <returns></returns>
     internal static List<GsaLoadGoo> GetFaceThermalLoads(
       ReadOnlyCollection<FaceThermalLoad> faceThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
