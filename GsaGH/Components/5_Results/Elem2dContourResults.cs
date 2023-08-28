@@ -83,8 +83,8 @@ namespace GsaGH.Components {
       "Moment Mx",
       "Moment My",
       "Moment Mxy",
-      "Wood-Armer M*x  ",
-      "Wood-Armer M*y  ",
+      "Wood-Armer M*x",
+      "Wood-Armer M*y",
     });
     private readonly List<string> _layer = new List<string>(new[] {
       "Top",
