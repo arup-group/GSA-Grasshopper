@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -50,6 +51,11 @@ namespace GsaGH.Parameters {
 
         case GsaMember3dGoo mem3d:
           return new GsaMaterialGoo(mem3d.Value.Prop3d.Material);
+      }
+
+      if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
+        var customMaterial = new GsaMaterial(id);
+        return new GsaMaterialGoo(customMaterial);
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Material");

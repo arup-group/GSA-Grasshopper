@@ -51,8 +51,8 @@ namespace GsaGH.Helpers.Import {
       if (id != 0) { // it is a custom material
         if (AnalysisMaterials.ContainsKey(id)) {
           return AnalysisMaterials[id];
-        } else { 
-          return null; // cannot import non-linear elastic material
+        } else {
+          return new GsaMaterial(id);
         }
       }
 

@@ -234,7 +234,7 @@ namespace GsaGH.Helpers.Export {
 
       AnalysisMaterial analysisMaterial = material.AnalysisMaterial;
       if (analysisMaterial == null) {
-        return 0;
+        return material.Id;
       }
 
       return AddOrSetMaterial(material.Id, material.Guid, analysisMaterial, ref matDict);
