@@ -181,7 +181,6 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
-        "EntityType",
         "Unit",
       });
 
