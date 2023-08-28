@@ -351,3 +351,4 @@ dist/*
 /IntegrationTests/bin
 /IntegrationTests/obj
 /UnitTestGsaGH/bin/x64/Debug
+/DocsGeneration/bin

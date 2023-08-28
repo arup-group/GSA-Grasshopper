@@ -13,7 +13,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>, IGH_PreviewData {
     public static string Description => "GSA 3D Element(s)";
-    public static string Name => "Element3D";
+    public static string Name => "Element 3D";
     public static string NickName => "E3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

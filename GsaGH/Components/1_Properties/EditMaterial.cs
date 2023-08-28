@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditMaterial;
 
-    public EditMaterial() : base("Edit Material", "MaterialEdit", "Modify GSA Material",
+    public EditMaterial() : base("Edit Material", "EditMat", "Modify a GSA Material",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

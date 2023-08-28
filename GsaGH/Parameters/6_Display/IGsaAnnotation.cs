@@ -4,7 +4,10 @@ using GsaGH.Parameters.Enums;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
-  
+  /// <summary>
+  /// <para>An Annotation parameter can display IDs of objects or values of results.</para>
+  /// <para>The Annotation parameter can be either a <see cref="GsaAnnotationDot"/> or a <see cref="GsaAnnotation3d"/> type.</para>
+  /// </summary>
   public interface IGsaAnnotation : IGH_GeometricGoo, IGH_PreviewData {
     public GsaAnnotationType AnnotationType { get; }
     public string Text { get; }

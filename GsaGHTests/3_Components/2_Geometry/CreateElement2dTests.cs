@@ -15,7 +15,7 @@ namespace GsaGHTests.Components.Geometry {
   public class CreateElement2dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateElement2d();
+      var comp = new Create2dElement();
       comp.CreateAttributes();
       var mesh = new Mesh();
       mesh.Vertices.Add(new Point3d(0, 0, 0));

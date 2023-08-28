@@ -33,8 +33,8 @@ namespace GsaGH.Components {
     private string _steelCode = string.Empty;
     private Dictionary<string, GsaMaterial> _gradeMaterials;
 
-    public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      GsaMaterialGoo.Name.Replace(" ", string.Empty),
+    public CreateMaterial() : base("Create " + GsaMaterialGoo.Name,
+      GsaMaterialGoo.NickName,
       "Create a " + GsaMaterialGoo.Description + " for a GSA Section, Prop2d or Prop3d",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;

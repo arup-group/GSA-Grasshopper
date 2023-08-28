@@ -15,7 +15,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GravityLoad;
+    protected override Bitmap Icon => Resources.CreateGravityLoad;
 
     public CreateGravityLoad() : base("Create Gravity Load", "GravityLoad",
       "Create GSA Gravity Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -121,12 +121,12 @@ namespace GsaGH.Components {
               gravityLoad.ReferenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp2dGoo value: {
+          case GsaProperty2dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp3dGoo value: {
+          case GsaProperty3dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
               break;

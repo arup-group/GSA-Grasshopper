@@ -18,16 +18,17 @@ namespace GsaGH.Parameters {
   public class GsaMember2dParameter : GH_OasysPersistentGeometryParam<GsaMember2dGoo>,
     IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("fa512c2d-4767-49f1-a574-32bf66a66568");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaMember2dGoo.Name + " parameter" :
         base.InstanceDescription;
     public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaMember2dGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.Mem2dParam;
+    protected override Bitmap Icon => Resources.Member2dParam;
 
-    public GsaMember2dParameter() : base(new GH_InstanceDescription(GsaMember2dGoo.Name,
-      GsaMember2dGoo.NickName, GsaMember2dGoo.Description + " parameter", CategoryName.Name(),
+    public GsaMember2dParameter() : base(new GH_InstanceDescription(
+      GsaMember2dGoo.Name, GsaMember2dGoo.NickName, 
+      GsaMember2dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaMember2dGoo PreferredCast(object data) {

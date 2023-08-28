@@ -112,7 +112,7 @@ namespace GsaGH.Helpers.Import {
                 inclPts.Add(Nodes.Point3dFromNode(node, model.ModelUnit));
               }
 
-              GsaProp2d prop2d = model.Properties.GetProp2d(item.Value);
+              GsaProperty2d prop2d = model.Properties.GetProp2d(item.Value);
               var mem2d = new GsaMember2d(item, topopts, topoType, voidTopo, voidTopoType,
                 incLinesTopo, inclLinesTopoType, inclPts, prop2d, model.ModelUnit);
               Member2ds.Add(new GsaMember2dGoo(mem2d));
@@ -142,7 +142,7 @@ namespace GsaGH.Helpers.Import {
           // append list of meshes (faster than appending each mesh one by one)
           m.Append(mList);
 
-          GsaProp3d prop = model.Properties.GetProp3d(item.Value);
+          GsaProperty3d prop = model.Properties.GetProp3d(item.Value);
           var mem3d = new GsaMember3d(item.Value, item.Key, m, prop,
             new Length(item.Value.MeshSize, LengthUnit.Meter).As(model.ModelUnit));
           Member3ds.Add(new GsaMember3dGoo(mem3d));

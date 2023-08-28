@@ -12,7 +12,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
     public static string Description => "GSA 1D Element";
-    public static string Name => "Element1D";
+    public static string Name => "Element 1D";
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

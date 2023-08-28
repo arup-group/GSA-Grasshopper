@@ -17,7 +17,9 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
+  /// <para>Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. </para>
+  /// <para>Element1Ds are one-dimensional stick elements (representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#element-types">1D Element Types</see>) used by the solver for analysis.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement1d {
     public Color Colour {

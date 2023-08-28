@@ -13,7 +13,7 @@ namespace GsaGHTests.Components.Geometry {
   public class EditElement1dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new EditElement1d();
+      var comp = new Edit1dElement();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,

@@ -25,8 +25,9 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaDiagramGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.DiagramParam;
 
-    public GsaDiagramParameter() : base(new GH_InstanceDescription(GsaDiagramGoo.Name,
-      GsaDiagramGoo.NickName, GsaDiagramGoo.Description + " parameter", CategoryName.Name(),
+    public GsaDiagramParameter() : base(new GH_InstanceDescription(
+      GsaDiagramGoo.Name + " parameter", GsaDiagramGoo.NickName, 
+      GsaDiagramGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {

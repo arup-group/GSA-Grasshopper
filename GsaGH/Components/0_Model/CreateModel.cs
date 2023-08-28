@@ -57,7 +57,7 @@ namespace GsaGH.Components {
       tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -187,7 +187,7 @@ namespace GsaGH.Components {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) =
         GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
-      (List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds)
+      (List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds)
         = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,

@@ -337,13 +337,13 @@ namespace GsaGH.Helpers.Export {
       return (null, null, null);
     }
 
-    internal static Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>> GetProperties(
+    internal static Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>> GetProperties(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
         var inSect = new List<GsaSection>();
-        var inProp2d = new List<GsaProp2d>();
-        var inProp3d = new List<GsaProp3d>();
+        var inProp2d = new List<GsaProperty2d>();
+        var inProp3d = new List<GsaProperty3d>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -357,11 +357,11 @@ namespace GsaGH.Helpers.Export {
                 inSect.Add(sectionGoo.Value.Duplicate());
                 break;
               }
-            case GsaProp2dGoo prop2dGoo: {
+            case GsaProperty2dGoo prop2dGoo: {
                 inProp2d.Add(prop2dGoo.Value.Duplicate());
                 break;
               }
-            case GsaProp3dGoo prop3dGoo: {
+            case GsaProperty3dGoo prop3dGoo: {
                 inProp3d.Add(prop3dGoo.Value.Duplicate());
                 break;
               }
@@ -388,7 +388,7 @@ namespace GsaGH.Helpers.Export {
           inProp3d = null;
         }
 
-        return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(inSect, inProp2d,
+        return new Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>(inSect, inProp2d,
           inProp3d);
       }
 
@@ -397,7 +397,7 @@ namespace GsaGH.Helpers.Export {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(null, null, null);
+      return new Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>(null, null, null);
     }
   }
 }

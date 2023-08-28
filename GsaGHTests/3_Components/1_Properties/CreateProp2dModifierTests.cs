@@ -10,7 +10,7 @@ namespace GsaGHTests.Components.Properties {
   public class CreateProp2dModifierTests {
 
     public static GH_OasysDropDownComponent ComponentMother() {
-      var comp = new CreateProp2dModifier();
+      var comp = new Create2dPropertyModifier();
       comp.CreateAttributes();
 
       comp.SetSelected(0, 0); // set modify type to "Modify by"
@@ -28,7 +28,7 @@ namespace GsaGHTests.Components.Properties {
     public void CreateComponent() {
       GH_OasysDropDownComponent comp = ComponentMother();
 
-      var output = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaProperty2dModifierGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0.1, output.Value.InPlane.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.2, output.Value.Bending.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.3, output.Value.Shear.As(RatioUnit.DecimalFraction));

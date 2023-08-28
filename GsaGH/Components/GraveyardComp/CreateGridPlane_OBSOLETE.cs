@@ -28,7 +28,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("675fd47a-890d-45b8-bdde-fb2e8c1d9cca");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridPlane;
+    protected override Bitmap Icon => Resources.CreateGridPlane;
     private readonly List<string> _type = new List<string>(new string[] {
       "General",
       "Storey",

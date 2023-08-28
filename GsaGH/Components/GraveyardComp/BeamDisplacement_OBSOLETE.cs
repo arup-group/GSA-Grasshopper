@@ -28,7 +28,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("21ec9005-1b2f-4eb8-8171-b2c0190a4a54");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamDisplacement;
+    protected override Bitmap Icon => Resources.BeamDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
     public BeamDisplacement_OBSOLETE() : base("Beam Displacements", "BeamDisp",

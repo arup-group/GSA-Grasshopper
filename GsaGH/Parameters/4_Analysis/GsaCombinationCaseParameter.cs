@@ -11,7 +11,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaCombinationCaseParameter : GH_OasysPersistentParam<GsaCombinationCaseGoo> {
     public override Guid ComponentGuid => new Guid("f8d0651f-b235-473f-ba71-30c97b9497cd");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaCombinationCaseGoo.Name + " parameter" :
         base.InstanceDescription;

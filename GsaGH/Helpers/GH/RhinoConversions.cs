@@ -563,7 +563,7 @@ namespace GsaGH.Helpers.GH {
               topoInts.Add(topo8);
               break;
             }
-          
+
           default: {
               throw new Exception($" Unable to create 2D element from mesh face with {topo.Count} verticies");
             }

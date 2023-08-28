@@ -12,14 +12,14 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateTest() {
-      var original = new GsaProp2d {
+      var original = new GsaProperty2d {
         Name = "Name",
         Thickness = new Length(200, LengthUnit.Millimeter),
         AdditionalOffsetZ = new Length(1, LengthUnit.Centimeter),
         ReferenceSurface = ReferenceSurface.Top
       };
 
-      GsaProp2d duplicate = original.Clone();
+      GsaProperty2d duplicate = original.Clone();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -31,7 +31,7 @@ namespace GsaGHTests.Parameters {
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.LOAD;
 
-      var prop = new GsaProp2d {
+      var prop = new GsaProperty2d {
         AxisProperty = axisProperty,
         Name = name,
         Description = description,
@@ -64,7 +64,7 @@ namespace GsaGHTests.Parameters {
       ReferenceSurface referenceSurface = ReferenceSurface.Bottom;
       var offset = new Length(-100.0, LengthUnit.Millimeter);
 
-      var orig = new GsaProp2d(14) {
+      var orig = new GsaProperty2d(14) {
         AxisProperty = axisProperty,
         Name = name,
         Description = description,
@@ -75,7 +75,7 @@ namespace GsaGHTests.Parameters {
       var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       orig.Material = material;
 
-      GsaProp2d dup = orig.Clone();
+      GsaProperty2d dup = orig.Clone();
 
       orig.Id = 4;
       orig.AxisProperty = 1;

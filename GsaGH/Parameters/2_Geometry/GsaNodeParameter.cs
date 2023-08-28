@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
   public class GsaNodeParameter : GH_OasysPersistentGeometryParam<GsaNodeGoo>, 
     IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaNodeGoo.Name + " parameter" :
         base.InstanceDescription;
