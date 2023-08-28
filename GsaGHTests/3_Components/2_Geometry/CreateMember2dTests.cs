@@ -16,7 +16,7 @@ namespace GsaGHTests.Components.Geometry {
   public class CreateMember2dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateMember2d();
+      var comp = new Create2dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,

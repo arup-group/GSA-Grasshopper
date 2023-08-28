@@ -25,7 +25,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
 
-    public GetSectionModifier() : base("Get Section Modifier", "GetModifier",
+    public GetSectionModifier() : base("Get Section Modifier", "GetPBM",
       "Get GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -60,7 +60,7 @@ namespace GsaGH.Components {
         densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,
         densityUnitsMenu,

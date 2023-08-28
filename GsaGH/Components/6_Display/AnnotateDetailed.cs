@@ -369,7 +369,7 @@ namespace GsaGH.Components {
       return s.Trim();
     }
 
-    private static string Prop2dToString(GsaProp2d prop) {
+    private static string Prop2dToString(GsaProperty2d prop) {
       string s = string.Empty;
       s += prop.Id > 0 ? $"PA{prop.Id}" : string.Empty;
       AddSeparator(ref s);
@@ -383,7 +383,7 @@ namespace GsaGH.Components {
       return s.Trim();
     }
 
-    private static string Prop3dToString(GsaProp3d prop) {
+    private static string Prop3dToString(GsaProperty3d prop) {
       string s = string.Empty;
       s += prop.Id > 0 ? $"PV{prop.Id}" : string.Empty;
       AddSeparator(ref s);

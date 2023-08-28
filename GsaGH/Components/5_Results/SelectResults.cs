@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     private Dictionary<Tuple<CaseType, int>, GsaResult> _resultCache;
     private CaseType _resultType = CaseType.AnalysisCase;
 
-    public SelectResult() : base("Select Results", "SelRes",
+    public SelectResult() : base("Select Result", "SelRes",
       "Select AnalysisCase or Combination Result from an analysed GSA model", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;

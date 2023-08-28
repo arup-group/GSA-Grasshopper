@@ -27,10 +27,10 @@ namespace GsaGH.Parameters {
         case GsaSectionGoo section: 
             return new GsaMaterialGoo(section.Value.Material);
 
-        case GsaProp2dGoo prop2d:
+        case GsaProperty2dGoo prop2d:
           return new GsaMaterialGoo(prop2d.Value.Material);
 
-        case GsaProp3dGoo prop3d:
+        case GsaProperty3dGoo prop3d:
           return new GsaMaterialGoo(prop3d.Value.Material);
 
         case GsaElement1dGoo elem1d:

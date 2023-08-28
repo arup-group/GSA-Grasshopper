@@ -13,7 +13,7 @@ namespace GsaGHTests.Components.Geometry {
   public class CreateMember1dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateMember1d();
+      var comp = new Create1dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(
@@ -67,7 +67,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData(new bool[] {
       false, true, false, true, false, true, false, true, false, true, false, true})]
     public void CanToggleReleases(bool[] releases) {
-      var comp = (CreateMember1d)ComponentMother();
+      var comp = (Create1dMember)ComponentMother();
       int i = 0;
       var restraints = new List<List<bool>> {
         new List<bool> {
@@ -107,7 +107,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void TestShortLineWarning() {
-      var comp = new CreateMember1d();
+      var comp = new Create1dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(

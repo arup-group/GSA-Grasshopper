@@ -15,16 +15,16 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6440b34e-d787-48cc-8e95-c07c6217e40a");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditBucklingLengthFactors;
+    protected override Bitmap Icon => Resources.EditBucklingFactors;
 
-    public EditBucklingFactors() : base("Edit " + GsaBucklingLengthFactorsGoo.Name,
-      "BucklingFactorsEdit", "Modify GSA Buckling Length Factors", CategoryName.Name(),
-      SubCategoryName.Cat2()) {
+    public EditBucklingFactors() : base("Edit " + GsaBucklingFactorsGoo.Name,
+      "EditBucklingFactors", "Modify " + GsaBucklingFactorsGoo.Description, 
+      CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
+      pManager.AddParameter(new GsaBucklingFactorsParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter());
+      pManager.AddParameter(new GsaBucklingFactorsParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -49,9 +49,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var fls = new GsaBucklingLengthFactors();
+      var fls = new GsaBucklingFactors();
 
-      GsaBucklingLengthFactorsGoo bucklingFactorsGoo = null;
+      GsaBucklingFactorsGoo bucklingFactorsGoo = null;
       if (da.GetData(0, ref bucklingFactorsGoo)) {
         fls = bucklingFactorsGoo.Value.Duplicate();
       }
@@ -71,7 +71,7 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = lt;
       }
 
-      da.SetData(0, new GsaBucklingLengthFactorsGoo(fls));
+      da.SetData(0, new GsaBucklingFactorsGoo(fls));
       da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
       da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
       da.SetData(3, fls.EquivalentUniformMomentFactor);

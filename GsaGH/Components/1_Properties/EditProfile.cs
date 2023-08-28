@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProfile;
     private bool _useDegrees = false;
-    public EditProfile() : base("Edit Profile", "EditProfile",
+    public EditProfile() : base("Edit Profile", "EditPf",
       "Transform a Profile by rotation or reflection.",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;

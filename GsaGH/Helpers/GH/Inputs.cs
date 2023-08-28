@@ -52,11 +52,11 @@ namespace GsaGH.Helpers.GH {
                   list.Add(sectionGoo);
                   break;
 
-                case GsaProp2dGoo prop2dGoo:
+                case GsaProperty2dGoo prop2dGoo:
                   list.Add(prop2dGoo);
                   break;
 
-                case GsaProp3dGoo prop3dGoo:
+                case GsaProperty3dGoo prop3dGoo:
                   list.Add(prop3dGoo);
                   break;
 
@@ -104,11 +104,11 @@ namespace GsaGH.Helpers.GH {
                   list.Add(sectionGoo);
                   break;
 
-                case GsaProp2dGoo prop2dGoo:
+                case GsaProperty2dGoo prop2dGoo:
                   list.Add(prop2dGoo);
                   break;
 
-                case GsaProp3dGoo prop3dGoo:
+                case GsaProperty3dGoo prop3dGoo:
                   list.Add(prop3dGoo);
                   break;
 

@@ -142,7 +142,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      foreach (GsaProp2dGoo prop2d in copyList._properties.prop2ds
+      foreach (GsaProperty2dGoo prop2d in copyList._properties.prop2ds
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(prop2d.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
@@ -154,7 +154,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      foreach (GsaProp3dGoo prop3d in copyList._properties.prop3ds
+      foreach (GsaProperty3dGoo prop3d in copyList._properties.prop3ds
         .Where(x => x != null && x.Value != null)) {
         string id = ElementListFromReference.GetReferenceDefinition(prop3d.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);

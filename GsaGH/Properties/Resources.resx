@@ -118,8 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Analyse" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Analyse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AddList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AddList.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnalyseModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnalyseModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AnalysisCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnalysisCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -130,23 +133,74 @@
   <data name="AnalysisTaskParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnalysisTaskParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="AreaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\AreaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Annotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Annotate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BeamDisplacement" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\BeamDisplacement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AnnotateDetailed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnnotateDetailed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BeamForces" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\BeamForces.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AnnotationParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnnotationParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BeamLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\BeamLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BeamDisplacements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamDisplacements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BeamForcesAndMoments" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamForcesAndMoments.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BeamStrainEnergyDensity" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamStrainEnergyDensity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Bool6Param" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Bool6Param.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ConvertUnitNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ConvertUnitNumber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BucklingFactorsParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BucklingFactorsParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CombinationCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CombinationCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CombinationCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CombinationCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Contour1dResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Contour1dResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Contour2dResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Contour2dResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Contour3dResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Contour3dResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ContourNodeResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ContourNodeResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create1dElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create1dElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create1dMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create1dMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create2dElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create2dElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create2dElementsFromBrep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create2dElementsFromBrep.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create2dMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create2dMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create2dProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create2dProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create2dPropertyModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create2dPropertyModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create3dMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create3dMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Create3dProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Create3dProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateAnalysisCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateAnalysisCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -154,56 +208,71 @@
   <data name="CreateAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CreateBeamLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateBeamLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateCombination" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateCombination.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CreateBucklingFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateBucklingFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateCombinationCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateCombinationCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateElem1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateElem1d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateElem2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateElem2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CreateCustomMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateCustomMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateElem3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateElem3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateElemsFromBreps" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateElemsFromBreps.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CreateElementsFromMembers" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateElementsFromMembers.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateElemsFromMems" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateElemsFromMems.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CreateFaceLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateFaceLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGravityLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGravityLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGridAreaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGridAreaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGridLine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGridLine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGridLineLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGridLineLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGridPlane" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGridPlane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGridPointLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGridPointLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateGridSurface" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateGridSurface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateList.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateLoadCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateLoadCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateMem1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateMem1d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateMem2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateMem2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateMem3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateMem3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="CreateModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateNodeLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateNodeLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateOffset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateOffset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateProp2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateProp2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateProp3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateProp3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -217,20 +286,35 @@
   <data name="CreateSupport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSupport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateUnitNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateUnitNumber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CustomMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CustomMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Displacement2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Displacement2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Displacement3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Displacement3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="DiagramParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\DiagramParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Documentation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Documentation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit1dElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit1dElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit1dMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit1dMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit2dElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit2dElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit2dMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit2dMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit2dProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit2dProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit3dElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit3dElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit3dMember" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit3dMember.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Edit3dProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Edit3dProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -238,26 +322,11 @@
   <data name="EditBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="EditElem1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditElem1d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditElem2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditElem2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditElem3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditElem3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="EditBucklingFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditBucklingFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditMem1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditMem1d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditMem2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditMem2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditMem3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditMem3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -265,11 +334,8 @@
   <data name="EditOffset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditOffset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="EditProp2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditProp2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditProp3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditProp3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="EditProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -277,56 +343,92 @@
   <data name="EditSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Elem1dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Elem1dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element1dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element1dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Elem1dDiagram" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Elem1dDiagram.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element2dDisplacements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element2dDisplacements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ShowLoadDiagrams" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ShowLoadDiagrams.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element2dForcesAndMoments" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element2dForcesAndMoments.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Elem2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Elem2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Elem3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Elem3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element2dStresses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element2dStresses.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="FaceLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\FaceLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element3dDisplacements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element3dDisplacements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Forces2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Forces2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Element3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Element3dStresses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Element3dStresses.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ElementsfromMembersOld" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ElementsfromMembersOld.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExampleFiles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ExampleFiles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FootfallResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\FootfallResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Forces3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Forces3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GetAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetGridLine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetGridLine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GetGeometry" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetGeometry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetListObjects" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetListObjects.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GetLoads" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetLoads.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetModelAnalysis" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetModelAnalysis.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GetSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetModelGeometry" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetModelGeometry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GravityLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GravityLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetModelLists" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetModelLists.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GridPlane" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GridPlane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetModelLoads" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetModelLoads.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GridPlaneParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GridPlaneParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetModelMaterials" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetModelMaterials.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GridPlaneProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GridPlaneProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetModelProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetModelProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GridSurface" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GridSurface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetProperty2dModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetProperty2dModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GetResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GetResultCases" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetResultCases.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GetSectionModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetSectionModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GlobalPerformanceResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GlobalPerformanceResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridLineInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridLineInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridLineParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridLineParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridPlaneSurfaceParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridPlaneSurfaceParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridPlaneSurfaceProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridPlaneSurfaceProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GSAInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GSAInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -340,14 +442,32 @@
   <data name="GsaLogo64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GsaLogo64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LineLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\LineLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GwaCommand" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GwaCommand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LoadInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\LoadInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="LineResultInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LineResultInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ListInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ListInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ListParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ListParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LoadCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LoadCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadDiagrams" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LoadDiagrams.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="LoadParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\LoadParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\LoadProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="LocalAxes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\LocalAxes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -358,23 +478,29 @@
   <data name="MaterialProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\MaterialProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Mem1dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Mem1dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Member1dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Member1dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Mem2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Mem2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Member2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Member2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Mem3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Mem3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Member3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Member3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MeshResultInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\MeshResultInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ModelParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ModelParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="NodeDisplacement" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\NodeDisplacement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ModelTitles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ModelTitles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="NodeLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\NodeLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ModelUnits" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ModelUnits.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeDisplacements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\NodeDisplacements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="NodeParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\NodeParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -385,29 +511,38 @@
   <data name="OpenModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\OpenModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="PointLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\PointLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PointResultInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\PointResultInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Prop2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Prop2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Preview3dSections" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Preview3dSections.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Prop3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Prop3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PreviewDeformed3dSections" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\PreviewDeformed3dSections.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProfileDimensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ProfileDimensions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Property2dModifierParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Property2dModifierParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Property2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Property2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Property3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Property3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReactionForceDiagrams" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ReactionForceDiagrams.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ReactionForces" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ReactionForces.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Result0D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result0D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Result3dInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Result3dInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Result1D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result1D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Result2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Result3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ResultDiagrams" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ResultDiagrams.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ResultGlobal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ResultGlobal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -415,8 +550,11 @@
   <data name="ResultParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ResultParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SaveModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\SaveModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SaveGsaModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SaveGsaModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SectionAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SectionAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SectionModifierParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SectionModifierParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -433,142 +571,16 @@
   <data name="SpringParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SpringParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="StrainEnergyDensity" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\StrainEnergyDensity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="SpringReactionForces" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SpringReactionForces.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stress2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Stress2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stress3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Stress3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TaperProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\TaperProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Titles" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Titles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="TotalLoadsAndReactions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\TotalLoadsAndReactions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UnitParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\UnitParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Units" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Units.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GlobalPerformance" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GlobalPerformance.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TotalLoadAndReaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\TotalLoadAndReaction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GwaModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GwaModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CombinationCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CombinationCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="BucklingFactorsParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\BucklingFactorsParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateBucklingLengthFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateBucklingLengthFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditBucklingLengthFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditBucklingLengthFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ExampleFiles" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ExampleFiles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SectionDimensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\SectionDimensions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SectionAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\SectionAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GetResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ResultsInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ResultsInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Result0dInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result0dInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Result1dInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result1dInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Result2dInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result2dInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Result3dInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Result3dInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Footfall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Footfall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateList" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateList.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GetList" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetList.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ListInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ListInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ListParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ListParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ReactionForceDiagram" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ReactionForceDiagram.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ShowID" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\ShowID.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="EditProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\EditProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateProp2dModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateProp2dModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GetProp2dModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetProp2dModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GetSectionModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetSectionModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GetMaterials" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetMaterials.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Prop2dModifierParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Prop2dModifierParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="LoadCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\LoadCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CreateLoadCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateLoadCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="LoadCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\LoadCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CombinationCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CombinationCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AnnotateParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\AnnotateParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DiagramParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\DiagramParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AnnotateDetailed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\AnnotateDetailed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DeformedSection3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\DeformedSection3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Section3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\Section3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="unused" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\unused.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

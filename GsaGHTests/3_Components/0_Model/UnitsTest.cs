@@ -11,7 +11,7 @@ namespace GsaGHTests.Model {
   public class UnitsTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new Units();
+      var comp = new ModelUnits();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp, ModelTests.GsaModelGooMother, 0);

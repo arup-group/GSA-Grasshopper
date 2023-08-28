@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem3d;
+    protected override Bitmap Icon => Resources.Edit3dMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public EditMember3d_OBSOLETE() : base("Edit 3D Member", "Mem3dEdit", "Modify GSA 3D Member",
@@ -39,7 +39,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -86,7 +86,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Set new 3D Property.",
+      pManager.AddParameter(new GsaProperty3dParameter(), "3D Property", "PV", "Set new 3D Property.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
         "Set Member Mesh Size", GH_ParamAccess.item);
@@ -115,7 +115,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
       pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Get 3D Property",
+      pManager.AddParameter(new GsaProperty3dParameter(), "3D Property", "PV", "Get 3D Property",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
         "Get Targe mesh size", GH_ParamAccess.item);
@@ -160,7 +160,7 @@ namespace GsaGH.Components {
         }
       }
 
-      GsaProp3dGoo prop3dGoo = null;
+      GsaProperty3dGoo prop3dGoo = null;
       if (da.GetData(3, ref prop3dGoo)) {
         mem.Prop3d = prop3dGoo.Value;
       }
@@ -209,7 +209,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaMember3dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.SolidMesh);
-      da.SetData(3, new GsaProp3dGoo(mem.Prop3d));
+      da.SetData(3, new GsaProperty3dGoo(mem.Prop3d));
       da.SetData(4,
         new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
       da.SetData(5, mem.MeshWithOthers);

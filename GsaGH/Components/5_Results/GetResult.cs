@@ -20,14 +20,14 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetResults;
+    protected override Bitmap Icon => Resources.GetResult;
     private ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
     private ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
     private Guid _modelGuid;
     private Dictionary<Tuple<CaseType, int>, GsaResult> _result;
     private int _tempNodeId;
 
-    public GetResult() : base("Get Results", "GetRes",
+    public GetResult() : base("Get Result", "GetRes",
       "Get AnalysisCase or Combination Result from an analysed GSA model", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;

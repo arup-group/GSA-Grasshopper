@@ -21,7 +21,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6b62f438-444a-4036-885f-d7582c590b2d");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.LoadInfo;
+    protected override Bitmap Icon => Resources.LoadProperties;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
@@ -61,8 +61,8 @@ namespace GsaGH.Components {
         });
 
         Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[7].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[8].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[7].Name = "Load Value or Factor Y [" + unitAbbreviation + "]";
+        Params.Output[8].Name = "Load Value or Factor Z [" + unitAbbreviation + "]";
         Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
       } catch (Exception e) {
         this.AddRuntimeError(e.Message);
@@ -119,8 +119,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter(
         "Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4",
         "Value at Point 4", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter());
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

@@ -21,7 +21,7 @@ namespace GsaGH.Components {
     private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
 
     public CreateAnalysisTask() : base(
-      "Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
+      "Create " + GsaAnalysisTaskGoo.Name,
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisTaskGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;

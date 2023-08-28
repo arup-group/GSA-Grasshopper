@@ -23,7 +23,7 @@ namespace GsaGHTests.Components.Properties {
     public void CreateComponent() {
       GH_OasysComponent comp = ComponentMother();
 
-      var output = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaBucklingFactorsGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0.1, output.Value.MomentAmplificationFactorStrongAxis);
       Assert.Equal(0.2, output.Value.MomentAmplificationFactorWeakAxis);
       Assert.Equal(1.0, output.Value.EquivalentUniformMomentFactor);

@@ -2,7 +2,7 @@
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Bool6 class, this class defines the basic properties and methods for any <see cref="GsaAPI.Bool6" />
+  /// A Bool6 contains six booleans to set releases in <see cref="GsaElement1d"/>s and <see cref="GsaMember1d"/>s, or restraints in <see cref="GsaNode"/>s.
   /// </summary>
   public class GsaBool6 {
     public bool X {

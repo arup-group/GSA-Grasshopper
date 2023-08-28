@@ -17,6 +17,7 @@ namespace GsaGH.Helpers.Import {
     ///   Method to create a Rhino Plane from a GSA Axis
     /// </summary>
     /// <param name="axis">GSA Axis to create plane from</param>
+    /// <param name="unit"></param>
     /// <returns></returns>
     internal static Plane AxisToPlane(Axis axis, LengthUnit unit) {
       if (axis == null) {

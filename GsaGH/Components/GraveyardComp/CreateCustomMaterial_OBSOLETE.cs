@@ -33,7 +33,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CustomMaterial;
+    protected override Bitmap Icon => Resources.CreateCustomMaterial;
     private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
     private FoldMode _mode = FoldMode.Timber;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;

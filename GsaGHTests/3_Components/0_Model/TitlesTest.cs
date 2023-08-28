@@ -10,7 +10,7 @@ namespace GsaGHTests.Model {
   public class TitlesTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new Titles();
+      var comp = new ModelTitles();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp, ModelTests.GsaModelGooMother, 0);

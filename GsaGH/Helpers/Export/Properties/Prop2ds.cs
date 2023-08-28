@@ -9,7 +9,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Helpers.Export {
   internal class Prop2ds {
     internal static void ConvertProp2ds(
-      List<GsaProp2d> prop2Ds,
+      List<GsaProperty2d> prop2Ds,
       ref Properties existingProperties,
       ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {
@@ -18,13 +18,13 @@ namespace GsaGH.Helpers.Export {
       }
 
       prop2Ds = prop2Ds.OrderByDescending(p => p.Id).ToList();
-      foreach (GsaProp2d prop2d in prop2Ds.Where(prop2d => prop2d != null)) {
+      foreach (GsaProperty2d prop2d in prop2Ds.Where(prop2d => prop2d != null)) {
         ConvertProp2d(prop2d, ref existingProperties, ref apiAxes, unit);
       }
     }
 
     internal static int ConvertProp2d(
-      GsaProp2d prop2d,
+      GsaProperty2d prop2d,
       ref Properties existingProperties,
       ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {
@@ -40,7 +40,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int AddProp2d(
-      GsaProp2d prop, 
+      GsaProperty2d prop, 
       ref Properties existingProperties, 
       ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {

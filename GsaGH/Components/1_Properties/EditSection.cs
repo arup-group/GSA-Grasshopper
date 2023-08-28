@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.EditSection;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public EditSection() : base("Edit Section", "SectionEdit", "Modify GSA Section",
+    public EditSection() : base("Edit Section", "EditPB", "Modify GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };

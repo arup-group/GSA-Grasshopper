@@ -13,7 +13,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaElement2dGoo : GH_OasysGeometricGoo<GsaElement2d>, IGH_PreviewData {
     public static string Description => "GSA 2D Element(s)";
-    public static string Name => "Element2D";
+    public static string Name => "Element 2D";
     public static string NickName => "E2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
