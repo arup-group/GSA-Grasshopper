@@ -74,7 +74,7 @@ namespace GsaGH.Components {
         }
       } else {
         _forcePerLengthUnit
-          = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[2]);
+          = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[1]);
       }
 
       base.UpdateUI();
