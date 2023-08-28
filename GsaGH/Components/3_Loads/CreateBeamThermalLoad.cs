@@ -138,7 +138,9 @@ namespace GsaGH.Components {
       var loadcase = new GsaLoadCase(1);
       GsaLoadCaseGoo loadCaseGoo = null;
       if (da.GetData(0, ref loadCaseGoo)) {
-        loadcase = loadCaseGoo.Value;
+        if (loadCaseGoo.Value != null) {
+          loadcase = loadCaseGoo.Value;
+        }
       }
       
       beamThermalLoad.LoadCase = loadcase;
