@@ -23,9 +23,6 @@ namespace DocsGeneration.MarkDowns {
         string width = $"<img width={columnWidths[i]}/>";
         _table += $"|{width} {headers[i]} ";
       }
-      foreach (string header in Headers) {
-        
-      }
 
       _table += $"|\n";
       foreach (string header in Headers) {

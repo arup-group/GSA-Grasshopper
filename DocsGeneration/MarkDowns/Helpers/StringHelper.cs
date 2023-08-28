@@ -47,6 +47,10 @@ namespace DocsGeneration.MarkDowns.Helpers {
           string parmeterName = parameterNameAndRest[0];
           if (parameterNames.Contains(parmeterName.ToUpper())) {
             string markDownName = parmeterName[0].ToString().ToUpper() + parmeterName.Substring(1);
+            markDownName = markDownName
+              .Replace(" 3d", " 3D")
+              .Replace(" 2d", " 2D")
+              .Replace(" 1d", " 1D");
             string markdownLink =
               $"[{markDownName}](gsagh-{parmeterName.ToLower()}-parameter.html) ";
             str += markdownLink;
@@ -77,8 +81,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
           htmlAddress = htmlAddress.Replace("https://docs.oasys-software.com/structural/gsa/", "/");
           string[] htmlNameAndRest = htmlLinkAndRest[1].Split(new string[] { "</see>" }, opt);
           string htmlName = htmlNameAndRest[0];
-          string markdownLink = $"[{htmlName}]({htmlAddress})";
-          str += markdownLink;
+          str += $"[{htmlName}]({htmlAddress})";
           if (htmlNameAndRest.Length > 1) {
             str += htmlNameAndRest[1];
           }
@@ -103,6 +106,10 @@ namespace DocsGeneration.MarkDowns.Helpers {
                 .Replace("\"", string.Empty).Replace(" ", string.Empty); ;
               string[] typeSplit = reference.Split('.');
               string markdownLink = SortReference(typeSplit[0], typeSplit[1], typeSplit.Last());
+              markdownLink = markdownLink
+                .Replace(" 3d", " 3D")
+                .Replace(" 2d", " 2D")
+                .Replace(" 1d", " 1D");
               str += markdownLink;
               if (refAndRest.Length > 1) {
                 str += refAndRest[1];

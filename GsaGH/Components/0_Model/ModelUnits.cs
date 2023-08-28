@@ -17,7 +17,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.ModelUnits;
 
     public ModelUnits() : base("Model Units", "Units",
-      "Get or set the units used by GSA when opening this Model",
+      "Get or set the units used by GSA when opening this GSA Model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
     }

@@ -46,8 +46,8 @@ namespace DocsGeneration.MarkDowns.Helpers {
       parameterName = parameterName.Replace(" (List)", string.Empty);
       parameterName = parameterName.Replace(" (Tree)", string.Empty);
       parameterName = SplitCamelCase(parameterName, " ");
-      string list = parameter.ParameterType.Contains(" (List)") ? " `List`" : string.Empty;
-      string tree = parameter.ParameterType.Contains(" (Tree)") ? " `Tree`" : string.Empty;
+      string list = parameter.ParameterType.Contains(" (List)") ? " _List_" : string.Empty;
+      string tree = parameter.ParameterType.Contains(" (Tree)") ? " _Tree_" : string.Empty;
 
       if (parameterNames.Contains(parameterName.ToUpper())) {
         string fileName = CreateFileName(parameterName, "parameter");
@@ -60,14 +60,17 @@ namespace DocsGeneration.MarkDowns.Helpers {
         return $"[{parameterName}]({fileName}.html)" + list + tree;
       }
 
-      string link = $"[Unit Number](gsagh-unitnumber-parameter.html)";
-      string otherParam = parameterName.Replace("UnitNumber", link);
-      otherParam = otherParam.Replace("I Geometric", "Geometry");
-      if (!otherParam.StartsWith("[")) {
-        otherParam = $"`{otherParam}`";
+      if (parameterName.Contains("UnitNumber")) {
+        string link = $"[Unit Number](gsagh-unitnumber-parameter.html)";
+        return parameterName.Replace("UnitNumber", link) + list + tree;
       }
 
-      return otherParam + list + tree;
+      parameterName = parameterName.Replace("I Geometric", "Geometry");
+      if (!parameterName.StartsWith("[")) {
+        parameterName = $"`{parameterName}`";
+      }
+
+      return parameterName + list + tree;
     }
 
     public static string CreateSideBarFileName(Component component) {
