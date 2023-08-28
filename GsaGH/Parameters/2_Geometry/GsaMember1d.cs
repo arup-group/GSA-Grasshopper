@@ -9,7 +9,6 @@ using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Collections;
-using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;

@@ -21,9 +21,11 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(GwaCommand))]
     [InlineData(typeof(ListInfo))]
     [InlineData(typeof(OpenModel))]
+    [InlineData(typeof(CreateGridLine))]
+    [InlineData(typeof(GetModelGridLines))]
+    [InlineData(typeof(GridLineInfo))]
     [InlineData(typeof(SaveGsaModel))]
     [InlineData(typeof(ModelTitles))]
-    // 1_Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(CreateBucklingFactors))]
     [InlineData(typeof(CreateCustomMaterial))]
