@@ -22,6 +22,7 @@ namespace GsaGH.Parameters {
     }
     public bool AnalysisMaterialsModified { get; private set; } = false;
     public bool IsCustom { get; private set; } = false;
+    public bool IsReferencedById { get; private set; } = false;
     public int Id {
       get => _id;
       set {
@@ -37,6 +38,10 @@ namespace GsaGH.Parameters {
     public string SteelDesignCodeName { get; private set; } = string.Empty;
     public string Name {
       get {
+        if (IsReferencedById) {
+          return "Referenced by ID";
+        }
+
         if (IsCustom) {
           return _analysisMaterial.Name;
         }
@@ -243,6 +248,13 @@ namespace GsaGH.Parameters {
 
     public GsaMaterial() { }
 
+    internal GsaMaterial(int id) {
+      _id = id;
+      MaterialType = MatType.Generic;
+      IsCustom = true;
+      IsReferencedById = true;
+    }
+
     internal GsaMaterial(AnalysisMaterial apiMaterial, int id, MatType type = MatType.Generic) {
       MaterialType = type;
       _analysisMaterial = apiMaterial;
@@ -361,10 +373,11 @@ namespace GsaGH.Parameters {
         ConcreteDesignCodeName = ConcreteDesignCodeName,
         SteelDesignCodeName = SteelDesignCodeName,
         IsCustom = IsCustom,
+        IsReferencedById = IsReferencedById,
         AnalysisMaterialsModified = AnalysisMaterialsModified,
       };
 
-      if (IsCustom) {
+      if (IsCustom && !IsReferencedById) {
         dup._analysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
       } else {
         dup.RecreateForDesignCode(AnalysisMaterialsModified ? _gradeName : Name);
@@ -457,6 +470,10 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
+      if (IsReferencedById) {
+        return $"Custom ID:{Id} (referenced)";
+      }
+
       string code = GetCodeName();
       string id = Id == 0 ? string.Empty : " Grd:" + Id;
       return (code + " " + MaterialType + id + " " + (Name ?? string.Empty)).Trim();
@@ -475,6 +492,7 @@ namespace GsaGH.Parameters {
       if (IsCustom) {
         code = "Custom";
       }
+
       return code;
     }
 
