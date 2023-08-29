@@ -207,6 +207,28 @@ namespace GsaGH.Helpers.Export {
       _initialNodeCount += Nodes.Count;
 
       if (createElementsFromMembers && Members.Count != 0) {
+        ConcurrentDictionary<int, ConcurrentBag<int>> initialMemberElementRelationship
+        = ElementListFromReference.GetMemberElementRelationship(Model);
+        var elemIds = new List<int>();
+        foreach (int id in Members.ReadOnlyDictionary.Keys) {
+          if (initialMemberElementRelationship.ContainsKey(id)) {
+            elemIds.AddRange(initialMemberElementRelationship[id]);
+          }
+        }
+
+        if (elemIds.Count > 0) {
+          string warning = "Creating Elements From Members will recreate child Elements." +
+            Environment.NewLine + "This will update the Element's property to the parent Member's property, " +
+            Environment.NewLine + "and may also renumber element IDs. " + Environment.NewLine +
+            Environment.NewLine + "The following former Element IDs were updated:" + Environment.NewLine;
+          string ids = string.Join(" ", elemIds);
+          if (ids.Length > 100) {
+            warning += "(list may be too long to display, click to copy)" + Environment.NewLine;
+          }
+
+          owner.AddRuntimeWarning(warning + ids);
+        }
+
         Model.CreateElementsFromMembers();
       }
 
