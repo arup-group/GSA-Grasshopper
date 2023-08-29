@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using GsaAPI;
@@ -23,6 +24,9 @@ namespace GsaGH.Helpers.Import {
       Member3ds = new ConcurrentBag<GsaMember3dGoo>();
 
       ReadOnlyDictionary<int, Member> mDict = model.Model.Members(memberList);
+
+      var errors1d = new ConcurrentBag<int>();
+      var errors2d = new ConcurrentBag<int>();
 
       Parallel.ForEach(mDict, item => {
         string toporg = item.Value.Topology;
@@ -54,8 +58,7 @@ namespace GsaGH.Helpers.Import {
             case MemberType.PILE:
 
               if (topopts.Count < 2) {
-                string error = " Invalid topology Mem1D ID: " + item.Key + ".";
-                owner?.AddRuntimeWarning(error);
+                errors1d.Add(item.Key);
                 return;
               }
 
@@ -68,8 +71,7 @@ namespace GsaGH.Helpers.Import {
             default: 
               // ### Member 2d ###
               if (topopts.Count < 2) {
-                string error = " Invalid topology Mem2D ID: " + item.Key + ".";
-                owner?.AddRuntimeWarning(error);
+                errors2d.Add(item.Key);
                 return;
               }
 
@@ -148,6 +150,18 @@ namespace GsaGH.Helpers.Import {
           Member3ds.Add(new GsaMember3dGoo(mem3d));
         }
       });
+
+      if (errors1d.Count > 0) {
+        string ids = string.Join(Environment.NewLine, errors1d.OrderBy(x => x));
+        string err = $" Invalid definition for 1D Member ID(s):{Environment.NewLine}{ids}";
+        owner.AddRuntimeWarning(err);
+      }
+
+      if (errors2d.Count > 0) {
+        string ids = string.Join(Environment.NewLine, errors2d.OrderBy(x => x));
+        string err = $" Invalid definition for 2D Member ID(s):{Environment.NewLine}{ids}";
+        owner.AddRuntimeWarning(err);
+      }
     }
   }
 }

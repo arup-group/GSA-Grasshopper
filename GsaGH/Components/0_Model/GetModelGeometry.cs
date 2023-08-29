@@ -563,8 +563,9 @@ namespace GsaGH.Components {
       if (!(results.Mem1ds is null) || results.Mem1ds.Count == 0) {
         var invalid1dMem = results.Mem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid1dMem.Count > 0) {
-          this.AddRuntimeWarning("Invalid Member1D definition for Member IDs:");
-          this.AddRuntimeWarning(string.Join(" ", invalid1dMem.OrderBy(x => x)));
+          string ids = string.Join(Environment.NewLine, invalid1dMem.OrderBy(x => x));
+          string err = $" Invalid definition for 1D Members ID(s):{Environment.NewLine}{ids}";
+          this.AddRuntimeWarning(err);
         }
 
         if (_mode == FoldMode.List) {
@@ -582,8 +583,9 @@ namespace GsaGH.Components {
       if (!(results.Elem1ds is null) || results.Elem1ds.Count == 0) {
         var invalid1dElem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid1dElem.Count > 0) {
-          this.AddRuntimeWarning("Invalid Element1D definition for Element IDs:");
-          this.AddRuntimeWarning(string.Join(" ", invalid1dElem.OrderBy(x => x)));
+          string ids = string.Join(Environment.NewLine, invalid1dElem.OrderBy(x => x));
+          string err = $" Invalid definition for 1D Elements ID(s):{Environment.NewLine}{ids}";
+          this.AddRuntimeWarning(err);
         }
 
         if (_mode == FoldMode.List) {
@@ -602,8 +604,9 @@ namespace GsaGH.Components {
       if (!(results.Mem2ds is null) || results.Mem2ds.Count == 0) {
         var invalid2dMem = results.Mem2ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid2dMem.Count > 0) {
-          this.AddRuntimeWarning("Invalid Member2D definition for Member IDs:");
-          this.AddRuntimeWarning(string.Join(" ", invalid2dMem.OrderBy(x => x)));
+          string ids = string.Join(Environment.NewLine, invalid2dMem.OrderBy(x => x));
+          string err = $" Invalid definition for 2D Member ID(s):{Environment.NewLine}{ids}";
+          this.AddRuntimeWarning(err);
         }
 
         if (!((IGH_PreviewObject)Params.Output[5]).Hidden) {
@@ -663,8 +666,9 @@ namespace GsaGH.Components {
       if (!(results.Mem3ds is null) || results.Mem3ds.Count == 0) {
         var invalid3dMem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
         if (invalid3dMem.Count > 0) {
-          this.AddRuntimeWarning("Invalid Member3D definition for Member IDs:");
-          this.AddRuntimeWarning(string.Join(" ", invalid3dMem.OrderBy(x => x)));
+          string ids = string.Join(Environment.NewLine, invalid3dMem.OrderBy(x => x));
+          string err = $" Invalid definition for 3D Members ID(s):{Environment.NewLine}{ids}";
+          this.AddRuntimeWarning(err);
         }
 
         if (!((IGH_PreviewObject)Params.Output[6]).Hidden) {
