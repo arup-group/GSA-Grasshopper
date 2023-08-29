@@ -156,7 +156,8 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddGenericParameter("Axis", "Ax",
-        "Get Local Axis either as Plane for custom or an integer (Global (0) or Topological (1)) for referenced Axis.",
+        "Get Local Axis either as `Plane` for custom local axis or an `Integer` (Global: 0 or " +
+        "Topological: 1) for a referenced Axis.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
@@ -164,8 +165,8 @@ namespace GsaGH.Components {
         "Get Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
         "Reference Surface Middle (default) = 0, Top = 1, Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
-        GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", 
+        "Additional Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProperty2dModifierParameter());
       pManager.AddGenericParameter("Support Type", "ST", "Support Type", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Reference Edge", "RE",

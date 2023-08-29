@@ -4,6 +4,10 @@ using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
+  /// <summary>
+  /// Grid Lines can be used to aid visual representation of a <see cref="GsaModel"/>.
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-grid-line.html">Grid lines</see> to read more.</para>
+  /// </summary>
   public class GsaGridLine {
     internal GridLine _gridLine;
     internal PolyCurve _curve;

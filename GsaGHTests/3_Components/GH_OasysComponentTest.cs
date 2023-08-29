@@ -42,7 +42,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(EditProfile))]
     [InlineData(typeof(Edit2dProperty))]
-    [InlineData(typeof(GetProperty2dModifier))]
+    [InlineData(typeof(Get2dPropertyModifier))]
     [InlineData(typeof(Edit3dProperty))]
     [InlineData(typeof(EditSection))]
     [InlineData(typeof(GetSectionModifier))]

@@ -100,8 +100,8 @@ namespace GsaGH.Components {
 
       pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Elements/Nodes/Definition", "Def",
-        "Element/Node list that load is applied to or Grid point / polygon definition",
+      pManager.AddGenericParameter("Definition", "Def",
+        "Node, Element or Member list that load is applied to or Grid point / polygon definition",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local",
         GH_ParamAccess.item);
