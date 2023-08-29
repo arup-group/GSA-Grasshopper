@@ -146,7 +146,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Grid Surface ID", "ID",
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
         GH_ParamAccess.item, 0);
-      pManager.AddGenericParameter("Element list", "El",
+      pManager.AddGenericParameter("Loadable Objects", "El",
         "Lists, Custom Materials, Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
         + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"

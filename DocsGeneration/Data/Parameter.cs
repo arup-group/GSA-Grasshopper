@@ -73,7 +73,7 @@ namespace DocsGeneration.Data {
 
         foreach (Type type in types) {
           if (Quantity.TryParse(type, measure, out IQuantity quantity)) {
-            return $"{un} `{quantity.QuantityInfo.Name}`";
+            return $"{un} `{quantity.QuantityInfo.Name.Trim()}`";
           }
         }
 
@@ -217,11 +217,21 @@ namespace DocsGeneration.Data {
     }
 
     private void UpdateParameters(List<Component> components) {
-      if (Name == "Model") {
+      if (Name == "Model" || Name == "Result") {
         return;
       }
 
       string parameterName = Name.ToUpper().Replace(" ", string.Empty);
+
+      if (parameterName.Contains("1D")) {
+        parameterName = "1D" + parameterName.Replace("1D", string.Empty);
+      }
+      if (parameterName.Contains("2D")) {
+        parameterName = "2D" + parameterName.Replace("2D", string.Empty);
+      }
+      if (parameterName.Contains("3D")) {
+        parameterName = "3D" + parameterName.Replace("3D", string.Empty);
+      }
 
       foreach (Component component in components) {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);

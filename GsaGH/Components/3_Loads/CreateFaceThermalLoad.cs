@@ -92,7 +92,7 @@ namespace GsaGH.Components {
       string unitAbbreviation = Temperature.GetAbbreviation(_temperatureUnit);
 
       pManager.AddParameter(new GsaLoadCaseParameter());
-      pManager.AddGenericParameter("Element list", "G2D",
+      pManager.AddGenericParameter("Loadable 2D Objects", "G2D",
         "List, Custom Material, 2D Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine

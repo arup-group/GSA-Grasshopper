@@ -16,14 +16,14 @@ using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
-  public class GetProperty2dModifier : GH_OasysComponent {
+  public class Get2dPropertyModifier : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("945d2e3b-4e5d-4a6e-a64b-c2447c0c0723");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetProperty2dModifier;
+    protected override Bitmap Icon => Resources.Get2dPropertyModifier;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public GetProperty2dModifier() : base("Get Property 2D Modifier", "GetP2M",
+    public Get2dPropertyModifier() : base("Get 2D Property Modifier", "GetP2M",
       "Get GSA 2D Property Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

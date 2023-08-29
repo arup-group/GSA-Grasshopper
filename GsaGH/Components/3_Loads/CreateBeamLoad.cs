@@ -200,7 +200,7 @@ namespace GsaGH.Components {
       string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
       pManager.AddParameter(new GsaLoadCaseParameter());
-      pManager.AddGenericParameter("Element list", "G1D",
+      pManager.AddGenericParameter("Loadable 1D Objects", "G1D",
         "List, Custom Material, Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine

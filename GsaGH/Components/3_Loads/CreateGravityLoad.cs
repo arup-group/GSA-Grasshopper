@@ -24,7 +24,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaLoadCaseParameter());
-      pManager.AddGenericParameter("Element list", "El",
+      pManager.AddGenericParameter("Loadable Objects", "Geo",
         "Lists, Custom Materials, Properties, Elements or Members to apply load to; either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
         + Environment.NewLine + "Text string with Element list should take the form:"
         + Environment.NewLine
