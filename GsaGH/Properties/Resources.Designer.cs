@@ -953,6 +953,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Get2dPropertyModifier {
+            get {
+                object obj = ResourceManager.GetObject("Get2dPropertyModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GetGridLine {
             get {
                 object obj = ResourceManager.GetObject("GetGridLine", resourceCulture);
@@ -1036,16 +1046,6 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap GetModelProperties {
             get {
                 object obj = ResourceManager.GetObject("GetModelProperties", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap GetProperty2dModifier {
-            get {
-                object obj = ResourceManager.GetObject("GetProperty2dModifier", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

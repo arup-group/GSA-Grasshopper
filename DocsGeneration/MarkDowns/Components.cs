@@ -103,7 +103,7 @@ namespace DocsGeneration.MarkDowns {
             FileHelper.CreateIconLink(property),
             FileHelper.CreateParameterLink(property, parmeterNames),
             StringHelper.MakeBold(property.Name),
-            property.Description,
+            property.Description.Replace("GSA ", string.Empty),
          });
         }
 

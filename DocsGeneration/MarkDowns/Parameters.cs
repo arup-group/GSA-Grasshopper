@@ -42,7 +42,7 @@ namespace DocsGeneration.MarkDowns {
           table.AddRow(new List<string>(){
             FileHelper.CreateIconLink(parameter),
             FileHelper.CreatePageLink(parameter),
-            parameter.Description
+            parameter.Description.Replace("GSA ", string.Empty)
           });
         }
         text += table.Finalise();

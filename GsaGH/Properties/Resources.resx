@@ -385,6 +385,9 @@
   <data name="Forces3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Forces3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Get2dPropertyModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Get2dPropertyModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="GetGridLine" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetGridLine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -411,9 +414,6 @@
   </data>
   <data name="GetModelProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetModelProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GetProperty2dModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\GetProperty2dModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GetResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
