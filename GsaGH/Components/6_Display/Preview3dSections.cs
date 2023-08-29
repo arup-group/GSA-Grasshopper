@@ -214,7 +214,7 @@ namespace GsaGH.Components {
                   continue;
                 }
 
-                modelAnalysisMesh.Append(model.DesignLayerPreview.Mesh);
+                modelDesignMesh.Append(model.DesignLayerPreview.Mesh);
                 modelDesignLines.AddRange(model.DesignLayerPreview.Outlines);
               }
 
