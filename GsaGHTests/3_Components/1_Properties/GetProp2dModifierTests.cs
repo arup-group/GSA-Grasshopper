@@ -12,7 +12,7 @@ namespace GsaGHTests.Properties {
   public class GetProp2dModifierTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new GetProperty2dModifier();
+      var comp = new Get2dPropertyModifier();
       comp.CreateAttributes();
       return comp;
     }
