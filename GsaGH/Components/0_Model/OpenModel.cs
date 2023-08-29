@@ -7,6 +7,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
@@ -109,40 +110,46 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
+      if (Versions.CheckAdSecVersion()) {
+        this.AddRuntimeWarning("Your version of AdSecGH is outdated. Please upgrade to ensure full functionality of this plugin");
+      }
+      if (Versions.CheckComposVersion()) {
+        this.AddRuntimeWarning("Your version of ComposGH is outdated. Please upgrade to ensure full functionality of this plugin");
+      }
+
       var model = new Model();
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(0, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GH_String _: {
-            if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both)) {
-              _fileName = tempFile;
-            }
+              if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both)) {
+                _fileName = tempFile;
+              }
 
-            if (!_fileName.EndsWith(".gwb")) {
-              _fileName += ".gwb";
-            }
+              if (!_fileName.EndsWith(".gwb")) {
+                _fileName += ".gwb";
+              }
 
-            ReturnValue status = model.Open(_fileName);
+              ReturnValue status = model.Open(_fileName);
 
-            if (status == 0) {
-              var gsaModel = new GsaModel(model) {
-                FileNameAndPath = _fileName,
-                ModelUnit = UnitMapping.GetUnit(model)
-              };
+              if (status == 0) {
+                var gsaModel = new GsaModel(model) {
+                  FileNameAndPath = _fileName,
+                  ModelUnit = UnitMapping.GetUnit(model)
+                };
 
-              UpdateMessage();
+                UpdateMessage();
 
-              da.SetData(0, new GsaModelGoo(gsaModel));
+                da.SetData(0, new GsaModelGoo(gsaModel));
 
-              PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
-                (int)(new FileInfo(_fileName).Length / 1024));
+                OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(_fileName).Length / 1024));
 
+                return;
+              }
+
+              this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
               return;
             }
-
-            this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
-            return;
-          }
           default:
             this.AddRuntimeError("Unable to open Model");
             return;

@@ -19,9 +19,7 @@ namespace GsaGH {
   public class GsaGhInfo : GH_AssemblyInfo {
     public override string AuthorContact => Contact;
     public override string AuthorName => Company;
-    public override string Description
-      =>
-        //Return a short string describing the purpose of this GHA library.
+    public override string Description =>
         "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine + (isBeta ? disclaimer : string.Empty)
         + Environment.NewLine + "A licensed version of GSA 10.1." + MinGsaVersion + " or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin." + Environment.NewLine
@@ -48,9 +46,9 @@ namespace GsaGH {
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     internal static bool isBeta = true;
   }
-  
+
   public class AddReferencePriority : GH_AssemblyPriority {
-    public static string PluginPath => pluginPath ?? (pluginPath = TryFindPluginPath("GSA.gha"));
+    public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
     public static string InstallPath = InstallationFolder.GetPath;
     private static string pluginPath;
 
@@ -60,7 +58,7 @@ namespace GsaGH {
       }
 
       // ### Set system environment variables to allow user rights to read below dlls ###
-      const string name = "PATH";
+      const string name = "PATH"; 
       string pathvar = Environment.GetEnvironmentVariable(name);
       string value = InstallPath + ";" + pathvar;
       EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
@@ -99,7 +97,7 @@ namespace GsaGH {
             (current, plugin) => current + "-" + plugin.Name + Environment.NewLine);
 
         string message = e.Message + Environment.NewLine + Environment.NewLine
-          + "This may be due to clash with other referenced dll files by one of these plugins that's already been loaded: "
+          + "This may be due to a clash with referenced dlls by one of the following plugins: "
           + Environment.NewLine + loadedPlugins + Environment.NewLine
           + "You may try disable the above plugins to solve the issue." + Environment.NewLine
           + "The plugin cannot be loaded.";
@@ -125,7 +123,7 @@ namespace GsaGH {
       // initially look in %appdata% folder where package manager will store the plugin
       string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
       path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", RhinoApp.ExeVersion + ".0",
-        GsaGhInfo.ProductName);
+        GsaGhInfo.ProductName, GsaGhInfo.Vers + "-beta");
 
       if (File.Exists(Path.Combine(path, keyword))) {
         return Path.GetDirectoryName(path);
