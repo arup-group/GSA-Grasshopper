@@ -28,10 +28,10 @@ namespace GsaGH.Helpers.Export {
       return assembledModel.Model;
     }
 
-    internal static Model AssembleForPreview(GsaModel model, List<GsaList> lists, 
+    internal static Model AssembleForPreview(List<GsaList> lists, 
       List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaMember1d> mem1ds, 
       List<GsaMember2d> mem2ds, LengthUnit modelUnit) {
-      var assembledModel = new ModelAssembly(model, modelUnit);
+      var assembledModel = new ModelAssembly(null, modelUnit);
       assembledModel.ConvertElements(elem1ds, elem2ds, null);
       assembledModel.ConvertMembers(mem1ds, mem2ds, null);
       assembledModel.ConvertLists(lists);

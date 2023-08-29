@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -8,17 +7,13 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaApi.EnumMappings;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Newtonsoft.Json.Linq;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -30,9 +25,9 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Preview3dSections;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Mesh _analysisMesh;
-    private IEnumerable<Line> _analysisLines;
+    private List<Line> _analysisLines;
     private Mesh _designMesh;
-    private IEnumerable<Line> _designLines;
+    private List<Line> _designLines;
 
     public Preview3dSections() : base("Preview 3D Sections", "Preview3d",
       "Show the 3D cross-section of 1D/2D GSA Elements and Members in a GSA model.",
@@ -74,10 +69,10 @@ namespace GsaGH.Components {
       pManager.HideParameter(1);
       pManager.AddMeshParameter("DesignLayer Mesh", "DM", "Design layer 3D Section Mesh",
         GH_ParamAccess.item);
-      pManager.HideParameter(0);
+      pManager.HideParameter(2);
       pManager.AddLineParameter("DesignLayer Outlines", "DLs", "The Design layer 3D Sections' outlines",
         GH_ParamAccess.list);
-      pManager.HideParameter(1);
+      pManager.HideParameter(3);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -155,49 +150,86 @@ namespace GsaGH.Components {
           return;
         }
 
-        var model = new GsaModel();
-        model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
-        if (models != null) {
-          if (models.Count > 0) {
-            model = models.Count > 1
-              ? MergeModels.MergeModel(models, this, Length.Zero) :
-              models[0].Clone();
-          }
-        }
-
         // Assemble model
-        model.Model = Assembler.AssembleForPreview(
-          model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        var assembled = new GsaModel {
+          Model = Assembler.AssembleForPreview(
+          lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit)
+        };
 
-        _analysisMesh = null;
-        _analysisLines = null;
-        _designMesh = null;
-        _designLines = null;
+        _analysisMesh = new Mesh();
+        _designMesh = new Mesh();
+        _analysisLines = new List<Line>();
+        _designLines = new List<Line>();
+        var modelAnalysisMesh = new Mesh();
+        var modelDesignMesh = new Mesh();
+        var modelAnalysisLines = new List<Line>();
+        var modelDesignLines = new List<Line>();
 
         var steps = new List<int> {
-        0, 1,
+        0, 1, 2, 3
         };
         Parallel.ForEach(steps, i => {
           switch (i) {
             case 0:
-              if (model.AnalysisLayerPreview == null) {
+              if (assembled.AnalysisLayerPreview == null) {
                 break;
               }
 
-              _analysisMesh = model.AnalysisLayerPreview.Mesh;
-              _analysisLines = model.AnalysisLayerPreview.Outlines;
+              _analysisMesh = assembled.AnalysisLayerPreview.Mesh;
+              _analysisLines.AddRange(assembled.AnalysisLayerPreview.Outlines);
               break;
 
             case 1:
-              if (model.DesignLayerPreview == null) {
+              if (assembled.DesignLayerPreview == null) {
                 break;
               }
 
-              _designMesh = model.DesignLayerPreview.Mesh;
-              _designLines = model.DesignLayerPreview.Outlines;
+              _designMesh = assembled.DesignLayerPreview.Mesh;
+              _designLines.AddRange(assembled.DesignLayerPreview.Outlines);
+              break;
+
+            case 2:
+              if (models == null || models.Count == 0) {
+                break;
+              }
+
+              foreach (GsaModel model in models) {
+                if (model.AnalysisLayerPreview == null) {
+                  continue;
+                }
+
+                modelAnalysisMesh.Append(model.AnalysisLayerPreview.Mesh);
+                modelAnalysisLines.AddRange(model.AnalysisLayerPreview.Outlines);
+              }
+              
+              break;
+
+            case 3:
+              if (models == null || models.Count == 0) {
+                break;
+              }
+
+              foreach (GsaModel model in models) {
+                if (model.DesignLayerPreview == null) {
+                  continue;
+                }
+
+                modelAnalysisMesh.Append(model.DesignLayerPreview.Mesh);
+                modelDesignLines.AddRange(model.DesignLayerPreview.Outlines);
+              }
+
               break;
           }
         });
+
+        if (models != null && models.Count > 0) {
+          _analysisMesh.Append(modelAnalysisMesh);
+          _analysisMesh.Vertices.CombineIdentical(true, false);
+          _designMesh.Append(modelDesignMesh);
+          _designMesh.Vertices.CombineIdentical(true, false);
+          _analysisLines.AddRange(modelAnalysisLines);
+          _designLines.AddRange(modelDesignLines);
+        }
 
         da.SetData(0, _analysisMesh);
         da.SetDataList(1, _analysisLines);
@@ -207,17 +239,16 @@ namespace GsaGH.Components {
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
-      if (_analysisMesh != null) {
+      if (_analysisMesh != null && _analysisMesh.IsValid) {
         args.Display.DrawMeshFalseColors(_analysisMesh);
       }
 
-      if (_designMesh != null) {
+      if (_designMesh != null && _designMesh.IsValid) {
         args.Display.DrawMeshFalseColors(_designMesh);
       }
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
-
       if (_analysisLines != null) {
         if (Attributes.Selected) {
           args.Display.DrawLines(_analysisLines, Colours.Element1dSelected,
