@@ -21,7 +21,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(Edit2dProperty))]
     [InlineData(typeof(MaterialProperties))]
-    [InlineData(typeof(GetProperty2dModifier))]
+    [InlineData(typeof(Get2dPropertyModifier))]
     [InlineData(typeof(ProfileDimensions))]
     [InlineData(typeof(GetSectionModifier))]
     [InlineData(typeof(SectionProperties))]
