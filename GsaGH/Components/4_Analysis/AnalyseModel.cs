@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
@@ -103,6 +105,15 @@ namespace GsaGH.Components {
         _tolerance = DefaultUnits.Tolerance;
       }
 
+      // add report output to old components
+      if (Params.Output.Count == 1) {
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[1].Name = "Report";
+        Params.Output[1].NickName = "R";
+        Params.Output[1].Description = "Analysis Task Report(s)";
+        Params.Output[1].Access = GH_ParamAccess.list;
+      }
+
       UpdateMessage();
       return flag;
     }
@@ -176,6 +187,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter());
+      pManager.AddTextParameter("Report", "R", "Analysis Task Report(s)", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -211,7 +223,7 @@ namespace GsaGH.Components {
 
       // Assemble model
       model.Model = Assembler.AssembleModel(
-        model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
+        model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
         sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, analysisTasks,
         combinationCases, _lengthUnit, _tolerance, _reMesh, this);
 
@@ -225,10 +237,10 @@ namespace GsaGH.Components {
           task.CreateDefaultCases(model.Model);
           if (task.Cases == null || task.Cases.Count == 0) {
             this.AddRuntimeWarning(
-              "Model contains no loads and has not been analysed, but has been assembled.");
+              " Model contains no loads and has not been analysed, but has been assembled.");
           } else {
             this.AddRuntimeRemark(
-              "Model contained no Analysis Tasks. Default Task has been created containing " +
+              " Model contained no Analysis Tasks. Default Task has been created containing " +
               "all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases) {
               model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
@@ -238,50 +250,61 @@ namespace GsaGH.Components {
           }
         }
 
-        // Workaround BUG in GsaAPI that will crash the application if element.property = 0:
-        ReadOnlyDictionary<int, Element> apielems = model.Model.Elements();
         bool tryAnalyse = true;
-        foreach (int key in apielems.Keys) {
-          if (apielems[key].Property != 0 || apielems[key].IsDummy) {
-            continue;
-          }
-
-          {
-            this.AddRuntimeError("Unable to analyse model. Element ID " + key
-              + " has no property set!");
-            tryAnalyse = false;
-          }
+        if (!SolverRequiredDll.IsCorrectVersionLoaded()) {
+          tryAnalyse = false;
+          string message
+            = " A dll required to run analysis has been previously loaded by another application. " +
+            "Please remove this file and try again:"
+            + Environment.NewLine + Environment.NewLine + SolverRequiredDll.LoadedFromPath
+            + Environment.NewLine + "Either uninstall the host application or delete the file.";
+          this.AddRuntimeError(message);
         }
 
-        if (tryAnalyse) {
-          if (!SolverRequiredDll.IsCorrectVersionLoaded()) {
-            tryAnalyse = false;
-            string message
-              = "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:"
-              + Environment.NewLine + Environment.NewLine + SolverRequiredDll.LoadedFromPath
-              + Environment.NewLine + "Either uninstall the host application or delete the file.";
-            this.AddRuntimeError(message);
-          }
-        }
 
         if (tryAnalyse) {
+          var reports = new List<string>();
+          string syncWarn = CatchElemFromMemSyncWarning();
+          if (!string.IsNullOrEmpty(syncWarn)) {
+            string warning = "\"Member and element synchronisation check has one or more warnings. " +
+              "Check report output for details";
+            this.AddRuntimeWarning($" {warning}");
+            reports.Add(syncWarn);
+          }
+
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
-            try {
-              if (model.Model.Analyse(task.Key)) {
-                PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse", apielems.Count);
-              } else {
-                this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
+            string warning = string.Empty;
+            if (model.Model.Analyse(task.Key)) {
+              if (!model.Model.Results().ContainsKey(task.Key)) {
+                warning = "Analysis Task " + task.Key +
+                  " was analysed but contains no results. Check report output for details";
               }
 
-              if (!model.Model.Results().ContainsKey(task.Key)) {
-                this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
-              }
-            } catch (Exception e) {
-              this.AddRuntimeError(e.Message);
+              PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
+                model.Model.Elements().Count);
+            } else {
+              warning = "Analysis Task " + task.Key +
+                " could not be analysed. Check report output for details";
+            }
+
+            string report = model.Model.AnalysisTaskReport(task.Key);
+            string[] split = report.Split('\n');
+            report = split[0].Replace(": ", "\n") + "\n" + string.Join("\n", split.Skip(1));
+            report = report.Replace("Checking", "\nChecks:");
+            report = report.Replace("Solving", "\nSolver:");
+            report += "\n \n";
+            reports.Add(report);
+            if (report.Contains("Warning") && string.IsNullOrEmpty(warning)) {
+              warning = "Analysis Task " + task.Key +
+                " has one or more warnings. Check report output for details";
+            }
+
+            if (!string.IsNullOrEmpty(warning)) {
+              this.AddRuntimeWarning($" {warning}");
             }
           }
-
           model.Guid = Guid.NewGuid();
+          da.SetDataList(1, reports);
         }
       }
 
@@ -321,6 +344,50 @@ namespace GsaGH.Components {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
       }
+    }
+
+    private string CatchElemFromMemSyncWarning() {
+      var remarks = RuntimeMessages(GH_RuntimeMessageLevel.Remark).ToList();
+      var warnings = RuntimeMessages(GH_RuntimeMessageLevel.Warning).ToList();
+      var errors = RuntimeMessages(GH_RuntimeMessageLevel.Error).ToList();
+      ClearRuntimeMessages();
+      foreach (string remark in remarks) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, remark);
+      }
+      foreach (string error in errors) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, error);
+      }
+
+      string syncWarning = string.Empty;
+      if (warnings.Count > 0) {
+        for (int i = 0; i < warnings.Count; i++) {
+          if (warnings[i].Trim().StartsWith(
+            "Creating Elements From Members will recreate child Elements")) {
+            string[] split = warnings[i].Split(new string[] {
+                "The following former Element IDs were updated:"
+                }, StringSplitOptions.None);
+
+            string warning = "Member and element synchronisation check\n" +
+              "Warning: Creating Elements From Members will recreate child Elements. " +
+            Environment.NewLine +"This will update the Element's property to the parent " +
+            "Member's property, and may also renumber element IDs. " +
+            Environment.NewLine + "The following former Element IDs were updated:" 
+            + Environment.NewLine;
+            string ids = split[1].Replace(
+              "(list may be too long to display, click to copy)", string.Empty)
+              .Replace(Environment.NewLine, string.Empty);
+            syncWarning = warning + ids + "\n \n";
+            warnings.RemoveAt(i);
+            break;
+          }
+        }
+      }
+
+      foreach (string warning in warnings) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
+      }
+
+      return syncWarning;
     }
   }
 }
