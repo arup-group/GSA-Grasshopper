@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -141,6 +142,25 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
+    }
+
+    public static string CreateListDefinition(List<int> ids) {
+      return ids.ToRanges().StringifyRange();
+    }
+
+    public static string SimplifyListDefinition(string definition) {
+      string[] split = definition.Split(' ');
+      var ids = new List<int>();
+      string props = string.Empty;
+      foreach (string def in split) {
+        if (int.TryParse(def, out int id)) {
+          ids.Add(id);
+        } else {
+          props += $" {def}";
+        }
+      }
+
+      return (CreateListDefinition(ids) + props).Trim();
     }
 
     public override string ToString() {
@@ -465,7 +485,10 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          var tempApiList = new GsaAPI.EntityList() { Type = GsaAPI.EntityType.Case, Name = Name, Definition = Definition };
+          var tempApiList = new GsaAPI.EntityList() { 
+            Type = GsaAPI.EntityType.Case, 
+            Name = Name, 
+            Definition = Definition };
           _cases = _model.Model.ExpandList(tempApiList).ToList();
           break;
 

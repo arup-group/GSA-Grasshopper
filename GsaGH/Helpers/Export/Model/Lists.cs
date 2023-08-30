@@ -41,13 +41,13 @@ namespace GsaGH.Helpers.Export {
         AddList(list, ref apiLists);
       }
       GsaList copyList = list.Duplicate();
-      var ids = new Collection<int>();
+      var ids = new List<int>();
 
       foreach (GsaNodeGoo node in list._nodes.Where(x => x != null && x.Value != null)) {
         ids.Add(Nodes.AddNode(ref apiNodes, node.Value.GetApiNodeToUnit(unit)));
       }
 
-      copyList._definition = string.Join(" ", ids);
+      copyList._definition = GsaList.CreateListDefinition(ids);
 
       AddList(copyList, ref apiLists);
     }
@@ -102,7 +102,7 @@ namespace GsaGH.Helpers.Export {
 
         case Parameters.EntityType.Case:
           copyList = list.Duplicate();
-          list._definition += string.Join(" ", list._cases);
+          list._definition += GsaList.CreateListDefinition(list._cases);
           AddList(list, ref model.Lists);
           break;
       }
@@ -124,7 +124,7 @@ namespace GsaGH.Helpers.Export {
         string id = ElementListFromReference.GetReferenceDefinition(material.Value.Guid,
           ReferenceType.Property, apiProperties, null, null, null);
         if (id == string.Empty) {
-          owner.AddRuntimeWarning($"Issue adding List {copyList.Name} to Model:{System.Environment.NewLine}Material {material.Value.ToString()} not found in Model");
+          owner.AddRuntimeWarning($"Issue adding List {copyList.Name} to Model:{Environment.NewLine}Material {material.Value} not found in Model");
         }
 
         ids.Add(id);
@@ -173,7 +173,7 @@ namespace GsaGH.Helpers.Export {
     private static void AddElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
       GsaList copyList = list.Duplicate();
 
-      var ids = new Collection<string>();
+      var ids = new List<string>();
 
       if (copyList._elements != (null, null, null)) {
         foreach (GsaElement1dGoo element1d in copyList._elements.e1d
@@ -293,7 +293,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      copyList._definition += string.Join(" ", ids);
+      copyList._definition += GsaList.SimplifyListDefinition(string.Join(" ", ids));
 
       AddList(copyList, ref model.Lists);
     }
@@ -355,7 +355,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition += string.Join(" ", ids);
+      copyList._definition += GsaList.SimplifyListDefinition(string.Join(" ", ids));
 
       AddList(copyList, ref apiLists);
     }

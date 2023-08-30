@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
@@ -37,7 +38,7 @@ namespace GsaGH.Helpers.Export {
 
     private static string GetElementsReferenceDefinition<T>(Guid guid, GsaGuidIntListDictionary<T> dictionary) {
       return dictionary.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
-        string.Join(" ", ids) : string.Empty;
+        GsaList.CreateListDefinition(ids.ToList()) : string.Empty;
     }
 
     private static string GetMemberChildElementsReferenceDefinition<T>(
