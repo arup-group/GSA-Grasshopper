@@ -266,7 +266,7 @@ namespace GsaGH.Components {
           var reports = new List<string>();
           string syncWarn = CatchElemFromMemSyncWarning();
           if (!string.IsNullOrEmpty(syncWarn)) {
-            string warning = "\"Member and element synchronisation check has one or more warnings. " +
+            string warning = "Member and element synchronisation check has one or more warnings. " +
               "Check report output for details";
             this.AddRuntimeWarning($" {warning}");
             reports.Add(syncWarn);
