@@ -437,6 +437,10 @@ namespace GsaGH.Components {
         cases.Add($"C{modelResults.Item2[i]}");
       }
 
+      if (caseIds.Count == 0) {
+        return;
+      }
+
       _dropDownItems[0] = cases;
       if (!_dropDownItems[0].Contains(_selectedItems[0])) {
         _selectedItems[0] = _dropDownItems[0][0];
