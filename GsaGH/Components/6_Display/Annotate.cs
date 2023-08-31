@@ -71,6 +71,14 @@ namespace GsaGH.Components {
                 }
                 break;
               }
+            
+            case GsaAnnotationDot annotationDot:
+              AddAnnotation(annotationDot.Location, annotationDot.Text,
+                              annotationDot.Color, path);
+              break;
+            case GsaAnnotation3d annotation3d:
+              AddAnnotation(annotation3d, path);
+              break;
 
             case GsaElement2dGoo e2d:
               for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
