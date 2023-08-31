@@ -104,6 +104,9 @@ namespace DocsGeneration.Data {
           parameter.Name = parameter.Name.Trim();
         }
 
+        parameter.Name = parameter.Name.Split(new string[] { " in [" }, StringSplitOptions.RemoveEmptyEntries)[0];
+        parameter.Name = parameter.Name.Split(new string[] { " [" }, StringSplitOptions.RemoveEmptyEntries)[0];
+
         if (param.Access == GH_ParamAccess.list) {
           parameter.ParameterType += " (List)";
         }
