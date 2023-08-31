@@ -13,8 +13,8 @@ A Grasshopper plugin for structural analysis using Oasys GSA.
 Head over to our GSA documentation site for:
 - [Introduction](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=GsaGhGithub)
 - [Installing the plugin in Grasshopper](https://docs.oasys-software.com/structural/gsa/tutorials/gsagh-installing-grasshopper-plugin.html?source=GsaGhGithub)
-- [Parameter overview](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-parameters.html?source=GsaGhGithub)
-- [Component overview](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-components.html?source=GsaGhGithub)
+- [Parameter overview](https://docs.oasys-software.com/structural/gsa/references/gsagh-parameters.html?source=GsaGhGithub)
+- [Component overview](https://docs.oasys-software.com/structural/gsa/references/gsagh-components.html?source=GsaGhGithub)
 
 ## Tutorials
 [![Tutorials](https://img.shields.io/badge/Tutorials-Start%20today-red?logo=youtube&style=social)](https://www.youtube.com/playlist?list=PLm0cokV2wawoKLWO7cp8FBlhGkBsbEYsh)
