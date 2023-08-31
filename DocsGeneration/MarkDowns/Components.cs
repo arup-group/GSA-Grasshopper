@@ -166,7 +166,7 @@ namespace DocsGeneration.MarkDowns {
       string text = ComponentsOverview;
 
       foreach (string category in categories) {
-        text += $"[{category} components](gsagh-{category.ToLower()}-components-overview.html)\n\n";
+        text += $"[{category} components](gsagh-{category.ToLower()}-components-overview.md)\n\n";
       }
 
       Writer.Write(filePath, text);
