@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace DocsGeneration.MarkDowns.Helpers {
   public class StringHelper {
     public static string AddBetaWarning() {
-      string txt = "GSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.";
+      string txt = "GSA-Grasshopper plugin is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using the plugin should not be relied upon without thorough and independent checking.";
       return Warning(txt);
     }
     public static string Tip(string headline, string text) {
