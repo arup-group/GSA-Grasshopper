@@ -81,13 +81,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        var ghPattern = new GH_Number();
-        int pattern = 0;
-        if (da.GetData(2, ref ghPattern)) {
-          GH_Convert.ToInt32(ghPattern, out pattern, GH_Conversion.Both);
-        }
-
-        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine, polyCurve, pattern)));
+        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine, polyCurve)));
       }
     }
   }

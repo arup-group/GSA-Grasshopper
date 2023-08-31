@@ -89,9 +89,6 @@ namespace GsaGH.Parameters {
         int thickness = 1;
         Color color = Color.Black;
         int pattern = 999999;
-        if (Value._pattern != 0) {
-          pattern = Value._pattern;
-        }
         args.Pipeline.DrawPatternedPolyline(points, color, pattern, thickness, false);
 
         double radius = 0.618046972 * unitLength; // in golden ratio

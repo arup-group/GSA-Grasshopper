@@ -14,10 +14,9 @@ namespace GsaGH.Parameters {
 
     internal int _pattern = 0;
 
-    internal GsaGridLine(GridLine gridLine, PolyCurve curve, int pattern = 0) {
+    internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
       _gridLine = gridLine;
       _curve = curve;
-      _pattern = pattern;
     }
 
     internal static GridLine FromArc(Arc arc, string label = "") {
@@ -103,7 +102,7 @@ namespace GsaGH.Parameters {
         gridLine.Theta2 = _gridLine.Theta2;
       }
       PolyCurve curve = _curve.DuplicatePolyCurve();
-      var dup = new GsaGridLine(gridLine, curve, _pattern);
+      var dup = new GsaGridLine(gridLine, curve);
       return dup;
     }
 
