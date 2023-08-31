@@ -17,7 +17,10 @@ namespace DocsGeneration.MarkDowns.Helpers {
     }
 
     public static string CreateIconLink(Component component) {
-      string name = component.Name.Replace(" ", string.Empty);
+      string name = component.Name.Replace(" ", string.Empty)
+          .Replace("3D", "3d")
+          .Replace("2D", "2d")
+          .Replace("1D", "1d"); ;
       iconNames.Add(name);
       return $"![{component.Name}]({iconPath}{name}.png)";
     }
