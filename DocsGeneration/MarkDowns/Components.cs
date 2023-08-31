@@ -14,7 +14,7 @@ namespace DocsGeneration.MarkDowns {
       "\nGSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \\\"as-is\\\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.\n:::\n" +
       "\n" +
       "![GsaGH-Ribbon](./images/RibbonLayout.gif)\n" +
-      "\n"; 
+      "\n";
 
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters) {
@@ -88,15 +88,15 @@ namespace DocsGeneration.MarkDowns {
           "Description"
         };
 
-      var widths = new List<int>() { 
+      var widths = new List<int>() {
         Table.IconWidth,
         Table.NameWidth,
-        Table.NameWidth, 
-        Table.DescriptionWidth 
+        Table.NameWidth,
+        Table.DescriptionWidth
       };
 
       if (component.Inputs != null && component.Inputs.Count != 0) {
-        
+
         var table = new Table("Input parameters", 3, headers, widths);
         foreach (Parameter property in component.Inputs) {
           table.AddRow(new List<string>() {
@@ -110,7 +110,7 @@ namespace DocsGeneration.MarkDowns {
         text += table.Finalise();
       }
 
-      
+
       if (component.Outputs != null && component.Outputs.Count != 0) {
         var table = new Table("Output parameters", 3, headers, widths);
 
@@ -118,7 +118,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter property in component.Outputs) {
           string description = property.Description;
           note = CheckForResultNote(ref description);
-
+          
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
             FileHelper.CreateParameterLink(property, parmeterNames),
@@ -127,12 +127,11 @@ namespace DocsGeneration.MarkDowns {
           });
         }
 
+        text += table.Finalise();
         if (!string.IsNullOrEmpty(note)) {
           note = note.Replace(Environment.NewLine, " ").Replace("  ", " ");
-          text += "\n\n" + StringHelper.MakeItalic("Output note:" + note) + "\n";
+          text += "\n\n" + StringHelper.MakeItalic("* " + note) + "\n\n";
         }
-
-        text += table.Finalise();
       }
 
       Writer.Write(filePath, text);
@@ -152,7 +151,7 @@ namespace DocsGeneration.MarkDowns {
 
       foreach (string note in notesToCheckFor) {
         if (description.Contains(note)) {
-          description = description.Replace(note, string.Empty);
+          description = "* " + description.Replace(note, string.Empty);
           noteOut = note;
         }
       }

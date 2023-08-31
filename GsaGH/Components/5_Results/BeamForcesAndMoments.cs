@@ -64,7 +64,7 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+      Params.Output[i].Name = "Moment |YYZZ| [" + momentunitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {

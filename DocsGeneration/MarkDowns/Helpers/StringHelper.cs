@@ -148,7 +148,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
             str += "\n- " + listsAndRest[j].Replace("</description></item>", string.Empty);
           }
           string[] lastItemAndRest = listsAndRest.Last().Split(new string[] { "</list>" }, opt);
-          str += "\n- " + lastItemAndRest[0].Replace("</description></item>", "\n\n");
+          str += lastItemAndRest[0].Replace("</description></item>", "\n\n");
           if (lastItemAndRest.Length > 1) {
             str += lastItemAndRest[1].TrimStart();
           }
