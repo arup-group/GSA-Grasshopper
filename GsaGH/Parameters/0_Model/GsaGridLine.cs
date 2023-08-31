@@ -12,8 +12,6 @@ namespace GsaGH.Parameters {
     internal GridLine _gridLine;
     internal PolyCurve _curve;
 
-    internal int _pattern = 0;
-
     internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
       _gridLine = gridLine;
       _curve = curve;
