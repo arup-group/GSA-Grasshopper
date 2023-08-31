@@ -273,18 +273,9 @@ namespace GsaGH.Components {
           }
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
-            string warning = string.Empty;
             if (model.Model.Analyse(task.Key)) {
-              if (!model.Model.Results().ContainsKey(task.Key)) {
-                warning = "Analysis Task " + task.Key +
-                  " was analysed but contains no results. Check report output for details";
-              }
-
               PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
-            } else {
-              warning = "Analysis Task " + task.Key +
-                " could not be analysed. Check report output for details";
             }
 
             string report = model.Model.AnalysisTaskReport(task.Key);
@@ -294,13 +285,19 @@ namespace GsaGH.Components {
             report = report.Replace("Solving", "\nSolver:");
             report += "\n \n";
             reports.Add(report);
-            if (report.Contains("Warning") && string.IsNullOrEmpty(warning)) {
-              warning = "Analysis Task " + task.Key +
-                " has one or more warnings. Check report output for details";
-            }
 
-            if (!string.IsNullOrEmpty(warning)) {
-              this.AddRuntimeWarning($" {warning}");
+            if (report.Contains("Error ")) {
+              string message = "Analysis Task " + task.Key +
+                " has one or more errors. Check report output for details";
+              this.AddRuntimeError($" {message}");
+            } else if (report.Contains("Severe warning ")) {
+              string message = "Analysis Task " + task.Key +
+                " has one or more severe warnings. Check report output for details";
+              this.AddRuntimeWarning($" {message}");
+            } else if (report.Contains("Warning ")) {
+              string message = "Analysis Task " + task.Key +
+                " has one or more warnings. Check report output for details";
+              this.AddRuntimeRemark($" {message}");
             }
           }
           model.Guid = Guid.NewGuid();
