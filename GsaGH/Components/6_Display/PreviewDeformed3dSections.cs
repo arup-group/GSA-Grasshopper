@@ -1,42 +1,21 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Xml.Linq;
 using GH_IO.Serialization;
-using Grasshopper;
-using Grasshopper.GUI;
-using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using OasysGH.UI;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
-using Rhino.Display;
+using Rhino;
+using Rhino.DocObjects;
 using Rhino.Geometry;
-using AngleUnit = OasysUnits.Units.AngleUnit;
-using EnergyUnit = OasysUnits.Units.EnergyUnit;
-using ForceUnit = OasysUnits.Units.ForceUnit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -88,13 +67,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Element filter list", "El",
-        "Filter results by list (by default 'all')" + Environment.NewLine
-        + "Input a GSA List or a text string taking the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElementListParameter());
       pManager[1].Optional = true;
     }
 
@@ -137,6 +110,17 @@ namespace GsaGH.Components {
           args.Display.DrawLines(_section3dPreview.Outlines, Colours.Element1d, 1);
         }
       }
+    }
+
+    public override bool IsBakeCapable => _section3dPreview != null;
+    public override void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
+      base.BakeGeometry(doc, att, obj_ids);
+      if (_section3dPreview == null) {
+        return;
+      }
+      
+      var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
+      _section3dPreview.BakeGeometry(ref gH_BakeUtility, doc, att);
     }
   }
 }
