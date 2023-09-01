@@ -188,7 +188,7 @@ namespace GsaGH.Helpers.Export {
       GridPlane newPlane = grdPlnSrf.GridPlane;
       foreach (KeyValuePair<int, GridPlane> kvp in
         model.Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary) {
-        if (kvp.Key < 0) {
+        if (kvp.Key < 1) {
           continue;
         }
 

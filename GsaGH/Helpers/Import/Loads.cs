@@ -223,7 +223,6 @@ namespace GsaGH.Helpers.Import {
       IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict,
       IReadOnlyDictionary<int, Axis> axDict, int gridSrfId, LengthUnit unit) {
       var gps = new GsaGridPlaneSurface();
-
       if (srfDict.Count > 0) {
         srfDict.TryGetValue(gridSrfId, out GridSurface gs);
         gps.GridSurface = gs;
@@ -231,34 +230,31 @@ namespace GsaGH.Helpers.Import {
         gps.Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString()
          .Replace(" ", string.Empty).Replace(",", string.Empty);
 
-        plnDict.TryGetValue(gs.GridPlane, out GridPlane gp);
-        gps.GridPlane = gp;
-        gps.GridPlaneId = gs.GridPlane;
-        gps.SetElevation(new Length(gp.Elevation, LengthUnit.Meter));
-        gps.StoreyToleranceAbove = gp.ToleranceAbove == 0 ? "auto" :
-          new Length(gp.ToleranceAbove, LengthUnit.Meter).ToUnit(unit).ToString()
-           .Replace(" ", string.Empty).Replace(",", string.Empty);
-        gps.StoreyToleranceBelow = gp.ToleranceBelow == 0 ? "auto" :
-          new Length(gp.ToleranceBelow, LengthUnit.Meter).ToUnit(unit).ToString()
-           .Replace(" ", string.Empty).Replace(",", string.Empty);
-
-        axDict.TryGetValue(gp.AxisProperty, out Axis ax);
-
-        gps.AxisId = gp.AxisProperty;
-
-        Plane plane;
-        if (ax != null) {
-          // for new origin Z-coordinate we add axis origin and grid plane elevation
-          plane = new Plane(
-            Nodes.Point3dFromXyzUnit(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation, unit),
-            Nodes.Vector3dFromXyzUnit(ax.XVector.X, ax.XVector.Y, ax.XVector.Z, unit),
-            Nodes.Vector3dFromXyzUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit));
-        } else {
-          plane = Plane.WorldXY;
-          plane.OriginZ = new Length(gp.Elevation, LengthUnit.Meter).As(unit);
+        if (plnDict.TryGetValue(gs.GridPlane, out GridPlane gp)) {
+          gps.GridPlane = gp;
+          gps.GridPlaneId = gs.GridPlane;
+          gps.SetElevation(new Length(gp.Elevation, LengthUnit.Meter));
+          gps.StoreyToleranceAbove = gp.ToleranceAbove == 0 ? "auto" :
+            new Length(gp.ToleranceAbove, LengthUnit.Meter).ToUnit(unit).ToString()
+             .Replace(" ", string.Empty).Replace(",", string.Empty);
+          gps.StoreyToleranceBelow = gp.ToleranceBelow == 0 ? "auto" :
+            new Length(gp.ToleranceBelow, LengthUnit.Meter).ToUnit(unit).ToString()
+             .Replace(" ", string.Empty).Replace(",", string.Empty);
+          gps.AxisId = gp.AxisProperty;
+          Plane plane;
+          if (axDict.TryGetValue(gp.AxisProperty, out Axis ax)) {
+            // for new origin Z-coordinate we add axis origin and grid plane elevation
+            plane = new Plane(
+              Nodes.Point3dFromXyzUnit(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation, unit),
+              Nodes.Vector3dFromXyzUnit(ax.XVector.X, ax.XVector.Y, ax.XVector.Z, unit),
+              Nodes.Vector3dFromXyzUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit));
+          } else {
+            plane = Plane.WorldXY;
+            plane.OriginZ = new Length(gp.Elevation, LengthUnit.Meter).As(unit);
+          }
+          gps.Plane = plane;
         }
 
-        gps.Plane = plane;
       } else {
         return null;
       }
