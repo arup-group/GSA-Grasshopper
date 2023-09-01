@@ -197,7 +197,7 @@ namespace GsaGH.Helpers.Export {
           && kvp.Value.IsStoreyType == newPlane.IsStoreyType
           && kvp.Value.ToleranceAbove == newPlane.ToleranceAbove
           && kvp.Value.ToleranceBelow == newPlane.ToleranceBelow
-          && newPlane.Name == string.Empty) {
+          && (kvp.Value.Name == newPlane.Name || newPlane.Name == string.Empty)) {
           return kvp.Key;
         }
       }

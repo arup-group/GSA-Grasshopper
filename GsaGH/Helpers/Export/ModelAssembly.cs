@@ -315,11 +315,10 @@ namespace GsaGH.Helpers.Export {
         try {
           Model.SetList(listId, Lists.ReadOnlyDictionary[listId]);
         } catch (ArgumentException e) {
-
+          ReportWarningFromAddingGridSurfacesOrList(
+            e.Message, Lists.ReadOnlyDictionary[listId].Name, "List", owner);
         }
-        
       }
-      Model.SetLists(Lists.ReadOnlyDictionary);
     }
 
     private void ReportWarningFromAddingGridSurfacesOrList(
