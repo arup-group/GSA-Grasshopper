@@ -197,11 +197,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter(), "GSA model", "GSA",
         "GSA model containing some Analysis Cases and Tasks", GH_ParamAccess.item);
       pManager.AddGenericParameter("Case filter list", "C",
-        $"Filter import by list.{Environment.NewLine}The case list should take the form:{Environment.NewLine} 1 L1 M1 A1 C1 C2p1 A3 to A5 T1.",
-        GH_ParamAccess.item);
-      pManager.AddGenericParameter("Element filter list", "El",
-        $"Filter import by list.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1).{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
-        GH_ParamAccess.item);
+        $"Filter import by list.{Environment.NewLine}The case list should take the form:" +
+        $"{Environment.NewLine} 1 L1 M1 A1 C1 C2p1 A3 to A5 T1.", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElementListParameter());
       pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
         false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
@@ -217,8 +215,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Lines and arrowheads of the GSA Load Diagram",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", 
+        "Lines and arrowheads of the GSA Load Diagram", GH_ParamAccess.list);
       pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
         "An", "Annotations for the diagram", GH_ParamAccess.list);
       pManager.HideParameter(1);
@@ -265,7 +263,9 @@ namespace GsaGH.Components {
         lengthUnit = _lengthUnit;
         _undefinedModelLengthUnit = true;
         this.AddRuntimeRemark(
-          $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
+          $"Model came straight out of GSA and we couldn't read the units. " +
+          $"The geometry has been scaled to be in {lengthUnit}. " +
+          $"This can be changed by right-clicking the component -> 'Select Units'");
       }
 
       bool showAnnotations = true;
@@ -370,11 +370,13 @@ namespace GsaGH.Components {
       } else {
         if (_selectedItems[2] == "All") {
           types.AddRange(Mappings.diagramTypeMappingLoads.Where(
-            item => item.Description.StartsWith(_selectedItems[1])).Select(item => item.GsaApiEnum).ToList());
+            item => item.Description.StartsWith(
+              _selectedItems[1])).Select(item => item.GsaApiEnum).ToList());
         } else {
           string type = $"{_selectedItems[1]} {_selectedItems[2]}";
           types.Add(Mappings.diagramTypeMappingLoads.Where(
-            item => item.Description.Contains(type)).Select(item => item.GsaApiEnum).FirstOrDefault());
+            item => item.Description.Contains(type))
+            .Select(item => item.GsaApiEnum).FirstOrDefault());
         }
       }
       return types;
@@ -390,7 +392,8 @@ namespace GsaGH.Components {
 
     private void PopulateTypeNames(ref List<string> list, string typeIdentifier) {
       list = Mappings.diagramTypeMappingLoads
-       .Where(item => item.Description.Contains(typeIdentifier)).Select(item => item.Description).ToList();
+       .Where(item => item.Description.Contains(typeIdentifier))
+       .Select(item => item.Description).ToList();
       list = list.Select(x => x.Replace(typeIdentifier + " ", string.Empty)).ToList();
       list.Insert(0, "All");
     }
