@@ -24,6 +24,7 @@ Contact oasys@arup.com to request a free trial version.
 
 Copyright © Oasys 1985 - 2022</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
@@ -69,10 +70,6 @@ Copyright © Oasys 1985 - 2022</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <Reference Include="GsaAPI">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Interop.Gsa_10_1">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -107,6 +104,13 @@ Copyright © Oasys 1985 - 2022</Description>
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\oasys-combined-1\gsa\GsaAPI\GsaAPI.vcxproj">
+      <Private>False</Private>
+      <CopyLocalSatelliteAssemblies>True</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
   </ItemGroup>
   
   <ItemGroup>

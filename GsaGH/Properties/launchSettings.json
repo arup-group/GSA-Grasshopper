@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GsaGH": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
