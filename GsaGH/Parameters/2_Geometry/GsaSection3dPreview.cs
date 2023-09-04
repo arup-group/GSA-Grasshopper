@@ -57,59 +57,16 @@ namespace GsaGH.Parameters {
     internal GsaSection3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
       CreateGraphics(model.Model, spec);
-      if (model.ModelUnit != LengthUnit.Meter) {
-        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, model.ModelUnit);
-        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
-        Transform(scalar);
-      }
+      Scale(model.ModelUnit);
     }
 
     internal GsaSection3dPreview(Model model, LengthUnit unit, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
       CreateGraphics(model, spec);
-      if (unit != LengthUnit.Meter) {
-        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, unit);
-        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
-        Transform(scalar);
-      }
+      Scale(unit);
     }
+
     private GsaSection3dPreview() { }
-
-    public GsaSection3dPreview Transform(Transform xform) {
-      Mesh m = Mesh.DuplicateMesh();
-      m.Transform(xform);
-      IEnumerable<Line> lns = Outlines.Select(l => new Line(l.From, l.To));
-      lns.Select(l => l.Transform(xform));
-      var dup = new GsaSection3dPreview() {
-        Mesh = m,
-        Outlines = lns,
-      };
-      return dup;
-    }
-
-    public GsaSection3dPreview Morph(SpaceMorph xmorph) {
-      Mesh m = Mesh.DuplicateMesh();
-      xmorph.Morph(m);
-      IEnumerable<Line> lns = Outlines.Select(
-        l => new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To)));
-      var dup = new GsaSection3dPreview() {
-        Mesh = m,
-        Outlines = lns,
-      };
-      return dup;
-    }
-
-    public void BakeGeometry(
-      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
-      att ??= doc.CreateDefaultAttributes();
-      att.ColorSource = ObjectColorSource.ColorFromObject;
-      ObjectAttributes meshAtt = att.Duplicate();
-      gH_BakeUtility.BakeObject(new GH_Mesh(Mesh), meshAtt, doc);
-      foreach (Line ln in Outlines) {
-        ObjectAttributes lnAtt = att.Duplicate();
-        gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
-      }
-    }
 
     private static Model AssembleTempModel(GsaElement1d elem) {
       var model = new Model();
@@ -206,7 +163,6 @@ namespace GsaGH.Parameters {
       mesh.Faces.ConvertTrianglesToQuads(1, 0.75);
       return mesh;
     }
-
 
     private void CreateGraphics(Model model, Layer layer, DimensionType type, string definition = "all") {
       GraphicDrawResult graphic = model.Draw(Specification(layer, definition, type));
@@ -363,6 +319,40 @@ namespace GsaGH.Parameters {
         DrawInitialState = false,
         DrawDeformedShape = true
       };
+    }
+
+    public void BakeGeometry(
+      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      ObjectAttributes meshAtt = att.Duplicate();
+      gH_BakeUtility.BakeObject(new GH_Mesh(Mesh), meshAtt, doc);
+      foreach (Line ln in Outlines) {
+        ObjectAttributes lnAtt = att.Duplicate();
+        gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
+      }
+    }
+
+    public void Morph(SpaceMorph xmorph) {
+      xmorph.Morph(Mesh);
+      IEnumerable<Line> lns = Outlines.Select(
+        l => new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To)));
+      Outlines = lns;
+    }
+
+    public void Scale(LengthUnit unit) {
+      if (unit != LengthUnit.Meter) {
+        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, unit);
+        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
+        Transform(scalar);
+      }
+    }
+
+    public void Transform(Transform xform) {
+      Mesh.Transform(xform);
+      IEnumerable<Line> lns = Outlines.Select(l => new Line(l.From, l.To));
+      lns.Select(l => l.Transform(xform));
+      Outlines = lns;
     }
   }
 }
