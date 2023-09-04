@@ -362,7 +362,7 @@ namespace GsaGH.Helpers.Export {
                 break;
               }
             case GsaProperty3dGoo prop3dGoo: {
-                inProp3d.Add(prop3dGoo.Value.Duplicate());
+                inProp3d.Add(prop3dGoo.Value);
                 break;
               }
             default: {

@@ -112,7 +112,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
         _mesh = (Mesh)_mesh.DuplicateShallow(),
-        Prop3d = Prop3d.Duplicate(),
+        Prop3d = Prop3d,
         Id = Id,
         ApiMember = GetAPI_MemberClone(),
         _guid = Guid.NewGuid()

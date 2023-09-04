@@ -58,7 +58,7 @@ namespace GsaGH.Components {
 
       GsaProperty3dGoo prop3dGoo = null;
       if (da.GetData(0, ref prop3dGoo)) {
-        prop = prop3dGoo.Value.Clone();
+        prop = (GsaProperty3d)prop3dGoo.Value.Clone();
       }
 
       int id = 0;
@@ -73,28 +73,28 @@ namespace GsaGH.Components {
 
       int axisId = 0;
       if (da.GetData(3, ref axisId)) {
-        prop.AxisProperty = axisId;
+        prop.ApiProp3d.AxisProperty = axisId;
       }
 
       string name = string.Empty;
       if (da.GetData(4, ref name)) {
-        prop.Name = name;
+        prop.ApiProp3d.Name = name;
       }
 
       Color colour = Color.Empty;
       if (da.GetData(5, ref colour)) {
-        prop.Colour = colour;
+        prop.ApiProp3d.Colour = colour;
       }
 
-      int ax = (prop.ApiProp3d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.ApiProp3d == null) ? "--" : prop.Name;
+      int ax = (prop.ApiProp3d == null) ? 0 : prop.ApiProp3d.AxisProperty;
+      string nm = (prop.ApiProp3d == null) ? "--" : prop.ApiProp3d.Name;
 
       da.SetData(0, new GsaProperty3dGoo(prop));
       da.SetData(1, prop.Id);
       da.SetData(2, new GsaMaterialGoo(prop.Material));
       da.SetData(3, ax);
       da.SetData(4, nm);
-      da.SetData(5, prop.Colour);
+      da.SetData(5, (Color)prop.ApiProp3d.Colour);
     }
   }
 }

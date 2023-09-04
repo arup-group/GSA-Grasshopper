@@ -115,6 +115,7 @@ namespace GsaGH.Helpers.Import {
       Materials materials) {
       var prop = new GsaProperty3d(prop3d.Key) {
         ApiProp3d = prop3d.Value,
+        IsReferencedById = false,
       };
       GsaMaterial material = materials.GetMaterial(prop3d.Value);
       if (material!= null) {

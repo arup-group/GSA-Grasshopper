@@ -387,7 +387,7 @@ namespace GsaGH.Components {
       string s = string.Empty;
       s += prop.Id > 0 ? $"PV{prop.Id}" : string.Empty;
       AddSeparator(ref s);
-      s += prop.Name;
+      s += prop.ApiProp3d == null ? string.Empty : prop.ApiProp3d.Name;
       return s.Trim();
     }
 

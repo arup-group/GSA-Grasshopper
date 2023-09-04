@@ -195,7 +195,7 @@ namespace GsaGH.Parameters {
       dup.CloneApiElements();
 
       dup.Ids = Ids.ToList();
-      dup.Prop3ds = Prop3ds.ConvertAll(x => x.Duplicate());
+      dup.Prop3ds = Prop3ds.ToList();
       dup.UpdatePreview();
       return dup;
     }
