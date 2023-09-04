@@ -66,7 +66,7 @@ namespace GsaGH.Helpers.Export {
       Loads.ConvertLoad(loads, ref assembledModel, owner);
       assembledModel.ConvertLoadCases(loadCases, owner);
 
-      assembledModel.AssembleLoadsCasesAxesGridPlaneSurfacesAndLists();
+      assembledModel.AssembleLoadsCasesAxesGridPlaneSurfacesAndLists(owner);
       assembledModel.ConvertAndAssembleGridLines(gridLines);
       assembledModel.ConvertAndAssembleAnalysisTasks(analysisTasks);
       assembledModel.ConvertAndAssembleCombinations(combinations);
