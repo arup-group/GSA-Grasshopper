@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace DocsGeneration.MarkDowns.Helpers {
   public class StringHelper {
     public static string AddBetaWarning() {
-      string txt = "GSA-Grasshopper plugin [GsaGH] is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.";
+      string txt = "GSA-Grasshopper plugin is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using the plugin should not be relied upon without thorough and independent checking.";
       return Warning(txt);
     }
     public static string Tip(string headline, string text) {
@@ -52,7 +52,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
               .Replace(" 2d", " 2D")
               .Replace(" 1d", " 1D");
             string markdownLink =
-              $"[{markDownName}](gsagh-{parmeterName.ToLower()}-parameter.html) ";
+              $"[{markDownName}](gsagh-{parmeterName.ToLower()}-parameter.md) ";
             str += markdownLink;
             for (int j = 1; j < parameterNameAndRest.Length; j++) {
               str += $"{parameterNameAndRest[j]} ";
@@ -77,7 +77,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
         str = split[0];
         for (int i = 1; i < split.Length; i++) {
           string[] htmlLinkAndRest = split[i].Split(new string[] { "\">" }, opt);
-          string htmlAddress = htmlLinkAndRest[0];
+          string htmlAddress = htmlLinkAndRest[0].Replace(".html", ".md");
           htmlAddress = htmlAddress.Replace("https://docs.oasys-software.com/structural/gsa/", "/");
           string[] htmlNameAndRest = htmlLinkAndRest[1].Split(new string[] { "</see>" }, opt);
           string htmlName = htmlNameAndRest[0];
@@ -178,7 +178,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
           name = name.Replace("Gsa", string.Empty);
           string link = FileHelper.CreateFileName(FileHelper.SplitCamelCase(name, "-"), type.TrimEnd('s'));
           name = FileHelper.SplitCamelCase(name, " ");
-          return $"[{name}]({link}.html)";
+          return $"[{name}]({link}.md)";
       }
 
       return string.Empty;

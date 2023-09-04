@@ -48,7 +48,7 @@ namespace GsaGH.Parameters {
     internal GsaSection3dPreview AnalysisLayerPreview {
       get {
         if (Model.Elements().Count > 0) {
-          _analysisLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Analysis);
+          _analysisLayerPreview ??= new GsaSection3dPreview(this, Layer.Analysis);
         }
         return _analysisLayerPreview;
       }
@@ -56,7 +56,7 @@ namespace GsaGH.Parameters {
     internal GsaSection3dPreview DesignLayerPreview {
       get {
         if (Model.Members().Count > 0) {
-          _designLayerPreview ??= GsaSection3dPreview.CreateFromApi(this, Layer.Design);
+          _designLayerPreview ??= new GsaSection3dPreview(this, Layer.Design);
         }
         return _designLayerPreview;
       }

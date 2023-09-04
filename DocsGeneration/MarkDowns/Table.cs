@@ -37,7 +37,7 @@ namespace DocsGeneration.MarkDowns {
       foreach (string item in items) {
         string row = item
           .Replace(Environment.NewLine, "<br />")
-          .Replace("|", string.Empty);
+          .Replace("|", "&#124;");
         _table += $"|{row} ";
       }
 

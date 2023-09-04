@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using DocsGeneration.Data;
+using GsaGH.Helpers.GH;
 
 namespace DocsGeneration.MarkDowns.Helpers {
   public class FileHelper {
@@ -17,7 +18,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
     }
 
     public static string CreateIconLink(Component component) {
-      string name = component.Name.Replace(" ", string.Empty);
+      string name = component.Name
+          .Replace("3D", "3d")
+          .Replace("2D", "2d")
+          .Replace("1D", "1d");
+      name = name.ToPascalCase();
       iconNames.Add(name);
       return $"![{component.Name}]({iconPath}{name}.png)";
     }
@@ -57,11 +62,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
           .Replace(" 2d", " 2D")
           .Replace(" 1d", " 1D");
 
-        return $"[{parameterName}]({fileName}.html)" + list + tree;
+        return $"[{parameterName}]({fileName}.md)" + list + tree;
       }
 
       if (parameterName.Contains("Unit Number")) {
-        string link = $"[Unit Number](gsagh-unitnumber-parameter.html)";
+        string link = $"[Unit Number](gsagh-unitnumber-parameter.md)";
         return parameterName.Replace("UnitNumber", link) + list + tree;
       }
 
@@ -87,11 +92,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
     public static string CreatePageLink(Parameter parameter) {
       string fileName = CreateFileName(parameter);
-      return $"[{parameter.Name}]({fileName}.html)";
+      return $"[{parameter.Name}]({fileName}.md)";
     }
     public static string CreatePageLink(Component component) {
       string fileName = CreateFileName(component);
-      return $"[{component.Name}]({fileName}.html)";
+      return $"[{component.Name}]({fileName}.md)";
     }
 
     private static string CreateFileName(Component component) {
