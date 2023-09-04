@@ -101,7 +101,6 @@ namespace GsaGH.Components {
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
-
       if (_section3dPreview != null) {
         if (Attributes.Selected) {
           args.Display.DrawLines(_section3dPreview.Outlines, Colours.Element1dSelected,
