@@ -288,7 +288,7 @@ namespace GsaGH.Helpers.Export {
       MemberElementRelationship = ElementListFromReference.GetMemberElementRelationship(Model);
     }
 
-    internal void AssembleLoadsCasesAxesGridPlaneSurfacesAndLists() {
+    internal void AssembleLoadsCasesAxesGridPlaneSurfacesAndLists(GH_Component owner) {
       // Add API Loads in model
       Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
       Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
@@ -303,10 +303,44 @@ namespace GsaGH.Helpers.Export {
       Model.SetAxes(Axes.ReadOnlyDictionary);
       Model.SetGridPlanes(Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary);
       foreach (int gridSurfaceId in Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary.Keys) {
-        Model.SetGridSurface(gridSurfaceId, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
+        try {
+          Model.SetGridSurface(gridSurfaceId, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
+        } catch (ArgumentException e) {
+          ReportWarningFromAddingGridSurfacesOrList(
+            e.Message, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name, 
+            "Grid Surface", owner);
+        }
       }
       // Set API list in model
-      Model.SetLists(Lists.ReadOnlyDictionary);
+      foreach (int listId in Lists.ReadOnlyDictionary.Keys) {
+        try {
+          Model.SetList(listId, Lists.ReadOnlyDictionary[listId]);
+        } catch (ArgumentException e) {
+          ReportWarningFromAddingGridSurfacesOrList(
+            e.Message, Lists.ReadOnlyDictionary[listId].Name, "List", owner);
+        }
+      }
+    }
+
+    private void ReportWarningFromAddingGridSurfacesOrList(
+      string mes, string troubleName, string type, GH_Component owner) {
+      foreach (KeyValuePair<int, GridSurface> gridSurface in Model.GridSurfaces()) {
+        if (gridSurface.Value.Name == troubleName) {
+          mes += $"\nA Grid Surface called '{troubleName}' was already added as a GridSurface at index {gridSurface.Key}";
+          mes += $"\nThe {type} '{troubleName}' was skipped";
+          owner.AddRuntimeWarning(mes);
+          return;
+        }
+      }
+
+      foreach (KeyValuePair<int, EntityList> list in Model.Lists()) {
+        if (list.Value.Name == troubleName) {
+          mes += $"\nA List called '{troubleName}' was already added as a List at index {list.Key}";
+          mes += $"\nThe {type} '{troubleName}' was skipped";
+          owner.AddRuntimeWarning(mes);
+          return;
+        }
+      }
     }
 
     internal void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
