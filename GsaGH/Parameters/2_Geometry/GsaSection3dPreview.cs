@@ -54,18 +54,24 @@ namespace GsaGH.Parameters {
       CreateGraphics(res.Model.Model, spec);
     }
 
-    internal static GsaSection3dPreview CreateFromApi(
-      GsaModel model, Layer layer) {
-      var section3dPreview = new GsaSection3dPreview();
+    internal GsaSection3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
-      section3dPreview.CreateGraphics(model.Model, spec);
+      CreateGraphics(model.Model, spec);
       if (model.ModelUnit != LengthUnit.Meter) {
         double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, model.ModelUnit);
         var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
-        section3dPreview.Transform(scalar);
+        Transform(scalar);
       }
+    }
 
-      return section3dPreview;
+    internal GsaSection3dPreview(Model model, LengthUnit unit, Layer layer) {
+      GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
+      CreateGraphics(model, spec);
+      if (unit != LengthUnit.Meter) {
+        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, unit);
+        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
+        Transform(scalar);
+      }
     }
     private GsaSection3dPreview() { }
 
