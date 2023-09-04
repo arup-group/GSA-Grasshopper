@@ -68,6 +68,13 @@ namespace GsaGH.Parameters {
 
     private GsaSection3dPreview() { }
 
+    public GsaSection3dPreview Duplicate() {
+      return new GsaSection3dPreview() {
+        Mesh = Mesh.DuplicateMesh(),
+        Outlines = Outlines.ToList(),
+      };
+    }
+
     private static Model AssembleTempModel(GsaElement1d elem) {
       var model = new Model();
       OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
@@ -335,8 +342,11 @@ namespace GsaGH.Parameters {
 
     public void Morph(SpaceMorph xmorph) {
       xmorph.Morph(Mesh);
-      IEnumerable<Line> lns = Outlines.Select(
-        l => new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To)));
+      var lns = new List<Line>();
+      foreach (Line l in Outlines) {
+        var line = new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To)));
+        lns.Add(line);
+      }
       Outlines = lns;
     }
 
@@ -350,8 +360,12 @@ namespace GsaGH.Parameters {
 
     public void Transform(Transform xform) {
       Mesh.Transform(xform);
-      IEnumerable<Line> lns = Outlines.Select(l => new Line(l.From, l.To));
-      lns.Select(l => l.Transform(xform));
+      var lns = new List<Line>();
+      foreach (Line l in Outlines) {
+        var line = new Line(l.From, l.To);
+        line.Transform(xform);
+        lns.Add(line);
+      }
       Outlines = lns;
     }
   }

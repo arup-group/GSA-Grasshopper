@@ -227,7 +227,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview;
+        dup.Section3dPreview = Section3dPreview.Duplicate();
       }
 
       if (_previewGreenLines != null) {
@@ -264,7 +264,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+        dup.Section3dPreview.Morph(xmorph);
       }
 
       dup.UpdateReleasesPreview();
@@ -295,7 +295,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview.Transform(xform);
+        dup.Section3dPreview.Transform(xform);
       }
 
       dup.UpdateReleasesPreview();
