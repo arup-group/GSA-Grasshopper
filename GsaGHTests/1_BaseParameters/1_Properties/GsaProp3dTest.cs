@@ -9,12 +9,11 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaProperty3d(new GsaMaterial()) {
-        Name = "Name",
       };
 
-      GsaProperty3d duplicate = original.Duplicate();
+      var duplicate = new GsaProperty3d(original);
 
-      Duplicates.AreEqual(original, duplicate);
+      Duplicates.AreEqual(original, duplicate, true);
     }
   }
 }

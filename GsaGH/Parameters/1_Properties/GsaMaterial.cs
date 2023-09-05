@@ -117,6 +117,8 @@ namespace GsaGH.Parameters {
     }
     public Guid Guid => _guid;
     public MatType MaterialType { get; private set; } = MatType.Generic;
+    internal MaterialType ApiMaterialType =>
+      (MaterialType)Enum.Parse(typeof(MaterialType), MaterialType.ToString(), true);
 
     internal AnalysisMaterial AnalysisMaterial {
       get {

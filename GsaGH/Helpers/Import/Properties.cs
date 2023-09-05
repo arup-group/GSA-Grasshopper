@@ -91,6 +91,7 @@ namespace GsaGH.Helpers.Import {
         IReadOnlyDictionary<int, Axis> axes) {
       var prop = new GsaProperty2d(prop2d.Key) {
         ApiProp2d = prop2d.Value,
+        IsReferencedById = false
       };
       GsaMaterial material = materials.GetMaterial(prop2d.Value);
       if (material != null) {
@@ -113,10 +114,8 @@ namespace GsaGH.Helpers.Import {
     internal static GsaProperty3dGoo CreateProp3dFromApi(
       KeyValuePair<int, Prop3D> prop3d,
       Materials materials) {
-      var prop = new GsaProperty3d(prop3d.Key) {
-        ApiProp3d = prop3d.Value,
-        IsReferencedById = false,
-      };
+      var prop = new GsaProperty3d(prop3d);
+
       GsaMaterial material = materials.GetMaterial(prop3d.Value);
       if (material!= null) {
         prop.Material = material;
@@ -131,6 +130,7 @@ namespace GsaGH.Helpers.Import {
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
       var sect = new GsaSection(section.Key) {
         ApiSection = section.Value,
+        IsReferencedById = false
       };
       GsaMaterial material = materials.GetMaterial(section.Value);
       if (material != null) {

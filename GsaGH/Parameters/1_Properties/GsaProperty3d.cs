@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
@@ -24,14 +22,37 @@ namespace GsaGH.Parameters {
       Material = material;
     }
 
-    public override string ToString() {
-      string type = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.MaterialType).Key;
-      string pa = (Id > 0) ? "PV" + Id + " " : string.Empty;
-      return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
+    public GsaProperty3d(GsaProperty3d other) {
+      Id = other.Id;
+      IsReferencedById = other.IsReferencedById;
+      ApiProp3d = other.DuplicateApiObject();
+      Material = other.Material;
     }
 
-    public override void DuplicateApiObject() {
+    internal GsaProperty3d(KeyValuePair<int, Prop3D> apiKvp) {
+      Id = apiKvp.Key;
+      ApiProp3d = apiKvp.Value;
+      IsReferencedById = false;
+    }
+
+    internal Prop3D AssembleApiObject() {
+      if (IsReferencedById || ApiProp3d == null) {
+        return null;
+      }
+
+      if (Material != null) {
+        ApiProp3d.MaterialType = Material.ApiMaterialType;
+      }
+
+      return ApiProp3d;
+    }
+
+    public override string ToString() {
+      string pa = (Id > 0) ? "PV" + Id + " " : string.Empty;
+      return string.Join(" ", pa.Trim(), MaterialType.Trim()).Trim().Replace("  ", " ");
+    }
+
+    private Prop3D DuplicateApiObject() {
       var prop = new Prop3D {
         MaterialAnalysisProperty = ApiProp3d.MaterialAnalysisProperty,
         MaterialGradeProperty = ApiProp3d.MaterialGradeProperty,
@@ -44,13 +65,8 @@ namespace GsaGH.Parameters {
         prop.Colour = ApiProp3d.Colour;
       }
 
-      ApiProp3d = prop;
+      return prop;
     }
 
-    public override IGsaObject Clone() {
-      var dup = (GsaProperty3d)MemberwiseClone();
-      dup.DuplicateApiObject();
-      return dup;
-    }
   }
 }

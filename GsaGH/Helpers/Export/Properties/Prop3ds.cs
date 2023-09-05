@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
@@ -29,12 +30,11 @@ namespace GsaGH.Helpers.Export {
 
     internal static int AddProp3d(GsaProperty3d prop, ref Properties existingProperties) {
       Materials.AddMaterial(ref prop, ref existingProperties.Materials);
-
       if (prop.Id <= 0) {
-        return existingProperties.Prop3ds.AddValue(prop.Guid, prop.ApiProp3d);
+        return existingProperties.Prop3ds.AddValue(prop.Guid, prop.AssembleApiObject());
       }
 
-      existingProperties.Prop3ds.SetValue(prop.Id, prop.Guid, prop.ApiProp3d);
+      existingProperties.Prop3ds.SetValue(prop.Id, prop.Guid, prop.AssembleApiObject());
       return prop.Id;
     }
   }
