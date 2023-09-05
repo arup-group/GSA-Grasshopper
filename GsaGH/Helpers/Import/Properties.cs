@@ -89,10 +89,8 @@ namespace GsaGH.Helpers.Import {
         KeyValuePair<int, Prop2D> prop2d,
         Materials materials,
         IReadOnlyDictionary<int, Axis> axes) {
-      var prop = new GsaProperty2d(prop2d.Key) {
-        ApiProp2d = prop2d.Value,
-        IsReferencedById = false
-      };
+      var prop = new GsaProperty2d(prop2d);
+      
       GsaMaterial material = materials.GetMaterial(prop2d.Value);
       if (material != null) {
         prop.Material = material;
@@ -102,9 +100,7 @@ namespace GsaGH.Helpers.Import {
       if (prop.ApiProp2d.AxisProperty > 0) {
         if (axes != null && axes.ContainsKey(prop.ApiProp2d.AxisProperty)) {
           Axis ax = axes[prop.ApiProp2d.AxisProperty];
-          prop.LocalAxis = new Plane(new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
-            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
-            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+          prop.SetPlaneFromAxis(ax);
         }
       }
 

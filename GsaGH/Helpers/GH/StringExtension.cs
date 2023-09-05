@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GsaGH.Helpers.GH {
   public static class StringExtension {
@@ -20,6 +21,10 @@ namespace GsaGH.Helpers.GH {
 
       return splittedText.Aggregate(returnValue,
         (current, word) => current + word[0].ToString().ToUpper() + word.Substring(1));
+    }
+
+    public static string ToSentenceCase(this string str) {
+      return Regex.Replace(str, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
     }
   }
 }

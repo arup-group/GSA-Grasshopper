@@ -6,50 +6,63 @@ using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contain information about <see cref="GsaMaterial"/>.
+  /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contains information about <see cref="GsaMaterial"/>.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.</para>
   /// </summary>
   public class GsaProperty3d : GsaProperty {
-    public Prop3D ApiProp3d = new Prop3D();
+    public Prop3D ApiProp3d;
 
-    public GsaProperty3d() { }
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
+    public GsaProperty3d() { 
+      ApiProp3d = new Prop3D();
+    }
+
+    /// <summary>
+    /// Create a new instance with reference to an Id and no API object
+    /// </summary>
+    /// <param name="id"></param>
     public GsaProperty3d(int id) {
       Id = id;
       IsReferencedById = true;
     }
 
+    /// <summary>
+    /// Create new instance by casting from a Material
+    /// </summary>
+    /// <param name="material"></param>
     public GsaProperty3d(GsaMaterial material) {
+      ApiProp3d = new Prop3D();
       Material = material;
     }
 
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
     public GsaProperty3d(GsaProperty3d other) {
       Id = other.Id;
       IsReferencedById = other.IsReferencedById;
-      ApiProp3d = other.DuplicateApiObject();
-      Material = other.Material;
+      if (!IsReferencedById) {
+        ApiProp3d = other.DuplicateApiObject();
+        Material = other.Material;
+      }
     }
 
-    internal GsaProperty3d(KeyValuePair<int, Prop3D> apiKvp) {
-      Id = apiKvp.Key;
-      ApiProp3d = apiKvp.Value;
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
+    /// <param name="prop3d"></param>
+    internal GsaProperty3d(KeyValuePair<int, Prop3D> prop3d) {
+      Id = prop3d.Key;
+      ApiProp3d = prop3d.Value;
       IsReferencedById = false;
     }
 
-    internal Prop3D AssembleApiObject() {
-      if (IsReferencedById || ApiProp3d == null) {
-        return null;
-      }
-
-      if (Material != null) {
-        ApiProp3d.MaterialType = Material.ApiMaterialType;
-      }
-
-      return ApiProp3d;
-    }
-
     public override string ToString() {
-      string pa = (Id > 0) ? "PV" + Id + " " : string.Empty;
-      return string.Join(" ", pa.Trim(), MaterialType.Trim()).Trim().Replace("  ", " ");
+      string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
+      return string.Join(" ", pv, MaterialType).Trim();
     }
 
     private Prop3D DuplicateApiObject() {
@@ -67,6 +80,5 @@ namespace GsaGH.Parameters {
 
       return prop;
     }
-
   }
 }

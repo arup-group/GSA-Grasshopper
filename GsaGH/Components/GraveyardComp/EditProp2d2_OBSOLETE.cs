@@ -72,7 +72,7 @@ namespace GsaGH.Components {
 
       GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(0, ref prop2dGoo)) {
-        prop = prop2dGoo.Value.Clone();
+        prop = new GsaProperty2d(prop2dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -95,26 +95,26 @@ namespace GsaGH.Components {
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
         if (GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both)) {
-          prop.AxisProperty = axis;
+          prop.ApiProp2d.AxisProperty = axis;
         }
       }
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-          prop.Name = name;
+          prop.ApiProp2d.Name = name;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(6, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          prop.Colour = col;
+          prop.ApiProp2d.Colour = col;
         }
       }
 
-      int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+      int ax = (prop.ApiProp2d == null) ? 0 : prop.ApiProp2d.AxisProperty;
+      string nm = (prop.ApiProp2d == null) ? "--" : prop.ApiProp2d.Name;
       ValueType colour = prop.ApiProp2d?.Colour;
 
       da.SetData(0, new GsaProperty2dGoo(prop));
@@ -127,7 +127,7 @@ namespace GsaGH.Components {
       da.SetData(5, nm);
       da.SetData(6, colour);
 
-      string str = (prop.ApiProp2d == null) ? "--" : prop.Type.ToString();
+      string str = (prop.ApiProp2d == null) ? "--" : prop.ApiProp2d.Type.ToString();
       if (prop.ApiProp2d == null) {
         str = char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
       }

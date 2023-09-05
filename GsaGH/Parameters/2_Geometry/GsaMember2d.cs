@@ -259,7 +259,7 @@ namespace GsaGH.Parameters {
       };
       dup.CloneApiObject();
 
-      dup.Prop2d = Prop2d.Duplicate();
+      dup.Prop2d = Prop2d;
 
       if (Brep == null) {
         return dup;
@@ -407,7 +407,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
         Id = Id,
         ApiMember = ApiMember,
-        Prop2d = Prop2d.Duplicate(),
+        Prop2d = Prop2d,
       };
 
       return dup;

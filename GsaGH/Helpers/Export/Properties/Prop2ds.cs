@@ -40,34 +40,18 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int AddProp2d(
-      GsaProperty2d prop, 
-      ref Properties existingProperties, 
+      GsaProperty2d prop,
+      ref Properties existingProperties,
       ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {
       Materials.AddMaterial(ref prop, ref existingProperties.Materials);
-      if (prop.AxisProperty == -2) {
-        if (prop.LocalAxis != null && prop.LocalAxis.IsValid) {
-          if (prop.LocalAxis != Plane.WorldXY) {
-            var ax = new Axis();
-            Plane pln = prop.LocalAxis;
-            ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX :
-              new Length(pln.OriginX, unit).Meters;
-            ax.Origin.Y = (unit == LengthUnit.Meter) ? pln.OriginY :
-              new Length(pln.OriginY, unit).Meters;
-            ax.Origin.Z = (unit == LengthUnit.Meter) ? pln.OriginZ :
-              new Length(pln.OriginZ, unit).Meters;
 
-            ax.XVector.X = pln.XAxis.X;
-            ax.XVector.Y = pln.XAxis.Y;
-            ax.XVector.Z = pln.XAxis.Z;
-            ax.XYPlane.X = pln.YAxis.X;
-            ax.XYPlane.Y = pln.YAxis.Y;
-            ax.XYPlane.Z = pln.YAxis.Z;
-
-            prop.AxisProperty = apiAxes.AddValue(ax);
-          } else {
-            prop.AxisProperty = 0;
-          }
+      if (prop.LocalAxis != null && prop.LocalAxis.IsValid) {
+        if (prop.LocalAxis != Plane.WorldXY && prop.LocalAxis != Plane.Unset) {
+          Axis ax = prop.GetAxisFromPlane(unit);
+          prop.ApiProp2d.AxisProperty = apiAxes.AddValue(ax);
+        } else {
+          prop.ApiProp2d.AxisProperty = 0;
         }
       }
 

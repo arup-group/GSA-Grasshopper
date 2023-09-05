@@ -141,7 +141,7 @@ namespace GsaGH.Parameters {
       Ids = new List<int>(new int[Mesh.Faces.Count]);
       var singleProp = new GsaProperty2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
-        Prop2ds.Add(singleProp.Duplicate());
+        Prop2ds.Add(singleProp);
       }
     }
 
@@ -159,7 +159,7 @@ namespace GsaGH.Parameters {
       Ids = new List<int>(new int[Mesh.Faces.Count]);
       var singleProp = new GsaProperty2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
-        Prop2ds.Add(singleProp.Duplicate());
+        Prop2ds.Add(singleProp);
       }
     }
 

@@ -30,11 +30,12 @@ namespace GsaGH.Helpers.Export {
 
     internal static int AddProp3d(GsaProperty3d prop, ref Properties existingProperties) {
       Materials.AddMaterial(ref prop, ref existingProperties.Materials);
+      prop.ApiProp3d.MaterialType = prop.Material.ApiMaterialType;
       if (prop.Id <= 0) {
-        return existingProperties.Prop3ds.AddValue(prop.Guid, prop.AssembleApiObject());
+        return existingProperties.Prop3ds.AddValue(prop.Guid, prop.ApiProp3d);
       }
 
-      existingProperties.Prop3ds.SetValue(prop.Id, prop.Guid, prop.AssembleApiObject());
+      existingProperties.Prop3ds.SetValue(prop.Id, prop.Guid, prop.ApiProp3d);
       return prop.Id;
     }
   }

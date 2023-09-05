@@ -43,7 +43,7 @@ namespace GsaGHTests.Properties {
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
-      Duplicates.AreEqual(prop2d, prop2dGoo.Value);
+      Duplicates.AreEqual(prop2d, prop2dGoo.Value, true);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
       Assert.Equal(0, id.Value);
       Assert.Equal("", name.Value);
@@ -86,7 +86,7 @@ namespace GsaGHTests.Properties {
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
-      Duplicates.AreEqual(prop2d, prop2dGoo.Value);
+      Duplicates.AreEqual(prop2d, prop2dGoo.Value, true);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
       Assert.Equal(0, id.Value);
       Assert.Equal("", name.Value);
@@ -114,20 +114,20 @@ namespace GsaGHTests.Properties {
 
       prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.Equal(49, prop2dGoo.Value.Id);
-      Assert.Equal("name", prop2dGoo.Value.Name);
-      Assert.Equal(ColorRGBA.White, prop2dGoo.Value.Colour);
-      Assert.Equal(7, prop2dGoo.Value.AxisProperty);
-      Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.Type);
+      Assert.Equal("name", prop2dGoo.Value.ApiProp2d.Name);
+      Assert.Equal(ColorRGBA.White, (Color)prop2dGoo.Value.ApiProp2d.Colour);
+      Assert.Equal(7, prop2dGoo.Value.ApiProp2d.AxisProperty);
+      Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.ApiProp2d.Type);
       Assert.Equal(40, prop2dGoo.Value.Thickness.As(LengthUnit.Centimeter), 6);
-      Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ReferenceSurface);
+      Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ApiProp2d.ReferenceSurface);
       Assert.Equal(10, prop2dGoo.Value.AdditionalOffsetZ.As(LengthUnit.Millimeter));
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.InPlane.Value);
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.Bending.Value);
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.Shear.Value);
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.Volume.Value);
       Assert.Equal(0, prop2dGoo.Value.ApiProp2d.PropertyModifier.AdditionalMass);
-      Assert.Equal(SupportType.Cantilever, prop2dGoo.Value.SupportType);
-      Assert.Equal(3, prop2dGoo.Value.ReferenceEdge);
+      Assert.Equal(SupportType.Cantilever, prop2dGoo.Value.ApiProp2d.SupportType);
+      Assert.Equal(3, prop2dGoo.Value.ApiProp2d.ReferenceEdge);
 
       id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       name = (GH_String)ComponentTestHelper.GetOutput(comp, 2);

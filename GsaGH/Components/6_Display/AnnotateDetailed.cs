@@ -372,13 +372,16 @@ namespace GsaGH.Components {
     private static string Prop2dToString(GsaProperty2d prop) {
       string s = string.Empty;
       s += prop.Id > 0 ? $"PA{prop.Id}" : string.Empty;
+      if (prop.IsReferencedById) {
+        return s;
+      }
       AddSeparator(ref s);
-      s += prop.Name;
+      s += prop.ApiProp2d.Name;
       AddSeparator(ref s);
-      s += prop.Description;
-      if (prop.Type != GsaAPI.Property2D_Type.SHELL) {
+      s += prop.ApiProp2d.Description;
+      if (prop.ApiProp2d.Type != GsaAPI.Property2D_Type.SHELL) {
         AddSeparator(ref s);
-        s += prop.Type.ToString().ToPascalCase();
+        s += prop.ApiProp2d.Type.ToString().ToPascalCase();
       }
       return s.Trim();
     }

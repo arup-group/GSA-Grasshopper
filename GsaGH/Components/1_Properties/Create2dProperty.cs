@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
@@ -151,17 +152,17 @@ namespace GsaGH.Components {
         case Prop2dType.Shell:
         case Prop2dType.CurvedShell:
         case Prop2dType.LoadPanel:
-          prop.Type = (Property2D_Type)(int)_mode;
+          prop.ApiProp2d.Type = Mappings.GetProperty2D_Type(_mode.ToString().ToSentenceCase());
           break;
 
         default:
           this.AddRuntimeWarning("Property type is undefined");
-          prop.Type = Property2D_Type.UNDEF;
+          prop.ApiProp2d.Type = Property2D_Type.UNDEF;
           break;
       }
 
       if (_mode != Prop2dType.LoadPanel) {
-        prop.AxisProperty = 0;
+        prop.ApiProp2d.AxisProperty = 0;
 
         if (_mode != Prop2dType.Fabric) {
           prop.Thickness = (Length)Input.UnitNumber(this, da, 0, _lengthUnit);
@@ -175,9 +176,9 @@ namespace GsaGH.Components {
             if (da.GetData("Reference Surface", ref ghReferenceSurface)) {
               try {
                 if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
-                  prop.ReferenceSurface = (ReferenceSurface)reference;
+                  prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)reference;
                 } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
-                  prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
+                  prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
                 }
               } catch {
                 this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value +
@@ -185,19 +186,19 @@ namespace GsaGH.Components {
                 return;
               }
             } else {
-              prop.ReferenceSurface = ReferenceSurface.Middle;
+              prop.ApiProp2d.ReferenceSurface = ReferenceSurface.Middle;
             }
 
             prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
           }
         }
       } else {
-        prop.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
-        if (prop.SupportType != SupportType.Auto && prop.SupportType != SupportType.AllEdges) {
+        prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
+        if (prop.ApiProp2d.SupportType != SupportType.Auto && prop.ApiProp2d.SupportType != SupportType.AllEdges) {
           int referenceEdge = 0;
           if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0
             && referenceEdge <= 4) {
-            prop.ReferenceEdge = referenceEdge;
+            prop.ApiProp2d.ReferenceEdge = referenceEdge;
           } else {
             this.AddRuntimeWarning("Input RE failed to collect data");
           }

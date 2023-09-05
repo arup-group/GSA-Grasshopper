@@ -34,7 +34,7 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysDropDownComponent comp = ComponentMother(false);
 
       var output = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(Property2D_Type.PLATE, output.Value.Type);
+      Assert.Equal(Property2D_Type.PLATE, output.Value.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Thickness);
     }
 
@@ -43,9 +43,9 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysDropDownComponent comp = ComponentMother(true);
 
       var output = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(Property2D_Type.LOAD, output.Value.Type);
-      Assert.Equal(SupportType.TwoEdges, output.Value.SupportType);
-      Assert.Equal(2, output.Value.ReferenceEdge);
+      Assert.Equal(Property2D_Type.LOAD, output.Value.ApiProp2d.Type);
+      Assert.Equal(SupportType.TwoEdges, output.Value.ApiProp2d.SupportType);
+      Assert.Equal(2, output.Value.ApiProp2d.ReferenceEdge);
     }
   }
 }
