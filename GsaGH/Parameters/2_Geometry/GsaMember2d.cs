@@ -284,7 +284,7 @@ namespace GsaGH.Parameters {
       dup.InclusionPoints = InclusionPoints.ToList();
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview;
+        dup.Section3dPreview = Section3dPreview.Duplicate();
       }
 
       return dup;
@@ -335,7 +335,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+        dup.Section3dPreview.Morph(xmorph);
       }
 
       return dup;
@@ -384,7 +384,7 @@ namespace GsaGH.Parameters {
       dup.InclusionPoints = xform.TransformList(dup.InclusionPoints).ToList();
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview.Transform(xform);
+        dup.Section3dPreview.Transform(xform);
       }
 
       return dup;
