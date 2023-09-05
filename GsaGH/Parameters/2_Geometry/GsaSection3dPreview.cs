@@ -344,7 +344,7 @@ namespace GsaGH.Parameters {
       xmorph.Morph(Mesh);
       var lns = new List<Line>();
       foreach (Line l in Outlines) {
-        var line = new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To)));
+        var line = new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To));
         lns.Add(line);
       }
       Outlines = lns;
