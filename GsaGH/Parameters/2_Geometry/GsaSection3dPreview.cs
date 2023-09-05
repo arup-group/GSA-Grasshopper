@@ -356,7 +356,8 @@ namespace GsaGH.Parameters {
           For2d = DisplayMethodFor2d.Solid
                 | DisplayMethodFor2d.Thickness
                 | DisplayMethodFor2d.Edge,
-          For3d = DisplayMethodFor3d.Off
+          For3d = DisplayMethodFor3d.Solid
+                | DisplayMethodFor3d.Edge
         },
         DeformationScaleFactor = scaleFactor,
         IsDeformationNormalised = false,
