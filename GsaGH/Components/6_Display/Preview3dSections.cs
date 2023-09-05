@@ -68,10 +68,10 @@ namespace GsaGH.Components {
       pManager.HideParameter(1);
       pManager.AddMeshParameter("DesignLayer Mesh", "DM", "Design layer 3D Section Mesh",
         GH_ParamAccess.item);
-      pManager.HideParameter(0);
+      pManager.HideParameter(2);
       pManager.AddLineParameter("DesignLayer Outlines", "DLs", "The Design layer 3D Sections' outlines",
         GH_ParamAccess.list);
-      pManager.HideParameter(1);
+      pManager.HideParameter(3);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
