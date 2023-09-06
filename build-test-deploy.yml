@@ -198,6 +198,12 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
   displayName: Package NuGet
 
+- powershell: |
+    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
+    Compress-Archive -Path .\Output -DestinationPath .\results\Docs.zip
+  displayName: Generate docs site
+  failOnStderr: true
+
 - task: GitHubRelease@1
   inputs:
     gitHubConnection: 'github.com_MJCramp'
@@ -213,12 +219,18 @@ steps:
       $(System.DefaultWorkingDirectory)/**/*.yak
       $(System.DefaultWorkingDirectory)/**/*.nupkg
       $(System.DefaultWorkingDirectory)/**/*.snupkg
+      $(System.DefaultWorkingDirectory)/**/Docs.zip
     assetUploadMode: 'replace'
     isDraft: true
     isPreRelease: true
     addChangeLog: false
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
   displayName: 'Publishing assets to Github'
+
+- powershell: |
+    wmic process where "name='DocsGeneration.exe'" delete
+  condition: always()
+  displayName: 'Kill DocsGeneration'
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
