@@ -198,7 +198,7 @@ steps:
 
 - powershell: |
     .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
-    Compress-Archive -Path .\DocsGeneration\bin\x64\Debug\net48\Output -DestinationPath .\results\Docs.zip
+    Compress-Archive -Path .\Output -DestinationPath .\results\Docs.zip
   displayName: Generate docs site
   failOnStderr: true
 
