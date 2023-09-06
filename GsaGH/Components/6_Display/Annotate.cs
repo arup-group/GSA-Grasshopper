@@ -59,6 +59,19 @@ namespace GsaGH.Components {
       foreach (GH_Path path in tree.Paths) {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
           switch (goo) {
+            case GsaAnnotationGoo annotation: {
+                switch (annotation.Value) {
+                  case GsaAnnotationDot annotationDot:
+                    AddAnnotation(annotationDot.Location, annotationDot.Text,
+                                    annotationDot.Color, path);
+                    break;
+                  case GsaAnnotation3d annotation3d:
+                    AddAnnotation(annotation3d, path);
+                    break;
+                }
+                break;
+              }
+            
             case GsaAnnotationDot annotationDot:
               AddAnnotation(annotationDot.Location, annotationDot.Text,
                               annotationDot.Color, path);
@@ -125,7 +138,7 @@ namespace GsaGH.Components {
               break;
 
             case LineResultGoo resLine:
-              AddAnnotation(resLine.Value.PointAt(0.5), resLine.ElementId.ToString(), 
+              AddAnnotation(resLine.Value.PointAt(0.5), resLine.ElementId.ToString(),
                 Color.Empty, path);
               break;
 
@@ -156,7 +169,7 @@ namespace GsaGH.Components {
       da.SetDataTree(1, _points);
       da.SetDataTree(2, _texts);
     }
-    
+
     private void AddAnnotation(Point3d pt, string txt, Color color, GH_Path path) {
       if (_color != Color.Empty) {
         color = _color;
@@ -174,7 +187,7 @@ namespace GsaGH.Components {
           annotation3d.Value.TextPlane,
           _color == Color.Empty ? _color : annotation3d.Color,
           annotation3d.Value.Text,
-          annotation3d.Value.Height)), 
+          annotation3d.Value.Height)),
         path);
       _points.Append(new GH_Point(annotation3d.Location), path);
       _texts.Append(new GH_String(annotation3d.Value.Text), path);

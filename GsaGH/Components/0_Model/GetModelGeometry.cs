@@ -451,11 +451,11 @@ namespace GsaGH.Components {
         "3D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaMember1dParameter(), "1D Members in [" + unitAbbreviation + "]", "M1D",
-        "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
+        "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
       pManager.AddParameter(new GsaMember2dParameter(), "2D Members in [" + unitAbbreviation + "]", "M2D",
-        "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
+        "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
       pManager.AddParameter(new GsaMember3dParameter(), "3D Members in [" + unitAbbreviation + "]", "M3D",
-        "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
+        "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess data) {

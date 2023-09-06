@@ -14,7 +14,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
+  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersect with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
   /// <para>A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
   /// </summary>
@@ -284,7 +284,7 @@ namespace GsaGH.Parameters {
       dup.InclusionPoints = InclusionPoints.ToList();
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview;
+        dup.Section3dPreview = Section3dPreview.Duplicate();
       }
 
       return dup;
@@ -335,7 +335,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview.Morph(xmorph);
+        dup.Section3dPreview.Morph(xmorph);
       }
 
       return dup;
@@ -384,7 +384,7 @@ namespace GsaGH.Parameters {
       dup.InclusionPoints = xform.TransformList(dup.InclusionPoints).ToList();
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview.Transform(xform);
+        dup.Section3dPreview.Transform(xform);
       }
 
       return dup;
