@@ -140,6 +140,39 @@ steps:
   displayName: Publish IntegrationTest to Azure
   continueOnError: true
 
+- task: PowerShell@2
+  displayName: Check for existing tags
+  inputs:
+    targetType: 'inline'
+    script: |
+        $versionInfo = $(Get-Item .\GsaGH\bin\x64\Release\net48\GsaGH.dll).VersionInfo
+        echo $versionInfo
+        $fullVersion = [array]${versionInfo}.FileVersion.split('.')
+        $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
+        $majorVersion = [string]$fullVersion[0]
+        $minorVersion = [string]$fullVersion[1]
+        $spVersion = [string]$fullVersion[2]
+        $buildNumber = [string]$fullVersion[3]
+
+        $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
+        $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
+
+        $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion + "-beta"
+        $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
+        $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
+        $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
+        
+        Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
+        git rev-parse $dotSeparatedTag
+        if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}
+        if($lastExitCode -eq 0){
+          $tagExists = 'true'
+          echo $tagExists
+        }
+    errorActionPreference: 'continue'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    ignoreLASTEXITCODE: true
+
 - powershell: |
     cd GsaGH\bin\x64\Release
     curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
@@ -163,9 +196,39 @@ steps:
     ..\yak build --platform win
   displayName: Package yak
 
-- publish:  $(System.DefaultWorkingDirectory)/**/*.yak
-  artifact: NightlyYakPackage
-  continueOnError: true
+- powershell: |
+    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
+    Compress-Archive -Path .\Output -DestinationPath .\results\Docs.zip
+  displayName: Generate docs site
+  failOnStderr: true
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github.com_MJCramp'
+    repositoryName: 'arup-group/GSA-Grasshopper'
+    action: 'edit'
+    target: '$(Build.SourceVersion)'
+    tag: '$(dotSeparatedTag)'
+    title: 'GsaGH Nightly version $(dotSeparatedTag)'
+    releaseNotesSource: 'inline'
+    releaseNotesInline: |
+      Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
+    assets: |
+      $(System.DefaultWorkingDirectory)/**/*.yak
+      $(System.DefaultWorkingDirectory)/**/*.nupkg
+      $(System.DefaultWorkingDirectory)/**/*.snupkg
+      $(System.DefaultWorkingDirectory)/**/Docs.zip
+    assetUploadMode: 'replace'
+    isDraft: true
+    isPreRelease: true
+    addChangeLog: false
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), ne(variables.TAG_EXISTS, 'true'))
+  displayName: 'Publishing assets to Github'
+
+- powershell: |
+    wmic process where "name='DocsGeneration.exe'" delete
+  condition: always()
+  displayName: 'Kill orphin DocsGeneration process'
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
