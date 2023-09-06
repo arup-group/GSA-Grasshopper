@@ -79,8 +79,7 @@ namespace GsaGH.Helpers.Export {
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null)) {
-        ConvertList(
-          list, ref model, owner);
+        ConvertList(list, ref model, owner);
       }
     }
 
@@ -293,7 +292,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      copyList._definition += GsaList.SimplifyListDefinition(string.Join(" ", ids));
+      copyList._definition += " " + string.Join(" ", ids);
 
       AddList(copyList, ref model.Lists);
     }
@@ -355,7 +354,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition += GsaList.SimplifyListDefinition(string.Join(" ", ids));
+      copyList._definition += " " + string.Join(" ", ids);
 
       AddList(copyList, ref apiLists);
     }

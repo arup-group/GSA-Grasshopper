@@ -274,7 +274,7 @@ namespace GsaGH.Components {
           case GsaMember2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
               faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Member;
-              faceLoad.ReferenceType = ReferenceType.MemberChildElements;
+              faceLoad.ReferenceType = ReferenceType.Member;
               break;
             }
           case GsaMaterialGoo value: {

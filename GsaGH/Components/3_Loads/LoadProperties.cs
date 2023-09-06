@@ -140,7 +140,9 @@ namespace GsaGH.Components {
             da.SetData(0, new GsaLoadCaseGoo(gravityLoad.LoadCase 
               ?? new GsaLoadCase(gravityLoad.GravityLoad.Case)));
             da.SetData(1, gravityLoad.GravityLoad.Name);
-            da.SetData(2, gravityLoad.GravityLoad.EntityList);
+            var gravityList = new GsaList(gravityLoad.Name, 
+              gravityLoad.GravityLoad.EntityList, gravityLoad.GravityLoad.EntityType);
+            da.SetData(2, new GsaListGoo(gravityList));
             da.SetData(6, gravityLoad.GravityLoad.Factor.X);
             da.SetData(7, gravityLoad.GravityLoad.Factor.Y);
             da.SetData(8, gravityLoad.GravityLoad.Factor.Z);
@@ -151,7 +153,9 @@ namespace GsaGH.Components {
             da.SetData(0, new GsaLoadCaseGoo(nodeLoad.LoadCase
               ?? new GsaLoadCase(nodeLoad.NodeLoad.Case)));
             da.SetData(1, nodeLoad.NodeLoad.Name);
-            da.SetData(2, nodeLoad.NodeLoad.Nodes);
+            var nodeList = new GsaList(
+              nodeLoad.Name, nodeLoad.NodeLoad.Nodes, GsaAPI.EntityType.Node);
+            da.SetData(2, new GsaListGoo(nodeList));
             da.SetData(3, nodeLoad.NodeLoad.AxisProperty);
             da.SetData(4, nodeLoad.NodeLoad.Direction);
             var apiNodeForce = new Force(nodeLoad.NodeLoad.Value, ForceUnit.Newton);
@@ -164,7 +168,9 @@ namespace GsaGH.Components {
             da.SetData(0, new GsaLoadCaseGoo(beamLoad.LoadCase
               ?? new GsaLoadCase(beamLoad.BeamLoad.Case)));
             da.SetData(1, beamLoad.BeamLoad.Name);
-            da.SetData(2, beamLoad.BeamLoad.EntityList);
+            var beamList = new GsaList(
+              beamLoad.Name, beamLoad.BeamLoad.EntityList, beamLoad.BeamLoad.EntityType);
+            da.SetData(2, new GsaListGoo(beamList));
             da.SetData(3, beamLoad.BeamLoad.AxisProperty);
             da.SetData(4, beamLoad.BeamLoad.Direction);
             da.SetData(5, beamLoad.BeamLoad.IsProjected);
@@ -185,7 +191,9 @@ namespace GsaGH.Components {
             da.SetData(0, new GsaLoadCaseGoo(faceLoad.LoadCase
               ?? new GsaLoadCase(faceLoad.FaceLoad.Case)));
             da.SetData(1, faceLoad.FaceLoad.Name);
-            da.SetData(2, faceLoad.FaceLoad.EntityList);
+            var faceList = new GsaList(
+              faceLoad.Name, faceLoad.FaceLoad.EntityList, faceLoad.FaceLoad.EntityType);
+            da.SetData(2, new GsaListGoo(faceList));
             da.SetData(3, faceLoad.FaceLoad.AxisProperty);
             da.SetData(4, faceLoad.FaceLoad.Direction);
             da.SetData(5, faceLoad.FaceLoad.IsProjected);

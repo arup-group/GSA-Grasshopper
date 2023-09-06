@@ -105,15 +105,6 @@ namespace GsaGH.Components {
         _tolerance = DefaultUnits.Tolerance;
       }
 
-      // add report output to old components
-      if (Params.Output.Count == 1) {
-        Params.RegisterOutputParam(new Param_String());
-        Params.Output[1].Name = "Report";
-        Params.Output[1].NickName = "R";
-        Params.Output[1].Description = "Analysis Task Report(s)";
-        Params.Output[1].Access = GH_ParamAccess.list;
-      }
-
       UpdateMessage();
       return flag;
     }
@@ -144,6 +135,16 @@ namespace GsaGH.Components {
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       UpdateMessage();
+
+      // add report output to old components
+      if (Params.Output.Count == 1) {
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[1].Name = "Report";
+        Params.Output[1].NickName = "R";
+        Params.Output[1].Description = "Analysis Task Report(s)";
+        Params.Output[1].Access = GH_ParamAccess.list;
+        VariableParameterMaintenance();
+      }
     }
 
     protected override void InitialiseDropdowns() {

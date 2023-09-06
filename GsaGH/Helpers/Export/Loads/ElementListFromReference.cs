@@ -19,7 +19,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static string GetReferenceElementIdsDefinition(
-  GsaGridPlaneSurface load, ModelAssembly model) {
+      GsaGridPlaneSurface load, ModelAssembly model) {
       return GetReferenceDefinition(
         load._refObjectGuid,
         load._referenceType,
@@ -32,8 +32,7 @@ namespace GsaGH.Helpers.Export {
     internal static string GetMemberChildElementReferenceIdsDefinition(
       int memberId, ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
       return memberElementRelationship.TryGetValue(memberId, out ConcurrentBag<int> ids) ?
-          string.Join(" ", ids) :
-          string.Empty;
+          GsaList.CreateListDefinition(ids.ToList()) : string.Empty;
     }
 
     private static string GetElementsReferenceDefinition<T>(Guid guid, GsaGuidIntListDictionary<T> dictionary) {

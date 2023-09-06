@@ -36,15 +36,5 @@ namespace GsaGHTests.Helpers.Export.GH {
       string result = GsaList.CreateListDefinition(range.ToList());
       Assert.Equal(expected, result);
     }
-
-    [Theory]
-    [InlineData("1 3 2 4 14 13 12 11", "1 to 4 11 to 14")]
-    [InlineData("1 3 2 4 7 14 13 8 12 11", "1 to 4 7 8 11 to 14")]
-    [InlineData("PB3 2 3 4 ", "2 to 4 PB3")]
-    [InlineData("1 PA1 2 3 4", "1 to 4 PA1")]
-    public void SimplifyListDefinitionTest(string definition, string expected) {
-      string result = GsaList.SimplifyListDefinition(definition);
-      Assert.Equal(expected, result);
-    }
   }
 }
