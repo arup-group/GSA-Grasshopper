@@ -163,8 +163,18 @@ steps:
     ..\yak build --platform win
   displayName: Package yak
 
-- publish:  $(System.DefaultWorkingDirectory)/**/*.yak
+- publish:  $(System.DefaultWorkingDirectory)\GsaGH\bin\x64\Release\net48\*.yak
   artifact: NightlyYakPackage
+  continueOnError: true
+
+- powershell: |
+    .\DocsGeneration\bin\x64\Release\net48\DocsGeneration.exe
+    Compress-Archive -Path .\DocsGeneration\bin\x64\Release\net48\Output -DestinationPath .\results\Docs.zip
+  displayName: Generate docs site
+  failOnStderr: true
+
+- publish:  $(System.DefaultWorkingDirectory)\results\Docs.zip
+  artifact: Docs
   continueOnError: true
 
 - powershell: |
