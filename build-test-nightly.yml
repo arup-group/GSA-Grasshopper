@@ -222,13 +222,13 @@ steps:
     isDraft: true
     isPreRelease: true
     addChangeLog: false
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/release/*'), ne(variables.TAG_EXISTS, 'true'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), ne(variables.TAG_EXISTS, 'true'))
   displayName: 'Publishing assets to Github'
 
 - powershell: |
     wmic process where "name='DocsGeneration.exe'" delete
   condition: always()
-  displayName: 'Kill DocsGeneration'
+  displayName: 'Kill orphin DocsGeneration process'
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
