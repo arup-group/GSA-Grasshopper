@@ -226,7 +226,7 @@ steps:
   displayName: 'Publishing assets to Github'
 
 - powershell: |
-    TASKKILL /F /T /IM DocsGeneration.exe
+    wmic process where "name='DocsGeneration.exe'" delete
   condition: always()
   displayName: 'Kill DocsGeneration'
 
