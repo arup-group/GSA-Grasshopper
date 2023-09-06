@@ -228,6 +228,11 @@ steps:
   displayName: 'Publishing assets to Github'
 
 - powershell: |
+    wmic process where "name='DocsGeneration.exe'" delete
+  condition: always()
+  displayName: 'Kill DocsGeneration'
+
+- powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
     Write-output "Installer Path: ${installerPath}"
     $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
