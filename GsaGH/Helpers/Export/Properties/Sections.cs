@@ -30,7 +30,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static int AddSection(GsaSection section, ref Properties apiProperties) {
       Materials.AddMaterial(ref section, ref apiProperties.Materials);
-
+      
       int outId;
       if (section.Id > 0) {
         apiProperties.Sections.SetValue(section.Id, section.Guid, section.ApiSection);

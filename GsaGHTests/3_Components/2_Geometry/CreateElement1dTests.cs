@@ -33,7 +33,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, output.Value.Line.PointAtEnd.X);
       Assert.Equal(3, output.Value.Line.PointAtEnd.Y);
       Assert.Equal(1, output.Value.Line.PointAtEnd.Z);
-      Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.Profile);
+      Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.ApiSection.Profile);
     }
 
     [Fact]

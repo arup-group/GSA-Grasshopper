@@ -139,7 +139,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref sectionGoo);
       GsaSection section = sectionGoo.Value;
 
-      string profile = section.Profile;
+      string profile = section.ApiSection.Profile;
       if (profile.Trim() == string.Empty) {
         this.AddRuntimeError("Profile not set in Section");
         return;

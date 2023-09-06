@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
@@ -62,7 +63,9 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
-      return string.Join(" ", pv, MaterialType).Trim();
+      string mat = Material != null ? MaterialType
+        : ApiProp3d.MaterialType.ToString().ToPascalCase();
+      return string.Join(" ", pv, mat).Trim();
     }
 
     private Prop3D DuplicateApiObject() {

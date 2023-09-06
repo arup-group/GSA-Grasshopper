@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -52,9 +53,7 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Length corrosponding to the thickness
     /// </summary>
     /// <param name="thickness"></param>
-    /// <param name="id">Optional ID</param>
-    public GsaProperty2d(Length thickness, int id = 0) {
-      Id = id;
+    public GsaProperty2d(Length thickness) {
       ApiProp2d = new Prop2D();
       Thickness = thickness;
     }
@@ -115,7 +114,9 @@ namespace GsaGH.Parameters {
       string type = Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == ApiProp2d.Type).Key;
       string desc = ApiProp2d.Description.Replace("(", string.Empty).Replace(")", string.Empty);
       if (ApiProp2d.Type != Property2D_Type.LOAD) {
-        return string.Join(" ", pa, type, desc, MaterialType).Trim();
+        string mat = Material != null ? MaterialType
+        : ApiProp2d.MaterialType.ToString().ToPascalCase();
+        return string.Join(" ", pa, type, desc, mat).Trim();
       }
       string supportType = ApiProp2d.SupportType.ToString().ToSentenceCase();
       string referenceEdge =

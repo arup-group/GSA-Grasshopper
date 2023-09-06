@@ -16,7 +16,7 @@ namespace GsaGHTests.Helpers.Import {
       var elements = new Elements(model);
       GsaElement1d elem = elements.Element1ds.First().Value;
       Assert.Equal("EN 1993-1-1:2005", elem.Section.Material.SteelDesignCodeName);
-      Assert.Equal("STD R 800 400", elem.Section.Profile);
+      Assert.Equal("STD R 800 400", elem.Section.ApiSection.Profile);
       Duplicates.AreEqual(model.Materials.SteelMaterials[1], elem.Section.Material);
       Duplicates.AreEqual(model.Properties.Sections[1].Value, elem.Section);
 

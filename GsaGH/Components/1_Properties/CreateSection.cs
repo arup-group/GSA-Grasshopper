@@ -58,12 +58,12 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaSection = new GsaSection();
+      var section = new GsaSection();
       string profile = string.Empty;
       da.GetData(0, ref profile);
 
       if (GsaSection.ValidProfile(profile)) {
-        gsaSection = new GsaSection(profile);
+        section = new GsaSection(profile);
       } else {
         this.AddRuntimeError("Invalid profile syntax: " + profile);
         return;
@@ -71,12 +71,12 @@ namespace GsaGH.Components {
 
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(1, ref materialGoo)) {
-        gsaSection.Material = materialGoo.Value;
+        section.Material = materialGoo.Value;
       } 
 
-      gsaSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);
+      section.ApiSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);
 
-      da.SetData(0, new GsaSectionGoo(gsaSection));
+      da.SetData(0, new GsaSectionGoo(section));
     }
   }
 }

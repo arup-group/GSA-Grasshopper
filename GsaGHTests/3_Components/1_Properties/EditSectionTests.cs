@@ -37,13 +37,15 @@ namespace GsaGHTests.Components.Properties {
 
       var edit = new GsaSection {
         Id = 42,
-        Profile = "STD I 300 400 10 20",
+        ApiSection = new Section() {
+          Profile = "STD I 300 400 10 20",
+          Pool = 12,
+          Name = "byggemandbob",
+          Colour = Color.Red,
+          BasicOffset = BasicOffset.Top,
+        },
         Material = material.Value,
         Modifier = modifier.Value,
-        Pool = 12,
-        Name = "byggemandbob",
-        Colour = Color.Red,
-        BasicOffset = BasicOffset.Top,
         AdditionalOffsetY = new Length(10.0, LengthUnit.Millimeter),
         AdditionalOffsetZ = new Length(-23.0, LengthUnit.Millimeter)
       };
@@ -72,7 +74,7 @@ namespace GsaGHTests.Components.Properties {
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 10);
 
-      Duplicates.AreEqual(edit, sectionGoo.Value);
+      Duplicates.AreEqual(edit, sectionGoo.Value, true);
       Assert.Equal(42, id.Value);
       Assert.Equal("STD I 300 400 10 20", profile.Value);
       Duplicates.AreEqual(material.Value, mat.Value);
@@ -94,10 +96,10 @@ namespace GsaGHTests.Components.Properties {
       ComponentTestHelper.SetInput(comp, Color.Blue, 10);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
 
-      Assert.Equal(Color.Blue.A, sectionGoo.Value.Colour.A);
-      Assert.Equal(Color.Blue.R, sectionGoo.Value.Colour.R);
-      Assert.Equal(Color.Blue.G, sectionGoo.Value.Colour.G);
-      Assert.Equal(Color.Blue.B, sectionGoo.Value.Colour.B);
+      Assert.Equal(Color.Blue.A, ((Color)sectionGoo.Value.ApiSection.Colour).A);
+      Assert.Equal(Color.Blue.R, ((Color)sectionGoo.Value.ApiSection.Colour).R);
+      Assert.Equal(Color.Blue.G, ((Color)sectionGoo.Value.ApiSection.Colour).G);
+      Assert.Equal(Color.Blue.B, ((Color)sectionGoo.Value.ApiSection.Colour).B);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 10);
       Assert.Equal(Color.Blue.A, colour.Value.A);
       Assert.Equal(Color.Blue.R, colour.Value.R);
@@ -144,7 +146,7 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, "John", 9);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal("John", sectionGoo.Value.Name);
+      Assert.Equal("John", sectionGoo.Value.ApiSection.Name);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
       Assert.Equal("John", name.Value);
     }
@@ -154,7 +156,7 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 99, 8);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal(99, sectionGoo.Value.Pool);
+      Assert.Equal(99, sectionGoo.Value.ApiSection.Pool);
       var pool = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
       Assert.Equal(99, pool.Value);
     }
@@ -164,7 +166,7 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, "STD I 300 400 10 20", 2);
       var sectionGoo = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Equal("STD I 300 400 10 20", sectionGoo.Value.Profile);
+      Assert.Equal("STD I 300 400 10 20", sectionGoo.Value.ApiSection.Profile);
       var profile = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
       Assert.Equal("STD I 300 400 10 20", profile.Value);
     }

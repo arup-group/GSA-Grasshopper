@@ -398,9 +398,9 @@ namespace GsaGH.Components {
       string s = string.Empty;
       s += section.Id > 0 ? $"PB{section.Id}" : string.Empty;
       AddSeparator(ref s);
-      s += section.Name;
+      s += section.ApiSection.Name;
       AddSeparator(ref s);
-      s += section.Profile;
+      s += section.ApiSection.Profile;
       return s.Trim();
     }
 

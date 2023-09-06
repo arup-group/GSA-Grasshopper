@@ -124,10 +124,8 @@ namespace GsaGH.Helpers.Import {
       KeyValuePair<int, Section> section,
       Materials materials,
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
-      var sect = new GsaSection(section.Key) {
-        ApiSection = section.Value,
-        IsReferencedById = false
-      };
+      var sect = new GsaSection(section);
+
       GsaMaterial material = materials.GetMaterial(section.Value);
       if (material != null) {
         sect.Material = material;

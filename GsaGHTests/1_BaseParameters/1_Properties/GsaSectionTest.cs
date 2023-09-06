@@ -15,12 +15,14 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaSection {
-        Name = "Name",
+        ApiSection = new Section {
+          Name = "Name",
+        }
       };
 
-      GsaSection duplicate = original.Clone();
+      var duplicate = new GsaSection(original);
 
-      Duplicates.AreEqual(original, duplicate);
+      Duplicates.AreEqual(original, duplicate, true);
     }
 
     [Fact]
@@ -29,7 +31,7 @@ namespace GsaGHTests.Parameters {
       var section = new GsaSection(profile);
 
       var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.Equal(areaExpected.Value, section.Area.SquareMillimeters, 10);
+      Assert.Equal(areaExpected.Value, section.SectionProperties.Area.SquareMillimeters, 10);
     }
 
     [Fact]
@@ -43,21 +45,21 @@ namespace GsaGHTests.Parameters {
       var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       sect.Material = material;
 
-      Assert.Equal(areaExpected.Value, sect.Area.SquareMillimeters, 10);
+      Assert.Equal(areaExpected.Value, sect.SectionProperties.Area.SquareMillimeters, 10);
 
       sect.Material.Id = 2;
-      sect.Name = "mariam";
-      sect.Pool = 4;
-      sect.BasicOffset = BasicOffset.TopRight;
+      sect.ApiSection.Name = "mariam";
+      sect.ApiSection.Pool = 4;
+      sect.ApiSection.BasicOffset = BasicOffset.TopRight;
       sect.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
       sect.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
 
       Assert.Equal(2, sect.Material.Id);
       Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         sect.Material.MaterialType.ToString());
-      Assert.Equal("mariam", sect.Name);
-      Assert.Equal(4, sect.Pool);
-      Assert.Equal(BasicOffset.TopRight, sect.BasicOffset);
+      Assert.Equal("mariam", sect.ApiSection.Name);
+      Assert.Equal(4, sect.ApiSection.Pool);
+      Assert.Equal(BasicOffset.TopRight, sect.ApiSection.BasicOffset);
       Assert.Equal(new Length(1, LengthUnit.Centimeter), sect.AdditionalOffsetY);
       Assert.Equal(new Length(2, LengthUnit.Centimeter), sect.AdditionalOffsetZ);
     }
@@ -68,9 +70,11 @@ namespace GsaGHTests.Parameters {
       double myarea = 15 * 20;
       var areaExpected = new Area(myarea, AreaUnit.SquareMillimeter);
 
-      var sect = new GsaSection(profile, 15);
+      var sect = new GsaSection(profile) { 
+        Id = 15 
+      };
 
-      Assert.Equal(areaExpected, sect.Area);
+      Assert.Equal(areaExpected, sect.SectionProperties.Area);
       Assert.Equal(15, sect.Id);
     }
 
@@ -78,7 +82,7 @@ namespace GsaGHTests.Parameters {
     public void TestDuplicateEmptySection() {
       var section = new GsaSection();
 
-      GsaSection dup = section.Clone();
+      var dup = new GsaSection(section);
       Assert.NotNull(dup);
     }
 
@@ -86,50 +90,49 @@ namespace GsaGHTests.Parameters {
     public void TestDuplicateSection() {
       string profile = "CAT HE HE200.B";
       double myarea1 = 7808.121;
-      var orig = new GsaSection(profile) {
-        Name = "mariam",
-        Pool = 12,
-        BasicOffset = BasicOffset.BottomLeft,
-        AdditionalOffsetY = new Length(-1, LengthUnit.Foot),
-        AdditionalOffsetZ = new Length(-2, LengthUnit.Foot)
-      };
-      var material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
-      orig.Material = material;
+      var orig = new GsaSection(profile);
+      orig.ApiSection.Name = "mariam";
+      orig.ApiSection.Pool = 12;
+      orig.ApiSection.BasicOffset = BasicOffset.BottomLeft;
+      orig.AdditionalOffsetY = new Length(-1, LengthUnit.Foot);
+      orig.AdditionalOffsetZ = new Length(-2, LengthUnit.Foot);
 
-      GsaSection dup = orig.Clone();
+      orig.Material = new GsaMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
 
-      string profile2 = "STD%R%15%20";
+      var dup = new GsaSection(orig);
+
+      string profile2 = "STD R 15 20";
       double myarea2 = 15 * 20;
       var areaExpected = new Area(myarea2, AreaUnit.SquareMillimeter);
-      orig.Profile = profile2;
+      orig.ApiSection.Profile = profile2;
       orig.Material.Id = 4;
-      orig.Name = "kris";
-      orig.Pool = 99;
-      orig.BasicOffset = BasicOffset.TopLeft;
+      orig.ApiSection.Name = "kris";
+      orig.ApiSection.Pool = 99;
+      orig.ApiSection.BasicOffset = BasicOffset.TopLeft;
       orig.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
       orig.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
 
-      Assert.Equal("STD R 15 20", orig.Profile);
-      Assert.Equal(areaExpected.SquareMillimeters, orig.Area.SquareMillimeters);
+      Assert.Equal("STD R 15 20", orig.ApiSection.Profile);
+      Assert.Equal(areaExpected.SquareMillimeters, orig.SectionProperties.Area.SquareMillimeters);
 
-      Assert.Equal(profile, dup.Profile.Substring(0, profile.Length));
-      Assert.Equal(myarea1, dup.Area.SquareMillimeters, 5);
+      Assert.Equal(profile, dup.ApiSection.Profile.Substring(0, profile.Length));
+      Assert.Equal(myarea1, dup.SectionProperties.Area.SquareMillimeters, 5);
 
       Assert.Equal(4, dup.Material.Id);
       Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         dup.Material.MaterialType.ToString());
-      Assert.Equal("mariam", dup.Name);
-      Assert.Equal(12, dup.Pool);
-      Assert.Equal(BasicOffset.BottomLeft, dup.BasicOffset);
+      Assert.Equal("mariam", dup.ApiSection.Name);
+      Assert.Equal(12, dup.ApiSection.Pool);
+      Assert.Equal(BasicOffset.BottomLeft, dup.ApiSection.BasicOffset);
       Assert.Equal(new Length(-1, LengthUnit.Foot), dup.AdditionalOffsetY);
       Assert.Equal(new Length(-2, LengthUnit.Foot), dup.AdditionalOffsetZ);
 
       Assert.Equal(4, orig.Material.Id);
       Assert.Equal(MaterialType.GENERIC.ToString().ToPascalCase(),
         orig.Material.MaterialType.ToString());
-      Assert.Equal("kris", orig.Name);
-      Assert.Equal(99, orig.Pool);
-      Assert.Equal(BasicOffset.TopLeft, orig.BasicOffset);
+      Assert.Equal("kris", orig.ApiSection.Name);
+      Assert.Equal(99, orig.ApiSection.Pool);
+      Assert.Equal(BasicOffset.TopLeft, orig.ApiSection.BasicOffset);
       Assert.Equal(new Length(1, LengthUnit.Centimeter), orig.AdditionalOffsetY);
       Assert.Equal(new Length(2, LengthUnit.Centimeter), orig.AdditionalOffsetZ);
     }

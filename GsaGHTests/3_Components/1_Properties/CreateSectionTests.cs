@@ -33,9 +33,9 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysComponent comp = ComponentMother(profile);
 
       var output = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(profile, output.Value.Profile);
+      Assert.Equal(profile, output.Value.ApiSection.Profile);
       Assert.Equal(MatType.Timber, output.Value.Material.MaterialType);
-      Assert.Equal(BasicOffset.Centroid, output.Value.BasicOffset);
+      Assert.Equal(BasicOffset.Centroid, output.Value.ApiSection.BasicOffset);
     }
   }
 }
