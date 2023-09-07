@@ -77,12 +77,6 @@ namespace GsaGH.Components {
                 this.AddRuntimeWarning(
                   "List must be of type Element or Member to apply to beam loading");
               }
-
-              if (value.Value.EntityType == EntityType.Member) {
-                this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-              }
-
               break;
             }
           case GsaElement2dGoo value: {
@@ -92,23 +86,17 @@ namespace GsaGH.Components {
             }
           case GsaMember1dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.MemberChildElements;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              gravityLoad.ReferenceType = ReferenceType.Member;
               break;
             }
           case GsaMember2dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.MemberChildElements;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              gravityLoad.ReferenceType = ReferenceType.Member;
               break;
             }
           case GsaMember3dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.MemberChildElements;
-              this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              gravityLoad.ReferenceType = ReferenceType.Member;
               break;
             }
           case GsaMaterialGoo value: {

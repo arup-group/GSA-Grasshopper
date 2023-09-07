@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -62,6 +63,12 @@ namespace GsaGH.Parameters {
       ConcurrentBag<GsaMember3dGoo> m3d) _members;
 
     public GsaList() { }
+    internal GsaList(string name, string definition, GsaAPI.EntityType type) {
+      EntityType = GetEntityFromAPI(type);
+      Id = 0;
+      Name = string.IsNullOrEmpty(name) ? $"{type} list" : name;
+      Definition = definition;
+    }
 
     internal GsaList(int id, EntityList list, GsaModel model) {
       EntityType = GetEntityFromAPI(list.Type);
@@ -141,6 +148,25 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
+    }
+
+    public static string CreateListDefinition(List<int> ids) {
+      return ids.ToRanges().StringifyRange();
+    }
+
+    public List<int> ExpandListDefinition() {
+      if (_model != null) {
+        return _model.Model.ExpandList(GetApiList()).ToList();
+      }
+
+      var m = new Model();
+      EntityList list = GetApiList();
+      list.Type = GsaAPI.EntityType.Undefined;
+      if (string.IsNullOrEmpty(list.Name)) {
+        list.Name = "name";
+      }
+
+      return m.ExpandList(list).ToList();
     }
 
     public override string ToString() {
@@ -465,7 +491,11 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          var tempApiList = new GsaAPI.EntityList() { Type = GsaAPI.EntityType.Case, Name = Name, Definition = Definition };
+          var tempApiList = new GsaAPI.EntityList() {
+            Type = GsaAPI.EntityType.Case,
+            Name = Name,
+            Definition = Definition
+          };
           _cases = _model.Model.ExpandList(tempApiList).ToList();
           break;
 
