@@ -26,7 +26,13 @@ namespace GsaGH.Parameters {
 
     protected override GsaSectionModifierGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaSectionGoo)) {
-        return new GsaSectionModifierGoo(((GsaSectionGoo)data).Value.Modifier);
+        GsaSection section = ((GsaSectionGoo)data).Value;
+        var modifier = new GsaSectionModifier();
+        if (section.Modifier != null) {
+          modifier = section.Modifier;
+        }
+
+        return new GsaSectionModifierGoo(modifier);
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to SectionModifier");

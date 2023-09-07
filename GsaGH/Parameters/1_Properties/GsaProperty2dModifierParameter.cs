@@ -28,8 +28,12 @@ namespace GsaGH.Parameters {
 
     protected override GsaProperty2dModifierGoo PreferredCast(object data) {
       if (data is GsaProperty2dGoo goo) {
-        Prop2DModifier apiModifier = goo.Value.ApiProp2d.PropertyModifier;
-        var modifier = new GsaProperty2dModifier(apiModifier);
+        GsaProperty2d prop = goo.Value;
+        var modifier = new GsaProperty2dModifier();
+        if (prop.ApiProp2d != null) {
+          modifier = new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier);
+        }
+        
         return new GsaProperty2dModifierGoo(modifier);
       } else if (data is GsaProperty2dModifier modifier) {
         return new GsaProperty2dModifierGoo(modifier);
