@@ -23,8 +23,9 @@ namespace GsaGH.Helpers.GH {
         (current, word) => current + word[0].ToString().ToUpper() + word.Substring(1));
     }
 
-    public static string ToSentenceCase(this string str) {
-      return Regex.Replace(str, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
+    public static string ToSentenceCase(this string value) {
+      value = Regex.Replace(value, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
+      return value.Replace("_", " ");
     }
   }
 }
