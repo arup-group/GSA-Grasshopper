@@ -248,7 +248,7 @@ namespace GsaGH.Helpers.GH {
         RhinoMath.DefaultAngleTolerance, 0);
 
       List<GsaNode> outNodes = null;
-      if (nodes != null && nodes.Count > 0) {
+      if (!nodes.IsNullOrEmpty()) {
         Member mem2d = model.Members()[elem2dgoo[0].Value.ApiElements[0].ParentMember.Member];
         List<int> topoInts = Topology.Topology_detangler(mem2d.Topology).Item4;
         int add = points?.Count ?? 0;
