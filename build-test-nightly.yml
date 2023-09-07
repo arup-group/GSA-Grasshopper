@@ -13,6 +13,7 @@ variables:
 
 pool: 'rhino-compute'
 
+steps:
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
     aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
@@ -147,7 +148,6 @@ pool: 'rhino-compute'
   displayName: Publish Yak Package to Azure
   continueOnError: false
 
-steps:
 - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
   displayName: 'Delete orphan .ghlink files'
   condition: always()
