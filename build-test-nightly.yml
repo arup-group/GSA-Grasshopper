@@ -141,6 +141,7 @@ steps:
     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
     ..\yak build --platform win
+    New-Item -ItemType Directory -Path $(System.DefaultWorkingDirectory)\results\yak
     Copy-Item $yakCurrentVersName $(System.DefaultWorkingDirectory)\results\yak\$yakCurrentVersName
     Copy-Item $yakRh7Name $(System.DefaultWorkingDirectory)\results\yak\$yakRh7Name
   displayName: Package yak
