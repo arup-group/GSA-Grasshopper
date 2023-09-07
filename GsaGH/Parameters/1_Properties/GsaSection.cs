@@ -79,6 +79,10 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string pb = Id > 0 ? $"PB{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pb} (referenced)" : string.Empty; ;
+      }
+
       string prof = ApiSection.Profile.Replace("%", " ");
       string mat = Material != null ? MaterialType 
         : ApiSection.MaterialType.ToString().ToPascalCase();

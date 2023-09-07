@@ -63,6 +63,10 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pv} (referenced)" : string.Empty; ;
+      }
+
       string mat = Material != null ? MaterialType
         : ApiProp3d.MaterialType.ToString().ToPascalCase();
       return string.Join(" ", pv, mat).Trim();

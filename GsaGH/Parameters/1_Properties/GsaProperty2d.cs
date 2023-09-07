@@ -111,6 +111,10 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string pa = (Id > 0) ? "PA" + Id : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pa} (referenced)" : string.Empty; ;
+      }
+
       string type = Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == ApiProp2d.Type).Key;
       string desc = ApiProp2d.Description.Replace("(", string.Empty).Replace(")", string.Empty);
       if (ApiProp2d.Type != Property2D_Type.LOAD) {
