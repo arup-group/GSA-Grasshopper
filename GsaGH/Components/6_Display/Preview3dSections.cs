@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -9,16 +8,13 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi.EnumMappings;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Newtonsoft.Json.Linq;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -29,10 +25,8 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Preview3dSections;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Mesh _analysisMesh;
-    private IEnumerable<Line> _analysisLines;
-    private Mesh _designMesh;
-    private IEnumerable<Line> _designLines;
+    private GsaSection3dPreview _analysisSection3dPreview;
+    private GsaSection3dPreview _designSection3dPreview;
 
     public Preview3dSections() : base("Preview 3D Sections", "Preview3d",
       "Show the 3D cross-section of 1D/2D GSA Elements and Members in a GSA model.",
@@ -74,10 +68,10 @@ namespace GsaGH.Components {
       pManager.HideParameter(1);
       pManager.AddMeshParameter("DesignLayer Mesh", "DM", "Design layer 3D Section Mesh",
         GH_ParamAccess.item);
-      pManager.HideParameter(0);
+      pManager.HideParameter(2);
       pManager.AddLineParameter("DesignLayer Outlines", "DLs", "The Design layer 3D Sections' outlines",
         GH_ParamAccess.list);
-      pManager.HideParameter(1);
+      pManager.HideParameter(3);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -166,13 +160,11 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        model.Model = Assembler.AssembleForPreview(
+        GsaAPI.Model previewModel = Assembler.AssembleForPreview(
           model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
 
-        _analysisMesh = null;
-        _analysisLines = null;
-        _designMesh = null;
-        _designLines = null;
+        _analysisSection3dPreview = null;
+        _designSection3dPreview = null;
 
         var steps = new List<int> {
         0, 1,
@@ -180,59 +172,63 @@ namespace GsaGH.Components {
         Parallel.ForEach(steps, i => {
           switch (i) {
             case 0:
-              if (model.AnalysisLayerPreview == null) {
+              if (previewModel.Elements().Count == 0) {
                 break;
               }
 
-              _analysisMesh = model.AnalysisLayerPreview.Mesh;
-              _analysisLines = model.AnalysisLayerPreview.Outlines;
+              _analysisSection3dPreview =
+                new GsaSection3dPreview(previewModel, model.ModelUnit, Layer.Analysis);
               break;
 
             case 1:
-              if (model.DesignLayerPreview == null) {
+              if (previewModel.Members().Count == 0) {
                 break;
               }
 
-              _designMesh = model.DesignLayerPreview.Mesh;
-              _designLines = model.DesignLayerPreview.Outlines;
+              _designSection3dPreview =
+                new GsaSection3dPreview(previewModel, model.ModelUnit, Layer.Design);
               break;
           }
         });
 
-        da.SetData(0, _analysisMesh);
-        da.SetDataList(1, _analysisLines);
-        da.SetData(2, _designMesh);
-        da.SetDataList(3, _designLines);
+        if (_analysisSection3dPreview != null) {
+          da.SetData(0, _analysisSection3dPreview.Mesh);
+          da.SetDataList(1, _analysisSection3dPreview.Outlines);
+        }
+
+        if (_designSection3dPreview != null) {
+          da.SetData(2, _designSection3dPreview.Mesh);
+          da.SetDataList(3, _designSection3dPreview.Outlines);
+        }
       }
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
-      if (_analysisMesh != null) {
-        args.Display.DrawMeshFalseColors(_analysisMesh);
+      if (_analysisSection3dPreview != null) {
+        args.Display.DrawMeshFalseColors(_analysisSection3dPreview.Mesh);
       }
 
-      if (_designMesh != null) {
-        args.Display.DrawMeshFalseColors(_designMesh);
+      if (_designSection3dPreview != null) {
+        args.Display.DrawMeshFalseColors(_designSection3dPreview.Mesh);
       }
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
-
-      if (_analysisLines != null) {
+      if (_analysisSection3dPreview != null) {
         if (Attributes.Selected) {
-          args.Display.DrawLines(_analysisLines, Colours.Element1dSelected,
+          args.Display.DrawLines(_analysisSection3dPreview.Outlines, Colours.Element1dSelected,
             2);
         } else {
-          args.Display.DrawLines(_analysisLines, Colours.Element1d, 1);
+          args.Display.DrawLines(_analysisSection3dPreview.Outlines, Colours.Element1d, 1);
         }
       }
 
-      if (_designLines != null) {
+      if (_designSection3dPreview != null) {
         if (Attributes.Selected) {
-          args.Display.DrawLines(_designLines, Colours.Member2dEdgeSelected,
+          args.Display.DrawLines(_designSection3dPreview.Outlines, Colours.Member2dEdgeSelected,
             2);
         } else {
-          args.Display.DrawLines(_designLines, Colours.Member2dEdge, 1);
+          args.Display.DrawLines(_designSection3dPreview.Outlines, Colours.Member2dEdge, 1);
         }
       }
     }

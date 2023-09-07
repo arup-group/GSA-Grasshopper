@@ -202,7 +202,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Section3dPreview != null) {
-        dup.Section3dPreview = Section3dPreview;
+        dup.Section3dPreview = Section3dPreview.Duplicate();
       }
 
       return dup;
@@ -221,7 +221,7 @@ namespace GsaGH.Parameters {
       xmorph.Morph(xLn);
       elem.Line = xLn;
       if (Section3dPreview != null) {
-        elem.Section3dPreview = Section3dPreview.Morph(xmorph);
+        elem.Section3dPreview.Morph(xmorph);
       }
 
       return elem;
@@ -244,7 +244,7 @@ namespace GsaGH.Parameters {
       elem.Line = xLn;
 
       if (Section3dPreview != null) {
-        elem.Section3dPreview = Section3dPreview.Transform(xform);
+        elem.Section3dPreview.Transform(xform);
       }
       
       return elem;
