@@ -237,10 +237,9 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Types.First()).Key
-        + " ";
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Types.First()).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", type, info).Trim().Replace("  ", " ");
     }
 
     public GsaElement2d Transform(Transform xform) {
@@ -374,7 +373,7 @@ namespace GsaGH.Parameters {
     }
 
     internal void UpdatePreview() {
-      if (Prop2ds != null && !Prop2ds[0].IsReferencedById) {
+      if (!Prop2ds.IsNullOrEmpty() && !Prop2ds[0].IsReferencedById) {
         Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;

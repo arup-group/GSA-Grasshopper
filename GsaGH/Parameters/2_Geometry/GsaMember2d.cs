@@ -343,25 +343,23 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string incl = string.Empty;
-      if (_inclCrvs != null) {
-        if (_inclCrvs.Count > 0) {
-          incl = " Incl.Crv:" + _inclCrvs.Count;
-        }
+      if (!_inclCrvs.IsNullOrEmpty()) {
+        incl = "Incl.Crv:" + _inclCrvs.Count;
       }
 
       if (InclusionPoints != null) {
-        if (InclusionPoints != null && InclusionPoints.Count > 0) {
-          incl += " &";
+        if (!_inclCrvs.IsNullOrEmpty()) {
+          incl += " & ";
         }
 
         if (InclusionPoints.Count > 0) {
-          incl += " Incl.Pt:" + InclusionPoints.Count;
+          incl += "Incl.Pt:" + InclusionPoints.Count;
         }
       }
 
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
-      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      return string.Join(" ", id, type, incl).Trim().Replace("  ", " ");
     }
 
     public GsaMember2d Transform(Transform xform) {

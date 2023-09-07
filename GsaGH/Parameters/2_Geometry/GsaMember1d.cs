@@ -272,10 +272,11 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
-      string pb = Section.Id > 0 ? "PB" + Section.Id : Section.ApiSection.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string pb = Section.Id > 0 ? $"PB{Section.Id}"
+        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      return string.Join(" ", id, type, pb).Trim().Replace("  ", " ");
     }
 
     public GsaMember1d Transform(Transform xform) {

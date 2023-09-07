@@ -219,7 +219,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (!(NgonMesh.Ngons.Count > 0)) {
+      if (NgonMesh == null || !NgonMesh.IsValid || NgonMesh.Ngons.Count == 0) {
         return "Null";
       }
 
@@ -227,7 +227,7 @@ namespace GsaGH.Parameters {
        .Key).ToList();
       string type = string.Join("/", types.Distinct());
       string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", type, info).Trim().Replace("  ", " ");
     }
 
     public GsaElement3d Transform(Transform xform) {
