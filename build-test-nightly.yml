@@ -14,9 +14,6 @@ variables:
 pool: 'rhino-compute'
 
 steps:
-- powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
-  displayName: 'Delete orphan .ghlink files'
-
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
     aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
@@ -59,11 +56,6 @@ steps:
   displayName: 'Register GSA COM'
   failOnStderr: false
 
-- powershell: |
-    Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{9E3AC20D-5051-423C-BC98-D0F5DCAC55EF}"  
-  displayName: 'List GSA Registry Fields'
-  failOnStderr: false
-
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -88,18 +80,6 @@ steps:
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.0\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
   displayName: dotnet tests
   failOnStderr: true
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
 
 - powershell: |
     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) { 
@@ -129,49 +109,16 @@ steps:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
-  
+
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   artifact: GsaGHTestsCoverage
-  displayName: Publish GsaGHTest to Azure
+  displayName: Publish GsaGHTest xml to Azure
   continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
   artifact: IntegrationTestsCoverage
-  displayName: Publish IntegrationTest to Azure
+  displayName: Publish IntegrationTest xml to Azure
   continueOnError: true
-
-- task: PowerShell@2
-  displayName: Check for existing tags
-  inputs:
-    targetType: 'inline'
-    script: |
-        $versionInfo = $(Get-Item .\GsaGH\bin\x64\Release\net48\GsaGH.dll).VersionInfo
-        echo $versionInfo
-        $fullVersion = [array]${versionInfo}.FileVersion.split('.')
-        $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
-        $majorVersion = [string]$fullVersion[0]
-        $minorVersion = [string]$fullVersion[1]
-        $spVersion = [string]$fullVersion[2]
-        $buildNumber = [string]$fullVersion[3]
-
-        $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
-        $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
-
-        $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion + "-beta"
-        $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
-        $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
-        $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
-        
-        Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
-        git rev-parse $dotSeparatedTag
-        if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}
-        if($lastExitCode -eq 0){
-          $tagExists = 'true'
-          echo $tagExists
-        }
-    errorActionPreference: 'continue'
-    workingDirectory: '$(System.DefaultWorkingDirectory)'
-    ignoreLASTEXITCODE: true
 
 - powershell: |
     cd GsaGH\bin\x64\Release
@@ -194,41 +141,19 @@ steps:
     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
     ..\yak build --platform win
+    New-Item -ItemType Directory -Path $(System.DefaultWorkingDirectory)\results\yak
+    Copy-Item $yakCurrentVersName $(System.DefaultWorkingDirectory)\results\yak\$yakCurrentVersName
+    Copy-Item $yakRh7Name $(System.DefaultWorkingDirectory)\results\yak\$yakRh7Name
   displayName: Package yak
 
-- powershell: |
-    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
-    Compress-Archive -Path .\Output -DestinationPath .\results\Docs.zip -Force
-  displayName: Generate docs site
-  failOnStderr: true
+- publish: $(System.DefaultWorkingDirectory)\results\yak\
+  artifact: Yak Package
+  displayName: Publish Yak Package to Azure
+  continueOnError: false
 
-- task: GitHubRelease@1
-  inputs:
-    gitHubConnection: 'github.com_MJCramp'
-    repositoryName: 'arup-group/GSA-Grasshopper'
-    action: 'edit'
-    target: '$(Build.SourceVersion)'
-    tag: '$(dotSeparatedTag)'
-    title: 'GsaGH Nightly version $(dotSeparatedTag)'
-    releaseNotesSource: 'inline'
-    releaseNotesInline: |
-      Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
-    assets: |
-      $(System.DefaultWorkingDirectory)/**/*.yak
-      $(System.DefaultWorkingDirectory)/**/*.nupkg
-      $(System.DefaultWorkingDirectory)/**/*.snupkg
-      $(System.DefaultWorkingDirectory)/**/Docs.zip
-    assetUploadMode: 'replace'
-    isDraft: true
-    isPreRelease: true
-    addChangeLog: false
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), ne(variables.TAG_EXISTS, 'true'))
-  displayName: 'Publishing assets to Github'
-
-- powershell: |
-    wmic process where "name='DocsGeneration.exe'" delete
+- powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
+  displayName: 'Delete orphan .ghlink files'
   condition: always()
-  displayName: 'Kill orphin DocsGeneration process'
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
