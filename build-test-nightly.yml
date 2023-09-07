@@ -109,7 +109,7 @@ steps:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
-    
+
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   artifact: GsaGHTestsCoverage
   displayName: Publish GsaGHTest xml to Azure
