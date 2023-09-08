@@ -47,7 +47,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(Nodes.AddNode(ref apiNodes, node.Value.GetApiNodeToUnit(unit)));
       }
 
-      copyList._definition = GsaList.CreateListDefinition(ids);
+      copyList.Definition = GsaList.CreateListDefinition(ids);
 
       AddList(copyList, ref apiLists);
     }
@@ -61,7 +61,7 @@ namespace GsaGH.Helpers.Export {
       if (list.EntityType == Parameters.Enums.EntityType.Member) {
         AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
         string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
-        list._name = $"Children of '{name}'";
+        list.Name = $"Children of '{name}'";
         list.EntityType = Parameters.Enums.EntityType.Element;
       }
 
@@ -101,7 +101,7 @@ namespace GsaGH.Helpers.Export {
 
         case Parameters.Enums.EntityType.Case:
           copyList = list.Duplicate();
-          list._definition += GsaList.CreateListDefinition(list._cases);
+          list.Definition += GsaList.CreateListDefinition(list._cases);
           AddList(list, ref model.Lists);
           break;
       }
@@ -165,7 +165,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition = string.Join(" ", ids);
+      copyList.Definition = string.Join(" ", ids);
       return copyList;
     }
 
@@ -292,7 +292,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      copyList._definition += " " + string.Join(" ", ids);
+      copyList.Definition += " " + string.Join(" ", ids);
 
       AddList(copyList, ref model.Lists);
     }
@@ -354,7 +354,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition += " " + string.Join(" ", ids);
+      copyList.Definition += " " + string.Join(" ", ids);
 
       AddList(copyList, ref apiLists);
     }
@@ -362,12 +362,12 @@ namespace GsaGH.Helpers.Export {
     private static void AddList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists) {
       if (list.Id > 0) {
         if (list.Name == null || list.Name.Length == 0) {
-          list._name = list.EntityType.ToString() + " List [" + list.Id + "]";
+          list.Name = list.EntityType.ToString() + " List [" + list.Id + "]";
         }
         apiLists.SetValue(list.Id, list.Guid, list.GetApiList());
       } else {
         if (list.Name == null || list.Name.Length == 0) {
-          list._name = list.EntityType.ToString() + " List [" + (apiLists.Count + 1) + "]";
+          list.Name = list.EntityType.ToString() + " List [" + (apiLists.Count + 1) + "]";
         }
         apiLists.AddValue(list.Guid, list.GetApiList());
       }
