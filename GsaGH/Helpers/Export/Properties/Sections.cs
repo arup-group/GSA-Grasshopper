@@ -40,7 +40,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (section.Modifier != null && section.Modifier.IsModified) {
-        apiProperties.SecionModifiers.SetValue(outId, section.Modifier._sectionModifier);
+        apiProperties.SecionModifiers.SetValue(outId, section.Modifier.ApiSectionModifier);
       }
 
       return outId;
