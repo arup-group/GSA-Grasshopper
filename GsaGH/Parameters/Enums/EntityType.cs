@@ -1,4 +1,4 @@
-﻿namespace GsaGH.Parameters {
+﻿namespace GsaGH.Parameters.Enums {
   public enum EntityType {
     Undefined,
     Node,
