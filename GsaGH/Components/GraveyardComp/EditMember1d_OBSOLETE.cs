@@ -301,7 +301,7 @@ namespace GsaGH.Components {
       if (da.GetData(14, ref ghTyp)) {
         var fls = new GsaBucklingFactors();
         if (ghTyp.Value is GsaBucklingFactorsGoo flsGoo) {
-          fls = flsGoo.Value.Duplicate();
+          fls = flsGoo.Value;
           mem.ApiMember.MomentAmplificationFactorStrongAxis
             = fls.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;

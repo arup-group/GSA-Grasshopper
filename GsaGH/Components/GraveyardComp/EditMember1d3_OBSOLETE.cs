@@ -310,7 +310,7 @@ namespace GsaGH.Components.GraveyardComp {
       if (da.GetData(14, ref ghTyp)) {
         var bucklingLengthFactors = new GsaBucklingFactors();
         if (ghTyp.Value is GsaBucklingFactorsGoo blfGoo) {
-          bucklingLengthFactors = blfGoo.Value.Duplicate();
+          bucklingLengthFactors = blfGoo.Value;
           mem.ApiMember.MomentAmplificationFactorStrongAxis 
             = bucklingLengthFactors.MomentAmplificationFactorStrongAxis;
           mem.ApiMember.MomentAmplificationFactorWeakAxis 

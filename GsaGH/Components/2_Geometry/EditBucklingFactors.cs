@@ -53,7 +53,7 @@ namespace GsaGH.Components {
 
       GsaBucklingFactorsGoo bucklingFactorsGoo = null;
       if (da.GetData(0, ref bucklingFactorsGoo)) {
-        fls = bucklingFactorsGoo.Value.Duplicate();
+        fls = new GsaBucklingFactors(bucklingFactorsGoo.Value);
       }
 
       double? y = null;

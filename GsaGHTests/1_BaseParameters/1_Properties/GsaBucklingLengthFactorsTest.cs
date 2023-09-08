@@ -93,7 +93,7 @@ namespace GsaGHTests.Parameters {
 
       var original = new GsaBucklingFactors(member);
 
-      GsaBucklingFactors duplicate = original.Duplicate();
+      var duplicate = new GsaBucklingFactors(original);
 
       Duplicates.AreEqual(original, duplicate);
 
