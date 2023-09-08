@@ -154,7 +154,7 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaList list in lists) {
         switch (list.EntityType) {
-          case Parameters.EntityType.Element:
+          case Parameters.Enums.EntityType.Element:
             if (list._elements == (null, null, null)) {
               continue;
             }
@@ -165,7 +165,7 @@ namespace GsaGH.Helpers.Export {
               list._elements.e3d.Select(x => x.Value).ToList());
             break;
 
-          case Parameters.EntityType.Member:
+          case Parameters.Enums.EntityType.Member:
             if (list._members == (null, null, null)) {
               continue;
             }

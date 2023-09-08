@@ -6,6 +6,7 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
+using GsaGH.Parameters.Enums;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {

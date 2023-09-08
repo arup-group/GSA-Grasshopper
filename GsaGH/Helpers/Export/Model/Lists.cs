@@ -30,7 +30,7 @@ namespace GsaGH.Helpers.Export {
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null
-      && list.EntityType == Parameters.EntityType.Node)) {
+      && list.EntityType == Parameters.Enums.EntityType.Node)) {
         AddNodeList(list, ref apiLists, ref apiNodes, modelUnit);
       }
     }
@@ -53,16 +53,16 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static string GetElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
-      if (list.EntityType == Parameters.EntityType.Element 
+      if (list.EntityType == Parameters.Enums.EntityType.Element 
         && model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
         return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
       }
 
-      if (list.EntityType == Parameters.EntityType.Member) {
+      if (list.EntityType == Parameters.Enums.EntityType.Member) {
         AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
         string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
         list._name = $"Children of '{name}'";
-        list.EntityType = Parameters.EntityType.Element;
+        list.EntityType = Parameters.Enums.EntityType.Element;
       }
 
       GsaList copyList = AddPropertiesList(list, model.Properties, owner);
@@ -89,17 +89,17 @@ namespace GsaGH.Helpers.Export {
       }
       GsaList copyList;
       switch (list.EntityType) {
-        case Parameters.EntityType.Element:
+        case Parameters.Enums.EntityType.Element:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddElementList(copyList, ref model, owner);
           break;
 
-        case Parameters.EntityType.Member:
+        case Parameters.Enums.EntityType.Member:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddMemberList(copyList, ref model.Lists, model.Members, owner);
           break;
 
-        case Parameters.EntityType.Case:
+        case Parameters.Enums.EntityType.Case:
           copyList = list.Duplicate();
           list._definition += GsaList.CreateListDefinition(list._cases);
           AddList(list, ref model.Lists);

@@ -154,8 +154,8 @@ namespace GsaGH.Helpers.Export {
       if (grdPlnSrf._referenceType != ReferenceType.None) {
         if (grdPlnSrf._referenceType == ReferenceType.List) {
           if (grdPlnSrf._refList == null
-            || grdPlnSrf._refList.EntityType != Parameters.EntityType.Element
-            || grdPlnSrf._refList.EntityType != Parameters.EntityType.Member) {
+            || grdPlnSrf._refList.EntityType != Parameters.Enums.EntityType.Element
+            || grdPlnSrf._refList.EntityType != Parameters.Enums.EntityType.Member) {
             owner.AddRuntimeWarning("Invalid List type for GridSurface " + grdPlnSrf.ToString()
               + Environment.NewLine + "Element list has not been set");
           }

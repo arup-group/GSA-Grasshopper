@@ -13,7 +13,7 @@ using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using EntityType = GsaGH.Parameters.EntityType;
+using EntityType = GsaGH.Parameters.Enums.EntityType;
 
 namespace GsaGH.Components {
   public class CreateGridSurface : GH_OasysDropDownComponent {
