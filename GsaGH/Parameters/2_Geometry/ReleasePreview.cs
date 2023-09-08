@@ -7,8 +7,8 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   public class ReleasePreview {
-    public List<Line> PreviewGreenLines = new List<Line>();
-    public List<Line> PreviewRedLines = new List<Line>();
+    public List<Line> PreviewGreenLines { get; set; } = new List<Line>();
+    public List<Line> PreviewRedLines { get; set; } = new List<Line>();
 
     public ReleasePreview() { }
 

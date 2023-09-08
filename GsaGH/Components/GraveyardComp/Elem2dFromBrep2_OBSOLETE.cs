@@ -171,7 +171,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           Curve crv = null;
           if (objectWrapper.Value is GsaMember1dGoo member1dGoo) {
-            member1ds.Add(member1dGoo.Value.Clone());
+            member1ds.Add(new GsaMember1d(member1dGoo.Value));
           } else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both)) {
             curves.Add(crv.DuplicateCurve());
           } else {

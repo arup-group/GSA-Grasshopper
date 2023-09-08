@@ -190,7 +190,7 @@ namespace GsaGH.Components {
 
       GsaMember1dGoo member1dGoo = null;
       if (da.GetData(0, ref member1dGoo)) {
-        mem = member1dGoo.Value.Clone();
+        mem = new GsaMember1d(member1dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -221,19 +221,19 @@ namespace GsaGH.Components {
       var ghgrp = new GH_Integer();
       if (da.GetData(4, ref ghgrp)) {
         if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both)) {
-          mem.Group = grp;
+          mem.ApiMember.Group = grp;
         }
       }
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          mem.Type = (MemberType)typeInt;
+          mem.ApiMember.Type = (MemberType)typeInt;
         }
 
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           if (Mappings.elementTypeMapping.ContainsKey(typestring)) {
-            mem.Type = Mappings.memberTypeMapping[typestring];
+            mem.ApiMember.Type = Mappings.memberTypeMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Element1D Type");
           }
@@ -243,10 +243,10 @@ namespace GsaGH.Components {
       ghString = new GH_String();
       if (da.GetData(6, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          mem.Type1D = (ElementType)typeInt;
+          mem.ApiMember.Type1D = (ElementType)typeInt;
         } else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           if (Mappings.elementTypeMapping.ContainsKey(typestring)) {
-            mem.Type1D = Mappings.elementTypeMapping[typestring];
+            mem.ApiMember.Type1D = Mappings.elementTypeMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Element1D Type");
           }
@@ -285,15 +285,13 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[12].Sources.Count > 0) {
-        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
+        mem.ApiMember.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
       }
 
       var ghbool = new GH_Boolean();
       if (da.GetData(13, ref ghbool)) {
         if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both)) {
-          if (mem.MeshWithOthers != mbool) {
-            mem.MeshWithOthers = mbool;
-          }
+          mem.ApiMember.IsIntersector = mbool;
         }
       }
 
@@ -314,21 +312,21 @@ namespace GsaGH.Components {
       var ghnm = new GH_String();
       if (da.GetData(15, ref ghnm)) {
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both)) {
-          mem.Name = name;
+          mem.ApiMember.Name = name;
         }
       }
 
       var ghcol = new GH_Colour();
       if (da.GetData(16, ref ghcol)) {
         if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both)) {
-          mem.Colour = col;
+          mem.ApiMember.Colour = col;
         }
       }
 
       var ghdum = new GH_Boolean();
       if (da.GetData(17, ref ghdum)) {
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both)) {
-          mem.IsDummy = dum;
+          mem.ApiMember.IsDummy = dum;
         }
       }
 
@@ -336,9 +334,11 @@ namespace GsaGH.Components {
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);
       da.SetData(3, new GsaSectionGoo(mem.Section));
-      da.SetData(4, mem.Group);
-      da.SetData(5, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(6, Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
+      da.SetData(4, mem.ApiMember.Group);
+      da.SetData(5, 
+        Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
+      da.SetData(6, 
+        Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
 
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
 
@@ -348,16 +348,16 @@ namespace GsaGH.Components {
       da.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
       da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-      da.SetData(12,
-        new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
-      da.SetData(13, mem.MeshWithOthers);
+      da.SetData(12, new GH_UnitNumber(new Length(mem.ApiMember.MeshSize, LengthUnit.Meter)
+        .ToUnit(_lengthUnit)));
+      da.SetData(13, mem.ApiMember.IsIntersector);
 
       da.SetData(14, new GsaBucklingFactorsGoo(new GsaBucklingFactors(mem)));
 
-      da.SetData(15, mem.Name);
+      da.SetData(15, mem.ApiMember.Name);
 
-      da.SetData(16, mem.Colour);
-      da.SetData(17, mem.IsDummy);
+      da.SetData(16, (Color)mem.ApiMember.Colour);
+      da.SetData(17, mem.ApiMember.IsDummy);
       da.SetData(18, mem.ApiMember.Topology);
     }
 

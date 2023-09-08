@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters {
     public void DuplicateTest(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
       var original = new GsaBool6(x, y, z, xx, yy, zz);
 
-      GsaBool6 duplicate = original.Duplicate();
+      var duplicate = new GsaBool6(original);
 
       _ = Duplicates.AreEqual(original, duplicate);
 

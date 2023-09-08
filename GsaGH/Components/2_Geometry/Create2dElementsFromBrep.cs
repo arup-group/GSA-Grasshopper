@@ -203,7 +203,7 @@ namespace GsaGH.Components {
               break;
             }
             case GsaMember1dGoo member1DGoo: {
-              mem1ds.Add(member1DGoo.Value.Clone());
+              mem1ds.Add(new GsaMember1d(member1DGoo.Value));
               break;
             }
             default: {

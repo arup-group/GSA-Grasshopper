@@ -25,8 +25,8 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Preview3dSections;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private GsaSection3dPreview _analysisSection3dPreview;
-    private GsaSection3dPreview _designSection3dPreview;
+    private Section3dPreview _analysisSection3dPreview;
+    private Section3dPreview _designSection3dPreview;
 
     public Preview3dSections() : base("Preview 3D Sections", "Preview3d",
       "Show the 3D cross-section of 1D/2D GSA Elements and Members in a GSA model.",
@@ -109,11 +109,11 @@ namespace GsaGH.Components {
               break;
 
             case GsaMember1dGoo member1dGoo:
-              mem1ds.Add(member1dGoo.Value.Duplicate());
+              mem1ds.Add(member1dGoo.Value);
               break;
 
             case GsaMember2dGoo member2dGoo:
-              mem2ds.Add(member2dGoo.Value.Duplicate());
+              mem2ds.Add(member2dGoo.Value);
               break;
 
             default: {
@@ -177,7 +177,7 @@ namespace GsaGH.Components {
               }
 
               _analysisSection3dPreview =
-                new GsaSection3dPreview(previewModel, model.ModelUnit, Layer.Analysis);
+                new Section3dPreview(previewModel, model.ModelUnit, Layer.Analysis);
               break;
 
             case 1:
@@ -186,7 +186,7 @@ namespace GsaGH.Components {
               }
 
               _designSection3dPreview =
-                new GsaSection3dPreview(previewModel, model.ModelUnit, Layer.Design);
+                new Section3dPreview(previewModel, model.ModelUnit, Layer.Design);
               break;
           }
         });

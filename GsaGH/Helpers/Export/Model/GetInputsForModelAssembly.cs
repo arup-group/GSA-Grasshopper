@@ -242,15 +242,15 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaMember1dGoo member1dGoo: {
-                inMem1ds.Add(member1dGoo.Value.Duplicate());
+                inMem1ds.Add(member1dGoo.Value);
                 break;
               }
             case GsaMember2dGoo member2dGoo: {
-                inMem2ds.Add(member2dGoo.Value.Duplicate());
+                inMem2ds.Add(member2dGoo.Value);
                 break;
               }
             case GsaMember3dGoo member3dGoo: {
-                inMem3ds.Add(member3dGoo.Value.Duplicate());
+                inMem3ds.Add(member3dGoo.Value);
                 break;
               }
             default: {

@@ -190,11 +190,11 @@ namespace GsaGH.Components {
             case GsaMember1dGoo m1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  CreateLocalAxis(m1d.Value.PolyCurve), CreateText(m1d, path), m1d.Value.Colour,
-                  size, path);
+                  CreateLocalAxis(m1d.Value.PolyCurve), 
+                  CreateText(m1d, path), (Color)m1d.Value.ApiMember.Colour, size, path);
               } else {
                 AddAnnotationDot(m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
-                CreateText(m1d, path), m1d.Value.Colour, size, path);
+                CreateText(m1d, path), (Color)m1d.Value.ApiMember.Colour, size, path);
               }
               break;
 
@@ -312,7 +312,7 @@ namespace GsaGH.Components {
 
         case GsaMember1dGoo m1d:
           id = m1d.Value.Id;
-          name = GeometryToString(m1d.Value.Name, m1d.Value.Type);
+          name = GeometryToString(m1d.Value.ApiMember.Name, m1d.Value.ApiMember.Type);
           prop = SectionToString(m1d.Value.Section);
           mat = MaterialToString(m1d.Value.Section.Material);
           break;

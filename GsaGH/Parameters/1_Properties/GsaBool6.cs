@@ -5,6 +5,8 @@ namespace GsaGH.Parameters {
   /// A Bool6 contains six booleans to set releases in <see cref="GsaElement1d"/>s and <see cref="GsaMember1d"/>s, or restraints in <see cref="GsaNode"/>s.
   /// </summary>
   public class GsaBool6 {
+    public Bool6 ApiBool6 { get; set; }
+
     public bool X {
       get => ApiBool6.X;
       set => ApiBool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
@@ -29,7 +31,6 @@ namespace GsaGH.Parameters {
       get => ApiBool6.ZZ;
       set => ApiBool6 = new Bool6(X, Y, Z, Xx, Yy, value);
     }
-    public Bool6 ApiBool6;
 
     public GsaBool6() {
       ApiBool6 = new Bool6(false, false, false, false, false, false);
@@ -38,17 +39,19 @@ namespace GsaGH.Parameters {
     public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
       ApiBool6 = new Bool6(x, y, z, xx, yy, zz);
     }
-
+    
+    public GsaBool6(GsaBool6 other) {
+      ApiBool6 = new Bool6(false, false, false, false, false, false);
+      X = other.X; 
+      Y = other.Y; 
+      Z = other.Z;
+      Xx = other.Xx;
+      Yy = other.Yy;
+      Zz = other.Zz; 
+    }
+    
     internal GsaBool6(Bool6 bool6) {
       ApiBool6 = bool6;
-    }
-
-    public GsaBool6 Duplicate() {
-      // create shallow copy
-      var dup = new GsaBool6 {
-        ApiBool6 = ApiBool6,
-      };
-      return dup;
     }
 
     public override string ToString() {

@@ -95,7 +95,7 @@ namespace GsaGH.Components {
 
       switch (ghTyp.Value) {
         case GsaMember1dGoo member1DGoo:
-          mem1d = member1DGoo.Value.Duplicate();
+          mem1d = member1DGoo.Value;
           if (mem1d == null) {
             this.AddRuntimeError("Input is null");
             return;

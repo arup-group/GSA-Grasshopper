@@ -125,7 +125,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
-    internal GsaSection3dPreview Section3dPreview { get; set; }
+    internal Section3dPreview Section3dPreview { get; set; }
     private Guid _guid = Guid.NewGuid();
 
     public GsaElement2d() { }
@@ -374,7 +374,7 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (!Prop2ds.IsNullOrEmpty() && !Prop2ds[0].IsReferencedById) {
-        Section3dPreview = new GsaSection3dPreview(this);
+        Section3dPreview = new Section3dPreview(this);
       } else {
         Section3dPreview = null;
       }

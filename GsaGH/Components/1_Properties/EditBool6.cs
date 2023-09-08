@@ -53,7 +53,7 @@ namespace GsaGH.Components {
       var myBool = new GsaBool6();
       GsaBool6Goo bool6Goo = null;
       if (da.GetData(0, ref bool6Goo)) {
-        myBool = bool6Goo.Value.Duplicate();
+        myBool = new GsaBool6(bool6Goo.Value);
       }
 
       if (myBool != null) {

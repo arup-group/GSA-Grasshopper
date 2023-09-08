@@ -193,13 +193,13 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref sectionGoo)) {
         mem.Section = sectionGoo.Value;
         if (Preview3dSection) {
-          mem.UpdatePreview();
+          mem.Section3dPreview = new Section3dPreview(mem);
         }
       }
 
       double meshSize = 0;
       if (da.GetData(2, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.ApiMember.MeshSize = meshSize;
       }
 
       da.SetData(0, new GsaMember1dGoo(mem));

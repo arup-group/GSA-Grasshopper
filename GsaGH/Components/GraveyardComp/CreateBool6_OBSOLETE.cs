@@ -153,7 +153,7 @@ namespace GsaGH.Components {
         Yy = _yy,
         Zz = _zz,
       };
-      da.SetData(0, new GsaBool6Goo(bool6.Duplicate()));
+      da.SetData(0, new GsaBool6Goo(bool6));
     }
   }
 }

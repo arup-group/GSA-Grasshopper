@@ -23,15 +23,15 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement1d {
-    public Element ApiElement;
+    public Element ApiElement { get; set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; set; } = Guid.NewGuid();
     public LineCurve Line { get; set; } = new LineCurve();
-    public GsaNode OrientationNode;
+    public GsaNode OrientationNode { get; set; }
     public ReleasePreview ReleasePreview = new ReleasePreview();
     public GsaSection Section { get; set; } = new GsaSection(0);
-    internal GsaLocalAxes LocalAxes;
-    internal GsaSection3dPreview Section3dPreview;
+    public GsaLocalAxes LocalAxes { get; set; }
+    public Section3dPreview Section3dPreview { get; set; }
 
     public GsaOffset Offset {
       get => GetOffSetFromApiElement();
@@ -67,6 +67,17 @@ namespace GsaGH.Parameters {
       UpdateReleasesPreview();
     }
 
+    public GsaElement1d(GsaElement1d other) {
+      Id = other.Id;
+      ApiElement = other.DuplicateApiObject();
+      LocalAxes = other.LocalAxes;
+      Line = (LineCurve)other.Line.DuplicateShallow();
+      LocalAxes = other.LocalAxes;
+      OrientationNode = other.OrientationNode;
+      Section = other.Section;
+      Section3dPreview = other.Section3dPreview;
+    }
+
     internal GsaElement1d(KeyValuePair<int, Element> element, IReadOnlyDictionary<int, Node> nodes,
       GsaSection section, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;
@@ -81,15 +92,6 @@ namespace GsaGH.Parameters {
         Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
       LocalAxes = new GsaLocalAxes(localAxes);
       Section = section;
-    }
-
-    public GsaElement1d(GsaElement1d other) {
-      Id = other.Id;
-      ApiElement = other.DuplicateApiObject();
-      LocalAxes = other.LocalAxes;
-      Line = (LineCurve)other.Line.DuplicateShallow();
-      Section = other.Section;
-      OrientationNode = other.OrientationNode;
     }
 
     public override string ToString() {

@@ -29,8 +29,8 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> apiNodes, 
       LengthUnit unit,
       ref Properties apiProperties) {
-      Member apiMember = member1d.GetAPI_MemberClone();
-      apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
+      Member apiMember = member1d.DuplicateApiObject();
+      apiMember.MeshSize = new Length(member1d.ApiMember.MeshSize, unit).Meters;
 
       string topo
         = CreateTopology(member1d.Topology, member1d.TopologyType, ref apiNodes, unit);

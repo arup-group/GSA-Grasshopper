@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Components;
+using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -62,9 +64,16 @@ namespace GsaGH.Helpers.Import {
                 return;
               }
 
-              GsaSection section = model.Properties.GetSection(item.Value);
+              GsaNode orientationNode = null;
+              if (model.ApiNodes.Keys.Contains(item.Value.OrientationNode)) {
+                orientationNode = new GsaNode(Nodes.Point3dFromNode(
+                  model.ApiNodes[item.Value.OrientationNode], model.ModelUnit));
+              }
+
               var mem1d = new GsaMember1d(
-                item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], section, model.ModelUnit);
+                item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], orientationNode, model.ModelUnit) {
+                Section = model.Properties.GetSection(item.Value)
+              };
               Member1ds.Add(new GsaMember1dGoo(mem1d));
               break;
 

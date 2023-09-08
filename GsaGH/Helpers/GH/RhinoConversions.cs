@@ -165,8 +165,7 @@ namespace GsaGH.Helpers.GH {
 
           case 2:
             var mem1d = new GsaMember1d(crv) {
-              ApiMember = inMem1ds[id - nCrvs - nElem1ds].GetAPI_MemberClone(),
-              MeshSize = inMem1ds[id - nCrvs - nElem1ds].MeshSize,
+              ApiMember = inMem1ds[id - nCrvs - nElem1ds].DuplicateApiObject(),
               Id = memid,
             };
             memSections.Add(memid++, inMem1ds[id - nCrvs - nElem1ds].Section);

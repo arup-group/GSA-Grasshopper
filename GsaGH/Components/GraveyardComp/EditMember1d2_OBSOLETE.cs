@@ -125,7 +125,7 @@ namespace GsaGH.Components {
 
       GsaMember1dGoo member1dGoo = null;
       if (da.GetData(0, ref member1dGoo)) {
-        mem = member1dGoo.Value.Clone();
+        mem = new GsaMember1d(member1dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -156,21 +156,21 @@ namespace GsaGH.Components {
       var ghGroup = new GH_Integer();
       if (da.GetData(4, ref ghGroup)) {
         if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both)) {
-          mem.Group = grp;
+          mem.ApiMember.Group = grp;
         }
       }
 
       var ghInteger = new GH_Integer();
       if (da.GetData(5, ref ghInteger)) {
         if (GH_Convert.ToInt32(ghInteger, out int type, GH_Conversion.Both)) {
-          mem.Type = (MemberType)type;
+          mem.ApiMember.Type = (MemberType)type;
         }
       }
 
       var integer = new GH_Integer();
       if (da.GetData(6, ref integer)) {
         if (GH_Convert.ToInt32(integer, out int type, GH_Conversion.Both)) {
-          mem.Type1D = (ElementType)type;
+          mem.ApiMember.Type1D = (ElementType)type;
         }
       }
 
@@ -206,11 +206,11 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[12].Sources.Count > 0) {
-        mem.MeshSize
+        mem.ApiMember.MeshSize
           = ((Length)Input.UnitNumber(this, da, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
         if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter) {
           this.AddRuntimeRemark("Mesh size input set in ["
-            + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
+            + string.Concat(mem.ApiMember.MeshSize.ToString().Where(char.IsLetter)) + "]. "
             + Environment.NewLine
             + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
@@ -219,30 +219,28 @@ namespace GsaGH.Components {
       var ghBoolean = new GH_Boolean();
       if (da.GetData(13, ref ghBoolean)) {
         if (GH_Convert.ToBoolean(ghBoolean, out bool mbool, GH_Conversion.Both)) {
-          if (mem.MeshWithOthers != mbool) {
-            mem.MeshWithOthers = mbool;
-          }
+          mem.ApiMember.IsIntersector = mbool;
         }
       }
 
       var ghName = new GH_String();
       if (da.GetData(14, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          mem.Name = name;
+          mem.ApiMember.Name = name;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(15, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          mem.Colour = col;
+          mem.ApiMember.Colour = col;
         }
       }
 
       var ghDummy = new GH_Boolean();
       if (da.GetData(16, ref ghDummy)) {
         if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both)) {
-          mem.IsDummy = dum;
+          mem.ApiMember.IsDummy = dum;
         }
       }
 
@@ -250,9 +248,9 @@ namespace GsaGH.Components {
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);
       da.SetData(3, new GsaSectionGoo(mem.Section));
-      da.SetData(4, mem.Group);
-      da.SetData(5, mem.Type);
-      da.SetData(6, mem.Type1D);
+      da.SetData(4, mem.ApiMember.Group);
+      da.SetData(5, mem.ApiMember.Type);
+      da.SetData(6, mem.ApiMember.Type1D);
 
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
 
@@ -262,15 +260,14 @@ namespace GsaGH.Components {
       da.SetData(10, mem.OrientationAngle);
       da.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-      da.SetData(12,
-        new GH_UnitNumber(
-          new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry)));
-      da.SetData(13, mem.MeshWithOthers);
+      da.SetData(12, new GH_UnitNumber(new Length(mem.ApiMember.MeshSize, LengthUnit.Meter)
+        .ToUnit(DefaultUnits.LengthUnitGeometry)));
+      da.SetData(13, mem.ApiMember.IsIntersector);
 
-      da.SetData(14, mem.Name);
+      da.SetData(14, mem.ApiMember.Name);
 
-      da.SetData(15, mem.Colour);
-      da.SetData(16, mem.IsDummy);
+      da.SetData(15, mem.ApiMember.Colour);
+      da.SetData(16, mem.ApiMember.IsDummy);
       da.SetData(17, mem.ApiMember.Topology);
     }
   }

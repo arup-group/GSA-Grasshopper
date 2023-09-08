@@ -87,11 +87,9 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.ApiElement.IsDummy) {
-        return;
+      if (!Value.ApiElement.IsDummy) {
+        Value.ReleasePreview.DrawViewportWires(args);
       }
-
-      Value.ReleasePreview.DrawViewportWires(args);
     }
 
     public override IGH_GeometricGoo Duplicate() {
@@ -111,10 +109,7 @@ namespace GsaGH.Parameters {
       xmorph.Morph(xLn);
       elem.Line = xLn;
       elem.UpdateReleasesPreview();
-      if (Value.Section3dPreview != null) {
-        elem.Section3dPreview = new GsaSection3dPreview(elem);
-      }
-
+      elem.Section3dPreview?.Morph(xmorph); 
       return new GsaElement1dGoo(elem);
     }
 
@@ -127,10 +122,7 @@ namespace GsaGH.Parameters {
       xLn.Transform(xform);
       elem.Line = xLn;
       elem.UpdateReleasesPreview();
-      if (Value.Section3dPreview != null) {
-        elem.Section3dPreview = new GsaSection3dPreview(elem);
-      }
-
+      elem.Section3dPreview?.Transform(xform);
       return new GsaElement1dGoo(elem);
     }
   }

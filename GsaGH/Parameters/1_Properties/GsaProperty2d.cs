@@ -20,16 +20,17 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-2d.html">2D Element Properties</see> to read more.</para>
   /// </summary>
   public class GsaProperty2d : Property {
-    public Prop2D ApiProp2d;
-    public Plane LocalAxis;
+    public Prop2D ApiProp2d { get; set; }
+    public Plane LocalAxis { get; set; }
 
     public Length AdditionalOffsetZ {
-      get => new Length(ApiProp2d.AdditionalOffsetZ, LengthUnit.Meter);
+      get => ApiProp2d == null ? Length.Zero 
+        : new Length(ApiProp2d.AdditionalOffsetZ, LengthUnit.Meter);
       set => ApiProp2d.AdditionalOffsetZ = value.As(LengthUnit.Meter);
     }
 
     public Length Thickness {
-      get => ConvertDescriptionToLength(ApiProp2d.Description);
+      get => ApiProp2d == null ? Length.Zero : ConvertDescriptionToLength(ApiProp2d.Description);
       set => ApiProp2d.Description = $"{value.Value}({Length.GetAbbreviation(value.Unit)})";
     }
 

@@ -199,7 +199,7 @@ namespace GsaGH.Components {
       }
 
       if (Preview3dSection || elem.Section3dPreview != null) {
-        elem.Section3dPreview = new GsaSection3dPreview(elem);
+        elem.Section3dPreview = new Section3dPreview(elem);
       } 
 
       da.SetData(0, new GsaElement1dGoo(elem));

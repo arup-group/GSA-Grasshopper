@@ -30,7 +30,7 @@ namespace GsaGH.Components {
     private double _maxValue = 1000;
     private double _minValue;
     private int _noDigits;
-    private GsaSection3dPreview _section3dPreview;
+    private Section3dPreview _section3dPreview;
     public PreviewDeformed3dSections() : base("Preview Deformed 3D Sections", "DeformedPreview3d",
       "Show the deformed 3D cross-section of 1D/2D GSA Elements and Members from a GSA Result.", 
       CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -86,7 +86,7 @@ namespace GsaGH.Components {
       GsaResult result = resultGoo.Value;
 
       string elementlist = Inputs.GetElementListNameForResults(this, da, 1, resultGoo.Value.Model);
-      _section3dPreview = new GsaSection3dPreview(result, elementlist, _defScale);
+      _section3dPreview = new Section3dPreview(result, elementlist, _defScale);
 
       da.SetData(0, _section3dPreview.Mesh);
       da.SetDataList(1, _section3dPreview.Outlines);

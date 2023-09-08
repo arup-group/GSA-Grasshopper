@@ -29,11 +29,11 @@ namespace GsaGH.Parameters {
     TwoDimensional
   }
 
-  public class GsaSection3dPreview {
+  public class Section3dPreview {
     public Mesh Mesh { get; set; }
     public IEnumerable<Line> Outlines { get; set; }
 
-    public GsaSection3dPreview(GsaElement1d elem) {
+    public Section3dPreview(GsaElement1d elem) {
       if (elem.ApiElement == null || !GsaSection.IsValidProfile(elem.Section.ApiSection.Profile)) {
         return;
       }
@@ -41,42 +41,43 @@ namespace GsaGH.Parameters {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
-    public GsaSection3dPreview(GsaElement2d elem) {
+    public Section3dPreview(GsaElement2d elem) {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.TwoDimensional);
     }
-    public GsaSection3dPreview(GsaMember1d mem) {
+    public Section3dPreview(GsaMember1d mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.OneDimensional);
     }
-    public GsaSection3dPreview(GsaMember2d mem) {
+    public Section3dPreview(GsaMember2d mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
     }
 
-    public GsaSection3dPreview(GsaResult res, string elementList, double scale) {
+    public Section3dPreview(GsaResult res, string elementList, double scale) {
       GraphicSpecification spec = ResultSpec(res, elementList, scale);
       CreateGraphics(res.Model.Model, spec);
     }
-    internal GsaSection3dPreview(GsaModel model, Layer layer) {
+    internal Section3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
       CreateGraphics(model.Model, spec);
       Scale(model.ModelUnit);
     }
 
-    internal GsaSection3dPreview(Model model, LengthUnit unit, Layer layer) {
+    internal Section3dPreview(Model model, LengthUnit unit, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
       CreateGraphics(model, spec);
       Scale(unit);
     }
-    private GsaSection3dPreview() { }
+    private Section3dPreview() { }
 
-    public GsaSection3dPreview Duplicate() {
-      return new GsaSection3dPreview() {
+    public Section3dPreview Duplicate() {
+      return new Section3dPreview() {
         Mesh = Mesh.DuplicateMesh(),
         Outlines = Outlines.ToList(),
       };
     }
+
     public void BakeGeometry(
       ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
       att ??= doc.CreateDefaultAttributes();
@@ -153,7 +154,7 @@ namespace GsaGH.Parameters {
           Nodes.NodeFromPoint(mem.Topology[i], unit));
         topo += $" {mem.TopologyType[i]}{id}";
       };
-      Member mem1d = mem.GetAPI_MemberClone();
+      Member mem1d = mem.DuplicateApiObject();
       mem1d.Topology = topo.Trim();
       mem1d.Property = model.AddSection(mem.Section.ApiSection);
       model.AddMember(mem1d);

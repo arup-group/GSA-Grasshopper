@@ -24,6 +24,22 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
+    public void DuplicateReferenceTest() {
+      var original = new GsaSection(4);
+      var duplicate = new GsaSection(original);
+      
+      Assert.Equal(4, duplicate.Id);
+      Assert.True(duplicate.IsReferencedById);
+    }
+
+    [Fact]
+    public void DuplicateReferenceTest2() {
+      var original = new GsaSection(4);
+      var duplicate = new GsaSection(original);
+      Duplicates.AreEqual(original, duplicate, true);
+    }
+
+    [Fact]
     public void TestCreateGsaSectionCat() {
       string profile = "CAT HE HE200.B";
       var section = new GsaSection(profile);

@@ -15,5 +15,21 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate, true);
     }
+
+    [Fact]
+    public void DuplicateReferenceTest() {
+      var original = new GsaProperty3d(4);
+      var duplicate = new GsaProperty3d(original);
+
+      Assert.Equal(4, duplicate.Id);
+      Assert.True(duplicate.IsReferencedById);
+    }
+
+    [Fact]
+    public void DuplicateReferenceTest2() {
+      var original = new GsaProperty3d(4);
+      var duplicate = new GsaProperty3d(original);
+      Duplicates.AreEqual(original, duplicate, true);
+    }
   }
 }

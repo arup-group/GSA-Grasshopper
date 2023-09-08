@@ -14,12 +14,12 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new SectionAlignment();
       comp.CreateAttributes();
 
-      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)), 0) {
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
         Section = new GsaSection("CAT HE HE300.B"),
       };
       var goo = new GsaMember1dGoo(member);
 
-      ComponentTestHelper.SetInput(comp, goo, 0);
+      ComponentTestHelper.SetInput(comp, goo);
 
       return comp;
     }

@@ -8,7 +8,7 @@ namespace GsaGH.Parameters {
     public bool IsReferencedById { get; set; } = false;
     public Guid Guid { get; set; } = Guid.NewGuid();
     public GsaMaterial Material { get; set; }
-    public virtual string MaterialType => 
-      Material == null ? string.Empty : Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key;
+    public virtual string MaterialType => Material == null ? string.Empty 
+      : Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key;
   }
 }
