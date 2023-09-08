@@ -126,7 +126,7 @@ namespace GsaGH.Components {
 
       GsaElement1dGoo element1dGoo = null;
       if (da.GetData(0, ref element1dGoo)) {
-        elem = element1dGoo.Value.Clone();
+        elem = new GsaElement1d(element1dGoo.Value);
       }
 
       int id = 0;
@@ -146,15 +146,15 @@ namespace GsaGH.Components {
 
       int group = 0;
       if (da.GetData(4, ref group)) {
-        elem.Group = group;
+        elem.ApiElement.Group = group;
       }
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          elem.Type = (ElementType)typeInt;
+          elem.ApiElement.Type = (ElementType)typeInt;
         } else {
-          elem.Type = Mappings.GetElementType(ghString.Value);
+          elem.ApiElement.Type = Mappings.GetElementType(ghString.Value);
         }
       }
 
@@ -185,39 +185,40 @@ namespace GsaGH.Components {
 
       string name = string.Empty;
       if (da.GetData(11, ref name)) {
-        elem.Name = name;
+        elem.ApiElement.Name = name;
       }
 
       Color colour = Color.Empty;
       if (da.GetData(12, ref colour)) {
-        elem.Colour = colour;
+        elem.ApiElement.Colour = colour;
       }
 
       bool dummy = false;
       if (da.GetData(13, ref dummy)) {
-        elem.IsDummy = dummy;
+        elem.ApiElement.IsDummy = dummy;
       }
 
       if (Preview3dSection || elem.Section3dPreview != null) {
-        elem.UpdatePreview();
+        elem.Section3dPreview = new GsaSection3dPreview(elem);
       } 
 
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
-      da.SetData(4, elem.Group);
-      da.SetData(5, Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+      da.SetData(4, elem.ApiElement.Group);
+      da.SetData(5, 
+        Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
       da.SetData(9, elem.OrientationAngle.Radians);
       da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
-      da.SetData(11, elem.Name);
-      da.SetData(12, elem.Colour);
-      da.SetData(13, elem.IsDummy);
+      da.SetData(11, elem.ApiElement.Name);
+      da.SetData(12, elem.ApiElement.Colour);
+      da.SetData(13, elem.ApiElement.IsDummy);
 
-      da.SetData(14, elem.ParentMember);
+      da.SetData(14, elem.ApiElement.ParentMember.Member);
 
       var topo = new DataTree<int>();
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));

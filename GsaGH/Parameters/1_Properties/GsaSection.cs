@@ -13,7 +13,7 @@ namespace GsaGH.Parameters {
   /// <para>Use the <see cref="Components.CreateProfile"/> component to create Catalogue and custom profiles.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-sect-lib.html">Sections</see> to read more.</para>
   /// </summary>
-  public class GsaSection : GsaProperty {
+  public class GsaSection : Property {
     public Section ApiSection;
     public GsaSectionModifier Modifier;
     public GsaSectionProperties SectionProperties 
@@ -86,12 +86,11 @@ namespace GsaGH.Parameters {
       string prof = ApiSection.Profile.Replace("%", " ");
       string mat = Material != null ? MaterialType 
         : ApiSection.MaterialType.ToString().ToPascalCase();
-      string mod = (Modifier != null && Modifier.IsModified) 
-        ? "modified" : string.Empty;
+      string mod = (Modifier != null && Modifier.IsModified) ? "modified" : string.Empty;
       return string.Join(" ", pb, prof, mat, mod).Trim().Replace("  ", " ");
     }
 
-    internal static bool ValidProfile(string profile) {
+    internal static bool IsValidProfile(string profile) {
       var test = new Section {
         Profile = profile,
       };

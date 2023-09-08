@@ -16,7 +16,7 @@ namespace GsaGH.Helpers.Export {
       LengthUnit unit,
       ref Properties apiProperties) {
       LineCurve line = element1d.Line;
-      Element apiElement = element1d.GetApiElementClone();
+      Element apiElement = element1d.ApiElement;
 
       var topo = new List<int> {
         Nodes.AddNode(ref apiNodes, line.PointAtStart, unit),

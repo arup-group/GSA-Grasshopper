@@ -3,7 +3,7 @@ using System.Linq;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
-  public abstract class GsaProperty {
+  public abstract class Property {
     public int Id { get; set; } = 0;
     public bool IsReferencedById { get; set; } = false;
     public Guid Guid { get; set; } = Guid.NewGuid();

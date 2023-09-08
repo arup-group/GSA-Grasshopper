@@ -62,7 +62,7 @@ namespace GsaGH.Components {
       string profile = string.Empty;
       da.GetData(0, ref profile);
 
-      if (GsaSection.ValidProfile(profile)) {
+      if (GsaSection.IsValidProfile(profile)) {
         section = new GsaSection(profile);
       } else {
         this.AddRuntimeError("Invalid profile syntax: " + profile);

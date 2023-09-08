@@ -122,7 +122,7 @@ namespace GsaGH.Parameters {
       set {
         _rel2 = value ?? new GsaBool6();
         CloneApiObject();
-        ApiMember.SetEndRelease(1, new EndRelease(_rel2._bool6));
+        ApiMember.SetEndRelease(1, new EndRelease(_rel2.ApiBool6));
         UpdateReleasesPreview();
       }
     }
@@ -131,7 +131,7 @@ namespace GsaGH.Parameters {
       set {
         _rel1 = value ?? new GsaBool6();
         CloneApiObject();
-        ApiMember.SetEndRelease(0, new EndRelease(_rel1._bool6));
+        ApiMember.SetEndRelease(0, new EndRelease(_rel1.ApiBool6));
         UpdateReleasesPreview();
       }
     }
@@ -358,7 +358,7 @@ namespace GsaGH.Parameters {
 
     internal void UpdatePreview() {
       if (Section.ApiSection.Profile != string.Empty 
-        && GsaSection.ValidProfile(Section.ApiSection.Profile)) {
+        && GsaSection.IsValidProfile(Section.ApiSection.Profile)) {
         Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;
@@ -368,14 +368,13 @@ namespace GsaGH.Parameters {
     }
 
     private void UpdateReleasesPreview() {
-      if (!((_rel1 != null) & (_rel2 != null))) {
-        return;
-      }
+      Bool6 s = ApiMember.GetEndRelease(0).Releases;
+      Bool6 e = ApiMember.GetEndRelease(1).Releases;
 
-      if (_rel1.X || _rel1.Y || _rel1.Z || _rel1.Xx || _rel1.Yy || _rel1.Zz || _rel2.X || _rel2.Y
-        || _rel2.Z || _rel2.Xx || _rel2.Yy || _rel2.Zz) {
+      if (s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
+        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ) {
         Tuple<List<Line>, List<Line>> previewCurves = Display.Preview1D(_crv,
-          ApiMember.OrientationAngle * Math.PI / 180.0, _rel1, _rel2);
+          ApiMember.OrientationAngle * Math.PI / 180.0, s, e);
         _previewGreenLines = previewCurves.Item1;
         _previewRedLines = previewCurves.Item2;
       } else {

@@ -38,7 +38,7 @@ namespace GsaGH.Parameters {
 
       GH_Convert.ToString(data, out string profile, GH_Conversion.Both);
 
-      if (!GsaSection.ValidProfile(profile)) {
+      if (!GsaSection.IsValidProfile(profile)) {
         this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section." +
           $"{Environment.NewLine}Invalid profile syntax: {profile}");
         return new GsaSectionGoo(null);

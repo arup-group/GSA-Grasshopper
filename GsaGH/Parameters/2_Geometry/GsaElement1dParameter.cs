@@ -46,7 +46,7 @@ namespace GsaGH.Parameters {
       att.ColorSource = ObjectColorSource.ColorFromObject;
       foreach (GsaElement1dGoo goo in m_data.AllData(true).Cast<GsaElement1dGoo>()) {
         ObjectAttributes objAtt = att.Duplicate();
-        objAtt.ObjectColor = goo.Value.Colour;
+        objAtt.ObjectColor = (Color)goo.Value.ApiElement.Colour;
         gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Line.Line), objAtt, doc);
         goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }

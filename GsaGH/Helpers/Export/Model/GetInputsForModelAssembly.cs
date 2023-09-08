@@ -84,31 +84,31 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaNodeGoo nodeGoo: {
-                inNodes.Add(nodeGoo.Value.Duplicate());
+                inNodes.Add(nodeGoo.Value);
                 break;
               }
             case GsaElement1dGoo element1dGoo: {
-                inElem1ds.Add(element1dGoo.Value.Duplicate());
+                inElem1ds.Add(element1dGoo.Value);
                 break;
               }
             case GsaElement2dGoo element2dGoo: {
-                inElem2ds.Add(element2dGoo.Value.Duplicate());
+                inElem2ds.Add(element2dGoo.Value);
                 break;
               }
             case GsaElement3dGoo element3dGoo: {
-                inElem3ds.Add(element3dGoo.Value.Duplicate());
+                inElem3ds.Add(element3dGoo.Value);
                 break;
               }
             case GsaMember1dGoo member1dGoo: {
-                inMem1ds.Add(member1dGoo.Value.Duplicate());
+                inMem1ds.Add(member1dGoo.Value);
                 break;
               }
             case GsaMember2dGoo member2dGoo: {
-                inMem2ds.Add(member2dGoo.Value.Duplicate());
+                inMem2ds.Add(member2dGoo.Value);
                 break;
               }
             case GsaMember3dGoo member3dGoo: {
-                inMem3ds.Add(member3dGoo.Value.Duplicate());
+                inMem3ds.Add(member3dGoo.Value);
                 break;
               }
             default: {
@@ -184,15 +184,15 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaLoadGoo loadGoo: {
-                inLoads.Add(loadGoo.Value.Duplicate());
+                inLoads.Add(loadGoo.Value);
                 break;
               }
             case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo: {
-                inGps.Add(gridPlaneSurfaceGoo.Value.Duplicate());
+                inGps.Add(gridPlaneSurfaceGoo.Value);
                 break;
               }
             case GsaLoadCaseGoo loadCaseGoo: {
-                inCases.Add(loadCaseGoo.Value.Duplicate());
+                inCases.Add(loadCaseGoo.Value);
                 break;
               }
             default: {

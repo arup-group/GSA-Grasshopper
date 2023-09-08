@@ -146,7 +146,7 @@ namespace GsaGH.Components {
       } else {
         string profile = string.Empty;
         ghTyp.CastTo(ref profile);
-        if (GsaSection.ValidProfile(profile)) {
+        if (GsaSection.IsValidProfile(profile)) {
           section = new GsaSection(profile);
         } else {
           this.AddRuntimeWarning("Invalid profile syntax: " + profile);

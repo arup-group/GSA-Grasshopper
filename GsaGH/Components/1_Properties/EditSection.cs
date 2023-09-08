@@ -148,7 +148,7 @@ namespace GsaGH.Components {
 
       string profile = string.Empty;
       if (da.GetData(2, ref profile)) {
-        if (GsaSection.ValidProfile(profile)) {
+        if (GsaSection.IsValidProfile(profile)) {
           section.ApiSection.Profile = profile;
         } else {
           this.AddRuntimeError("Invalid profile syntax: " + profile);

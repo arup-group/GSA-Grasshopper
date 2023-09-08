@@ -43,7 +43,7 @@ namespace GsaGH.Components {
       }
 
       if (GH_Convert.ToString(ghProfile, out string profile, GH_Conversion.Both)) {
-        if (GsaSection.ValidProfile(profile)) {
+        if (GsaSection.IsValidProfile(profile)) {
           gsaSection = new GsaSection(profile);
         } else {
           this.AddRuntimeWarning("Invalid profile syntax: " + profile);

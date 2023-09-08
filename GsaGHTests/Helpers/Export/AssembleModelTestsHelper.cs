@@ -43,10 +43,10 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiEnd.Position.Y, new Length(expected.Line.PointAtEnd.Y, unit).Meters);
       Assert.Equal(apiEnd.Position.Z, new Length(expected.Line.PointAtEnd.Z, unit).Meters);
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Type, api.Type);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiElement.Group, api.Group);
+      Assert.Equal(expected.ApiElement.Type, api.Type);
+      Assert.Equal(expected.ApiElement.Name, api.Name);
+      Assert.Equal(expected.ApiElement.IsDummy, api.IsDummy);
       Assert.Equal(expected.Offset.X1.Meters, api.Offset.X1);
       Assert.Equal(expected.Offset.X2.Meters, api.Offset.X2);
       Assert.Equal(expected.Offset.Y.Meters, api.Offset.Y);

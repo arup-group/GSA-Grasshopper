@@ -19,7 +19,7 @@ namespace GsaGH.Parameters {
   /// <para>2D Properties can also be used to create LoadPanels, use the <see cref="Components.Create2dProperty"/> component and select `LoadPanel` from the dropdown list. </para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-2d.html">2D Element Properties</see> to read more.</para>
   /// </summary>
-  public class GsaProperty2d : GsaProperty {
+  public class GsaProperty2d : Property {
     public Prop2D ApiProp2d;
     public Plane LocalAxis;
 

@@ -117,7 +117,7 @@ namespace GsaGH.Components {
 
       GsaElement1dGoo element1dGoo = null;
       if (da.GetData(0, ref element1dGoo)) {
-        elem = element1dGoo.Value.Clone();
+        elem = new GsaElement1d(element1dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -144,14 +144,14 @@ namespace GsaGH.Components {
       var ghgrp = new GH_Integer();
       if (da.GetData(4, ref ghgrp)) {
         if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both)) {
-          elem.Group = grp;
+          elem.ApiElement.Group = grp;
         }
       }
 
       var ghinteg = new GH_Integer();
       if (da.GetData(5, ref ghinteg)) {
         if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both)) {
-          elem.Type = (ElementType)type;
+          elem.ApiElement.Type = (ElementType)type;
         }
       }
 
@@ -189,21 +189,21 @@ namespace GsaGH.Components {
       var ghnm = new GH_String();
       if (da.GetData(11, ref ghnm)) {
         if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both)) {
-          elem.Name = name;
+          elem.ApiElement.Name = name;
         }
       }
 
       var ghcol = new GH_Colour();
       if (da.GetData(12, ref ghcol)) {
         if (GH_Convert.ToColor(ghcol, out Color col, GH_Conversion.Both)) {
-          elem.Colour = col;
+          elem.ApiElement.Colour = col;
         }
       }
 
       var ghdum = new GH_Boolean();
       if (da.GetData(13, ref ghdum)) {
         if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both)) {
-          elem.IsDummy = dum;
+          elem.ApiElement.IsDummy = dum;
         }
       }
 
@@ -211,19 +211,19 @@ namespace GsaGH.Components {
       da.SetData(1, elem.Id);
       da.SetData(2, elem.Line.Line);
       da.SetData(3, new GsaSectionGoo(elem.Section));
-      da.SetData(4, elem.Group);
-      da.SetData(5, elem.Type);
+      da.SetData(4, elem.ApiElement.Group);
+      da.SetData(5, elem.ApiElement.Type);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
       da.SetData(9, elem.OrientationAngle.Degrees);
       da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
-      da.SetData(11, elem.Name);
-      da.SetData(12, elem.Colour);
-      da.SetData(13, elem.IsDummy);
+      da.SetData(11, elem.ApiElement.Name);
+      da.SetData(12, elem.ApiElement.Colour);
+      da.SetData(13, elem.ApiElement.IsDummy);
 
       try {
-        da.SetData(14, elem.ParentMember);
+        da.SetData(14, elem.ApiElement.ParentMember.Member);
       } catch (Exception) {
         // ignored
       }

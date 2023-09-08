@@ -109,7 +109,7 @@ namespace GsaGH.Components {
 
           break;
         case GsaElement1dGoo element1DGoo:
-          elem1d = element1DGoo.Value.Duplicate();
+          elem1d = element1DGoo.Value;
           if (elem1d == null) {
             this.AddRuntimeError("Input is null");
             return;

@@ -17,6 +17,7 @@ using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 using Grasshopper.Kernel.Types;
+using Newtonsoft.Json.Linq;
 
 namespace GsaGH.Parameters {
   internal enum Layer {
@@ -33,6 +34,10 @@ namespace GsaGH.Parameters {
     public IEnumerable<Line> Outlines { get; set; }
 
     public GsaSection3dPreview(GsaElement1d elem) {
+      if (elem.ApiElement == null || !GsaSection.IsValidProfile(elem.Section.ApiSection.Profile)) {
+        return;
+      }
+
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
@@ -53,7 +58,6 @@ namespace GsaGH.Parameters {
       GraphicSpecification spec = ResultSpec(res, elementList, scale);
       CreateGraphics(res.Model.Model, spec);
     }
-
     internal GsaSection3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
       CreateGraphics(model.Model, spec);
@@ -65,7 +69,6 @@ namespace GsaGH.Parameters {
       CreateGraphics(model, spec);
       Scale(unit);
     }
-
     private GsaSection3dPreview() { }
 
     public GsaSection3dPreview Duplicate() {
@@ -73,6 +76,58 @@ namespace GsaGH.Parameters {
         Mesh = Mesh.DuplicateMesh(),
         Outlines = Outlines.ToList(),
       };
+    }
+    public void BakeGeometry(
+      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      ObjectAttributes meshAtt = att.Duplicate();
+      gH_BakeUtility.BakeObject(new GH_Mesh(Mesh), meshAtt, doc);
+      foreach (Line ln in Outlines) {
+        ObjectAttributes lnAtt = att.Duplicate();
+        gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
+      }
+    }
+
+    public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      args.Pipeline.DrawMeshFalseColors(Mesh);
+    }
+    
+    public void DrawViewportWires(GH_PreviewWireArgs args) {
+      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+        args.Pipeline.DrawLines(Outlines, Colours.Element1d);
+      } else {
+        args.Pipeline.DrawLines(Outlines, Colours.Element1dSelected);
+      }
+    }
+
+    public void Morph(SpaceMorph xmorph) {
+      xmorph.Morph(Mesh);
+      var lns = new List<Line>();
+      foreach (Line l in Outlines) {
+        var line = new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To));
+        lns.Add(line);
+      }
+      Outlines = lns;
+    }
+
+    public void Scale(LengthUnit unit) {
+      if (unit != LengthUnit.Meter) {
+        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, unit);
+        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
+        Transform(scalar);
+      }
+    }
+
+    public void Transform(Transform xform) {
+      Mesh.Transform(xform);
+      var lns = new List<Line>();
+      foreach (Line l in Outlines) {
+        var line = new Line(l.From, l.To);
+        line.Transform(xform);
+        lns.Add(line);
+      }
+      Outlines = lns;
     }
 
     private static Model AssembleTempModel(GsaElement1d elem) {
@@ -82,7 +137,7 @@ namespace GsaGH.Parameters {
         model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.From, unit)),
         model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.To, unit))
       };
-      Element elem1d = elem.GetApiElementClone();
+      Element elem1d = elem.DuplicateApiObject();
       elem1d.Topology = new ReadOnlyCollection<int>(topo);
       elem1d.Property = model.AddSection(elem.Section.ApiSection);
       model.AddElement(elem1d);
@@ -327,47 +382,6 @@ namespace GsaGH.Parameters {
         DrawInitialState = false,
         DrawDeformedShape = true
       };
-    }
-
-    public void BakeGeometry(
-      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
-      att ??= doc.CreateDefaultAttributes();
-      att.ColorSource = ObjectColorSource.ColorFromObject;
-      ObjectAttributes meshAtt = att.Duplicate();
-      gH_BakeUtility.BakeObject(new GH_Mesh(Mesh), meshAtt, doc);
-      foreach (Line ln in Outlines) {
-        ObjectAttributes lnAtt = att.Duplicate();
-        gH_BakeUtility.BakeObject(new GH_Line(ln), lnAtt, doc);
-      }
-    }
-
-    public void Morph(SpaceMorph xmorph) {
-      xmorph.Morph(Mesh);
-      var lns = new List<Line>();
-      foreach (Line l in Outlines) {
-        var line = new Line(xmorph.MorphPoint(l.From), xmorph.MorphPoint(l.To));
-        lns.Add(line);
-      }
-      Outlines = lns;
-    }
-
-    public void Scale(LengthUnit unit) {
-      if (unit != LengthUnit.Meter) {
-        double unitScaleFactor = UnitConverter.Convert(1, LengthUnit.Meter, unit);
-        var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
-        Transform(scalar);
-      }
-    }
-
-    public void Transform(Transform xform) {
-      Mesh.Transform(xform);
-      var lns = new List<Line>();
-      foreach (Line l in Outlines) {
-        var line = new Line(l.From, l.To);
-        line.Transform(xform);
-        lns.Add(line);
-      }
-      Outlines = lns;
     }
   }
 }

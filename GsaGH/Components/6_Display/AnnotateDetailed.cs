@@ -179,10 +179,11 @@ namespace GsaGH.Components {
             case GsaElement1dGoo e1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  CreateLocalAxis(e1d.Value.Line), CreateText(e1d, path), e1d.Value.Colour, size, path);
+                  CreateLocalAxis(e1d.Value.Line), 
+                  CreateText(e1d, path), (Color)e1d.Value.ApiElement.Colour, size, path);
               } else {
                 AddAnnotationDot(e1d.Value.Line.PointAtNormalizedLength(0.5),
-                CreateText(e1d, path), e1d.Value.Colour, size, path);
+                CreateText(e1d, path), (Color)e1d.Value.ApiElement.Colour, size, path);
               }
               break;
 
@@ -304,7 +305,7 @@ namespace GsaGH.Components {
 
         case GsaElement1dGoo e1d:
           id = e1d.Value.Id;
-          name = GeometryToString(e1d.Value.Name, e1d.Value.Type);
+          name = GeometryToString(e1d.Value.ApiElement.Name, e1d.Value.ApiElement.Type);
           prop = SectionToString(e1d.Value.Section);
           mat = MaterialToString(e1d.Value.Section.Material);
           break;

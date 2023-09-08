@@ -12,56 +12,21 @@ using Line = Rhino.Geometry.Line;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement1dTest {
-
-    [Fact]
-    public void CloneApiObjectTest() {
-      var section = new GsaSection {
-        ApiSection = new Section {
-          Name = "Name",
-        }
-      };
-      var element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode()) {
-        Name = "Name",
-      };
-      Element original = element1d.ApiElement;
-
-      Element duplicate = element1d.GetApiElementClone();
-
-      Duplicates.AreEqual(original, duplicate);
-    }
-
-    [Fact]
-    public void DuplicateTest() {
-      var section = new GsaSection {
-        ApiSection = new Section { Name = "Name" },
-      };
-      var original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode()) {
-        Name = "Name",
-      };
-
-      GsaElement1d duplicate = original.Duplicate();
-
-      Duplicates.AreEqual(original, duplicate);
-    }
-
     [Fact]
     public void TestCreateGsaElem1dFromLn() {
       var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
       var elem = new GsaElement1d(new LineCurve(ln)) {
         Id = 66,
-        Section = new GsaSection {
-          Id = 2,
-        },
-        Colour = Color.Yellow,
-        Group = 4,
-        IsDummy = true,
-        Name = "EltonJohn",
+        Section = new GsaSection(3),
       };
+      elem.ApiElement.Colour = Color.Yellow;
+      elem.ApiElement.Group = 4;
+      elem.ApiElement.IsDummy = true;
+      elem.ApiElement.Name = "EltonJohn";
       var offset = new GsaOffset(0, 0, 14.3, 0);
       elem.Offset = offset;
       elem.OrientationAngle = new Angle(90, AngleUnit.Degree);
-      elem.Section.Id = 3;
 
       Assert.Equal(1, elem.Line.PointAtStart.X);
       Assert.Equal(4, elem.Line.PointAtStart.Y);
@@ -72,10 +37,10 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(66, elem.Id);
       Assert.Equal(3, elem.Section.Id);
-      Assert.Equal(Color.FromArgb(255, 255, 255, 0), elem.Colour);
-      Assert.Equal(4, elem.Group);
-      Assert.True(elem.IsDummy);
-      Assert.Equal("EltonJohn", elem.Name);
+      Assert.Equal(Color.FromArgb(255, 255, 255, 0), (Color)elem.ApiElement.Colour);
+      Assert.Equal(4, elem.ApiElement.Group);
+      Assert.True(elem.ApiElement.IsDummy);
+      Assert.Equal("EltonJohn", elem.ApiElement.Name);
       Assert.Equal(14.3, elem.Offset.Y.Value);
       Assert.Equal(90, elem.OrientationAngle.Degrees);
       Assert.Equal(3, elem.Section.Id);
@@ -102,27 +67,26 @@ namespace GsaGHTests.Parameters {
 
       var orig = new GsaElement1d(new LineCurve(ln)) {
         Id = 3,
-        Section = new GsaSection {
-          Id = 7,
-        },
-        Colour = Color.Aqua,
-        Group = 1,
-        IsDummy = false,
-        Name = "Tilman",
+        Section = new GsaSection(7)
       };
+      orig.ApiElement.Colour = Color.Aqua;
+      orig.ApiElement.Group = 1;
+      orig.ApiElement.IsDummy = false;
+      orig.ApiElement.Name = "Tilman";
+
       var offset = new GsaOffset(0, 0, 2.9, 0);
       orig.Offset = offset;
       orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
-      GsaElement1d dup = orig.Clone();
+      var dup = new GsaElement1d(orig);
 
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
       orig.Id = 5;
       orig.Section.Id = 9;
-      orig.Colour = Color.Red;
-      orig.Group = 2;
-      orig.IsDummy = true;
-      orig.Name = "Hugh";
+      orig.ApiElement.Colour = Color.Red;
+      orig.ApiElement.Group = 2;
+      orig.ApiElement.IsDummy = true;
+      orig.ApiElement.Name = "Hugh";
       var offset2 = new GsaOffset(0, 0, -0.991, 0, LengthUnit.Meter);
       orig.Offset = offset2;
       orig.OrientationAngle = new Angle(0, AngleUnit.Radian);
@@ -136,10 +100,10 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(4, dup.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(3, dup.Id);
       Assert.Equal(9, dup.Section.Id);
-      Assert.Equal(Color.FromArgb(255, 0, 255, 255), dup.Colour);
-      Assert.Equal(1, dup.Group);
-      Assert.False(dup.IsDummy);
-      Assert.Equal("Tilman", dup.Name);
+      Assert.Equal(Color.FromArgb(255, 0, 255, 255), (Color)dup.ApiElement.Colour);
+      Assert.Equal(1, dup.ApiElement.Group);
+      Assert.False(dup.ApiElement.IsDummy);
+      Assert.Equal("Tilman", dup.ApiElement.Name);
       Assert.Equal(2.9, dup.Offset.Y.Meters, 1E-9);
       Assert.Equal(-0.14, dup.OrientationAngle.Radians, 1E-9);
 
@@ -152,12 +116,66 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, orig.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(5, orig.Id);
       Assert.Equal(9, orig.Section.Id);
-      Assert.Equal(Color.FromArgb(255, 255, 0, 0), orig.Colour);
-      Assert.Equal(2, orig.Group);
-      Assert.True(orig.IsDummy);
-      Assert.Equal("Hugh", orig.Name);
+      Assert.Equal(Color.FromArgb(255, 255, 0, 0), (Color)orig.ApiElement.Colour);
+      Assert.Equal(2, orig.ApiElement.Group);
+      Assert.True(orig.ApiElement.IsDummy);
+      Assert.Equal("Hugh", orig.ApiElement.Name);
       Assert.Equal(-0.991, orig.Offset.Y.Meters, 1E-9);
       Assert.Equal(0, orig.OrientationAngle.Radians, 1E-9);
+    }
+
+    [Fact]
+    public void TestDuplicateElem1dChangeDuplicateSection() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var orig = new GsaElement1d(new LineCurve(ln)) {
+        Section = new GsaSection("STD R 200 100")
+      };
+
+      var dup = new GsaElement1d(orig) {
+        Section = new GsaSection("STD I 1000 500 10 5")
+      };
+
+      Assert.Equal("STD R 200 100", orig.Section.ApiSection.Profile);
+      Assert.Equal("STD I 1000 500 10 5", dup.Section.ApiSection.Profile);
+    }
+
+    [Fact]
+    public void TestDuplicateElem1dChangeApiSection() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var orig = new GsaElement1d(new LineCurve(ln)) {
+        Section = new GsaSection("STD R 200 100")
+      };
+
+      var dup = new GsaElement1d(orig);
+      dup.Section.ApiSection.Profile = "STD I 1000 500 10 5";
+      
+      Assert.Equal("STD I 1000 500 10 5", orig.Section.ApiSection.Profile);
+      Assert.Equal("STD I 1000 500 10 5", dup.Section.ApiSection.Profile);
+    }
+
+    [Fact]
+    public void TestDuplicateElem1dChangeOriginalSection() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var orig = new GsaElement1d(new LineCurve(ln)) {
+        Section = new GsaSection("STD R 200 100")
+      };
+
+      var dup = new GsaElement1d(orig);
+      orig.Section = new GsaSection("STD I 1000 500 10 5");
+
+      Assert.Equal("STD R 200 100", dup.Section.ApiSection.Profile);
+      Assert.Equal("STD I 1000 500 10 5", orig.Section.ApiSection.Profile);
+    }
+
+    [Fact]
+    public void TestDuplicateElem1dSection() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var orig = new GsaElement1d(new LineCurve(ln)) {
+        Section = new GsaSection("STD R 200 100")
+      };
+
+      var dup = new GsaElement1d(orig);
+      Assert.Equal(dup.Section.Guid, orig.Section.Guid);
     }
   }
 }

@@ -199,7 +199,7 @@ namespace GsaGH.Components {
           Curve crv = null;
           switch (ghType.Value) {
             case GsaElement1dGoo element1DGoo: {
-              elem1ds.Add(element1DGoo.Value.Clone());
+              elem1ds.Add(new GsaElement1d(element1DGoo.Value));
               break;
             }
             case GsaMember1dGoo member1DGoo: {
@@ -260,7 +260,7 @@ namespace GsaGH.Components {
 
       if (tuple.Item3 != null) {
         da.SetDataList(2,
-          new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem, false))));
+          new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem))));
       }
 
       this.AddRuntimeRemark(

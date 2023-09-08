@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
   /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contains information about <see cref="GsaMaterial"/>.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.</para>
   /// </summary>
-  public class GsaProperty3d : GsaProperty {
+  public class GsaProperty3d : Property {
     public Prop3D ApiProp3d;
 
     /// <summary>
