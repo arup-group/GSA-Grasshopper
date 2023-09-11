@@ -185,8 +185,10 @@ namespace GsaGH.Components {
       }
 
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
+#pragma warning disable CS0618 // Type or member is obsolete
       var elem2d = new GsaElement2d(brep, curves, pts, meshSize.As(_lengthUnit), member1ds, nodes,
         _lengthUnit, _tolerance);
+#pragma warning restore CS0618 // Type or member is obsolete
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProperty2d();
       if (da.GetData(3, ref ghTyp)) {
@@ -212,7 +214,7 @@ namespace GsaGH.Components {
 
       elem2d.Prop2ds = prop2Ds;
 
-      da.SetData(0, new GsaElement2dGoo(elem2d, false));
+      da.SetData(0, new GsaElement2dGoo(elem2d));
 
       this.AddRuntimeRemark(
         "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");

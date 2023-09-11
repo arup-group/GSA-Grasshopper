@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -33,9 +35,9 @@ namespace GsaGH.Helpers.Export {
 
     public static GsaModel MergeModel(
       GsaModel mainModel, GsaModel appendModel, GH_Component owner, Length tolerance) {
-      
+      appendModel.ModelUnit = mainModel.ModelUnit;
       ConcurrentBag<GsaNodeGoo> goonodes = 
-        Import.Nodes.GetNodes(appendModel.ApiNodes, LengthUnit.Meter);
+        Import.Nodes.GetNodes(appendModel.ApiNodes, mainModel.ModelUnit);
       var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
         c.Id = 0; // set node Id of incoming to 0 to append to end and use CollapseCoincidingNodes
@@ -148,7 +150,7 @@ namespace GsaGH.Helpers.Export {
 
       mainModel.Model = Assembler.AssembleModel(
         mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
-        sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, LengthUnit.Meter,
+        sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, mainModel.ModelUnit,
         tolerance, false, owner);
       return mainModel;
     }

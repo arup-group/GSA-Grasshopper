@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace GsaGH.Helpers.GH {
+namespace GsaGH.Helpers {
   public static class StringExtension {
 
     /// <summary>

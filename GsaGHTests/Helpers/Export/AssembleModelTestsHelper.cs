@@ -80,38 +80,34 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel) {
       ReadOnlyDictionary<int, Element> apiElements = actualModel.Model.Elements();
       ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
-      int j = 0;
 
+      int i = 0;
       foreach (int id in expectedIds) {
         Assert.True(apiElements.ContainsKey(id),
           "Element with id " + id + " is not present in model");
-
         Element api = apiElements[id];
-
-        List<int> topoInts = expected.TopoInt[j++];
-        int i = 0;
+        List<int> topoInts = expected.TopoInt[i];
+        int j = 0;
         foreach (int topo in api.Topology) {
           Node apiNode = apiNodes[topo];
-          Point3d pt = expected.Topology[topoInts[i++]];
+          Point3d pt = expected.Topology[topoInts[j++]];
           Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
           Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
           Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
         }
 
-        int group = (i > expected.Groups.Count - 1) ? expected.Groups.Last() : expected.Groups[i];
+        int group = expected.ApiElements[i].Group;
         Assert.Equal(group, api.Group);
-        bool dummy = (i > expected.IsDummies.Count - 1) ? expected.IsDummies.Last() :
-          expected.IsDummies[i];
+        bool dummy = expected.ApiElements[i].IsDummy;
         Assert.Equal(dummy, api.IsDummy);
-        string name = (i > expected.Names.Count - 1) ? expected.Names.Last() : expected.Names[i];
+        string name = expected.ApiElements[i].Name;
         Assert.Equal(name, api.Name);
-        GsaOffset offset = (i > expected.Offsets.Count - 1) ? expected.Offsets.Last() :
-          expected.Offsets[i];
+        GsaOffset offset = expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
-        GsaProperty2d prop = (i > expected.Prop2ds.Count - 1) ? expected.Prop2ds.Last() :
-          expected.Prop2ds[i];
+        GsaProperty2d prop = expected.Prop2ds[i];
         TestProp2d(prop, api.Property, actualModel);
+        i++;
       }
     }
 

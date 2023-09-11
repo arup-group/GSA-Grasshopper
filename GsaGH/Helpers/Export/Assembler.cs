@@ -49,8 +49,7 @@ namespace GsaGH.Helpers.Export {
       List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, 
       List<GsaLoadCase> loadCases, List<GsaAnalysisTask> analysisTasks, 
       List<GsaCombinationCase> combinations, LengthUnit modelUnit, 
-      Length toleranceCoincidentNodes, bool createElementsFromMembers,
-      GH_Component owner) {
+      Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
       var assembledModel = new ModelAssembly(model, modelUnit);
       assembledModel.ConvertNodes(nodes);
       assembledModel.ConvertProperties(sections, prop2Ds, prop3Ds);
@@ -59,7 +58,6 @@ namespace GsaGH.Helpers.Export {
       assembledModel.ConvertNodeList(lists);
       assembledModel.ConvertNodeLoads(loads);
       assembledModel.AssembleNodesElementsMembersAndLists();
-      UiUnits units = assembledModel.Model.UiUnits();
       assembledModel.ElementsFromMembers(
         createElementsFromMembers, toleranceCoincidentNodes, owner);
 

@@ -52,6 +52,9 @@ namespace GsaGH.Parameters {
       set => SetRelease(value, 0);
     }
 
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
     public GsaMember1d() {
       ApiMember = new Member() {
         Type = MemberType.GENERIC_1D,
@@ -59,6 +62,10 @@ namespace GsaGH.Parameters {
       };
     }
 
+    /// <summary>
+    /// Create new instance by casting from a Curve
+    /// </summary>
+    /// <param name="crv"></param>
     public GsaMember1d(Curve crv) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_1D,
@@ -72,6 +79,10 @@ namespace GsaGH.Parameters {
       UpdateReleasesPreview();
     }
 
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
     public GsaMember1d(GsaMember1d other) {
       Id = other.Id;
       ApiMember = other.DuplicateApiObject();
@@ -85,6 +96,9 @@ namespace GsaGH.Parameters {
       Section3dPreview = other.Section3dPreview;
     }
 
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
     internal GsaMember1d(KeyValuePair<int, Member> mem, List<Point3d> topology,
       List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode, 
       LengthUnit modelUnit) {

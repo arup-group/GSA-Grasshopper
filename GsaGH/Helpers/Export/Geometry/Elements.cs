@@ -60,7 +60,7 @@ namespace GsaGH.Helpers.Export {
       List<Point3d> meshVerticies = element2d.Topology;
 
       for (int i = 0; i < element2d.ApiElements.Count; i++) {
-        Element apiMeshElement = element2d.GetApiObjectClone(i);
+        Element apiMeshElement = element2d.ApiElements[i];
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         var topo = new List<int>();

@@ -218,7 +218,6 @@ namespace GsaGH.Components {
         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
         sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, analysisTasks,
         combinationCases, _lengthUnit, _tolerance, _reMesh, this);
-      model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
 
       UpdateMessage();
 

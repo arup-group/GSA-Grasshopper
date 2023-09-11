@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -18,6 +19,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -223,7 +225,7 @@ namespace GsaGH.Components {
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
 
       Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
-        = GsaElement2d.GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
+        = GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
           meshSize.As(_lengthUnit), _lengthUnit, _tolerance);
       GsaElement2d elem2d = tuple.Item1;
 
@@ -253,7 +255,7 @@ namespace GsaGH.Components {
       elem2d.Prop2ds = prop2Ds;
       elem2d.UpdatePreview();
 
-      da.SetData(0, new GsaElement2dGoo(elem2d, false));
+      da.SetData(0, new GsaElement2dGoo(elem2d));
       if (tuple.Item2 != null) {
         da.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n => new GsaNodeGoo(n, false))));
       }
@@ -299,6 +301,25 @@ namespace GsaGH.Components {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
       }
+    }
+
+    private Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
+      Brep brep, List<Point3d> points, List<GsaNode> nodes, List<Curve> curves,
+      List<GsaElement1d> elem1ds, List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit,
+      Length tolerance) {
+      var gsaElement2D = new GsaElement2d();
+      Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple
+        = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
+          unit, tolerance);
+      gsaElement2D.Mesh = tuple.Item1;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
+        = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);
+      gsaElement2D.ApiElements = convertMesh.Item1;
+      gsaElement2D.Topology = convertMesh.Item2;
+      gsaElement2D.TopoInt = convertMesh.Item3;
+      gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
+      return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2,
+        tuple.Item3);
     }
   }
 }

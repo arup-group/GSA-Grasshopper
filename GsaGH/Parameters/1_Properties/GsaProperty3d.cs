@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GH;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {

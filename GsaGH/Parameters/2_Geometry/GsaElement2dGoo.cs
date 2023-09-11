@@ -1,10 +1,13 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -22,9 +25,6 @@ namespace GsaGH.Parameters {
       Value = item;
     }
 
-    internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null) {
-      Value = duplicate ? item.Duplicate() : item;
-    }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
@@ -81,11 +81,33 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      return new GsaElement2dGoo(Value.Morph(xmorph));
+      var elem = new GsaElement2d(Value) {
+        Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
+        Topology = new List<Point3d>()
+      };
+      foreach (Point3d pt in Value.Topology) {
+        elem.Topology.Add(xmorph.MorphPoint(pt));
+      }
+      Mesh m = Value.Mesh.DuplicateMesh();
+      xmorph.Morph(m);
+      elem.Mesh = m;
+      elem.UpdatePreview();
+      elem.Section3dPreview?.Morph(xmorph);
+      return new GsaElement2dGoo(elem);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      return new GsaElement2dGoo(Value.Transform(xform));
+      var xpts = new Point3dList(Value.Topology);
+      xpts.Transform(xform);
+      var elem = new GsaElement2d(Value) {
+        Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
+      };
+      Mesh m = Value.Mesh.DuplicateMesh();
+      m.Transform(xform);
+      elem.Mesh = m;
+      elem.UpdatePreview();
+      elem.Section3dPreview?.Transform(xform);
+      return new GsaElement2dGoo(elem);
     }
   }
 }

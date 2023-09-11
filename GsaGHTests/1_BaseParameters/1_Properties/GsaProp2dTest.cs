@@ -1,5 +1,5 @@
 ﻿using GsaAPI;
-using GsaGH.Helpers.GH;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;

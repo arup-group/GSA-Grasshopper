@@ -147,8 +147,10 @@ namespace GsaGH.Components {
         meshSize = new Length(size, _lengthUnit).ToUnit(LengthUnit.Meter);
       }
 
+#pragma warning disable CS0618 // Type or member is obsolete
       var elem2d = new GsaElement2d(brep, crvs, point3ds, meshSize.Value, mem1ds, nodes,
         _lengthUnit, DefaultUnits.Tolerance);
+#pragma warning restore CS0618 // Type or member is obsolete
 
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProperty2d();

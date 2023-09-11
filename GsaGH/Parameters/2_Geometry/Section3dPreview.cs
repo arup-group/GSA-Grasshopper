@@ -169,7 +169,7 @@ namespace GsaGH.Parameters {
         foreach (int id in elem.TopoInt[i]) {
           topo.Add(model.AddNode(Nodes.NodeFromPoint(elem.Topology[id], unit)));
         };
-        Element element = elem.GetApiObjectClone(i);
+        Element element = elem.ApiElements[i];
         element.Topology = new ReadOnlyCollection<int>(topo);
         element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
         model.AddElement(element);

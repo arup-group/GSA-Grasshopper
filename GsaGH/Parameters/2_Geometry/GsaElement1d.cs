@@ -52,12 +52,19 @@ namespace GsaGH.Parameters {
       set => SetRelease(value, 0);
     }
 
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
     public GsaElement1d() {
       ApiElement = new Element {
         Type = ElementType.BEAM,
       };
     }
 
+    /// <summary>
+    /// Create new instance by casting from a Line
+    /// </summary>
+    /// <param name="line"></param>
     public GsaElement1d(LineCurve line) {
       Id = Id;
       ApiElement = new Element {
@@ -67,6 +74,10 @@ namespace GsaGH.Parameters {
       UpdateReleasesPreview();
     }
 
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
     public GsaElement1d(GsaElement1d other) {
       Id = other.Id;
       ApiElement = other.DuplicateApiObject();
@@ -78,6 +89,9 @@ namespace GsaGH.Parameters {
       Section3dPreview = other.Section3dPreview;
     }
 
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
     internal GsaElement1d(KeyValuePair<int, Element> element, IReadOnlyDictionary<int, Node> nodes,
       GsaSection section, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;

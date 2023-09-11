@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GH;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Import;
 using EntityType = GsaGH.Parameters.Enums.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
