@@ -633,7 +633,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement2dGoo>();
           foreach (GsaElement2dGoo element in results.Elem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
+            tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
           }
 
           data.SetDataTree(2, tree);
@@ -695,7 +695,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement3dGoo>();
           foreach (GsaElement3dGoo element in results.Elem3ds) {
-            tree.Add(element, new GH_Path(element.Value.PropertyIDs.First()));
+            tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
           }
 
           data.SetDataTree(3, tree);

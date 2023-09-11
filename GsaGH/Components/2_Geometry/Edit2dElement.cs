@@ -162,6 +162,7 @@ namespace GsaGH.Components {
       var ghcols = new List<GH_Colour>();
       if (da.GetDataList(7, ghcols)) {
         elem.ApiElements.SetMembers(ghcols.Select(x => x.Value).ToList());
+        elem.UpdateMeshColours();
       }
 
       // 8 Dummy
@@ -189,7 +190,7 @@ namespace GsaGH.Components {
       da.SetDataList(9, elem.ApiElements.Select(x => (Color)x.Colour));
       da.SetDataList(10, elem.ApiElements.Select(x => x.IsDummy));
       try {
-        da.SetData(11, elem.ApiElements[0].ParentMember.Member);
+        da.SetDataList(11, elem.ApiElements.Select(x => x.ParentMember.Member).ToList());
       } catch (Exception) { }
       da.SetDataTree(12, elem.GetTopologyIDs());
     }

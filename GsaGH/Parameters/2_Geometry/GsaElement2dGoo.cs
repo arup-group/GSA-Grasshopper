@@ -91,7 +91,6 @@ namespace GsaGH.Parameters {
       Mesh m = Value.Mesh.DuplicateMesh();
       xmorph.Morph(m);
       elem.Mesh = m;
-      elem.UpdatePreview();
       elem.Section3dPreview?.Morph(xmorph);
       return new GsaElement2dGoo(elem);
     }
@@ -101,11 +100,11 @@ namespace GsaGH.Parameters {
       xpts.Transform(xform);
       var elem = new GsaElement2d(Value) {
         Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
+        Topology = xpts.ToList()
       };
       Mesh m = Value.Mesh.DuplicateMesh();
       m.Transform(xform);
       elem.Mesh = m;
-      elem.UpdatePreview();
       elem.Section3dPreview?.Transform(xform);
       return new GsaElement2dGoo(elem);
     }

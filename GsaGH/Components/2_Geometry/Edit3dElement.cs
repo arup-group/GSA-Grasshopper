@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -82,7 +83,7 @@ namespace GsaGH.Components {
 
       GsaElement3dGoo element3dGoo = null;
       if (da.GetData(0, ref element3dGoo)) {
-        elem = element3dGoo.Value.Clone();
+        elem = new GsaElement3d(element3dGoo.Value);
       }
 
       // 1 ID
@@ -116,65 +117,26 @@ namespace GsaGH.Components {
       // 3 Group
       var ghGrps = new List<GH_Integer>();
       if (da.GetDataList(3, ghGrps)) {
-        if (ghGrps.Count == 1) {
-          elem.Groups = new List<int>() { 
-            ghGrps[0].Value
-          };
-        } else {
-          if (ghGrps.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Gr input must either be a single Group ID or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
-          }
-          elem.Groups = ghGrps.Select(x => x.Value).ToList();
-        }
+        elem.ApiElements.SetMembers(ghGrps.Select(x => x.Value).ToList());
       }
 
       // 4 name
       var ghnm = new List<GH_String>();
       if (da.GetDataList(4, ghnm)) {
-        if (ghnm.Count == 1) {
-          elem.Names = new List<string>() {
-            ghnm[0].Value
-          };
-        } else {
-          if (ghnm.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Nm input must either be a single Text string or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
-          }
-          elem.Names = ghnm.Select(x => x.Value).ToList();
-        }
+        elem.ApiElements.SetMembers(ghnm.Select(x => x.Value).ToList());
       }
 
       // 5 Colour
       var ghcols = new List<GH_Colour>();
       if (da.GetDataList(5, ghcols)) {
-        if (ghcols.Count == 1) {
-          elem.Colours = new List<Color>() {
-            ghcols[0].Value
-          };
-        } else {
-          if (ghcols.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Co input must either be a single Colour or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
-          }
-          elem.Colours = ghcols.Select(x => x.Value).ToList();
-        }
+        elem.ApiElements.SetMembers(ghcols.Select(x => x.Value).ToList());
+        elem.UpdateMeshColours();
       }
 
       // 6 Dummy
       var ghdummies = new List<GH_Boolean>();
       if (da.GetDataList(6, ghdummies)) {
-        if (ghdummies.Count == 1) {
-          elem.IsDummies = new List<bool>() {
-            ghdummies[0].Value
-          };
-        } else {
-          if (ghdummies.Count != elem.ApiElements.Count) {
-            this.AddRuntimeWarning("Dm input must either be a single Boolean or a" +
-              $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
-          }
-          elem.IsDummies = ghdummies.Select(x => x.Value).ToList();
-        }
+        elem.ApiElements.SetMembers(ghdummies.Select(x => x.Value).ToList());
       }
 
       da.SetData(0, new GsaElement3dGoo(elem));
@@ -182,13 +144,15 @@ namespace GsaGH.Components {
       da.SetDataList(2, elem.DisplayMesh.ExplodeAtUnweldedEdges());
       da.SetDataList(3,
         new List<GsaProperty3dGoo>(elem.Prop3ds.Select(x => new GsaProperty3dGoo(x))));
-      da.SetDataList(4, elem.Groups);
-      da.SetDataList(5, elem.Types);
-      da.SetDataList(6, elem.Names);
-      da.SetDataList(7, elem.Colours);
-      da.SetDataList(8, elem.IsDummies);
-      da.SetDataList(9, elem.ParentMembers);
-      da.SetDataTree(10, elem.TopologyIDs);
+      da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
+      da.SetDataList(5, elem.ApiElements.Select(x => x.Type));
+      da.SetDataList(6, elem.ApiElements.Select(x => x.Name));
+      da.SetDataList(7, elem.ApiElements.Select(x => (Color)x.Colour));
+      da.SetDataList(8, elem.ApiElements.Select(x => x.IsDummy));
+      try {
+        da.SetDataList(9, elem.ApiElements.Select(x => x.ParentMember.Member).ToList());
+      } catch (Exception) { }
+      da.SetDataTree(10, elem.GetTopologyIDs());
     }
   }
 }

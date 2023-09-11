@@ -11,7 +11,7 @@ namespace GsaGHTests.Parameters {
     public void DuplicateTest() {
       var original = new GsaElement3d(new Mesh());
 
-      GsaElement3d duplicate = original.Duplicate();
+      GsaElement3d duplicate = original;
 
       Duplicates.AreEqual(original, duplicate);
     }

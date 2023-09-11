@@ -418,10 +418,13 @@ namespace GsaGH.Helpers.Import {
           foreach (int key in elems.Keys) {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element apiElem);
+            var apiElems = new ConcurrentDictionary<int, Element>();
+            apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
             prop3Ds.TryGetValue(key, out GsaProperty3d prop);
-
-            var singleelement3D = new GsaElement3d(apiElem, key, mesh, prop);
+            var propList = new ConcurrentDictionary<int, GsaProperty3d>();
+            propList.TryAdd(key, prop);
+            var singleelement3D = new GsaElement3d(apiElems, mesh, propList);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
         } else {

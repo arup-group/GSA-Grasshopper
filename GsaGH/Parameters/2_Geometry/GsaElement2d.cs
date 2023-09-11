@@ -39,8 +39,15 @@ namespace GsaGH.Parameters {
     public List<GsaProperty2d> Prop2ds { get; set; } = new List<GsaProperty2d>();
     internal Section3dPreview Section3dPreview { get; set; }
 
+    /// <summary>
+    /// Empty constructor instantiating a list of new API objects
+    /// </summary>
     public GsaElement2d() { }
 
+    /// <summary>
+    /// Create new instance by casting from a Mesh
+    /// </summary>
+    /// <param name="mesh"></param>
     public GsaElement2d(Mesh mesh) {
       Mesh = mesh.DuplicateMesh();
       Mesh.Compact();
@@ -72,8 +79,8 @@ namespace GsaGH.Parameters {
       Brep brep, List<Curve> curves, List<Point3d> points, double meshSize,
       List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance,
       int prop = 0) {
-      Mesh = RhinoConversions.ConvertBrepToMesh(brep,
-        points, nodes, curves, null, mem1ds, meshSize, unit, tolerance).Item1;
+      Mesh = RhinoConversions.ConvertBrepToMesh(
+        brep, points, nodes, curves, null, mem1ds, meshSize, unit, tolerance).Item1;
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, prop, true);
       ApiElements = convertMesh.Item1;
@@ -121,7 +128,7 @@ namespace GsaGH.Parameters {
       return topos;
     }
 
-    public void UpdatePreview() {
+    public void UpdateMeshColours() {
       for (int i = 0; i < ApiElements.Count; i++) {
         Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
       }

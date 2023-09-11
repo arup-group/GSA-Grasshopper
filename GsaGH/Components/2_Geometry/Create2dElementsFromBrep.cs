@@ -253,7 +253,6 @@ namespace GsaGH.Components {
       }
 
       elem2d.Prop2ds = prop2Ds;
-      elem2d.UpdatePreview();
 
       da.SetData(0, new GsaElement2dGoo(elem2d));
       if (tuple.Item2 != null) {
