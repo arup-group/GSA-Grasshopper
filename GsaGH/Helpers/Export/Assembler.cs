@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -57,7 +59,7 @@ namespace GsaGH.Helpers.Export {
       assembledModel.ConvertNodeList(lists);
       assembledModel.ConvertNodeLoads(loads);
       assembledModel.AssembleNodesElementsMembersAndLists();
-
+      UiUnits units = assembledModel.Model.UiUnits();
       assembledModel.ElementsFromMembers(
         createElementsFromMembers, toleranceCoincidentNodes, owner);
 

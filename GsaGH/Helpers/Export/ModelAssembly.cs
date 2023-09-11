@@ -5,7 +5,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Components;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -31,9 +33,10 @@ namespace GsaGH.Helpers.Export {
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
-
       Model = model.Model;
       Unit = unit;
+      Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(Unit);
+      UiUnits units = Model.UiUnits();
       Nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       Axes = new GsaIntDictionary<Axis>(model.ApiAxis);
       Properties = new Properties(model);
@@ -182,6 +185,8 @@ namespace GsaGH.Helpers.Export {
     internal void AssembleNodesElementsMembersAndLists() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
+        GsaModel.SetUserDefaultUnits(Model.UiUnits());
+        Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(Unit);
       }
 
       // Set API Nodes, Elements and Members in model

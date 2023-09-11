@@ -212,8 +212,7 @@ namespace GsaGH.Components {
       }
 
       // Merge models
-      var model = new GsaModel();
-      model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
+      var model = new GsaModel();      
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
@@ -227,7 +226,6 @@ namespace GsaGH.Components {
         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
         sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, analysisTasks,
         combinationCases, _lengthUnit, _tolerance, _reMesh, this);
-
       // Run analysis
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
