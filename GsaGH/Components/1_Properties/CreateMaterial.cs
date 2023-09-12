@@ -111,7 +111,7 @@ namespace GsaGH.Components {
         "GSA Standard Material", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       string search = string.Empty;
       if (da.GetData(0, ref search)) {
         search = search.Trim().ToLower().Replace(".", string.Empty).Replace(" ", string.Empty);

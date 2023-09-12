@@ -561,7 +561,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var result = new GsaResult();
       _case = string.Empty;
       _resType = string.Empty;

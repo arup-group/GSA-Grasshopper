@@ -177,7 +177,7 @@ namespace GsaGH.Components {
       pManager.HideParameter(1);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var result = new GsaResult();
       var ghObject = new GH_ObjectWrapper();
 

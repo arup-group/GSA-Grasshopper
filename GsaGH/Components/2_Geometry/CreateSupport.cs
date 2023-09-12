@@ -87,7 +87,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Node", "No", "GSA Node with Restraint", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GH_Point ghpt = null;
       da.GetData(0, ref ghpt);
 

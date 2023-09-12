@@ -17,10 +17,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "E3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaElement3dGoo(GsaElement3d item) : base(item) { }
-    public GsaElement3dGoo(GsaElement3d item) : base(null) {
-      Value = item;
-    }
+    public GsaElement3dGoo(GsaElement3d item) : base(item) { }
 
     internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null) {
       Value = duplicate ? item.Duplicate() : item;

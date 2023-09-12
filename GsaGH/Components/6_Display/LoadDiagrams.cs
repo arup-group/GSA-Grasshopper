@@ -226,7 +226,7 @@ namespace GsaGH.Components {
       Message = Force.GetAbbreviation(_forceUnit);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GsaModelGoo modelGoo = null;
       if (!da.GetData(0, ref modelGoo) || !IsGhObjectValid(modelGoo)) {
         _gsaModel = null;

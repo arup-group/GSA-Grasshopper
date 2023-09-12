@@ -17,10 +17,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "E2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaElement2dGoo(GsaElement2d item) : base(item) { }
-    public GsaElement2dGoo(GsaElement2d item) : base(null) {
-      Value = item;
-    }
+    public GsaElement2dGoo(GsaElement2d item) : base(item) { }
 
     internal GsaElement2dGoo(GsaElement2d item, bool duplicate) : base(null) {
       Value = duplicate ? item.Duplicate() : item;

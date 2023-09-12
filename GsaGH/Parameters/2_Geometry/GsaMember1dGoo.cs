@@ -18,10 +18,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "M1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaMember1dGoo(GsaMember1d item) : base(item) { }
-    public GsaMember1dGoo(GsaMember1d item) : base(null) {
-      Value = item;
-    }
+    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
 
     internal GsaMember1dGoo(GsaMember1d item, bool duplicate) : base(null) {
       Value = duplicate ? item.Duplicate() : item;

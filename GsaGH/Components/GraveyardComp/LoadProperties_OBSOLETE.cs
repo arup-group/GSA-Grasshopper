@@ -123,7 +123,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       ForcePerLengthUnit forcePerLengthUnit
         = UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit);
       PressureUnit forcePerAreaUnit = UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit);

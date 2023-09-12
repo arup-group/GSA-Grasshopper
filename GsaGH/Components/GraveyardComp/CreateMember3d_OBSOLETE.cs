@@ -71,7 +71,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaMember3dParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;

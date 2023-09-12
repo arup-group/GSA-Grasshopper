@@ -127,7 +127,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.tree);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
         return;
       }

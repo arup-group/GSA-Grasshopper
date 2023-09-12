@@ -17,10 +17,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "M3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaMember3dGoo(GsaMember3d item) : base(item) { }
-    public GsaMember3dGoo(GsaMember3d item) : base(null) {
-      Value = item;
-    }
+    public GsaMember3dGoo(GsaMember3d item) : base(item) { }
 
     internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null) {
       Value = duplicate ? item.Duplicate() : item;

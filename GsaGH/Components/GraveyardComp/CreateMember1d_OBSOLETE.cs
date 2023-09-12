@@ -161,7 +161,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaMember1dParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghcrv = new GH_Curve();
       if (!da.GetData(0, ref ghcrv)) {
         return;
