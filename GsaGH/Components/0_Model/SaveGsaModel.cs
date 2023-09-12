@@ -26,8 +26,52 @@ namespace GsaGH.Components {
   ///   Component to open an existing GSA model
   /// </summary>
   public class SaveGsaModel : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.SaveGsaModel;
+    private string _fileNameLastSaved;
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    public SaveGsaModel() : base("Save GSA Model", "Save",
+      "Saves your GSA model from this parametric nightmare", CategoryName.Name(),
+      SubCategoryName.Cat0()) {
+      Hidden = true;
+    }
+
+    public override void CreateAttributes() {
+      m_attributes = new ThreeButtonComponentAttributes(this, "Save", "Save As", "Open in GSA",
+        SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
+    }
+
+    public override void SetSelected(int i, int j) { }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      var saveInput = (Param_Boolean)Params.Input[1];
+      if (saveInput.PersistentData.First().Value) {
+        return flag;
+      }
+
+      saveInput.PersistentData.Clear();
+      saveInput.PersistentData.Append(new GH_Boolean(true));
+      return flag;
+    }
+
+    protected override void InitialiseDropdowns() { }
+
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model to save",
+        GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button",
+        GH_ParamAccess.item, true);
+      pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      pManager.AddParameter(new GsaModelParameter());
+    }
+
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       Message = string.Empty;
       if (!da.GetData(0, ref ghTyp)) {
@@ -76,50 +120,6 @@ namespace GsaGH.Components {
       }
     }
 
-    #region Name and Ribbon Layout
-
-    public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SaveGsaModel;
-
-    public SaveGsaModel() : base("Save GSA Model", "Save",
-      "Saves your GSA model from this parametric nightmare", CategoryName.Name(),
-      SubCategoryName.Cat0()) {
-      Hidden = true;
-    }
-
-    #endregion
-
-    #region Input and output
-
-    protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model to save",
-        GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button",
-        GH_ParamAccess.item, true);
-      pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaModelParameter());
-    }
-
-    #endregion
-
-    #region Custom UI
-
-    private string _fileNameLastSaved;
-
-    public override void SetSelected(int i, int j) { }
-
-    protected override void InitialiseDropdowns() { }
-
-    public override void CreateAttributes() {
-      m_attributes = new ThreeButtonComponentAttributes(this, "Save", "Save As", "Open in GSA",
-        SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
-    }
-
     internal void SaveButtonClick() {
       UpdateUI();
     }
@@ -157,20 +157,5 @@ namespace GsaGH.Components {
         Process.Start(_fileNameLastSaved);
       }
     }
-
-    public override bool Read(GH_IReader reader) {
-      bool flag = base.Read(reader);
-      var saveInput = (Param_Boolean)Params.Input[1];
-      if (saveInput.PersistentData.First().Value) {
-        return flag;
-      }
-
-      saveInput.PersistentData.Clear();
-      saveInput.PersistentData.Append(new GH_Boolean(true));
-      return flag;
-    }
-
-    #endregion
-
   }
 }

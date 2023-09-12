@@ -74,7 +74,7 @@ namespace GsaGH.Components {
       pManager.HideParameter(3);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(0, ghTypes)) {
         var elem1ds = new List<GsaElement1d>();

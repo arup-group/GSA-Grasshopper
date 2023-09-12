@@ -144,7 +144,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaProperty2dParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var prop = new GsaProperty2d();
       switch (_mode) {
         case Prop2dType.PlaneStress:

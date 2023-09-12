@@ -19,10 +19,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "No";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaNodeGoo(GsaNode item) : base(item) { }
-    public GsaNodeGoo(GsaNode item) : base(null) {
-      Value = item;
-    }
+    public GsaNodeGoo(GsaNode item) : base(item) { }
 
     internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null) {
       Value = duplicate ? item.Duplicate() : item;

@@ -67,7 +67,7 @@ namespace GsaGH.Components {
         + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess DA) {
+    protected override void SolveInternal(IGH_DataAccess DA) {
       var list = new GsaList() {
         EntityType = _type,
       };

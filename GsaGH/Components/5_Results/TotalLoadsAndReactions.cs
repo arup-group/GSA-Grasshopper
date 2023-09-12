@@ -126,7 +126,7 @@ namespace GsaGH.Components {
         "Σ|Rm|", "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {

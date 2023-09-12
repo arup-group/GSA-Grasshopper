@@ -16,10 +16,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaElement1dGoo(GsaElement1d item) : base(item) { }
-    public GsaElement1dGoo(GsaElement1d item) : base(null) {
-      Value = item;
-    }
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {

@@ -63,7 +63,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaAnalysisTaskParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       string name = _analtype.ToString();
       da.GetData(0, ref name);
 

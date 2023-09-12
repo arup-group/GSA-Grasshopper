@@ -57,7 +57,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaSectionParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var section = new GsaSection();
       string profile = string.Empty;
       da.GetData(0, ref profile);

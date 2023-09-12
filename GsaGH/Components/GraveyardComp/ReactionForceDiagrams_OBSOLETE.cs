@@ -181,7 +181,7 @@ namespace GsaGH.Components {
       pManager.HideParameter(0);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       this.AddRuntimeError("Reaction Force results are now in Global axis - please update your script accordingly!");
       var result = new GsaResult();
       var ghObject = new GH_ObjectWrapper();

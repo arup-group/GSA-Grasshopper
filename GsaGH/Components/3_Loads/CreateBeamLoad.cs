@@ -235,7 +235,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var beamLoad = new GsaBeamLoad();
 
       var loadcase = new GsaLoadCase(1);

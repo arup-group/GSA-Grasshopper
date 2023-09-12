@@ -114,7 +114,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaBool6Parameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
       var bool6 = new GsaBool6(uiSet);
 

@@ -65,7 +65,7 @@ namespace GsaGH.Components.GraveyardComp {
         "GSA Standard Material (reference)", GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       this.AddRuntimeError(
         $"This component is obsolete and no longer works with the plugin. {Environment.NewLine}" +
         $"Please use the new CreateMaterial component that now supports standard materials." +

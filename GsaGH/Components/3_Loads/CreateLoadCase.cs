@@ -51,7 +51,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaLoadCaseParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var type = 
         (LoadCase.LoadCaseType)Enum.Parse(typeof(LoadCase.LoadCaseType), _selectedItems[0]);
 

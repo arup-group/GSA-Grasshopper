@@ -931,7 +931,7 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.tree);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       ClearRuntimeMessages();
       foreach (IGH_Param input in Params.Input) {
         input.ClearRuntimeMessages();

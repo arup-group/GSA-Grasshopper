@@ -114,7 +114,7 @@ namespace GsaGH.Components {
         "GSA Beam Thermal Load", GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var beamThermalLoad = new GsaBeamThermalLoad();
 
       var loadcase = new GsaLoadCase(1);

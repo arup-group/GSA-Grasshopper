@@ -72,7 +72,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaMember2dParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GH_Brep ghbrep = null;
       da.GetData(0, ref ghbrep);
 

@@ -12,10 +12,7 @@ namespace GsaGH.Parameters {
     public static string NickName => "PA";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    //public GsaProperty2dGoo(GsaProperty2d item) : base(item) { }
-    public GsaProperty2dGoo(GsaProperty2d item) {
-      Value = item;
-    }
+    public GsaProperty2dGoo(GsaProperty2d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {

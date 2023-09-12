@@ -112,7 +112,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaLoadParameter(), "Face Thermal Load", "Ld", "GSA Face Thermal Load", GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var faceThermalLoad = new GsaFaceThermalLoad();
 
       var loadcase = new GsaLoadCase(1);

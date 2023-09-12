@@ -191,7 +191,7 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Report", "R", "Analysis Task Report(s)", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
       (List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds)
