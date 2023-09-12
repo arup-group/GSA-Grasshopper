@@ -6,6 +6,7 @@ using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 
@@ -72,7 +73,7 @@ namespace GsaGH.Parameters {
     internal Member ApiMember { get; set; } = new Member();
     internal List<Line> _previewEdgeLines;
     internal List<Polyline> _previewHiddenLines;
-    internal List<Point3d> _previewPts;
+    internal Point3dList _previewPts;
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
     private Mesh _mesh = new Mesh();

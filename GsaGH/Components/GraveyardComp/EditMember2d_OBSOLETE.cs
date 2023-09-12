@@ -180,7 +180,7 @@ namespace GsaGH.Components {
 
       GsaMember2dGoo member2dGoo = null;
       if (da.GetData(0, ref member2dGoo)) {
-        mem = member2dGoo.Value.Clone();
+        mem = new GsaMember2d(member2dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -196,7 +196,7 @@ namespace GsaGH.Components {
       var curves = curveList.ToList();
       var ghCurves = new List<GH_Curve>();
       var ghPoints = new List<GH_Point>();
-      List<Point3d> pts = mem.InclusionPoints;
+      Point3dList pts = mem.InclusionPoints;
 
       if (da.GetData(2, ref ghBrep) || da.GetDataList(3, ghPoints) || da.GetDataList(4, ghCurves)) {
         if (da.GetData(2, ref ghBrep)) {
@@ -204,7 +204,7 @@ namespace GsaGH.Components {
         }
 
         if (da.GetDataList(3, ghPoints)) {
-          pts = new List<Point3d>();
+          pts = new Point3dList();
           foreach (GH_Point point in ghPoints) {
             var pt = new Point3d();
             if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both)) {
@@ -234,19 +234,19 @@ namespace GsaGH.Components {
       var ghGroup = new GH_Integer();
       if (da.GetData(6, ref ghGroup)) {
         if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both)) {
-          mem.Group = grp;
+          mem.ApiMember.Group = grp;
         }
       }
 
       var ghString = new GH_String();
       if (da.GetData(7, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          mem.Type = (MemberType)typeInt;
+          mem.ApiMember.Type = (MemberType)typeInt;
         }
 
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           if (Mappings.memberTypeMapping.ContainsKey(typestring)) {
-            mem.Type = Mappings.memberTypeMapping[typestring];
+            mem.ApiMember.Type = Mappings.memberTypeMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Member Type");
           }
@@ -256,12 +256,12 @@ namespace GsaGH.Components {
       ghString = new GH_String();
       if (da.GetData(8, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          mem.Type2D = (AnalysisOrder)typeInt;
+          mem.ApiMember.Type2D = (AnalysisOrder)typeInt;
         }
 
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           if (Mappings.analysisOrderMapping.ContainsKey(typestring)) {
-            mem.Type2D = Mappings.analysisOrderMapping[typestring];
+            mem.ApiMember.Type2D = Mappings.analysisOrderMapping[typestring];
           } else {
             this.AddRuntimeError("Unable to change Analysis Element Type");
           }
@@ -274,14 +274,14 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[10].Sources.Count > 0) {
-        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 10, _lengthUnit, true)).Meters;
+        mem.ApiMember.MeshSize = ((Length)Input.UnitNumber(this, da, 10, _lengthUnit, true)).Meters;
       }
 
       var ghbool = new GH_Boolean();
       if (da.GetData(11, ref ghbool)) {
         if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both)) {
-          if (mem.MeshWithOthers != mbool) {
-            mem.MeshWithOthers = mbool;
+          if (mem.ApiMember.IsIntersector != mbool) {
+            mem.ApiMember.IsIntersector = mbool;
           }
         }
       }
@@ -289,21 +289,21 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(12, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          mem.Name = name;
+          mem.ApiMember.Name = name;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(13, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          mem.Colour = col;
+          mem.ApiMember.Colour = col;
         }
       }
 
       var ghDummy = new GH_Boolean();
       if (da.GetData(14, ref ghDummy)) {
         if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both)) {
-          mem.IsDummy = dum;
+          mem.ApiMember.IsDummy = dum;
         }
       }
 
@@ -314,20 +314,20 @@ namespace GsaGH.Components {
       da.SetDataList(4, mem.InclusionLines);
 
       da.SetData(5, new GsaProperty2dGoo(mem.Prop2d));
-      da.SetData(6, mem.Group);
+      da.SetData(6, mem.ApiMember.Group);
 
-      da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(8, Mappings.analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
+      da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
+      da.SetData(8, Mappings.analysisOrderMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type2D).Key);
 
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
 
       da.SetData(10,
-        new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
-      da.SetData(11, mem.MeshWithOthers);
+        new GH_UnitNumber(new Length(mem.ApiMember.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
+      da.SetData(11, mem.ApiMember.IsIntersector);
 
-      da.SetData(12, mem.Name);
-      da.SetData(13, mem.Colour);
-      da.SetData(14, mem.IsDummy);
+      da.SetData(12, mem.ApiMember.Name);
+      da.SetData(13, mem.ApiMember.Colour);
+      da.SetData(14, mem.ApiMember.IsDummy);
       da.SetData(15, mem.ApiMember.Topology);
     }
 

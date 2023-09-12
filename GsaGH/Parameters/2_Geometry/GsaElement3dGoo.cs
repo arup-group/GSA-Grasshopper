@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
@@ -71,11 +72,8 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var elem = new GsaElement3d(Value) {
         Ids = new List<int>(new int[Value.NgonMesh.Faces.Count]),
-        Topology = new List<Point3d>()
       };
-      foreach (Point3d pt in Value.Topology) {
-        elem.Topology.Add(xmorph.MorphPoint(pt));
-      }
+      elem.Topology?.Morph(xmorph);
       Mesh m = Value.NgonMesh.DuplicateMesh();
       xmorph.Morph(m);
       elem.NgonMesh = m;
@@ -87,7 +85,7 @@ namespace GsaGH.Parameters {
       xpts.Transform(xform);
       var elem = new GsaElement3d(Value) {
         Ids = new List<int>(new int[Value.NgonMesh.Faces.Count]),
-        Topology = xpts.ToList()
+        Topology = xpts
       };
       Mesh m = Value.NgonMesh.DuplicateMesh();
       m.Transform(xform);

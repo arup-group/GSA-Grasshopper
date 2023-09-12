@@ -27,6 +27,7 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -633,12 +634,12 @@ namespace GsaGH.Components {
       #region create mesh
 
       var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
-        new List<List<Point3d>>(), new List<int>());
+        new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
       var values = new ConcurrentDictionary<int, List<IQuantity>>();
       values.AsParallel().AsOrdered();
-      var verticies = new ConcurrentDictionary<int, List<Point3d>>();
+      var verticies = new ConcurrentDictionary<int, Point3dList>();
       verticies.AsParallel().AsOrdered();
 
       Parallel.ForEach(elems.Keys, key => {
@@ -752,14 +753,14 @@ namespace GsaGH.Components {
 
         meshes[key] = tempmesh;
         values[key] = vals;
-        verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
+        verticies[key] = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
 
         #endregion
       });
 
       #endregion
 
-      resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
+      resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
         meshes.Keys.ToList());
 
       #region Legend

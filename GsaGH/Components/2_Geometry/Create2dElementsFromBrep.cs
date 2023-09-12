@@ -18,6 +18,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -173,7 +174,7 @@ namespace GsaGH.Components {
       }
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      var pts = new List<Point3d>();
+      var pts = new Point3dList();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
@@ -303,7 +304,7 @@ namespace GsaGH.Components {
     }
 
     private Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
-      Brep brep, List<Point3d> points, List<GsaNode> nodes, List<Curve> curves,
+      Brep brep, Point3dList points, List<GsaNode> nodes, List<Curve> curves,
       List<GsaElement1d> elem1ds, List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit,
       Length tolerance) {
       var gsaElement2D = new GsaElement2d();
@@ -311,7 +312,7 @@ namespace GsaGH.Components {
         = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
           unit, tolerance);
       gsaElement2D.Mesh = tuple.Item1;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
+      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);
       gsaElement2D.ApiElements = convertMesh.Item1;
       gsaElement2D.Topology = convertMesh.Item2;

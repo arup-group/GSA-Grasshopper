@@ -182,13 +182,13 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Type, api.Type);
-      Assert.Equal(expected.Type2D, api.Type2D);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
-      Assert.Equal(expected.MeshSize, api.MeshSize);
-      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.ApiMember.Group, api.Group);
+      Assert.Equal(expected.ApiMember.Type, api.Type);
+      Assert.Equal(expected.ApiMember.Type2D, api.Type2D);
+      Assert.Equal(expected.ApiMember.Name, api.Name);
+      Assert.Equal(expected.ApiMember.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiMember.MeshSize, api.MeshSize);
+      Assert.Equal(expected.ApiMember.IsIntersector, api.IsIntersector);
       Assert.Equal(expected.Offset.Z.Meters, api.Offset.Z);
       Assert.Equal(expected.OrientationAngle.Degrees, api.OrientationAngle);
 

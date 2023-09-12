@@ -13,6 +13,7 @@ using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysGH.UI;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -31,7 +32,7 @@ namespace GsaGH.Parameters {
     public Guid Guid { get; set; } = Guid.NewGuid();
     public Mesh Mesh { get; set; } = new Mesh();
     public List<List<int>> TopoInt { get; set; }
-    public List<Point3d> Topology { get; set; }
+    public Point3dList Topology { get; set; }
     public List<GsaOffset> Offsets => ApiElements.Select(
       e => new GsaOffset(e.Offset.X1, e.Offset.X2, e.Offset.Y, e.Offset.Z)).ToList();
     public List<Angle> OrientationAngles => ApiElements.Select(
@@ -52,7 +53,7 @@ namespace GsaGH.Parameters {
       Mesh = mesh.DuplicateMesh();
       Mesh.Compact();
       Mesh.Vertices.CombineIdentical(true, false);
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
+      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(mesh, 0);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
@@ -76,12 +77,12 @@ namespace GsaGH.Parameters {
 
     [Obsolete("This method is only used by obsolete components and will be removed in GsaGH 1.0")]
     public GsaElement2d(
-      Brep brep, List<Curve> curves, List<Point3d> points, double meshSize,
+      Brep brep, List<Curve> curves, Point3dList points, double meshSize,
       List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance,
       int prop = 0) {
       Mesh = RhinoConversions.ConvertBrepToMesh(
         brep, points, nodes, curves, null, mem1ds, meshSize, unit, tolerance).Item1;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
+      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, prop, true);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
@@ -99,7 +100,7 @@ namespace GsaGH.Parameters {
     internal GsaElement2d(
       ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty2d> prop2ds) {
       Mesh = mesh;
-      Topology = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      Topology = new Point3dList(mesh.Vertices.ToPoint3dArray());
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
       ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
       Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();

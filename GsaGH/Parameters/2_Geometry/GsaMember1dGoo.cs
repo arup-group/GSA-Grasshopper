@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
 using OasysGH;
@@ -85,7 +86,7 @@ namespace GsaGH.Parameters {
 
       if (Value.Topology != null) {
         if (!Value.ApiMember.IsDummy) {
-          List<Point3d> pts = Value.Topology;
+          Point3dList pts = Value.Topology;
           for (int i = 0; i < pts.Count; i++) {
             // this is a workaround to change colour between selected and not
             if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
@@ -126,11 +127,8 @@ namespace GsaGH.Parameters {
       var mem = new GsaMember1d(Value) {
         Id = 0,
         LocalAxes = null,
-        Topology = new List<Point3d>()
       };
-      foreach (Point3d pt in Value.Topology) { 
-        mem.Topology.Add(xmorph.MorphPoint(pt));
-      }
+      mem.Topology?.Morph(xmorph);
       PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
       xmorph.Morph(crv);
       mem.PolyCurve = crv;
@@ -145,7 +143,7 @@ namespace GsaGH.Parameters {
       var mem = new GsaMember1d(Value) {
         Id = 0,
         LocalAxes = null,
-        Topology = xpts.ToList()
+        Topology = xpts
       };
       PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
       crv.Transform(xform);

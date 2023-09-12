@@ -23,6 +23,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 using EntityType = GsaGH.Parameters.Enums.EntityType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
@@ -383,7 +384,7 @@ namespace GsaGH.Components {
     private void SetOutputs(IGH_DataAccess dataAccess) {
       IOrderedEnumerable<KeyValuePair<int, (GsaVectorDiagram, GsaAnnotationGoo, IQuantity)>> orderedDict
         = _reactionForceVectors.OrderBy(index => index.Key);
-      var startingPoints = new List<Point3d>();
+      var startingPoints = new Point3dList();
       var vectors = new List<IGsaDiagram>();
       var forceValues = new List<IQuantity>();
 

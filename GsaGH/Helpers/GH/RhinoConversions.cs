@@ -24,7 +24,7 @@ namespace GsaGH.Helpers.GH {
   public class RhinoConversions {
 
     public static PolyCurve BuildArcLineCurveFromPtsAndTopoType(
-      List<Point3d> topology, List<string> topoType = null) {
+      Point3dList topology, List<string> topoType = null) {
       var crvs = new PolyCurve();
 
       for (int i = 0; i < topology.Count - 1; i++) {
@@ -86,7 +86,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(
-      Brep brep, List<Point3d> points, List<GsaNode> inNodes, List<Curve> inCurves,
+      Brep brep, Point3dList points, List<GsaNode> inNodes, List<Curve> inCurves,
       List<GsaElement1d> inElem1ds, List<GsaMember1d> inMem1ds, double meshSize, LengthUnit unit,
       Length tolerance) {
       Brep inBrep = brep.DuplicateBrep();
@@ -175,7 +175,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       var nodes = new List<GsaNode>();
-      var inclusionPoints = inclPts.ToList();
+      var inclusionPoints = new Point3dList(inclPts);
       foreach (TextDot dot in inclNodes) {
         int id = unroller.FollowingGeometryIndex(dot);
         nodes.Add(inNodes[id]);
@@ -195,10 +195,8 @@ namespace GsaGH.Helpers.GH {
         nodes.Add(inNodes[i]);
       }
 
-      var mem = new GsaMember2d(flattened[0], curves, inclusionPoints) {
-        MeshSize = meshSize,
-        Type = MemberType.GENERIC_2D,
-      };
+      var mem = new GsaMember2d(flattened[0], curves, inclusionPoints);
+      mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
 
       Model model = Assembler.AssembleModel(
         null,
@@ -321,11 +319,11 @@ namespace GsaGH.Helpers.GH {
     /// <param name="curve"></param>
     /// <param name="tolerance"></param>
     /// <returns></returns>
-    public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem1dCrv(
+    public static Tuple<PolyCurve, Point3dList, List<string>> ConvertMem1dCrv(
       Curve curve, double tolerance = -1) {
       PolyCurve polyCurve = null;
       var crvType = new List<string>();
-      var point3ds = new List<Point3d>();
+      var point3ds = new Point3dList();
 
       if (curve.IsArc()) {
         crvType.Add("");
@@ -381,10 +379,10 @@ namespace GsaGH.Helpers.GH {
         }
       }
 
-      return new Tuple<PolyCurve, List<Point3d>, List<string>>(polyCurve, point3ds, crvType);
+      return new Tuple<PolyCurve, Point3dList, List<string>>(polyCurve, point3ds, crvType);
     }
 
-    public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(
+    public static Tuple<PolyCurve, Point3dList, List<string>> ConvertMem2dCrv(
       Curve curve, double tolerance = -1) {
       if (tolerance < 0) {
         tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
@@ -402,7 +400,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       var crvType = new List<string>();
-      var point3ds = new List<Point3d>();
+      var point3ds = new Point3dList();
 
       foreach (Curve segment in segments) {
         point3ds.Add(segment.PointAtStart);
@@ -418,7 +416,7 @@ namespace GsaGH.Helpers.GH {
       point3ds.Add(segments[segments.Length - 1].PointAtEnd);
       crvType.Add("");
 
-      return new Tuple<PolyCurve, List<Point3d>, List<string>>(polyCurve, point3ds, crvType);
+      return new Tuple<PolyCurve, Point3dList, List<string>>(polyCurve, point3ds, crvType);
     }
 
     public static List<List<int>> ConvertMeshToElem2d(Mesh mesh) {
@@ -465,10 +463,10 @@ namespace GsaGH.Helpers.GH {
       return topoInts;
     }
 
-    public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(
+    public static Tuple<List<Element>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
       Mesh mesh, int prop = 0, bool createQuadraticElements = false) {
       var elems = new List<Element>();
-      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
@@ -572,13 +570,13 @@ namespace GsaGH.Helpers.GH {
         elems.Add(elem);
       }
 
-      return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
+      return new Tuple<List<Element>, Point3dList, List<List<int>>>(elems, topoPts, topoInts);
     }
 
-    public static Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>
+    public static Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>
       ConvertMeshToElem3d(Mesh mesh, int prop = 1) {
       var elems = new List<Element>();
-      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
       var faceInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
@@ -611,8 +609,8 @@ namespace GsaGH.Helpers.GH {
         elems.Add(elem);
       }
 
-      return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems,
-        topoPts, topoInts, faceInts);
+      return new Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>(
+        elems, topoPts, topoInts, faceInts);
     }
 
     public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh) {
@@ -662,18 +660,18 @@ namespace GsaGH.Helpers.GH {
     /// <param name="tolerance"></param>
     /// <returns></returns>
     public static
-      Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>,
-        Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>,
-        Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
+      Tuple<Tuple<PolyCurve, Point3dList, List<string>>,
+        Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>>,
+        Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>, Point3dList>>
       ConvertPolyBrepInclusion(
-        Brep brep, List<Curve> inclCrvs = null, List<Point3d> inclPts = null,
+        Brep brep, List<Curve> inclCrvs = null, Point3dList inclPts = null,
         double tolerance = -1) {
       var voidCrvs = new List<PolyCurve>();
-      var voidTopo = new List<List<Point3d>>();
+      var voidTopo = new List<Point3dList>();
       var voidTopoType = new List<List<string>>();
 
       var inclPolyCrvs = new List<PolyCurve>();
-      var inclTopo = new List<List<Point3d>>();
+      var inclTopo = new List<Point3dList>();
       var inclTopoType = new List<List<string>>();
 
       Curve outer = null;
@@ -691,11 +689,11 @@ namespace GsaGH.Helpers.GH {
       };
       edges.AddRange(inner);
 
-      List<Point3d> ctrlPts;
+      Point3dList ctrlPts;
       if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
-        ctrlPts = tempCrv.ToList();
+        ctrlPts = new Point3dList(tempCrv);
       } else {
-        Tuple<PolyCurve, List<Point3d>, List<string>> convertBadSrf
+        Tuple<PolyCurve, Point3dList, List<string>> convertBadSrf
           = ConvertMem2dCrv(edges[0], tolerance);
         ctrlPts = convertBadSrf.Item2;
       }
@@ -712,9 +710,9 @@ namespace GsaGH.Helpers.GH {
         }
       }
 
-      Tuple<PolyCurve, List<Point3d>, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
+      Tuple<PolyCurve, Point3dList, List<string>> convert = ConvertMem2dCrv(edges[0], tolerance);
       PolyCurve edgeCrv = convert.Item1;
-      List<Point3d> topo = convert.Item2;
+      Point3dList topo = convert.Item2;
       List<string> topoType = convert.Item3;
 
       for (int i = 1; i < edges.Count; i++) {
@@ -742,7 +740,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (inclPts != null) {
-        var inclPtsWithinTolerance = new List<Point3d>();
+        var inclPtsWithinTolerance = new Point3dList();
         for (int i = 0; i < inclPts.Count; i++) {
           Point3d tempPt = plane.ClosestPoint(inclPts[i]);
           if (inclPts[i].DistanceTo(tempPt)
@@ -754,22 +752,22 @@ namespace GsaGH.Helpers.GH {
         inclPts = inclPtsWithinTolerance;
       }
 
-      var edgeTuple = new Tuple<PolyCurve, List<Point3d>, List<string>>(edgeCrv, topo, topoType);
+      var edgeTuple = new Tuple<PolyCurve, Point3dList, List<string>>(edgeCrv, topo, topoType);
       var voidTuple
-        = new Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>(voidCrvs, voidTopo,
+        = new Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>>(voidCrvs, voidTopo,
           voidTopoType);
       var inclTuple
-        = new Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>(
+        = new Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>, Point3dList>(
           inclPolyCrvs, inclTopo, inclTopoType, inclPts);
 
-      return new Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>,
-        Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>,
-        Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>(edgeTuple,
+      return new Tuple<Tuple<PolyCurve, Point3dList, List<string>>,
+        Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>>,
+        Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>, Point3dList>>(edgeTuple,
         voidTuple, inclTuple);
     }
 
     public static Plane CreateBestFitUnitisedPlaneFromPts(
-      List<Point3d> ctrlPts) {
+      Point3dList ctrlPts) {
       Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
       plane.Normal.Unitize();
       return new Plane(plane.Origin, plane.Normal);

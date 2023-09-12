@@ -2,6 +2,8 @@
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using OasysUnits;
+using Rhino.Collections;
+using Rhino.Geometry;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,6 +26,15 @@ namespace GsaGH.Helpers {
       }
 
       return false;
+    }
+
+    public static void Morph(this Point3dList value, SpaceMorph xmorph) {
+      var morphed = new Point3dList();
+      for (int i  = 0; i < value.Count; i++) {
+        morphed.Add(xmorph.MorphPoint(value[i]));
+      }
+
+      value = morphed;
     }
 
     public static void SetMembers<T>(this List<Element> value, IList<T> list) {

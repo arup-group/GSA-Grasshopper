@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -21,7 +22,7 @@ namespace GsaGH.Parameters {
       get => GridAreaLoad.Name;
       set => GridAreaLoad.Name = value;
     }
-    internal List<Point3d> Points { get; set; } = new List<Point3d>();
+    internal Point3dList Points { get; set; } = new Point3dList();
 
     public GsaGridAreaLoad() {
       GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
@@ -42,7 +43,7 @@ namespace GsaGH.Parameters {
           Value = GridAreaLoad.Value,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
-        Points = Points.ToList(),
+        Points = Points,
       };
 
       if (LoadCase != null) {

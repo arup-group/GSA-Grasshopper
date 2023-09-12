@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters.Enums;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 
@@ -13,7 +14,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaVectorDiagram : GH_GeometricGoo<Vector3d>, IGsaDiagram, IGH_PreviewData {
     public override BoundingBox Boundingbox
-      => new BoundingBox(new List<Point3d>() {
+      => new BoundingBox(new Point3dList() {
         DisplayLine.From,
         DisplayLine.To,
       });

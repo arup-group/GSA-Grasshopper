@@ -50,7 +50,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(100, output0.Value.Brep.GetArea());
       Assert.Equal(Property2D_Type.PLATE, output0.Value.Prop2d.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output0.Value.Prop2d.Thickness);
-      Assert.Equal(0.5, output0.Value.MeshSize);
+      Assert.Equal(0.5, output0.Value.ApiMember.MeshSize);
       Assert.Equal(0, output1.Value);
       Assert.Equal(100, output2.Value.GetArea());
       Assert.Equal(Property2D_Type.PLATE, output5.Value.ApiProp2d.Type);
@@ -117,7 +117,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(16, output0.Value.Brep.GetArea());
       Assert.Equal(Property2D_Type.SHELL, output0.Value.Prop2d.ApiProp2d.Type);
       Assert.Equal(new Length(200, LengthUnit.Millimeter), output0.Value.Prop2d.Thickness);
-      Assert.Equal(0.7, output0.Value.MeshSize);
+      Assert.Equal(0.7, output0.Value.ApiMember.MeshSize);
       Assert.Equal(7, output1.Value);
       Assert.Equal(16, output2.Value.GetArea());
       Assert.Equal(Property2D_Type.SHELL, output5.Value.ApiProp2d.Type);

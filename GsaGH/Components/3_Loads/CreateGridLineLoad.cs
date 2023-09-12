@@ -17,6 +17,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 
@@ -200,7 +201,7 @@ namespace GsaGH.Components {
         GH_Convert.ToCurve(ghCurve, ref curve, GH_Conversion.Both);
 
         if (curve.TryGetPolyline(out Polyline ln)) {
-          var controlPoints = ln.ToList();
+          var controlPoints = new Point3dList(ln);
           gridlineload.Points = controlPoints;
 
           if (!planeSet) {
@@ -220,7 +221,7 @@ namespace GsaGH.Components {
           } else {
             curve = Curve.ProjectToPlane(curve, plane);
             curve.TryGetPolyline(out ln);
-            controlPoints = ln.ToList();
+            controlPoints = new Point3dList(ln);
           }
 
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;

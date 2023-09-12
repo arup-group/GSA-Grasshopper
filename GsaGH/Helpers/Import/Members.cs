@@ -11,6 +11,7 @@ using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -41,7 +42,7 @@ namespace GsaGH.Helpers.Import {
               = Topology.Topology_detangler(toporg);
           (List<int> topoInt, List<string> topoType) = item1;
 
-          var topopts = new List<Point3d>();
+          var topopts = new Point3dList();
           foreach (int t in topoInt) {
             if (model.ApiNodes.TryGetValue(t, out Node node)) {
               topopts.Add(Nodes.Point3dFromNode(node, model.ModelUnit));
@@ -92,9 +93,9 @@ namespace GsaGH.Helpers.Import {
               List<List<string>> inclLinesTopoType = lineTuple.Item2;
 
               //list of lists of void points /member2d
-              var voidTopo = new List<List<Point3d>>();
+              var voidTopo = new List<Point3dList>();
               for (int i = 0; i < voidTopoInt.Count; i++) {
-                voidTopo.Add(new List<Point3d>());
+                voidTopo.Add(new Point3dList());
                 for (int j = 0; j < voidTopoInt[i].Count; j++) {
                   if (model.ApiNodes.TryGetValue(voidTopoInt[i][j], out Node node)) {
                     voidTopo[i].Add(Nodes.Point3dFromNode(node, model.ModelUnit));
@@ -103,9 +104,9 @@ namespace GsaGH.Helpers.Import {
               }
 
               //list of lists of line inclusion topology points /member2d
-              var incLinesTopo = new List<List<Point3d>>();
+              var incLinesTopo = new List<Point3dList>();
               for (int i = 0; i < incLinesTopoInt.Count; i++) {
-                incLinesTopo.Add(new List<Point3d>());
+                incLinesTopo.Add(new Point3dList());
                 for (int j = 0; j < incLinesTopoInt[i].Count; j++) {
                   if (model.ApiNodes.TryGetValue(incLinesTopoInt[i][j], out Node node)) {
                     incLinesTopo[i].Add(Nodes.Point3dFromNode(node, model.ModelUnit));
@@ -114,7 +115,7 @@ namespace GsaGH.Helpers.Import {
               }
 
               //list of points for inclusion /member2d
-              var inclPts = new List<Point3d>();
+              var inclPts = new Point3dList();
               foreach (int point in inclpts) {
                 if (!model.ApiNodes.TryGetValue(point, out Node node)) {
                   continue;

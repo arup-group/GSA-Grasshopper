@@ -269,7 +269,7 @@ namespace GsaGH.Components {
           }
 
           if (ghTyp.Value is GsaMember2dGoo member2DGoo) {
-            inMem2ds.Add(member2DGoo.Value.Duplicate());
+            inMem2ds.Add(member2DGoo.Value);
           } else {
             this.AddRuntimeError("Error in Mem2D input");
             return;

@@ -220,25 +220,25 @@ namespace GsaGH.Components {
                 AddAnnotation3d(
                   pln, 
                   CreateText(m2d, path), 
-                  m2d.Value.Colour, size, path);
+                  (Color)m2d.Value.ApiMember.Colour, size, path);
               } else {
                 AddAnnotationDot(
                   pl.CenterPoint(), 
-                  CreateText(m2d, path), 
-                  m2d.Value.Colour, size, path);
+                  CreateText(m2d, path),
+                  (Color)m2d.Value.ApiMember.Colour, size, path);
               }
               break;
             case GsaMember3dGoo m3d:
               if (_text3d) {
                 AddAnnotation3d(
                   m3d.Value.SolidMesh.GetBoundingBox(false).Center,
-                  CreateText(m3d, path), 
-                  m3d.Value.Colour, size, path);
+                  CreateText(m3d, path),
+                  (Color)m3d.Value.Colour, size, path);
               } else {
                 AddAnnotationDot(
                   m3d.Value.SolidMesh.GetBoundingBox(false).Center,
-                  CreateText(m3d, path), 
-                  m3d.Value.Colour, size, path);
+                  CreateText(m3d, path),
+                  (Color)m3d.Value.Colour, size, path);
               }
               break;
 
@@ -342,7 +342,7 @@ namespace GsaGH.Components {
 
         case GsaMember2dGoo m2d:
           id = m2d.Value.Id;
-          name = GeometryToString(m2d.Value.ApiMember.Name, m2d.Value.Type);
+          name = GeometryToString(m2d.Value.ApiMember.Name, m2d.Value.ApiMember.Type);
           prop = Prop2dToString(m2d.Value.Prop2d);
           mat = MaterialToString(m2d.Value.Prop2d.Material);
           break;

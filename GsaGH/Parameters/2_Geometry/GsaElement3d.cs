@@ -10,6 +10,7 @@ using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -26,7 +27,7 @@ namespace GsaGH.Parameters {
     public Mesh NgonMesh { get; set; } = new Mesh();
     public List<List<int>> FaceInt { get; set; }
     public List<List<int>> TopoInt { get; set; }
-    public List<Point3d> Topology { get; set; }
+    public Point3dList Topology { get; set; }
     public List<GsaProperty3d> Prop3ds { get; set; } = new List<GsaProperty3d>();
     public Mesh DisplayMesh {
       get {
@@ -50,7 +51,7 @@ namespace GsaGH.Parameters {
     /// <param name="mesh"></param>
     public GsaElement3d(Mesh mesh) {
       NgonMesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
+      Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
@@ -83,7 +84,7 @@ namespace GsaGH.Parameters {
     internal GsaElement3d(ConcurrentDictionary<int, Element> elements, Mesh mesh, 
       ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
+      Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Parameters;
+using Rhino.Collections;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
@@ -520,7 +521,7 @@ namespace GsaGH.Helpers.Graphics {
 
     public static void PreviewMem3d(
       ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines,
-      ref List<Point3d> pts) {
+      ref Point3dList pts) {
       MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;
       if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count) {
         solidMesh.FaceNormals.ComputeFaceNormals();
@@ -545,7 +546,7 @@ namespace GsaGH.Helpers.Graphics {
         }
       }
 
-      pts = new List<Point3d>(solidMesh.Vertices.ToPoint3dArray());
+      pts = new Point3dList(solidMesh.Vertices.ToPoint3dArray());
     }
 
     public static void PreviewRestraint(

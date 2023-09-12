@@ -9,6 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -57,10 +58,10 @@ namespace GsaGH.Components {
       GH_Brep ghbrep = null;
       da.GetData(0, ref ghbrep);
 
-      var points = new List<Point3d>();
+      var points = new Point3dList();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
-        points = ghpts.Select(pt => pt.Value).ToList();
+        points = new Point3dList(ghpts.ConvertAll(pt => pt.Value));
       }
 
       var crvs = new List<Curve>();
@@ -79,12 +80,12 @@ namespace GsaGH.Components {
 
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.ApiMember.MeshSize = meshSize;
       }
 
       bool internalOffset = false;
       if (da.GetData(5, ref internalOffset)) {
-        mem.AutomaticInternalOffset = internalOffset;
+        mem.ApiMember.AutomaticOffset.Internal = internalOffset;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

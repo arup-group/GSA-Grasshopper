@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
@@ -57,6 +58,8 @@ namespace GsaGH.Parameters {
         return;
       }
 
+      Value.Section3dPreview?.DrawViewportWires(args);
+
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
         args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdge, 1);
       } else {
@@ -83,11 +86,8 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var elem = new GsaElement2d(Value) {
         Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
-        Topology = new List<Point3d>()
       };
-      foreach (Point3d pt in Value.Topology) {
-        elem.Topology.Add(xmorph.MorphPoint(pt));
-      }
+      elem.Topology?.Morph(xmorph);
       Mesh m = Value.Mesh.DuplicateMesh();
       xmorph.Morph(m);
       elem.Mesh = m;
@@ -100,7 +100,7 @@ namespace GsaGH.Parameters {
       xpts.Transform(xform);
       var elem = new GsaElement2d(Value) {
         Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
-        Topology = xpts.ToList()
+        Topology = xpts
       };
       Mesh m = Value.Mesh.DuplicateMesh();
       m.Transform(xform);

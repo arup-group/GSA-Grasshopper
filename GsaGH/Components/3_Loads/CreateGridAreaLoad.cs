@@ -17,6 +17,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 
@@ -205,8 +206,8 @@ namespace GsaGH.Components {
         Curve curve = edges[0];
 
         if (curve.TryGetPolyline(out Polyline polyline)) {
-          var ctrlPts = polyline.ToList();
-          gridareaload.Points = polyline.ToList();
+          var ctrlPts = new Point3dList(polyline);
+          gridareaload.Points = ctrlPts;
 
           if (!planeSet) {
             plane = RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrlPts);

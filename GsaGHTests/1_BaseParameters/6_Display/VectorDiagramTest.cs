@@ -5,6 +5,7 @@ using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Morphs;
 using Xunit;
@@ -109,7 +110,7 @@ namespace GsaGHTests.Parameters {
         new Point3d(3, 3, 3), new Vector3d(3, 3, 3), false, Color.Empty);
 
       BoundingBox actualBoundingBox = obj.Boundingbox;
-      var expectedBoundingBox = new BoundingBox(new List<Point3d>() {
+      var expectedBoundingBox = new BoundingBox(new Point3dList() {
         Point3d.Origin,
         new Point3d(3, 3, 3),
       });
@@ -130,7 +131,7 @@ namespace GsaGHTests.Parameters {
       var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
 
       BoundingBox actualBoundingBox = obj.Boundingbox;
-      var expectedBoundingBox = new BoundingBox(new List<Point3d>() {
+      var expectedBoundingBox = new BoundingBox(new Point3dList() {
         new Point3d(1, 1, 1),
         new Point3d(3, 3, 3),
       });

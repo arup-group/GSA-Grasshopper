@@ -3,6 +3,7 @@ using System.Drawing;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 
@@ -42,7 +43,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestCreateGsaMem1dFromCrv() {
-      var pts = new List<Point3d> {
+      var pts = new Point3dList {
         new Point3d(-3, -4, 0),
         new Point3d(5, -2, 0),
         new Point3d(2, 2, 0),
@@ -87,7 +88,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestDuplicateMem1d() {
-      var pts = new List<Point3d> {
+      var pts = new Point3dList {
         new Point3d(0, 0, 0),
         new Point3d(0, 10, 0),
       };

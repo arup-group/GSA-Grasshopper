@@ -4,6 +4,7 @@ using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -21,7 +22,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestCreateGsaElem2dFromMesh() {
-      var pts = new List<Point3d> {
+      var pts = new Point3dList {
         new Point3d(-3, -4, 0),
         new Point3d(5, -2, 0),
         new Point3d(6, 7, 0),
@@ -109,7 +110,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestDuplicateElem2d() {
-      var pts = new List<Point3d> {
+      var pts = new Point3dList {
         new Point3d(0, 0, 0),
         new Point3d(0, 5, 0),
         new Point3d(5, 5, 0),

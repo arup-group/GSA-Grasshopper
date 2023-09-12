@@ -186,7 +186,7 @@ namespace GsaGH.Parameters {
         int id = model.AddNode(Nodes.NodeFromPoint(mem.Topology[i], unit));
         topo += $" {mem.TopologyType[i]}{id}";
       };
-      Member mem2d = mem.GetAPI_MemberClone();
+      Member mem2d = mem.DuplicateApiObject();
       mem2d.Topology = topo.Trim();
       mem2d.Property = model.AddProp2D(mem.Prop2d.ApiProp2d);
       model.AddMember(mem2d);

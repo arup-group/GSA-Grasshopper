@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
     public int Id { get; set; } = 0;
     public Guid Guid { get; set; } = Guid.NewGuid();
     public PolyCurve PolyCurve { get; set; } = new PolyCurve();
-    public List<Point3d> Topology { get; set; }
+    public Point3dList Topology { get; set; }
     public List<string> TopologyType { get; set; }
     public GsaNode OrientationNode { get; set; }
     public ReleasePreview ReleasePreview { get; set; } = new ReleasePreview();
@@ -71,7 +71,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_1D,
         Type1D = ElementType.BEAM
       };
-      Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv
+      Tuple<PolyCurve, Point3dList, List<string>> convertCrv
         = RhinoConversions.ConvertMem1dCrv(crv);
       PolyCurve = convertCrv.Item1;
       Topology = convertCrv.Item2;
@@ -99,7 +99,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaMember1d(KeyValuePair<int, Member> mem, List<Point3d> topology,
+    internal GsaMember1d(KeyValuePair<int, Member> mem, Point3dList topology,
       List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode, 
       LengthUnit modelUnit) {
       Id = mem.Key;

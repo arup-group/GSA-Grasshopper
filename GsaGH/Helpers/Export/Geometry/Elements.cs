@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
+using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -57,7 +58,7 @@ namespace GsaGH.Helpers.Export {
       LengthUnit unit,
       ref Properties apiProperties,
       ref GsaIntDictionary<Axis> existingAxes) {
-      List<Point3d> meshVerticies = element2d.Topology;
+      Point3dList meshVerticies = element2d.Topology;
 
       for (int i = 0; i < element2d.ApiElements.Count; i++) {
         Element apiMeshElement = element2d.ApiElements[i];
@@ -105,7 +106,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> apiNodes, 
       LengthUnit unit,
       ref Properties apiProperties) {
-      List<Point3d> meshVerticies = element3d.Topology;
+      Point3dList meshVerticies = element3d.Topology;
 
       for (int i = 0; i < element3d.ApiElements.Count; i++) {
         Element apiMeshElement = element3d.ApiElements[i];
