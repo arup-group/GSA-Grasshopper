@@ -23,7 +23,6 @@ namespace GsaGH.Parameters {
 
     public GsaElement2dGoo(GsaElement2d item) : base(item) { }
 
-
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Mesh);
