@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using OasysUnits;
+﻿using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;

@@ -7,18 +7,13 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
-using OasysGH.UI;
 using OasysUnits;
 using Rhino.Collections;
-using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -135,7 +130,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private List<Element> DuplicateApiObjects() {
+    public List<Element> DuplicateApiObjects() {
       var elems = new List<Element>();
       for (int i = 0; i < ApiElements.Count; i++) {
         elems.Add(new Element() {

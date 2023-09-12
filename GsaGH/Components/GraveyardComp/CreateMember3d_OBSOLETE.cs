@@ -104,7 +104,7 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[2].SourceCount > 0) {
-        member.MeshSize = ((Length)Input.UnitNumber(this, da, 2, _lengthUnit, true)).Meters;
+        member.ApiMember.MeshSize = ((Length)Input.UnitNumber(this, da, 2, _lengthUnit, true)).Meters;
       }
 
       da.SetData(0, new GsaMember3dGoo(member));

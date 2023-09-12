@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Components;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Collections;
-using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -49,18 +46,22 @@ namespace GsaGH.Parameters {
       set => ApiMember.OrientationAngle = value.Degrees;
     }
 
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
     public GsaMember2d() {
       ApiMember = new Member() {
         Type = MemberType.GENERIC_2D,
       };
     }
 
+    /// <summary>
+    /// Create new instance by casting from a Brep with optional inclusion geometry
+    /// </summary>
     public GsaMember2d(
-      Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null,
-      int prop = 0) {
+      Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
-        Property = prop,
       };
 
       (Tuple<PolyCurve, Point3dList, List<string>> edgeTuple,
@@ -87,9 +88,40 @@ namespace GsaGH.Parameters {
           + "Settings or if unset under Rhino unit settings");
       }
 
-      Prop2d = new GsaProperty2d(prop);
+      Prop2d = new GsaProperty2d();
     }
 
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
+    public GsaMember2d(GsaMember2d other) {
+      Id = other.Id;
+      ApiMember = other.DuplicateApiObject();
+
+      PolyCurve = (PolyCurve)other.PolyCurve?.DuplicateShallow();
+      Brep = (Brep)other.Brep?.DuplicateShallow();
+      PolyCurve = (PolyCurve)other.PolyCurve?.DuplicateShallow();
+      Topology = other.Topology;
+      TopologyType = other.TopologyType;
+
+      VoidCurves = other.VoidCurves?.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
+      VoidTopology = VoidTopology;
+      VoidTopologyType = VoidTopologyType;
+
+      InclusionLines = other.InclusionLines?.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
+      InclusionLinesTopology = other.InclusionLinesTopology;
+      InclusionLinesTopologyType = other.InclusionLinesTopologyType;
+
+      InclusionPoints = other.InclusionPoints;
+
+      Prop2d = other.Prop2d;
+      Section3dPreview = other.Section3dPreview;
+    }
+
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
     internal GsaMember2d(
       KeyValuePair<int, Member> mem,
       Point3dList topology,
@@ -161,31 +193,6 @@ namespace GsaGH.Parameters {
       Prop2d = prop2d;
     }
 
-
-    public GsaMember2d(GsaMember2d other) {
-      Id = other.Id;
-      ApiMember = other.DuplicateApiObject();
-      
-      PolyCurve = (PolyCurve)other.PolyCurve.DuplicateShallow();
-      Brep = (Brep)other.Brep.DuplicateShallow();
-      PolyCurve = (PolyCurve)other.PolyCurve.DuplicateShallow();
-      Topology = other.Topology;
-      TopologyType = other.TopologyType;
-
-      VoidCurves = other.VoidCurves.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
-      VoidTopology = VoidTopology;
-      VoidTopologyType = VoidTopologyType;
-
-      InclusionLines = other.InclusionLines.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
-      InclusionLinesTopology = other.InclusionLinesTopology;
-      InclusionLinesTopologyType = other.InclusionLinesTopologyType;
-
-      InclusionPoints = other.InclusionPoints;
-      
-      Prop2d = other.Prop2d;
-      Section3dPreview = other.Section3dPreview;
-    }
-
     public override string ToString() {
       string incl = string.Empty;
       if (!InclusionLines.IsNullOrEmpty()) {
@@ -207,7 +214,7 @@ namespace GsaGH.Parameters {
       return string.Join(" ", id, type, incl).Trim().Replace("  ", " ");
     }
 
-    public GsaMember2d UpdateGeometry(
+    public void UpdateGeometry(
       Brep brep = null, List<Curve> inclCrvs = null, Point3dList inclPts = null) {
       if (brep == null && Brep != null) {
         brep = Brep.DuplicateBrep();
@@ -221,17 +228,32 @@ namespace GsaGH.Parameters {
         inclPts = new Point3dList(InclusionPoints);
       }
 
-      var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
-        Id = Id,
-        ApiMember = ApiMember,
-        Prop2d = Prop2d,
-      };
+      (Tuple<PolyCurve, Point3dList, List<string>> edgeTuple,
+          Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>> voidTuple,
+          Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>, Point3dList> inclTuple)
+        = RhinoConversions.ConvertPolyBrepInclusion(brep, inclCrvs, inclPts);
 
-      return dup;
+      PolyCurve = edgeTuple.Item1;
+      Topology = edgeTuple.Item2;
+      TopologyType = edgeTuple.Item3;
+      VoidCurves = voidTuple.Item1;
+      VoidTopology = voidTuple.Item2;
+      VoidTopologyType = voidTuple.Item3;
+      InclusionLines = inclTuple.Item1;
+      InclusionLinesTopology = inclTuple.Item2;
+      InclusionLinesTopologyType = inclTuple.Item3;
+      InclusionPoints = inclTuple.Item4;
+
+      Brep = RhinoConversions.BuildBrep(PolyCurve, VoidCurves);
+      if (Brep == null) {
+        throw new Exception(" Error with Mem2D: Unable to build Brep, "
+          + "please verify input geometry is valid and tolerance "
+          + "is set accordingly with your geometry under GSA Plugin Unit "
+          + "Settings or if unset under Rhino unit settings");
+      }
     }
 
-
-    internal Member DuplicateApiObject() {
+    public Member DuplicateApiObject() {
       var mem = new Member {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
@@ -261,14 +283,6 @@ namespace GsaGH.Parameters {
       }
 
       return mem;
-    }
-
-    internal void UpdatePreview() {
-      if (Prop2d != null && !Prop2d.IsReferencedById) {
-        Section3dPreview = new Section3dPreview(this);
-      } else {
-        Section3dPreview = null;
-      }
     }
 
     private GsaOffset GetOffSetFromApiMember() {

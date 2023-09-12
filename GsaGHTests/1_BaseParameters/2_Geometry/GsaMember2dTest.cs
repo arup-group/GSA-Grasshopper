@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters {
       var pol2 = new Polyline(pts2);
       Brep brep2 = Brep.CreatePlanarBreps(pol2.ToNurbsCurve(), 0.001)[0];
 
-      original = original.UpdateGeometry(brep2);
+      original.UpdateGeometry(brep2);
       original.ApiMember.Colour = Color.Black;
       original.Id = 7;
       original.ApiMember.MeshSize = 0;

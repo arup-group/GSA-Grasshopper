@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
-using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Helpers.Export.GH {

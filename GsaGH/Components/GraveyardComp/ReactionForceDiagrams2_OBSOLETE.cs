@@ -25,7 +25,6 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
-using EntityType = GsaGH.Parameters.Enums.EntityType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

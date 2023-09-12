@@ -6,6 +6,7 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -30,7 +31,7 @@ namespace GsaGH.Helpers.Export {
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null
-      && list.EntityType == Parameters.Enums.EntityType.Node)) {
+      && list.EntityType == EntityType.Node)) {
         AddNodeList(list, ref apiLists, ref apiNodes, modelUnit);
       }
     }
@@ -53,16 +54,16 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static string GetElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
-      if (list.EntityType == Parameters.Enums.EntityType.Element 
+      if (list.EntityType == EntityType.Element 
         && model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
         return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
       }
 
-      if (list.EntityType == Parameters.Enums.EntityType.Member) {
+      if (list.EntityType == EntityType.Member) {
         AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
         string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
         list.Name = $"Children of '{name}'";
-        list.EntityType = Parameters.Enums.EntityType.Element;
+        list.EntityType = EntityType.Element;
       }
 
       GsaList copyList = AddPropertiesList(list, model.Properties, owner);
@@ -89,17 +90,17 @@ namespace GsaGH.Helpers.Export {
       }
       GsaList copyList;
       switch (list.EntityType) {
-        case Parameters.Enums.EntityType.Element:
+        case EntityType.Element:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddElementList(copyList, ref model, owner);
           break;
 
-        case Parameters.Enums.EntityType.Member:
+        case EntityType.Member:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddMemberList(copyList, ref model.Lists, model.Members, owner);
           break;
 
-        case Parameters.Enums.EntityType.Case:
+        case EntityType.Case:
           copyList = list.Duplicate();
           list.Definition += GsaList.CreateListDefinition(list._cases);
           AddList(list, ref model.Lists);

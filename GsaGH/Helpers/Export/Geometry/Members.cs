@@ -121,8 +121,8 @@ namespace GsaGH.Helpers.Export {
       GsaMember3d member3d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
       ref Properties apiProperties) {
-      Member apiMember = member3d.GetAPI_MemberClone();
-      apiMember.MeshSize = new Length(member3d.MeshSize, unit).Meters;
+      Member apiMember = member3d.DuplicateApiObject();
+      apiMember.MeshSize = new Length(member3d.ApiMember.MeshSize, unit).Meters;
 
       var topos = new List<string>();
 

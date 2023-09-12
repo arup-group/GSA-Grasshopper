@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.Import;
 using OasysGH;
 using OasysGH.Parameters;
 using Rhino.Collections;
@@ -148,6 +145,10 @@ namespace GsaGH.Parameters {
       mem.UpdateReleasesPreview();
       mem.Section3dPreview?.Transform(xform);
       return new GsaMember1dGoo(mem);
+    }
+
+    public override object ScriptVariable() {
+      return Value.DuplicateApiObject();
     }
   }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,12 +10,14 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -221,12 +224,7 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghcrv)) {
         Curve crv = null;
         if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both)) {
-          if (crv is PolyCurve curve) {
-            mem.PolyCurve = curve;
-          } else {
-            var tempMem = new GsaMember1d(crv);
-            mem.PolyCurve = tempMem.PolyCurve;
-          }
+          mem.UpdateGeometry(crv);
         }
       }
 
@@ -347,6 +345,8 @@ namespace GsaGH.Components {
         mem.Section3dPreview = new Section3dPreview(mem);
       }
 
+      mem.UpdateReleasesPreview();
+
       da.SetData(0, new GsaMember1dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);
@@ -369,7 +369,7 @@ namespace GsaGH.Components {
       da.SetData(17, mem.ApiMember.IsIntersector);
       da.SetData(18, new GsaBucklingFactorsGoo(new GsaBucklingFactors(mem)));
       da.SetData(19, mem.ApiMember.Name);
-      da.SetData(20, mem.ApiMember.Colour);
+      da.SetData(20, (Color)mem.ApiMember.Colour);
       da.SetData(21, mem.ApiMember.IsDummy);
       da.SetData(22, mem.ApiMember.Topology);
     }

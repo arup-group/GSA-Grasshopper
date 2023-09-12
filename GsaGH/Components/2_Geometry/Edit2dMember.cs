@@ -11,7 +11,6 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
@@ -193,7 +192,7 @@ namespace GsaGH.Components {
           crvs = ghcrvs.Select(crv => crv.Value).ToList();
         }
 
-        mem = mem.UpdateGeometry(brep, crvs, points);
+        mem.UpdateGeometry(brep, crvs, points);
       }
 
       GsaProperty2dGoo prop2dGoo = null;
@@ -292,7 +291,7 @@ namespace GsaGH.Components {
       }
 
       if (Preview3dSection || mem.Section3dPreview != null) {
-        mem.UpdatePreview();
+        mem.Section3dPreview = new Section3dPreview(mem);
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));
@@ -311,7 +310,7 @@ namespace GsaGH.Components {
       da.SetData(13, mem.ApiMember.MeshMode2d.ToString());
       da.SetData(14, mem.OrientationAngle.Radians);
       da.SetData(15, mem.ApiMember.Name);
-      da.SetData(16, mem.ApiMember.Colour);
+      da.SetData(16, (Color)mem.ApiMember.Colour);
       da.SetData(17, mem.ApiMember.IsDummy);
       da.SetData(18, mem.ApiMember.Topology);
     }

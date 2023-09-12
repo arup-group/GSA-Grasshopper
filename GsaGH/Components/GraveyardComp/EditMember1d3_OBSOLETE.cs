@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,6 +17,7 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -214,12 +216,7 @@ namespace GsaGH.Components.GraveyardComp {
       if (da.GetData(2, ref ghcrv)) {
         Curve crv = null;
         if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both)) {
-          if (crv is PolyCurve curve) {
-            mem.PolyCurve = curve;
-          } else {
-            var tempMem = new GsaMember1d(crv);
-            mem.PolyCurve = tempMem.PolyCurve;
-          }
+          mem.UpdateGeometry(crv);
         }
       }
 

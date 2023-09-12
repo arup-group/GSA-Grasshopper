@@ -233,12 +233,12 @@ namespace GsaGH.Components {
                 AddAnnotation3d(
                   m3d.Value.SolidMesh.GetBoundingBox(false).Center,
                   CreateText(m3d, path),
-                  (Color)m3d.Value.Colour, size, path);
+                  (Color)m3d.Value.ApiMember.Colour, size, path);
               } else {
                 AddAnnotationDot(
                   m3d.Value.SolidMesh.GetBoundingBox(false).Center,
                   CreateText(m3d, path),
-                  (Color)m3d.Value.Colour, size, path);
+                  (Color)m3d.Value.ApiMember.Colour, size, path);
               }
               break;
 

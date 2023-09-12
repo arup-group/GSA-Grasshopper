@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -103,6 +102,10 @@ namespace GsaGH.Parameters {
       elem.Mesh = m;
       elem.Section3dPreview?.Transform(xform);
       return new GsaElement2dGoo(elem);
+    }
+
+    public override object ScriptVariable() {
+      return Value.DuplicateApiObjects();
     }
   }
 }

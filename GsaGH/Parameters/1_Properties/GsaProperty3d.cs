@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
-using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -61,18 +59,7 @@ namespace GsaGH.Parameters {
       IsReferencedById = false;
     }
 
-    public override string ToString() {
-      string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
-      if (IsReferencedById) {
-        return (Id > 0) ? $"{pv} (referenced)" : string.Empty; ;
-      }
-
-      string mat = Material != null ? MaterialType
-        : ApiProp3d.MaterialType.ToString().ToPascalCase();
-      return string.Join(" ", pv, mat).Trim();
-    }
-
-    private Prop3D DuplicateApiObject() {
+    public Prop3D DuplicateApiObject() {
       var prop = new Prop3D {
         MaterialAnalysisProperty = ApiProp3d.MaterialAnalysisProperty,
         MaterialGradeProperty = ApiProp3d.MaterialGradeProperty,
@@ -86,6 +73,17 @@ namespace GsaGH.Parameters {
       }
 
       return prop;
+    }
+
+    public override string ToString() {
+      string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pv} (referenced)" : string.Empty; ;
+      }
+
+      string mat = Material != null ? MaterialType
+        : ApiProp3d.MaterialType.ToString().ToPascalCase();
+      return string.Join(" ", pv, mat).Trim();
     }
   }
 }

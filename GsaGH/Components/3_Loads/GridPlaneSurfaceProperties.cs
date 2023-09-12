@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -187,7 +186,7 @@ namespace GsaGH.Components {
       da.SetData(16,
         char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
       bool simple = gridPlaneSurface.GridSurface.SpanType
-        == GsaAPI.GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
+        == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
       da.SetData(17, simple);
     }
 

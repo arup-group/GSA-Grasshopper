@@ -15,7 +15,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using EntityType = GsaGH.Parameters.Enums.EntityType;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateNodeLoad : GH_OasysDropDownComponent {

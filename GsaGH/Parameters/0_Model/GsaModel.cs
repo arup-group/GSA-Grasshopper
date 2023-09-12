@@ -38,8 +38,8 @@ namespace GsaGH.Parameters {
     }
     public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
-    internal GsaAPI.Titles Titles => Model.Titles();
-    internal GsaAPI.UiUnits Units => Model.UiUnits();
+    internal Titles Titles => Model.Titles();
+    internal UiUnits Units => Model.UiUnits();
     internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiElementLocalAxes { get; private set; }
     internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiMemberLocalAxes { get; private set; }
     internal ReadOnlyDictionary<int, Node> ApiNodes { get; private set; }

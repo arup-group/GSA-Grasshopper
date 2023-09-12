@@ -4,13 +4,9 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
-using Newtonsoft.Json.Linq;
-using OasysGH.Units;
 using OasysUnits;
-using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -116,7 +112,7 @@ namespace GsaGH.Parameters {
       return string.Join(" ", id, type, pb).Trim().Replace("  ", " ");
     }
 
-    internal Element DuplicateApiObject() {
+    public Element DuplicateApiObject() {
       var elem = new Element {
         Group = ApiElement.Group,
         IsDummy = ApiElement.IsDummy,

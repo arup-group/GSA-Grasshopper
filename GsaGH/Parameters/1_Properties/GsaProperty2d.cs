@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
 using GsaGH.Helpers;
-using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Geometry;
@@ -85,6 +82,40 @@ namespace GsaGH.Parameters {
       IsReferencedById = false;
     }
 
+    public Prop2D DuplicateApiObject() {
+      var prop = new Prop2D {
+        MaterialAnalysisProperty = ApiProp2d.MaterialAnalysisProperty,
+        MaterialGradeProperty = ApiProp2d.MaterialGradeProperty,
+        MaterialType = ApiProp2d.MaterialType,
+        Name = ApiProp2d.Name,
+        Description = ApiProp2d.Description,
+        Type = ApiProp2d.Type,
+        AxisProperty = ApiProp2d.AxisProperty,
+        ReferenceSurface = ApiProp2d.ReferenceSurface,
+        AdditionalOffsetZ = ApiProp2d.AdditionalOffsetZ,
+      };
+
+      if (ApiProp2d.Type == Property2D_Type.LOAD) {
+        prop.SupportType = ApiProp2d.SupportType;
+        if (ApiProp2d.SupportType != SupportType.Auto) {
+          prop.ReferenceEdge = ApiProp2d.ReferenceEdge;
+        }
+      }
+
+      prop.PropertyModifier.AdditionalMass = ApiProp2d.PropertyModifier.AdditionalMass;
+      prop.PropertyModifier.Bending = ApiProp2d.PropertyModifier.Bending;
+      prop.PropertyModifier.InPlane = ApiProp2d.PropertyModifier.InPlane;
+      prop.PropertyModifier.Shear = ApiProp2d.PropertyModifier.Shear;
+      prop.PropertyModifier.Volume = ApiProp2d.PropertyModifier.Volume;
+
+      // workaround to handle that System.Drawing.Color is non-nullable type
+      if ((Color)ApiProp2d.Colour != Color.FromArgb(0, 0, 0)) {
+        prop.Colour = ApiProp2d.Colour;
+      }
+
+      return prop;
+    }
+
     internal void SetPlaneFromAxis(Axis axis) {
       LocalAxis = new Plane(new Point3d(axis.Origin.X, axis.Origin.Y, axis.Origin.Z),
             new Vector3d(axis.XVector.X, axis.XVector.Y, axis.XVector.Z),
@@ -141,40 +172,6 @@ namespace GsaGH.Parameters {
         type = type.Replace("LOAD_PANEL", "LOAD");
         return (Property2D_Type)Enum.Parse(typeof(Property2D_Type), type);
       }
-    }
-
-    private Prop2D DuplicateApiObject() {
-      var prop = new Prop2D {
-        MaterialAnalysisProperty = ApiProp2d.MaterialAnalysisProperty,
-        MaterialGradeProperty = ApiProp2d.MaterialGradeProperty,
-        MaterialType = ApiProp2d.MaterialType,
-        Name = ApiProp2d.Name,
-        Description = ApiProp2d.Description,
-        Type = ApiProp2d.Type,
-        AxisProperty = ApiProp2d.AxisProperty,
-        ReferenceSurface = ApiProp2d.ReferenceSurface,
-        AdditionalOffsetZ = ApiProp2d.AdditionalOffsetZ,
-      };
-
-      if (ApiProp2d.Type == Property2D_Type.LOAD) {
-        prop.SupportType = ApiProp2d.SupportType;
-        if (ApiProp2d.SupportType != SupportType.Auto) {
-          prop.ReferenceEdge = ApiProp2d.ReferenceEdge;
-        }
-      }
-
-      prop.PropertyModifier.AdditionalMass = ApiProp2d.PropertyModifier.AdditionalMass;
-      prop.PropertyModifier.Bending = ApiProp2d.PropertyModifier.Bending;
-      prop.PropertyModifier.InPlane = ApiProp2d.PropertyModifier.InPlane;
-      prop.PropertyModifier.Shear = ApiProp2d.PropertyModifier.Shear;
-      prop.PropertyModifier.Volume = ApiProp2d.PropertyModifier.Volume;
-
-      // workaround to handle that System.Drawing.Color is non-nullable type
-      if ((Color)ApiProp2d.Colour != Color.FromArgb(0, 0, 0)) {
-        prop.Colour = ApiProp2d.Colour;
-      }
-
-      return prop;
     }
 
     private static Length ConvertDescriptionToLength(string description) {

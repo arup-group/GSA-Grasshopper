@@ -6,14 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaGH.Components;
-using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {
   internal class Members {
@@ -155,8 +151,7 @@ namespace GsaGH.Helpers.Import {
           m.Append(mList);
 
           GsaProperty3d prop = model.Properties.GetProp3d(item.Value);
-          var mem3d = new GsaMember3d(item.Value, item.Key, m, prop,
-            new Length(item.Value.MeshSize, LengthUnit.Meter).As(model.ModelUnit));
+          var mem3d = new GsaMember3d(item.Value, item.Key, m, prop, model.ModelUnit);
           Member3ds.Add(new GsaMember3dGoo(mem3d));
         }
       });

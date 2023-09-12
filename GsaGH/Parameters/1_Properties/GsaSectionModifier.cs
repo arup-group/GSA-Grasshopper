@@ -194,8 +194,34 @@ namespace GsaGH.Parameters {
       ApiSectionModifier = other.DuplicateApiObject();
     }
 
-    public GsaSectionModifier Duplicate() {
-      return this;
+    public SectionModifier DuplicateApiObject() {
+      return new SectionModifier {
+        AreaModifier
+          = new SectionModifierAttribute(ApiSectionModifier.AreaModifier.Option,
+            ApiSectionModifier.AreaModifier.Value),
+        I11Modifier
+          = new SectionModifierAttribute(ApiSectionModifier.I11Modifier.Option,
+            ApiSectionModifier.I11Modifier.Value),
+        I22Modifier
+          = new SectionModifierAttribute(ApiSectionModifier.I22Modifier.Option,
+            ApiSectionModifier.I22Modifier.Value),
+        JModifier
+          = new SectionModifierAttribute(ApiSectionModifier.JModifier.Option,
+            ApiSectionModifier.JModifier.Value),
+        K11Modifier
+          = new SectionModifierAttribute(ApiSectionModifier.K11Modifier.Option,
+            ApiSectionModifier.K11Modifier.Value),
+        K22Modifier
+          = new SectionModifierAttribute(ApiSectionModifier.K22Modifier.Option,
+            ApiSectionModifier.K22Modifier.Value),
+        VolumeModifier
+          = new SectionModifierAttribute(ApiSectionModifier.VolumeModifier.Option,
+            ApiSectionModifier.VolumeModifier.Value),
+        AdditionalMass = ApiSectionModifier.AdditionalMass,
+        StressOption = ApiSectionModifier.StressOption,
+        IsBendingAxesPrincipal = ApiSectionModifier.IsBendingAxesPrincipal,
+        IsReferencePointCentroid = ApiSectionModifier.IsReferencePointCentroid,
+      };
     }
 
     public override string ToString() {
@@ -305,6 +331,7 @@ namespace GsaGH.Parameters {
 
       switch (ApiSectionModifier.StressOption) {
         case SectionModifierStressType.NO_MOD:
+    
           stress = "X";
           break;
 
@@ -339,36 +366,6 @@ namespace GsaGH.Parameters {
       }
 
       return attribute.Value != 1;
-    }
-
-    private SectionModifier DuplicateApiObject() {
-      return new SectionModifier {
-        AreaModifier
-          = new SectionModifierAttribute(ApiSectionModifier.AreaModifier.Option,
-            ApiSectionModifier.AreaModifier.Value),
-        I11Modifier
-          = new SectionModifierAttribute(ApiSectionModifier.I11Modifier.Option,
-            ApiSectionModifier.I11Modifier.Value),
-        I22Modifier
-          = new SectionModifierAttribute(ApiSectionModifier.I22Modifier.Option,
-            ApiSectionModifier.I22Modifier.Value),
-        JModifier
-          = new SectionModifierAttribute(ApiSectionModifier.JModifier.Option,
-            ApiSectionModifier.JModifier.Value),
-        K11Modifier
-          = new SectionModifierAttribute(ApiSectionModifier.K11Modifier.Option,
-            ApiSectionModifier.K11Modifier.Value),
-        K22Modifier
-          = new SectionModifierAttribute(ApiSectionModifier.K22Modifier.Option,
-            ApiSectionModifier.K22Modifier.Value),
-        VolumeModifier
-          = new SectionModifierAttribute(ApiSectionModifier.VolumeModifier.Option,
-            ApiSectionModifier.VolumeModifier.Value),
-        AdditionalMass = ApiSectionModifier.AdditionalMass,
-        StressOption = ApiSectionModifier.StressOption,
-        IsBendingAxesPrincipal = ApiSectionModifier.IsBendingAxesPrincipal,
-        IsReferencePointCentroid = ApiSectionModifier.IsReferencePointCentroid,
-      };
     }
   }
 }

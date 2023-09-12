@@ -4,7 +4,6 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;

@@ -202,6 +202,8 @@ namespace GsaGH.Components {
         elem.Section3dPreview = new Section3dPreview(elem);
       } 
 
+      elem.UpdateReleasesPreview();
+
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));
@@ -215,7 +217,7 @@ namespace GsaGH.Components {
       da.SetData(9, elem.OrientationAngle.Radians);
       da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
       da.SetData(11, elem.ApiElement.Name);
-      da.SetData(12, elem.ApiElement.Colour);
+      da.SetData(12, (Color)elem.ApiElement.Colour);
       da.SetData(13, elem.ApiElement.IsDummy);
 
       da.SetData(14, elem.ApiElement.ParentMember.Member);

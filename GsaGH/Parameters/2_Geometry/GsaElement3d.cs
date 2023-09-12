@@ -7,7 +7,6 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
-using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using Rhino.Collections;
@@ -141,7 +140,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    private List<Element> DuplicateApiObjects() {
+    public List<Element> DuplicateApiObjects() {
       var elems = new List<Element>();
       for (int i = 0; i < ApiElements.Count; i++) {
         elems.Add(new Element() {

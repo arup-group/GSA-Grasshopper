@@ -5,6 +5,7 @@ using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.Export {
   internal class GridPlaneSurfaces {
@@ -66,7 +67,7 @@ namespace GsaGH.Helpers.Export {
             return -12;
           }
         }
-        axisId = Export.Axes.TryGetExistingAxisId(ref model.Axes, axis);
+        axisId = Axes.TryGetExistingAxisId(ref model.Axes, axis);
       }
 
       if (model.Axes.ReadOnlyDictionary[axisId].Name == string.Empty) {
@@ -154,8 +155,8 @@ namespace GsaGH.Helpers.Export {
       if (grdPlnSrf._referenceType != ReferenceType.None) {
         if (grdPlnSrf._referenceType == ReferenceType.List) {
           if (grdPlnSrf._refList == null
-            || grdPlnSrf._refList.EntityType != Parameters.Enums.EntityType.Element
-            || grdPlnSrf._refList.EntityType != Parameters.Enums.EntityType.Member) {
+            || grdPlnSrf._refList.EntityType != EntityType.Element
+            || grdPlnSrf._refList.EntityType != EntityType.Member) {
             owner.AddRuntimeWarning("Invalid List type for GridSurface " + grdPlnSrf.ToString()
               + Environment.NewLine + "Element list has not been set");
           }

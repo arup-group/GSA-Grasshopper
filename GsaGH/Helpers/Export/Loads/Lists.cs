@@ -12,9 +12,9 @@ namespace GsaGH.Helpers.Export {
 
       // Add lists embedded in loads as they may have ID > 0 set
       if (lists == null && !loads.IsNullOrEmpty()) {
-        lists = Loads.GetLoadLists(loads);
+        lists = GetLoadLists(loads);
       } else if (!loads.IsNullOrEmpty()) {
-        lists.AddRange(Loads.GetLoadLists(loads));
+        lists.AddRange(GetLoadLists(loads));
       }
 
       Lists.ConvertList(lists, ref model, owner);

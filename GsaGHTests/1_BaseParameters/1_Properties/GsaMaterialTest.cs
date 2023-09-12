@@ -65,7 +65,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal("customName", material.Name);
         var apiMaterial = (FabricMaterial)material.StandardMaterial;
         Assert.Equal("customName", apiMaterial.Name);
-        Assert.Throws<System.Exception>(() => DuplicateTest(material));
+        Assert.Throws<Exception>(() => DuplicateTest(material));
       }
     }
 

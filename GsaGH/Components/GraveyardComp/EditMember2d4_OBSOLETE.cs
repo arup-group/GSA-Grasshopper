@@ -188,7 +188,7 @@ namespace GsaGH.Components {
           crvs = ghcrvs.Select(crv => crv.Value).ToList();
         }
 
-        mem = mem.UpdateGeometry(brep, crvs, points);
+        mem.UpdateGeometry(brep, crvs, points);
       }
 
       GsaProperty2dGoo prop2dGoo = null;

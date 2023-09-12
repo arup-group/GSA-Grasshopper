@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
 using Rhino.Geometry;
-using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {

@@ -189,7 +189,7 @@ namespace GsaGH.Components {
           }
         }
 
-        mem = mem.UpdateGeometry(brep, curves, points);
+        mem.UpdateGeometry(brep, curves, points);
       }
 
       GsaProperty2dGoo prop2dGoo = null;

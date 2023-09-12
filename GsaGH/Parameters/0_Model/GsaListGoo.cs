@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters.Enums;
 using OasysGH;
 using OasysGH.Parameters;
 
@@ -34,6 +33,10 @@ namespace GsaGH.Parameters {
       }
 
       return false;
+    }
+
+    public override object ScriptVariable() {
+      return Value.GetApiList();
     }
   }
 }

@@ -227,12 +227,13 @@ namespace GsaGH.Helpers.Import {
       if (srfDict.Count == 0 || !srfDict.TryGetValue(gridSrfId, out GridSurface gs)) {
         return null;
       }
-      
-      var gps = new GsaGridPlaneSurface();
-      gps.GridSurface = gs;
-      gps.GridSurfaceId = gridSrfId;
-      gps.Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString()
-       .Replace(" ", string.Empty).Replace(",", string.Empty);
+
+      var gps = new GsaGridPlaneSurface {
+        GridSurface = gs,
+        GridSurfaceId = gridSrfId,
+        Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString()
+       .Replace(" ", string.Empty).Replace(",", string.Empty)
+      };
 
       if (plnDict.TryGetValue(gs.GridPlane, out GridPlane gp)) {
         gps.GridPlane = gp;

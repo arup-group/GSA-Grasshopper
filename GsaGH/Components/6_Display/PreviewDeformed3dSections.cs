@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Xml.Linq;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
@@ -15,7 +13,6 @@ using OasysGH.Components;
 using OasysGH.UI;
 using Rhino;
 using Rhino.DocObjects;
-using Rhino.Geometry;
 
 namespace GsaGH.Components {
   /// <summary>

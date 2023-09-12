@@ -8,7 +8,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
-using EntityType = GsaGH.Parameters.Enums.EntityType;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateGravityLoad : GH_OasysComponent {

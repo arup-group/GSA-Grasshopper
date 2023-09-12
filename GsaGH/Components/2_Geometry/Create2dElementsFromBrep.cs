@@ -17,7 +17,6 @@ using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;

@@ -13,7 +13,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using EntityType = GsaGH.Parameters.Enums.EntityType;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateBeamThermalLoad : GH_OasysDropDownComponent {

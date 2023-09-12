@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Net;
-using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysUnits;
-using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Model {

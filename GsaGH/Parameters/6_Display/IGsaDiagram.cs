@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters.Enums;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -10,7 +9,7 @@ namespace GsaGH.Parameters {
   /// <see cref="GsaLineDiagram"/> or <see cref="GsaVectorDiagram"/>.</para>
   /// </summary>
   public interface IGsaDiagram : IGH_GeometricGoo, IGH_PreviewData {
-    public GsaDiagramType DiagramType { get; }
+    public DiagramType DiagramType { get; }
     public bool CastTo<TQ>(ref TQ target);
     public GeometryBase GetGeometry();
   }

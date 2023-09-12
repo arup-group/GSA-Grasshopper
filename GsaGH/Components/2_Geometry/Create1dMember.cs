@@ -8,7 +8,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Components;
 using OasysGH.UI;
 using OasysGH.Units;
 

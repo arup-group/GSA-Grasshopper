@@ -204,7 +204,7 @@ namespace GsaGH.Components {
           }
         }
 
-        mem = mem.UpdateGeometry(brep, crvs, pts);
+        mem.UpdateGeometry(brep, crvs, pts);
       }
 
       GsaProperty2dGoo prop2dGoo = null;

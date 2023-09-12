@@ -3,7 +3,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using System;
 using System.Reflection;
-using System.Reflection.Emit;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

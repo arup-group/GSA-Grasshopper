@@ -16,7 +16,6 @@ using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;

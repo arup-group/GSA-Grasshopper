@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -17,7 +16,6 @@ using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 using Grasshopper.Kernel.Types;
-using Newtonsoft.Json.Linq;
 
 namespace GsaGH.Parameters {
   internal enum Layer {
@@ -133,7 +131,7 @@ namespace GsaGH.Parameters {
 
     private static Model AssembleTempModel(GsaElement1d elem) {
       var model = new Model();
-      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       var topo = new List<int> {
         model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.From, unit)),
         model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.To, unit))
@@ -180,7 +178,7 @@ namespace GsaGH.Parameters {
 
     private static Model AssembleTempModel(GsaMember2d mem) {
       var model = new Model();
-      OasysUnits.Units.LengthUnit unit = DefaultUnits.LengthUnitGeometry;
+      LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       string topo = string.Empty;
       for (int i = 0; i < mem.Topology.Count; i++) {
         int id = model.AddNode(Nodes.NodeFromPoint(mem.Topology[i], unit));

@@ -10,7 +10,6 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using Rhino.Collections;
-using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class MeshResultInfo : GH_OasysComponent {

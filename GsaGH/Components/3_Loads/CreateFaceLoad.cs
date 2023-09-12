@@ -15,7 +15,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using EntityType = GsaGH.Parameters.Enums.EntityType;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {
   public class CreateFaceLoad : GH_OasysDropDownComponent {
@@ -326,7 +326,7 @@ namespace GsaGH.Components {
       }
 
       string dir = "Z";
-      GsaAPI.Direction direc = GsaAPI.Direction.Z;
+      Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -336,11 +336,11 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = GsaAPI.Direction.X;
+          direc = Direction.X;
           break;
 
         case "Y":
-          direc = GsaAPI.Direction.Y;
+          direc = Direction.Y;
           break;
       }
 
@@ -349,7 +349,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.CONSTANT;
+            faceLoad.FaceLoad.Type = FaceLoadType.CONSTANT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -367,7 +367,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Variable:
           if (_mode == FoldMode.Variable) {
-            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.GENERAL;
+            faceLoad.FaceLoad.Type = FaceLoadType.GENERAL;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -394,7 +394,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            faceLoad.FaceLoad.Type = GsaAPI.FaceLoadType.POINT;
+            faceLoad.FaceLoad.Type = FaceLoadType.POINT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();

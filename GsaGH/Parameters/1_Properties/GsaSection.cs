@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
-using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -79,6 +77,26 @@ namespace GsaGH.Parameters {
       IsReferencedById = false;
     }
 
+    public Section DuplicateApiObject() {
+      var sec = new Section() {
+        MaterialAnalysisProperty = ApiSection.MaterialAnalysisProperty,
+        MaterialGradeProperty = ApiSection.MaterialGradeProperty,
+        MaterialType = ApiSection.MaterialType,
+        Name = ApiSection.Name.ToString(),
+        BasicOffset = ApiSection.BasicOffset,
+        AdditionalOffsetY = ApiSection.AdditionalOffsetY,
+        AdditionalOffsetZ = ApiSection.AdditionalOffsetZ,
+        Pool = ApiSection.Pool,
+        Profile = ApiSection.Profile,
+      };
+      // workaround to handle that Color is non-nullable type
+      if ((Color)ApiSection.Colour != Color.FromArgb(0, 0, 0)) {
+        sec.Colour = ApiSection.Colour;
+      }
+
+      return sec;
+    }
+
     public override string ToString() {
       string pb = Id > 0 ? $"PB{Id}" : string.Empty;
       if (IsReferencedById) {
@@ -97,26 +115,6 @@ namespace GsaGH.Parameters {
         Profile = profile,
       };
       return test.Properties().Area != 0;
-    }
-
-    private Section DuplicateApiObject() {
-      var sec = new Section() {
-        MaterialAnalysisProperty = ApiSection.MaterialAnalysisProperty,
-        MaterialGradeProperty = ApiSection.MaterialGradeProperty,
-        MaterialType = ApiSection.MaterialType,
-        Name = ApiSection.Name.ToString(),
-        BasicOffset = ApiSection.BasicOffset,
-        AdditionalOffsetY = ApiSection.AdditionalOffsetY,
-        AdditionalOffsetZ = ApiSection.AdditionalOffsetZ,
-        Pool = ApiSection.Pool,
-        Profile = ApiSection.Profile,
-      };
-      // workaround to handle that Color is non-nullable type
-      if ((Color)ApiSection.Colour != Color.FromArgb(0, 0, 0)) {
-        sec.Colour = ApiSection.Colour;
-      }
-
-      return sec;
     }
   }
 }

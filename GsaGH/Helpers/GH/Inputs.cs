@@ -4,7 +4,6 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.GH {
   internal class Inputs {

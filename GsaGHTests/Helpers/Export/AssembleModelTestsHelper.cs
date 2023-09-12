@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
@@ -228,11 +227,11 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
-      Assert.Equal(expected.MeshSize, api.MeshSize);
-      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.ApiMember.Group, api.Group);
+      Assert.Equal(expected.ApiMember.Name, api.Name);
+      Assert.Equal(expected.ApiMember.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiMember.MeshSize, api.MeshSize);
+      Assert.Equal(expected.ApiMember.IsIntersector, api.IsIntersector);
 
       TestProp3d(expected.Prop3d, api.Property, actualModel);
     }

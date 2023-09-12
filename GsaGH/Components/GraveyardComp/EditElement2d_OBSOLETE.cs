@@ -10,8 +10,6 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units;
-using OasysUnits;
 
 namespace GsaGH.Components {
   /// <summary>

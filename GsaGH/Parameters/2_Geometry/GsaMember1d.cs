@@ -5,14 +5,12 @@ using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -71,11 +69,7 @@ namespace GsaGH.Parameters {
         Type = MemberType.GENERIC_1D,
         Type1D = ElementType.BEAM
       };
-      Tuple<PolyCurve, Point3dList, List<string>> convertCrv
-        = RhinoConversions.ConvertMem1dCrv(crv);
-      PolyCurve = convertCrv.Item1;
-      Topology = convertCrv.Item2;
-      TopologyType = convertCrv.Item3;
+      UpdateGeometry(crv);
       UpdateReleasesPreview();
     }
 
@@ -121,7 +115,7 @@ namespace GsaGH.Parameters {
       return string.Join(" ", id, type, pb).Trim().Replace("  ", " ");
     }
 
-    internal Member DuplicateApiObject() {
+    public Member DuplicateApiObject() {
       var mem = new Member {
         Group = ApiMember.Group,
         IsDummy = ApiMember.IsDummy,
@@ -156,6 +150,14 @@ namespace GsaGH.Parameters {
       }
 
       return mem;
+    }
+
+    public void UpdateGeometry(Curve crv) {
+      Tuple<PolyCurve, Point3dList, List<string>> convertCrv
+        = RhinoConversions.ConvertMem1dCrv(crv);
+      PolyCurve = convertCrv.Item1;
+      Topology = convertCrv.Item2;
+      TopologyType = convertCrv.Item3;
     }
 
     private GsaOffset GetOffSetFromApiMember() {

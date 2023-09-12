@@ -8,7 +8,6 @@ using Grasshopper.Kernel;
 using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;

@@ -1,7 +1,5 @@
 ﻿using System.Drawing;
-using GsaAPI;
 using GsaGH.Parameters;
-using GsaGHTests.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
 using Xunit;

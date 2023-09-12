@@ -70,10 +70,10 @@ namespace GsaGH.Parameters {
     internal static PolyCurve ToCurve(GridLine gridLine) {
         var curve = new PolyCurve();
       if (gridLine.Shape is GridLineShape.Line) {
-        var line = GsaGridLine.ToLine(gridLine);
+        Line line = ToLine(gridLine);
         curve.Append(line);
       } else if (gridLine.Shape is GridLineShape.Arc) {
-        var arc = GsaGridLine.ToArc(gridLine);
+        Arc arc = ToArc(gridLine);
         curve.Append(arc);
       }
       return curve;
@@ -88,36 +88,31 @@ namespace GsaGH.Parameters {
       return line;
     }
 
-    public GsaGridLine Clone() {
-      var gridLine = new GridLine(_gridLine.Label) {
-        X = _gridLine.X,
-        Y = _gridLine.Y,
-        Length = _gridLine.Length,
-        Shape = _gridLine.Shape,
-        Theta1 = _gridLine.Theta1,
+    public GsaGridLine(GsaGridLine other) {
+      _gridLine = new GridLine(other._gridLine.Label) {
+        Shape = other._gridLine.Shape,
+        Theta1 = other._gridLine.Theta1,
+        X = other._gridLine.X,
+        Y = other._gridLine.Y,
       };
+      
       if (_gridLine.Shape == GridLineShape.Arc) {
-        gridLine.Theta2 = _gridLine.Theta2;
+        _gridLine.Theta2 = other._gridLine.Theta2;
       }
-      PolyCurve curve = _curve.DuplicatePolyCurve();
-      var dup = new GsaGridLine(gridLine, curve);
-      return dup;
-    }
 
-    public GsaGridLine Duplicate() {
-      return this;
+      _curve = other._curve.DuplicatePolyCurve();
     }
 
     internal Arc ToArc() {
-      return GsaGridLine.ToArc(_gridLine);
+      return ToArc(_gridLine);
     }
 
     internal PolyCurve ToCurve() {
-      return GsaGridLine.ToCurve(_gridLine);
+      return ToCurve(_gridLine);
     }
 
     internal Line ToLine() {
-      return GsaGridLine.ToLine(_gridLine);
+      return ToLine(_gridLine);
     }
 
     public override string ToString() {

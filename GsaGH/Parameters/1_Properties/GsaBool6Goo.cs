@@ -21,5 +21,9 @@ namespace GsaGH.Parameters {
     public override IGH_Goo Duplicate() {
       return new GsaBool6Goo(Value);
     }
+
+    public override object ScriptVariable() {
+      return Value.ApiBool6;
+    }
   }
 }

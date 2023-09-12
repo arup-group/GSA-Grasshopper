@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -227,6 +225,10 @@ namespace GsaGH.Parameters {
       mem.InclusionPoints?.Transform(xform);
       mem.Section3dPreview?.Transform(xform);
       return new GsaMember2dGoo(mem);
+    }
+
+    public override object ScriptVariable() {
+      return Value.DuplicateApiObject();
     }
   }
 }

@@ -6,6 +6,7 @@ using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
 
@@ -43,7 +44,7 @@ namespace GsaGH.Helpers.Export {
       foreach (int key in LoadCases.Keys) {
         // some old gwb files stores Dead as (int)0:
         if ((int)LoadCases[key].CaseType == 0) {
-          LoadCases[key].CaseType = LoadCaseType.Dead;
+          LoadCases[key].CaseType = GsaAPI.LoadCaseType.Dead;
         }
       }
     }
@@ -186,8 +187,8 @@ namespace GsaGH.Helpers.Export {
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.Enums.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.Enums.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
@@ -220,8 +221,8 @@ namespace GsaGH.Helpers.Export {
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.Enums.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.Enums.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for BeamThermalLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
@@ -254,8 +255,8 @@ namespace GsaGH.Helpers.Export {
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.Enums.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.Enums.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
@@ -289,8 +290,8 @@ namespace GsaGH.Helpers.Export {
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.Enums.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.Enums.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for FaceLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
@@ -323,8 +324,8 @@ namespace GsaGH.Helpers.Export {
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.Enums.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.Enums.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for FaceThermalLoads " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }

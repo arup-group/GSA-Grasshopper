@@ -1,5 +1,5 @@
 ﻿using GsaAPI;
-using Diagram = GsaGH.Parameters.Enums;
+using Diagram = GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GsaApi.EnumMappings {
   internal class DiagramTypeMapping : EnumMapping<DiagramType, Diagram.ApiDiagramType> {

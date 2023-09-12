@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -19,7 +18,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
-using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
+using ExpansionType = GsaGH.Parameters.ExpansionType;
 
 namespace GsaGH.Components {
   public class CreateGridAreaLoad : GH_OasysDropDownComponent {

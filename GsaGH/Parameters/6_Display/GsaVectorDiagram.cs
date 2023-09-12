@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Parameters.Enums;
 using Rhino.Collections;
 using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
@@ -23,7 +21,7 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Vector Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; } = Colours.GsaDarkPurple;
-    public GsaDiagramType DiagramType => GsaDiagramType.Vector;
+    public DiagramType DiagramType => DiagramType.Vector;
     public readonly Point3d AnchorPoint;
     internal Line DisplayLine;
     private bool _doubleArrow = false;

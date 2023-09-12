@@ -1,6 +1,5 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
@@ -50,7 +49,7 @@ namespace GsaGH.Helpers {
           $"is null or empty");
       }
 
-      for (int i = 0; i < list.Count; i++) {
+      for (int i = 0; i < value.Count; i++) {
         switch (list) {
           case List<int> groups:
             value[i].Group = groups.Count > i ? groups[i] : groups.Last();

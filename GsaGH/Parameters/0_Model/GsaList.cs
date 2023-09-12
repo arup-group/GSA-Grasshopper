@@ -6,7 +6,6 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.Import;
-using EntityType = GsaGH.Parameters.Enums.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -464,7 +463,7 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          var tempApiList = new GsaAPI.EntityList() {
+          var tempApiList = new EntityList() {
             Type = GsaAPI.EntityType.Case,
             Name = Name,
             Definition = Definition
