@@ -196,7 +196,7 @@ namespace GsaGH.Parameters {
         dup._rel2 = _rel2.Duplicate();
       }
 
-      dup.Section = Section.Duplicate();
+      dup.Section = Section;
       if (_orientationNode != null) {
         dup._orientationNode = _orientationNode.Duplicate();
       }
@@ -228,10 +228,11 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
-      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
-      string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
+      string pb = Section.Id > 0 ? $"PB{Section.Id}" 
+        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      return string.Join(" ", id, type, pb).Trim().Replace("  ", " ");
     }
 
     public GsaElement1d Transform(Transform xform) {
@@ -286,7 +287,8 @@ namespace GsaGH.Parameters {
     }
 
     internal void UpdatePreview() {
-      if (Section.Profile != string.Empty && GsaSection.ValidProfile(Section.Profile)) {
+      if (Section.ApiSection.Profile != string.Empty && 
+        GsaSection.ValidProfile(Section.ApiSection.Profile)) {
         Section3dPreview = new GsaSection3dPreview(this);
       } else {
         Section3dPreview = null;

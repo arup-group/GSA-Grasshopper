@@ -194,39 +194,41 @@ namespace GsaGH.Components {
       SectionModulusUnit sectionModulusUnit = UnitsHelper.GetSectionModulusUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
-      da.SetData(0, new GH_UnitNumber(section.Area.ToUnit(areaUnit)));
+      GsaSectionProperties props = section.SectionProperties;
 
-      da.SetData(1, new GH_UnitNumber(section.Iyy.ToUnit(inertiaUnit)));
-      da.SetData(2, new GH_UnitNumber(section.Izz.ToUnit(inertiaUnit)));
-      da.SetData(3, new GH_UnitNumber(section.Iyz.ToUnit(inertiaUnit)));
+      da.SetData(0, new GH_UnitNumber(props.Area.ToUnit(areaUnit)));
 
-      da.SetData(4, new GH_UnitNumber(section.Iuu.ToUnit(inertiaUnit)));
-      da.SetData(5, new GH_UnitNumber(section.Ivv.ToUnit(inertiaUnit)));
-      da.SetData(6, new GH_UnitNumber(section.Angle.ToUnit(AngleUnit.Degree)));
+      da.SetData(1, new GH_UnitNumber(props.Iyy.ToUnit(inertiaUnit)));
+      da.SetData(2, new GH_UnitNumber(props.Izz.ToUnit(inertiaUnit)));
+      da.SetData(3, new GH_UnitNumber(props.Iyz.ToUnit(inertiaUnit)));
 
-      da.SetData(7, new GH_Number(section.Kyy));
-      da.SetData(8, new GH_Number(section.Kzz));
+      da.SetData(4, new GH_UnitNumber(props.Iuu.ToUnit(inertiaUnit)));
+      da.SetData(5, new GH_UnitNumber(props.Ivv.ToUnit(inertiaUnit)));
+      da.SetData(6, new GH_UnitNumber(props.Angle.ToUnit(AngleUnit.Degree)));
 
-      da.SetData(9, new GH_Number(section.Kuu));
-      da.SetData(10, new GH_Number(section.Kvv));
+      da.SetData(7, new GH_Number(props.Kyy));
+      da.SetData(8, new GH_Number(props.Kzz));
 
-      da.SetData(11, new GH_UnitNumber(section.J.ToUnit(inertiaUnit)));
-      da.SetData(12, new GH_UnitNumber(section.C.ToUnit(sectionModulusUnit)));
+      da.SetData(9, new GH_Number(props.Kuu));
+      da.SetData(10, new GH_Number(props.Kvv));
 
-      da.SetData(13, new GH_UnitNumber(section.Zy.ToUnit(sectionModulusUnit)));
-      da.SetData(14, new GH_UnitNumber(section.Zz.ToUnit(sectionModulusUnit)));
+      da.SetData(11, new GH_UnitNumber(props.J.ToUnit(inertiaUnit)));
+      da.SetData(12, new GH_UnitNumber(props.C.ToUnit(sectionModulusUnit)));
 
-      da.SetData(15, new GH_UnitNumber(section.Zpy.ToUnit(sectionModulusUnit)));
-      da.SetData(16, new GH_UnitNumber(section.Zpz.ToUnit(sectionModulusUnit)));
+      da.SetData(13, new GH_UnitNumber(props.Zy.ToUnit(sectionModulusUnit)));
+      da.SetData(14, new GH_UnitNumber(props.Zz.ToUnit(sectionModulusUnit)));
 
-      da.SetData(17, new GH_UnitNumber(section.Cy.ToUnit(_lengthUnit)));
-      da.SetData(18, new GH_UnitNumber(section.Cz.ToUnit(_lengthUnit)));
+      da.SetData(15, new GH_UnitNumber(props.Zpy.ToUnit(sectionModulusUnit)));
+      da.SetData(16, new GH_UnitNumber(props.Zpz.ToUnit(sectionModulusUnit)));
 
-      da.SetData(19, new GH_UnitNumber(section.Ry.ToUnit(_lengthUnit)));
-      da.SetData(20, new GH_UnitNumber(section.Rz.ToUnit(_lengthUnit)));
+      da.SetData(17, new GH_UnitNumber(props.Cy.ToUnit(_lengthUnit)));
+      da.SetData(18, new GH_UnitNumber(props.Cz.ToUnit(_lengthUnit)));
 
-      da.SetData(21, new GH_UnitNumber(section.SurfaceAreaPerLength));
-      da.SetData(22, new GH_UnitNumber(section.VolumePerLength));
+      da.SetData(19, new GH_UnitNumber(props.Ry.ToUnit(_lengthUnit)));
+      da.SetData(20, new GH_UnitNumber(props.Rz.ToUnit(_lengthUnit)));
+
+      da.SetData(21, new GH_UnitNumber(props.SurfaceAreaPerLength));
+      da.SetData(22, new GH_UnitNumber(props.VolumePerLength));
     }
 
     private void Update(string unit) {

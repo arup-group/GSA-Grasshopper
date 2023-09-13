@@ -1,151 +1,91 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contain information about <see cref="GsaMaterial"/>.
+  /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contains information about <see cref="GsaMaterial"/>.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.</para>
   /// </summary>
-  public class GsaProperty3d {
-    public int AxisProperty {
-      get => _prop3d.AxisProperty;
-      set {
-        CloneApiObject();
-        _prop3d.AxisProperty = value;
-        IsReferencedById = false;
-      }
-    }
-    public Color Colour {
-      get => (Color)_prop3d.Colour;
-      set {
-        CloneApiObject();
-        _prop3d.Colour = value;
-        IsReferencedById = false;
-      }
-    }
-    public Guid Guid => _guid;
-    public int Id {
-      get => _id;
-      set {
-        _guid = Guid.NewGuid();
-        _id = value;
-      }
-    }
-    public GsaMaterial Material {
-      get => _material;
-      set {
-        _material = value;
-        if (_prop3d == null) {
-          _prop3d = new Prop3D();
-        } else {
-          CloneApiObject();
-        }
+  public class GsaProperty3d : GsaProperty {
+    public Prop3D ApiProp3d;
 
-        _prop3d.MaterialType = Materials.GetMaterialType(_material);
-        if (_material.IsCustom) {
-          _prop3d.MaterialAnalysisProperty = _material.Id;
-        } else {
-          _prop3d.MaterialGradeProperty = _material.Id;
-        }
-        IsReferencedById = false;
-      }
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
+    public GsaProperty3d() { 
+      ApiProp3d = new Prop3D();
     }
-    public string Name {
-      get => _prop3d.Name;
-      set {
-        CloneApiObject();
-        _prop3d.Name = value;
-        IsReferencedById = false;
-      }
-    }
-    internal Prop3D ApiProp3d {
-      get => _prop3d;
-      set {
-        _guid = Guid.NewGuid();
-        _prop3d = value;
-        _material = Material.Duplicate();
-        IsReferencedById = false;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
-    private Guid _guid = Guid.NewGuid();
-    private int _id;
-    private GsaMaterial _material = new GsaMaterial();
-    private Prop3D _prop3d = new Prop3D();
 
-    public GsaProperty3d() { }
-
+    /// <summary>
+    /// Create a new instance with reference to an Id and no API object
+    /// </summary>
+    /// <param name="id"></param>
     public GsaProperty3d(int id) {
-      _id = id;
+      Id = id;
       IsReferencedById = true;
     }
 
+    /// <summary>
+    /// Create new instance by casting from a Material
+    /// </summary>
+    /// <param name="material"></param>
     public GsaProperty3d(GsaMaterial material) {
+      ApiProp3d = new Prop3D();
       Material = material;
     }
 
-    internal GsaProperty3d(
-      IReadOnlyDictionary<int, Prop3D> pDict, int id,
-      IReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!pDict.ContainsKey(id)) {
-        return;
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
+    public GsaProperty3d(GsaProperty3d other) {
+      Id = other.Id;
+      IsReferencedById = other.IsReferencedById;
+      if (!IsReferencedById) {
+        ApiProp3d = other.DuplicateApiObject();
+        Material = other.Material;
       }
+    }
 
-      _prop3d = pDict[id];
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
+    /// <param name="prop3d"></param>
+    internal GsaProperty3d(KeyValuePair<int, Prop3D> prop3d) {
+      Id = prop3d.Key;
+      ApiProp3d = prop3d.Value;
       IsReferencedById = false;
-      // material
-      if (_prop3d.MaterialAnalysisProperty != 0
-        && matDict.ContainsKey(_prop3d.MaterialAnalysisProperty)) {
-        _material.AnalysisMaterial = matDict[_prop3d.MaterialAnalysisProperty];
-      }
-
-      _material = Material.Duplicate();
-    }
-
-    public GsaProperty3d Clone() {
-      var dup = new GsaProperty3d {
-        _prop3d = _prop3d,
-        _id = _id,
-        _material = _material.Duplicate(),
-        IsReferencedById = IsReferencedById,
-      };
-      dup.CloneApiObject();
-      return dup;
-    }
-
-    public GsaProperty3d Duplicate() {
-      return this;
     }
 
     public override string ToString() {
-      string type = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.MaterialType).Key;
-      string pa = (Id > 0) ? "PV" + Id + " " : string.Empty;
-      return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
-    }
-
-    private void CloneApiObject() {
-      var prop = new Prop3D {
-        MaterialAnalysisProperty = _prop3d.MaterialAnalysisProperty,
-        MaterialGradeProperty = _prop3d.MaterialGradeProperty,
-        MaterialType = _prop3d.MaterialType,
-        Name = _prop3d.Name.ToString(),
-        AxisProperty = _prop3d.AxisProperty,
-      };
-      if ((Color)_prop3d.Colour
-        != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
-      {
-        prop.Colour = _prop3d.Colour;
+      string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pv} (referenced)" : string.Empty; ;
       }
 
-      _prop3d = prop;
-      _guid = Guid.NewGuid();
+      string mat = Material != null ? MaterialType
+        : ApiProp3d.MaterialType.ToString().ToPascalCase();
+      return string.Join(" ", pv, mat).Trim();
+    }
+
+    private Prop3D DuplicateApiObject() {
+      var prop = new Prop3D {
+        MaterialAnalysisProperty = ApiProp3d.MaterialAnalysisProperty,
+        MaterialGradeProperty = ApiProp3d.MaterialGradeProperty,
+        MaterialType = ApiProp3d.MaterialType,
+        Name = ApiProp3d.Name.ToString(),
+        AxisProperty = ApiProp3d.AxisProperty,
+      };
+      // workaround to handle that Color is non-nullable type
+      if ((Color)ApiProp3d.Colour != Color.FromArgb(0, 0, 0)) {
+        prop.Colour = ApiProp3d.Colour;
+      }
+
+      return prop;
     }
   }
 }

@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         "Expanded list IDs", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess DA) {
+    protected override void SolveInternal(IGH_DataAccess DA) {
       var list = new GsaList();
 
       GsaListGoo listGoo = null;

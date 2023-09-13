@@ -112,7 +112,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember3d {
         MeshSize = MeshSize,
         _mesh = (Mesh)_mesh.DuplicateShallow(),
-        Prop3d = Prop3d.Duplicate(),
+        Prop3d = Prop3d,
         Id = Id,
         ApiMember = GetAPI_MemberClone(),
         _guid = Guid.NewGuid()
@@ -139,9 +139,9 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
-      return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", id, type).Trim().Replace("  ", " ");
     }
 
     public GsaMember3d Transform(Transform xform) {

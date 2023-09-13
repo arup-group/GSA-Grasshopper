@@ -89,9 +89,8 @@ namespace GsaGH.Helpers.Import {
         KeyValuePair<int, Prop2D> prop2d,
         Materials materials,
         IReadOnlyDictionary<int, Axis> axes) {
-      var prop = new GsaProperty2d(prop2d.Key) {
-        ApiProp2d = prop2d.Value,
-      };
+      var prop = new GsaProperty2d(prop2d);
+      
       GsaMaterial material = materials.GetMaterial(prop2d.Value);
       if (material != null) {
         prop.Material = material;
@@ -101,9 +100,7 @@ namespace GsaGH.Helpers.Import {
       if (prop.ApiProp2d.AxisProperty > 0) {
         if (axes != null && axes.ContainsKey(prop.ApiProp2d.AxisProperty)) {
           Axis ax = axes[prop.ApiProp2d.AxisProperty];
-          prop.LocalAxis = new Plane(new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
-            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
-            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+          prop.SetPlaneFromAxis(ax);
         }
       }
 
@@ -113,9 +110,8 @@ namespace GsaGH.Helpers.Import {
     internal static GsaProperty3dGoo CreateProp3dFromApi(
       KeyValuePair<int, Prop3D> prop3d,
       Materials materials) {
-      var prop = new GsaProperty3d(prop3d.Key) {
-        ApiProp3d = prop3d.Value,
-      };
+      var prop = new GsaProperty3d(prop3d);
+
       GsaMaterial material = materials.GetMaterial(prop3d.Value);
       if (material!= null) {
         prop.Material = material;
@@ -128,9 +124,8 @@ namespace GsaGH.Helpers.Import {
       KeyValuePair<int, Section> section,
       Materials materials,
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
-      var sect = new GsaSection(section.Key) {
-        ApiSection = section.Value,
-      };
+      var sect = new GsaSection(section);
+
       GsaMaterial material = materials.GetMaterial(section.Value);
       if (material != null) {
         sect.Material = material;

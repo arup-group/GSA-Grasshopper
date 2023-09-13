@@ -183,6 +183,8 @@ namespace GsaGH.Helpers.GsaApi {
         }, {
           "Plate", Property2D_Type.PLATE
         }, {
+          "Flat Plate", Property2D_Type.PLATE
+        }, {
           "Shell", Property2D_Type.SHELL
         }, {
           "Curved Shell", Property2D_Type.CURVED_SHELL

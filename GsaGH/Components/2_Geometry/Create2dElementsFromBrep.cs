@@ -135,7 +135,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep)) {
         return;
@@ -231,7 +231,7 @@ namespace GsaGH.Components {
       var prop2d = new GsaProperty2d();
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProperty2dGoo prop2DGoo) {
-          prop2d = prop2DGoo.Value.Duplicate();
+          prop2d = prop2DGoo.Value;
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;

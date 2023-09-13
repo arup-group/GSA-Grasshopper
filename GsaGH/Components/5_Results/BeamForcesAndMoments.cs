@@ -126,7 +126,7 @@ namespace GsaGH.Components {
         "Total |YYZZ| Element Bending Moments." + note, GH_ParamAccess.tree);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var result = new GsaResult();
       string elementlist = "All";
 

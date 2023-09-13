@@ -241,7 +241,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaSectionModifierParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var modifier = new GsaSectionModifier();
       if (_toMode) {
         AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);

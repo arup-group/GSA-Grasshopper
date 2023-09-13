@@ -91,7 +91,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var model = new Model();
       var ghTyp = new GH_ObjectWrapper();
       string fileName = string.Empty;

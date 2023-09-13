@@ -354,15 +354,15 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaSectionGoo sectionGoo: {
-                inSect.Add(sectionGoo.Value.Duplicate());
+                inSect.Add(sectionGoo.Value);
                 break;
               }
             case GsaProperty2dGoo prop2dGoo: {
-                inProp2d.Add(prop2dGoo.Value.Duplicate());
+                inProp2d.Add(prop2dGoo.Value);
                 break;
               }
             case GsaProperty3dGoo prop3dGoo: {
-                inProp3d.Add(prop3dGoo.Value.Duplicate());
+                inProp3d.Add(prop3dGoo.Value);
                 break;
               }
             default: {

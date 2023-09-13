@@ -107,7 +107,7 @@ namespace GsaGH.Components {
         "Combined |XXYYZZ| Rotations in Local Axis." + note, GH_ParamAccess.tree);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       this.AddRuntimeError("Beam Displacements are now in local axis - please update your script accordingly!");
       var result = new GsaResult();
 

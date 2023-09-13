@@ -178,7 +178,7 @@ namespace GsaGH.Parameters {
       }
       switch (EntityType) {
         case EntityType.Node:
-          if (_nodes != null && _nodes.Count != 0) {
+          if (!_nodes.IsNullOrEmpty()) {
             s += "containing " + _nodes.Count + " " + EntityType.ToString() + "s";
           } else {
             s += EntityType.ToString() + "s" + (Definition != null
@@ -217,7 +217,7 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          if (_cases != null && _cases.Count != 0) {
+          if (!_cases.IsNullOrEmpty()) {
             s += "containing " + _cases.Count + " " + EntityType.ToString() + "s";
           } else {
             s += EntityType.ToString() + "s" + (Definition != null
@@ -303,7 +303,7 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Undefined:
-          if (Definition != null && Definition != string.Empty) {
+          if (!string.IsNullOrEmpty(Definition)) {
             list = new List<object>(new List<string>() {
               Definition,
             });

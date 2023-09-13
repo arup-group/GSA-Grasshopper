@@ -183,7 +183,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) =
         GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);

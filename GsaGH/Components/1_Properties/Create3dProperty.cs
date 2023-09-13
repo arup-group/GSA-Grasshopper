@@ -38,7 +38,7 @@ namespace GsaGH.Components {
         prop.Material = materialGoo.Value;
       } 
 
-      prop.AxisProperty = 0;
+      prop.ApiProp3d.AxisProperty = 0;
 
       da.SetData(0, new GsaProperty3dGoo(prop));
     }

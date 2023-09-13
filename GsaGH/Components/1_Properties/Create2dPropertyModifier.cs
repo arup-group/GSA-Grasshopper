@@ -152,7 +152,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaProperty2dModifierParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var modifier = new GsaProperty2dModifier();
       if (_toMode) {
         AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);

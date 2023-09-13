@@ -80,7 +80,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var offset = new GsaOffset {
         X1 = (Length)Input.UnitNumber(this, da, 0, _lengthUnit, true),
         X2 = (Length)Input.UnitNumber(this, da, 1, _lengthUnit, true),

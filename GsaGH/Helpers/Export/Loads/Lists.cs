@@ -2,6 +2,7 @@
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
@@ -11,9 +12,9 @@ namespace GsaGH.Helpers.Export {
       model.Lists = new GsaGuidDictionary<EntityList>(model.Model.Lists());
 
       // Add lists embedded in loads as they may have ID > 0 set
-      if (lists == null && loads != null && loads.Count > 0) {
+      if (lists == null && !loads.IsNullOrEmpty()) {
         lists = Loads.GetLoadLists(loads);
-      } else if (loads != null && loads.Count > 0) {
+      } else if (!loads.IsNullOrEmpty()) {
         lists.AddRange(Loads.GetLoadLists(loads));
       }
 
@@ -35,6 +36,7 @@ namespace GsaGH.Helpers.Export {
       if (load == null) {
         return null;
       }
+
       switch (load.LoadType) {
         case LoadType.Gravity:
         case LoadType.Beam:
@@ -47,6 +49,7 @@ namespace GsaGH.Helpers.Export {
           }
           break;
       }
+
       return null;
     }
   }

@@ -53,9 +53,7 @@ namespace GsaGH.Helpers.Export {
     internal void ConvertProperties(List<GsaSection> sections,
       List<GsaProperty2d> prop2Ds,
       List<GsaProperty3d> prop3Ds) {
-      if ((sections != null && sections.Count > 0)
-        || (prop2Ds != null && prop2Ds.Count > 0)
-        || (prop3Ds != null && prop3Ds.Count > 0)) {
+      if ((!sections.IsNullOrEmpty()) || (!prop2Ds.IsNullOrEmpty()) || (!prop3Ds.IsNullOrEmpty())) {
         _deleteResults = true;
       }
 
@@ -68,9 +66,8 @@ namespace GsaGH.Helpers.Export {
       List<GsaElement1d> element1ds,
       List<GsaElement2d> element2ds,
       List<GsaElement3d> element3ds) {
-      if ((element1ds != null && element1ds.Count > 0)
-        || (element2ds != null && element2ds.Count > 0)
-        || (element3ds != null && element3ds.Count > 0)) {
+      if ((!element1ds.IsNullOrEmpty()) || (!element2ds.IsNullOrEmpty())
+        || (!element3ds.IsNullOrEmpty())) {
         _deleteResults = true;
       }
 
@@ -79,7 +76,7 @@ namespace GsaGH.Helpers.Export {
         element2ds, ref Elements, ref Nodes, Unit, ref Properties, ref Axes);
       Export.Elements.ConvertElement3ds(element3ds, ref Elements, ref Nodes, Unit, ref Properties);
 
-      if (element2ds != null && element2ds.Count > 0) {
+      if (!element2ds.IsNullOrEmpty()) {
         foreach (GsaElement2d e2d in element2ds) {
           int expectedCollapsedNodeCount = e2d.Mesh.TopologyVertices.Count;
           int actualNodeCount = e2d.TopoInt.Sum(topoint => topoint.Count);
@@ -88,7 +85,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      if (element3ds != null && element3ds.Count > 0) {
+      if (!element3ds.IsNullOrEmpty()) {
         foreach (GsaElement3d e3d in element3ds) {
           int expectedCollapsedNodeCount = e3d.NgonMesh.TopologyVertices.Count;
           int actualNodeCount = e3d.TopoInt.Sum(topoint => topoint.Count);
@@ -102,9 +99,8 @@ namespace GsaGH.Helpers.Export {
       List<GsaMember1d> member1ds,
       List<GsaMember2d> member2ds,
       List<GsaMember3d> member3ds) {
-      if ((member1ds != null && member1ds.Count > 0)
-        || (member2ds != null && member2ds.Count > 0)
-        || (member3ds != null && member3ds.Count > 0)) {
+      if ((!member1ds.IsNullOrEmpty()) || (!member2ds.IsNullOrEmpty())
+        || (!member3ds.IsNullOrEmpty())) {
         _deleteResults = true;
       }
 
@@ -123,7 +119,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertNodeLoads(List<IGsaLoad> loads) {
-      if (loads != null && loads.Count > 0) {
+      if (!loads.IsNullOrEmpty()) {
         _deleteResults = true;
       }
 
@@ -131,7 +127,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertLoadCases(List<GsaLoadCase> loadCases, GH_Component owner) {
-      if (loadCases == null || loadCases.Count == 0) {
+      if (loadCases.IsNullOrEmpty()) {
         return;
       }
 
@@ -152,7 +148,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertLists(List<GsaList> lists) {
-      if (lists == null || lists.Count == 0) {
+      if (lists.IsNullOrEmpty()) {
         return;
       }
 
@@ -221,7 +217,7 @@ namespace GsaGH.Helpers.Export {
             Environment.NewLine + "This will update the Element's property to the parent Member's property, " +
             Environment.NewLine + "and may also renumber element IDs. " + Environment.NewLine +
             Environment.NewLine + "The following former Element IDs were updated:" + Environment.NewLine;
-          
+
           string ids = GsaList.CreateListDefinition(elemIds);
           owner.AddRuntimeWarning(warning + ids);
         }
@@ -303,7 +299,7 @@ namespace GsaGH.Helpers.Export {
           Model.SetGridSurface(gridSurfaceId, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
         } catch (ArgumentException e) {
           ReportWarningFromAddingGridSurfacesOrList(
-            e.Message, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name, 
+            e.Message, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name,
             "Grid Surface", owner);
         }
       }
@@ -364,26 +360,30 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal void ConvertAndAssembleCombinations(List<GsaCombinationCase> combinations) {
-      if (combinations != null && combinations.Count > 0) {
-        var existing = Model.CombinationCases()
-          .ToDictionary(k => k.Key, k => k.Value);
-        foreach (GsaCombinationCase co in combinations) {
-          var apiCase = new CombinationCase(co.Name, co.Definition);
-          if (co.Id > 0 && existing.ContainsKey(co.Id)) {
-            existing[co.Id] = apiCase;
-          } else {
-            existing.Add(co.Id, apiCase);
-          }
-        }
-        Model.SetCombinationCases(new ReadOnlyDictionary<int, CombinationCase>(existing));
+      if (combinations.IsNullOrEmpty()) {
+        return;
       }
+
+      var existing = Model.CombinationCases()
+        .ToDictionary(k => k.Key, k => k.Value);
+      foreach (GsaCombinationCase co in combinations) {
+        var apiCase = new CombinationCase(co.Name, co.Definition);
+        if (co.Id > 0 && existing.ContainsKey(co.Id)) {
+          existing[co.Id] = apiCase;
+        } else {
+          existing.Add(co.Id, apiCase);
+        }
+      }
+      Model.SetCombinationCases(new ReadOnlyDictionary<int, CombinationCase>(existing));
     }
 
     internal void DeleteExistingResults() {
-      if (_deleteResults) {
-        foreach (int taskId in Model.AnalysisTasks().Keys) {
-          Model.DeleteResults(taskId);
-        }
+      if (!_deleteResults) {
+        return;
+      }
+
+      foreach (int taskId in Model.AnalysisTasks().Keys) {
+        Model.DeleteResults(taskId);
       }
     }
 

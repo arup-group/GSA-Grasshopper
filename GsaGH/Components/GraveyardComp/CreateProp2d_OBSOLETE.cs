@@ -7,6 +7,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -338,38 +339,10 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       var prop = new GsaProperty2d();
 
-      switch (_mode) {
-        case FoldMode.PlaneStress:
-          prop.Type = Property2D_Type.PL_STRESS;
-          break;
-
-        case FoldMode.Fabric:
-          prop.Type = Property2D_Type.FABRIC;
-          break;
-
-        case FoldMode.FlatPlate:
-          prop.Type = Property2D_Type.PLATE;
-          break;
-
-        case FoldMode.Shell:
-          prop.Type = Property2D_Type.SHELL;
-          break;
-
-        case FoldMode.CurvedShell:
-          prop.Type = Property2D_Type.CURVED_SHELL;
-          break;
-
-        case FoldMode.LoadPanel:
-          prop.Type = Property2D_Type.LOAD;
-          break;
-
-        default:
-          prop.Type = Property2D_Type.UNDEF;
-          break;
-      }
+      prop.ApiProp2d.Type = Mappings.GetProperty2D_Type(_mode.ToString());
 
       if (_mode != FoldMode.LoadPanel) {
-        prop.AxisProperty = 0;
+        prop.ApiProp2d.AxisProperty = 0;
 
         if (_mode != FoldMode.Fabric) {
           GsaMaterialGoo materialGoo = null;

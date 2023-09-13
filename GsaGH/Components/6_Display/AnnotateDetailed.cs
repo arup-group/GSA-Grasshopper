@@ -127,7 +127,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.tree);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
         return;
       }
@@ -372,13 +372,16 @@ namespace GsaGH.Components {
     private static string Prop2dToString(GsaProperty2d prop) {
       string s = string.Empty;
       s += prop.Id > 0 ? $"PA{prop.Id}" : string.Empty;
+      if (prop.IsReferencedById) {
+        return s;
+      }
       AddSeparator(ref s);
-      s += prop.Name;
+      s += prop.ApiProp2d.Name;
       AddSeparator(ref s);
-      s += prop.Description;
-      if (prop.Type != GsaAPI.Property2D_Type.SHELL) {
+      s += prop.ApiProp2d.Description;
+      if (prop.ApiProp2d.Type != GsaAPI.Property2D_Type.SHELL) {
         AddSeparator(ref s);
-        s += prop.Type.ToString().ToPascalCase();
+        s += prop.ApiProp2d.Type.ToString().ToPascalCase();
       }
       return s.Trim();
     }
@@ -387,7 +390,7 @@ namespace GsaGH.Components {
       string s = string.Empty;
       s += prop.Id > 0 ? $"PV{prop.Id}" : string.Empty;
       AddSeparator(ref s);
-      s += prop.Name;
+      s += prop.ApiProp3d == null ? string.Empty : prop.ApiProp3d.Name;
       return s.Trim();
     }
 
@@ -395,9 +398,9 @@ namespace GsaGH.Components {
       string s = string.Empty;
       s += section.Id > 0 ? $"PB{section.Id}" : string.Empty;
       AddSeparator(ref s);
-      s += section.Name;
+      s += section.ApiSection.Name;
       AddSeparator(ref s);
-      s += section.Profile;
+      s += section.ApiSection.Profile;
       return s.Trim();
     }
 

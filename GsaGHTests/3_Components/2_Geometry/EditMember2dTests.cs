@@ -48,12 +48,12 @@ namespace GsaGHTests.Components.Geometry {
       var output18 = (GH_String)ComponentTestHelper.GetOutput(comp, 18);
 
       Assert.Equal(100, output0.Value.Brep.GetArea());
-      Assert.Equal(Property2D_Type.PLATE, output0.Value.Prop2d.Type);
+      Assert.Equal(Property2D_Type.PLATE, output0.Value.Prop2d.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output0.Value.Prop2d.Thickness);
       Assert.Equal(0.5, output0.Value.MeshSize);
       Assert.Equal(0, output1.Value);
       Assert.Equal(100, output2.Value.GetArea());
-      Assert.Equal(Property2D_Type.PLATE, output5.Value.Type);
+      Assert.Equal(Property2D_Type.PLATE, output5.Value.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output5.Value.Thickness);
       Assert.Equal(0, output6.Value);
       Assert.Equal("Generic 2D", output7.Value);
@@ -115,12 +115,12 @@ namespace GsaGHTests.Components.Geometry {
       var output18 = (GH_String)ComponentTestHelper.GetOutput(comp, 18);
 
       Assert.Equal(16, output0.Value.Brep.GetArea());
-      Assert.Equal(Property2D_Type.SHELL, output0.Value.Prop2d.Type);
+      Assert.Equal(Property2D_Type.SHELL, output0.Value.Prop2d.ApiProp2d.Type);
       Assert.Equal(new Length(200, LengthUnit.Millimeter), output0.Value.Prop2d.Thickness);
       Assert.Equal(0.7, output0.Value.MeshSize);
       Assert.Equal(7, output1.Value);
       Assert.Equal(16, output2.Value.GetArea());
-      Assert.Equal(Property2D_Type.SHELL, output5.Value.Type);
+      Assert.Equal(Property2D_Type.SHELL, output5.Value.ApiProp2d.Type);
       Assert.Equal(new Length(200, LengthUnit.Millimeter), output5.Value.Thickness);
       Assert.Equal(1, output6.Value);
       Assert.Equal("Ribbed Slab", output7.Value);

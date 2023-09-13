@@ -80,7 +80,7 @@ namespace GsaGH.Components {
       pManager.HideParameter(1);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GsaResultGoo resultGoo = null;
       da.GetData(0, ref resultGoo);
       GsaResult result = resultGoo.Value;

@@ -173,7 +173,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       Plane plane = Plane.Unset;
       GsaGridPlaneSurface gps;
       bool idSet = false;

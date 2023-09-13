@@ -78,7 +78,7 @@ namespace GsaGH.Components {
         "Applied Offset", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
@@ -101,7 +101,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          profile = mem1d.Section.Profile;
+          profile = mem1d.Section.ApiSection.Profile;
           if (profile == string.Empty) {
             this.AddRuntimeError("Member has no section attached");
             return;
@@ -115,7 +115,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          profile = elem1d.Section.Profile;
+          profile = elem1d.Section.ApiSection.Profile;
           if (profile == string.Empty) {
             this.AddRuntimeError("Element has no section attached");
             return;
