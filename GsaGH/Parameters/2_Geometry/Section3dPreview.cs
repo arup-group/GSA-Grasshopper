@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.Graphics;
@@ -15,7 +16,6 @@ using Rhino;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
-using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters {
   internal enum Layer {
@@ -91,7 +91,7 @@ namespace GsaGH.Parameters {
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) {
       args.Pipeline.DrawMeshFalseColors(Mesh);
     }
-    
+
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
         args.Pipeline.DrawLines(Outlines, Colours.Element1d);

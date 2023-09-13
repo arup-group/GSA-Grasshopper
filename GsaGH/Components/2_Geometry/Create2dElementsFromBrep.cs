@@ -41,7 +41,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
@@ -201,23 +201,23 @@ namespace GsaGH.Components {
           Curve crv = null;
           switch (ghType.Value) {
             case GsaElement1dGoo element1DGoo: {
-              elem1ds.Add(new GsaElement1d(element1DGoo.Value));
-              break;
-            }
-            case GsaMember1dGoo member1DGoo: {
-              mem1ds.Add(new GsaMember1d(member1DGoo.Value));
-              break;
-            }
-            default: {
-              if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
-                crvs.Add(crv.DuplicateCurve());
-              } else {
-                this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
-                  + $"{ghType.GetTypeName()} to curve or 1D Member");
+                elem1ds.Add(new GsaElement1d(element1DGoo.Value));
+                break;
               }
+            case GsaMember1dGoo member1DGoo: {
+                mem1ds.Add(new GsaMember1d(member1DGoo.Value));
+                break;
+              }
+            default: {
+                if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
+                  crvs.Add(crv.DuplicateCurve());
+                } else {
+                  this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
+                    + $"{ghType.GetTypeName()} to curve or 1D Member");
+                }
 
-              break;
-            }
+                break;
+              }
           }
         }
       }
@@ -253,7 +253,6 @@ namespace GsaGH.Components {
       }
 
       elem2d.Prop2ds = prop2Ds;
-      elem2d.UpdatePreview();
 
       da.SetData(0, new GsaElement2dGoo(elem2d));
       if (tuple.Item2 != null) {
