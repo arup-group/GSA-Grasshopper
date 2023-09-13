@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using OasysUnits;
 using EntityType = GsaGH.Parameters.EntityType;
 

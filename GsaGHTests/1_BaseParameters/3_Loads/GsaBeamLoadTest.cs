@@ -1,19 +1,14 @@
 ﻿using System;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
+using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaBeamLoadTest {
-    [Fact]
-    public void ConstructorTest() {
-      var load = new GsaBeamLoad();
-
-      Assert.Equal(LoadType.Beam, load.LoadType);
-    }
-
     [Fact]
     public void LoadCaseTest() {
       var load = new GsaBeamLoad();
@@ -34,7 +29,7 @@ namespace GsaGHTests.Parameters {
       var duplicateType = (BeamLoadType)Enum.Parse(typeof(BeamLoadType), duplicateTypeString);
 
       var original = new GsaBeamLoad {
-        BeamLoad = {
+        ApiLoad = {
           Type = originalType,
           AxisProperty = 5,
           Case = 6,
@@ -50,54 +45,53 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.BeamLoad.Type = duplicateType;
-      duplicate.BeamLoad.AxisProperty = 1;
-      duplicate.BeamLoad.Case = 1;
-      duplicate.BeamLoad.Direction = Direction.XX;
-      duplicate.BeamLoad.EntityList = "";
-      duplicate.BeamLoad.Name = "";
-      duplicate.BeamLoad.IsProjected = false;
-      duplicate.BeamLoad.SetPosition(0, 99);
-      duplicate.BeamLoad.SetValue(0, 99);
-      duplicate.BeamLoad.SetPosition(1, 99);
-      duplicate.BeamLoad.SetValue(1, 99);
+      duplicate.ApiLoad.Type = duplicateType;
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.XX;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.IsProjected = false;
+      duplicate.ApiLoad.SetPosition(0, 99);
+      duplicate.ApiLoad.SetValue(0, 99);
+      duplicate.ApiLoad.SetPosition(1, 99);
+      duplicate.ApiLoad.SetValue(1, 99);
 
-      Assert.Equal(LoadType.Beam, original.LoadType);
-      Assert.Equal(originalType, original.BeamLoad.Type);
-      Assert.Equal(5, original.BeamLoad.AxisProperty);
-      Assert.Equal(6, original.BeamLoad.Case);
-      Assert.Equal(Direction.ZZ, original.BeamLoad.Direction);
-      Assert.Equal("all", original.BeamLoad.EntityList);
-      Assert.Equal(GsaAPI.EntityType.Element, original.BeamLoad.EntityType);
-      Assert.Equal("name", original.BeamLoad.Name);
-      Assert.True(original.BeamLoad.IsProjected);
-      switch (original.BeamLoad.Type) {
+      Assert.Equal(originalType, original.ApiLoad.Type);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.ZZ, original.ApiLoad.Direction);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.True(original.ApiLoad.IsProjected);
+      switch (original.ApiLoad.Type) {
         case BeamLoadType.POINT:
-          Assert.Equal(0, original.BeamLoad.Position(0));
-          Assert.Equal(0, original.BeamLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Position(0));
+          Assert.Equal(0, original.ApiLoad.Value(0));
           break;
 
         case BeamLoadType.UNIFORM:
-          Assert.Equal(0, original.BeamLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Value(0));
           break;
 
         case BeamLoadType.LINEAR:
-          Assert.Equal(0, original.BeamLoad.Position(0));
-          Assert.Equal(0, original.BeamLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Position(0));
+          Assert.Equal(0, original.ApiLoad.Value(1));
           break;
 
         case BeamLoadType.PATCH:
-          Assert.Equal(0, original.BeamLoad.Position(0));
-          Assert.Equal(0, original.BeamLoad.Position(1));
-          Assert.Equal(0, original.BeamLoad.Value(0));
-          Assert.Equal(0, original.BeamLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Position(0));
+          Assert.Equal(0, original.ApiLoad.Position(1));
+          Assert.Equal(0, original.ApiLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Value(1));
           break;
 
         case BeamLoadType.TRILINEAR:
-          Assert.Equal(0, original.BeamLoad.Position(0));
-          Assert.Equal(0, original.BeamLoad.Position(1));
-          Assert.Equal(0, original.BeamLoad.Value(0));
-          Assert.Equal(0, original.BeamLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Position(0));
+          Assert.Equal(0, original.ApiLoad.Position(1));
+          Assert.Equal(0, original.ApiLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Value(1));
           break;
       }
     }
@@ -114,7 +108,9 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaBeamLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, GsaGH.Parameters.LoadCaseType.Dead, "DeadLoad");
+
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

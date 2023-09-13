@@ -1,34 +1,34 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Parameters {
   public class GsaBeamThermalLoad : IGsaLoad {
-    public BeamThermalLoad BeamThermalLoad { get; set; }
+    public BeamThermalLoad ApiLoad { get; set; }
     public GsaLoadCase LoadCase { get; set; }
-    public LoadType LoadType => LoadType.BeamThermal;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
     public Guid RefObjectGuid { get; set; }
     public int CaseId {
-      get => BeamThermalLoad.Case;
-      set => BeamThermalLoad.Case = value;
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
     }
     public string Name {
-      get => BeamThermalLoad.Name;
-      set => BeamThermalLoad.Name = value;
+      get => ApiLoad.Name;
+      set => ApiLoad.Name = value;
     }
     public GsaBeamThermalLoad() {
-      BeamThermalLoad = new BeamThermalLoad();
+      ApiLoad = new BeamThermalLoad();
     }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaBeamThermalLoad {
-        BeamThermalLoad = {
-          Case = BeamThermalLoad.Case,
-          EntityList = BeamThermalLoad.EntityList,
-          EntityType = BeamThermalLoad.EntityType,
-          Name = BeamThermalLoad.Name,
-          UniformTemperature = BeamThermalLoad.UniformTemperature
+        ApiLoad = {
+          Case = ApiLoad.Case,
+          EntityList = ApiLoad.EntityList,
+          EntityType = ApiLoad.EntityType,
+          Name = ApiLoad.Name,
+          UniformTemperature = ApiLoad.UniformTemperature
         },
       };
 

@@ -6,6 +6,7 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -313,7 +314,6 @@ namespace GsaGH.Helpers.Export {
       }
 
       copyList.Definition += " " + string.Join(" ", ids);
-
       AddList(copyList, ref model.Lists);
     }
 
@@ -375,7 +375,6 @@ namespace GsaGH.Helpers.Export {
       }
 
       copyList.Definition += " " + string.Join(" ", ids);
-
       AddList(copyList, ref apiLists);
     }
 

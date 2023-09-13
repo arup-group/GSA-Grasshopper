@@ -1,6 +1,7 @@
 ﻿using System;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
 using Xunit;
@@ -12,8 +13,7 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest() {
       var load = new GsaGridAreaLoad();
 
-      Assert.Equal(LoadType.GridArea, load.LoadType);
-      Assert.Equal(GridAreaPolyLineType.PLANE, load.GridAreaLoad.Type);
+      Assert.Equal(GridAreaPolyLineType.PLANE, load.ApiLoad.Type);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ namespace GsaGHTests.Parameters {
         gridAreaPolyLineTypeString);
 
       var original = new GsaGridAreaLoad {
-        GridAreaLoad = {
+        ApiLoad = {
           AxisProperty = 5,
           Case = 6,
           Direction = Direction.ZZ,
@@ -53,29 +53,28 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.GridAreaLoad.AxisProperty = 1;
-      duplicate.GridAreaLoad.Case = 1;
-      duplicate.GridAreaLoad.Direction = Direction.XX;
-      duplicate.GridAreaLoad.GridSurface = 1;
-      duplicate.GridAreaLoad.IsProjected = false;
-      duplicate.GridAreaLoad.Name = "";
-      duplicate.GridAreaLoad.PolyLineDefinition = "";
-      duplicate.GridAreaLoad.PolyLineReference = 0;
-      duplicate.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
-      duplicate.GridAreaLoad.Value = 0;
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.XX;
+      duplicate.ApiLoad.GridSurface = 1;
+      duplicate.ApiLoad.IsProjected = false;
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.PolyLineDefinition = "";
+      duplicate.ApiLoad.PolyLineReference = 0;
+      duplicate.ApiLoad.Type = GridAreaPolyLineType.POLYGON;
+      duplicate.ApiLoad.Value = 0;
       duplicate.GridPlaneSurface = new GsaGridPlaneSurface(new Plane());
 
-      Assert.Equal(LoadType.GridArea, original.LoadType);
-      Assert.Equal(5, original.GridAreaLoad.AxisProperty);
-      Assert.Equal(6, original.GridAreaLoad.Case);
-      Assert.Equal(Direction.ZZ, original.GridAreaLoad.Direction);
-      Assert.Equal(7, original.GridAreaLoad.GridSurface);
-      Assert.True(original.GridAreaLoad.IsProjected);
-      Assert.Equal("name", original.GridAreaLoad.Name);
-      Assert.Equal("", original.GridAreaLoad.PolyLineDefinition);
-      Assert.Equal(1, original.GridAreaLoad.PolyLineReference);
-      Assert.Equal(type, original.GridAreaLoad.Type);
-      Assert.Equal(10, original.GridAreaLoad.Value);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.ZZ, original.ApiLoad.Direction);
+      Assert.Equal(7, original.ApiLoad.GridSurface);
+      Assert.True(original.ApiLoad.IsProjected);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.Equal("", original.ApiLoad.PolyLineDefinition);
+      Assert.Equal(1, original.ApiLoad.PolyLineReference);
+      Assert.Equal(type, original.ApiLoad.Type);
+      Assert.Equal(10, original.ApiLoad.Value);
       Assert.Equal(originalGridPlaneSurface, original.GridPlaneSurface);
     }
 
@@ -92,6 +91,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(99, duplicate.LoadCase.Id);
 
       duplicate.LoadCase = new GsaLoadCase(1, GsaGH.Parameters.LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

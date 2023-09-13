@@ -1,17 +1,11 @@
 ﻿using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaFaceThermalLoadTest {
-    [Fact]
-    public void ConstructorTest() {
-      var load = new GsaFaceThermalLoad();
-
-      Assert.Equal(LoadType.FaceThermal, load.LoadType);
-    }
-
     [Fact]
     public void LoadCaseTest() {
       var load = new GsaFaceThermalLoad();
@@ -23,7 +17,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaFaceThermalLoad {
-        FaceThermalLoad = {
+        ApiLoad = {
           Case = 6,
           EntityList = "all",
           EntityType = GsaAPI.EntityType.Element,
@@ -35,16 +29,15 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.FaceThermalLoad.Case = 1;
-      duplicate.FaceThermalLoad.EntityList = "";
-      duplicate.FaceThermalLoad.Name = "";
-      duplicate.FaceThermalLoad.UniformTemperature = 99;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.UniformTemperature = 99;
 
-      Assert.Equal(LoadType.FaceThermal, original.LoadType);
-      Assert.Equal(6, original.FaceThermalLoad.Case);
-      Assert.Equal("all", original.FaceThermalLoad.EntityList);
-      Assert.Equal("name", original.FaceThermalLoad.Name);
-      Assert.Equal(7.0, original.FaceThermalLoad.UniformTemperature);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.Equal(7.0, original.ApiLoad.UniformTemperature);
     }
 
     [Fact]
@@ -59,7 +52,8 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaFaceThermalLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, GsaGH.Parameters.LoadCaseType.Dead, "DeadLoad");
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

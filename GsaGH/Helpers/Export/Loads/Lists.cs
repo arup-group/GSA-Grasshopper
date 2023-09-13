@@ -2,7 +2,9 @@
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
@@ -32,24 +34,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     private static GsaList GetLoadList(IGsaLoad load) {
-      if (load == null) {
-        return null;
-      }
-
-      switch (load.LoadType) {
-        case LoadType.Gravity:
-        case LoadType.Beam:
-        case LoadType.Face:
-        case LoadType.GridPoint:
-        case LoadType.GridLine:
-        case LoadType.GridArea:
-          if (load.ReferenceType == ReferenceType.List) {
-            return load.ReferenceList;
-          }
-          break;
-      }
-
-      return null;
+      return load == null ? null 
+        : load.ReferenceType == ReferenceType.List ? load.ReferenceList : null;
     }
   }
 }

@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -267,13 +268,13 @@ namespace GsaGH.Components {
             }
           case GsaElement2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Element;
+              faceLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ReferenceType = ReferenceType.Element;
               break;
             }
           case GsaMember2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Member;
+              faceLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
               faceLoad.ReferenceType = ReferenceType.Member;
               break;
             }
@@ -284,7 +285,7 @@ namespace GsaGH.Components {
                 return;
               }
               faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Element;
+              faceLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ReferenceType = ReferenceType.Property;
               this.AddRuntimeRemark(
                 "Load from Material reference created as Element load");
@@ -292,7 +293,7 @@ namespace GsaGH.Components {
             }
           case GsaProperty2dGoo value: {
               faceLoad.RefObjectGuid = value.Value.Guid;
-              faceLoad.FaceLoad.EntityType = GsaAPI.EntityType.Element;
+              faceLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ReferenceType = ReferenceType.Property;
               this.AddRuntimeRemark(
                 "Load from 2D Property reference created as Element load");
@@ -300,7 +301,7 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                faceLoad.FaceLoad.EntityList = elemList;
+                faceLoad.ApiLoad.EntityList = elemList;
               }
 
               break;
@@ -311,17 +312,17 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          faceLoad.FaceLoad.Name = name;
+          faceLoad.ApiLoad.Name = name;
         }
       }
 
-      faceLoad.FaceLoad.AxisProperty
+      faceLoad.ApiLoad.AxisProperty
         = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
       var ghAx = new GH_Integer();
       if (da.GetData(3, ref ghAx)) {
         GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1) {
-          faceLoad.FaceLoad.AxisProperty = axis;
+          faceLoad.ApiLoad.AxisProperty = axis;
         }
       }
 
@@ -344,12 +345,12 @@ namespace GsaGH.Components {
           break;
       }
 
-      faceLoad.FaceLoad.Direction = direc;
+      faceLoad.ApiLoad.Direction = direc;
 
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            faceLoad.FaceLoad.Type = FaceLoadType.CONSTANT;
+            faceLoad.ApiLoad.Type = FaceLoadType.CONSTANT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -357,17 +358,17 @@ namespace GsaGH.Components {
               GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
             }
 
-            faceLoad.FaceLoad.IsProjected = prj;
+            faceLoad.ApiLoad.IsProjected = prj;
 
             var load1 = (Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit);
-            faceLoad.FaceLoad.SetValue(0, load1.NewtonsPerSquareMeter);
+            faceLoad.ApiLoad.SetValue(0, load1.NewtonsPerSquareMeter);
           }
 
           break;
 
         case FoldMode.Variable:
           if (_mode == FoldMode.Variable) {
-            faceLoad.FaceLoad.Type = FaceLoadType.GENERAL;
+            faceLoad.ApiLoad.Type = FaceLoadType.GENERAL;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -375,17 +376,17 @@ namespace GsaGH.Components {
               GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
             }
 
-            faceLoad.FaceLoad.IsProjected = prj;
-            faceLoad.FaceLoad.SetValue(0,
+            faceLoad.ApiLoad.IsProjected = prj;
+            faceLoad.ApiLoad.SetValue(0,
               ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit, true))
              .NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(1,
+            faceLoad.ApiLoad.SetValue(1,
               ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit, true))
              .NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(2,
+            faceLoad.ApiLoad.SetValue(2,
               ((Pressure)Input.UnitNumber(this, da, 8, _forcePerAreaUnit, true))
              .NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(3,
+            faceLoad.ApiLoad.SetValue(3,
               ((Pressure)Input.UnitNumber(this, da, 9, _forcePerAreaUnit, true))
              .NewtonsPerSquareMeter);
           }
@@ -394,7 +395,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            faceLoad.FaceLoad.Type = FaceLoadType.POINT;
+            faceLoad.ApiLoad.Type = FaceLoadType.POINT;
 
             bool prj = false;
             var ghPrj = new GH_Boolean();
@@ -402,13 +403,13 @@ namespace GsaGH.Components {
               GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
             }
 
-            faceLoad.FaceLoad.IsProjected = prj;
+            faceLoad.ApiLoad.IsProjected = prj;
 
             double r = 0;
             da.GetData(7, ref r);
             double s = 0;
             da.GetData(8, ref s);
-            faceLoad.FaceLoad.SetValue(0,
+            faceLoad.ApiLoad.SetValue(0,
               ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit)).NewtonsPerSquareMeter);
             this.AddRuntimeWarning("Warning: the position cannot be set in GsaAPI at the moment");
           }
@@ -420,12 +421,12 @@ namespace GsaGH.Components {
             int edge = 1;
             da.GetData(5, ref edge);
 
-            faceLoad.FaceLoad.SetValue(0,
+            faceLoad.ApiLoad.SetValue(0,
               ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit)).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(1,
+            faceLoad.ApiLoad.SetValue(1,
               Params.Input[7].SourceCount != 0 ?
                 ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit)).NewtonsPerSquareMeter :
-                faceLoad.FaceLoad.Value(0));
+                faceLoad.ApiLoad.Value(0));
 
             this.AddRuntimeWarning("Warning: edge-load is not yet supported in GsaAPI");
           }

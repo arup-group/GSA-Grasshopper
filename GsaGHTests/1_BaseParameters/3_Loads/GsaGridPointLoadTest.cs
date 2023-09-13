@@ -1,18 +1,13 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
+using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridPointLoadTest {
-    [Fact]
-    public void ConstructorTest() {
-      var load = new GsaGridPointLoad();
-
-      Assert.Equal(LoadType.GridPoint, load.LoadType);
-    }
-
     [Fact]
     public void LoadCaseTest() {
       var load = new GsaGridPointLoad();
@@ -24,7 +19,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaGridPointLoad {
-        GridPointLoad = {
+        ApiLoad = {
           AxisProperty = 5,
           Case = 6,
           Direction = Direction.ZZ,
@@ -40,24 +35,23 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.GridPointLoad.AxisProperty = 1;
-      duplicate.GridPointLoad.Case = 1;
-      duplicate.GridPointLoad.Direction = Direction.XX;
-      duplicate.GridPointLoad.GridSurface = 1;
-      duplicate.GridPointLoad.Name = "";
-      duplicate.GridPointLoad.X = 0;
-      duplicate.GridPointLoad.Y = 0;
-      duplicate.GridPointLoad.Value = 0;
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.XX;
+      duplicate.ApiLoad.GridSurface = 1;
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.X = 0;
+      duplicate.ApiLoad.Y = 0;
+      duplicate.ApiLoad.Value = 0;
 
-      Assert.Equal(LoadType.GridPoint, original.LoadType);
-      Assert.Equal(5, original.GridPointLoad.AxisProperty);
-      Assert.Equal(6, original.GridPointLoad.Case);
-      Assert.Equal(Direction.ZZ, original.GridPointLoad.Direction);
-      Assert.Equal(7, original.GridPointLoad.GridSurface);
-      Assert.Equal("name", original.GridPointLoad.Name);
-      Assert.Equal(5, original.GridPointLoad.X);
-      Assert.Equal(6, original.GridPointLoad.Y);
-      Assert.Equal(10, original.GridPointLoad.Value);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.ZZ, original.ApiLoad.Direction);
+      Assert.Equal(7, original.ApiLoad.GridSurface);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.Equal(5, original.ApiLoad.X);
+      Assert.Equal(6, original.ApiLoad.Y);
+      Assert.Equal(10, original.ApiLoad.Value);
     }
 
     [Fact]
@@ -72,7 +66,8 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaGridPointLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, GsaGH.Parameters.LoadCaseType.Dead, "DeadLoad");
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

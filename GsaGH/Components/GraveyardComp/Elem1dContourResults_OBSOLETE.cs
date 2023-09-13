@@ -735,7 +735,7 @@ namespace GsaGH.Components {
       var cs = new List<Color>();
 
       for (int i = 0; i < ghGradient.GripCount; i++) {
-        double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * (double)i);
+        double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * i);
         double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
         scl = Math.Max(scl, 1);
         t = scl * Math.Round(t / scl, 3);
