@@ -4,6 +4,7 @@ using System.Linq;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 using GsaGH.Components.Helpers;
+using GsaGH.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Components {
