@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -192,7 +193,8 @@ namespace GsaGH.Helpers.Export {
             owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
+          objectElemList += Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.BeamLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
@@ -226,7 +228,8 @@ namespace GsaGH.Helpers.Export {
             owner.AddRuntimeWarning("Invalid List type for BeamThermalLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
+          objectElemList += Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.BeamThermalLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
@@ -261,7 +264,8 @@ namespace GsaGH.Helpers.Export {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
+            Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.GravityLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
@@ -296,7 +300,8 @@ namespace GsaGH.Helpers.Export {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
+            Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.FaceLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
@@ -330,7 +335,8 @@ namespace GsaGH.Helpers.Export {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
+            Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.FaceThermalLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }

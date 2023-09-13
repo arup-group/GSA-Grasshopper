@@ -226,9 +226,5 @@ namespace GsaGH.Parameters {
       mem.Section3dPreview?.Transform(xform);
       return new GsaMember2dGoo(mem);
     }
-
-    public override object ScriptVariable() {
-      return Value.DuplicateApiObject();
-    }
   }
 }

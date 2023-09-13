@@ -325,7 +325,10 @@ namespace GsaGH.Helpers.Import {
           }
 
           mList[elementId] = faceMesh;
-          prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
+          GsaProperty2d prop2d = model.Properties.GetProp2d(elems[elementId]);
+          if (prop2d != null) {
+            prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
+          }
         });
 
         // create one large mesh from single mesh face using
@@ -401,7 +404,10 @@ namespace GsaGH.Helpers.Import {
 
           mList[elementId] = ngonClosedMesh;
 
-          prop3Ds.TryAdd(elementId, model.Properties.GetProp3d(elems[elementId]));
+          GsaProperty3d prop3d = model.Properties.GetProp3d(elems[elementId]);
+          if (prop3d != null) {
+            prop3Ds.TryAdd(elementId, prop3d);
+          }
         });
 
         // create one large mesh from single mesh face using

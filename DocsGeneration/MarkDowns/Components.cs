@@ -129,7 +129,7 @@ namespace DocsGeneration.MarkDowns {
 
         text += table.Finalise();
         if (!string.IsNullOrEmpty(note)) {
-          note = note.Replace(Environment.NewLine, " ").Replace("  ", " ");
+          note = note.Replace(Environment.NewLine, " ").TrimSpaces();
           text += "\n\n" + StringHelper.MakeItalic("* " + note) + "\n\n";
         }
       }

@@ -101,10 +101,6 @@ namespace GsaGH.Parameters {
       return new GsaVectorDiagram(anchor, vec, _doubleArrow, Color);
     }
 
-    public override object ScriptVariable() {
-      return Value;
-    }
-
     public override string ToString() {
       var pt = new GH_Point(AnchorPoint);
       var vec = new GH_Vector(Direction);

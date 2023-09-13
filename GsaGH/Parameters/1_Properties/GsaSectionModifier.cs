@@ -1,5 +1,6 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Helpers;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -353,10 +354,9 @@ namespace GsaGH.Parameters {
       }
 
       string innerDesc = string
-       .Join(" ", a.Trim(), i11.Trim(), i22.Trim(), j.Trim(), k11.Trim(), k22.Trim(), v.Trim(),
-          mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty)
-       .Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ')
-       .TrimEnd(',').Replace("  ", " ");
+       .Join(" ", a, i11, i22, j, k11, k22, v, mass, stress, axis, refPt)
+       .Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ')
+       .TrimEnd('X').TrimEnd(' ').TrimEnd(',').TrimSpaces();
       return innerDesc;
     }
 

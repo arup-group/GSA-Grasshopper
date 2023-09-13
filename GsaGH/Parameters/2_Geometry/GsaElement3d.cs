@@ -7,6 +7,7 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using Rhino.Collections;
@@ -20,14 +21,14 @@ namespace GsaGH.Parameters {
   /// 
   /// </summary>
   public class GsaElement3d {
-    public List<Element> ApiElements { get; set; } = new List<Element>();
+    public List<Element> ApiElements { get; set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; set; } = Guid.NewGuid();
     public Mesh NgonMesh { get; set; } = new Mesh();
     public List<List<int>> FaceInt { get; set; }
     public List<List<int>> TopoInt { get; set; }
     public Point3dList Topology { get; set; }
-    public List<GsaProperty3d> Prop3ds { get; set; } = new List<GsaProperty3d>();
+    public List<GsaProperty3d> Prop3ds { get; set; }
     public Mesh DisplayMesh {
       get {
         if (_displayMesh == null) {
@@ -42,25 +43,30 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
     /// </summary>
-    public GsaElement3d() { }
+    public GsaElement3d() {
+      ApiElements = new List<Element>();
+    }
 
     /// <summary>
     /// Create new instance by casting from a Mesh
     /// </summary>
     /// <param name="mesh"></param>
     public GsaElement3d(Mesh mesh) {
-      NgonMesh = mesh;
+      if (mesh.IsClosed) {
+        NgonMesh = mesh;
+      } else {
+        Mesh m = mesh.DuplicateMesh();
+        m.FillHoles();
+        NgonMesh = m;
+      }
+
       Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
+        = RhinoConversions.ConvertMeshToElem3d(mesh);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       FaceInt = convertMesh.Item4;
       Ids = new List<int>(new int[NgonMesh.Faces.Count]);
-      Prop3ds = new List<GsaProperty3d>();
-      for (int i = 0; i < NgonMesh.Faces.Count; i++) {
-        Prop3ds.Add(new GsaProperty3d(0));
-      }
     }
 
     /// <summary>
@@ -80,30 +86,32 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement3d(ConcurrentDictionary<int, Element> elements, Mesh mesh, 
+    internal GsaElement3d(ConcurrentDictionary<int, Element> elements, Mesh mesh,
       ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
       Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
+        = RhinoConversions.ConvertMeshToElem3d(mesh);
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       FaceInt = convertMesh.Item4;
       ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
       Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
-      Prop3ds = prop3ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      if (!prop3ds.IsNullOrEmpty()) {
+        Prop3ds = prop3ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      }
       UpdateMeshColours();
     }
 
     public override string ToString() {
       if (NgonMesh == null || NgonMesh.Ngons.Count == 0) {
-        return "Null";
+        return "Invalid 3D Element";
       }
 
       var types = ApiElements.Select(t => Mappings.elementTypeMapping.FirstOrDefault(
         x => x.Value == t.Type).Key).ToList();
       string type = string.Join("/", types.Distinct());
       string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type, info).Trim().Replace("  ", " ");
+      return string.Join(" ", type, info).TrimSpaces();
     }
 
     public DataTree<int> GetTopologyIDs() {
@@ -131,7 +139,6 @@ namespace GsaGH.Parameters {
       }
 
       _displayMesh.RebuildNormals();
-      _displayMesh.Vertices.CombineIdentical(true, false);
     }
 
     public void UpdateMeshColours() {
@@ -141,6 +148,10 @@ namespace GsaGH.Parameters {
     }
 
     public List<Element> DuplicateApiObjects() {
+      if (ApiElements.IsNullOrEmpty()) {
+        return ApiElements;
+      }
+
       var elems = new List<Element>();
       for (int i = 0; i < ApiElements.Count; i++) {
         elems.Add(new Element() {

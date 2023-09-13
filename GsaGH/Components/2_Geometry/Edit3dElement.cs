@@ -57,7 +57,7 @@ namespace GsaGH.Components {
         + "This will export a list of solid meshes representing each 3D element."
         + Environment.NewLine
         + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly",
-        GH_ParamAccess.item);
+        GH_ParamAccess.list);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProperty3dParameter(), "3D Property", "PV",
         "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model",
@@ -142,8 +142,8 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaElement3dGoo(elem));
       da.SetDataList(1, elem.Ids);
       da.SetDataList(2, elem.DisplayMesh.ExplodeAtUnweldedEdges());
-      da.SetDataList(3,
-        new List<GsaProperty3dGoo>(elem.Prop3ds.Select(x => new GsaProperty3dGoo(x))));
+      da.SetDataList(3, elem.Prop3ds == null ? null
+        : new List<GsaProperty3dGoo>(elem.Prop3ds.Select(x => new GsaProperty3dGoo(x))));
       da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
       da.SetDataList(5, elem.ApiElements.Select(x => x.Type));
       da.SetDataList(6, elem.ApiElements.Select(x => x.Name));

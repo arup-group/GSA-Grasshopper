@@ -7,6 +7,8 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
+using GsaGH.Helpers;
+using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
@@ -22,7 +24,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement2d {
-    public List<Element> ApiElements { get; set; } = new List<Element>();
+    public List<Element> ApiElements { get; set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; set; } = Guid.NewGuid();
     public Mesh Mesh { get; set; } = new Mesh();
@@ -31,14 +33,16 @@ namespace GsaGH.Parameters {
     public List<GsaOffset> Offsets => ApiElements.Select(
       e => new GsaOffset(e.Offset.X1, e.Offset.X2, e.Offset.Y, e.Offset.Z)).ToList();
     public List<Angle> OrientationAngles => ApiElements.Select(
-      e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();  
-    public List<GsaProperty2d> Prop2ds { get; set; } = new List<GsaProperty2d>();
+      e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();
+    public List<GsaProperty2d> Prop2ds { get; set; }
     internal Section3dPreview Section3dPreview { get; set; }
 
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
     /// </summary>
-    public GsaElement2d() { }
+    public GsaElement2d() {
+      ApiElements = new List<Element>();
+    }
 
     /// <summary>
     /// Create new instance by casting from a Mesh
@@ -99,7 +103,9 @@ namespace GsaGH.Parameters {
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
       ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
       Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
-      Prop2ds = prop2ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      if (!prop2ds.IsNullOrEmpty()) {
+        Prop2ds = prop2ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      }
     }
 
     public override string ToString() {
@@ -110,7 +116,7 @@ namespace GsaGH.Parameters {
       string type = Mappings.elementTypeMapping.FirstOrDefault(
         x => x.Value == ApiElements.First().Type).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type, info).Trim().Replace("  ", " ");
+      return string.Join(" ", type, info).TrimSpaces();
     }
 
     public DataTree<int> GetTopologyIDs() {
@@ -131,6 +137,10 @@ namespace GsaGH.Parameters {
     }
 
     public List<Element> DuplicateApiObjects() {
+      if (ApiElements.IsNullOrEmpty()) {
+        return ApiElements;
+      }
+
       var elems = new List<Element>();
       for (int i = 0; i < ApiElements.Count; i++) {
         elems.Add(new Element() {
@@ -155,7 +165,7 @@ namespace GsaGH.Parameters {
           elems[i].Colour = ApiElements[i].Colour;
         }
       }
-        
+
       return elems;
     }
   }

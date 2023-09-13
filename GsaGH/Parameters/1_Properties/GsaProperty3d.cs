@@ -83,7 +83,7 @@ namespace GsaGH.Parameters {
 
       string mat = Material != null ? MaterialType
         : ApiProp3d.MaterialType.ToString().ToPascalCase();
-      return string.Join(" ", pv, mat).Trim();
+      return string.Join(" ", pv, mat).TrimSpaces();
     }
   }
 }

@@ -38,9 +38,10 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetBeamLoads(
       ReadOnlyCollection<BeamLoad> beamLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (BeamLoad gsaLoad in beamLoads) {
+      foreach (BeamLoad apiLoad in beamLoads) {
         var load = new GsaBeamLoad {
-          BeamLoad = gsaLoad,
+          BeamLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
         load.LoadCase = new GsaLoadCase(load.BeamLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
@@ -59,9 +60,10 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetBeamThermalLoads(
       ReadOnlyCollection<BeamThermalLoad> beamThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (BeamThermalLoad gsaLoad in beamThermalLoads) {
+      foreach (BeamThermalLoad apiLoad in beamThermalLoads) {
         var load = new GsaBeamThermalLoad {
-          BeamThermalLoad = gsaLoad,
+          BeamThermalLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
         load.LoadCase = new GsaLoadCase(load.BeamThermalLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
@@ -80,9 +82,10 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetFaceLoads(
       ReadOnlyCollection<FaceLoad> faceLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (FaceLoad faceLoad in faceLoads) {
+      foreach (FaceLoad apiLoad in faceLoads) {
         var load = new GsaFaceLoad {
-          FaceLoad = faceLoad,
+          FaceLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
         load.LoadCase = new GsaLoadCase(load.FaceLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
@@ -101,9 +104,10 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetFaceThermalLoads(
       ReadOnlyCollection<FaceThermalLoad> faceThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (FaceThermalLoad faceThermalLoad in faceThermalLoads) {
+      foreach (FaceThermalLoad apiLoad in faceThermalLoads) {
         var load = new GsaFaceThermalLoad {
-          FaceThermalLoad = faceThermalLoad,
+          FaceThermalLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
         load.LoadCase = new GsaLoadCase(load.FaceThermalLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
@@ -122,9 +126,10 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetGravityLoads(
       ReadOnlyCollection<GravityLoad> gravityLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (GravityLoad gload in gravityLoads) {
+      foreach (GravityLoad apiLoad in gravityLoads) {
         var load = new GsaGravityLoad {
-          GravityLoad = gload,
+          GravityLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
         load.LoadCase = new GsaLoadCase(load.GravityLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));

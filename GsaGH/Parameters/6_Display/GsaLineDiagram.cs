@@ -72,10 +72,6 @@ namespace GsaGH.Parameters {
       };
     }
 
-    public override object ScriptVariable() {
-      return Value;
-    }
-
     public override string ToString() {
       var ln = new GH_Line(Value);
       return $"Diagram Line {ln}";

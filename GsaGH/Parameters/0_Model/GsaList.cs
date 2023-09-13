@@ -206,7 +206,7 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      return s.Replace("  ", " ");
+      return s.TrimSpaces();
     }
 
     internal List<object> GetListObjects(LengthUnit unit) {

@@ -72,6 +72,25 @@ namespace GsaGH.Helpers.Export {
       return $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
     }
 
+    internal static string GetElementOrMemberList(GsaList list, ref ModelAssembly model, GH_Component owner) {
+      if (model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
+        return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
+      }
+
+      GsaList copyList = AddPropertiesList(list, model.Properties, owner);
+      switch (list.EntityType) {
+        case EntityType.Element:
+          AddElementList(copyList, ref model, owner);
+          break;
+
+        case EntityType.Member:
+          AddMemberList(copyList, ref model.Lists, model.Members, owner);
+          break;
+      }
+
+      return $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
+    }
+
     internal static void ConvertList(
       List<GsaList> lists, ref ModelAssembly model, GH_Component owner) {
       if (lists == null) {

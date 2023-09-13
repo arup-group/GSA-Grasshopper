@@ -34,9 +34,5 @@ namespace GsaGH.Parameters {
 
       return false;
     }
-
-    public override object ScriptVariable() {
-      return Value.GetApiList();
-    }
   }
 }

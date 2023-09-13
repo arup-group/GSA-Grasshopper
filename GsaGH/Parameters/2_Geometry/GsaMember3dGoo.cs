@@ -136,9 +136,5 @@ namespace GsaGH.Parameters {
       mem.UpdatePreview();
       return new GsaMember3dGoo(mem);
     }
-
-    public override object ScriptVariable() {
-      return Value.DuplicateApiObject();
-    }
   }
 }

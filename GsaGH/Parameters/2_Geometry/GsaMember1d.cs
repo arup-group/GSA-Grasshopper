@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
@@ -27,7 +28,7 @@ namespace GsaGH.Parameters {
     public List<string> TopologyType { get; set; }
     public GsaNode OrientationNode { get; set; }
     public ReleasePreview ReleasePreview { get; set; } = new ReleasePreview();
-    public GsaSection Section { get; set; } = new GsaSection(0);
+    public GsaSection Section { get; set; }
     public GsaLocalAxes LocalAxes { get; set; }
     public Section3dPreview Section3dPreview { get; set; }
 
@@ -110,9 +111,13 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
-      string pb = Section.Id > 0 ? $"PB{Section.Id}"
+      string pb = string.Empty;
+      if (Section != null) {
+        pb = Section.Id > 0 ? $"PB{Section.Id}"
         : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
-      return string.Join(" ", id, type, pb).Trim().Replace("  ", " ");
+      }
+
+      return string.Join(" ", id, type, pb).TrimSpaces();
     }
 
     public Member DuplicateApiObject() {

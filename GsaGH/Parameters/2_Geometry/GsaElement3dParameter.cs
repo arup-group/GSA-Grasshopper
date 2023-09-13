@@ -26,17 +26,28 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaElement3dGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Element3dParam;
 
-    public GsaElement3dParameter() : base(new GH_InstanceDescription(GsaElement3dGoo.Name, 
+    public GsaElement3dParameter() : base(new GH_InstanceDescription(GsaElement3dGoo.Name,
       GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaElement3dGoo PreferredCast(object data) {
       var mesh = new Mesh();
+      string mes = string.Empty;
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
-        return new GsaElement3dGoo(new GsaElement3d(mesh));
+        if (mesh.IsClosed) {
+          var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+          if (ngons.Count != ngons.Select(f => f.FaceCount).Sum()) {
+            return new GsaElement3dGoo(new GsaElement3d(mesh));
+          }
+        }
+        mes = "Mesh must be a closed (solid) Ngon Mesh";
       }
 
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element3d");
+      if (!string.IsNullOrEmpty(mes)) {
+        mes = "." + Environment.NewLine + mes;
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element3d" + mes);
       return new GsaElement3dGoo(null);
     }
 

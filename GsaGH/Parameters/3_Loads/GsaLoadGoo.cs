@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using OasysGH;
 using OasysGH.Parameters;
 using Rhino.Geometry;
@@ -127,11 +128,12 @@ namespace GsaGH.Parameters {
       if (Value == null) {
         return "Null";
       }
+
       string caseid = $"LC{Value.CaseId}";
-      string type = Value.LoadType.ToString().Trim();
-      string name = Value.Name.Trim();
-      string value = string.Join(" ", caseid, type, name).Trim().Replace("  ", " ");
-      return PluginInfo.ProductName + " " + TypeName + " (" + value + ")";
+      string type = Value.LoadType.ToString();
+      string name = Value.Name;
+      string value = string.Join(" ", caseid, type, name).TrimSpaces();
+      return $"{PluginInfo.ProductName} {TypeName} ({value})";
     }
   }
 }

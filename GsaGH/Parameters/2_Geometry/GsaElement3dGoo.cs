@@ -24,7 +24,7 @@ namespace GsaGH.Parameters {
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.DisplayMesh);
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.NgonMesh);
         return true;
       }
 
@@ -87,10 +87,6 @@ namespace GsaGH.Parameters {
       m.Transform(xform);
       elem.NgonMesh = m;
       return new GsaElement3dGoo(elem);
-    }
-
-    public override object ScriptVariable() {
-      return Value.DuplicateApiObjects();
     }
   }
 }

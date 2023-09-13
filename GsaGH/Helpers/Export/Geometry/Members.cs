@@ -37,7 +37,7 @@ namespace GsaGH.Helpers.Export {
         = CreateTopology(member1d.Topology, member1d.TopologyType, ref apiNodes, unit);
       if (topo != string.Empty) {
         try {
-          apiMember.Topology = string.Copy(topo.Replace("  ", " "));
+          apiMember.Topology = string.Copy(topo.TrimSpaces());
         } catch (Exception) {
           var errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
           string error = string.Join(", ", errors);
@@ -89,7 +89,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       try {
-        apiMember.Topology = string.Copy(topo.Replace("( ", "(").Replace("  ", " "));
+        apiMember.Topology = string.Copy(topo.Replace("( ", "(").TrimSpaces());
       } catch (Exception) {
         var errors = member2d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
         string error = string.Join(", ", errors);

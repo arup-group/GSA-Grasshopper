@@ -11,6 +11,7 @@ using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Rhino.Geometry.Collections;
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -26,7 +27,7 @@ namespace GsaGH.Parameters {
     public List<Line> PreviewEdgeLines { get; set; }
     public List<Polyline> PreviewHiddenLines { get; set; }
     public Point3dList PreviewPts { get; set; }
-    public GsaProperty3d Prop3d { get; set; } = new GsaProperty3d();
+    public GsaProperty3d Prop3d { get; set; }
 
     /// <summary>
     /// Empty constructor instantiating a new API object
@@ -88,7 +89,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
-      return string.Join(" ", id, type).Trim().Replace("  ", " ");
+      return string.Join(" ", id, type).TrimSpaces();
     }
 
     public void UpdateGeometry(Brep brep) {

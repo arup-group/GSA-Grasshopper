@@ -574,9 +574,9 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>
-      ConvertMeshToElem3d(Mesh mesh, int prop = 1) {
+      ConvertMeshToElem3d(Mesh mesh) {
       var elems = new List<Element>();
-      var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
+      var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
       var faceInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
@@ -584,33 +584,36 @@ namespace GsaGH.Helpers.GH {
       foreach (MeshNgon ngon in ngons) {
         var elem = new Element();
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
+        var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
-        switch (topo.Count) {
-          case 4:
+        switch ((topo.Count, faces.Count)) {
+          case (4, 4):
             elem.Type = ElementType.TETRA4;
             break;
 
-          case 5:
+          case (5, 5):
             elem.Type = ElementType.PYRAMID5;
             break;
 
-          case 6:
+          case (6, 5):
             elem.Type = ElementType.WEDGE6;
             break;
 
-          case 8:
+          case (8, 6):
             elem.Type = ElementType.BRICK8;
             break;
-        }
 
-        var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
+          default:
+            throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
+              "3D Element type");
+        }
+        
         faceInts.Add(faces);
-        elem.Property = prop;
         elems.Add(elem);
       }
 
-      return new Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>(
-        elems, topoPts, topoInts, faceInts);
+      return new Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>(elems,
+        new Point3dList(topoPts), topoInts, faceInts);
     }
 
     public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh) {

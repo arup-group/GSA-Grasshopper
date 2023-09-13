@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using OasysUnits;
 using Rhino.Display;
@@ -172,7 +173,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
+      string id = Id == 0 ? string.Empty : "ID:" + Id + " ";
 
       string sptTxt = ApiNode.Restraint.X == false && ApiNode.Restraint.Y == false
         && ApiNode.Restraint.Z == false && ApiNode.Restraint.XX == false
@@ -198,9 +199,7 @@ namespace GsaGH.Parameters {
         localTxt = " Axis:{" + ghPlane.ToString() + "}";
       }
 
-      return string.Join(" ",
-        idd.Trim(), sptTxt.Trim(), localTxt.Trim(),
-        ("Pos:" + new GH_Point(Point).ToString()).Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", id, sptTxt, localTxt, $"Pos:{new GH_Point(Point)}").TrimSpaces();
     }
 
     public GsaNode Transform(Transform xform) {

@@ -142,10 +142,6 @@ namespace GsaGH.Parameters {
       return new MeshResultGoo(m, ResultValues, Vertices, ElementIds);
     }
 
-    public override object ScriptVariable() {
-      return Value;
-    }
-
     public override string ToString() {
       return
         $"MeshResult: V:{Value.Vertices.Count:0}, F:{Value.Faces.Count:0}, R:{ResultValues.Count:0}";

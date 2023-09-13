@@ -1,4 +1,5 @@
 ﻿using GsaAPI;
+using GsaGH.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -118,9 +119,9 @@ namespace GsaGH.Parameters {
       }
 
       string innerDesc = string
-       .Join(" ", inPlane.Trim(), bending.Trim(), shear.Trim(), volume.Trim(), mass.Trim()).
+       .Join(" ", inPlane, bending, shear, volume, mass).
        Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').
-       TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
+       TrimEnd('X').TrimEnd(' ').TrimEnd(',').TrimSpaces();
       return innerDesc;
     }
   }

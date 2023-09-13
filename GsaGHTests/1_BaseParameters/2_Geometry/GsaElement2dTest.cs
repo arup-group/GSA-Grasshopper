@@ -121,7 +121,9 @@ namespace GsaGHTests.Parameters {
       var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
-      var origi = new GsaElement2d(mesh);
+      var origi = new GsaElement2d(mesh) {
+        Prop2ds = new List<GsaProperty2d>()
+      };
       int elid = 3;
       int secid = 4;
       var grps = new List<int>();

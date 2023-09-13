@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GsaAPI;
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -45,8 +46,7 @@ namespace GsaGH.Parameters {
         s += " " + Definition.ToString();
       }
 
-      return string.Join(" ", (Id > 0 ? "ID:" + Id : string.Empty).Trim(), s.Trim()).Trim()
-       .Replace("  ", " ");
+      return string.Join(" ", Id > 0 ? $"ID:{Id}" : string.Empty, s).TrimSpaces();
     }
 
     private void ValidateDefinition(string name, string definition) {

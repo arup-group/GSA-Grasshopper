@@ -27,5 +27,12 @@ namespace GsaGH.Helpers {
       value = Regex.Replace(value, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
       return value.Replace("_", " ");
     }
+
+    public static string TrimSpaces(this string value) {
+      while (value.Contains("  ")) {
+        value = value.Replace("  ", " ");
+      }
+      return value.Trim();
+    }
   }
 }

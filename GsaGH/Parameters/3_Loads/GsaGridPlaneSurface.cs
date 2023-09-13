@@ -1,5 +1,6 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -217,8 +218,7 @@ namespace GsaGH.Parameters {
 
       gs += GridSurface.Elements == "all" ? string.Empty : GridSurface.Elements;
 
-      return string.Join(" ", ax.Trim(), gp.Trim(), gs.Trim()).Replace("''", string.Empty).Trim()
-       .Replace("  ", " ");
+      return string.Join(" ", ax, gp, gs).Replace("''", string.Empty).TrimSpaces();
     }
 
     internal Axis GetAxis(LengthUnit modelUnit) {

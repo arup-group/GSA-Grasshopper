@@ -62,10 +62,6 @@ namespace GsaGH.Parameters {
       };
     }
 
-    public override object ScriptVariable() {
-      return Value;
-    }
-
     public override string ToString() {
       var m = new GH_Mesh(Value);
       return $"Diagram Arrowhead {m}";

@@ -33,7 +33,7 @@ namespace GsaGH.Parameters {
     public List<Point3dList> InclusionLinesTopology { get; set; }
     public List<List<string>> InclusionLinesTopologyType { get; set; }
     public Point3dList InclusionPoints { get; set; }
-    public GsaProperty2d Prop2d { get; set; } = new GsaProperty2d();
+    public GsaProperty2d Prop2d { get; set; }
     public Section3dPreview Section3dPreview { get; set; }
 
     public GsaOffset Offset {
@@ -87,8 +87,6 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
-
-      Prop2d = new GsaProperty2d();
     }
 
     /// <summary>
@@ -211,7 +209,7 @@ namespace GsaGH.Parameters {
 
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
-      return string.Join(" ", id, type, incl).Trim().Replace("  ", " ");
+      return string.Join(" ", id, type, incl).TrimSpaces();
     }
 
     public void UpdateGeometry(

@@ -126,10 +126,5 @@ namespace GsaGH.Parameters {
       gridline._curve.Transform(xform);
       return new GsaGridLineGoo(gridline);
     }
-
-    public override object ScriptVariable() {
-      var gridline = new GsaGridLine(Value);
-      return gridline._gridLine;
-    }
   }
 }

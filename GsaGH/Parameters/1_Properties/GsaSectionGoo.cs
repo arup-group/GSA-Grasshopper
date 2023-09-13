@@ -29,9 +29,5 @@ namespace GsaGH.Parameters {
     public override IGH_Goo Duplicate() {
       return new GsaSectionGoo(Value);
     }
-
-    public override object ScriptVariable() {
-      return Value.DuplicateApiObject();
-    }
   }
 }

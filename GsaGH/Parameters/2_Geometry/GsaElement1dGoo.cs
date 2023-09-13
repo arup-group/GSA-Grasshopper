@@ -122,9 +122,5 @@ namespace GsaGH.Parameters {
       elem.Section3dPreview?.Transform(xform);
       return new GsaElement1dGoo(elem);
     }
-
-    public override object ScriptVariable() {
-      return Value.DuplicateApiObject();
-    }
   }
 }

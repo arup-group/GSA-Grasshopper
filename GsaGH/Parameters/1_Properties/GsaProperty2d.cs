@@ -152,20 +152,20 @@ namespace GsaGH.Parameters {
       if (ApiProp2d.Type != Property2D_Type.LOAD) {
         string mat = Material != null ? MaterialType
         : ApiProp2d.MaterialType.ToString().ToPascalCase();
-        return string.Join(" ", pa, type, desc, mat).Trim();
+        return string.Join(" ", pa, type, desc, mat).TrimSpaces();
       }
       string supportType = ApiProp2d.SupportType.ToString().ToSentenceCase();
       string referenceEdge =
         ApiProp2d.SupportType != SupportType.Auto && ApiProp2d.SupportType != SupportType.AllEdges
         ? $"RefEdge:{ApiProp2d.ReferenceEdge}" : string.Empty;
-      return string.Join(" ", pa, type, supportType, referenceEdge, desc).Trim();
+      return string.Join(" ", pa, type, supportType, referenceEdge, desc).TrimSpaces();
     }
 
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
         return Mappings.GetProperty2D_Type(type);
       } catch (ArgumentException) {
-        type = type.Trim().Replace(" ", "_").ToUpper();
+        type = type.TrimSpaces().Replace(" ", "_").ToUpper();
         type = type.Replace("PLANE", "PL");
         type = type.Replace("NUMBER", "NUM");
         type = type.Replace("AXIS_SYMMETRIC", "AXISYMMETRIC");

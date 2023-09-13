@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -23,11 +24,23 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProperty3dGoo PreferredCast(object data) {
+      string mes = string.Empty;
+      string defaultText = $"{data.GetTypeName()} does not contain a 3D Property";
       switch (data) {
         case GsaElement3dGoo elem3d:
+          if (elem3d.Value.Prop3ds.IsNullOrEmpty()) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaProperty3dGoo(elem3d.Value.Prop3ds[0]);
 
         case GsaMember3dGoo mem3d:
+          if (mem3d.Value.Prop3d == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaProperty3dGoo(mem3d.Value.Prop3d);
       }
 
@@ -41,7 +54,11 @@ namespace GsaGH.Parameters {
         return new GsaProperty3dGoo(prop);
       }
 
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop3d");
+      if (!string.IsNullOrEmpty(mes)) {
+        mes = "." + Environment.NewLine + mes;
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop3d" + mes);
       return new GsaProperty3dGoo(null);
     }
   }

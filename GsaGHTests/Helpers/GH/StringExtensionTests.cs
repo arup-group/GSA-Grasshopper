@@ -21,5 +21,16 @@ namespace GsaGHTests.Helpers.Export.GH {
       string result = val.ToSentenceCase();
       Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData("A                                      B", "A B")]
+    [InlineData("A     B", "A B")]
+    [InlineData(" A   B", "A B")]
+    [InlineData("A  B ", "A B")]
+    [InlineData(" A  B ", "A B")]
+    public void TrimSpacesTest(string val, string expected) {
+      string result = val.TrimSpaces();
+      Assert.Equal(expected, result);
+    }
   }
 }

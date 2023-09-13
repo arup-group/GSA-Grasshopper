@@ -3,6 +3,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysUnits;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
