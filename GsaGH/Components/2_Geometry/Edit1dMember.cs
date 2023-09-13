@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,14 +9,12 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Collections;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -296,7 +293,7 @@ namespace GsaGH.Components {
 
       GsaNodeGoo nodeGoo = null;
       if (da.GetData(13, ref nodeGoo)) {
-        mem.OrientationNode = nodeGoo.Value.Duplicate();
+        mem.OrientationNode = nodeGoo.Value;
       }
 
       double meshSize = 0;

@@ -255,7 +255,7 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiNode.Restraint.YY, expected.Restraint.Yy);
       Assert.Equal(apiNode.Restraint.ZZ, expected.Restraint.Zz);
 
-      if (!expected.IsGlobalAxis()) {
+      if (!expected.IsGlobalAxis) {
         ReadOnlyDictionary<int, Axis> apiAxes = actualModel.Model.Axes();
         Assert.True(apiAxes.ContainsKey(apiNode.AxisProperty),
           "Axis with id " + apiNode.AxisProperty + " is not present in model");
@@ -272,11 +272,11 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiAxis.XYPlane.Z, expected.LocalAxis.YAxis.Z);
       }
 
-      Assert.Equal(apiNode.Name, expected.Name);
-      Assert.Equal(apiNode.Colour, expected.Colour);
-      Assert.Equal(apiNode.DamperProperty, expected.DamperProperty);
-      Assert.Equal(apiNode.MassProperty, expected.MassProperty);
-      Assert.Equal(apiNode.SpringProperty, expected.SpringProperty);
+      Assert.Equal(apiNode.Name, expected.ApiNode.Name);
+      Assert.Equal(apiNode.Colour, expected.ApiNode.Colour);
+      Assert.Equal(apiNode.DamperProperty, expected.ApiNode.DamperProperty);
+      Assert.Equal(apiNode.MassProperty, expected.ApiNode.MassProperty);
+      Assert.Equal(apiNode.SpringProperty, expected.ApiNode.SpringProperty);
     }
 
     internal void TestProp2d(GsaProperty2d expected, int expectedId, GsaModel actualModel) {

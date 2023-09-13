@@ -135,7 +135,7 @@ namespace GsaGH.Components {
 
       GsaNodeGoo nodeGoo = null;
       if (da.GetData(0, ref nodeGoo)) {
-        node = nodeGoo.Value.Clone();
+        node = new GsaNode(nodeGoo.Value);
       } else {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0) {
@@ -175,14 +175,14 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(5, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          node.Name = name;
+          node.ApiNode.Name = name;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(6, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          node.Colour = col;
+          node.ApiNode.Colour = col;
         }
       }
 
@@ -192,7 +192,7 @@ namespace GsaGH.Components {
       da.SetData(3, new GH_Plane(node.LocalAxis));
       da.SetData(4, new GsaBool6Goo(node.Restraint));
       da.SetData(5, node.ApiNode?.Name);
-      da.SetData(6, node.Colour);
+      da.SetData(6, node.ApiNode.Colour);
 
       if (_mode != FoldMode.GetConnected) {
         return;

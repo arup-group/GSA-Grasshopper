@@ -12,7 +12,7 @@ namespace GsaGHTests.Parameters {
     public void GsaNodeEqualsTest() {
       var original = new GsaNode();
 
-      GsaNode duplicate = original.Duplicate();
+      var duplicate = new GsaNode(original);
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -101,13 +101,13 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestDuplicateNode() {
       var node = new GsaNode(new Point3d(-3.3, 0, 1.5)) {
-        Colour = Color.Red,
         LocalAxis = Plane.WorldYZ,
         Id = 3,
-        Name = "Mariam",
       };
+      node.ApiNode.Colour = Color.Red;
+      node.ApiNode.Name = "Mariam";
 
-      GsaNode duplicate = node.Clone();
+      var duplicate = new GsaNode(node);
 
       Assert.Equal(node.Point.X, duplicate.Point.X);
       Assert.Equal(node.Point.Y, duplicate.Point.Y);
@@ -121,14 +121,14 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
       Assert.Equal(node.Id, duplicate.Id);
-      Assert.Equal(node.Colour, duplicate.Colour);
-      Assert.Equal(node.Name, duplicate.Name);
+      Assert.Equal(node.ApiNode.Colour, duplicate.ApiNode.Colour);
+      Assert.Equal(node.ApiNode.Name, duplicate.ApiNode.Name);
 
       node.Point = new Point3d(3.3, 1, -1.5);
       node.LocalAxis = Plane.Unset;
-      node.Colour = Color.Blue;
+      node.ApiNode.Colour = Color.Blue;
       node.Id = 2;
-      node.Name = "Kristjan";
+      node.ApiNode.Name = "Kristjan";
 
       Assert.NotEqual(node.Point.X, duplicate.Point.X);
       Assert.NotEqual(node.Point.Y, duplicate.Point.Y);
@@ -143,8 +143,8 @@ namespace GsaGHTests.Parameters {
       Assert.NotEqual(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
       Assert.NotEqual(node.Id, duplicate.Id);
-      Assert.NotEqual(node.Colour, duplicate.Colour);
-      Assert.NotEqual(node.Name, duplicate.Name);
+      Assert.NotEqual(node.ApiNode.Colour, duplicate.ApiNode.Colour);
+      Assert.NotEqual(node.ApiNode.Name, duplicate.ApiNode.Name);
     }
   }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,7 +16,6 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Collections;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -283,7 +281,7 @@ namespace GsaGH.Components.GraveyardComp {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(11, ref ghTyp)) {
         if (ghTyp.Value is GsaNodeGoo nodeGoo) {
-          mem.OrientationNode = nodeGoo.Value.Duplicate();
+          mem.OrientationNode = nodeGoo.Value;
         } else {
           this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
         }

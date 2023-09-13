@@ -120,7 +120,10 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, true, 10);
       ComponentTestHelper.SetInput(comp, true, 11);
       ComponentTestHelper.SetInput(comp, Math.PI, 12);
-      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 13);
+      var node = new GsaNode(new Point3d(1, 2, 3)) {
+        Id = 99,
+      };
+      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(node), 13);
       ComponentTestHelper.SetInput(comp, 0.7, 14);
       ComponentTestHelper.SetInput(comp, false, 15);
       ComponentTestHelper.SetInput(comp,

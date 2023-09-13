@@ -119,7 +119,7 @@ namespace GsaGH.Helpers.GH {
       if (inNodes != null) {
         foreach (GsaNode node in inNodes) {
           inBrep.Surfaces[0].ClosestPoint(node.Point, out double u, out double v);
-          var dot = new TextDot(node.Name, inBrep.Surfaces[0].PointAt(u, v));
+          var dot = new TextDot(node.ApiNode.Name, inBrep.Surfaces[0].PointAt(u, v));
           unroller.AddFollowingGeometry(dot);
           nodeIds.Add(nodeid++);
         }

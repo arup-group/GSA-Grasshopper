@@ -152,7 +152,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           var pt = new Point3d();
           if (objectWrapper.Value is GsaNodeGoo nodeGoo) {
-            nodes.Add(nodeGoo.Value.Clone());
+            nodes.Add(new GsaNode(nodeGoo.Value));
           } else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {

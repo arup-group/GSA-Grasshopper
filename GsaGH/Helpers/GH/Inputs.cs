@@ -7,7 +7,6 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Export;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using EntityType = GsaGH.Parameters.EntityType;
 

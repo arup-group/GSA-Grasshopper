@@ -199,7 +199,7 @@ namespace GsaGH.Components {
 
       GsaNodeGoo nodeGoo = null;
       if (da.GetData(10, ref nodeGoo)) {
-        elem.OrientationNode = nodeGoo.Value.Duplicate();
+        elem.OrientationNode = nodeGoo.Value;
       }
 
       var ghName = new GH_String();

@@ -49,7 +49,7 @@ namespace GsaGH.Parameters {
       att.ColorSource = ObjectColorSource.ColorFromObject;
       foreach (GsaNodeGoo goo in m_data.AllData(true).Cast<GsaNodeGoo>()) {
         ObjectAttributes objAtt = att.Duplicate();
-        objAtt.ObjectColor = goo.Value.Colour;
+        objAtt.ObjectColor = (Color)goo.Value.ApiNode.Colour;
         gH_BakeUtility.BakeObject(new GH_Point(goo.Value.Point), objAtt, doc);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);

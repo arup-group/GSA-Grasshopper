@@ -113,26 +113,25 @@ namespace GsaGH.Helpers.Import {
     /// </summary>
     /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
     /// <param name="axDict"></param>
-    /// <param name="duplicateApiObjects"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
     internal static ConcurrentBag<GsaNodeGoo> GetNodes(
       ReadOnlyDictionary<int, Node> nDict, LengthUnit unit,
-      ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false) {
+      ReadOnlyDictionary<int, Axis> axDict = null) {
       var outNodes = new ConcurrentBag<GsaNodeGoo>();
-      Parallel.ForEach(nDict,
-        node => outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict),
-          duplicateApiObjects)));
+      Parallel.ForEach(nDict, node => 
+          outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)))
+        );
       return outNodes;
     }
 
     internal static Point3d Point3dFromNode(Node node, LengthUnit unit) {
       return (unit == LengthUnit.Meter) ?
-        new Point3d(node.Position.X, node.Position.Y,
-          node.Position.Z) : // skip unitsnet conversion, gsa api node always in meters
-        new Point3d(new Length(node.Position.X, LengthUnit.Meter).As(unit),
-          new Length(node.Position.Y, LengthUnit.Meter).As(unit),
-          new Length(node.Position.Z, LengthUnit.Meter).As(unit));
+        // skip unitsnet conversion, gsa api node always in meters
+        new Point3d(node.Position.X, node.Position.Y, node.Position.Z) 
+        : new Point3d(new Length(node.Position.X, LengthUnit.Meter).As(unit),
+            new Length(node.Position.Y, LengthUnit.Meter).As(unit),
+            new Length(node.Position.Z, LengthUnit.Meter).As(unit));
     }
 
     internal static Point3d Point3dFromXyzUnit(double x, double y, double z, LengthUnit modelUnit) {

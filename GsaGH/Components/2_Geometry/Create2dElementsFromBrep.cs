@@ -179,7 +179,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
           var pt = new Point3d();
           if (ghObjectWrapper.Value is GsaNodeGoo nodeGoo) {
-            nodes.Add(nodeGoo.Value.Clone());
+            nodes.Add(new GsaNode(nodeGoo.Value));
           } else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {
@@ -256,7 +256,7 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaElement2dGoo(elem2d));
       if (tuple.Item2 != null) {
-        da.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n => new GsaNodeGoo(n, false))));
+        da.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n => new GsaNodeGoo(n))));
       }
 
       if (tuple.Item3 != null) {

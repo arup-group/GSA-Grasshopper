@@ -281,10 +281,7 @@ namespace GsaGH.Helpers.Import {
       Parallel.ForEach(elements, item => {
         GsaSection section = model.Properties.GetSection(item.Value);
         var elem = new GsaElement1d(
-          item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit) {
-          //Section3dPreview = GsaSection3dPreview.CreateFromApi(
-          //  model, Layer.Analysis, DimensionType.OneDimensional, item.Key.ToString())
-        };
+          item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
         elem1dGoos.Add(new GsaElement1dGoo(elem));
       });
       return elem1dGoos;

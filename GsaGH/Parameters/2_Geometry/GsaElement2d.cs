@@ -8,7 +8,6 @@ using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers;
-using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
