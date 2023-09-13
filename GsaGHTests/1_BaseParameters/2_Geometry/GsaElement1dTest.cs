@@ -16,7 +16,9 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void CloneApiObjectTest() {
       var section = new GsaSection {
-        Name = "Name",
+        ApiSection = new Section {
+          Name = "Name",
+        }
       };
       var element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode()) {
         Name = "Name",
@@ -31,7 +33,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var section = new GsaSection {
-        Name = "Name",
+        ApiSection = new Section { Name = "Name" },
       };
       var original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode()) {
         Name = "Name",

@@ -10,11 +10,11 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d> {
     public static string Description => "GSA 1D Member";
-    public static string Name => "Member1D";
+    public static string Name => "Member 1D";
     public static string NickName => "M1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
@@ -32,6 +32,11 @@ namespace GsaGH.Parameters {
         }
       }
 
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)) && Value.Section3dPreview != null) {
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Section3dPreview.Mesh);
+        return true;
+      }
+
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
           target = (TQ)(object)new GH_Integer(Value.Id);
@@ -43,11 +48,25 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value == null || Value.Section3dPreview == null) {
+        return;
+      }
+
+      args.Pipeline.DrawMeshFalseColors(Value.Section3dPreview.Mesh);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null) {
         return;
+      }
+
+      if (Value.Section3dPreview != null) {
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member1d);
+        } else {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member1dSelected);
+        }
       }
 
       if (Value.PolyCurve != null) {

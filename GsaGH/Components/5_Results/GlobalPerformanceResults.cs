@@ -27,7 +27,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GlobalPerformance;
+    protected override Bitmap Icon => Resources.GlobalPerformanceResults;
     private ForcePerLengthUnit _forcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
     private AreaMomentOfInertiaUnit _inertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
     private MassUnit _massUnit = DefaultUnits.MassUnit;
@@ -152,7 +152,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
       GH_ObjectWrapper ghTyp = null;
       if (!da.GetData(0, ref ghTyp)) {
@@ -168,7 +168,7 @@ namespace GsaGH.Components {
 
         case GsaResultGoo goo: {
           result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination) {
+          if (result.Type == CaseType.Combination) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;
           }

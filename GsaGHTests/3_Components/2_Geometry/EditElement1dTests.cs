@@ -13,7 +13,7 @@ namespace GsaGHTests.Components.Geometry {
   public class EditElement1dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new EditElement1d();
+      var comp = new Edit1dElement();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
@@ -48,7 +48,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, elem.Value.Line.PointAtEnd.X, 6);
       Assert.Equal(3, elem.Value.Line.PointAtEnd.Y, 6);
       Assert.Equal(1, elem.Value.Line.PointAtEnd.Z, 6);
-      Assert.Equal("STD CH(ft) 1 2 3 4", elem.Value.Section.Profile);
+      Assert.Equal("STD CH(ft) 1 2 3 4", elem.Value.Section.ApiSection.Profile);
       Assert.Equal(0, id.Value);
       Assert.Equal(0, line.Value.From.X, 6);
       Assert.Equal(-1, line.Value.From.Y, 6);
@@ -56,7 +56,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, line.Value.To.X, 6);
       Assert.Equal(3, line.Value.To.Y, 6);
       Assert.Equal(1, line.Value.To.Z, 6);
-      Assert.Equal("STD CH(ft) 1 2 3 4", section.Value.Profile);
+      Assert.Equal("STD CH(ft) 1 2 3 4", section.Value.ApiSection.Profile);
       Assert.Equal(0, group.Value);
       Assert.Equal("Beam", type.Value);
       Assert.Equal(0, offset.Value.X1.Value, 6);
@@ -127,7 +127,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, elem.Value.Line.PointAtEnd.X);
       Assert.Equal(2, elem.Value.Line.PointAtEnd.Y);
       Assert.Equal(3, elem.Value.Line.PointAtEnd.Z);
-      Assert.Equal("STD CH 10 20 30 40", elem.Value.Section.Profile);
+      Assert.Equal("STD CH 10 20 30 40", elem.Value.Section.ApiSection.Profile);
       Assert.Equal(1, id.Value);
       Assert.Equal(0, line.Value.From.X);
       Assert.Equal(0, line.Value.From.Y);
@@ -135,7 +135,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, line.Value.To.X);
       Assert.Equal(2, line.Value.To.Y);
       Assert.Equal(3, line.Value.To.Z);
-      Assert.Equal("STD CH 10 20 30 40", section.Value.Profile);
+      Assert.Equal("STD CH 10 20 30 40", section.Value.ApiSection.Profile);
       Assert.Equal(7, group.Value);
       Assert.Equal("Beam", type.Value);
       Assert.Equal(1, offset.Value.X1.Value);

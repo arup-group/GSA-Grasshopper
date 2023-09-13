@@ -22,7 +22,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class SectionAlignment : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("4dc655a2-366e-486e-b8c3-10b2063b7aac");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SectionAlignment;
 
@@ -78,7 +78,7 @@ namespace GsaGH.Components {
         "Applied Offset", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
@@ -101,7 +101,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          profile = mem1d.Section.Profile;
+          profile = mem1d.Section.ApiSection.Profile;
           if (profile == string.Empty) {
             this.AddRuntimeError("Member has no section attached");
             return;
@@ -115,7 +115,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          profile = elem1d.Section.Profile;
+          profile = elem1d.Section.ApiSection.Profile;
           if (profile == string.Empty) {
             this.AddRuntimeError("Element has no section attached");
             return;
@@ -439,7 +439,7 @@ namespace GsaGH.Components {
 
           if (elem2d != null) {
             var offsets = new List<GsaOffset>();
-            foreach (GsaProp2d prop in elem2d.Prop2ds) {
+            foreach (GsaProperty2d prop in elem2d.Prop2ds) {
               alignmentOffset = new GsaOffset();
               switch (alignmentType) {
                 case AlignmentType.TopLeft:

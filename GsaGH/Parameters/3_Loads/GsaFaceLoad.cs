@@ -4,19 +4,23 @@ using GsaAPI;
 namespace GsaGH.Parameters {
   public class GsaFaceLoad : IGsaLoad {
     public FaceLoad FaceLoad { get; set; }
+    public GsaLoadCase LoadCase { get; set; }
     public LoadType LoadType => LoadType.Face;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
     public Guid RefObjectGuid { get; set; }
-
+    public int CaseId {
+      get => FaceLoad.Case;
+      set => FaceLoad.Case = value;
+    }
+    public string Name {
+      get => FaceLoad.Name;
+      set => FaceLoad.Name = value;
+    }
     public GsaFaceLoad() {
       FaceLoad = new FaceLoad {
         Type = FaceLoadType.CONSTANT,
       };
-    }
-
-    public int CaseId() {
-      return FaceLoad.Case;
     }
 
     public IGsaLoad Duplicate() {
@@ -25,8 +29,9 @@ namespace GsaGH.Parameters {
           AxisProperty = FaceLoad.AxisProperty,
           Case = FaceLoad.Case,
           Direction = FaceLoad.Direction,
-          Elements = FaceLoad.Elements.ToString(),
-          Name = FaceLoad.Name.ToString(),
+          EntityList = FaceLoad.EntityList,
+          EntityType = FaceLoad.EntityType,
+          Name = FaceLoad.Name,
           Type = FaceLoad.Type,
         },
       };
@@ -53,6 +58,10 @@ namespace GsaGH.Parameters {
           break;
       }
 
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       if (ReferenceType == ReferenceType.None) {
         return dup;
       }
@@ -66,10 +75,6 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), FaceLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

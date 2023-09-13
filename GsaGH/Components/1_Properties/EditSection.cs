@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.EditSection;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public EditSection() : base("Edit Section", "SectionEdit", "Modify GSA Section",
+    public EditSection() : base("Edit Section", "EditPB", "Modify GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -138,7 +138,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value.Clone();
+        section = new GsaSection(sectionGoo.Value);
       }
 
       int id = 0;
@@ -149,7 +149,7 @@ namespace GsaGH.Components {
       string profile = string.Empty;
       if (da.GetData(2, ref profile)) {
         if (GsaSection.ValidProfile(profile)) {
-          section.Profile = profile;
+          section.ApiSection.Profile = profile;
         } else {
           this.AddRuntimeError("Invalid profile syntax: " + profile);
           return;
@@ -165,9 +165,9 @@ namespace GsaGH.Components {
       if (da.GetData("Basic Offset", ref ghBasicOffset)) {
         try {
           if (GH_Convert.ToInt32(ghBasicOffset.Value, out int offset, GH_Conversion.Both)) {
-            section.BasicOffset = (BasicOffset)offset;
+            section.ApiSection.BasicOffset = (BasicOffset)offset;
           } else if (GH_Convert.ToString(ghBasicOffset, out string value, GH_Conversion.Both)) {
-            section.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), value, ignoreCase: true);
+            section.ApiSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), value, ignoreCase: true);
           }
         } catch {
           this.AddRuntimeError("Unable to convert input " + ghBasicOffset.Value + " to a Basic Offset (Centroid = 0, Top = 1, TopLeft = 2, TopRight = 3, Left = 4, Right = 5, Bottom = 6, BottomLeft = 7, BottomRight = 8)");
@@ -185,34 +185,34 @@ namespace GsaGH.Components {
 
       int pool = 0;
       if (da.GetData(8, ref pool)) {
-        section.Pool = pool;
+        section.ApiSection.Pool = pool;
       }
 
       string name = string.Empty;
       if (da.GetData(9, ref name)) {
-        section.Name = name;
+        section.ApiSection.Name = name;
       }
 
       Color colour = Color.Empty;
       if (da.GetData(10, ref colour)) {
-        section.Colour = colour;
+        section.ApiSection.Colour = colour;
       }
 
-      string prof = (section.ApiSection == null) ? "--" : section.Profile;
-      int poo = (section.ApiSection == null) ? 0 : section.Pool;
-      string nm = (section.ApiSection == null) ? "--" : section.Name;
+      string prof = (section.ApiSection == null) ? "--" : section.ApiSection.Profile;
+      int poo = (section.ApiSection == null) ? 0 : section.ApiSection.Pool;
+      string nm = (section.ApiSection == null) ? "--" : section.ApiSection.Name;
 
       da.SetData(0, new GsaSectionGoo(section));
       da.SetData(1, section.Id);
       da.SetData(2, prof);
       da.SetData(3, new GsaMaterialGoo(section.Material));
-      da.SetData(4, section.BasicOffset);
+      da.SetData(4, section.ApiSection.BasicOffset);
       da.SetData(5, section.AdditionalOffsetY.ToUnit(_lengthUnit));
       da.SetData(6, section.AdditionalOffsetZ.ToUnit(_lengthUnit));
       da.SetData(7, new GsaSectionModifierGoo(section.Modifier));
       da.SetData(8, poo);
       da.SetData(9, nm);
-      da.SetData(10, section.Colour);
+      da.SetData(10, section.ApiSection.Colour);
     }
 
     private void Update(string unit) {

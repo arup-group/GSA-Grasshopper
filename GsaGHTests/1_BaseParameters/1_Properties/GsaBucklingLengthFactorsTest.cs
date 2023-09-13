@@ -23,9 +23,7 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null, null, null, null, null, null, 
-        new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, 
-        LengthUnit.Meter, Length.Zero, false, null),
+        Model = Assembler.AssembleForLocalAxis(m1d),
       };
 
       Member assembledMem1d = assembled.Model.Members()[1];
@@ -38,7 +36,7 @@ namespace GsaGHTests.Parameters {
     [Theory]
     [InlineData(1, 2, 3)]
     public void ConstructorTest1(double factor1, double factor2, double factor3) {
-      var factors = new GsaBucklingLengthFactors(factor1, factor2, factor3);
+      var factors = new GsaBucklingFactors(factor1, factor2, factor3);
 
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
@@ -56,7 +54,7 @@ namespace GsaGHTests.Parameters {
         },
       };
 
-      var factors = new GsaBucklingLengthFactors(member);
+      var factors = new GsaBucklingFactors(member);
 
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
@@ -75,7 +73,7 @@ namespace GsaGHTests.Parameters {
         },
       };
 
-      var factors = new GsaBucklingLengthFactors(member);
+      var factors = new GsaBucklingFactors(member);
 
       Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
       Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
@@ -93,9 +91,9 @@ namespace GsaGHTests.Parameters {
         },
       };
 
-      var original = new GsaBucklingLengthFactors(member);
+      var original = new GsaBucklingFactors(member);
 
-      GsaBucklingLengthFactors duplicate = original.Duplicate();
+      GsaBucklingFactors duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
 
@@ -110,7 +108,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void EmptyConstructorTest() {
-      var factors = new GsaBucklingLengthFactors();
+      var factors = new GsaBucklingFactors();
 
       Assert.Null(factors.MomentAmplificationFactorStrongAxis);
       Assert.Null(factors.MomentAmplificationFactorWeakAxis);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -24,32 +23,79 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaMaterialGoo PreferredCast(object data) {
+      string mes = string.Empty;
+      string defaultText = $"{data.GetTypeName()} does not contain a Material";
       switch (data) {
         case GsaSectionGoo section: 
-            return new GsaMaterialGoo(section.Value.Material);
+          if (section.Value.Material == null) {
+            mes = defaultText;
+            break;
+          }
 
-        case GsaProp2dGoo prop2d:
+          return new GsaMaterialGoo(section.Value.Material);
+
+        case GsaProperty2dGoo prop2d:
+          if (prop2d.Value.Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(prop2d.Value.Material);
 
-        case GsaProp3dGoo prop3d:
+        case GsaProperty3dGoo prop3d:
+          if (prop3d.Value.Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(prop3d.Value.Material);
 
         case GsaElement1dGoo elem1d:
+          if (elem1d.Value.Section == null || elem1d.Value.Section.Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(elem1d.Value.Section.Material);
 
         case GsaElement2dGoo elem2d:
+          if (elem2d.Value.Prop2ds.IsNullOrEmpty() || elem2d.Value.Prop2ds[0].Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(elem2d.Value.Prop2ds[0].Material);
 
         case GsaElement3dGoo elem3d:
+          if (elem3d.Value.Prop3ds.IsNullOrEmpty() || elem3d.Value.Prop3ds[0].Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(elem3d.Value.Prop3ds[0].Material);
 
         case GsaMember1dGoo mem1d:
+          if (mem1d.Value.Section == null || mem1d.Value.Section.Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(mem1d.Value.Section.Material);
 
         case GsaMember2dGoo mem2d:
+          if (mem2d.Value.Prop2d == null || mem2d.Value.Prop2d.Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(mem2d.Value.Prop2d.Material);
 
         case GsaMember3dGoo mem3d:
+          if (mem3d.Value.Prop3d == null || mem3d.Value.Prop3d.Material == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaMaterialGoo(mem3d.Value.Prop3d.Material);
       }
 
@@ -58,7 +104,11 @@ namespace GsaGH.Parameters {
         return new GsaMaterialGoo(customMaterial);
       }
 
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Material");
+      if (!string.IsNullOrEmpty(mes)) {
+        mes = "." + Environment.NewLine + mes;      
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Material" + mes);
       return new GsaMaterialGoo(null);
     }
   }

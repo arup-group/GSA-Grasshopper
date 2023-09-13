@@ -22,7 +22,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void WhenCreated_ThenExposureValue_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      Assert.Equal(GH_Exposure.secondary, obj.Exposure);
+      Assert.Equal(GH_Exposure.tertiary, obj.Exposure);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ namespace GsaGHTests.Components.Results {
       string expectedNickName = "ReactionForce";
       string expectedDesc = "Diplays GSA Node Reaction Force Results as Vector Diagrams";
       string expectedCategory = CategoryName.Name();
-      string expectedSubCategory = SubCategoryName.Cat5();
+      string expectedSubCategory = SubCategoryName.Cat6();
 
       Assert.Equal(expectedName, obj.Name);
       Assert.Equal(expectedNickName, obj.NickName);
@@ -130,13 +130,13 @@ namespace GsaGHTests.Components.Results {
       var obj = new ReactionForceDiagrams();
       var expectedLinesParam = new Param_GenericObject() {
         Name = "Diagram lines",
-        NickName = "L",
-        Description = "Lines of the diagram",
+        NickName = "Dgm",
+        Description = "Vectors of the GSA Result Diagram",
         Access = GH_ParamAccess.list,
       };
       var expectedGenericParam = new Param_GenericObject() {
         Name = "Annotations",
-        NickName = "Val",
+        NickName = "An",
         Description = "Annotations for the diagram",
         Access = GH_ParamAccess.list,
       };
@@ -149,10 +149,10 @@ namespace GsaGHTests.Components.Results {
       List<IGH_Param> actualOutputs = obj.Params.Output;
 
       for (int i = 0; i < actualOutputs.Count; i++) {
-        Assert.Equal(actualOutputs[i].Name, expectedOutputs[i].Name);
-        Assert.Equal(actualOutputs[i].NickName, expectedOutputs[i].NickName);
-        Assert.Equal(actualOutputs[i].Description, expectedOutputs[i].Description);
-        Assert.Equal(actualOutputs[i].Access, expectedOutputs[i].Access);
+        Assert.Equal(expectedOutputs[i].Name, actualOutputs[i].Name);
+        Assert.Equal(expectedOutputs[i].NickName, actualOutputs[i].NickName);
+        Assert.Equal(expectedOutputs[i].Description, actualOutputs[i].Description);
+        Assert.Equal(expectedOutputs[i].Access, actualOutputs[i].Access);
       }
 
       Assert.Equal(actualOutputs.Count, expectedOutputs.Count);

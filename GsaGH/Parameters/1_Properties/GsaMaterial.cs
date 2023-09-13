@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial" />
+  /// <para>A Material is used by <see cref="GsaSection"/>s, <see cref="GsaProperty2d"/>s and <see cref="GsaProperty3d"/>s. It is only possible to work with elastic isotropic material types. A Material can either be created as a Standard Material from design code and grade using the <see cref="Components.CreateMaterial"/> component, or as a custom material using the <see cref="Components.CreateCustomMaterial"/> component.</para>
+  /// <para>Use the <see cref="Components.GetModelMaterials"/> to get all materials in a <see cref="GsaModel"/> and then use <see cref="Components.EditMaterial"/> in combination with <see cref="Components.MaterialProperties"/> to get information about material properties.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-mat-steel.html">Materials</see> to read more.</para>
   /// </summary>
   public class GsaMaterial {
     public enum MatType {
@@ -116,6 +117,8 @@ namespace GsaGH.Parameters {
     }
     public Guid Guid => _guid;
     public MatType MaterialType { get; private set; } = MatType.Generic;
+    internal MaterialType ApiMaterialType =>
+      (MaterialType)Enum.Parse(typeof(MaterialType), MaterialType.ToString(), true);
 
     internal AnalysisMaterial AnalysisMaterial {
       get {
@@ -473,8 +476,13 @@ namespace GsaGH.Parameters {
         return $"Custom ID:{Id} (referenced)";
       }
 
-      string code = string.Empty;
+      string code = GetCodeName();
+      string id = Id == 0 ? string.Empty : IsCustom ? $" ID:{Id}" : $" Grd:{Id}";
+      return (code + " " + MaterialType + id + " " + (Name ?? string.Empty)).Trim();
+    }
 
+    internal string GetCodeName() {
+      string code = string.Empty;
       if (MaterialType == MatType.Concrete && !AnalysisMaterialsModified) {
         code = ConcreteDesignCodeName;
       }
@@ -487,8 +495,7 @@ namespace GsaGH.Parameters {
         code = "Custom";
       }
 
-      string id = Id == 0 ? string.Empty : " Grd:" + Id;
-      return (code + " " + MaterialType + id + " " + Name ?? string.Empty).Trim();
+      return code;
     }
 
     internal static List<string> GetGradeNames(

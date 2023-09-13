@@ -8,15 +8,21 @@ using Grasshopper;
 using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
+using OasysGH.UI;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Element2d class, this class defines the basic properties and methods for any Gsa Element 2d
+  /// <para>Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. </para>
+  /// <para>In Grasshopper, an Element2D parameter is a collection of 2D Elements (mesh faces representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#quad-and-triangle-elements">Quad or Triangle Elements</see>) used for FE analysis. In GSA a 2D element is just a single face, but for Rhino performance reasons we have made the Element2D parameter a mesh that can contain more than one Element/Face.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement2d {
     private enum ApiObjectMember {
@@ -46,8 +52,7 @@ namespace GsaGH.Parameters {
 
         return cols;
       }
-      set
-        => CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
+      set => CloneApiElements(ApiObjectMember.Colour, null, null, null, null, null, null, null,
           value);
     }
     public int Count => ApiElements.Count;
@@ -71,7 +76,10 @@ namespace GsaGH.Parameters {
         => (from element in ApiElements where element != null
             select new GsaOffset(element.Offset.X1, element.Offset.X2, element.Offset.Y,
               element.Offset.Z)).ToList();
-      set => CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Offset, null, null, null, null, value);
+        UpdatePreview();
+      }
     }
     public List<Angle> OrientationAngles {
       get
@@ -94,7 +102,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp2d> Prop2ds { get; set; } = new List<GsaProp2d>();
+    public List<GsaProperty2d> Prop2ds { get; set; } = new List<GsaProperty2d>();
     public List<List<int>> TopoInt { get; private set; }
     public List<Point3d> Topology { get; private set; }
     public DataTree<int> TopologyIDs {
@@ -111,10 +119,13 @@ namespace GsaGH.Parameters {
     }
     public List<ElementType> Types {
       get => (from t in ApiElements where t != null select t.Type).ToList();
-      set => CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
+      set {
+        CloneApiElements(ApiObjectMember.Type, null, null, null, null, null, null, value);
+        UpdatePreview();
+      }
     }
     internal List<Element> ApiElements { get; set; } = new List<Element>();
-
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     private Guid _guid = Guid.NewGuid();
 
     public GsaElement2d() { }
@@ -128,9 +139,9 @@ namespace GsaGH.Parameters {
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       Ids = new List<int>(new int[Mesh.Faces.Count]);
-      var singleProp = new GsaProp2d(prop);
+      var singleProp = new GsaProperty2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
-        Prop2ds.Add(singleProp.Duplicate());
+        Prop2ds.Add(singleProp);
       }
     }
 
@@ -146,14 +157,14 @@ namespace GsaGH.Parameters {
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
       Ids = new List<int>(new int[Mesh.Faces.Count]);
-      var singleProp = new GsaProp2d(prop);
+      var singleProp = new GsaProperty2d(prop);
       for (int i = 0; i < Mesh.Faces.Count; i++) {
-        Prop2ds.Add(singleProp.Duplicate());
+        Prop2ds.Add(singleProp);
       }
     }
 
     internal GsaElement2d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProp2d> prop2ds) {
+      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty2d> prop2ds) {
       Mesh = mesh;
       Topology = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
@@ -177,7 +188,6 @@ namespace GsaGH.Parameters {
       gsaElement2D.Topology = convertMesh.Item2;
       gsaElement2D.TopoInt = convertMesh.Item3;
       gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
-
       return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2,
         tuple.Item3);
     }
@@ -190,9 +200,13 @@ namespace GsaGH.Parameters {
 
       dup.Ids = Ids.ToList();
       dup.Mesh = (Mesh)Mesh.DuplicateShallow();
-      dup.Prop2ds = Prop2ds.ConvertAll(x => x.Duplicate());
       dup.Topology = Topology;
       dup.TopoInt = TopoInt;
+      dup.Prop2ds = Prop2ds;
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Duplicate();
+      }
+
       return dup;
     }
 
@@ -211,6 +225,10 @@ namespace GsaGH.Parameters {
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xmorph.Morph(xMs);
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview.Morph(xmorph);
+      }
+
       return dup.UpdateGeometry(xMs);
     }
 
@@ -219,10 +237,9 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Types.First()).Key
-        + " ";
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == Types.First()).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", type, info).Trim().Replace("  ", " ");
     }
 
     public GsaElement2d Transform(Transform xform) {
@@ -236,6 +253,10 @@ namespace GsaGH.Parameters {
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xMs.Transform(xform);
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview.Transform(xform);
+      }
+
       return dup.UpdateGeometry(xMs);
     }
 
@@ -244,14 +265,13 @@ namespace GsaGH.Parameters {
         return null; // the logic below assumes the number of elements is equal to number of faces
       }
 
-      GsaElement2d dup = Clone();
       Mesh = newMesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, 0);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
-      return dup;
+      return this;
     }
 
     internal void CloneApiElements() {
@@ -350,6 +370,14 @@ namespace GsaGH.Parameters {
       }
 
       ApiElements = elems;
+    }
+
+    internal void UpdatePreview() {
+      if (!Prop2ds.IsNullOrEmpty() && !Prop2ds[0].IsReferencedById) {
+        Section3dPreview = new GsaSection3dPreview(this);
+      } else {
+        Section3dPreview = null;
+      }
     }
   }
 }

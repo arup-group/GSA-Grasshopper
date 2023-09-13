@@ -24,9 +24,9 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridSurface;
+    protected override Bitmap Icon => Resources.CreateGridSurface;
     private readonly List<string> _type = new List<string>(new[] {
       "1D, One-way span",
       "1D, Two-way span",
@@ -146,7 +146,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Grid Surface ID", "ID",
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
         GH_ParamAccess.item, 0);
-      pManager.AddGenericParameter("Element list", "El",
+      pManager.AddGenericParameter("Loadable Objects", "El",
         "Lists, Custom Materials, Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
         + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
         + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
@@ -173,7 +173,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       Plane plane = Plane.Unset;
       GsaGridPlaneSurface gps;
       bool idSet = false;
@@ -205,8 +205,16 @@ namespace GsaGH.Components {
         gps = new GsaGridPlaneSurface(plane);
       }
 
+      var ghString = new GH_String();
+      string name = "";
       bool changeGs = false;
-      var gs = new GsaAPI.GridSurface();
+      if (da.GetData(3, ref ghString)) {
+        if (GH_Convert.ToString(ghString, out name, GH_Conversion.Both)) {
+          changeGs = true;
+        }
+      }
+
+      var gs = new GsaAPI.GridSurface(name);
       if (idSet) {
         gs.GridPlane = gps.GridSurface.GridPlane;
       }
@@ -284,12 +292,12 @@ namespace GsaGH.Components {
               gps._referenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp2dGoo value: {
+          case GsaProperty2dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.Property;
               break;
             }
-          case GsaProp3dGoo value: {
+          case GsaProperty3dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.Property;
               break;
@@ -304,14 +312,6 @@ namespace GsaGH.Components {
         }
       } else {
         gps.GridSurface.Elements = "All";
-      }
-
-      var ghString = new GH_String();
-      if (da.GetData(3, ref ghString)) {
-        if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-          gs.Name = name;
-          changeGs = true;
-        }
       }
 
       ghTyp = new GH_ObjectWrapper();

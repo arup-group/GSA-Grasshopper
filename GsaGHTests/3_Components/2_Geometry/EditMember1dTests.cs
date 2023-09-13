@@ -13,7 +13,7 @@ namespace GsaGHTests.Components.Geometry {
   public class EditMember1dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new EditMember1d();
+      var comp = new Edit1dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
@@ -45,7 +45,7 @@ namespace GsaGHTests.Components.Geometry {
       var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
       var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaBucklingFactorsGoo)ComponentTestHelper.GetOutput(comp, 18);
       var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
       var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
       var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
@@ -57,7 +57,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, output0.Value.PolyCurve.PointAtEnd.X, 6);
       Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Y, 6);
       Assert.Equal(1, output0.Value.PolyCurve.PointAtEnd.Z, 6);
-      Assert.Equal("STD CH(ft) 1 2 3 4", output0.Value.Section.Profile);
+      Assert.Equal("STD CH(ft) 1 2 3 4", output0.Value.Section.ApiSection.Profile);
       Assert.Equal(0, output1.Value);
       Assert.Equal(0, output2.Value.PointAtStart.X, 6);
       Assert.Equal(-1, output2.Value.PointAtStart.Y, 6  );
@@ -65,7 +65,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, output2.Value.PointAtEnd.X, 6);
       Assert.Equal(3, output2.Value.PointAtEnd.Y, 6);
       Assert.Equal(1, output2.Value.PointAtEnd.Z, 6);
-      Assert.Equal("STD CH(ft) 1 2 3 4", output3.Value.Profile);
+      Assert.Equal("STD CH(ft) 1 2 3 4", output3.Value.ApiSection.Profile);
       Assert.Equal(0, output4.Value);
       Assert.Equal("Generic 1D", output5.Value);
       Assert.Equal("Beam", output6.Value);
@@ -124,7 +124,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 0.7, 14);
       ComponentTestHelper.SetInput(comp, false, 15);
       ComponentTestHelper.SetInput(comp,
-        new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)), 16);
+        new GsaBucklingFactorsGoo(new GsaBucklingFactors(1, 2, 3)), 16);
       ComponentTestHelper.SetInput(comp, "name", 17);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
       ComponentTestHelper.SetInput(comp, true, 19);
@@ -147,7 +147,7 @@ namespace GsaGHTests.Components.Geometry {
       var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
       var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GsaBucklingLengthFactorsGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaBucklingFactorsGoo)ComponentTestHelper.GetOutput(comp, 18);
       var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
       var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
       var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
@@ -159,7 +159,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, output0.Value.PolyCurve.PointAtEnd.X);
       Assert.Equal(2, output0.Value.PolyCurve.PointAtEnd.Y);
       Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Z);
-      Assert.Equal("STD CH 10 20 30 40", output0.Value.Section.Profile);
+      Assert.Equal("STD CH 10 20 30 40", output0.Value.Section.ApiSection.Profile);
       Assert.Equal(1, output1.Value);
       Assert.Equal(0, output2.Value.PointAtStart.X);
       Assert.Equal(0, output2.Value.PointAtStart.Y);
@@ -167,7 +167,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, output2.Value.PointAtEnd.X);
       Assert.Equal(2, output2.Value.PointAtEnd.Y);
       Assert.Equal(3, output2.Value.PointAtEnd.Z);
-      Assert.Equal("STD CH 10 20 30 40", output3.Value.Profile);
+      Assert.Equal("STD CH 10 20 30 40", output3.Value.ApiSection.Profile);
       Assert.Equal(7, output4.Value);
       Assert.Equal("Cantilever", output5.Value);
       Assert.Equal("Damper", output6.Value);

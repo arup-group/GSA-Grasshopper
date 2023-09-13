@@ -33,8 +33,8 @@ namespace GsaGH.Components {
     private string _steelCode = string.Empty;
     private Dictionary<string, GsaMaterial> _gradeMaterials;
 
-    public CreateMaterial() : base("Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      GsaMaterialGoo.Name.Replace(" ", string.Empty),
+    public CreateMaterial() : base("Create " + GsaMaterialGoo.Name,
+      GsaMaterialGoo.NickName,
       "Create a " + GsaMaterialGoo.Description + " for a GSA Section, Prop2d or Prop3d",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
@@ -111,7 +111,7 @@ namespace GsaGH.Components {
         "GSA Standard Material", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       string search = string.Empty;
       if (da.GetData(0, ref search)) {
         search = search.Trim().ToLower().Replace(".", string.Empty).Replace(" ", string.Empty);

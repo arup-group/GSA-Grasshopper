@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GsaGH.Components;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
-using GsaGHTests.Helpers;
-using OasysGH.Components;
 using Rhino.Geometry;
 using Xunit;
 

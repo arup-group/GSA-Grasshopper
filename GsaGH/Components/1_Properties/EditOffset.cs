@@ -21,12 +21,12 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditOffset : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("dd2b4e77-c1c7-4a0e-9d12-fe7a8982f9ea");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditOffset;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
 
-    public EditOffset() : base("Edit Offset", "OffsetEdit",
+    public EditOffset() : base("Edit Offset", "EditOff",
       "Modify GSA Offset or just get information about existing", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
@@ -39,7 +39,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -80,14 +80,14 @@ namespace GsaGH.Components {
 
     public virtual void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      Params.Input[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      Params.Input[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      Params.Input[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      Params.Input[4].Name = "Offset Z [" + unitAbbreviation + "]";
-      Params.Output[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      Params.Output[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      Params.Output[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      Params.Output[4].Name = "Offset Z [" + unitAbbreviation + "]";
+      Params.Input[1].Name = "X1 [" + unitAbbreviation + "]";
+      Params.Input[2].Name = "X2 [" + unitAbbreviation + "]";
+      Params.Input[3].Name = "Y [" + unitAbbreviation + "]";
+      Params.Input[4].Name = "Z [" + unitAbbreviation + "]";
+      Params.Output[1].Name = "X1 [" + unitAbbreviation + "]";
+      Params.Output[2].Name = "X2 [" + unitAbbreviation + "]";
+      Params.Output[3].Name = "Y [" + unitAbbreviation + "]";
+      Params.Output[4].Name = "Z [" + unitAbbreviation + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -105,13 +105,13 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter(), GsaOffsetGoo.Name, GsaOffsetGoo.NickName,
         GsaOffsetGoo.Description + " to get or set information for. Leave blank to create a new "
         + GsaOffsetGoo.Name, GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]", "X1",
-        "X1 - Start axial offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]", "X2",
-        "X2 - End axial offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]", "Y", "Y Offset",
+      pManager.AddGenericParameter("X1 [" + unitAbbreviation + "]", "X1",
+        "`X1` - Start axial offset", GH_ParamAccess.item);
+      pManager.AddGenericParameter("X2 [" + unitAbbreviation + "]", "X2",
+        "`X2` - End axial offset", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Y [" + unitAbbreviation + "]", "Y", "`Y` Offset",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]", "Z", "Z Offset",
+      pManager.AddGenericParameter("Z [" + unitAbbreviation + "]", "Z", "`Z` Offset",
         GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
@@ -123,13 +123,13 @@ namespace GsaGH.Components {
 
       pManager.AddParameter(new GsaOffsetParameter(), GsaOffsetGoo.Name, GsaOffsetGoo.NickName,
         GsaOffsetGoo.Description + " with applied changes.", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]", "X1",
-        "X1 - Start axial offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]", "X2",
-        "X2 - End axial offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]", "Y", "Y Offset",
+      pManager.AddGenericParameter("X1 [" + unitAbbreviation + "]", "X1",
+        "`X1` - Start axial offset", GH_ParamAccess.item);
+      pManager.AddGenericParameter("X2 [" + unitAbbreviation + "]", "X2",
+        "`X2` - End axial offset", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Y [" + unitAbbreviation + "]", "Y", "`Y` Offset",
         GH_ParamAccess.item);
-      pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]", "Z", "Z Offset",
+      pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]", "Z", "`Z` Offset",
         GH_ParamAccess.item);
     }
 

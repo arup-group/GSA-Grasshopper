@@ -37,6 +37,7 @@ namespace GsaGH.Helpers.Graphics {
     public static Color Element1dSelected => GsaDarkPurple;
     public static Color Element2dEdge => GsaBlue;
     public static Color Element2dEdgeSelected => GsaDarkPurple;
+    public static Color Preview3dMeshDefault => Color.FromArgb(200, 220, 220, 220);
     public static DisplayMaterial Element2dFace {
       get {
         var material = new DisplayMaterial {

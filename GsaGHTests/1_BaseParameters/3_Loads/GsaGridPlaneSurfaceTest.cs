@@ -84,7 +84,6 @@ namespace GsaGHTests.Parameters {
       duplicate.GridSurface.Elements = "";
       duplicate.GridSurface.ElementType = Element_Type.TWO_DIMENSIONAL;
       duplicate.GridSurface.ExpansionType = GridSurfaceExpansionType.LEGACY;
-      duplicate.GridSurface.Name = "name";
       duplicate.GridSurface.SpanType = Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
       duplicate.GridSurface.Tolerance = 0.2;
       duplicate.GridSurfaceId = 1;

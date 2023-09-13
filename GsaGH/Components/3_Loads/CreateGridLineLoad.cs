@@ -23,9 +23,9 @@ using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
 namespace GsaGH.Components {
   public class CreateGridLineLoad : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.LineLoad;
+    protected override Bitmap Icon => Resources.CreateGridLineLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
@@ -102,8 +102,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddCurveParameter("PolyLine", "L",
         "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.",
         GH_ParamAccess.item);
@@ -140,15 +139,18 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var gridlineload = new GsaGridLineLoad();
-      int loadCase = 1;
-      var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc)) {
-        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+
+      var loadcase = new GsaLoadCase(1);
+      GsaLoadCaseGoo loadCaseGoo = null;
+      if (da.GetData(0, ref loadCaseGoo)) {
+        if (loadCaseGoo.Value != null) {
+          loadcase = loadCaseGoo.Value;
+        }
       }
 
-      gridlineload.GridLineLoad.Case = loadCase;
+      gridlineload.LoadCase = loadcase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;

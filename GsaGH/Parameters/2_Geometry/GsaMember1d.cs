@@ -16,7 +16,9 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
+  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
+  /// <para>A Member1D is the linear geometry resembling for instance a column or a beam. They can be defined geometrically by a PolyCurve consisting of either multiple line segments or a single arc.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-1d.html">1D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember1d {
     public bool AutomaticOffsetEnd1 {
@@ -40,7 +42,6 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         ApiMember.Colour = value;
-        UpdatePreview();
       }
     }
     public int Group {
@@ -63,7 +64,6 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         ApiMember.IsDummy = value;
-        UpdatePreview();
       }
     }
     public double MeshSize { get; set; } = 0;
@@ -115,7 +115,6 @@ namespace GsaGH.Parameters {
         _crv = convertCrv.Item1;
         Topology = convertCrv.Item2;
         TopologyType = convertCrv.Item3;
-        UpdatePreview();
       }
     }
     public GsaBool6 ReleaseEnd {
@@ -124,7 +123,7 @@ namespace GsaGH.Parameters {
         _rel2 = value ?? new GsaBool6();
         CloneApiObject();
         ApiMember.SetEndRelease(1, new EndRelease(_rel2._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaBool6 ReleaseStart {
@@ -133,7 +132,7 @@ namespace GsaGH.Parameters {
         _rel1 = value ?? new GsaBool6();
         CloneApiObject();
         ApiMember.SetEndRelease(0, new EndRelease(_rel1._bool6));
-        UpdatePreview();
+        UpdateReleasesPreview();
       }
     }
     public GsaSection Section { get; set; } = new GsaSection();
@@ -154,6 +153,7 @@ namespace GsaGH.Parameters {
       }
     }
     internal Member ApiMember { get; set; } = new Member();
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     internal List<Line> _previewGreenLines;
     internal List<Line> _previewRedLines;
@@ -178,7 +178,7 @@ namespace GsaGH.Parameters {
       Topology = convertCrv.Item2;
       TopologyType = convertCrv.Item3;
       Section = new GsaSection(prop);
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     internal GsaMember1d(
@@ -198,7 +198,7 @@ namespace GsaGH.Parameters {
       _rel2 = new GsaBool6(ApiMember.GetEndRelease(1).Releases);
       LocalAxes = new GsaLocalAxes(localAxis);
       Section = section;
-      UpdatePreview();
+      UpdateReleasesPreview();
     }
 
     public GsaMember1d Clone() {
@@ -219,14 +219,25 @@ namespace GsaGH.Parameters {
         dup._rel2 = _rel2.Duplicate();
       }
 
-      dup.Section = Section.Duplicate();
+      dup.Section = Section;
       dup.Topology = Topology;
       dup.TopologyType = TopologyType;
       if (_orientationNode != null) {
         dup._orientationNode = _orientationNode.Duplicate();
       }
 
-      dup.UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Duplicate();
+      }
+
+      if (_previewGreenLines != null) {
+        dup._previewGreenLines = _previewGreenLines.ToList();
+      }
+
+      if (_previewRedLines != null) {
+        dup._previewRedLines = _previewRedLines.ToList();
+      }
+
       return dup;
     }
 
@@ -252,15 +263,20 @@ namespace GsaGH.Parameters {
         dup._crv = crv;
       }
 
-      dup.UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview.Morph(xmorph);
+      }
+
+      dup.UpdateReleasesPreview();
       return dup;
     }
 
     public override string ToString() {
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
-      string pb = Section.Id > 0 ? "PB" + Section.Id : Section.Profile;
-      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string pb = Section.Id > 0 ? $"PB{Section.Id}"
+        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      return string.Join(" ", id, type, pb).Trim().Replace("  ", " ");
     }
 
     public GsaMember1d Transform(Transform xform) {
@@ -279,7 +295,11 @@ namespace GsaGH.Parameters {
         dup._crv = crv;
       }
 
-      dup.UpdatePreview();
+      if (Section3dPreview != null) {
+        dup.Section3dPreview.Transform(xform);
+      }
+
+      dup.UpdateReleasesPreview();
       return dup;
     }
 
@@ -336,8 +356,18 @@ namespace GsaGH.Parameters {
       _crv = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(Topology, TopologyType);
     }
 
-    // list of polyline curve type (arch or line) for member1d/2d
-    private void UpdatePreview() {
+    internal void UpdatePreview() {
+      if (Section.ApiSection.Profile != string.Empty 
+        && GsaSection.ValidProfile(Section.ApiSection.Profile)) {
+        Section3dPreview = new GsaSection3dPreview(this);
+      } else {
+        Section3dPreview = null;
+      }
+
+      UpdateReleasesPreview();
+    }
+
+    private void UpdateReleasesPreview() {
       if (!((_rel1 != null) & (_rel2 != null))) {
         return;
       }

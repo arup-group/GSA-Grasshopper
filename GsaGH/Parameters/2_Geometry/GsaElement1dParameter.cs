@@ -18,13 +18,13 @@ namespace GsaGH.Parameters {
   public class GsaElement1dParameter : GH_OasysPersistentGeometryParam<GsaElement1dGoo>,
     IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("9c045214-cab6-47d9-a158-ae1f4f494b66");
-    public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaElement1dGoo.Name + " parameter" :
         base.InstanceDescription;
     public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaElement1dGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.Elem1dParam;
+    protected override Bitmap Icon => Resources.Element1dParam;
 
     public GsaElement1dParameter() : base(new GH_InstanceDescription(GsaElement1dGoo.Name,
       GsaElement1dGoo.NickName, GsaElement1dGoo.Description + " parameter", CategoryName.Name(),
@@ -42,7 +42,14 @@ namespace GsaGH.Parameters {
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
-      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Line(x.Value.Line.Line)), att, doc);
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      foreach (GsaElement1dGoo goo in m_data.AllData(true).Cast<GsaElement1dGoo>()) {
+        ObjectAttributes objAtt = att.Duplicate();
+        objAtt.ObjectColor = goo.Value.Colour;
+        gH_BakeUtility.BakeObject(new GH_Line(goo.Value.Line.Line), objAtt, doc);
+        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
+      }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 

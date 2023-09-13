@@ -28,7 +28,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5e7627a2-9c3c-4ace-9a08-f9c9a7106755");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditProp2d;
+    protected override Bitmap Icon => Resources.Edit2dProperty;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private int _referenceEdge;
     private int _supportTypeIndex;
@@ -45,7 +45,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -103,9 +103,9 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaProp2dParameter(), GsaProp2dGoo.Name, GsaProp2dGoo.NickName,
-        GsaProp2dGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaProp2dGoo.Name, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProperty2dParameter(), GsaProperty2dGoo.Name, GsaProperty2dGoo.NickName,
+        GsaProperty2dGoo.Description + " to get or set information for. Leave blank to create a new "
+        + GsaProperty2dGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID",
         "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model",
         GH_ParamAccess.item);
@@ -149,8 +149,8 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaProp2dParameter(), GsaProp2dGoo.Name, GsaProp2dGoo.NickName,
-        GsaProp2dGoo.Description + " with applied changes.", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProperty2dParameter(), GsaProperty2dGoo.Name, GsaProperty2dGoo.NickName,
+        GsaProperty2dGoo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
@@ -173,11 +173,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var prop = new GsaProp2d();
+      var prop = new GsaProperty2d();
 
-      GsaProp2dGoo prop2dGoo = null;
+      GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(0, ref prop2dGoo)) {
-        prop = prop2dGoo.Value.Clone();
+        prop = new GsaProperty2d(prop2dGoo.Value);
       }
 
       int id = 0;
@@ -202,7 +202,7 @@ namespace GsaGH.Components {
             prop.LocalAxis = pln;
           }
         } else if (GH_Convert.ToInt32(ghPlaneOrInt.Value, out int axis, GH_Conversion.Both)) {
-          prop.AxisProperty = axis;
+          prop.ApiProp2d.AxisProperty = axis;
         }
       }
 
@@ -212,23 +212,23 @@ namespace GsaGH.Components {
       GH_ObjectWrapper ghType = null;
       if (da.GetData(9, ref ghType)) {
         if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both)) {
-          prop.Type = (Property2D_Type)number;
+          prop.ApiProp2d.Type = (Property2D_Type)number;
         } else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
-          prop.Type = GsaProp2d.PropTypeFromString(type);
+          prop.ApiProp2d.Type = GsaProperty2d.PropTypeFromString(type);
         }
       }
 
       GH_ObjectWrapper ghSupportType = null;
       if (da.GetData(5, ref ghSupportType)) {
         if (ghSupportType.Value is GH_Integer supportTypeIndex) {
-          prop.SupportType = (SupportType)supportTypeIndex.Value;
+          prop.ApiProp2d.SupportType = (SupportType)supportTypeIndex.Value;
         } else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName,
           GH_Conversion.Both)) {
           supportTypeName = supportTypeName.Replace(" ", string.Empty).Replace("1", "One")
            .Replace("2", "Two").Replace("3", "Three");
           supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
            .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
-          prop.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
+          prop.ApiProp2d.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
         } else {
           this.AddRuntimeError("Cannot convert support type to 'int' or 'string'");
         }
@@ -236,26 +236,27 @@ namespace GsaGH.Components {
 
       int refEdge = 0;
       if (da.GetData(6, ref refEdge)) {
-        prop.ReferenceEdge = refEdge;
+        prop.ApiProp2d.ReferenceEdge = refEdge;
       }
 
       string name = string.Empty;
       if (da.GetData(7, ref name)) {
-        prop.Name = name;
+        prop.ApiProp2d.Name = name;
       }
 
       Color colour = Color.Empty;
       if (da.GetData(8, ref colour)) {
-        prop.Colour = colour;
+        prop.ApiProp2d.Colour = colour;
       }
 
       var ghReferenceSurface = new GH_ObjectWrapper();
       if (da.GetData("Reference Surface", ref ghReferenceSurface)) {
         try {
           if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
-            prop.ReferenceSurface = (ReferenceSurface)reference;
+            prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)reference;
           } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
-            prop.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
+            prop.ApiProp2d.ReferenceSurface = 
+              (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
           }
         } catch {
           this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value + " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
@@ -270,27 +271,27 @@ namespace GsaGH.Components {
         }
       }
 
-      int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+      int ax = (prop.ApiProp2d == null) ? 0 : prop.ApiProp2d.AxisProperty;
+      string nm = (prop.ApiProp2d == null) ? "--" : prop.ApiProp2d.Name;
 
-      da.SetData(0, new GsaProp2dGoo(prop));
+      da.SetData(0, new GsaProperty2dGoo(prop));
       da.SetData(1, prop.Id);
       da.SetData(2, new GsaMaterialGoo(prop.Material));
       da.SetData(3,
         prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
           new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
-      if (prop.AxisProperty == -2) {
+      if (prop.ApiProp2d.AxisProperty == -2) {
         da.SetData(4, new GH_Plane(prop.LocalAxis));
       } else {
         da.SetData(4, ax);
       }
 
-      da.SetData(5, prop.SupportType);
-      da.SetData(6, prop.SupportType != SupportType.Auto ? prop.ReferenceEdge : -1);
+      da.SetData(5, prop.ApiProp2d.SupportType);
+      da.SetData(6, prop.ApiProp2d.SupportType != SupportType.Auto ? prop.ApiProp2d.ReferenceEdge : -1);
       da.SetData(7, nm);
       da.SetData(8, prop.ApiProp2d?.Colour);
-      da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
-      da.SetData(10, prop.ReferenceSurface);
+      da.SetData(9, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.ApiProp2d.Type).Key);
+      da.SetData(10, prop.ApiProp2d.ReferenceSurface);
       da.SetData(11, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
     }
 

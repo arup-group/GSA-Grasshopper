@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -51,6 +52,8 @@ namespace GsaGH.Helpers.Export.Load {
         load.NodeLoad.Nodes = Lists.GetNodeList(
           load.ReferenceList, ref apiLists, ref apiNodes, unit);
       }
+
+      load.CaseId = load.LoadCase.Id;
 
       switch (load.Type) {
         case GsaNodeLoad.NodeLoadType.AppliedDisp:

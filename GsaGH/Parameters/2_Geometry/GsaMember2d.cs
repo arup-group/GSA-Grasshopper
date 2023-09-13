@@ -4,15 +4,19 @@ using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
+using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
+  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersect with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
+  /// <para>A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember2d {
     public bool AutomaticInternalOffset {
@@ -54,6 +58,13 @@ namespace GsaGH.Parameters {
       set {
         CloneApiObject();
         ApiMember.IsDummy = value;
+      }
+    }
+    public GsaAPI.MeshMode2d MeshMode {
+      get => ApiMember.MeshMode2d;
+      set {
+        CloneApiObject();
+        ApiMember.MeshMode2d = value;
       }
     }
     // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
@@ -99,7 +110,7 @@ namespace GsaGH.Parameters {
       }
     }
     public PolyCurve PolyCurve { get; private set; }
-    public GsaProp2d Prop2d { get; set; } = new GsaProp2d();
+    public GsaProperty2d Prop2d { get; set; } = new GsaProperty2d();
     public List<Point3d> Topology { get; private set; }
     public List<string> TopologyType { get; private set; }
     public MemberType Type {
@@ -121,7 +132,7 @@ namespace GsaGH.Parameters {
     internal Member ApiMember { get; set; } = new Member() {
       Type = MemberType.GENERIC_2D,
     };
-
+    internal GsaSection3dPreview Section3dPreview { get; set; }
     // list of polyline curve type (arch or line) for member1d/2d
     private Guid _guid = Guid.NewGuid();
     private int _id = 0;
@@ -161,7 +172,8 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
-      Prop2d = new GsaProp2d(prop);
+
+      Prop2d = new GsaProperty2d(prop);
     }
 
     internal GsaMember2d(
@@ -173,7 +185,7 @@ namespace GsaGH.Parameters {
       List<List<Point3d>> inlcusionLinesTopology,
       List<List<string>> inclusionTopologyType,
       List<Point3d> includePoints,
-      GsaProp2d prop2d,
+      GsaProperty2d prop2d,
       LengthUnit modelUnit) {
       ApiMember = mem.Value;
       MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
@@ -247,7 +259,7 @@ namespace GsaGH.Parameters {
       };
       dup.CloneApiObject();
 
-      dup.Prop2d = Prop2d.Duplicate();
+      dup.Prop2d = Prop2d;
 
       if (Brep == null) {
         return dup;
@@ -266,10 +278,14 @@ namespace GsaGH.Parameters {
 
       var dupInclCrvs = _inclCrvs.Select(t => (PolyCurve)t.DuplicateShallow()).ToList();
       dup._inclCrvs = dupInclCrvs;
-      dup.IncLinesTopology = IncLinesTopology;
-      dup.IncLinesTopologyType = IncLinesTopologyType;
+      dup.IncLinesTopology = IncLinesTopology.ToList();
+      dup.IncLinesTopologyType = IncLinesTopologyType.ToList();
 
-      dup.InclusionPoints = InclusionPoints;
+      dup.InclusionPoints = InclusionPoints.ToList();
+
+      if (Section3dPreview != null) {
+        dup.Section3dPreview = Section3dPreview.Duplicate();
+      }
 
       return dup;
     }
@@ -318,30 +334,32 @@ namespace GsaGH.Parameters {
         dup.InclusionPoints[i] = xmorph.MorphPoint(dup.InclusionPoints[i]);
       }
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview.Morph(xmorph);
+      }
+
       return dup;
     }
 
     public override string ToString() {
       string incl = string.Empty;
-      if (_inclCrvs != null) {
-        if (_inclCrvs.Count > 0) {
-          incl = " Incl.Crv:" + _inclCrvs.Count;
-        }
+      if (!_inclCrvs.IsNullOrEmpty()) {
+        incl = "Incl.Crv:" + _inclCrvs.Count;
       }
 
       if (InclusionPoints != null) {
-        if (InclusionPoints != null && InclusionPoints.Count > 0) {
-          incl += " &";
+        if (!_inclCrvs.IsNullOrEmpty()) {
+          incl += " & ";
         }
 
         if (InclusionPoints.Count > 0) {
-          incl += " Incl.Pt:" + InclusionPoints.Count;
+          incl += "Incl.Pt:" + InclusionPoints.Count;
         }
       }
 
-      string idd = Id == 0 ? string.Empty : "ID:" + Id + " ";
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == Type).Key + " ";
-      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      return string.Join(" ", id, type, incl).Trim().Replace("  ", " ");
     }
 
     public GsaMember2d Transform(Transform xform) {
@@ -363,6 +381,10 @@ namespace GsaGH.Parameters {
 
       dup.InclusionPoints = xform.TransformList(dup.InclusionPoints).ToList();
 
+      if (Section3dPreview != null) {
+        dup.Section3dPreview.Transform(xform);
+      }
+
       return dup;
     }
 
@@ -383,7 +405,7 @@ namespace GsaGH.Parameters {
       var dup = new GsaMember2d(brep, inclCrvs, inclPts) {
         Id = Id,
         ApiMember = ApiMember,
-        Prop2d = Prop2d.Duplicate(),
+        Prop2d = Prop2d,
       };
 
       return dup;
@@ -407,6 +429,7 @@ namespace GsaGH.Parameters {
         Type2D = ApiMember.Type2D,
         AutomaticOffset = ApiMember.AutomaticOffset,
         IsIntersector = ApiMember.IsIntersector,
+        MeshMode2d = ApiMember.MeshMode2d,
       };
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
@@ -423,6 +446,14 @@ namespace GsaGH.Parameters {
       }
 
       return mem;
+    }
+
+    internal void UpdatePreview() {
+      if (Prop2d != null && !Prop2d.IsReferencedById) {
+        Section3dPreview = new GsaSection3dPreview(this);
+      } else {
+        Section3dPreview = null;
+      }
     }
   }
 }

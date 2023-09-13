@@ -16,7 +16,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateBool6 : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBool6;
     private bool _x;
@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     private bool _z;
     private bool _zz;
 
-    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
+    public CreateBool6() : base("Create " + GsaBool6Goo.Name,
       GsaBool6Goo.NickName.Replace(" ", string.Empty), "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
@@ -114,7 +114,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaBool6Parameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
       GsaBool6 bool6 = uiSet.Duplicate();
 

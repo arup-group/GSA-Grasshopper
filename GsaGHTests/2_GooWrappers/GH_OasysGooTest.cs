@@ -1,8 +1,9 @@
-﻿using System;
-using System.Reflection;
-using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using System;
+using System.Reflection;
+using System.Reflection.Emit;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -20,12 +21,15 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaListGoo), typeof(GsaList))]
     [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
-    [InlineData(typeof(GsaProp2dGoo), typeof(GsaProp2d))]
-    [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
+    [InlineData(typeof(GsaProperty2dGoo), typeof(GsaProperty2d))]
+    [InlineData(typeof(GsaProperty3dGoo), typeof(GsaProperty3d))]
     [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
     [InlineData(typeof(GsaSectionModifierGoo), typeof(GsaSectionModifier))]
+    [InlineData(typeof(GsaLoadCaseGoo), typeof(GsaLoadCase))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaBeamLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaBeamThermalLoad))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaFaceLoad))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaFaceThermalLoad))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaGravityLoad))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaGridAreaLoad))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaGridLineLoad))]
@@ -34,8 +38,13 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
+    [InlineData(typeof(GsaDiagramGoo), typeof(GsaArrowheadDiagram))]
+    [InlineData(typeof(GsaDiagramGoo), typeof(GsaLineDiagram))]
+    [InlineData(typeof(GsaDiagramGoo), typeof(GsaVectorDiagram))]
+    [InlineData(typeof(GsaAnnotationGoo), typeof(GsaAnnotation3d))]
+    [InlineData(typeof(GsaAnnotationGoo), typeof(GsaAnnotationDot))]
     public void GenericGH_OasysGeometricGooTest(Type gooType, Type wrapType) {
-      object value = Activator.CreateInstance(wrapType);
+      object value = Activator.CreateInstance(wrapType, true);
       object[] parameters = {
         value,
       };
@@ -68,8 +77,14 @@ namespace GsaGHTests.GooWrappers {
           }
 
           methodInfo = gooValue.GetType().GetMethod("Duplicate");
-          object duplicateValue = methodInfo.Invoke(gooValue, null); // .Duplicate();
-          Duplicates.AreEqual(gooValue, duplicateValue);
+          if (methodInfo != null) {
+            object duplicateValue = methodInfo.Invoke(gooValue, null); // .Duplicate();
+            Duplicates.AreEqual(gooValue, duplicateValue);
+          } else {
+            ConstructorInfo duplicateConstructor = gooValue.GetType().GetConstructor(new Type[] { gooValue.GetType() });
+            object duplicateValue = duplicateConstructor.Invoke(new object[] { gooValue });
+            Duplicates.AreEqual(gooValue, duplicateValue, true);
+          }
 
           hasValue = true;
         }
@@ -99,7 +114,7 @@ namespace GsaGHTests.GooWrappers {
         }
 
         string description = (string)gooProperty.GetValue(objectGoo, null);
-        Assert.StartsWith("GSA ", description);
+        Assert.StartsWith("GSA", description);
         Assert.True(description.Length > 7);
         hasDescription = true;
       }

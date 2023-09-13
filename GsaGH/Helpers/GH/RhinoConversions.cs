@@ -201,7 +201,8 @@ namespace GsaGH.Helpers.GH {
         Type = MemberType.GENERIC_2D,
       };
 
-      Model model = AssembleModel.Assemble(
+      Model model = Assembler.AssembleModel(
+        null,
         null,
         null,
         nodes,
@@ -212,6 +213,7 @@ namespace GsaGH.Helpers.GH {
         new List<GsaMember2d> {
           mem,
         },
+        null,
         null,
         null,
         null,
@@ -246,7 +248,7 @@ namespace GsaGH.Helpers.GH {
         RhinoMath.DefaultAngleTolerance, 0);
 
       List<GsaNode> outNodes = null;
-      if (nodes != null && nodes.Count > 0) {
+      if (!nodes.IsNullOrEmpty()) {
         Member mem2d = model.Members()[elem2dgoo[0].Value.ApiElements[0].ParentMember.Member];
         List<int> topoInts = Topology.Topology_detangler(mem2d.Topology).Item4;
         int add = points?.Count ?? 0;
@@ -561,7 +563,7 @@ namespace GsaGH.Helpers.GH {
               topoInts.Add(topo8);
               break;
             }
-          
+
           default: {
               throw new Exception($" Unable to create 2D element from mesh face with {topo.Count} verticies");
             }

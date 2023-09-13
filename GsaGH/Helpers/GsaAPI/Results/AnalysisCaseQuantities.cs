@@ -193,7 +193,7 @@ namespace GsaGH.Helpers.GsaApi {
     }
 
     /// <summary>
-    ///   Returns force & moment result values
+    ///   Returns force and moment result values
     /// </summary>
     /// <param name="globalResults"></param>
     /// <param name="forceUnit"></param>
@@ -369,6 +369,7 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="globalResults"></param>
     /// <param name="forceUnit"></param>
     /// <param name="momentUnit"></param>
+    /// <param name="supportnodeIDs"></param>
     /// <returns></returns>
     internal static GsaResultsValues GetNodeReactionForceResultValues(
       ReadOnlyDictionary<int, NodeResult> globalResults, ForceUnit forceUnit, MomentUnit momentUnit,
@@ -435,6 +436,7 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="globalResults"></param>
     /// <param name="forceUnit"></param>
     /// <param name="momentUnit"></param>
+    /// <param name="supportnodeIDs"></param>
     /// <returns></returns>
     internal static GsaResultsValues GetNodeSpringForceResultValues(
       ReadOnlyDictionary<int, NodeResult> globalResults, ForceUnit forceUnit, MomentUnit momentUnit,

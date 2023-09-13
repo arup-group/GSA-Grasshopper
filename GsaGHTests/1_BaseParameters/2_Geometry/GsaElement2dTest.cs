@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters {
       var off = new List<GsaOffset>();
       for (int i = 0; i < origi.Count; i++) {
         origi.Ids[i] = elid++;
-        origi.Prop2ds.Add(new GsaProp2d());
+        origi.Prop2ds.Add(new GsaProperty2d());
         origi.Prop2ds[i].Id = secid++;
         grps.Add(2);
         dum.Add(false);

@@ -7,7 +7,7 @@ using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Interop.Gsa_10_1;
+using Interop.Gsa_10_2;
 using OasysGH;
 using OasysGH.Components;
 
@@ -20,7 +20,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6f701c53-1531-45ef-9842-9356da59b590");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GwaModel;
+    protected override Bitmap Icon => Resources.GwaCommand;
 
     public GwaModel_OBSOLETE() : base("Create GWA Model", "GWA",
       "Create a model from a GWA string.", CategoryName.Name(), SubCategoryName.Cat0()) {

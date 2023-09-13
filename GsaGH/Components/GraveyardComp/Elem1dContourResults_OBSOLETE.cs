@@ -59,7 +59,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("dee5c513-197e-4659-998f-09225df9beaa");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result1D;
+    protected override Bitmap Icon => Resources.Contour1dResults;
     private readonly List<string> _displacement = new List<string>(new[] {
       "Translation Ux",
       "Translation Uy",
@@ -344,7 +344,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var result = new GsaResult();
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
@@ -356,7 +356,7 @@ namespace GsaGH.Components {
       if (ghTyp.Value is GsaResultGoo goo) {
         result = goo.Value;
         switch (result.Type) {
-          case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+          case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
             this.AddRuntimeWarning("Combination case contains "
               + result.SelectedPermutationIds.Count
               + " - only one permutation can be displayed at a time." + Environment.NewLine
@@ -364,11 +364,11 @@ namespace GsaGH.Components {
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             break;
 
-          case GsaResult.CaseType.Combination:
+          case CaseType.Combination:
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             break;
 
-          case GsaResult.CaseType.AnalysisCase:
+          case CaseType.AnalysisCase:
             _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
             break;
         }
@@ -409,25 +409,25 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.Displacement:
-          res = result.Element1DDisplacementValues(elementlist, positionsCount, _lengthUnit)[0];
+          res = result.Element1DDisplacementValues(elementlist, positionsCount, 0, _lengthUnit)[0];
 
           break;
 
         case FoldMode.Force:
-          res = result.Element1DForceValues(elementlist, positionsCount, DefaultUnits.ForceUnit,
+          res = result.Element1DForceValues(elementlist, positionsCount, 0, DefaultUnits.ForceUnit,
             DefaultUnits.MomentUnit)[0];
           break;
 
         case FoldMode.StrainEnergy:
           res = _disp == DisplayValue.X ?
-            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount,
+            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, 0,
               _energyResultUnit)[0] :
-            result.Element1DAverageStrainEnergyDensityValues(elementlist, _energyResultUnit)[0];
+            result.Element1DAverageStrainEnergyDensityValues(elementlist, 0, _energyResultUnit)[0];
           break;
       }
 
       var elementIDs = new List<int>();
-      elementIDs = result.Type == GsaResult.CaseType.AnalysisCase ?
+      elementIDs = result.Type == CaseType.AnalysisCase ?
         result.ACaseElement1DResults.Values.First().Select(x => x.Key).ToList() :
         result.ComboElement1DResults.Values.First().Select(x => x.Key).ToList();
       if (elementlist.ToLower() == "all") {

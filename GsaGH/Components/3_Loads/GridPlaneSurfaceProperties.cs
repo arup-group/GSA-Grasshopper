@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -18,9 +19,9 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class GridPlaneSurfaceProperties : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridPlaneProperties;
+    protected override Bitmap Icon => Resources.GridPlaneSurfaceProperties;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public GridPlaneSurfaceProperties() : base("Grid Plane Surface Properties",
@@ -34,7 +35,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -186,7 +187,7 @@ namespace GsaGH.Components {
       da.SetData(16,
         char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
       bool simple = gridPlaneSurface.GridSurface.SpanType
-        == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
+        == GsaAPI.GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
       da.SetData(17, simple);
     }
 

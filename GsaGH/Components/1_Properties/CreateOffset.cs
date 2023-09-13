@@ -19,12 +19,12 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateOffset : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("ba73abd3-cd48-4dd2-9cd1-d89c921dd108");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateOffset;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
-    public CreateOffset() : base("Create Offset", "Offset", "Create GSA Offset",
+    public CreateOffset() : base("Create Offset", "Offset", "Create an GSA Offset",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -80,7 +80,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var offset = new GsaOffset {
         X1 = (Length)Input.UnitNumber(this, da, 0, _lengthUnit, true),
         X2 = (Length)Input.UnitNumber(this, da, 1, _lengthUnit, true),

@@ -24,9 +24,9 @@ namespace GsaGH.Components {
   public class CreateGridAreaLoad : GH_OasysDropDownComponent {
 
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.AreaLoad;
+    protected override Bitmap Icon => Resources.CreateGridAreaLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
@@ -105,8 +105,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddBrepParameter("Brep", "B",
         "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.",
         GH_ParamAccess.item);
@@ -141,15 +140,18 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var gridareaload = new GsaGridAreaLoad();
-      int loadCase = 1;
-      var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc)) {
-        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+
+      var loadcase = new GsaLoadCase(1);
+      GsaLoadCaseGoo loadCaseGoo = null;
+      if (da.GetData(0, ref loadCaseGoo)) {
+        if (loadCaseGoo.Value != null) {
+          loadcase = loadCaseGoo.Value;
+        }
       }
 
-      gridareaload.GridAreaLoad.Case = loadCase;
+      gridareaload.LoadCase = loadcase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;

@@ -70,7 +70,7 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (da.GetData(0, ref sectionGoo)) {
-        section = sectionGoo.Value.Clone();
+        section = new GsaSection(sectionGoo.Value);
       }
 
       if (section != null) {
@@ -83,7 +83,7 @@ namespace GsaGH.Components {
 
         string profile = string.Empty;
         if (da.GetData(2, ref profile)) {
-          section.Profile = profile;
+          section.ApiSection.Profile = profile;
         }
 
         GsaMaterialGoo materialGoo = null;
@@ -98,26 +98,26 @@ namespace GsaGH.Components {
 
         int pool = 0;
         if (da.GetData(5, ref pool)) {
-          section.Pool = pool;
+          section.ApiSection.Pool = pool;
         }
 
         var ghString = new GH_String();
         if (da.GetData(6, ref ghString)) {
           if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-            section.Name = name;
+            section.ApiSection.Name = name;
           }
         }
 
         var ghColour = new GH_Colour();
         if (da.GetData(7, ref ghColour)) {
           if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-            section.Colour = col;
+            section.ApiSection.Colour = col;
           }
         }
 
-        string prof = (section.ApiSection == null) ? "--" : section.Profile;
-        int poo = (section.ApiSection == null) ? 0 : section.Pool;
-        string nm = (section.ApiSection == null) ? "--" : section.Name;
+        string prof = (section.ApiSection == null) ? "--" : section.ApiSection.Profile;
+        int poo = (section.ApiSection == null) ? 0 : section.ApiSection.Pool;
+        string nm = (section.ApiSection == null) ? "--" : section.ApiSection.Name;
         ValueType colour = section.ApiSection?.Colour;
 
         da.SetData(0, new GsaSectionGoo(section));

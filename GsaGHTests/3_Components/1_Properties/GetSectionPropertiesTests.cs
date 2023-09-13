@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Properties {
   public class GetSectionPropertiesTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new GetSectionProperties();
+      var comp = new SectionProperties();
       comp.CreateAttributes();
       return comp;
     }

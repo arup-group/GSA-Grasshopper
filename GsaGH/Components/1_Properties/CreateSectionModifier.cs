@@ -20,7 +20,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateSectionModifier : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateSectionModifier;
     private readonly List<string> _optionTypes = new List<string>(new[] {
@@ -39,7 +39,7 @@ namespace GsaGH.Components {
     private bool _toMode = false;
 
     public CreateSectionModifier() : base("Create Section Modifier", "SectionModifier",
-      "Create GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
+      "Create a GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -241,7 +241,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaSectionModifierParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var modifier = new GsaSectionModifier();
       if (_toMode) {
         AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);

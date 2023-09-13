@@ -19,14 +19,14 @@ namespace GsaGH.Components {
   /// </summary>
   public class LocalAxes : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     internal Line _previewXaxis;
     internal Line _previewYaxis;
     internal Line _previewZaxis;
     protected override Bitmap Icon => Resources.LocalAxes;
-
-    public LocalAxes() : base("Local Axis", "Axis", "Get Element1D or Member1D local axes",
+    public LocalAxes() : base("Local Axes", "Axes", 
+      "Get the local axes from a 1D Element or Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
@@ -52,11 +52,11 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddVectorParameter("Local X", "X", "Element1D or Member1D's local X-axis",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item);
       pManager.AddVectorParameter("Local Y", "Y", "Element1D or Member1D's local X-axis",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item);
       pManager.AddVectorParameter("Local Z", "Z", "Element1D or Member1D's local X-axis",
-        GH_ParamAccess.list);
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -80,12 +80,9 @@ namespace GsaGH.Components {
           member = memberGoo.Value;
           axes = member.LocalAxes;
           if (axes == null) {
-            var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null, null, null, null, 
-              new List<GsaMember1d>() { 
-                member 
-              }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
-              Length.Zero, false, null);
+            var model = new GsaModel {
+              Model = Assembler.AssembleForLocalAxis(member)
+            };
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
             this.AddRuntimeWarning(
@@ -105,12 +102,9 @@ namespace GsaGH.Components {
           element = elementGoo.Value;
           axes = element.LocalAxes;
           if (axes == null) {
-            var model = new GsaModel();
-            model.Model = AssembleModel.Assemble(model, null, null,
-              new List<GsaElement1d>() {
-                element,
-              }, null, null, null, null, null, null, null, null, null, null, null, null,
-              LengthUnit.Meter, Length.Zero, false, null);
+            var model = new GsaModel() {
+              Model = Assembler.AssembleForLocalAxis(element)
+            };
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
             this.AddRuntimeWarning(

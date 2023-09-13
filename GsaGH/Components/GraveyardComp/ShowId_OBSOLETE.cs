@@ -18,7 +18,7 @@ namespace GsaGH.Components.GraveyardComp {
     public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowID;
+    protected override Bitmap Icon => Resources.Annotate;
     private List<Point3d> _pts;
     private List<string> _txts;
 
@@ -142,8 +142,8 @@ namespace GsaGH.Components.GraveyardComp {
               pt = resLine.Value.PointAt(0.5);
               break;
 
-            case DiagramGoo resVector:
-              pt = resVector.StartingPoint;
+            case GsaVectorDiagram resVector:
+              pt = resVector.AnchorPoint;
               break;
 
             default:

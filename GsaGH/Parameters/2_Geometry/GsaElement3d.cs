@@ -13,7 +13,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
+  /// <para>Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. </para>
+  /// <para>In Grasshopper, an Element3D is a collection of 3D Elements (mesh solids representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#brick-wedge-pyramid-and-tetra-elements">Brick, Wedge, Pyramid or Tetra Elements</see>) used for FE analysis. In GSA, a 3D Element is just a single closed mesh, but for Rhino performance reasons we have made Element3D an <see href="https://docs.mcneel.com/rhino/7/help/en-us/popup_moreinformation/ngon.htm">Ngon Mesh</see> that can contain more than one closed mesh.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
+  /// 
   /// </summary>
   public class GsaElement3d {
     private enum ApiObjectMember {
@@ -100,7 +103,7 @@ namespace GsaGH.Parameters {
         return pMems;
       }
     }
-    public List<GsaProp3d> Prop3ds { get; set; } = new List<GsaProp3d>();
+    public List<GsaProperty3d> Prop3ds { get; set; } = new List<GsaProperty3d>();
     public List<int> PropertyIDs {
       get => (from element in ApiElements where element != null select element.Property).ToList();
       set => CloneApiElements(ApiObjectMember.Property, null, null, null, null, null, value);
@@ -140,15 +143,15 @@ namespace GsaGH.Parameters {
 
       Ids = new List<int>(new int[NgonMesh.Faces.Count]);
 
-      Prop3ds = new List<GsaProp3d>();
+      Prop3ds = new List<GsaProperty3d>();
       for (int i = 0; i < NgonMesh.Faces.Count; i++) {
-        Prop3ds.Add(new GsaProp3d(0));
+        Prop3ds.Add(new GsaProperty3d(0));
       }
 
       UpdatePreview();
     }
 
-    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProp3d prop3d) {
+    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProperty3d prop3d) {
       ApiElements = new List<Element>() {
         element,
       };
@@ -161,14 +164,14 @@ namespace GsaGH.Parameters {
       Ids = new List<int>() {
         id,
       };
-      Prop3ds = new List<GsaProp3d>() {
+      Prop3ds = new List<GsaProperty3d>() {
         prop3d,
       };
       UpdatePreview();
     }
 
     internal GsaElement3d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProp3d> prop3ds) {
+      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh, 0);
@@ -192,7 +195,7 @@ namespace GsaGH.Parameters {
       dup.CloneApiElements();
 
       dup.Ids = Ids.ToList();
-      dup.Prop3ds = Prop3ds.ConvertAll(x => x.Duplicate());
+      dup.Prop3ds = Prop3ds.ToList();
       dup.UpdatePreview();
       return dup;
     }
@@ -216,7 +219,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (!(NgonMesh.Ngons.Count > 0)) {
+      if (NgonMesh == null || !NgonMesh.IsValid || NgonMesh.Ngons.Count == 0) {
         return "Null";
       }
 
@@ -224,7 +227,7 @@ namespace GsaGH.Parameters {
        .Key).ToList();
       string type = string.Join("/", types.Distinct());
       string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", type, info).Trim().Replace("  ", " ");
     }
 
     public GsaElement3d Transform(Transform xform) {

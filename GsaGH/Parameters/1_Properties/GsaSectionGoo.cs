@@ -7,7 +7,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaSection" /> can be used in Grasshopper.
   /// </summary>
   public class GsaSectionGoo : GH_OasysGoo<GsaSection> {
-    public static string Description => "GSA Beam Property";
+    public static string Description => "GSA Section Property (Beam)";
     public static string Name => "Section";
     public static string NickName => "PB";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

@@ -52,11 +52,11 @@ namespace GsaGH.Helpers.GH {
                   list.Add(sectionGoo);
                   break;
 
-                case GsaProp2dGoo prop2dGoo:
+                case GsaProperty2dGoo prop2dGoo:
                   list.Add(prop2dGoo);
                   break;
 
-                case GsaProp3dGoo prop3dGoo:
+                case GsaProperty3dGoo prop3dGoo:
                   list.Add(prop3dGoo);
                   break;
 
@@ -104,11 +104,11 @@ namespace GsaGH.Helpers.GH {
                   list.Add(sectionGoo);
                   break;
 
-                case GsaProp2dGoo prop2dGoo:
+                case GsaProperty2dGoo prop2dGoo:
                   list.Add(prop2dGoo);
                   break;
 
-                case GsaProp3dGoo prop3dGoo:
+                case GsaProperty3dGoo prop3dGoo:
                   list.Add(prop3dGoo);
                   break;
 
@@ -152,7 +152,7 @@ namespace GsaGH.Helpers.GH {
       return list;
     }
 
-    internal static string GetElementListNameFoResults(
+    internal static string GetElementListNameForResults(
       GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
       // to-do GSAGH-350
       string elementlist = "All";
@@ -193,7 +193,7 @@ namespace GsaGH.Helpers.GH {
       return elementlist;
     }
 
-    internal static string GetNodeListNameForesults(
+    internal static string GetNodeListNameForResults(
       GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
       string nodeList = "All";
       var ghType = new GH_ObjectWrapper();

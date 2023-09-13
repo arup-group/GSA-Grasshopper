@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Geometry {
   public class CreateMember3dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateMember3d();
+      var comp = new Create3dMember();
       comp.CreateAttributes();
 
       Box box = Box.Empty;

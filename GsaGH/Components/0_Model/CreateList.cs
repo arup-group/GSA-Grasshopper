@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateList : GH_OasysDropDownComponent, IGH_PreviewObject {
     public override Guid ComponentGuid => new Guid("5fec976c-14d7-438e-a8ba-ac97042d0477");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateList;
     private EntityType _type = EntityType.Node;
@@ -66,7 +66,7 @@ namespace GsaGH.Components {
         + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess DA) {
+    protected override void SolveInternal(IGH_DataAccess DA) {
       var list = new GsaList() {
         EntityType = _type,
       };

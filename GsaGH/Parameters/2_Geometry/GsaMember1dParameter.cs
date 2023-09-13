@@ -18,16 +18,17 @@ namespace GsaGH.Parameters {
   public class GsaMember1dParameter : GH_OasysPersistentGeometryParam<GsaMember1dGoo>,
     IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("0392a5a0-7762-4214-8c30-fb395365056e");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaMember1dGoo.Name + " parameter" :
         base.InstanceDescription;
     public bool IsBakeCapable => !m_data.IsEmpty;
     public override string TypeName => SourceCount == 0 ? GsaMember1dGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.Mem1dParam;
+    protected override Bitmap Icon => Resources.Member1dParam;
 
-    public GsaMember1dParameter() : base(new GH_InstanceDescription(GsaMember1dGoo.Name,
-      GsaMember1dGoo.NickName, GsaMember1dGoo.Description + " parameter", CategoryName.Name(),
+    public GsaMember1dParameter() : base(new GH_InstanceDescription(
+      GsaMember1dGoo.Name, GsaMember1dGoo.NickName, 
+      GsaMember1dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
     protected override GsaMember1dGoo PreferredCast(object data) {
@@ -42,7 +43,14 @@ namespace GsaGH.Parameters {
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
-      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Curve(x.Value.PolyCurve)), att, doc);
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      foreach (GsaMember1dGoo goo in m_data.AllData(true).Cast<GsaMember1dGoo>()) {
+        ObjectAttributes objAtt = att.Duplicate();
+        objAtt.ObjectColor = goo.Value.Colour;
+        gH_BakeUtility.BakeObject(new GH_Curve(goo.Value.PolyCurve), objAtt, doc);
+        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
+      }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 

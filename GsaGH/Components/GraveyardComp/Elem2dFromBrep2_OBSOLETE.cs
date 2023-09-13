@@ -27,7 +27,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = string.Empty;
@@ -48,7 +48,7 @@ namespace GsaGH.Components {
       };
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.Units) {
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -112,7 +112,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
       pManager.AddGenericParameter("Incl. Curves or 1D Members", "(C)",
         "Inclusion curves or 1D Members", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddParameter(new GsaProperty2dParameter());
       pManager.AddGenericParameter("Mesh Size", "Ms", "Target mesh size", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
@@ -129,7 +129,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep)) {
         return;
@@ -188,10 +188,10 @@ namespace GsaGH.Components {
       var elem2d = new GsaElement2d(brep, curves, pts, meshSize.As(_lengthUnit), member1ds, nodes,
         _lengthUnit, _tolerance);
       var ghTyp = new GH_ObjectWrapper();
-      var prop2d = new GsaProp2d();
+      var prop2d = new GsaProperty2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
-          prop2d = prop2DGoo.Value.Duplicate();
+        if (ghTyp.Value is GsaProperty2dGoo prop2DGoo) {
+          prop2d = prop2DGoo.Value;
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
@@ -205,7 +205,7 @@ namespace GsaGH.Components {
         prop2d.Id = 0;
       }
 
-      var prop2Ds = new List<GsaProp2d>();
+      var prop2Ds = new List<GsaProperty2d>();
       for (int i = 0; i < elem2d.ApiElements.Count; i++) {
         prop2Ds.Add(prop2d);
       }

@@ -12,7 +12,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
     public static string Description => "GSA 1D Element";
-    public static string Name => "Element1D";
+    public static string Name => "Element 1D";
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
@@ -37,6 +37,11 @@ namespace GsaGH.Parameters {
         return true;
       }
 
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)) && Value.Section3dPreview != null) {
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Section3dPreview.Mesh);
+        return true;
+      }
+
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
           target = (TQ)(object)new GH_Integer(Value.Id);
@@ -48,11 +53,25 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      if (Value == null || Value.Section3dPreview == null) {
+        return;
+      }
+
+      args.Pipeline.DrawMeshFalseColors(Value.Section3dPreview.Mesh);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null) {
         return;
+      }
+
+      if (Value.Section3dPreview != null) {
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Element1d);
+        } else {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Element1dSelected);
+        }
       }
 
       if (Value.Line != null) {

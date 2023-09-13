@@ -18,10 +18,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components {
   public class LoadProperties : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override Guid ComponentGuid => new Guid("6b62f438-444a-4036-885f-d7582c590b2d");
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.LoadInfo;
+    protected override Bitmap Icon => Resources.LoadProperties;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
@@ -61,8 +61,8 @@ namespace GsaGH.Components {
         });
 
         Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[7].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[8].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[7].Name = "Load Value or Factor Y [" + unitAbbreviation + "]";
+        Params.Output[8].Name = "Load Value or Factor Z [" + unitAbbreviation + "]";
         Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
       } catch (Exception e) {
         this.AddRuntimeError(e.Message);
@@ -98,10 +98,10 @@ namespace GsaGH.Components {
       string lengthUnitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Elements/Nodes/Definition", "Def",
-        "Element/Node list that load is applied to or Grid point / polygon definition",
+      pManager.AddGenericParameter("Definition", "Def",
+        "Node, Element or Member list that load is applied to or Grid point / polygon definition",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local",
         GH_ParamAccess.item);
@@ -119,11 +119,10 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter(
         "Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4",
         "Value at Point 4", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneSurfaceParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       ForcePerLengthUnit forcePerLengthUnit
         = UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit);
       PressureUnit forcePerAreaUnit = UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit);
@@ -138,9 +137,12 @@ namespace GsaGH.Components {
         switch (gsaLoad.LoadType) {
           case LoadType.Gravity:
             var gravityLoad = (GsaGravityLoad)gsaLoad;
-            da.SetData(0, gravityLoad.GravityLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(gravityLoad.LoadCase 
+              ?? new GsaLoadCase(gravityLoad.GravityLoad.Case)));
             da.SetData(1, gravityLoad.GravityLoad.Name);
-            da.SetData(2, gravityLoad.GravityLoad.Elements);
+            var gravityList = new GsaList(gravityLoad.Name, 
+              gravityLoad.GravityLoad.EntityList, gravityLoad.GravityLoad.EntityType);
+            da.SetData(2, new GsaListGoo(gravityList));
             da.SetData(6, gravityLoad.GravityLoad.Factor.X);
             da.SetData(7, gravityLoad.GravityLoad.Factor.Y);
             da.SetData(8, gravityLoad.GravityLoad.Factor.Z);
@@ -148,9 +150,12 @@ namespace GsaGH.Components {
 
           case LoadType.Node:
             var nodeLoad = (GsaNodeLoad)gsaLoad;
-            da.SetData(0, nodeLoad.NodeLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(nodeLoad.LoadCase
+              ?? new GsaLoadCase(nodeLoad.NodeLoad.Case)));
             da.SetData(1, nodeLoad.NodeLoad.Name);
-            da.SetData(2, nodeLoad.NodeLoad.Nodes);
+            var nodeList = new GsaList(
+              nodeLoad.Name, nodeLoad.NodeLoad.Nodes, GsaAPI.EntityType.Node);
+            da.SetData(2, new GsaListGoo(nodeList));
             da.SetData(3, nodeLoad.NodeLoad.AxisProperty);
             da.SetData(4, nodeLoad.NodeLoad.Direction);
             var apiNodeForce = new Force(nodeLoad.NodeLoad.Value, ForceUnit.Newton);
@@ -160,9 +165,12 @@ namespace GsaGH.Components {
 
           case LoadType.Beam:
             var beamLoad = (GsaBeamLoad)gsaLoad;
-            da.SetData(0, beamLoad.BeamLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(beamLoad.LoadCase
+              ?? new GsaLoadCase(beamLoad.BeamLoad.Case)));
             da.SetData(1, beamLoad.BeamLoad.Name);
-            da.SetData(2, beamLoad.BeamLoad.Elements);
+            var beamList = new GsaList(
+              beamLoad.Name, beamLoad.BeamLoad.EntityList, beamLoad.BeamLoad.EntityType);
+            da.SetData(2, new GsaListGoo(beamList));
             da.SetData(3, beamLoad.BeamLoad.AxisProperty);
             da.SetData(4, beamLoad.BeamLoad.Direction);
             da.SetData(5, beamLoad.BeamLoad.IsProjected);
@@ -180,9 +188,12 @@ namespace GsaGH.Components {
 
           case LoadType.Face:
             var faceLoad = (GsaFaceLoad)gsaLoad;
-            da.SetData(0, faceLoad.FaceLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(faceLoad.LoadCase
+              ?? new GsaLoadCase(faceLoad.FaceLoad.Case)));
             da.SetData(1, faceLoad.FaceLoad.Name);
-            da.SetData(2, faceLoad.FaceLoad.Elements);
+            var faceList = new GsaList(
+              faceLoad.Name, faceLoad.FaceLoad.EntityList, faceLoad.FaceLoad.EntityType);
+            da.SetData(2, new GsaListGoo(faceList));
             da.SetData(3, faceLoad.FaceLoad.AxisProperty);
             da.SetData(4, faceLoad.FaceLoad.Direction);
             da.SetData(5, faceLoad.FaceLoad.IsProjected);
@@ -206,7 +217,8 @@ namespace GsaGH.Components {
 
           case LoadType.GridPoint:
             var gridPointLoad = (GsaGridPointLoad)gsaLoad;
-            da.SetData(0, gridPointLoad.GridPointLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(gridPointLoad.LoadCase
+              ?? new GsaLoadCase(gridPointLoad.GridPointLoad.Case)));
             da.SetData(1, gridPointLoad.GridPointLoad.Name);
             da.SetData(2, new GH_Point(gridPointLoad.GetPoint(_lengthUnit)));
             da.SetData(3, gridPointLoad.GridPointLoad.AxisProperty);
@@ -219,7 +231,8 @@ namespace GsaGH.Components {
 
           case LoadType.GridLine:
             var gridLineLoad = (GsaGridLineLoad)gsaLoad;
-            da.SetData(0, gridLineLoad.GridLineLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(gridLineLoad.LoadCase
+              ?? new GsaLoadCase(gridLineLoad.GridLineLoad.Case)));
             da.SetData(1, gridLineLoad.GridLineLoad.Name);
             da.SetData(2, new Polyline(gridLineLoad.Points));
             da.SetData(3, gridLineLoad.GridLineLoad.AxisProperty);
@@ -239,7 +252,8 @@ namespace GsaGH.Components {
 
           case LoadType.GridArea:
             var gridAreaLoad = (GsaGridAreaLoad)gsaLoad;
-            da.SetData(0, gridAreaLoad.GridAreaLoad.Case);
+            da.SetData(0, new GsaLoadCaseGoo(gridAreaLoad.LoadCase
+              ?? new GsaLoadCase(gridAreaLoad.GridAreaLoad.Case)));
             da.SetData(1, gridAreaLoad.GridAreaLoad.Name);
             var polyline = new Polyline(gridAreaLoad.Points);
             if (!polyline.IsClosed) {

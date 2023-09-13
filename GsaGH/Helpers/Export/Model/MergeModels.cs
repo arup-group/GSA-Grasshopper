@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
@@ -113,20 +114,26 @@ namespace GsaGH.Helpers.Export {
       }).ToList();
 
       var gooloads = new List<GsaLoadGoo>();
-      gooloads.AddRange(Import.Loads.GetGravityLoads(appendModel.Model.GravityLoads()));
-      gooloads.AddRange(Import.Loads.GetNodeLoads(appendModel.Model));
-      gooloads.AddRange(Import.Loads.GetBeamLoads(appendModel.Model.BeamLoads()));
-      gooloads.AddRange(Import.Loads.GetFaceLoads(appendModel.Model.FaceLoads()));
+      ReadOnlyDictionary<int, LoadCase> loadCases = appendModel.Model.LoadCases();
+      gooloads.AddRange(Import.Loads.GetGravityLoads(appendModel.Model.GravityLoads(), loadCases));
+      gooloads.AddRange(Import.Loads.GetNodeLoads(appendModel.Model, loadCases));
+      gooloads.AddRange(Import.Loads.GetBeamLoads(appendModel.Model.BeamLoads(), loadCases));
+      gooloads.AddRange(Import.Loads.GetBeamThermalLoads(appendModel.Model.BeamThermalLoads(), loadCases));
+      gooloads.AddRange(Import.Loads.GetFaceLoads(appendModel.Model.FaceLoads(), loadCases));
+      gooloads.AddRange(Import.Loads.GetFaceThermalLoads(appendModel.Model.FaceThermalLoads(), loadCases));
 
       IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.Model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.Model.GridPlanes();
 
       gooloads.AddRange(Import.Loads.GetGridPointLoads(
-        appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+        appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
+        LengthUnit.Meter));
       gooloads.AddRange(Import.Loads.GetGridLineLoads(
-        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases, 
+        LengthUnit.Meter));
       gooloads.AddRange(Import.Loads.GetGridAreaLoads(
-        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, LengthUnit.Meter));
+        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases, 
+        LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
       var gpsgoo = srfDict.Keys.Select(key => new GsaGridPlaneSurfaceGoo(
@@ -135,10 +142,14 @@ namespace GsaGH.Helpers.Export {
       var gps = gpsgoo.Select(n => n.Value).ToList();
 
       List<GsaList> lists = Import.Lists.GetLists(appendModel);
+      List<GsaGridLine> gridLines = Import.GridLines.GetGridLines(appendModel);
+      var gsaLoadCases = 
+        Import.Loads.GetLoadCases(loadCases).Select(n => n.Value).ToList();
 
-      mainModel.Model = AssembleModel.Assemble(mainModel, lists, nodes, elem1ds, elem2ds, elem3ds,
-        mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gps, null, null, 
-        LengthUnit.Meter, tolerance, false, owner);
+      mainModel.Model = Assembler.AssembleModel(
+        mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
+        sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, LengthUnit.Meter,
+        tolerance, false, owner);
       return mainModel;
     }
   }

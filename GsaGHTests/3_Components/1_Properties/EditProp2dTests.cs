@@ -18,19 +18,19 @@ namespace GsaGHTests.Properties {
   public class EditProp2dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new EditProp2d();
+      var comp = new Edit2dProperty();
       comp.CreateAttributes();
       return comp;
     }
 
     [Fact]
     public void GetValuesFromExistingComponent() {
-      var prop2d = new GsaProp2d(new Length(400, LengthUnit.Millimeter));
+      var prop2d = new GsaProperty2d(new Length(400, LengthUnit.Millimeter));
 
       GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, new GsaProp2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
 
-      var prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 3);
@@ -39,11 +39,11 @@ namespace GsaGHTests.Properties {
       var thickness = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
       var referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
       var offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
-      var modifier = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
+      var modifier = (GsaProperty2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
-      Duplicates.AreEqual(prop2d, prop2dGoo.Value);
+      Duplicates.AreEqual(prop2d, prop2dGoo.Value, true);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
       Assert.Equal(0, id.Value);
       Assert.Equal("", name.Value);
@@ -54,7 +54,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(400, thickness.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(ReferenceSurface.Middle, referenceSurface.Value);
       Assert.Equal(new Length(0, LengthUnit.Centimeter), offset.Value);
-      Duplicates.AreEqual(new GsaProp2dModifier(), modifier.Value);
+      Duplicates.AreEqual(new GsaProperty2dModifier(), modifier.Value);
       Assert.Equal(SupportType.Undefined, supportType.Value);
       Assert.Equal(1, referenceEdge.Value);
     }
@@ -70,10 +70,10 @@ namespace GsaGHTests.Properties {
 
     [Fact]
     public void SetValuesFromNewComponent() {
-      var prop2d = new GsaProp2d();
+      var prop2d = new GsaProperty2d();
       GH_OasysComponent comp = ComponentMother();
 
-      var prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 3);
@@ -82,11 +82,11 @@ namespace GsaGHTests.Properties {
       var thickness = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
       var referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
       var offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
-      var modifier = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
+      var modifier = (GsaProperty2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
-      Duplicates.AreEqual(prop2d, prop2dGoo.Value);
+      Duplicates.AreEqual(prop2d, prop2dGoo.Value, true);
       Assert.NotEqual(prop2d, prop2dGoo.Value);
       Assert.Equal(0, id.Value);
       Assert.Equal("", name.Value);
@@ -96,7 +96,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(0, thickness.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(ReferenceSurface.Middle, referenceSurface.Value);
       Assert.Equal(new Length(0, LengthUnit.Centimeter), offset.Value);
-      Duplicates.AreEqual(new GsaProp2dModifier(), modifier.Value);
+      Duplicates.AreEqual(new GsaProperty2dModifier(), modifier.Value);
       Assert.Equal(SupportType.Undefined, supportType.Value);
       Assert.Equal(1, referenceEdge.Value);
 
@@ -108,26 +108,26 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)), 7);
       ComponentTestHelper.SetInput(comp, new GH_Integer(2), 8); // Bottom
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(10, LengthUnit.Millimeter)), 9);
-      ComponentTestHelper.SetInput(comp, new GsaProp2dModifierGoo(new GsaProp2dModifier()), 10);
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dModifierGoo(new GsaProperty2dModifier()), 10);
       ComponentTestHelper.SetInput(comp, new GH_String("Cantilever"), 11);
       ComponentTestHelper.SetInput(comp, new GH_Integer(3), 12);
 
-      prop2dGoo = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.Equal(49, prop2dGoo.Value.Id);
-      Assert.Equal("name", prop2dGoo.Value.Name);
-      Assert.Equal(ColorRGBA.White, prop2dGoo.Value.Colour);
-      Assert.Equal(7, prop2dGoo.Value.AxisProperty);
-      Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.Type);
+      Assert.Equal("name", prop2dGoo.Value.ApiProp2d.Name);
+      Assert.Equal(ColorRGBA.White, (Color)prop2dGoo.Value.ApiProp2d.Colour);
+      Assert.Equal(7, prop2dGoo.Value.ApiProp2d.AxisProperty);
+      Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.ApiProp2d.Type);
       Assert.Equal(40, prop2dGoo.Value.Thickness.As(LengthUnit.Centimeter), 6);
-      Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ReferenceSurface);
+      Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ApiProp2d.ReferenceSurface);
       Assert.Equal(10, prop2dGoo.Value.AdditionalOffsetZ.As(LengthUnit.Millimeter));
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.InPlane.Value);
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.Bending.Value);
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.Shear.Value);
       Assert.Equal(1, prop2dGoo.Value.ApiProp2d.PropertyModifier.Volume.Value);
       Assert.Equal(0, prop2dGoo.Value.ApiProp2d.PropertyModifier.AdditionalMass);
-      Assert.Equal(SupportType.Cantilever, prop2dGoo.Value.SupportType);
-      Assert.Equal(3, prop2dGoo.Value.ReferenceEdge);
+      Assert.Equal(SupportType.Cantilever, prop2dGoo.Value.ApiProp2d.SupportType);
+      Assert.Equal(3, prop2dGoo.Value.ApiProp2d.ReferenceEdge);
 
       id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       name = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
@@ -137,7 +137,7 @@ namespace GsaGHTests.Properties {
       thickness = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 7);
       referenceSurface = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 8);
       offset = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
-      modifier = (GsaProp2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
+      modifier = (GsaProperty2dModifierGoo)ComponentTestHelper.GetOutput(comp, 10);
       supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 

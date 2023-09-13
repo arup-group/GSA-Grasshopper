@@ -19,13 +19,13 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class GetSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("495dab75-6404-43b5-9f20-4a8caaaf41ab");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetSectionModifier;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
 
-    public GetSectionModifier() : base("Get Section Modifier", "GetModifier",
+    public GetSectionModifier() : base("Get Section Modifier", "GetPBM",
       "Get GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -60,7 +60,7 @@ namespace GsaGH.Components {
         densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,
         densityUnitsMenu,

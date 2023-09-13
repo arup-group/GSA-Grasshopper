@@ -12,7 +12,7 @@ namespace GsaGHTests.Analysis {
 
     [Fact]
     public void TestOutputs() {
-      var comp = new ResultsInfo();
+      var comp = new GetResultCases();
       comp.CreateAttributes();
 
       GsaModelGoo modelInput = ModelTests.GsaModelGooMother;
