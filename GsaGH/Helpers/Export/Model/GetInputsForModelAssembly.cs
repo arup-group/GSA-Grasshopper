@@ -195,6 +195,10 @@ namespace GsaGH.Helpers.Export {
                 inCases.Add(loadCaseGoo.Value);
                 break;
               }
+            case GsaLoadCaseGoo loadCaseGoo: {
+                inCases.Add(loadCaseGoo.Value.Duplicate());
+                break;
+              }
             default: {
                 string type = ghTyp.Value.GetType().ToString();
                 type = type.Replace("GsaGH.Parameters.", string.Empty);
