@@ -4,6 +4,7 @@ using GsaGHTests.Helpers;
 using System.IO;
 using System;
 using Xunit;
+using System.Collections.Generic;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
@@ -64,7 +65,7 @@ namespace GsaGHTests.Model {
       deserializedComponent.ExpireSolution(true);
       deserializedComponent.Params.Output[0].CollectData();
 
-      Duplicates.AreEqual(originalComponent, deserializedComponent, true);
+      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
     }
   }
 }

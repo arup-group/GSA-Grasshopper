@@ -2,9 +2,9 @@
 using GsaAPI;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Parameters;
 using OasysUnits.Units;
 using Xunit;
-using static GsaGH.Parameters.GsaMaterial;
 using AccelerationUnit = OasysUnits.Units.AccelerationUnit;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
@@ -72,7 +72,7 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     }
 
     [Theory]
-    [InlineData("Generic")]
+    [InlineData("Custom")]
     [InlineData("Steel")]
     [InlineData("Concrete")]
     [InlineData("Aluminium")]

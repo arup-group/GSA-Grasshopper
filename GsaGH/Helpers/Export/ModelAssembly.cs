@@ -405,27 +405,13 @@ namespace GsaGH.Helpers.Export {
     }
 
     private void CreateModelFromDesignCodes() {
-      string concreteCode = Properties.Materials.ConcreteDesignCode;
-      if (concreteCode == string.Empty) {
-        if (Model.ConcreteDesignCode() != string.Empty) {
-          concreteCode = Model.ConcreteDesignCode();
-        } else {
-          concreteCode = DesignCode.GetConcreteDesignCodeNames()[8];
-        }
-      }
 
-      string steelCode = Properties.Materials.SteelDesignCode;
-      if (steelCode == string.Empty) {
-        if (Model.SteelDesignCode() != string.Empty) {
-          steelCode = Model.SteelDesignCode();
-        } else {
-          steelCode = DesignCode.GetSteelDesignCodeNames()[8];
-        }
-      }
+      // is the model not supposed to be null here??
+
+      string concreteCode = Properties.Materials.GetConcreteDesignCode(Model);
+      string steelCode = Properties.Materials.GetSteelDesignCode(Model);
 
       Model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
-      Properties.Materials.ConcreteDesignCode = concreteCode;
-      Properties.Materials.SteelDesignCode = steelCode;
     }
 
     internal void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {

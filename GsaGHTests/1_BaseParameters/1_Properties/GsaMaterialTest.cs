@@ -1,9 +1,9 @@
-﻿using GsaAPI;
+﻿using System;
+using System.Collections.Generic;
+using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -12,19 +12,19 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void CreateSteelStandardMaterialsTest() {
       foreach (string codeName in DesignCode.GetSteelDesignCodeNames()) {
-        List<string> gradeNames = GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, string.Empty, codeName);
+        List<string> gradeNames = GsaMaterialFactory.GetGradeNames(MatType.Steel, string.Empty, codeName);
 
         Assert.NotEmpty(gradeNames);
 
         foreach (string grade in gradeNames) {
-          var material = new GsaMaterial(GsaMaterial.MatType.Steel, grade, codeName);
+          var material = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(MatType.Steel, grade, codeName);
           Assert.NotNull(material);
-          Assert.Equal(GsaMaterial.MatType.Steel, material.MaterialType);
+          Assert.Equal(MatType.Steel, material.MaterialType);
           DuplicateTest(material);
           EditSteelStandardMaterialsAnalysisMaterialTest(material);
           material.Name = "customName";
           Assert.Equal("customName", material.Name);
-          var apiMaterial = (SteelMaterial)material.StandardMaterial;
+          var apiMaterial = (SteelMaterial)((IGsaStandardMaterial)material).StandardMaterial;
           Assert.Equal("customName", apiMaterial.Name);
         }
       }
@@ -33,20 +33,20 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void CreateConcreteStandardMaterialsTest() {
       foreach (string codeName in DesignCode.GetConcreteDesignCodeNames()) {
-        List<string> gradeNames = GsaMaterial.GetGradeNames(
-          GsaMaterial.MatType.Concrete, codeName, string.Empty);
+        List<string> gradeNames = GsaMaterialFactory.GetGradeNames(
+          MatType.Concrete, codeName, string.Empty);
 
         Assert.NotEmpty(gradeNames);
 
         foreach (string grade in gradeNames) {
-          var material = new GsaMaterial(GsaMaterial.MatType.Concrete, grade, codeName);
+          var material = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(MatType.Concrete, grade, codeName);
           Assert.NotNull(material);
-          Assert.Equal(GsaMaterial.MatType.Concrete, material.MaterialType);
+          Assert.Equal(MatType.Concrete, material.MaterialType);
           DuplicateTest(material);
           EditConcreteStandardMaterialsAnalysisMaterialTest(material);
           material.Name = "customName";
           Assert.Equal("customName", material.Name);
-          var apiMaterial = (ConcreteMaterial)material.StandardMaterial;
+          var apiMaterial = (ConcreteMaterial)((IGsaStandardMaterial)material).StandardMaterial;
           Assert.Equal("customName", apiMaterial.Name);
         }
       }
@@ -54,32 +54,32 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void CreateFabricStandardMaterialsTest() {
-      List<string> gradeNames = GsaMaterial.GetGradeNames(GsaMaterial.MatType.Fabric);
+      List<string> gradeNames = GsaMaterialFactory.GetGradeNames(MatType.Fabric);
       Assert.NotEmpty(gradeNames);
 
       foreach (string grade in gradeNames) {
-        var material = new GsaMaterial(GsaMaterial.MatType.Fabric, grade);
+        var material = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(MatType.Fabric, grade);
         Assert.NotNull(material);
-        Assert.Equal(GsaMaterial.MatType.Fabric, material.MaterialType);
+        Assert.Equal(MatType.Fabric, material.MaterialType);
         material.Name = "customName";
         Assert.Equal("customName", material.Name);
-        var apiMaterial = (FabricMaterial)material.StandardMaterial;
+        var apiMaterial = (FabricMaterial)((IGsaStandardMaterial)material).StandardMaterial;
         Assert.Equal("customName", apiMaterial.Name);
-        Assert.Throws<Exception>(() => DuplicateTest(material));
+        Assert.Throws<GsaApiException>(() => DuplicateTest(material));
       }
     }
 
     [Theory]
-    [InlineData(GsaMaterial.MatType.Frp)]
-    [InlineData(GsaMaterial.MatType.Aluminium)]
-    [InlineData(GsaMaterial.MatType.Timber)]
-    [InlineData(GsaMaterial.MatType.Glass)]
-    public void CreateOtherStandardMaterialsTest(GsaMaterial.MatType type) {
-      List<string> gradeNames = GsaMaterial.GetGradeNames(type);
+    [InlineData(MatType.Frp)]
+    [InlineData(MatType.Aluminium)]
+    [InlineData(MatType.Timber)]
+    [InlineData(MatType.Glass)]
+    public void CreateOtherStandardMaterialsTest(MatType type) {
+      List<string> gradeNames = GsaMaterialFactory.GetGradeNames(type);
       Assert.NotEmpty(gradeNames);
 
       foreach (string grade in gradeNames) {
-        var material = new GsaMaterial(type, grade);
+        var material = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(type, grade);
         Assert.NotNull(material);
         Assert.Equal(type, material.MaterialType);
         DuplicateTest(material);
@@ -87,23 +87,23 @@ namespace GsaGHTests.Parameters {
         material.Name = "customName";
         Assert.Equal("customName", material.Name);
         switch (type) {
-          case GsaMaterial.MatType.Aluminium:
-            var aluminium = (AluminiumMaterial)material.StandardMaterial;
+          case MatType.Aluminium:
+            var aluminium = (AluminiumMaterial)((IGsaStandardMaterial)material).StandardMaterial;
             Assert.Equal("customName", aluminium.Name);
             break;
 
-          case GsaMaterial.MatType.Frp:
-            var frp = (FrpMaterial)material.StandardMaterial;
+          case MatType.Frp:
+            var frp = (FrpMaterial)((IGsaStandardMaterial)material).StandardMaterial;
             Assert.Equal("customName", frp.Name);
             break;
 
-          case GsaMaterial.MatType.Glass:
-            var glass = (GlassMaterial)material.StandardMaterial;
+          case MatType.Glass:
+            var glass = (GlassMaterial)((IGsaStandardMaterial)material).StandardMaterial;
             Assert.Equal("customName", glass.Name);
             break;
 
-          case GsaMaterial.MatType.Timber:
-            var timber = (TimberMaterial)material.StandardMaterial;
+          case MatType.Timber:
+            var timber = (TimberMaterial)((IGsaStandardMaterial)material).StandardMaterial;
             Assert.Equal("customName", timber.Name);
             break;
 
@@ -116,9 +116,9 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void CreateCustomMaterialTest() {
-      var material = new GsaMaterial(TestAnalysisMaterial(), 99);
+      var material = new GsaCustomMaterial(TestAnalysisMaterial(), 99);
 
-      Assert.Equal(GsaMaterial.MatType.Generic, material.MaterialType);
+      Assert.Equal(MatType.Custom, material.MaterialType);
       Assert.Equal(99, material.Id);
       Assert.Equal("myMat", material.Name);
       Assert.Equal(0.05, material.AnalysisMaterial.CoefficientOfThermalExpansion);
@@ -131,21 +131,22 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void NonStandardMaterialException() {
       Assert.Throws<Exception>(() => {
-        var mat = new GsaMaterial(GsaMaterial.MatType.Generic, "custom");
+        var mat = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(MatType.Custom, "custom");
       });
     }
 
     [Fact]
     public void NonStandardMaterialGradeNameException() {
       Assert.Throws<Exception>(() => {
-        List<string> grades = GsaMaterial.GetGradeNames(GsaMaterial.MatType.Generic);
+        List<string> grades = GsaMaterialFactory.GetGradeNames(MatType.Custom);
       });
     }
 
     internal static void DuplicateTest(GsaMaterial original) {
-      GsaMaterial duplicate = original.Clone();
+      GsaMaterial duplicate = GsaMaterialFactory.CreateMaterial(original);
       Assert.NotSame(duplicate, original);
-      Duplicates.AreEqual(original, duplicate);
+
+      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid", "IsFromApi" });
     }
 
     private void EditOtherStandardMaterialsTest(GsaMaterial material) {
@@ -166,7 +167,7 @@ namespace GsaGHTests.Parameters {
     }
 
     private void AnalysisMaterialIsEqualTest(GsaMaterial material) {
-      Assert.Equal("myMat", material.Name);
+      Assert.Equal("myMat", material.AnalysisMaterial.Name);
       Assert.Equal(0.05, material.AnalysisMaterial.CoefficientOfThermalExpansion);
       Assert.Equal(7800, material.AnalysisMaterial.Density);
       Assert.Equal(205000, material.AnalysisMaterial.ElasticModulus);
