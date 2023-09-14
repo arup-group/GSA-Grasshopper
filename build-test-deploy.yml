@@ -124,10 +124,11 @@ steps:
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   artifact: GsaGHTestsCoverage
+  displayName: GsaGHTest Azure Coverage
   continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  artifact: IntegrationTestsCoverage
+  artifact: IntegrationTests Azure Coverage
   continueOnError: true
 
 - task: PowerShell@2
@@ -201,6 +202,7 @@ steps:
 
 - publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
   artifact: Docs
+  displayName: Publish Docs artifact
   continueOnError: false
 
 - task: GitHubRelease@1
