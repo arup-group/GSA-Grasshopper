@@ -11,12 +11,6 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-sect-lib.html#modifiers">Section Modifiers</see> to read more.</para>
   /// </summary>
   public class GsaSectionModifier {
-    public enum StressOptionType {
-      NoCalculation,
-      UseModified,
-      UseUnmodified,
-    }
-
     public LinearDensity AdditionalMass {
       get => new LinearDensity(ApiSectionModifier.AdditionalMass, LinearDensityUnit.KilogramPerMeter);
       set => ApiSectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
@@ -181,7 +175,7 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public SectionModifier ApiSectionModifier;
+    public SectionModifier ApiSectionModifier { get; private set; }
 
     public GsaSectionModifier() { 
       ApiSectionModifier = new SectionModifier();

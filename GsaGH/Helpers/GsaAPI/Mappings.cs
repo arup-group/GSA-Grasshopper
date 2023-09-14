@@ -4,8 +4,8 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using static GsaGH.Parameters.GsaMaterial;
-using static GsaGH.Parameters.GsaOffset;
 using Diagram = GsaGH.Parameters;
+using AlignmentType = GsaGH.Parameters.AlignmentType;
 
 namespace GsaGH.Helpers.GsaApi {
   internal class Mappings {

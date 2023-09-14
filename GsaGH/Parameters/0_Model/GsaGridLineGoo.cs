@@ -28,8 +28,8 @@ namespace GsaGH.Parameters {
     public override bool CastTo<Q>(ref Q target) {
       if (Value != null) {
         if (typeof(Q).IsAssignableFrom(typeof(GH_Line))) {
-          if (Value._gridLine.Shape == GsaAPI.GridLineShape.Line) {
-            var line = GsaGridLine.ToLine(Value._gridLine);
+          if (Value.GridLine.Shape == GsaAPI.GridLineShape.Line) {
+            var line = GsaGridLine.ToLine(Value.GridLine);
             var ghLine = new GH_Line();
             GH_Convert.ToGHLine(line, GH_Conversion.Both, ref ghLine);
             target = (Q)(object)ghLine;
@@ -37,8 +37,8 @@ namespace GsaGH.Parameters {
           }
         }
         if (typeof(Q).IsAssignableFrom(typeof(GH_Arc))) {
-          if (Value._gridLine.Shape == GsaAPI.GridLineShape.Arc) {
-            var arc = GsaGridLine.ToArc(Value._gridLine);
+          if (Value.GridLine.Shape == GsaAPI.GridLineShape.Arc) {
+            var arc = GsaGridLine.ToArc(Value.GridLine);
             var ghArc = new GH_Arc();
             GH_Convert.ToGHArc(arc, GH_Conversion.Both, ref ghArc);
             target = (Q)(object)ghArc;
@@ -76,11 +76,11 @@ namespace GsaGH.Parameters {
       }
 
       Point3d[] points = null;
-      Curve segment = Value._curve.SegmentCurve(0);
+      Curve segment = Value.Curve.SegmentCurve(0);
       if (segment == null) {
         return;
       }
-      if (Value._curve.IsLinear()) {
+      if (Value.Curve.IsLinear()) {
         points = new Point3d[2] { segment.PointAtStart, segment.PointAtEnd };
       } else {
         points = segment.DivideEquidistant(segment.GetLength() / 360.0);
@@ -94,13 +94,13 @@ namespace GsaGH.Parameters {
         double radius = 0.618046972 * unitLength; // in golden ratio
         Plane plane = Plane.WorldXY;
         Point3d origin = points[0];
-        Vector3d distance = Value._curve.TangentAtStart;
+        Vector3d distance = Value.Curve.TangentAtStart;
         distance.Unitize();
         distance *= -radius;
         origin.Transform(Rhino.Geometry.Transform.Translation(distance));
         plane.Origin = origin;
 
-        var text = new Text3d(Value._gridLine.Label, plane, 0.381982059 * unitLength) { // golden ratio
+        var text = new Text3d(Value.GridLine.Label, plane, 0.381982059 * unitLength) { // golden ratio
           HorizontalAlignment = TextHorizontalAlignment.Center,
           VerticalAlignment = TextVerticalAlignment.Middle
         };
@@ -112,18 +112,18 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value == null ? null : (GeometryBase)Value._curve;
+      return Value == null ? null : (GeometryBase)Value.Curve;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var gridline = new GsaGridLine(Value);
-      xmorph.Morph(gridline._curve);
+      xmorph.Morph(gridline.Curve);
       return new GsaGridLineGoo(gridline);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
       var gridline = new GsaGridLine(Value);
-      gridline._curve.Transform(xform);
+      gridline.Curve.Transform(xform);
       return new GsaGridLineGoo(gridline);
     }
   }

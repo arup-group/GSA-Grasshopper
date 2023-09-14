@@ -172,7 +172,7 @@ namespace GsaGH.Components {
       }
 
       if (Preview3dSection || elem.Section3dPreview != null) {
-        elem.Section3dPreview = new Section3dPreview(elem);
+        elem.CreateSection3dPreview();
       }
 
       // #### outputs ####

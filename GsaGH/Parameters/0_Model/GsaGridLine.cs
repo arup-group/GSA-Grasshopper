@@ -9,19 +9,20 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-grid-line.html">Grid lines</see> to read more.</para>
   /// </summary>
   public class GsaGridLine {
-    internal GridLine _gridLine;
-    internal PolyCurve _curve;
+    public GridLine GridLine { get; internal set; }
+    public PolyCurve Curve { get; internal set; }
 
     internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
-      _gridLine = gridLine;
-      _curve = curve;
+      GridLine = gridLine;
+      Curve = curve;
     }
 
-    internal static GridLine FromArc(Arc arc, string label = "") {
-      GridLine gridLine;
+    public GsaGridLine(Arc arc, string label = "") {
       if (arc.Plane.ZAxis.Z < 0) {
         arc = new Arc(arc.EndPoint, arc.MidPoint, arc.StartPoint);
       }
+      Curve = new PolyCurve();
+      Curve.Append(arc);
 
       double arcAngleRadians = Vector3d.VectorAngle(arc.Plane.XAxis, Vector3d.XAxis);
       var x = Vector3d.CrossProduct(Vector3d.XAxis, arc.Plane.XAxis);
@@ -32,7 +33,7 @@ namespace GsaGH.Parameters {
       double startAngleDegrees = arcAngleRadians * 180 / Math.PI;
       double endAngleDegrees = startAngleDegrees + arc.EndAngleDegrees;
 
-      gridLine = new GridLine(label) {
+      GridLine = new GridLine(label) {
         Shape = GridLineShape.Arc,
         X = arc.Center.X,
         Y = arc.Center.Y,
@@ -40,20 +41,18 @@ namespace GsaGH.Parameters {
         Theta1 = startAngleDegrees,
         Theta2 = endAngleDegrees
       };
-      return gridLine;
     }
 
-    internal static GridLine FromLine(Line line, string label = "") {
-      GridLine gridLine;
-      var polyCurve = new PolyCurve();
-      gridLine = new GridLine(label) {
+    public GsaGridLine(Line line, string label = "") {
+      GridLine = new GridLine(label) {
         Shape = GridLineShape.Line,
         X = line.From.X,
         Y = line.From.Y,
         Length = line.Length,
         Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
       };
-      return gridLine;
+      Curve = new PolyCurve();
+      Curve.Append(line);
     }
 
     internal static Arc ToArc(GridLine gridLine) {
@@ -89,40 +88,28 @@ namespace GsaGH.Parameters {
     }
 
     public GsaGridLine(GsaGridLine other) {
-      _gridLine = new GridLine(other._gridLine.Label) {
-        Shape = other._gridLine.Shape,
-        Theta1 = other._gridLine.Theta1,
-        X = other._gridLine.X,
-        Y = other._gridLine.Y,
+      GridLine = new GridLine(other.GridLine.Label) {
+        Shape = other.GridLine.Shape,
+        Theta1 = other.GridLine.Theta1,
+        X = other.GridLine.X,
+        Y = other.GridLine.Y,
       };
       
-      if (_gridLine.Shape == GridLineShape.Arc) {
-        _gridLine.Theta2 = other._gridLine.Theta2;
+      if (GridLine.Shape == GridLineShape.Arc) {
+        GridLine.Theta2 = other.GridLine.Theta2;
       }
 
-      _curve = other._curve.DuplicatePolyCurve();
-    }
-
-    internal Arc ToArc() {
-      return ToArc(_gridLine);
-    }
-
-    internal PolyCurve ToCurve() {
-      return ToCurve(_gridLine);
-    }
-
-    internal Line ToLine() {
-      return ToLine(_gridLine);
+      Curve = other.Curve.DuplicatePolyCurve();
     }
 
     public override string ToString() {
-      string label = _gridLine.Label != "" ? $"{_gridLine.Label} " : string.Empty;
-      string type = _gridLine.Shape == GridLineShape.Arc ? "Shape: Arc " : string.Empty;
-      string s = $"{label}{type}X:{_gridLine.X} Y:{_gridLine.Y} Length:" +
-        $"{_gridLine.Length} Orientation:{_gridLine.Theta1}°";
-      if (_gridLine.Shape == GridLineShape.Arc) {
+      string label = GridLine.Label != "" ? $"{GridLine.Label} " : string.Empty;
+      string type = GridLine.Shape == GridLineShape.Arc ? "Shape: Arc " : string.Empty;
+      string s = $"{label}{type}X:{GridLine.X} Y:{GridLine.Y} Length:" +
+        $"{GridLine.Length} Orientation:{GridLine.Theta1}°";
+      if (GridLine.Shape == GridLineShape.Arc) {
         s.Replace("Orientation", "Theta1");
-        s += " Theta2:" + _gridLine.Theta2 + "°";
+        s += " Theta2:" + GridLine.Theta2 + "°";
       }
 
       return s;

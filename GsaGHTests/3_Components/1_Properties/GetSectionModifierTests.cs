@@ -31,7 +31,7 @@ namespace GsaGHTests.Properties {
         AdditionalMass = new LinearDensity(5, LinearDensityUnit.KilogramPerMeter),
         IsBendingAxesPrincipal = true,
         IsReferencePointCentroid = false,
-        StressOption = GsaSectionModifier.StressOptionType.UseModified,
+        StressOption = StressOptionType.UseModified,
       };
 
       GH_OasysComponent comp = ComponentMother();

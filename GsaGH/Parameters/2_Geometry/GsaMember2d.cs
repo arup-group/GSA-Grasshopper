@@ -19,22 +19,22 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember2d {
-    public Member ApiMember { get; set; }
+    public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public Brep Brep { get; set; }
-    public PolyCurve PolyCurve { get; set; }
-    public Point3dList Topology { get; set; }
-    public List<string> TopologyType { get; set; }
-    public List<PolyCurve> VoidCurves { get; set; }
-    public List<Point3dList> VoidTopology { get; set; }
-    public List<List<string>> VoidTopologyType { get; set; }
-    public List<PolyCurve> InclusionLines { get; set; }
-    public List<Point3dList> InclusionLinesTopology { get; set; }
-    public List<List<string>> InclusionLinesTopologyType { get; set; }
-    public Point3dList InclusionPoints { get; set; }
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public Brep Brep { get; internal set; }
+    public PolyCurve PolyCurve { get; internal set; }
+    public Point3dList Topology { get; internal set; }
+    public List<string> TopologyType { get; internal set; }
+    public List<PolyCurve> VoidCurves { get; internal set; }
+    public List<Point3dList> VoidTopology { get; internal set; }
+    public List<List<string>> VoidTopologyType { get; internal set; }
+    public List<PolyCurve> InclusionLines { get; internal set; }
+    public List<Point3dList> InclusionLinesTopology { get; internal set; }
+    public List<List<string>> InclusionLinesTopologyType { get; internal set; }
+    public Point3dList InclusionPoints { get; internal set; }
     public GsaProperty2d Prop2d { get; set; }
-    public Section3dPreview Section3dPreview { get; set; }
+    public Section3dPreview Section3dPreview { get; private set; }
 
     public GsaOffset Offset {
       get => GetOffSetFromApiMember();
@@ -189,6 +189,10 @@ namespace GsaGH.Parameters {
       Brep = RhinoConversions.BuildBrep(PolyCurve, VoidCurves, 0.001);
 
       Prop2d = prop2d;
+    }
+
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
     }
 
     public override string ToString() {

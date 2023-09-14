@@ -43,7 +43,7 @@ namespace GsaGHTests.Model {
       GH_OasysComponent comp = GridLineComponentMother();
 
       var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.NotNull(output.Value._gridLine);
+      Assert.NotNull(output.Value.GridLine);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ namespace GsaGHTests.Model {
       GH_OasysComponent comp = GridArcComponentMother();
 
       var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.NotNull(output.Value._gridLine);
+      Assert.NotNull(output.Value.GridLine);
     }
   }
 }

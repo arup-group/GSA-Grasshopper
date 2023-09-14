@@ -23,18 +23,18 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement2d {
-    public List<Element> ApiElements { get; set; }
+    public List<Element> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
-    public Guid Guid { get; set; } = Guid.NewGuid();
+    public Guid Guid { get; private set; } = Guid.NewGuid();
     public Mesh Mesh { get; set; } = new Mesh();
-    public List<List<int>> TopoInt { get; set; }
-    public Point3dList Topology { get; set; }
+    public List<List<int>> TopoInt { get; internal set; }
+    public Point3dList Topology { get; internal set; }
     public List<GsaOffset> Offsets => ApiElements.Select(
       e => new GsaOffset(e.Offset.X1, e.Offset.X2, e.Offset.Y, e.Offset.Z)).ToList();
     public List<Angle> OrientationAngles => ApiElements.Select(
       e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();
     public List<GsaProperty2d> Prop2ds { get; set; }
-    internal Section3dPreview Section3dPreview { get; set; }
+    public Section3dPreview Section3dPreview { get; private set; }
 
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
@@ -116,6 +116,10 @@ namespace GsaGH.Parameters {
         x => x.Value == ApiElements.First().Type).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
       return string.Join(" ", type, info).TrimSpaces();
+    }
+
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
     }
 
     public DataTree<int> GetTopologyIDs() {

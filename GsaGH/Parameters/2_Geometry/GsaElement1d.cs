@@ -20,15 +20,15 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement1d {
-    public Element ApiElement { get; set; }
+    public Element ApiElement { get; internal set; }
     public int Id { get; set; } = 0;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public LineCurve Line { get; set; } = new LineCurve();
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public LineCurve Line { get; internal set; } = new LineCurve();
     public GsaNode OrientationNode { get; set; }
-    public ReleasePreview ReleasePreview = new ReleasePreview();
     public GsaSection Section { get; set; }
-    public GsaLocalAxes LocalAxes { get; set; }
-    public Section3dPreview Section3dPreview { get; set; }
+    public GsaLocalAxes LocalAxes { get; private set; }
+    public Section3dPreview Section3dPreview { get; private set; }
+    public ReleasePreview ReleasePreview { get; private set; }
 
     public GsaOffset Offset {
       get => GetOffSetFromApiElement();
@@ -80,7 +80,6 @@ namespace GsaGH.Parameters {
       ApiElement = other.DuplicateApiObject();
       LocalAxes = other.LocalAxes;
       Line = (LineCurve)other.Line.DuplicateShallow();
-      LocalAxes = other.LocalAxes;
       OrientationNode = other.OrientationNode;
       Section = other.Section;
       Section3dPreview = other.Section3dPreview;
@@ -116,6 +115,9 @@ namespace GsaGH.Parameters {
 
       return string.Join(" ", id, type, pb).TrimSpaces();
     }
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
+    }
 
     public Element DuplicateApiObject() {
       var elem = new Element {
@@ -145,6 +147,21 @@ namespace GsaGH.Parameters {
       return elem;
     }
 
+    public void UpdateReleasesPreview() {
+      Bool6 s = ApiElement.GetEndRelease(0).Releases;
+      Bool6 e = ApiElement.GetEndRelease(1).Releases;
+
+      if (s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
+        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ) {
+        var crv = new PolyCurve();
+        crv.Append(Line);
+        ReleasePreview = new ReleasePreview(crv,
+          ApiElement.OrientationAngle * Math.PI / 180.0, s, e);
+      } else {
+        ReleasePreview = new ReleasePreview();
+      }
+    }
+
     private GsaOffset GetOffSetFromApiElement() {
       return new GsaOffset(
         ApiElement.Offset.X1, ApiElement.Offset.X2, ApiElement.Offset.Y, ApiElement.Offset.Z);
@@ -160,21 +177,6 @@ namespace GsaGH.Parameters {
     private void SetRelease(GsaBool6 bool6, int pos) {
       ApiElement.SetEndRelease(pos, new EndRelease(bool6.ApiBool6));
       UpdateReleasesPreview();
-    }
-
-    public void UpdateReleasesPreview() {
-      Bool6 s = ApiElement.GetEndRelease(0).Releases;
-      Bool6 e = ApiElement.GetEndRelease(1).Releases;
-
-      if (s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
-        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ) {
-        var crv = new PolyCurve();
-        crv.Append(Line);
-        ReleasePreview = new ReleasePreview(crv,
-          ApiElement.OrientationAngle * Math.PI / 180.0, s, e);
-      } else {
-        ReleasePreview = new ReleasePreview();
-      }
     }
   }
 }

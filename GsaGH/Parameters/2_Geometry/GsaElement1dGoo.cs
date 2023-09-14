@@ -85,7 +85,7 @@ namespace GsaGH.Parameters {
       }
 
       if (!Value.ApiElement.IsDummy) {
-        Value.ReleasePreview.DrawViewportWires(args);
+        Value.ReleasePreview?.DrawViewportWires(args);
       }
     }
 
@@ -100,7 +100,6 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var elem = new GsaElement1d(Value) {
         Id = 0,
-        LocalAxes = null
       };
       LineCurve xLn = elem.Line;
       xmorph.Morph(xLn);
@@ -113,7 +112,6 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       var elem = new GsaElement1d(Value) {
         Id = 0,
-        LocalAxes = null
       };
       LineCurve xLn = elem.Line;
       xLn.Transform(xform);
