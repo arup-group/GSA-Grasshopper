@@ -16,6 +16,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -145,13 +146,13 @@ namespace GsaGH.Components {
       }
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      var pts = new List<Point3d>();
+      var pts = new Point3dList();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           var pt = new Point3d();
           if (objectWrapper.Value is GsaNodeGoo nodeGoo) {
-            nodes.Add(nodeGoo.Value.Clone());
+            nodes.Add(new GsaNode(nodeGoo.Value));
           } else if (GH_Convert.ToPoint3d(objectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {
@@ -171,7 +172,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
           Curve crv = null;
           if (objectWrapper.Value is GsaMember1dGoo member1dGoo) {
-            member1ds.Add(member1dGoo.Value.Clone());
+            member1ds.Add(new GsaMember1d(member1dGoo.Value));
           } else if (GH_Convert.ToCurve(objectWrapper.Value, ref crv, GH_Conversion.Both)) {
             curves.Add(crv.DuplicateCurve());
           } else {
@@ -185,8 +186,10 @@ namespace GsaGH.Components {
       }
 
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
+#pragma warning disable CS0618 // Type or member is obsolete
       var elem2d = new GsaElement2d(brep, curves, pts, meshSize.As(_lengthUnit), member1ds, nodes,
         _lengthUnit, _tolerance);
+#pragma warning restore CS0618 // Type or member is obsolete
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProperty2d();
       if (da.GetData(3, ref ghTyp)) {
@@ -212,7 +215,7 @@ namespace GsaGH.Components {
 
       elem2d.Prop2ds = prop2Ds;
 
-      da.SetData(0, new GsaElement2dGoo(elem2d, false));
+      da.SetData(0, new GsaElement2dGoo(elem2d));
 
       this.AddRuntimeRemark(
         "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");

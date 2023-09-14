@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -380,7 +381,7 @@ namespace GsaGH.Parameters {
           }
       }
 
-      return txt.Trim().Replace("  ", " ");
+      return txt.TrimSpaces();
     }
 
     /// <summary>

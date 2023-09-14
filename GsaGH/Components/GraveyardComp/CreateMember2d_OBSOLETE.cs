@@ -15,6 +15,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -115,7 +116,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      var point3ds = new List<Point3d>();
+      var point3ds = new Point3dList();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
         foreach (GH_Point point in ghpts) {
@@ -145,7 +146,7 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[4].SourceCount > 0) {
-        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
+        mem.ApiMember.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

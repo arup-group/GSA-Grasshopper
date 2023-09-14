@@ -38,25 +38,25 @@ namespace GsaGH.Parameters {
     }
     public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
-    internal GsaAPI.Titles Titles => Model.Titles();
-    internal GsaAPI.UiUnits Units => Model.UiUnits();
+    internal Titles Titles => Model.Titles();
+    internal UiUnits Units => Model.UiUnits();
     internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiElementLocalAxes { get; private set; }
     internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiMemberLocalAxes { get; private set; }
     internal ReadOnlyDictionary<int, Node> ApiNodes { get; private set; }
     internal ReadOnlyDictionary<int, Axis> ApiAxis { get; private set; }
     internal Materials Materials { get; private set; }
-    internal GsaSection3dPreview AnalysisLayerPreview {
+    internal Section3dPreview AnalysisLayerPreview {
       get {
         if (Model.Elements().Count > 0) {
-          _analysisLayerPreview ??= new GsaSection3dPreview(this, Layer.Analysis);
+          _analysisLayerPreview ??= new Section3dPreview(this, Layer.Analysis);
         }
         return _analysisLayerPreview;
       }
     }
-    internal GsaSection3dPreview DesignLayerPreview {
+    internal Section3dPreview DesignLayerPreview {
       get {
         if (Model.Members().Count > 0) {
-          _designLayerPreview ??= new GsaSection3dPreview(this, Layer.Design);
+          _designLayerPreview ??= new Section3dPreview(this, Layer.Design);
         }
         return _designLayerPreview;
       }
@@ -74,8 +74,8 @@ namespace GsaGH.Parameters {
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
     private Model _model = new Model();
-    private GsaSection3dPreview _analysisLayerPreview;
-    private GsaSection3dPreview _designLayerPreview;
+    private Section3dPreview _analysisLayerPreview;
+    private Section3dPreview _designLayerPreview;
 
     public GsaModel() {
       SetUserDefaultUnits(Model.UiUnits());

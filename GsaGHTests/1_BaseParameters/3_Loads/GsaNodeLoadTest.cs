@@ -1,8 +1,10 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
-using LoadCase = GsaGH.Parameters.Enums.LoadCase;
+using LoadCaseType = GsaGH.Parameters.LoadCaseType;
+using NodeLoadType = GsaGH.Parameters.NodeLoadType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -16,11 +18,10 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest(int typeId) {
       var type = (NodeLoadType)typeId;
       var load = new GsaNodeLoad {
-        Type = (GsaNodeLoad.NodeLoadType)type,
+        Type = type,
       };
 
-      Assert.Equal(LoadType.Node, load.LoadType);
-      Assert.Equal((NodeLoadType)type, (NodeLoadType)load.Type);
+      Assert.Equal(type, load.Type);
     }
 
     [Fact]
@@ -38,12 +39,12 @@ namespace GsaGHTests.Parameters {
     [InlineData(3, 0)]
     [InlineData(4, 0)]
     public void DuplicateTest(int intType, int intDuplicateType) {
-      var originalType = (GsaNodeLoad.NodeLoadType)intType;
-      var duplicateType = (GsaNodeLoad.NodeLoadType)intDuplicateType;
+      var originalType = (NodeLoadType)intType;
+      var duplicateType = (NodeLoadType)intDuplicateType;
 
       var original = new GsaNodeLoad {
-        Type = (GsaNodeLoad.NodeLoadType)originalType,
-        NodeLoad = {
+        Type = originalType,
+        ApiLoad = {
           AxisProperty = 2,
           Case = 100,
           Direction = Direction.XY,
@@ -58,21 +59,20 @@ namespace GsaGHTests.Parameters {
       Duplicates.AreEqual(original, duplicate);
 
       duplicate.Type = duplicateType;
-      duplicate.NodeLoad.AxisProperty = 3;
-      duplicate.NodeLoad.Case = 99;
-      duplicate.NodeLoad.Direction = Direction.YY;
-      duplicate.NodeLoad.Nodes = "";
-      duplicate.NodeLoad.Name = "";
-      duplicate.NodeLoad.Value = -3.3;
+      duplicate.ApiLoad.AxisProperty = 3;
+      duplicate.ApiLoad.Case = 99;
+      duplicate.ApiLoad.Direction = Direction.YY;
+      duplicate.ApiLoad.Nodes = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.Value = -3.3;
 
-      Assert.Equal(LoadType.Node, original.LoadType);
       Assert.Equal(originalType, original.Type);
-      Assert.Equal(2, original.NodeLoad.AxisProperty);
-      Assert.Equal(100, original.NodeLoad.Case);
-      Assert.Equal(Direction.XY, original.NodeLoad.Direction);
-      Assert.Equal("all", original.NodeLoad.Nodes);
-      Assert.Equal("name", original.NodeLoad.Name);
-      Assert.Equal(97.5, original.NodeLoad.Value);
+      Assert.Equal(2, original.ApiLoad.AxisProperty);
+      Assert.Equal(100, original.ApiLoad.Case);
+      Assert.Equal(Direction.XY, original.ApiLoad.Direction);
+      Assert.Equal("all", original.ApiLoad.Nodes);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.Equal(97.5, original.ApiLoad.Value);
     }
 
     [Fact]
@@ -87,7 +87,8 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaNodeLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, LoadCase.LoadCaseType.Dead, "DeadLoad");
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());
@@ -98,8 +99,7 @@ namespace GsaGHTests.Parameters {
     public void NodeLoadEmptyConstructorTest() {
       var load = new GsaNodeLoad();
 
-      Assert.Equal(LoadType.Node, load.LoadType);
-      Assert.Equal(GsaNodeLoad.NodeLoadType.NodeLoad, load.Type);
+      Assert.Equal(NodeLoadType.NodeLoad, load.Type);
     }
   }
 }

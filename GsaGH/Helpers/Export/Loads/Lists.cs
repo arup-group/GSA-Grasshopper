@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
@@ -13,9 +14,9 @@ namespace GsaGH.Helpers.Export {
 
       // Add lists embedded in loads as they may have ID > 0 set
       if (lists == null && !loads.IsNullOrEmpty()) {
-        lists = Loads.GetLoadLists(loads);
+        lists = GetLoadLists(loads);
       } else if (!loads.IsNullOrEmpty()) {
-        lists.AddRange(Loads.GetLoadLists(loads));
+        lists.AddRange(GetLoadLists(loads));
       }
 
       Lists.ConvertList(lists, ref model, owner);
@@ -33,24 +34,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     private static GsaList GetLoadList(IGsaLoad load) {
-      if (load == null) {
-        return null;
-      }
-
-      switch (load.LoadType) {
-        case LoadType.Gravity:
-        case LoadType.Beam:
-        case LoadType.Face:
-        case LoadType.GridPoint:
-        case LoadType.GridLine:
-        case LoadType.GridArea:
-          if (load.ReferenceType == ReferenceType.List) {
-            return load.ReferenceList;
-          }
-          break;
-      }
-
-      return null;
+      return load == null ? null 
+        : load.ReferenceType == ReferenceType.List ? load.ReferenceList : null;
     }
   }
 }

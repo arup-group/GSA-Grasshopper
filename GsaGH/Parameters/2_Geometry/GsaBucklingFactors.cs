@@ -24,8 +24,10 @@
       MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
 
-    public GsaBucklingFactors Duplicate() {
-      return (GsaBucklingFactors)MemberwiseClone();
+    public GsaBucklingFactors(GsaBucklingFactors other) {
+      EquivalentUniformMomentFactor = other.EquivalentUniformMomentFactor;
+      MomentAmplificationFactorStrongAxis = other.MomentAmplificationFactorStrongAxis;
+      MomentAmplificationFactorWeakAxis = other.MomentAmplificationFactorWeakAxis;
     }
 
     public override string ToString() {

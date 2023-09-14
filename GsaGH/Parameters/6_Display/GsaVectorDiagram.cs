@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Parameters.Enums;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 
@@ -13,7 +12,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaVectorDiagram : GH_GeometricGoo<Vector3d>, IGsaDiagram, IGH_PreviewData {
     public override BoundingBox Boundingbox
-      => new BoundingBox(new List<Point3d>() {
+      => new BoundingBox(new Point3dList() {
         DisplayLine.From,
         DisplayLine.To,
       });
@@ -22,7 +21,7 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Vector Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; } = Colours.GsaDarkPurple;
-    public GsaDiagramType DiagramType => GsaDiagramType.Vector;
+    public DiagramType DiagramType => DiagramType.Vector;
     public readonly Point3d AnchorPoint;
     internal Line DisplayLine;
     private bool _doubleArrow = false;
@@ -100,10 +99,6 @@ namespace GsaGH.Parameters {
       var fakeVector = new Point3d(Value);
       var vec = new Vector3d(xmorph.MorphPoint(fakeVector));
       return new GsaVectorDiagram(anchor, vec, _doubleArrow, Color);
-    }
-
-    public override object ScriptVariable() {
-      return Value;
     }
 
     public override string ToString() {

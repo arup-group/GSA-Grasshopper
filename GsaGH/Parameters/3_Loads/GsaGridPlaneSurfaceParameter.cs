@@ -2,6 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH.Parameters;
 using Rhino.Geometry;
@@ -29,19 +30,21 @@ namespace GsaGH.Parameters {
       if (data.GetType() == typeof(GsaLoadGoo)) {
         var loadGoo = (GsaLoadGoo)data;
         if (loadGoo.Value != null) {
-          switch (loadGoo.Value.LoadType) {
-            case LoadType.GridPoint:
-              return new GsaGridPlaneSurfaceGoo(((GsaGridPointLoad)loadGoo.Value).GridPlaneSurface);
+          switch (loadGoo.Value) {
+            case GsaGridPointLoad point:
+              return new GsaGridPlaneSurfaceGoo(point.GridPlaneSurface);
 
-            case LoadType.GridLine:
-              return new GsaGridPlaneSurfaceGoo(((GsaGridLineLoad)loadGoo.Value).GridPlaneSurface);
+            case GsaGridLineLoad line:
+              return new GsaGridPlaneSurfaceGoo(line.GridPlaneSurface);
 
-            case LoadType.GridArea:
-              return new GsaGridPlaneSurfaceGoo(((GsaGridAreaLoad)loadGoo.Value).GridPlaneSurface);
+            case GsaGridAreaLoad area:
+              return new GsaGridPlaneSurfaceGoo(area.GridPlaneSurface);
 
             default:
               this.AddRuntimeError(
-                $"Load is {loadGoo.Value.LoadType} but must be a GridLoad to convert to GridPlaneSurface");
+                "Load is " + loadGoo.Value.GetType().ToString()
+                .Replace("Gsa", string.Empty).Replace("Load", string.Empty) +
+                $" but must be a GridLoad to convert to GridPlaneSurface");
               return new GsaGridPlaneSurfaceGoo(null);
           }
         }

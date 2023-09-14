@@ -399,9 +399,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      if (_combinationCaseResults == null) {
-        _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
-      }
+      _combinationCaseResults ??= _gsaModel.Model.CombinationCaseResults();
 
       if (_combinationCaseResults.Count == 0) {
         return;

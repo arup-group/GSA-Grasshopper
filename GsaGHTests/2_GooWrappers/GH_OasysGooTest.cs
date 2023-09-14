@@ -3,7 +3,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using System;
 using System.Reflection;
-using System.Reflection.Emit;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -81,7 +80,8 @@ namespace GsaGHTests.GooWrappers {
             object duplicateValue = methodInfo.Invoke(gooValue, null); // .Duplicate();
             Duplicates.AreEqual(gooValue, duplicateValue);
           } else {
-            ConstructorInfo duplicateConstructor = gooValue.GetType().GetConstructor(new Type[] { gooValue.GetType() });
+            ConstructorInfo duplicateConstructor = gooValue.GetType()
+              .GetConstructor(new Type[] { gooValue.GetType() }); // new GsaObj(GsaObj other);
             object duplicateValue = duplicateConstructor.Invoke(new object[] { gooValue });
             Duplicates.AreEqual(gooValue, duplicateValue, true);
           }

@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -146,12 +147,12 @@ namespace GsaGH.Components {
 
           case GsaElement1dGoo element1dGoo:
             beamThermalLoad.RefObjectGuid = element1dGoo.Value.Guid;
-            beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
+            beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
             break;
 
           case GsaMember1dGoo member1dGoo:
             beamThermalLoad.RefObjectGuid = member1dGoo.Value.Guid;
-            beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Member;
+            beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
             break;
 
           case GsaMaterialGoo materialGoo:
@@ -161,7 +162,7 @@ namespace GsaGH.Components {
               return;
             }
             beamThermalLoad.RefObjectGuid = materialGoo.Value.Guid;
-            beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
+            beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
             beamThermalLoad.ReferenceType = ReferenceType.Property;
             this.AddRuntimeRemark(
                 "Load from Material reference created as Element load");
@@ -169,7 +170,7 @@ namespace GsaGH.Components {
 
           case GsaSectionGoo sectionGoo:
             beamThermalLoad.RefObjectGuid = sectionGoo.Value.Guid;
-            beamThermalLoad.BeamThermalLoad.EntityType = GsaAPI.EntityType.Element;
+            beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
             beamThermalLoad.ReferenceType = ReferenceType.Property;
             this.AddRuntimeRemark(
                 "Load from Section reference created as Element load");
@@ -177,7 +178,7 @@ namespace GsaGH.Components {
 
           default:
             if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
-              beamThermalLoad.BeamThermalLoad.EntityList = beamList;
+              beamThermalLoad.ApiLoad.EntityList = beamList;
             }
             break;
         }
@@ -186,7 +187,7 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          beamThermalLoad.BeamThermalLoad.Name = name;
+          beamThermalLoad.ApiLoad.Name = name;
         }
       }
 
@@ -194,7 +195,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            beamThermalLoad.BeamThermalLoad.UniformTemperature = temperature.DegreesCelsius;
+            beamThermalLoad.ApiLoad.UniformTemperature = temperature.DegreesCelsius;
           }
           break;
       }

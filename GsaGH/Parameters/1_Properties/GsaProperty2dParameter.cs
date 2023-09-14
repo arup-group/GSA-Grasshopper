@@ -2,6 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -26,11 +27,23 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProperty2dGoo PreferredCast(object data) {
+      string mes = string.Empty;
+      string defaultText = $"{data.GetTypeName()} does not contain a 2D Property";
       switch (data) {
         case GsaElement2dGoo elem2d:
+          if (elem2d.Value.Prop2ds.IsNullOrEmpty()) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaProperty2dGoo(elem2d.Value.Prop2ds[0]);
 
         case GsaMember2dGoo mem2d:
+          if (mem2d.Value.Prop2d == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaProperty2dGoo(mem2d.Value.Prop2d);
       }
 
@@ -61,7 +74,11 @@ namespace GsaGH.Parameters {
         }
       }
 
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2d");
+      if (!string.IsNullOrEmpty(mes)) {
+        mes = "." + Environment.NewLine + mes;
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2d" + mes);
       return new GsaProperty2dGoo(null);
     }
   }

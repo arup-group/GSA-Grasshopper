@@ -1,6 +1,6 @@
 ﻿using System;
 using GsaAPI;
-using GsaGH.Helpers.GH;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
@@ -11,7 +11,6 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaSectionTest {
-
     [Fact]
     public void DuplicateTest() {
       var original = new GsaSection {
@@ -21,7 +20,22 @@ namespace GsaGHTests.Parameters {
       };
 
       var duplicate = new GsaSection(original);
+      Duplicates.AreEqual(original, duplicate, true);
+    }
 
+    [Fact]
+    public void DuplicateReferenceTest() {
+      var original = new GsaSection(4);
+      var duplicate = new GsaSection(original);
+      
+      Assert.Equal(4, duplicate.Id);
+      Assert.True(duplicate.IsReferencedById);
+    }
+
+    [Fact]
+    public void DuplicateReferenceTest2() {
+      var original = new GsaSection(4);
+      var duplicate = new GsaSection(original);
       Duplicates.AreEqual(original, duplicate, true);
     }
 

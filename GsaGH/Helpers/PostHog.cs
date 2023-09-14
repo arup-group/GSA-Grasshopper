@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers {
   internal class PostHog {
@@ -34,12 +35,13 @@ namespace GsaGH.Helpers {
     }
 
     internal static void Load(
-      LoadType loadType, ReferenceType refType, string subType = "-") {
+      IGsaLoad load, ReferenceType refType, string subType = "-") {
       const string eventName = "Load";
       bool objLoad = refType != ReferenceType.None;
       var properties = new Dictionary<string, object>() {
         {
-          "loadType", loadType.ToString()
+          "loadType", load.GetType().ToString()
+            .Replace("Gsa", string.Empty).Replace("Load", string.Empty)
         }, {
           "objectLoad", objLoad
         }, {

@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -16,7 +15,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
-using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
+using ExpansionType = GsaGH.Parameters.ExpansionType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Components {
@@ -150,8 +149,8 @@ namespace GsaGH.Components {
         GH_Convert.ToPoint3d(ghPt, ref point3d, GH_Conversion.Both);
       }
 
-      gridPointLoad.GridPointLoad.X = point3d.X;
-      gridPointLoad.GridPointLoad.Y = point3d.Y;
+      gridPointLoad.ApiLoad.X = point3d.X;
+      gridPointLoad.ApiLoad.Y = point3d.Y;
 
       GsaGridPlaneSurface gridPlaneSurface;
       Plane plane = Plane.WorldXY;
@@ -176,7 +175,7 @@ namespace GsaGH.Components {
 
           default: {
               if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                gridPointLoad.GridPointLoad.GridSurface = id;
+                gridPointLoad.ApiLoad.GridSurface = id;
                 gridPointLoad.GridPlaneSurface = null;
               } else {
                 this.AddRuntimeError(
@@ -240,25 +239,25 @@ namespace GsaGH.Components {
           break;
       }
 
-      gridPointLoad.GridPointLoad.Direction = direc;
+      gridPointLoad.ApiLoad.Direction = direc;
 
-      gridPointLoad.GridPointLoad.AxisProperty = 0;
+      gridPointLoad.ApiLoad.AxisProperty = 0;
       var ghAx = new GH_Integer();
       if (da.GetData(4, ref ghAx)) {
         GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1) {
-          gridPointLoad.GridPointLoad.AxisProperty = axis;
+          gridPointLoad.ApiLoad.AxisProperty = axis;
         }
       }
 
       var ghName = new GH_String();
       if (da.GetData(5, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          gridPointLoad.GridPointLoad.Name = name;
+          gridPointLoad.ApiLoad.Name = name;
         }
       }
 
-      gridPointLoad.GridPointLoad.Value
+      gridPointLoad.ApiLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
       da.SetData(0, new GsaLoadGoo(gridPointLoad));

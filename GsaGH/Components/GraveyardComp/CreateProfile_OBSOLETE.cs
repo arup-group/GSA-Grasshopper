@@ -22,6 +22,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -1203,9 +1204,9 @@ namespace GsaGH.Components {
                 Curve[] edgeSegments = brep.DuplicateEdgeCurves();
                 Curve[] edges = Curve.JoinCurves(edgeSegments);
 
-                var ctrlPts = new List<Point3d>();
+                var ctrlPts = new Point3dList();
                 if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
-                  ctrlPts = tempCrv.ToList();
+                  ctrlPts = new Point3dList(tempCrv);
                 } else {
                   this.AddRuntimeError("Cannot convert edge to Polyline");
                   return;
@@ -1225,7 +1226,7 @@ namespace GsaGH.Components {
                     origin.Z += p.Z;
                   }
 
-                  origin.X /= ctrlPts.Count;
+                  origin.X /= origin.X / ctrlPts.Count;
                   origin.Y /= ctrlPts.Count;
                   origin.Z /= ctrlPts.Count;
 
@@ -1284,7 +1285,7 @@ namespace GsaGH.Components {
                     }
 
                     if (edges[i].TryGetPolyline(out tempCrv)) {
-                      ctrlPts = tempCrv.ToList();
+                      ctrlPts = new Point3dList(tempCrv);
                       pts = new List<Point2d>();
                       foreach (Point3d pt3d in ctrlPts) {
                         pt3d.Transform(translation);

@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters.Enums;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -9,7 +8,7 @@ namespace GsaGH.Parameters {
   /// <para>The Annotation parameter can be either a <see cref="GsaAnnotationDot"/> or a <see cref="GsaAnnotation3d"/> type.</para>
   /// </summary>
   public interface IGsaAnnotation : IGH_GeometricGoo, IGH_PreviewData {
-    public GsaAnnotationType AnnotationType { get; }
+    public AnnotationType AnnotationType { get; }
     public string Text { get; }
     public Point3d Location { get; }
     public bool CastTo<TQ>(ref TQ target);

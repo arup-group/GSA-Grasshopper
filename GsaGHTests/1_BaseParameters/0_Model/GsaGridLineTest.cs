@@ -16,19 +16,10 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void CloneTest() {
-      var original = new GsaGridLine(new GridLine("label1"), new PolyCurve());
-
-      var duplicate = (GsaGridLine)original.Duplicate();
-
-      Assert.Equal(original, duplicate);
-    }
-
-    [Fact]
     public void DuplicateTest() {
       var original = new GsaGridLine(new GridLine("label1"), new PolyCurve());
 
-      var duplicate = (GsaGridLine)original.Clone();
+      var duplicate = new GsaGridLine(original);
 
       Duplicates.AreEqual(original, duplicate);
 

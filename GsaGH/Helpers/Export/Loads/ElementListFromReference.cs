@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Export {
   internal class ElementListFromReference {

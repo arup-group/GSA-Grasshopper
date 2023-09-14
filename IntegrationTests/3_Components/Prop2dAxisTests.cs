@@ -19,8 +19,8 @@ namespace IntegrationTests.Components {
     [InlineData("paZX", 0.0)]
     [InlineData("paZY", 0.0)]
     [InlineData("paZZ", 1.0)]
-    [InlineData("RotationAngleCheck", (int)0)]
-    [InlineData("AxisRotationCheck", (int)0)]
+    [InlineData("RotationAngleCheck", 0)]
+    [InlineData("AxisRotationCheck", 0)]
     public void Test(string groupIdentifier, object expected, int tolerance = 6) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected, tolerance);

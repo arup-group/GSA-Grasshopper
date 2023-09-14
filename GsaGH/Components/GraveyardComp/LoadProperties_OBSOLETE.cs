@@ -6,6 +6,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -135,101 +136,95 @@ namespace GsaGH.Components {
 
       if (ghTyp.Value is GsaLoadGoo loadGoo) {
         IGsaLoad gsaLoad = loadGoo.Value;
-        switch (gsaLoad.LoadType) {
-          case LoadType.Gravity:
-            var gravityLoad = (GsaGravityLoad)gsaLoad;
-            da.SetData(0, gravityLoad.GravityLoad.Case);
-            da.SetData(1, gravityLoad.GravityLoad.Name);
-            da.SetData(2, gravityLoad.GravityLoad.EntityList);
-            da.SetData(6, gravityLoad.GravityLoad.Factor.X);
-            da.SetData(7, gravityLoad.GravityLoad.Factor.Y);
-            da.SetData(8, gravityLoad.GravityLoad.Factor.Z);
+        switch (gsaLoad) {
+          case GsaGravityLoad gravityLoad:
+            da.SetData(0, gravityLoad.ApiLoad.Case);
+            da.SetData(1, gravityLoad.ApiLoad.Name);
+            da.SetData(2, gravityLoad.ApiLoad.EntityList);
+            da.SetData(6, gravityLoad.ApiLoad.Factor.X);
+            da.SetData(7, gravityLoad.ApiLoad.Factor.Y);
+            da.SetData(8, gravityLoad.ApiLoad.Factor.Z);
             return;
 
-          case LoadType.Node:
-            var nodeLoad = (GsaNodeLoad)gsaLoad;
-            da.SetData(0, nodeLoad.NodeLoad.Case);
-            da.SetData(1, nodeLoad.NodeLoad.Name);
-            da.SetData(2, nodeLoad.NodeLoad.Nodes);
-            da.SetData(3, nodeLoad.NodeLoad.AxisProperty);
-            da.SetData(4, nodeLoad.NodeLoad.Direction);
-            var apiNodeForce = new Force(nodeLoad.NodeLoad.Value, ForceUnit.Newton);
+          case GsaNodeLoad nodeLoad:
+            da.SetData(0, nodeLoad.ApiLoad.Case);
+            da.SetData(1, nodeLoad.ApiLoad.Name);
+            da.SetData(2, nodeLoad.ApiLoad.Nodes);
+            da.SetData(3, nodeLoad.ApiLoad.AxisProperty);
+            da.SetData(4, nodeLoad.ApiLoad.Direction);
+            var apiNodeForce = new Force(nodeLoad.ApiLoad.Value, ForceUnit.Newton);
             var outNodeForce = new Force(apiNodeForce.As(_forceUnit), _forceUnit);
             da.SetData(6, new GH_UnitNumber(outNodeForce));
             return;
 
-          case LoadType.Beam:
-            var beamLoad = (GsaBeamLoad)gsaLoad;
-            da.SetData(0, beamLoad.BeamLoad.Case);
-            da.SetData(1, beamLoad.BeamLoad.Name);
-            da.SetData(2, beamLoad.BeamLoad.EntityList);
-            da.SetData(3, beamLoad.BeamLoad.AxisProperty);
-            da.SetData(4, beamLoad.BeamLoad.Direction);
-            da.SetData(5, beamLoad.BeamLoad.IsProjected);
-            var apiBeamForce1 = new ForcePerLength(beamLoad.BeamLoad.Value(0),
+          case GsaBeamLoad beamLoad:
+            da.SetData(0, beamLoad.ApiLoad.Case);
+            da.SetData(1, beamLoad.ApiLoad.Name);
+            da.SetData(2, beamLoad.ApiLoad.EntityList);
+            da.SetData(3, beamLoad.ApiLoad.AxisProperty);
+            da.SetData(4, beamLoad.ApiLoad.Direction);
+            da.SetData(5, beamLoad.ApiLoad.IsProjected);
+            var apiBeamForce1 = new ForcePerLength(beamLoad.ApiLoad.Value(0),
               ForcePerLengthUnit.NewtonPerMeter);
             var outBeamForce1
               = new ForcePerLength(apiBeamForce1.As(forcePerLengthUnit), forcePerLengthUnit);
             da.SetData(6, new GH_UnitNumber(outBeamForce1));
-            var apiBeamForce2 = new ForcePerLength(beamLoad.BeamLoad.Value(1),
+            var apiBeamForce2 = new ForcePerLength(beamLoad.ApiLoad.Value(1),
               ForcePerLengthUnit.NewtonPerMeter);
             var outBeamForce2
               = new ForcePerLength(apiBeamForce2.As(forcePerLengthUnit), forcePerLengthUnit);
             da.SetData(7, new GH_UnitNumber(outBeamForce2));
             return;
 
-          case LoadType.Face:
-            var faceLoad = (GsaFaceLoad)gsaLoad;
-            da.SetData(0, faceLoad.FaceLoad.Case);
-            da.SetData(1, faceLoad.FaceLoad.Name);
-            da.SetData(2, faceLoad.FaceLoad.EntityList);
-            da.SetData(3, faceLoad.FaceLoad.AxisProperty);
-            da.SetData(4, faceLoad.FaceLoad.Direction);
-            da.SetData(5, faceLoad.FaceLoad.IsProjected);
-            var apiFaceForce1 = new Pressure(faceLoad.FaceLoad.Value(0),
+          case GsaFaceLoad faceLoad:
+            da.SetData(0, faceLoad.ApiLoad.Case);
+            da.SetData(1, faceLoad.ApiLoad.Name);
+            da.SetData(2, faceLoad.ApiLoad.EntityList);
+            da.SetData(3, faceLoad.ApiLoad.AxisProperty);
+            da.SetData(4, faceLoad.ApiLoad.Direction);
+            da.SetData(5, faceLoad.ApiLoad.IsProjected);
+            var apiFaceForce1 = new Pressure(faceLoad.ApiLoad.Value(0),
               PressureUnit.NewtonPerSquareMeter);
             var outFaceForce1 = new Pressure(apiFaceForce1.As(forcePerAreaUnit), forcePerAreaUnit);
             da.SetData(6, new GH_UnitNumber(outFaceForce1));
-            var apiFaceForce2 = new Pressure(faceLoad.FaceLoad.Value(1),
+            var apiFaceForce2 = new Pressure(faceLoad.ApiLoad.Value(1),
               PressureUnit.NewtonPerSquareMeter);
             var outFaceForce2 = new Pressure(apiFaceForce2.As(forcePerAreaUnit), forcePerAreaUnit);
             da.SetData(7, new GH_UnitNumber(outFaceForce2));
-            var apiFaceForce3 = new Pressure(faceLoad.FaceLoad.Value(2),
+            var apiFaceForce3 = new Pressure(faceLoad.ApiLoad.Value(2),
               PressureUnit.NewtonPerSquareMeter);
             var outFaceForce3 = new Pressure(apiFaceForce3.As(forcePerAreaUnit), forcePerAreaUnit);
             da.SetData(8, new GH_UnitNumber(outFaceForce3));
-            var apiFaceForce4 = new Pressure(faceLoad.FaceLoad.Value(3),
+            var apiFaceForce4 = new Pressure(faceLoad.ApiLoad.Value(3),
               PressureUnit.NewtonPerSquareMeter);
             var outFaceForce4 = new Pressure(apiFaceForce4.As(forcePerAreaUnit), forcePerAreaUnit);
             da.SetData(9, new GH_UnitNumber(outFaceForce4));
             return;
 
-          case LoadType.GridPoint:
-            var gridPointLoad = (GsaGridPointLoad)gsaLoad;
-            da.SetData(0, gridPointLoad.GridPointLoad.Case);
-            da.SetData(1, gridPointLoad.GridPointLoad.Name);
+          case GsaGridPointLoad gridPointLoad:
+            da.SetData(0, gridPointLoad.ApiLoad.Case);
+            da.SetData(1, gridPointLoad.ApiLoad.Name);
             da.SetData(2, new GH_Point(gridPointLoad.GetPoint(_lengthUnit)));
-            da.SetData(3, gridPointLoad.GridPointLoad.AxisProperty);
-            da.SetData(4, gridPointLoad.GridPointLoad.Direction);
-            var apiPointForce = new Force(gridPointLoad.GridPointLoad.Value, ForceUnit.Newton);
+            da.SetData(3, gridPointLoad.ApiLoad.AxisProperty);
+            da.SetData(4, gridPointLoad.ApiLoad.Direction);
+            var apiPointForce = new Force(gridPointLoad.ApiLoad.Value, ForceUnit.Newton);
             var outPointForce = new Force(apiPointForce.As(_forceUnit), _forceUnit);
             da.SetData(6, new GH_UnitNumber(outPointForce));
             da.SetData(10, new GsaGridPlaneSurfaceGoo(gridPointLoad.GridPlaneSurface));
             return;
 
-          case LoadType.GridLine:
-            var gridLineLoad = (GsaGridLineLoad)gsaLoad;
-            da.SetData(0, gridLineLoad.GridLineLoad.Case);
-            da.SetData(1, gridLineLoad.GridLineLoad.Name);
+          case GsaGridLineLoad gridLineLoad:
+            da.SetData(0, gridLineLoad.ApiLoad.Case);
+            da.SetData(1, gridLineLoad.ApiLoad.Name);
             da.SetData(2, new Polyline(gridLineLoad.Points));
-            da.SetData(3, gridLineLoad.GridLineLoad.AxisProperty);
-            da.SetData(4, gridLineLoad.GridLineLoad.Direction);
-            var apiLineForce1 = new ForcePerLength(gridLineLoad.GridLineLoad.ValueAtStart,
+            da.SetData(3, gridLineLoad.ApiLoad.AxisProperty);
+            da.SetData(4, gridLineLoad.ApiLoad.Direction);
+            var apiLineForce1 = new ForcePerLength(gridLineLoad.ApiLoad.ValueAtStart,
               ForcePerLengthUnit.NewtonPerMeter);
             var outLineForce1
               = new ForcePerLength(apiLineForce1.As(forcePerLengthUnit), forcePerLengthUnit);
             da.SetData(6, new GH_UnitNumber(outLineForce1));
-            var apiLineForce2 = new ForcePerLength(gridLineLoad.GridLineLoad.ValueAtEnd,
+            var apiLineForce2 = new ForcePerLength(gridLineLoad.ApiLoad.ValueAtEnd,
               ForcePerLengthUnit.NewtonPerMeter);
             var outLineForce2
               = new ForcePerLength(apiLineForce2.As(forcePerLengthUnit), forcePerLengthUnit);
@@ -237,10 +232,9 @@ namespace GsaGH.Components {
             da.SetData(10, new GsaGridPlaneSurfaceGoo(gridLineLoad.GridPlaneSurface));
             return;
 
-          case LoadType.GridArea:
-            var gridAreaLoad = (GsaGridAreaLoad)gsaLoad;
-            da.SetData(0, gridAreaLoad.GridAreaLoad.Case);
-            da.SetData(1, gridAreaLoad.GridAreaLoad.Name);
+          case GsaGridAreaLoad gridAreaLoad:
+            da.SetData(0, gridAreaLoad.ApiLoad.Case);
+            da.SetData(1, gridAreaLoad.ApiLoad.Name);
             var polyline = new Polyline(gridAreaLoad.Points);
             if (!polyline.IsClosed) {
               var pts = gridAreaLoad.Points.ToList();
@@ -249,9 +243,9 @@ namespace GsaGH.Components {
             }
 
             da.SetData(2, polyline);
-            da.SetData(3, gridAreaLoad.GridAreaLoad.AxisProperty);
-            da.SetData(4, gridAreaLoad.GridAreaLoad.Direction);
-            var apiAreaForce = new Pressure(gridAreaLoad.GridAreaLoad.Value,
+            da.SetData(3, gridAreaLoad.ApiLoad.AxisProperty);
+            da.SetData(4, gridAreaLoad.ApiLoad.Direction);
+            var apiAreaForce = new Pressure(gridAreaLoad.ApiLoad.Value,
               PressureUnit.NewtonPerSquareMeter);
             var outAreaForce = new Pressure(apiAreaForce.As(forcePerAreaUnit), forcePerAreaUnit);
             da.SetData(6, new GH_UnitNumber(outAreaForce));

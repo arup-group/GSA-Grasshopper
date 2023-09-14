@@ -12,6 +12,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -101,7 +102,7 @@ namespace GsaGH.Components {
       }
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      var point3ds = new List<Point3d>();
+      var point3ds = new Point3dList();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
@@ -147,8 +148,10 @@ namespace GsaGH.Components {
         meshSize = new Length(size, _lengthUnit).ToUnit(LengthUnit.Meter);
       }
 
+#pragma warning disable CS0618 // Type or member is obsolete
       var elem2d = new GsaElement2d(brep, crvs, point3ds, meshSize.Value, mem1ds, nodes,
         _lengthUnit, DefaultUnits.Tolerance);
+#pragma warning restore CS0618 // Type or member is obsolete
 
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProperty2d();

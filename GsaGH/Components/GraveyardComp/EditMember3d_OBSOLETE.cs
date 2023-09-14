@@ -136,7 +136,7 @@ namespace GsaGH.Components {
 
       GsaMember3dGoo member3dGoo = null;
       if (da.GetData(0, ref member3dGoo)) {
-        mem = member3dGoo.Value.Clone();
+        mem = new GsaMember3d(member3dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -151,9 +151,9 @@ namespace GsaGH.Components {
         var brep = new Brep();
         var mesh = new Mesh();
         if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
-          mem = mem.UpdateGeometry(brep);
+          mem.UpdateGeometry(brep);
         } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
-          mem = mem.UpdateGeometry(mesh);
+          mem.UpdateGeometry(mesh);
         } else {
           this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
           return;
@@ -166,14 +166,14 @@ namespace GsaGH.Components {
       }
 
       if (Params.Input[4].Sources.Count > 0) {
-        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
+        mem.ApiMember.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
       }
 
       var ghBoolean = new GH_Boolean();
       if (da.GetData(5, ref ghBoolean)) {
         if (GH_Convert.ToBoolean(ghBoolean, out bool mbool, GH_Conversion.Both)) {
-          if (mem.MeshWithOthers != mbool) {
-            mem.MeshWithOthers = mbool;
+          if (mem.ApiMember.IsIntersector != mbool) {
+            mem.ApiMember.IsIntersector = mbool;
           }
         }
       }
@@ -181,28 +181,28 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(6, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          mem.Name = name;
+          mem.ApiMember.Name = name;
         }
       }
 
       var ghGroup = new GH_Integer();
       if (da.GetData(7, ref ghGroup)) {
         if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both)) {
-          mem.Group = grp;
+          mem.ApiMember.Group = grp;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(8, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          mem.Colour = col;
+          mem.ApiMember.Colour = col;
         }
       }
 
       var ghDummy = new GH_Boolean();
       if (da.GetData(9, ref ghDummy)) {
         if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both)) {
-          mem.IsDummy = dum;
+          mem.ApiMember.IsDummy = dum;
         }
       }
 
@@ -211,12 +211,12 @@ namespace GsaGH.Components {
       da.SetData(2, mem.SolidMesh);
       da.SetData(3, new GsaProperty3dGoo(mem.Prop3d));
       da.SetData(4,
-        new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
-      da.SetData(5, mem.MeshWithOthers);
-      da.SetData(6, mem.Name);
-      da.SetData(7, mem.Group);
-      da.SetData(8, mem.Colour);
-      da.SetData(9, mem.IsDummy);
+        new GH_UnitNumber(new Length(mem.ApiMember.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
+      da.SetData(5, mem.ApiMember.IsIntersector);
+      da.SetData(6, mem.ApiMember.Name);
+      da.SetData(7, mem.ApiMember.Group);
+      da.SetData(8, mem.ApiMember.Colour);
+      da.SetData(9, mem.ApiMember.IsDummy);
       da.SetData(10, mem.ApiMember.Topology);
     }
 

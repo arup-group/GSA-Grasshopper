@@ -115,13 +115,13 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement1dGoo elem1d = Element1d(ln, section);
 
       elem1d.Value.Offset = new GsaOffset(12, 15, 17, 19, LengthUnit.Centimeter);
-      elem1d.Value.Colour = Color.Red;
-      elem1d.Value.Group = 4;
-      elem1d.Value.Name = "name Name Name";
+      elem1d.Value.ApiElement.Colour = Color.Red;
+      elem1d.Value.ApiElement.Group = 4;
+      elem1d.Value.ApiElement.Name = "name Name Name";
       elem1d.Value.OrientationAngle = new Angle(45, AngleUnit.Degree);
       elem1d.Value.ReleaseEnd = new GsaBool6(true, true, true, false, false, true);
       elem1d.Value.ReleaseStart = new GsaBool6(false, false, false, false, false, false);
-      elem1d.Value.Type = ElementType.BEAM;
+      elem1d.Value.ApiElement.Type = ElementType.BEAM;
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement1dGoo>() {

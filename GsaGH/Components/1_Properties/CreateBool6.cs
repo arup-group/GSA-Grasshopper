@@ -116,7 +116,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
-      GsaBool6 bool6 = uiSet.Duplicate();
+      var bool6 = new GsaBool6(uiSet);
 
       bool input = false;
       if (da.GetData(0, ref input)) {

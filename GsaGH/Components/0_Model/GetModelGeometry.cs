@@ -16,7 +16,6 @@ using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -181,38 +180,46 @@ namespace GsaGH.Components {
       foreach (GsaNodeGoo node in _supportNodes) {
         if (node.Value.Point.IsValid) {
           if (!Attributes.Selected) {
-            if (node.Value.Colour != Color.FromArgb(0, 0, 0)) {
+            if ((Color)node.Value.ApiNode.Colour != Color.FromArgb(0, 0, 0)) {
               args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3,
-                node.Value.Colour);
+                (Color)node.Value.ApiNode.Colour);
             } else {
               Color col = Colours.Node;
               args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3, col);
             }
-
-            if (node.Value._previewSupportSymbol != null) {
-              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol, Colours.SupportSymbol);
-            }
-
-            if (node.Value._previewText != null) {
-              args.Display.Draw3dText(node.Value._previewText, Colours.Support);
-            }
           } else {
             args.Display.DrawPoint(node.Value.Point, PointStyle.RoundControlPoint, 3,
               Colours.NodeSelected);
-            if (node.Value._previewSupportSymbol != null) {
-              args.Display.DrawBrepShaded(node.Value._previewSupportSymbol,
-                Colours.SupportSymbolSelected);
-            }
-
-            if (node.Value._previewText != null) {
-              args.Display.Draw3dText(node.Value._previewText, Colours.NodeSelected);
-            }
           }
 
-          if (!node.Value.IsGlobalAxis()) {
-            args.Display.DrawLine(node.Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
-            args.Display.DrawLine(node.Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
-            args.Display.DrawLine(node.Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+          if (node.Value.SupportPreview != null) {
+            if (!Attributes.Selected) {
+
+              if (node.Value.SupportPreview.SupportSymbol != null) {
+                args.Display.DrawBrepShaded(node.Value.SupportPreview.SupportSymbol, Colours.SupportSymbol);
+              }
+
+              if (node.Value.SupportPreview.Text != null) {
+                args.Display.Draw3dText(node.Value.SupportPreview.Text, Colours.Support);
+              }
+            } else {
+              if (node.Value.SupportPreview.SupportSymbol != null) {
+                args.Display.DrawBrepShaded(node.Value.SupportPreview.SupportSymbol, Colours.SupportSymbolSelected);
+              }
+
+              if (node.Value.SupportPreview.Text != null) {
+                args.Display.Draw3dText(node.Value.SupportPreview.Text, Colours.NodeSelected);
+              }
+            }
+
+            if (node.Value.SupportPreview.Xaxis != null) {
+              args.Display.DrawLine(node.Value.SupportPreview.Xaxis, 
+                Color.FromArgb(255, 244, 96, 96), 1);
+              args.Display.DrawLine(node.Value.SupportPreview.Yaxis, 
+                Color.FromArgb(255, 96, 244, 96), 1);
+              args.Display.DrawLine(node.Value.SupportPreview.Zaxis, 
+                Color.FromArgb(255, 96, 96, 234), 1);
+            }
           }
         }
       }
@@ -633,7 +640,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement2dGoo>();
           foreach (GsaElement2dGoo element in results.Elem2ds) {
-            tree.Add(element, new GH_Path(element.Value.Prop2ds.First().Id));
+            tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
           }
 
           data.SetDataTree(2, tree);
@@ -695,7 +702,7 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement3dGoo>();
           foreach (GsaElement3dGoo element in results.Elem3ds) {
-            tree.Add(element, new GH_Path(element.Value.PropertyIDs.First()));
+            tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
           }
 
           data.SetDataTree(3, tree);

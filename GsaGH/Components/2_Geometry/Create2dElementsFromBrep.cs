@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -16,8 +17,9 @@ using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -39,7 +41,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
@@ -171,13 +173,13 @@ namespace GsaGH.Components {
       }
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      var pts = new List<Point3d>();
+      var pts = new Point3dList();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper ghObjectWrapper in ghTypes) {
           var pt = new Point3d();
           if (ghObjectWrapper.Value is GsaNodeGoo nodeGoo) {
-            nodes.Add(nodeGoo.Value.Clone());
+            nodes.Add(new GsaNode(nodeGoo.Value));
           } else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
           } else {
@@ -199,23 +201,23 @@ namespace GsaGH.Components {
           Curve crv = null;
           switch (ghType.Value) {
             case GsaElement1dGoo element1DGoo: {
-              elem1ds.Add(element1DGoo.Value.Clone());
-              break;
-            }
-            case GsaMember1dGoo member1DGoo: {
-              mem1ds.Add(member1DGoo.Value.Clone());
-              break;
-            }
-            default: {
-              if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
-                crvs.Add(crv.DuplicateCurve());
-              } else {
-                this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
-                  + $"{ghType.GetTypeName()} to curve or 1D Member");
+                elem1ds.Add(new GsaElement1d(element1DGoo.Value));
+                break;
               }
+            case GsaMember1dGoo member1DGoo: {
+                mem1ds.Add(new GsaMember1d(member1DGoo.Value));
+                break;
+              }
+            default: {
+                if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
+                  crvs.Add(crv.DuplicateCurve());
+                } else {
+                  this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
+                    + $"{ghType.GetTypeName()} to curve or 1D Member");
+                }
 
-              break;
-            }
+                break;
+              }
           }
         }
       }
@@ -223,7 +225,7 @@ namespace GsaGH.Components {
       var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
 
       Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
-        = GsaElement2d.GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
+        = GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
           meshSize.As(_lengthUnit), _lengthUnit, _tolerance);
       GsaElement2d elem2d = tuple.Item1;
 
@@ -251,16 +253,15 @@ namespace GsaGH.Components {
       }
 
       elem2d.Prop2ds = prop2Ds;
-      elem2d.UpdatePreview();
 
-      da.SetData(0, new GsaElement2dGoo(elem2d, false));
+      da.SetData(0, new GsaElement2dGoo(elem2d));
       if (tuple.Item2 != null) {
-        da.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n => new GsaNodeGoo(n, false))));
+        da.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n => new GsaNodeGoo(n))));
       }
 
       if (tuple.Item3 != null) {
         da.SetDataList(2,
-          new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem, false))));
+          new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem))));
       }
 
       this.AddRuntimeRemark(
@@ -299,6 +300,25 @@ namespace GsaGH.Components {
         this.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
       }
+    }
+
+    private Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
+      Brep brep, Point3dList points, List<GsaNode> nodes, List<Curve> curves,
+      List<GsaElement1d> elem1ds, List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit,
+      Length tolerance) {
+      var gsaElement2D = new GsaElement2d();
+      Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple
+        = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
+          unit, tolerance);
+      gsaElement2D.Mesh = tuple.Item1;
+      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
+        = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);
+      gsaElement2D.ApiElements = convertMesh.Item1;
+      gsaElement2D.Topology = convertMesh.Item2;
+      gsaElement2D.TopoInt = convertMesh.Item3;
+      gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
+      return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2,
+        tuple.Item3);
     }
   }
 }

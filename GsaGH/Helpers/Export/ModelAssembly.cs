@@ -6,9 +6,11 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
 
@@ -31,9 +33,10 @@ namespace GsaGH.Helpers.Export {
 
     internal ModelAssembly(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
-
       Model = model.Model;
       Unit = unit;
+      Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(Unit);
+      UiUnits units = Model.UiUnits();
       Nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       Axes = new GsaIntDictionary<Axis>(model.ApiAxis);
       Properties = new Properties(model);
@@ -154,7 +157,7 @@ namespace GsaGH.Helpers.Export {
 
       foreach (GsaList list in lists) {
         switch (list.EntityType) {
-          case Parameters.EntityType.Element:
+          case EntityType.Element:
             if (list._elements == (null, null, null)) {
               continue;
             }
@@ -165,7 +168,7 @@ namespace GsaGH.Helpers.Export {
               list._elements.e3d.Select(x => x.Value).ToList());
             break;
 
-          case Parameters.EntityType.Member:
+          case EntityType.Member:
             if (list._members == (null, null, null)) {
               continue;
             }
@@ -182,6 +185,8 @@ namespace GsaGH.Helpers.Export {
     internal void AssembleNodesElementsMembersAndLists() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
+        GsaModel.SetUserDefaultUnits(Model.UiUnits());
+        Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(Unit);
       }
 
       // Set API Nodes, Elements and Members in model

@@ -23,12 +23,30 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaSectionGoo PreferredCast(object data) {
+      string mes = string.Empty;
+      string defaultText = $"{data.GetTypeName()} does not contain a Section";
       switch (data) {
         case GsaElement1dGoo elem1d:
+          if (elem1d.Value.Section == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaSectionGoo(elem1d.Value.Section);
 
         case GsaMember1dGoo mem1d:
+          if (mem1d.Value.Section == null) {
+            mes = defaultText;
+            break;
+          }
+
           return new GsaSectionGoo(mem1d.Value.Section);
+      }
+
+      if (!string.IsNullOrEmpty(mes)) {
+        mes = "." + Environment.NewLine + mes;
+        this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section" + mes);
+        return new GsaSectionGoo(null);
       }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
@@ -38,7 +56,7 @@ namespace GsaGH.Parameters {
 
       GH_Convert.ToString(data, out string profile, GH_Conversion.Both);
 
-      if (!GsaSection.ValidProfile(profile)) {
+      if (!GsaSection.IsValidProfile(profile)) {
         this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Section." +
           $"{Environment.NewLine}Invalid profile syntax: {profile}");
         return new GsaSectionGoo(null);

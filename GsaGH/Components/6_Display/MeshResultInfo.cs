@@ -9,7 +9,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
-using Rhino.Geometry;
+using Rhino.Collections;
 
 namespace GsaGH.Components {
   public class MeshResultInfo : GH_OasysComponent {
@@ -41,7 +41,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref res);
       da.SetData(0, res.Value);
 
-      var vertices = new List<Point3d>();
+      var vertices = new Point3dList();
       var values = new List<GH_UnitNumber>();
       for (int i = 0; i < res.ResultValues.Count; i++) {
         vertices.AddRange(res.Vertices[i]);

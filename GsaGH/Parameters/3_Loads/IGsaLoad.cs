@@ -1,4 +1,5 @@
 ﻿using System;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -17,7 +18,6 @@ namespace GsaGH.Parameters {
   /// 
   /// </summary>
   public interface IGsaLoad {
-    LoadType LoadType { get; }
     GsaList ReferenceList { get; }
     ReferenceType ReferenceType { get; }
     Guid RefObjectGuid { get; }

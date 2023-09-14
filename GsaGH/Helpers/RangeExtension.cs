@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GsaGH.Helpers.GH {
+namespace GsaGH.Helpers {
   public static class RangeExtension {
     internal static string StringifyRange(this IEnumerable<Range> ranges) {
       var values = new List<string>();
       foreach (Range range in ranges) {
         if (IsEmpty(range)) {
           values.Add(range.Min.ToString());
-        } else if (IsSingle(range)) {
+        }
+        else if (IsSingle(range)) {
           values.Add($"{range.Min} {range.Max}");
-        } else {
+        }
+        else {
           values.Add($"{range.Min} to {range.Max}");
         }
       }
@@ -44,7 +43,8 @@ namespace GsaGH.Helpers.GH {
         bool isConsecutive = e.Current - previous == 1;
         if (isConsecutive) {
           range = new Range(range.Min, e.Current);
-        } else {
+        }
+        else {
           yield return range;
           range = new Range(e.Current, e.Current);
         }

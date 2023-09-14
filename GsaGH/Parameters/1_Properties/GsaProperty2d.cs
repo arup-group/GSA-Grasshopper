@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Helpers.Export;
-using GsaGH.Helpers.GH;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Geometry;
@@ -19,17 +16,18 @@ namespace GsaGH.Parameters {
   /// <para>2D Properties can also be used to create LoadPanels, use the <see cref="Components.Create2dProperty"/> component and select `LoadPanel` from the dropdown list. </para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-2d.html">2D Element Properties</see> to read more.</para>
   /// </summary>
-  public class GsaProperty2d : GsaProperty {
-    public Prop2D ApiProp2d;
-    public Plane LocalAxis;
+  public class GsaProperty2d : Property {
+    public Prop2D ApiProp2d { get; set; }
+    public Plane LocalAxis { get; set; }
 
     public Length AdditionalOffsetZ {
-      get => new Length(ApiProp2d.AdditionalOffsetZ, LengthUnit.Meter);
+      get => ApiProp2d == null ? Length.Zero 
+        : new Length(ApiProp2d.AdditionalOffsetZ, LengthUnit.Meter);
       set => ApiProp2d.AdditionalOffsetZ = value.As(LengthUnit.Meter);
     }
 
     public Length Thickness {
-      get => ConvertDescriptionToLength(ApiProp2d.Description);
+      get => ApiProp2d == null ? Length.Zero : ConvertDescriptionToLength(ApiProp2d.Description);
       set => ApiProp2d.Description = $"{value.Value}({Length.GetAbbreviation(value.Unit)})";
     }
 
@@ -84,6 +82,40 @@ namespace GsaGH.Parameters {
       IsReferencedById = false;
     }
 
+    public Prop2D DuplicateApiObject() {
+      var prop = new Prop2D {
+        MaterialAnalysisProperty = ApiProp2d.MaterialAnalysisProperty,
+        MaterialGradeProperty = ApiProp2d.MaterialGradeProperty,
+        MaterialType = ApiProp2d.MaterialType,
+        Name = ApiProp2d.Name,
+        Description = ApiProp2d.Description,
+        Type = ApiProp2d.Type,
+        AxisProperty = ApiProp2d.AxisProperty,
+        ReferenceSurface = ApiProp2d.ReferenceSurface,
+        AdditionalOffsetZ = ApiProp2d.AdditionalOffsetZ,
+      };
+
+      if (ApiProp2d.Type == Property2D_Type.LOAD) {
+        prop.SupportType = ApiProp2d.SupportType;
+        if (ApiProp2d.SupportType != SupportType.Auto) {
+          prop.ReferenceEdge = ApiProp2d.ReferenceEdge;
+        }
+      }
+
+      prop.PropertyModifier.AdditionalMass = ApiProp2d.PropertyModifier.AdditionalMass;
+      prop.PropertyModifier.Bending = ApiProp2d.PropertyModifier.Bending;
+      prop.PropertyModifier.InPlane = ApiProp2d.PropertyModifier.InPlane;
+      prop.PropertyModifier.Shear = ApiProp2d.PropertyModifier.Shear;
+      prop.PropertyModifier.Volume = ApiProp2d.PropertyModifier.Volume;
+
+      // workaround to handle that System.Drawing.Color is non-nullable type
+      if ((Color)ApiProp2d.Colour != Color.FromArgb(0, 0, 0)) {
+        prop.Colour = ApiProp2d.Colour;
+      }
+
+      return prop;
+    }
+
     internal void SetPlaneFromAxis(Axis axis) {
       LocalAxis = new Plane(new Point3d(axis.Origin.X, axis.Origin.Y, axis.Origin.Z),
             new Vector3d(axis.XVector.X, axis.XVector.Y, axis.XVector.Z),
@@ -120,60 +152,26 @@ namespace GsaGH.Parameters {
       if (ApiProp2d.Type != Property2D_Type.LOAD) {
         string mat = Material != null ? MaterialType
         : ApiProp2d.MaterialType.ToString().ToPascalCase();
-        return string.Join(" ", pa, type, desc, mat).Trim();
+        return string.Join(" ", pa, type, desc, mat).TrimSpaces();
       }
       string supportType = ApiProp2d.SupportType.ToString().ToSentenceCase();
       string referenceEdge =
         ApiProp2d.SupportType != SupportType.Auto && ApiProp2d.SupportType != SupportType.AllEdges
         ? $"RefEdge:{ApiProp2d.ReferenceEdge}" : string.Empty;
-      return string.Join(" ", pa, type, supportType, referenceEdge, desc).Trim();
+      return string.Join(" ", pa, type, supportType, referenceEdge, desc).TrimSpaces();
     }
 
     internal static Property2D_Type PropTypeFromString(string type) {
       try {
         return Mappings.GetProperty2D_Type(type);
       } catch (ArgumentException) {
-        type = type.Trim().Replace(" ", "_").ToUpper();
+        type = type.TrimSpaces().Replace(" ", "_").ToUpper();
         type = type.Replace("PLANE", "PL");
         type = type.Replace("NUMBER", "NUM");
         type = type.Replace("AXIS_SYMMETRIC", "AXISYMMETRIC");
         type = type.Replace("LOAD_PANEL", "LOAD");
         return (Property2D_Type)Enum.Parse(typeof(Property2D_Type), type);
       }
-    }
-
-    private Prop2D DuplicateApiObject() {
-      var prop = new Prop2D {
-        MaterialAnalysisProperty = ApiProp2d.MaterialAnalysisProperty,
-        MaterialGradeProperty = ApiProp2d.MaterialGradeProperty,
-        MaterialType = ApiProp2d.MaterialType,
-        Name = ApiProp2d.Name,
-        Description = ApiProp2d.Description,
-        Type = ApiProp2d.Type,
-        AxisProperty = ApiProp2d.AxisProperty,
-        ReferenceSurface = ApiProp2d.ReferenceSurface,
-        AdditionalOffsetZ = ApiProp2d.AdditionalOffsetZ,
-      };
-
-      if (ApiProp2d.Type == Property2D_Type.LOAD) {
-        prop.SupportType = ApiProp2d.SupportType;
-        if (ApiProp2d.SupportType != SupportType.Auto) {
-          prop.ReferenceEdge = ApiProp2d.ReferenceEdge;
-        }
-      }
-
-      prop.PropertyModifier.AdditionalMass = ApiProp2d.PropertyModifier.AdditionalMass;
-      prop.PropertyModifier.Bending = ApiProp2d.PropertyModifier.Bending;
-      prop.PropertyModifier.InPlane = ApiProp2d.PropertyModifier.InPlane;
-      prop.PropertyModifier.Shear = ApiProp2d.PropertyModifier.Shear;
-      prop.PropertyModifier.Volume = ApiProp2d.PropertyModifier.Volume;
-
-      // workaround to handle that System.Drawing.Color is non-nullable type
-      if ((Color)ApiProp2d.Colour != Color.FromArgb(0, 0, 0)) {
-        prop.Colour = ApiProp2d.Colour;
-      }
-
-      return prop;
     }
 
     private static Length ConvertDescriptionToLength(string description) {

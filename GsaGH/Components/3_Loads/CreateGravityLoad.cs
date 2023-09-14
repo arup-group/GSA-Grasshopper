@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -61,7 +62,7 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(1, ref ghTyp)) {
-        gravityLoad.GravityLoad.EntityList = string.Empty;
+        gravityLoad.ApiLoad.EntityList = string.Empty;
         if (ghTyp.Value is GsaElement1dGoo goo) {
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Element;
@@ -126,20 +127,20 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                gravityLoad.GravityLoad.EntityList = elemList;
+                gravityLoad.ApiLoad.EntityList = elemList;
               }
 
               break;
             }
         }
       } else {
-        gravityLoad.GravityLoad.EntityList = "All";
+        gravityLoad.ApiLoad.EntityList = "All";
       }
 
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          gravityLoad.GravityLoad.Name = name;
+          gravityLoad.ApiLoad.Name = name;
         }
       }
 
@@ -160,7 +161,7 @@ namespace GsaGH.Components {
           "Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
       }
 
-      gravityLoad.GravityLoad.Factor = factor;
+      gravityLoad.ApiLoad.Factor = factor;
 
       da.SetData(0, new GsaLoadGoo(gravityLoad));
     }

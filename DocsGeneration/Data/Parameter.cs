@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using DocsGeneration.Data.Helpers;
 using OasysUnits;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DocsGeneration.Data {
   public class Parameter {

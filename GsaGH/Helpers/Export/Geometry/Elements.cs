@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
+using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -16,21 +17,18 @@ namespace GsaGH.Helpers.Export {
       LengthUnit unit,
       ref Properties apiProperties) {
       LineCurve line = element1d.Line;
-      Element apiElement = element1d.GetApiElementClone();
-
+      Element apiElement = element1d.DuplicateApiObject();
       var topo = new List<int> {
         Nodes.AddNode(ref apiNodes, line.PointAtStart, unit),
         Nodes.AddNode(ref apiNodes, line.PointAtEnd, unit),
       };
       apiElement.Topology = new ReadOnlyCollection<int>(topo);
-
       if (element1d.OrientationNode != null) {
         apiElement.OrientationNode
           = Nodes.AddNode(ref apiNodes, element1d.OrientationNode.Point, unit);
       }
 
       apiElement.Property = Sections.ConvertSection(element1d.Section, ref apiProperties);
-
       AddElement(element1d.Id, element1d.Guid, apiElement, true, ref apiElements);
     }
 
@@ -57,10 +55,10 @@ namespace GsaGH.Helpers.Export {
       LengthUnit unit,
       ref Properties apiProperties,
       ref GsaIntDictionary<Axis> existingAxes) {
-      List<Point3d> meshVerticies = element2d.Topology;
-
-      for (int i = 0; i < element2d.ApiElements.Count; i++) {
-        Element apiMeshElement = element2d.GetApiObjectClone(i);
+      Point3dList meshVerticies = element2d.Topology;
+      List<Element> apiElems = element2d.DuplicateApiObjects();
+      for (int i = 0; i < apiElems.Count; i++) {
+        Element apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         var topo = new List<int>();
@@ -69,12 +67,13 @@ namespace GsaGH.Helpers.Export {
         }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
-
-        GsaProperty2d prop = (i > element2d.Prop2ds.Count - 1) ? element2d.Prop2ds.Last() :
+        if (!element2d.Prop2ds.IsNullOrEmpty()) {
+          GsaProperty2d prop = (i > element2d.Prop2ds.Count - 1) ? element2d.Prop2ds.Last() :
           element2d.Prop2ds[i];
-        apiMeshElement.Property = Prop2ds.ConvertProp2d(
-          prop, ref apiProperties, ref existingAxes, unit);
-
+          apiMeshElement.Property = Prop2ds.ConvertProp2d(
+            prop, ref apiProperties, ref existingAxes, unit);
+        }
+        
         AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false, ref apiElements);
       }
     }
@@ -105,23 +104,23 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> apiNodes, 
       LengthUnit unit,
       ref Properties apiProperties) {
-      List<Point3d> meshVerticies = element3d.Topology;
-
-      for (int i = 0; i < element3d.ApiElements.Count; i++) {
-        Element apiMeshElement = element3d.GetApiObjectClone(i);
+      Point3dList meshVerticies = element3d.Topology;
+      List<Element> apiElems = element3d.DuplicateApiObjects();
+      for (int i = 0; i < apiElems.Count; i++) {
+        Element apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element3d.TopoInt[i];
-
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
           topo.Add(Nodes.AddNode(ref apiNodes, meshVerticies[mesh], unit));
         }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
-
-        GsaProperty3d prop = (i > element3d.Prop3ds.Count - 1) ? element3d.Prop3ds.Last() :
+        if (!element3d.Prop3ds.IsNullOrEmpty()) {
+          GsaProperty3d prop = (i > element3d.Prop3ds.Count - 1) ? element3d.Prop3ds.Last() :
           element3d.Prop3ds[i];
-        apiMeshElement.Property = Prop3ds.ConvertProp3d(prop, ref apiProperties);
-
+          apiMeshElement.Property = Prop3ds.ConvertProp3d(prop, ref apiProperties);
+        }
+        
         AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false, ref apiElements);
       }
     }

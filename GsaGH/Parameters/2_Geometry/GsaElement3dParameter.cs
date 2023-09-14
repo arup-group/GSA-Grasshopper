@@ -32,11 +32,22 @@ namespace GsaGH.Parameters {
 
     protected override GsaElement3dGoo PreferredCast(object data) {
       var mesh = new Mesh();
+      string mes = string.Empty;
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
-        return new GsaElement3dGoo(new GsaElement3d(mesh));
+        if (mesh.IsClosed) {
+          var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+          if (ngons.Count != ngons.Select(f => f.FaceCount).Sum()) {
+            return new GsaElement3dGoo(new GsaElement3d(mesh));
+          }
+        }
+        mes = "Mesh must be a closed (solid) Ngon Mesh";
       }
 
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element3d");
+      if (!string.IsNullOrEmpty(mes)) {
+        mes = "." + Environment.NewLine + mes;
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element3d" + mes);
       return new GsaElement3dGoo(null);
     }
 

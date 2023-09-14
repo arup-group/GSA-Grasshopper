@@ -1,8 +1,8 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
-using LoadCase = GsaGH.Parameters.Enums.LoadCase;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -11,14 +11,13 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest() {
       var load = new GsaGravityLoad();
 
-      Assert.Equal(LoadType.Gravity, load.LoadType);
-      Assert.Equal(0, load.GravityLoad.Factor.X);
-      Assert.Equal(0, load.GravityLoad.Factor.Y);
-      Assert.Equal(-1, load.GravityLoad.Factor.Z);
-      Assert.Equal(1, load.GravityLoad.Case);
-      Assert.Equal("all", load.GravityLoad.EntityList);
-      Assert.Equal(GsaAPI.EntityType.Element, load.GravityLoad.EntityType);
-      Assert.Equal("all", load.GravityLoad.Nodes);
+      Assert.Equal(0, load.ApiLoad.Factor.X);
+      Assert.Equal(0, load.ApiLoad.Factor.Y);
+      Assert.Equal(-1, load.ApiLoad.Factor.Z);
+      Assert.Equal(1, load.ApiLoad.Case);
+      Assert.Equal("all", load.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, load.ApiLoad.EntityType);
+      Assert.Equal("all", load.ApiLoad.Nodes);
     }
 
     [Fact]
@@ -32,7 +31,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaGravityLoad {
-        GravityLoad = {
+        ApiLoad = {
           Name = "name",
         },
       };
@@ -40,26 +39,25 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.GravityLoad.Factor = new Vector3() {
+      duplicate.ApiLoad.Factor = new Vector3() {
         X = 1,
         Y = 1,
         Z = 1,
       };
-      duplicate.GravityLoad.Case = 3;
-      duplicate.GravityLoad.EntityList = "";
-      duplicate.GravityLoad.EntityType = GsaAPI.EntityType.Member;
-      duplicate.GravityLoad.Nodes = "";
-      duplicate.GravityLoad.Name = "";
+      duplicate.ApiLoad.Case = 3;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.EntityType = GsaAPI.EntityType.Member;
+      duplicate.ApiLoad.Nodes = "";
+      duplicate.ApiLoad.Name = "";
 
-      Assert.Equal(LoadType.Gravity, original.LoadType);
-      Assert.Equal(0, original.GravityLoad.Factor.X);
-      Assert.Equal(0, original.GravityLoad.Factor.Y);
-      Assert.Equal(-1, original.GravityLoad.Factor.Z);
-      Assert.Equal(1, original.GravityLoad.Case);
-      Assert.Equal("all", original.GravityLoad.EntityList);
-      Assert.Equal(GsaAPI.EntityType.Element, original.GravityLoad.EntityType);
-      Assert.Equal("all", original.GravityLoad.Nodes);
-      Assert.Equal("name", original.GravityLoad.Name);
+      Assert.Equal(0, original.ApiLoad.Factor.X);
+      Assert.Equal(0, original.ApiLoad.Factor.Y);
+      Assert.Equal(-1, original.ApiLoad.Factor.Z);
+      Assert.Equal(1, original.ApiLoad.Case);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("all", original.ApiLoad.Nodes);
+      Assert.Equal("name", original.ApiLoad.Name);
     }
 
     [Fact]
@@ -74,7 +72,8 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaGravityLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, LoadCase.LoadCaseType.Dead, "DeadLoad");
+      duplicate.LoadCase = new GsaLoadCase(1, GsaGH.Parameters.LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -95,7 +96,7 @@ namespace GsaGH.Components {
 
       switch (ghTyp.Value) {
         case GsaMember1dGoo member1DGoo:
-          mem1d = member1DGoo.Value.Duplicate();
+          mem1d = member1DGoo.Value;
           if (mem1d == null) {
             this.AddRuntimeError("Input is null");
             return;
@@ -109,7 +110,7 @@ namespace GsaGH.Components {
 
           break;
         case GsaElement1dGoo element1DGoo:
-          elem1d = element1DGoo.Value.Duplicate();
+          elem1d = element1DGoo.Value;
           if (elem1d == null) {
             this.AddRuntimeError("Input is null");
             return;
@@ -124,7 +125,7 @@ namespace GsaGH.Components {
           break;
 
         case GsaMember2dGoo member2DGoo:
-          mem2d = member2DGoo.Value.Duplicate();
+          mem2d = member2DGoo.Value;
           if (mem2d == null) {
             this.AddRuntimeError("Input is null");
             return;
@@ -134,7 +135,7 @@ namespace GsaGH.Components {
           break;
 
         case GsaElement2dGoo element2DGoo:
-          elem2d = element2DGoo.Value.Duplicate();
+          elem2d = element2DGoo.Value;
           if (elem2d == null) {
             this.AddRuntimeError("Input is null");
             return;
@@ -459,7 +460,7 @@ namespace GsaGH.Components {
               offsets.Add(alignmentOffset.Duplicate());
             }
 
-            elem2d.Offsets = offsets;
+            elem2d.ApiElements.SetMembers(offsets);
             da.SetData(0, new GsaElement2dGoo(elem2d));
             da.SetDataList(1,
               new List<GsaOffsetGoo>(offsets.Select(x => new GsaOffsetGoo(x)).ToList()));

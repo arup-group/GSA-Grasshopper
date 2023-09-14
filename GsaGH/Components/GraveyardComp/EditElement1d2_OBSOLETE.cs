@@ -131,7 +131,7 @@ namespace GsaGH.Components {
 
       GsaElement1dGoo element1dGoo = null;
       if (da.GetData(0, ref element1dGoo)) {
-        elem = element1dGoo.Value.Clone();
+        elem = new GsaElement1d(element1dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -158,17 +158,17 @@ namespace GsaGH.Components {
       var ghGroup = new GH_Integer();
       if (da.GetData(4, ref ghGroup)) {
         if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both)) {
-          elem.Group = grp;
+          elem.ApiElement.Group = grp;
         }
       }
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          elem.Type = (ElementType)typeInt;
+          elem.ApiElement.Type = (ElementType)typeInt;
         } else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
           try {
-            elem.Type = Mappings.GetElementType(typestring);
+            elem.ApiElement.Type = Mappings.GetElementType(typestring);
           } catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Element Type");
           }
@@ -199,27 +199,27 @@ namespace GsaGH.Components {
 
       GsaNodeGoo nodeGoo = null;
       if (da.GetData(10, ref nodeGoo)) {
-        elem.OrientationNode = nodeGoo.Value.Duplicate();
+        elem.OrientationNode = nodeGoo.Value;
       }
 
       var ghName = new GH_String();
       if (da.GetData(11, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          elem.Name = name;
+          elem.ApiElement.Name = name;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(12, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          elem.Colour = col;
+          elem.ApiElement.Colour = col;
         }
       }
 
       var ghDummy = new GH_Boolean();
       if (da.GetData(13, ref ghDummy)) {
         if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both)) {
-          elem.IsDummy = dum;
+          elem.ApiElement.IsDummy = dum;
         }
       }
 
@@ -227,19 +227,20 @@ namespace GsaGH.Components {
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
-      da.SetData(4, elem.Group);
-      da.SetData(5, Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+      da.SetData(4, elem.ApiElement.Group);
+      da.SetData(5, 
+        Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
       da.SetData(9, elem.OrientationAngle.As(AngleUnit.Degree));
       da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
-      da.SetData(11, elem.Name);
-      da.SetData(12, elem.Colour);
-      da.SetData(13, elem.IsDummy);
+      da.SetData(11, elem.ApiElement.Name);
+      da.SetData(12, elem.ApiElement.Colour);
+      da.SetData(13, elem.ApiElement.IsDummy);
 
       try {
-        da.SetData(14, elem.ParentMember);
+        da.SetData(14, elem.ApiElement.ParentMember.Member);
       } catch (Exception) {
         // ignored
       }

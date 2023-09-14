@@ -19,9 +19,9 @@ namespace GsaGH.Parameters {
 
       Id = id;
     }
-    public GsaLoadCase(int id, Enums.LoadCase.LoadCaseType type, string name) : this(id) {
+    public GsaLoadCase(int id, LoadCaseType type, string name) : this(id) {
       LoadCase = new LoadCase() {
-        CaseType = (LoadCaseType)Enum.Parse(typeof(LoadCaseType), type.ToString()),
+        CaseType = (GsaAPI.LoadCaseType)Enum.Parse(typeof(GsaAPI.LoadCaseType), type.ToString()),
         Name = name
       };
     }

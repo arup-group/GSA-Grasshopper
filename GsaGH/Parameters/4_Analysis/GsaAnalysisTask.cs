@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
@@ -70,8 +71,8 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return (Id > 0 ? "ID:" + Id : string.Empty + " '" + Name + "' " + Type.ToString().Replace("_", " "))
-       .Trim().Replace("  ", " ");
+      return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{Name}' {Type}".Replace("_", " ")
+        .TrimSpaces();
     }
 
     internal void CreateDeafultCases(GsaModel gsaModel) {

@@ -48,7 +48,7 @@ namespace GsaGH.Helpers.Export {
       foreach (KeyValuePair<int, GsaSectionGoo> section in model.Properties.Sections) {
         sections.SetValue(section.Key, section.Value.Value.Guid, section.Value.Value.ApiSection);
         if (section.Value.Value.Modifier != null && section.Value.Value.Modifier.IsModified) {
-          modifiers.SetValue(section.Key, section.Value.Value.Modifier._sectionModifier);
+          modifiers.SetValue(section.Key, section.Value.Value.Modifier.ApiSectionModifier);
         }
       }
 

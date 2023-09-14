@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
       att.ColorSource = ObjectColorSource.ColorFromObject;
       foreach (GsaMember3dGoo goo in m_data.AllData(true).Cast<GsaMember3dGoo>()) {
         ObjectAttributes objAtt = att.Duplicate();
-        objAtt.ObjectColor = goo.Value.Colour;
+        objAtt.ObjectColor = (Color)goo.Value.ApiMember.Colour;
         gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.SolidMesh), objAtt, doc);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);

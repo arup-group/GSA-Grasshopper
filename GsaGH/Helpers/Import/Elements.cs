@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
 using Rhino.Geometry;
-using static System.Collections.Specialized.BitVector32;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {
@@ -282,10 +281,7 @@ namespace GsaGH.Helpers.Import {
       Parallel.ForEach(elements, item => {
         GsaSection section = model.Properties.GetSection(item.Value);
         var elem = new GsaElement1d(
-          item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit) {
-          //Section3dPreview = GsaSection3dPreview.CreateFromApi(
-          //  model, Layer.Analysis, DimensionType.OneDimensional, item.Key.ToString())
-        };
+          item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
         elem1dGoos.Add(new GsaElement1dGoo(elem));
       });
       return elem1dGoos;
@@ -326,7 +322,10 @@ namespace GsaGH.Helpers.Import {
           }
 
           mList[elementId] = faceMesh;
-          prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
+          GsaProperty2d prop2d = model.Properties.GetProp2d(elems[elementId]);
+          if (prop2d != null) {
+            prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
+          }
         });
 
         // create one large mesh from single mesh face using
@@ -402,7 +401,10 @@ namespace GsaGH.Helpers.Import {
 
           mList[elementId] = ngonClosedMesh;
 
-          prop3Ds.TryAdd(elementId, model.Properties.GetProp3d(elems[elementId]));
+          GsaProperty3d prop3d = model.Properties.GetProp3d(elems[elementId]);
+          if (prop3d != null) {
+            prop3Ds.TryAdd(elementId, prop3d);
+          }
         });
 
         // create one large mesh from single mesh face using
@@ -418,10 +420,13 @@ namespace GsaGH.Helpers.Import {
           foreach (int key in elems.Keys) {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element apiElem);
+            var apiElems = new ConcurrentDictionary<int, Element>();
+            apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
             prop3Ds.TryGetValue(key, out GsaProperty3d prop);
-
-            var singleelement3D = new GsaElement3d(apiElem, key, mesh, prop);
+            var propList = new ConcurrentDictionary<int, GsaProperty3d>();
+            propList.TryAdd(key, prop);
+            var singleelement3D = new GsaElement3d(apiElems, mesh, propList);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
         } else {

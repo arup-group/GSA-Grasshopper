@@ -37,9 +37,9 @@ namespace GsaGHTests.Components.Geometry {
       Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true), output.Value.Restraint);
       Assert.Equal(0, output.Value.Id);
       Duplicates.AreEqual(Plane.WorldYZ, output.Value.LocalAxis);
-      Assert.Equal(0, output.Value.DamperProperty);
-      Assert.Equal(0, output.Value.MassProperty);
-      Assert.Equal(0, output.Value.SpringProperty);
+      Assert.Equal(0, output.Value.ApiNode.DamperProperty);
+      Assert.Equal(0, output.Value.ApiNode.MassProperty);
+      Assert.Equal(0, output.Value.ApiNode.SpringProperty);
     }
 
     [Fact]
@@ -57,9 +57,9 @@ namespace GsaGHTests.Components.Geometry {
       Duplicates.AreEqual(new GsaBool6(), output.Value.Restraint);
       Assert.Equal(0, output.Value.Id);
       Duplicates.AreEqual(Plane.WorldXY, output.Value.LocalAxis);
-      Assert.Equal(0, output.Value.DamperProperty);
-      Assert.Equal(0, output.Value.MassProperty);
-      Assert.Equal(0, output.Value.SpringProperty);
+      Assert.Equal(0, output.Value.ApiNode.DamperProperty);
+      Assert.Equal(0, output.Value.ApiNode.MassProperty);
+      Assert.Equal(0, output.Value.ApiNode.SpringProperty);
     }
 
     [Theory]

@@ -5,50 +5,53 @@ namespace GsaGH.Parameters {
   /// A Bool6 contains six booleans to set releases in <see cref="GsaElement1d"/>s and <see cref="GsaMember1d"/>s, or restraints in <see cref="GsaNode"/>s.
   /// </summary>
   public class GsaBool6 {
+    public Bool6 ApiBool6 { get; set; }
+
     public bool X {
-      get => _bool6.X;
-      set => _bool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
+      get => ApiBool6.X;
+      set => ApiBool6 = new Bool6(value, Y, Z, Xx, Yy, Zz);
     }
     public bool Xx {
-      get => _bool6.XX;
-      set => _bool6 = new Bool6(X, Y, Z, value, Yy, Zz);
+      get => ApiBool6.XX;
+      set => ApiBool6 = new Bool6(X, Y, Z, value, Yy, Zz);
     }
     public bool Y {
-      get => _bool6.Y;
-      set => _bool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
+      get => ApiBool6.Y;
+      set => ApiBool6 = new Bool6(X, value, Z, Xx, Yy, Zz);
     }
     public bool Yy {
-      get => _bool6.YY;
-      set => _bool6 = new Bool6(X, Y, Z, Xx, value, Zz);
+      get => ApiBool6.YY;
+      set => ApiBool6 = new Bool6(X, Y, Z, Xx, value, Zz);
     }
     public bool Z {
-      get => _bool6.Z;
-      set => _bool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
+      get => ApiBool6.Z;
+      set => ApiBool6 = new Bool6(X, Y, value, Xx, Yy, Zz);
     }
     public bool Zz {
-      get => _bool6.ZZ;
-      set => _bool6 = new Bool6(X, Y, Z, Xx, Yy, value);
+      get => ApiBool6.ZZ;
+      set => ApiBool6 = new Bool6(X, Y, Z, Xx, Yy, value);
     }
-    internal Bool6 _bool6;
 
     public GsaBool6() {
-      _bool6 = new Bool6(false, false, false, false, false, false);
+      ApiBool6 = new Bool6(false, false, false, false, false, false);
     }
 
     public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
-      _bool6 = new Bool6(x, y, z, xx, yy, zz);
+      ApiBool6 = new Bool6(x, y, z, xx, yy, zz);
     }
-
+    
+    public GsaBool6(GsaBool6 other) {
+      ApiBool6 = new Bool6(false, false, false, false, false, false);
+      X = other.X; 
+      Y = other.Y; 
+      Z = other.Z;
+      Xx = other.Xx;
+      Yy = other.Yy;
+      Zz = other.Zz; 
+    }
+    
     internal GsaBool6(Bool6 bool6) {
-      _bool6 = bool6;
-    }
-
-    public GsaBool6 Duplicate() {
-      // create shallow copy
-      var dup = new GsaBool6 {
-        _bool6 = _bool6,
-      };
-      return dup;
+      ApiBool6 = bool6;
     }
 
     public override string ToString() {

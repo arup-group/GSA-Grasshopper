@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -13,17 +11,19 @@ namespace GsaGH.Parameters {
   /// <para>Use the <see cref="Components.CreateProfile"/> component to create Catalogue and custom profiles.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-sect-lib.html">Sections</see> to read more.</para>
   /// </summary>
-  public class GsaSection : GsaProperty {
-    public Section ApiSection;
-    public GsaSectionModifier Modifier;
+  public class GsaSection : Property {
+    public Section ApiSection { get; set; }
+    public GsaSectionModifier Modifier { get; set; }
     public GsaSectionProperties SectionProperties 
       => new GsaSectionProperties(ApiSection.Properties());
     public Length AdditionalOffsetY {
-      get => new Length(ApiSection.AdditionalOffsetY, LengthUnit.Meter);
+      get => ApiSection == null ? Length.Zero 
+        : new Length(ApiSection.AdditionalOffsetY, LengthUnit.Meter);
       set => ApiSection.AdditionalOffsetY = value.Meters;
     }
     public Length AdditionalOffsetZ {
-      get => new Length(ApiSection.AdditionalOffsetZ, LengthUnit.Meter);
+      get => ApiSection == null ? Length.Zero 
+        : new Length(ApiSection.AdditionalOffsetZ, LengthUnit.Meter);
       set => ApiSection.AdditionalOffsetZ = value.Meters;
     }
 
@@ -77,28 +77,7 @@ namespace GsaGH.Parameters {
       IsReferencedById = false;
     }
 
-    public override string ToString() {
-      string pb = Id > 0 ? $"PB{Id}" : string.Empty;
-      if (IsReferencedById) {
-        return (Id > 0) ? $"{pb} (referenced)" : string.Empty; ;
-      }
-
-      string prof = ApiSection.Profile.Replace("%", " ");
-      string mat = Material != null ? MaterialType 
-        : ApiSection.MaterialType.ToString().ToPascalCase();
-      string mod = (Modifier != null && Modifier.IsModified) 
-        ? "modified" : string.Empty;
-      return string.Join(" ", pb, prof, mat, mod).Trim().Replace("  ", " ");
-    }
-
-    internal static bool ValidProfile(string profile) {
-      var test = new Section {
-        Profile = profile,
-      };
-      return test.Properties().Area != 0;
-    }
-
-    private Section DuplicateApiObject() {
+    public Section DuplicateApiObject() {
       var sec = new Section() {
         MaterialAnalysisProperty = ApiSection.MaterialAnalysisProperty,
         MaterialGradeProperty = ApiSection.MaterialGradeProperty,
@@ -116,6 +95,26 @@ namespace GsaGH.Parameters {
       }
 
       return sec;
+    }
+
+    public override string ToString() {
+      string pb = Id > 0 ? $"PB{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pb} (referenced)" : string.Empty;
+      }
+
+      string prof = ApiSection.Profile.Replace("%", " ");
+      string mat = Material != null ? MaterialType 
+        : ApiSection.MaterialType.ToString().ToPascalCase();
+      string mod = (Modifier != null && Modifier.IsModified) ? "modified" : string.Empty;
+      return string.Join(" ", pb, prof, mat, mod).TrimSpaces();
+    }
+
+    internal static bool IsValidProfile(string profile) {
+      var test = new Section {
+        Profile = profile,
+      };
+      return test.Properties().Area != 0;
     }
   }
 }

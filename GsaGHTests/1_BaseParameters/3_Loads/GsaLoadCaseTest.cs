@@ -1,5 +1,4 @@
 ﻿using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using System;
 using Xunit;
 
@@ -24,10 +23,10 @@ namespace GsaGHTests.Parameters {
     }
 
     [Theory]
-    [InlineData(1, LoadCase.LoadCaseType.Dead, "DeadLoad")]
-    [InlineData(2, LoadCase.LoadCaseType.Live, "Live Load")]
-    [InlineData(3, LoadCase.LoadCaseType.Wind, "Wind in X-direction")]
-    public void Constructor2Test(int caseId, LoadCase.LoadCaseType type, string name) {
+    [InlineData(1, LoadCaseType.Dead, "DeadLoad")]
+    [InlineData(2, LoadCaseType.Live, "Live Load")]
+    [InlineData(3, LoadCaseType.Wind, "Wind in X-direction")]
+    public void Constructor2Test(int caseId, LoadCaseType type, string name) {
       var lc = new GsaLoadCase(caseId, type, name);
 
       Assert.Equal(caseId, lc.Id);

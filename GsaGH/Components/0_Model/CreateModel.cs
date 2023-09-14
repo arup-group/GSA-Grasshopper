@@ -8,7 +8,6 @@ using Grasshopper.Kernel;
 using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -206,7 +205,6 @@ namespace GsaGH.Components {
 
       // Merge models
       var model = new GsaModel();
-      model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
@@ -214,7 +212,6 @@ namespace GsaGH.Components {
             models[0].Clone();
         }
       }
-
       // Assemble model
       model.Model = Assembler.AssembleModel(
         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 

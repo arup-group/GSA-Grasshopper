@@ -2,7 +2,6 @@
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

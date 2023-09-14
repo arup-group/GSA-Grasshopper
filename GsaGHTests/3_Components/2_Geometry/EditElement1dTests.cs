@@ -100,7 +100,10 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp,
         new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 8);
       ComponentTestHelper.SetInput(comp, Math.PI, 9);
-      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3), 99)), 10);
+      var node = new GsaNode(new Point3d(1, 2, 3)) {
+        Id = 99
+      };
+      ComponentTestHelper.SetInput(comp, new GsaNodeGoo(node), 10);
       ComponentTestHelper.SetInput(comp, "name", 11);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 12);
       ComponentTestHelper.SetInput(comp, true, 13);

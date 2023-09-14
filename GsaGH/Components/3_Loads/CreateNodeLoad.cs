@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -176,15 +177,15 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.NodeForce:
         case FoldMode.NodeMoment:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadType.NodeLoad;
+          nodeLoad.Type = NodeLoadType.NodeLoad;
           break;
 
         case FoldMode.AppliedDispl:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadType.AppliedDisp;
+          nodeLoad.Type = NodeLoadType.AppliedDisp;
           break;
 
         case FoldMode.Settlement:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadType.Settlement;
+          nodeLoad.Type = NodeLoadType.Settlement;
           break;
       }
 
@@ -214,14 +215,14 @@ namespace GsaGH.Components {
           this.AddRuntimeRemark(
             "Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         } else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both)) {
-          nodeLoad.NodeLoad.Nodes = nodeList;
+          nodeLoad.ApiLoad.Nodes = nodeList;
         }
       }
 
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          nodeLoad.NodeLoad.Name = name;
+          nodeLoad.ApiLoad.Name = name;
         }
       }
 
@@ -256,7 +257,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      nodeLoad.NodeLoad.Direction = direc;
+      nodeLoad.ApiLoad.Direction = direc;
 
       double load = 0;
       if (_mode == FoldMode.NodeForce || _mode == FoldMode.NodeMoment) {
@@ -301,7 +302,7 @@ namespace GsaGH.Components {
         }
       }
 
-      nodeLoad.NodeLoad.Value = load;
+      nodeLoad.ApiLoad.Value = load;
 
       da.SetData(0, new GsaLoadGoo(nodeLoad));
     }

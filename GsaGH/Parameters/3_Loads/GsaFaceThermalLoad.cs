@@ -1,34 +1,34 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Parameters {
   public class GsaFaceThermalLoad : IGsaLoad {
-    public FaceThermalLoad FaceThermalLoad { get; set; }
+    public FaceThermalLoad ApiLoad { get; set; }
     public GsaLoadCase LoadCase { get; set; }
-    public LoadType LoadType => LoadType.FaceThermal;
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
     public Guid RefObjectGuid { get; set; }
     public int CaseId {
-      get => FaceThermalLoad.Case;
-      set => FaceThermalLoad.Case = value;
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
     }
     public string Name {
-      get => FaceThermalLoad.Name;
-      set => FaceThermalLoad.Name = value;
+      get => ApiLoad.Name;
+      set => ApiLoad.Name = value;
     }
     public GsaFaceThermalLoad() {
-      FaceThermalLoad = new FaceThermalLoad ();
+      ApiLoad = new FaceThermalLoad ();
     }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaFaceThermalLoad {
-        FaceThermalLoad = {
-          Case = FaceThermalLoad.Case,
-          EntityList = FaceThermalLoad.EntityList,
-          EntityType = FaceThermalLoad.EntityType,
-          Name = FaceThermalLoad.Name,
-          UniformTemperature = FaceThermalLoad.UniformTemperature
+        ApiLoad = {
+          Case = ApiLoad.Case,
+          EntityList = ApiLoad.EntityList,
+          EntityType = ApiLoad.EntityType,
+          Name = ApiLoad.Name,
+          UniformTemperature = ApiLoad.UniformTemperature
         },
       };
       

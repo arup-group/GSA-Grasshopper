@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -143,13 +144,13 @@ namespace GsaGH.Components {
             }
           case GsaElement2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
-              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Element;
+              faceThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ReferenceType = ReferenceType.Element;
               break;
             }
           case GsaMember2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
-              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Member;
+              faceThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
               faceThermalLoad.ReferenceType = ReferenceType.Member;
               break;
             }
@@ -160,7 +161,7 @@ namespace GsaGH.Components {
                 return;
               }
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
-              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Element;
+              faceThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ReferenceType = ReferenceType.Property;
               this.AddRuntimeRemark(
                 "Load from Material reference created as Element load");
@@ -168,7 +169,7 @@ namespace GsaGH.Components {
             }
           case GsaProperty2dGoo value: {
               faceThermalLoad.RefObjectGuid = value.Value.Guid;
-              faceThermalLoad.FaceThermalLoad.EntityType = GsaAPI.EntityType.Element;
+              faceThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ReferenceType = ReferenceType.Property;
               this.AddRuntimeRemark(
                 "Load from 2D Property reference created as Element load");
@@ -176,7 +177,7 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                faceThermalLoad.FaceThermalLoad.EntityList = elemList;
+                faceThermalLoad.ApiLoad.EntityList = elemList;
               }
 
               break;
@@ -187,7 +188,7 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          faceThermalLoad.FaceThermalLoad.Name = name;
+          faceThermalLoad.ApiLoad.Name = name;
         }
       }
 
@@ -195,7 +196,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            faceThermalLoad.FaceThermalLoad.UniformTemperature = temperature.DegreesCelsius;
+            faceThermalLoad.ApiLoad.UniformTemperature = temperature.DegreesCelsius;
           }
           break;
       }

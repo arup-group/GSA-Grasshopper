@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   /// <summary>
   /// A 3D Property is used by <see cref="GsaElement3d"/> and <see cref="GsaMember3d"/> and simply contains information about <see cref="GsaMaterial"/>.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.</para>
   /// </summary>
-  public class GsaProperty3d : GsaProperty {
-    public Prop3D ApiProp3d;
+  public class GsaProperty3d : Property {
+    public Prop3D ApiProp3d { get; set; }
 
     /// <summary>
     /// Empty constructor instantiating a new API object
@@ -61,18 +59,7 @@ namespace GsaGH.Parameters {
       IsReferencedById = false;
     }
 
-    public override string ToString() {
-      string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
-      if (IsReferencedById) {
-        return (Id > 0) ? $"{pv} (referenced)" : string.Empty; ;
-      }
-
-      string mat = Material != null ? MaterialType
-        : ApiProp3d.MaterialType.ToString().ToPascalCase();
-      return string.Join(" ", pv, mat).Trim();
-    }
-
-    private Prop3D DuplicateApiObject() {
+    public Prop3D DuplicateApiObject() {
       var prop = new Prop3D {
         MaterialAnalysisProperty = ApiProp3d.MaterialAnalysisProperty,
         MaterialGradeProperty = ApiProp3d.MaterialGradeProperty,
@@ -86,6 +73,17 @@ namespace GsaGH.Parameters {
       }
 
       return prop;
+    }
+
+    public override string ToString() {
+      string pv = (Id > 0) ? $"PV{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pv} (referenced)" : string.Empty; ;
+      }
+
+      string mat = Material != null ? MaterialType
+        : ApiProp3d.MaterialType.ToString().ToPascalCase();
+      return string.Join(" ", pv, mat).TrimSpaces();
     }
   }
 }

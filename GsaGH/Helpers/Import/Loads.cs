@@ -7,6 +7,7 @@ using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using NodeLoadType = GsaGH.Parameters.NodeLoadType;
 
 namespace GsaGH.Helpers.Import {
   /// <summary>
@@ -38,11 +39,12 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetBeamLoads(
       ReadOnlyCollection<BeamLoad> beamLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (BeamLoad gsaLoad in beamLoads) {
+      foreach (BeamLoad apiLoad in beamLoads) {
         var load = new GsaBeamLoad {
-          BeamLoad = gsaLoad,
+          ApiLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
-        load.LoadCase = new GsaLoadCase(load.BeamLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -59,11 +61,12 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetBeamThermalLoads(
       ReadOnlyCollection<BeamThermalLoad> beamThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (BeamThermalLoad gsaLoad in beamThermalLoads) {
+      foreach (BeamThermalLoad apiLoad in beamThermalLoads) {
         var load = new GsaBeamThermalLoad {
-          BeamThermalLoad = gsaLoad,
+          ApiLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
-        load.LoadCase = new GsaLoadCase(load.BeamThermalLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -80,11 +83,12 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetFaceLoads(
       ReadOnlyCollection<FaceLoad> faceLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (FaceLoad faceLoad in faceLoads) {
+      foreach (FaceLoad apiLoad in faceLoads) {
         var load = new GsaFaceLoad {
-          FaceLoad = faceLoad,
+          ApiLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
-        load.LoadCase = new GsaLoadCase(load.FaceLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -101,11 +105,12 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetFaceThermalLoads(
       ReadOnlyCollection<FaceThermalLoad> faceThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (FaceThermalLoad faceThermalLoad in faceThermalLoads) {
+      foreach (FaceThermalLoad apiLoad in faceThermalLoads) {
         var load = new GsaFaceThermalLoad {
-          FaceThermalLoad = faceThermalLoad,
+          ApiLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
-        load.LoadCase = new GsaLoadCase(load.FaceThermalLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -122,11 +127,12 @@ namespace GsaGH.Helpers.Import {
     internal static List<GsaLoadGoo> GetGravityLoads(
       ReadOnlyCollection<GravityLoad> gravityLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
       var loads = new List<GsaLoadGoo>();
-      foreach (GravityLoad gload in gravityLoads) {
+      foreach (GravityLoad apiLoad in gravityLoads) {
         var load = new GsaGravityLoad {
-          GravityLoad = gload,
+          ApiLoad = apiLoad,
+          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
         };
-        load.LoadCase = new GsaLoadCase(load.GravityLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -151,7 +157,7 @@ namespace GsaGH.Helpers.Import {
       var loads = new List<GsaLoadGoo>();
       foreach (GridAreaLoad gridAreaLoad in areaLoads) {
         var load = new GsaGridAreaLoad {
-          GridAreaLoad = gridAreaLoad,
+          ApiLoad = gridAreaLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit)
         };
@@ -163,7 +169,7 @@ namespace GsaGH.Helpers.Import {
             gridAreaLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
         }
 
-        load.LoadCase = new GsaLoadCase(load.GridAreaLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -188,7 +194,7 @@ namespace GsaGH.Helpers.Import {
       var loads = new List<GsaLoadGoo>();
       foreach (GridLineLoad gridLineLoad in lineLoads) {
         var load = new GsaGridLineLoad {
-          GridLineLoad = gridLineLoad,
+          ApiLoad = gridLineLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit)
         };
@@ -200,7 +206,7 @@ namespace GsaGH.Helpers.Import {
           gridLineLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
         }
 
-        load.LoadCase = new GsaLoadCase(load.GridLineLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -227,12 +233,13 @@ namespace GsaGH.Helpers.Import {
       if (srfDict.Count == 0 || !srfDict.TryGetValue(gridSrfId, out GridSurface gs)) {
         return null;
       }
-      
-      var gps = new GsaGridPlaneSurface();
-      gps.GridSurface = gs;
-      gps.GridSurfaceId = gridSrfId;
-      gps.Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString()
-       .Replace(" ", string.Empty).Replace(",", string.Empty);
+
+      var gps = new GsaGridPlaneSurface {
+        GridSurface = gs,
+        GridSurfaceId = gridSrfId,
+        Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString()
+       .Replace(" ", string.Empty).Replace(",", string.Empty)
+      };
 
       if (plnDict.TryGetValue(gs.GridPlane, out GridPlane gp)) {
         gps.GridPlane = gp;
@@ -280,16 +287,16 @@ namespace GsaGH.Helpers.Import {
       var loads = new List<GsaLoadGoo>();
       foreach (GridPointLoad gridPointLoad in pointLoads) {
         var load = new GsaGridPointLoad {
-          GridPointLoad = gridPointLoad,
+          ApiLoad = gridPointLoad,
           GridPlaneSurface
             = GetGridPlaneSurface(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit), };
 
         if (unit != LengthUnit.Meter) {
-          load.GridPointLoad.X = new Length(load.GridPointLoad.X, LengthUnit.Meter).As(unit);
-          load.GridPointLoad.Y = new Length(load.GridPointLoad.Y, LengthUnit.Meter).As(unit);
+          load.ApiLoad.X = new Length(load.ApiLoad.X, LengthUnit.Meter).As(unit);
+          load.ApiLoad.Y = new Length(load.ApiLoad.Y, LengthUnit.Meter).As(unit);
         }
 
-        load.LoadCase = new GsaLoadCase(load.GridPointLoad.Case, loadCases);
+        load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
 
@@ -310,39 +317,39 @@ namespace GsaGH.Helpers.Import {
       var loads = new List<GsaLoadGoo>();
 
       // NodeLoads come in varioys types, depending on GsaAPI.NodeLoadType:
-      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
+      foreach (GsaAPI.NodeLoadType typ in Enum.GetValues(typeof(GsaAPI.NodeLoadType))) {
         try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
         {
           var gsaloads = model.NodeLoads(typ).ToList();
-          GsaNodeLoad.NodeLoadType ntyp = GsaNodeLoad.NodeLoadType.NodeLoad;
+          NodeLoadType ntyp = NodeLoadType.NodeLoad;
           switch (typ) {
-            case NodeLoadType.APPL_DISP:
-              ntyp = GsaNodeLoad.NodeLoadType.AppliedDisp;
+            case GsaAPI.NodeLoadType.APPL_DISP:
+              ntyp = NodeLoadType.AppliedDisp;
               break;
 
-            case NodeLoadType.GRAVITY:
-              ntyp = GsaNodeLoad.NodeLoadType.Gravity;
+            case GsaAPI.NodeLoadType.GRAVITY:
+              ntyp = NodeLoadType.Gravity;
               break;
 
-            case NodeLoadType.NODE_LOAD:
-              ntyp = GsaNodeLoad.NodeLoadType.NodeLoad;
+            case GsaAPI.NodeLoadType.NODE_LOAD:
+              ntyp = NodeLoadType.NodeLoad;
               break;
 
-            case NodeLoadType.NUM_TYPES:
-              ntyp = GsaNodeLoad.NodeLoadType.NumTypes;
+            case GsaAPI.NodeLoadType.NUM_TYPES:
+              ntyp = NodeLoadType.NumTypes;
               break;
 
-            case NodeLoadType.SETTLEMENT:
-              ntyp = GsaNodeLoad.NodeLoadType.Settlement;
+            case GsaAPI.NodeLoadType.SETTLEMENT:
+              ntyp = NodeLoadType.Settlement;
               break;
           }
 
           foreach (NodeLoad gsaLoad in gsaloads) {
             var load = new GsaNodeLoad {
-              NodeLoad = gsaLoad,
+              ApiLoad = gsaLoad,
               Type = ntyp,
             };
-            load.LoadCase = new GsaLoadCase(load.NodeLoad.Case, loadCases);
+            load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
             loads.Add(new GsaLoadGoo(load));
           }
         } catch (Exception) {
@@ -358,7 +365,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
       caseIDs.AddRange(gravities.Select(x => x.Case));
 
-      foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType))) {
+      foreach (GsaAPI.NodeLoadType typ in Enum.GetValues(typeof(GsaAPI.NodeLoadType))) {
         ReadOnlyCollection<NodeLoad> nodeLoads;
         try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
         {

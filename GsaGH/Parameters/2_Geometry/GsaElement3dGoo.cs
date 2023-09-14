@@ -1,10 +1,13 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -19,13 +22,9 @@ namespace GsaGH.Parameters {
 
     public GsaElement3dGoo(GsaElement3d item) : base(item) { }
 
-    internal GsaElement3dGoo(GsaElement3d item, bool duplicate) : base(null) {
-      Value = duplicate ? item.Duplicate() : item;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.DisplayMesh);
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.NgonMesh);
         return true;
       }
 
@@ -38,9 +37,8 @@ namespace GsaGH.Parameters {
         return;
       }
       args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
-        args.Material.Diffuse
-        == Color.FromArgb(255, 150, 0,
-          0) // this is a workaround to change colour between selected and not
+        // this is a workaround to change colour between selected and not
+        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) 
           ? Colours.Element3dFace : Colours.Element2dFaceSelected);
     }
 
@@ -68,11 +66,27 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      return new GsaElement3dGoo(Value.Morph(xmorph));
+      var elem = new GsaElement3d(Value) {
+        Ids = new List<int>(new int[Value.NgonMesh.Faces.Count]),
+      };
+      elem.Topology?.Morph(xmorph);
+      Mesh m = Value.NgonMesh.DuplicateMesh();
+      xmorph.Morph(m);
+      elem.NgonMesh = m;
+      return new GsaElement3dGoo(elem);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      return new GsaElement3dGoo(Value.Transform(xform));
+      var xpts = new Point3dList(Value.Topology);
+      xpts.Transform(xform);
+      var elem = new GsaElement3d(Value) {
+        Ids = new List<int>(new int[Value.NgonMesh.Faces.Count]),
+        Topology = xpts
+      };
+      Mesh m = Value.NgonMesh.DuplicateMesh();
+      m.Transform(xform);
+      elem.NgonMesh = m;
+      return new GsaElement3dGoo(elem);
     }
   }
 }

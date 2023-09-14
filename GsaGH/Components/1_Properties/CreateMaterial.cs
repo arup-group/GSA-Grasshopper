@@ -74,22 +74,22 @@ namespace GsaGH.Components {
       _concreteCode = _dropDownItems[1][8];
       _selectedItems.Add(_concreteCode); // EC2-1-1
 
-      _dropDownItems.Add(GsaMaterial.GetGradeNames(
-        GsaMaterial.MatType.Concrete, _concreteCode, string.Empty));
+      _dropDownItems.Add(GetGradeNames(
+        MatType.Concrete, _concreteCode, string.Empty));
       _selectedItems.Add(_dropDownItems[2][4]); // C30/37
 
       _isInitialised = true;
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      var type = (GsaMaterial.MatType)Enum.Parse(
-        typeof(GsaMaterial.MatType), _selectedItems[0], ignoreCase: true);
+      var type = (MatType)Enum.Parse(
+        typeof(MatType), _selectedItems[0], ignoreCase: true);
 
-      if (type == GsaMaterial.MatType.Concrete) {
+      if (type == MatType.Concrete) {
         _concreteCode = _selectedItems[1];
       }
 
-      if (type == GsaMaterial.MatType.Steel) {
+      if (type == MatType.Steel) {
         _steelCode = _selectedItems[1];
       }
 
@@ -132,8 +132,8 @@ namespace GsaGH.Components {
         return;
       }
 
-      var type = (GsaMaterial.MatType)Enum.Parse(
-        typeof(GsaMaterial.MatType), _selectedItems[0], ignoreCase: true);
+      var type = (MatType)Enum.Parse(
+        typeof(MatType), _selectedItems[0], ignoreCase: true);
 
       string steelCode = _steelCode.Replace("HK", "Hong Kong").Replace("CoP", "Code of Practice");
       string concreteCode = _concreteCode.Replace("CoP", "CP");
@@ -154,11 +154,11 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMaterialType() {
-      var type = (GsaMaterial.MatType)Enum.Parse(
-        typeof(GsaMaterial.MatType), _selectedItems[0], ignoreCase: true);
+      var type = (MatType)Enum.Parse(
+        typeof(MatType), _selectedItems[0], ignoreCase: true);
       switch (type) {
-        case GsaMaterial.MatType.Steel:
-        case GsaMaterial.MatType.Concrete:
+        case MatType.Steel:
+        case MatType.Concrete:
           if (_dropDownItems.Count < 3) {
             _dropDownItems.Add(new List<string>());
             _selectedItems.Add(string.Empty);
@@ -170,13 +170,13 @@ namespace GsaGH.Components {
             ReDrawComponent();
           }
 
-          _dropDownItems[1] = GetCodeNames(type == GsaMaterial.MatType.Steel);
+          _dropDownItems[1] = GetCodeNames(type == MatType.Steel);
 
-          if (type == GsaMaterial.MatType.Steel && _steelCode == string.Empty) {
+          if (type == MatType.Steel && _steelCode == string.Empty) {
             _steelCode = _dropDownItems[1][8]; // EN 1993-1-1
           }
 
-          _selectedItems[1] = type == GsaMaterial.MatType.Steel ? _steelCode : _concreteCode;
+          _selectedItems[1] = type == MatType.Steel ? _steelCode : _concreteCode;
           break;
 
         default:
@@ -197,10 +197,10 @@ namespace GsaGH.Components {
     }
 
     private void UpdateGrades() {
-      var type = (GsaMaterial.MatType)Enum.Parse(
-        typeof(GsaMaterial.MatType), _selectedItems[0], ignoreCase: true);
+      var type = (MatType)Enum.Parse(
+        typeof(MatType), _selectedItems[0], ignoreCase: true);
 
-      List<string> grades = GsaMaterial.GetGradeNames(type, _concreteCode, _steelCode);
+      List<string> grades = GetGradeNames(type, _concreteCode, _steelCode);
       for (int i = grades.Count - 1; i >= 0; i--) {
         if (grades[i].StartsWith("<")) {
           grades.RemoveAt(i);

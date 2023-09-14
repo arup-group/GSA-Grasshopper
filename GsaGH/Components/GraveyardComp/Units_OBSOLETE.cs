@@ -94,7 +94,7 @@ namespace GsaGH.Components {
       if (da.GetData(i++, ref gooModel)) {
         model = gooModel.Value.Clone();
       }
-      GsaAPI.UiUnits units = model.Units;
+      UiUnits units = model.Units;
 
       var ghString = new GH_String();
       if (da.GetData(i++, ref ghString)) {

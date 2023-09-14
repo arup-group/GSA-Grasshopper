@@ -5,7 +5,9 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using OasysUnits;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
 
@@ -42,8 +44,8 @@ namespace GsaGH.Helpers.Export {
       LoadCases = model.LoadCases().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       foreach (int key in LoadCases.Keys) {
         // some old gwb files stores Dead as (int)0:
-        if ((int)LoadCases[key].CaseType == 0) {
-          LoadCases[key].CaseType = LoadCaseType.Dead;
+        if (LoadCases[key].CaseType == 0) {
+          LoadCases[key].CaseType = GsaAPI.LoadCaseType.Dead;
         }
       }
     }
@@ -51,37 +53,37 @@ namespace GsaGH.Helpers.Export {
     internal static void ConvertLoad(IGsaLoad load, ref ModelAssembly model, GH_Component owner) {
       ConvertLoadCase(load.LoadCase, ref model, owner);
       load.CaseId = load.LoadCase.Id;
-      switch (load.LoadType) {
-        case LoadType.Gravity:
-          ConvertGravityLoad((GsaGravityLoad)load, ref model, owner);
+      switch (load) {
+        case GsaGravityLoad gravity:
+          ConvertGravityLoad(gravity, ref model, owner);
           break;
 
-        case LoadType.Beam:
-          ConvertBeamLoad((GsaBeamLoad)load, ref model, owner);
+        case GsaBeamLoad beam:
+          ConvertBeamLoad(beam, ref model, owner);
           break;
 
-        case LoadType.BeamThermal:
-          ConvertBeamThermalLoad((GsaBeamThermalLoad)load, ref model, owner);
+        case GsaBeamThermalLoad beamThermal:
+          ConvertBeamThermalLoad(beamThermal, ref model, owner);
           break;
 
-        case LoadType.Face:
-          ConvertFaceLoad((GsaFaceLoad)load, ref model, owner);
+        case GsaFaceLoad face:
+          ConvertFaceLoad(face, ref model, owner);
           break;
 
-        case LoadType.FaceThermal:
-          ConvertFaceThermalLoad((GsaFaceThermalLoad)load, ref model, owner);
+        case GsaFaceThermalLoad faceThermal:
+          ConvertFaceThermalLoad(faceThermal, ref model, owner);
           break;
 
-        case LoadType.GridPoint:
-          ConvertGridPointLoad((GsaGridPointLoad)load, ref model, owner);
+        case GsaGridPointLoad point:
+          ConvertGridPointLoad(point, ref model, owner);
           break;
 
-        case LoadType.GridLine:
-          ConvertGridLineLoad((GsaGridLineLoad)load, ref model, owner);
+        case GsaGridLineLoad line:
+          ConvertGridLineLoad(line, ref model, owner);
           break;
 
-        case LoadType.GridArea:
-          ConvertGridAreaLoad((GsaGridAreaLoad)load, ref model, owner);
+        case GsaGridAreaLoad area:
+          ConvertGridAreaLoad(area, ref model, owner);
           break;
       }
     }
@@ -109,95 +111,96 @@ namespace GsaGH.Helpers.Export {
     }
 
     private static void ConvertGridAreaLoad(GsaGridAreaLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, ReferenceType.None,
-        load.GridAreaLoad.Type.ToString());
-      if (load.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON) {
-        load.GridAreaLoad.PolyLineDefinition =
-        GridLoadHelper.ClearDefinitionForUnit(load.GridAreaLoad.PolyLineDefinition) +
+      PostHog.Load(load, ReferenceType.None,
+        load.ApiLoad.Type.ToString());
+      if (load.ApiLoad.Type == GridAreaPolyLineType.POLYGON) {
+        load.ApiLoad.PolyLineDefinition =
+        GridLoadHelper.ClearDefinitionForUnit(load.ApiLoad.PolyLineDefinition) +
         $"({Length.GetAbbreviation(model.Unit)})";
       }
 
       if (load.GridPlaneSurface == null) {
-        model.Loads.GridAreas.Add(load.GridAreaLoad);
+        model.Loads.GridAreas.Add(load.ApiLoad);
         return;
       }
 
       GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;
 
       if (gridplnsrf.GridPlane != null) {
-        load.GridAreaLoad.GridSurface = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
+        load.ApiLoad.GridSurface = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
       }
 
-      model.Loads.GridAreas.Add(load.GridAreaLoad);
+      model.Loads.GridAreas.Add(load.ApiLoad);
     }
 
     private static void ConvertGridLineLoad(GsaGridLineLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, ReferenceType.None);
+      PostHog.Load(load, ReferenceType.None);
       if (load.GridPlaneSurface == null) {
-        model.Loads.GridLines.Add(load.GridLineLoad);
+        model.Loads.GridLines.Add(load.ApiLoad);
         return;
       }
 
       if (model.Unit != LengthUnit.Meter
-        && load.GridLineLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
-        load.GridLineLoad.PolyLineDefinition =
-          GridLoadHelper.ClearDefinitionForUnit(load.GridLineLoad.PolyLineDefinition) +
+        && load.ApiLoad.Type == GridLineLoad.PolyLineType.EXPLICIT_POLYLINE) {
+        load.ApiLoad.PolyLineDefinition =
+          GridLoadHelper.ClearDefinitionForUnit(load.ApiLoad.PolyLineDefinition) +
           $"({Length.GetAbbreviation(model.Unit)})";
       }
 
       GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;
 
       if (gridplnsrf.GridPlane != null) {
-        load.GridLineLoad.GridSurface
+        load.ApiLoad.GridSurface
           = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
       }
 
-      model.Loads.GridLines.Add(load.GridLineLoad);
+      model.Loads.GridLines.Add(load.ApiLoad);
     }
 
     private static void ConvertGridPointLoad(GsaGridPointLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, ReferenceType.None);
+      PostHog.Load(load, ReferenceType.None);
       if (load.GridPlaneSurface == null) {
-        model.Loads.GridPoints.Add(load.GridPointLoad);
+        model.Loads.GridPoints.Add(load.ApiLoad);
         return;
       }
 
       var gridptref = (GsaGridPointLoad)load.Duplicate();
       if (model.Unit != LengthUnit.Meter) {
-        gridptref.GridPointLoad.X = new Length(gridptref.GridPointLoad.X, model.Unit).As(LengthUnit.Meter);
-        gridptref.GridPointLoad.Y = new Length(gridptref.GridPointLoad.Y, model.Unit).As(LengthUnit.Meter);
+        gridptref.ApiLoad.X = new Length(gridptref.ApiLoad.X, model.Unit).As(LengthUnit.Meter);
+        gridptref.ApiLoad.Y = new Length(gridptref.ApiLoad.Y, model.Unit).As(LengthUnit.Meter);
       }
 
       GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
 
       if (gridplnsrf.GridPlane != null) {
-        gridptref.GridPointLoad.GridSurface
+        gridptref.ApiLoad.GridSurface
           = GridPlaneSurfaces.ConvertGridPlaneSurface(gridplnsrf, ref model, owner);
       }
 
-      model.Loads.GridPoints.Add(gridptref.GridPointLoad);
+      model.Loads.GridPoints.Add(gridptref.ApiLoad);
     }
 
     private static void ConvertBeamLoad(
       GsaBeamLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, load.ReferenceType);
+      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.BeamLoad.EntityList;
+        string objectElemList = load.ApiLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
+          objectElemList += Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.BeamLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more BeamLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -210,28 +213,29 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      model.Loads.Beams.Add(load.BeamLoad);
+      model.Loads.Beams.Add(load.ApiLoad);
     }
 
     private static void ConvertBeamThermalLoad(GsaBeamThermalLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, load.ReferenceType);
+      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.BeamThermalLoad.EntityList;
+        string objectElemList = load.ApiLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for BeamThermalLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += Lists.GetElementList(load.ReferenceList, ref model, owner);
+          objectElemList += Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.BeamThermalLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more BeamThermalLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -244,29 +248,30 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      model.Loads.BeamThermals.Add(load.BeamThermalLoad);
+      model.Loads.BeamThermals.Add(load.ApiLoad);
     }
 
     private static void ConvertGravityLoad(GsaGravityLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, load.ReferenceType);
+      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.GravityLoad.EntityList;
+        string objectElemList = load.ApiLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
+            Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.GravityLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more GravityLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -279,29 +284,30 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      model.Loads.Gravities.Add(load.GravityLoad);
+      model.Loads.Gravities.Add(load.ApiLoad);
     }
 
     private static void ConvertFaceLoad(GsaFaceLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, load.ReferenceType);
+      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.FaceLoad.EntityList;
+        string objectElemList = load.ApiLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for FaceLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
+            Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.FaceLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more FaceLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -313,29 +319,30 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      model.Loads.Faces.Add(load.FaceLoad);
+      model.Loads.Faces.Add(load.ApiLoad);
     }
 
     private static void ConvertFaceThermalLoad(GsaFaceThermalLoad load, ref ModelAssembly model, GH_Component owner) {
-      PostHog.Load(load.LoadType, load.ReferenceType);
+      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
-        string objectElemList = load.FaceThermalLoad.EntityList;
+        string objectElemList = load.ApiLoad.EntityList;
 
         if (load.ReferenceType == ReferenceType.List) {
           if (load.ReferenceList == null
-            && (load.ReferenceList.EntityType != Parameters.EntityType.Element
-            || load.ReferenceList.EntityType != Parameters.EntityType.Member)) {
+            && (load.ReferenceList.EntityType != EntityType.Element
+            || load.ReferenceList.EntityType != EntityType.Member)) {
             owner.AddRuntimeWarning("Invalid List type for FaceThermalLoads " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList +=
-            Lists.GetElementList(load.ReferenceList, ref model, owner);
+            Lists.GetElementOrMemberList(load.ReferenceList, ref model, owner);
+          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += ElementListFromReference.GetReferenceDefinition(load, model);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.FaceThermalLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList;
         } else {
           string warning = "One or more FaceThermalLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -347,7 +354,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      model.Loads.FaceThermals.Add(load.FaceThermalLoad);
+      model.Loads.FaceThermals.Add(load.ApiLoad);
     }
   }
 }

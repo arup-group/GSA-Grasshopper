@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -9,8 +8,6 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {

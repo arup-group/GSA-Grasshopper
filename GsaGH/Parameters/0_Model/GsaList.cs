@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GH;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Import;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -18,41 +18,12 @@ namespace GsaGH.Parameters {
   /// <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>.</para>
   /// </summary>
   public class GsaList {
-    public string Definition {
-      get => _definition;
-      set {
-        Guid = Guid.NewGuid();
-        _definition = value;
-      }
-    }
-    public EntityType EntityType {
-      get => _entityType;
-      set {
-        Guid = Guid.NewGuid();
-        _entityType = value;
-      }
-    }
+    public string Definition { get; set; }
+    public EntityType EntityType { get; set; } = EntityType.Undefined;
     public Guid Guid { get; set; } = Guid.NewGuid();
-    public int Id {
-      get => _id;
-      set {
-        Guid = Guid.NewGuid();
-        _id = value;
-      }
-    }
-    public string Name {
-      get => _name;
-      set {
-        Guid = Guid.NewGuid();
-        _name = value;
-      }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
 
-    private EntityType _entityType = EntityType.Undefined;
-    private GsaModel _model;
-    internal int _id;
-    internal string _name;
-    internal string _definition;
     internal List<int> _cases;
     internal (List<GsaMaterialGoo> materials, List<GsaSectionGoo> sections,
       List<GsaProperty2dGoo> prop2ds, List<GsaProperty3dGoo> prop3ds) _properties;
@@ -61,6 +32,7 @@ namespace GsaGH.Parameters {
       ConcurrentBag<GsaElement3dGoo> e3d) _elements;
     internal (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
       ConcurrentBag<GsaMember3dGoo> m3d) _members;
+    private GsaModel _model;
 
     public GsaList() { }
     internal GsaList(string name, string definition, GsaAPI.EntityType type) {
@@ -234,7 +206,7 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      return s.Replace("  ", " ");
+      return s.TrimSpaces();
     }
 
     internal List<object> GetListObjects(LengthUnit unit) {
@@ -491,7 +463,7 @@ namespace GsaGH.Parameters {
           break;
 
         case EntityType.Case:
-          var tempApiList = new GsaAPI.EntityList() {
+          var tempApiList = new EntityList() {
             Type = GsaAPI.EntityType.Case,
             Name = Name,
             Definition = Definition
@@ -506,41 +478,23 @@ namespace GsaGH.Parameters {
     }
 
     internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type) {
-      switch (type) {
-        case GsaAPI.EntityType.Node:
-          return EntityType.Node;
-
-        case GsaAPI.EntityType.Element:
-          return EntityType.Element;
-
-        case GsaAPI.EntityType.Member:
-          return EntityType.Member;
-
-        case GsaAPI.EntityType.Case:
-          return EntityType.Case;
-
-        default:
-          return EntityType.Undefined;
-      }
+      return type switch {
+        GsaAPI.EntityType.Node => EntityType.Node,
+        GsaAPI.EntityType.Element => EntityType.Element,
+        GsaAPI.EntityType.Member => EntityType.Member,
+        GsaAPI.EntityType.Case => EntityType.Case,
+        _ => EntityType.Undefined,
+      };
     }
 
     internal static GsaAPI.EntityType GetAPIEntityType(EntityType type) {
-      switch (type) {
-        case EntityType.Node:
-          return GsaAPI.EntityType.Node;
-
-        case EntityType.Element:
-          return GsaAPI.EntityType.Element;
-
-        case EntityType.Member:
-          return GsaAPI.EntityType.Member;
-
-        case EntityType.Case:
-          return GsaAPI.EntityType.Case;
-
-        default:
-          return GsaAPI.EntityType.Undefined;
-      }
+      return type switch {
+        EntityType.Node => GsaAPI.EntityType.Node,
+        EntityType.Element => GsaAPI.EntityType.Element,
+        EntityType.Member => GsaAPI.EntityType.Member,
+        EntityType.Case => GsaAPI.EntityType.Case,
+        _ => GsaAPI.EntityType.Undefined,
+      };
     }
   }
 }

@@ -1,20 +1,11 @@
-﻿using System;
-using GsaAPI;
-using GsaGH.Parameters;
+﻿using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
-using LoadCase = GsaGH.Parameters.Enums.LoadCase;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaBeamThermalLoadTest {
-    [Fact]
-    public void ConstructorTest() {
-      var load = new GsaBeamThermalLoad();
-
-      Assert.Equal(LoadType.BeamThermal, load.LoadType);
-    }
-
     [Fact]
     public void LoadCaseTest() {
       var load = new GsaBeamThermalLoad();
@@ -26,7 +17,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaBeamThermalLoad {
-        BeamThermalLoad = {
+        ApiLoad = {
           Case = 6,
           EntityList = "all",
           EntityType = GsaAPI.EntityType.Element,
@@ -39,18 +30,16 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.BeamThermalLoad.Case = 1;
-      duplicate.BeamThermalLoad.EntityList = "";
-      duplicate.BeamThermalLoad.Name = "";
-      duplicate.BeamThermalLoad.UniformTemperature = 99;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.UniformTemperature = 99;
 
-      Assert.Equal(LoadType.BeamThermal, original.LoadType);
-
-      Assert.Equal(6, original.BeamThermalLoad.Case);
-      Assert.Equal("all", original.BeamThermalLoad.EntityList);
-      Assert.Equal(GsaAPI.EntityType.Element, original.BeamThermalLoad.EntityType);
-      Assert.Equal("name", original.BeamThermalLoad.Name);
-      Assert.Equal(7.0, original.BeamThermalLoad.UniformTemperature);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.Equal(7.0, original.ApiLoad.UniformTemperature);
     }
 
     [Fact]
@@ -65,7 +54,8 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaBeamThermalLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, LoadCase.LoadCaseType.Dead, "DeadLoad");
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

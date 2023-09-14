@@ -5,7 +5,6 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -35,7 +34,7 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(Enum.GetNames(typeof(LoadCase.LoadCaseType)).ToList());
+      _dropDownItems.Add(Enum.GetNames(typeof(LoadCaseType)).ToList());
       _selectedItems.Add(_dropDownItems[0][0]);
 
       _isInitialised = true;
@@ -53,7 +52,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var type = 
-        (LoadCase.LoadCaseType)Enum.Parse(typeof(LoadCase.LoadCaseType), _selectedItems[0]);
+        (LoadCaseType)Enum.Parse(typeof(LoadCaseType), _selectedItems[0]);
 
       int id = 0;
       da.GetData(0, ref id);

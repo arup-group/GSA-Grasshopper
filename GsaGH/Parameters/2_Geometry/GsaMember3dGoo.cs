@@ -19,10 +19,6 @@ namespace GsaGH.Parameters {
 
     public GsaMember3dGoo(GsaMember3d item) : base(item) { }
 
-    internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null) {
-      Value = duplicate ? item.Duplicate() : item;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         if (Value == null) {
@@ -53,7 +49,7 @@ namespace GsaGH.Parameters {
         return;
       }
 
-      if (!Value.IsDummy) {
+      if (!Value.ApiMember.IsDummy) {
         args.Pipeline.DrawMeshShaded(Value.SolidMesh,
           args.Material.Diffuse
           == Color.FromArgb(255, 150, 0,
@@ -69,8 +65,8 @@ namespace GsaGH.Parameters {
         return;
       }
 
-      if (Value.IsDummy) {
-        foreach (Line line in Value._previewEdgeLines) {
+      if (Value.ApiMember.IsDummy) {
+        foreach (Line line in Value.PreviewEdgeLines) {
           args.Pipeline.DrawDottedLine(line,
             args.Color
             == Color.FromArgb(255, 150, 0,
@@ -78,13 +74,13 @@ namespace GsaGH.Parameters {
               ? Colours.Dummy1D : Colours.Member2dEdgeSelected);
         }
       } else {
-        foreach (Line line in Value._previewEdgeLines) {
+        foreach (Line line in Value.PreviewEdgeLines) {
           if (args.Color
             == Color.FromArgb(255, 150, 0,
               0)) // this is a workaround to change colour between selected and not
           {
-            if (Value.Colour != Color.FromArgb(0, 0, 0)) {
-              args.Pipeline.DrawLine(line, (Color)Value.Colour, 2);
+            if ((Color)Value.ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
+              args.Pipeline.DrawLine(line, (Color)Value.ApiMember.Colour, 2);
             } else {
               Color col = Colours.Member2dEdge;
               args.Pipeline.DrawLine(line, col, 2);
@@ -94,18 +90,18 @@ namespace GsaGH.Parameters {
           }
         }
 
-        foreach (Polyline line in Value._previewHiddenLines) {
+        foreach (Polyline line in Value.PreviewHiddenLines) {
           args.Pipeline.DrawDottedPolyline(line, Colours.Dummy1D, false);
         }
       }
 
-      foreach (Point3d point3d in Value._previewPts) {
+      foreach (Point3d point3d in Value.PreviewPts) {
         if (args.Color
           == Color.FromArgb(255, 150, 0,
             0)) // this is a workaround to change colour between selected and not
         {
           args.Pipeline.DrawPoint(point3d, PointStyle.RoundSimple, 2,
-            Value.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
+            Value.ApiMember.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
         } else {
           args.Pipeline.DrawPoint(point3d, PointStyle.RoundControlPoint, 3,
             Colours.Member1dNodeSelected);
@@ -122,11 +118,23 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      return new GsaMember3dGoo(Value.Morph(xmorph));
+      var mem = new GsaMember3d(Value) {
+        Id = 0
+      };
+      
+      xmorph.Morph(mem.SolidMesh);
+      mem.UpdatePreview();
+      return new GsaMember3dGoo(mem);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      return new GsaMember3dGoo(Value.Transform(xform));
+      var mem = new GsaMember3d(Value) {
+        Id = 0
+      };
+
+      mem.SolidMesh.Transform(xform);
+      mem.UpdatePreview();
+      return new GsaMember3dGoo(mem);
     }
   }
 }

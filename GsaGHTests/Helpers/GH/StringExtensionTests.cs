@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GsaGH.Helpers.GH;
-using GsaGH.Parameters;
-using Rhino.Geometry;
+﻿using GsaGH.Helpers;
 using Xunit;
 
 namespace GsaGHTests.Helpers.Export.GH {
@@ -24,6 +19,17 @@ namespace GsaGHTests.Helpers.Export.GH {
     [InlineData("Use_GPS_Settings", "Use GPS Settings")]
     public void ToSentenceCaseTest(string val, string expected) {
       string result = val.ToSentenceCase();
+      Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("A                                      B", "A B")]
+    [InlineData("A     B", "A B")]
+    [InlineData(" A   B", "A B")]
+    [InlineData("A  B ", "A B")]
+    [InlineData(" A  B ", "A B")]
+    public void TrimSpacesTest(string val, string expected) {
+      string result = val.TrimSpaces();
       Assert.Equal(expected, result);
     }
   }

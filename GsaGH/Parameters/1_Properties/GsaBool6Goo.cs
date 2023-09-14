@@ -13,7 +13,10 @@ namespace GsaGH.Parameters {
     public static string NickName => "B6";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaBool6Goo(GsaBool6 item) : base(item) { }
+    //public GsaBool6Goo(GsaBool6 item) : base(item) { }
+    public GsaBool6Goo(GsaBool6 item) {
+      Value = item;
+    }
 
     public override IGH_Goo Duplicate() {
       return new GsaBool6Goo(Value);

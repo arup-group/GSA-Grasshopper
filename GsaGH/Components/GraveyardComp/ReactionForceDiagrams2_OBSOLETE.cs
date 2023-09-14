@@ -23,8 +23,8 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
-using EntityType = GsaGH.Parameters.EntityType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -300,13 +300,13 @@ namespace GsaGH.Components {
       var direction = new Vector3d();
       IQuantity forceValue = null;
 
-      Vector3d xAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.XAxis :
+      Vector3d xAxis = node.Value.Value.IsGlobalAxis ? Vector3d.XAxis :
         node.Value.Value.LocalAxis.XAxis;
       xAxis.Unitize();
-      Vector3d yAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.YAxis :
+      Vector3d yAxis = node.Value.Value.IsGlobalAxis ? Vector3d.YAxis :
         node.Value.Value.LocalAxis.YAxis;
       yAxis.Unitize();
-      Vector3d zAxis = node.Value.Value.IsGlobalAxis() ? Vector3d.ZAxis :
+      Vector3d zAxis = node.Value.Value.IsGlobalAxis ? Vector3d.ZAxis :
         node.Value.Value.LocalAxis.ZAxis;
       zAxis.Unitize();
 
@@ -383,7 +383,7 @@ namespace GsaGH.Components {
     private void SetOutputs(IGH_DataAccess dataAccess) {
       IOrderedEnumerable<KeyValuePair<int, (GsaVectorDiagram, GsaAnnotationGoo, IQuantity)>> orderedDict
         = _reactionForceVectors.OrderBy(index => index.Key);
-      var startingPoints = new List<Point3d>();
+      var startingPoints = new Point3dList();
       var vectors = new List<IGsaDiagram>();
       var forceValues = new List<IQuantity>();
 

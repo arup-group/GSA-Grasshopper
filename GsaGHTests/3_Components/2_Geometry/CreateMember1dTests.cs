@@ -36,7 +36,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output.Value.PolyCurve.PointAtEnd.Y);
       Assert.Equal(1, output.Value.PolyCurve.PointAtEnd.Z);
       Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.ApiSection.Profile);
-      Assert.Equal(0.5, output.Value.MeshSize);
+      Assert.Equal(0.5, output.Value.ApiMember.MeshSize);
     }
 
     [Fact]

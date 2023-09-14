@@ -5,6 +5,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -156,10 +157,13 @@ namespace GsaGH.Components {
                   }
                   AddAnnotation3d(
                     new Plane(e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Mesh.FaceNormals[i]),
-                    CreateText(e2d, path, i), e2d.Value.Colours[i], size, path);
+                    CreateText(e2d, path, i), 
+                    (Color)e2d.Value.ApiElements[i].Colour, size, path);
                 } else {
-                  AddAnnotationDot(e2d.Value.Mesh.Faces.GetFaceCenter(i), CreateText(e2d, path, i),
-                  e2d.Value.Colours[i], size, path);
+                  AddAnnotationDot(
+                    e2d.Value.Mesh.Faces.GetFaceCenter(i), 
+                    CreateText(e2d, path, i),
+                    (Color)e2d.Value.ApiElements[i].Colour, size, path);
                 }
               }
               continue;
@@ -167,11 +171,15 @@ namespace GsaGH.Components {
             case GsaElement3dGoo e3d:
               for (int i = 0; i < e3d.Value.NgonMesh.Ngons.Count; i++) {
                 if (_text3d) {
-                  AddAnnotation3d(new Plane(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), Vector3d.ZAxis),
-                    CreateText(e3d, path, i), e3d.Value.Colours[i], size, path);
+                  AddAnnotation3d(
+                    new Plane(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), Vector3d.ZAxis),
+                    CreateText(e3d, path, i), 
+                    (Color)e3d.Value.ApiElements[i].Colour, size, path);
                 } else {
-                  AddAnnotationDot(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), CreateText(e3d, path, i),
-                  e3d.Value.Colours[i], size, path);
+                  AddAnnotationDot(
+                    e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), 
+                    CreateText(e3d, path, i), 
+                    (Color)e3d.Value.ApiElements[i].Colour, size, path);
                 }
               }
               continue;
@@ -179,21 +187,28 @@ namespace GsaGH.Components {
             case GsaElement1dGoo e1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  CreateLocalAxis(e1d.Value.Line), CreateText(e1d, path), e1d.Value.Colour, size, path);
+                  CreateLocalAxis(e1d.Value.Line), 
+                  CreateText(e1d, path), 
+                  (Color)e1d.Value.ApiElement.Colour, size, path);
               } else {
-                AddAnnotationDot(e1d.Value.Line.PointAtNormalizedLength(0.5),
-                CreateText(e1d, path), e1d.Value.Colour, size, path);
+                AddAnnotationDot(
+                  e1d.Value.Line.PointAtNormalizedLength(0.5),
+                  CreateText(e1d, path), 
+                  (Color)e1d.Value.ApiElement.Colour, size, path);
               }
               break;
 
             case GsaMember1dGoo m1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  CreateLocalAxis(m1d.Value.PolyCurve), CreateText(m1d, path), m1d.Value.Colour,
-                  size, path);
+                  CreateLocalAxis(m1d.Value.PolyCurve), 
+                  CreateText(m1d, path), 
+                  (Color)m1d.Value.ApiMember.Colour, size, path);
               } else {
-                AddAnnotationDot(m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
-                CreateText(m1d, path), m1d.Value.Colour, size, path);
+                AddAnnotationDot(
+                  m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
+                  CreateText(m1d, path), 
+                  (Color)m1d.Value.ApiMember.Colour, size, path);
               }
               break;
 
@@ -202,19 +217,28 @@ namespace GsaGH.Components {
               if (_text3d) {
                 Plane.FitPlaneToPoints(pl, out Plane pln);
                 pln.Origin = pl.CenterPoint();
-                AddAnnotation3d(pln, CreateText(m2d, path), m2d.Value.Colour, size, path);
+                AddAnnotation3d(
+                  pln, 
+                  CreateText(m2d, path), 
+                  (Color)m2d.Value.ApiMember.Colour, size, path);
               } else {
-                AddAnnotationDot(pl.CenterPoint(), CreateText(m2d, path), m2d.Value.Colour, size, path);
+                AddAnnotationDot(
+                  pl.CenterPoint(), 
+                  CreateText(m2d, path),
+                  (Color)m2d.Value.ApiMember.Colour, size, path);
               }
               break;
             case GsaMember3dGoo m3d:
               if (_text3d) {
-                AddAnnotation3d(m3d.Value.SolidMesh.GetBoundingBox(false).Center,
-                  CreateText(m3d, path), m3d.Value.Colour,
-                  size, path);
+                AddAnnotation3d(
+                  m3d.Value.SolidMesh.GetBoundingBox(false).Center,
+                  CreateText(m3d, path),
+                  (Color)m3d.Value.ApiMember.Colour, size, path);
               } else {
-                AddAnnotationDot(m3d.Value.SolidMesh.GetBoundingBox(false).Center,
-                  CreateText(m3d, path), m3d.Value.Colour, size, path);
+                AddAnnotationDot(
+                  m3d.Value.SolidMesh.GetBoundingBox(false).Center,
+                  CreateText(m3d, path),
+                  (Color)m3d.Value.ApiMember.Colour, size, path);
               }
               break;
 
@@ -290,41 +314,41 @@ namespace GsaGH.Components {
       switch (goo) {
         case GsaElement2dGoo e2d:
           id = e2d.Value.Ids[i];
-          name = GeometryToString(e2d.Value.Names[i], e2d.Value.Types[i]);
+          name = GeometryToString(e2d.Value.ApiElements[i].Name, e2d.Value.ApiElements[i].Type);
           prop = Prop2dToString(e2d.Value.Prop2ds[i]);
           mat = MaterialToString(e2d.Value.Prop2ds[i].Material);
           break;
 
         case GsaElement3dGoo e3d:
           id = e3d.Value.Ids[i];
-          name = GeometryToString(e3d.Value.Names[i], e3d.Value.Types[i]);
+          name = GeometryToString(e3d.Value.ApiElements[i].Name, e3d.Value.ApiElements[i].Type);
           prop = Prop3dToString(e3d.Value.Prop3ds[i]);
           mat = MaterialToString(e3d.Value.Prop3ds[i].Material);
           break;
 
         case GsaElement1dGoo e1d:
           id = e1d.Value.Id;
-          name = GeometryToString(e1d.Value.Name, e1d.Value.Type);
+          name = GeometryToString(e1d.Value.ApiElement.Name, e1d.Value.ApiElement.Type);
           prop = SectionToString(e1d.Value.Section);
           mat = MaterialToString(e1d.Value.Section.Material);
           break;
 
         case GsaMember1dGoo m1d:
           id = m1d.Value.Id;
-          name = GeometryToString(m1d.Value.Name, m1d.Value.Type);
+          name = GeometryToString(m1d.Value.ApiMember.Name, m1d.Value.ApiMember.Type);
           prop = SectionToString(m1d.Value.Section);
           mat = MaterialToString(m1d.Value.Section.Material);
           break;
 
         case GsaMember2dGoo m2d:
           id = m2d.Value.Id;
-          name = GeometryToString(m2d.Value.Name, m2d.Value.Type);
+          name = GeometryToString(m2d.Value.ApiMember.Name, m2d.Value.ApiMember.Type);
           prop = Prop2dToString(m2d.Value.Prop2d);
           mat = MaterialToString(m2d.Value.Prop2d.Material);
           break;
         case GsaMember3dGoo m3d:
           id = m3d.Value.Id;
-          name = GeometryToString(m3d.Value.Name, string.Empty);
+          name = GeometryToString(m3d.Value.ApiMember.Name, string.Empty);
           prop = Prop3dToString(m3d.Value.Prop3d);
           mat = MaterialToString(m3d.Value.Prop3d.Material);
           break;

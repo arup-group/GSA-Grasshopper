@@ -5,7 +5,7 @@ using AngleUnit = OasysUnits.Units.AngleUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// This class puts a UnitsNet / OasysUnits wrapper around <see cref="GsaAPI.SectionProperties"/>
+  /// This class puts a UnitsNet / OasysUnits wrapper around <see cref="SectionProperties"/>
   /// </summary>
   public class GsaSectionProperties {
     public Angle Angle {

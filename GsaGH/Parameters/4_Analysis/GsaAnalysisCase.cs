@@ -1,4 +1,6 @@
-﻿namespace GsaGH.Parameters {
+﻿using GsaGH.Helpers;
+
+namespace GsaGH.Parameters {
   /// <summary>
   /// Analysis Case definition, for instance `L1` for LoadCase 1 or `L1 + L2` for combining multiple load cases in one Analysis case.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/analysiscases.html">Analysis cases</see> to read more.</para>
@@ -36,7 +38,7 @@
         s += " " + Description;
       }
 
-      return string.Join(" ", id.Trim(), s.Trim()).Trim().Replace("  ", " ");
+      return string.Join(" ", id, s).TrimSpaces();
     }
   }
 }

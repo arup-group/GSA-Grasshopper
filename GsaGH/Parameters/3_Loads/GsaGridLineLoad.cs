@@ -1,49 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using GsaAPI;
-using Rhino.Geometry;
+using GsaGH.Parameters.Enums;
+using Rhino.Collections;
 
 namespace GsaGH.Parameters {
-  public class GsaGridLineLoad : IGsaLoad {
-    public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
+  public class GsaGridLineLoad : IGsaGridLoad {
+    public GridLineLoad ApiLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
     public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
-    public LoadType LoadType => LoadType.GridLine;
+    public Point3dList Points { get; set; } = new Point3dList();
     public int CaseId {
-      get => GridLineLoad.Case;
-      set => GridLineLoad.Case = value;
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
     }
     public string Name {
-      get => GridLineLoad.Name;
-      set => GridLineLoad.Name = value;
+      get => ApiLoad.Name;
+      set => ApiLoad.Name = value;
     }
-    internal List<Point3d> Points { get; set; } = new List<Point3d>();
 
     public GsaGridLineLoad() {
-      GridLineLoad.PolyLineReference = 0;
+      ApiLoad.PolyLineReference = 0;
     }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridLineLoad {
-        GridLineLoad = {
-          AxisProperty = GridLineLoad.AxisProperty,
-          Case = GridLineLoad.Case,
-          Direction = GridLineLoad.Direction,
-          GridSurface = GridLineLoad.GridSurface,
-          IsProjected = GridLineLoad.IsProjected,
-          Name = GridLineLoad.Name.ToString(),
-          PolyLineDefinition = GridLineLoad.PolyLineDefinition.ToString(),
-          PolyLineReference = GridLineLoad.PolyLineReference,
-          Type = GridLineLoad.Type,
-          ValueAtStart = GridLineLoad.ValueAtStart,
-          ValueAtEnd = GridLineLoad.ValueAtEnd,
+        ApiLoad = {
+          AxisProperty = ApiLoad.AxisProperty,
+          Case = ApiLoad.Case,
+          Direction = ApiLoad.Direction,
+          GridSurface = ApiLoad.GridSurface,
+          IsProjected = ApiLoad.IsProjected,
+          Name = ApiLoad.Name.ToString(),
+          PolyLineDefinition = ApiLoad.PolyLineDefinition.ToString(),
+          PolyLineReference = ApiLoad.PolyLineReference,
+          Type = ApiLoad.Type,
+          ValueAtStart = ApiLoad.ValueAtStart,
+          ValueAtEnd = ApiLoad.ValueAtEnd,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
-        Points = Points.ToList(),
+        Points = Points,
       };
       
       if (LoadCase != null) {

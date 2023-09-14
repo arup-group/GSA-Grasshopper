@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -265,13 +266,13 @@ namespace GsaGH.Components {
 
           case GsaElement1dGoo element1dGoo:
             beamLoad.RefObjectGuid = element1dGoo.Value.Guid;
-            beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
+            beamLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
             beamLoad.ReferenceType = ReferenceType.Element;
             break;
 
           case GsaMember1dGoo member1dGoo:
             beamLoad.RefObjectGuid = member1dGoo.Value.Guid;
-            beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Member;
+            beamLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
             beamLoad.ReferenceType = ReferenceType.Member;
             break;
 
@@ -282,7 +283,7 @@ namespace GsaGH.Components {
               return;
             }
             beamLoad.RefObjectGuid = materialGoo.Value.Guid;
-            beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
+            beamLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
             beamLoad.ReferenceType = ReferenceType.Property;
             this.AddRuntimeRemark(
                 "Load from Material reference created as Element load");
@@ -290,7 +291,7 @@ namespace GsaGH.Components {
 
           case GsaSectionGoo sectionGoo:
             beamLoad.RefObjectGuid = sectionGoo.Value.Guid;
-            beamLoad.BeamLoad.EntityType = GsaAPI.EntityType.Element;
+            beamLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
             beamLoad.ReferenceType = ReferenceType.Property;
             this.AddRuntimeRemark(
                 "Load from Section reference created as Element load");
@@ -298,7 +299,7 @@ namespace GsaGH.Components {
 
           default:
             if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
-              beamLoad.BeamLoad.EntityList = beamList;
+              beamLoad.ApiLoad.EntityList = beamList;
             }
             break;
         }
@@ -307,22 +308,22 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(2, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          beamLoad.BeamLoad.Name = name;
+          beamLoad.ApiLoad.Name = name;
         }
       }
 
-      beamLoad.BeamLoad.AxisProperty
+      beamLoad.ApiLoad.AxisProperty
         = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
       var ghAx = new GH_Integer();
       if (da.GetData(3, ref ghAx)) {
         GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1) {
-          beamLoad.BeamLoad.AxisProperty = axis;
+          beamLoad.ApiLoad.AxisProperty = axis;
         }
       }
 
       string dir = "Z";
-      GsaAPI.Direction direc = GsaAPI.Direction.Z;
+      Direction direc = Direction.Z;
 
       var ghDir = new GH_String();
       if (da.GetData(4, ref ghDir)) {
@@ -332,27 +333,27 @@ namespace GsaGH.Components {
       dir = dir.ToUpper().Trim();
       switch (dir) {
         case "X":
-          direc = GsaAPI.Direction.X;
+          direc = Direction.X;
           break;
 
         case "Y":
-          direc = GsaAPI.Direction.Y;
+          direc = Direction.Y;
           break;
 
         case "XX":
-          direc = GsaAPI.Direction.XX;
+          direc = Direction.XX;
           break;
 
         case "YY":
-          direc = GsaAPI.Direction.YY;
+          direc = Direction.YY;
           break;
 
         case "ZZ":
-          direc = GsaAPI.Direction.ZZ;
+          direc = Direction.ZZ;
           break;
       }
 
-      beamLoad.BeamLoad.Direction = direc;
+      beamLoad.ApiLoad.Direction = direc;
 
       bool prj = false;
       var ghPrj = new GH_Boolean();
@@ -360,46 +361,46 @@ namespace GsaGH.Components {
         GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
       }
 
-      beamLoad.BeamLoad.IsProjected = prj;
+      beamLoad.ApiLoad.IsProjected = prj;
 
       var load1 = (ForcePerLength)Input.UnitNumber(this, da, 6, _forcePerLengthUnit);
 
       switch (_mode) {
         case FoldMode.Point:
           if (_mode == FoldMode.Point) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.POINT;
+            beamLoad.ApiLoad.Type = BeamLoadType.POINT;
             double pos = 0;
             if (da.GetData(7, ref pos)) {
               pos *= -1;
             }
 
-            beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
-            beamLoad.BeamLoad.SetPosition(0, pos);
+            beamLoad.ApiLoad.SetValue(0, load1.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetPosition(0, pos);
           }
 
           break;
 
         case FoldMode.Uniform:
           if (_mode == FoldMode.Uniform) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.UNIFORM;
-            beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
+            beamLoad.ApiLoad.Type = BeamLoadType.UNIFORM;
+            beamLoad.ApiLoad.SetValue(0, load1.NewtonsPerMeter);
           }
 
           break;
 
         case FoldMode.Linear:
           if (_mode == FoldMode.Linear) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.LINEAR;
+            beamLoad.ApiLoad.Type = BeamLoadType.LINEAR;
             var load2 = (ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit);
-            beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
-            beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetValue(0, load1.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetValue(1, load2.NewtonsPerMeter);
           }
 
           break;
 
         case FoldMode.Patch:
           if (_mode == FoldMode.Patch) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.PATCH;
+            beamLoad.ApiLoad.Type = BeamLoadType.PATCH;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;
@@ -411,17 +412,17 @@ namespace GsaGH.Components {
             }
 
             var load2 = (ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit);
-            beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
-            beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
-            beamLoad.BeamLoad.SetPosition(0, pos1);
-            beamLoad.BeamLoad.SetPosition(1, pos2);
+            beamLoad.ApiLoad.SetValue(0, load1.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetValue(1, load2.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetPosition(0, pos1);
+            beamLoad.ApiLoad.SetPosition(1, pos2);
           }
 
           break;
 
         case FoldMode.Trilinear:
           if (_mode == FoldMode.Trilinear) {
-            beamLoad.BeamLoad.Type = GsaAPI.BeamLoadType.TRILINEAR;
+            beamLoad.ApiLoad.Type = BeamLoadType.TRILINEAR;
             double pos1 = 0;
             if (da.GetData(7, ref pos1)) {
               pos1 *= -1;
@@ -433,10 +434,10 @@ namespace GsaGH.Components {
             }
 
             var load2 = (ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit);
-            beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
-            beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
-            beamLoad.BeamLoad.SetPosition(0, pos1);
-            beamLoad.BeamLoad.SetPosition(1, pos2);
+            beamLoad.ApiLoad.SetValue(0, load1.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetValue(1, load2.NewtonsPerMeter);
+            beamLoad.ApiLoad.SetPosition(0, pos1);
+            beamLoad.ApiLoad.SetPosition(1, pos2);
           }
 
           break;

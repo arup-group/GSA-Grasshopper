@@ -114,16 +114,16 @@ namespace GsaGHTests.Helpers.Export {
       GsaMember1dGoo mem1d = Member1d(crv, section);
 
       mem1d.Value.Offset = new GsaOffset(12, 15, 17, 19, LengthUnit.Centimeter);
-      mem1d.Value.MeshSize = 0.9;
-      mem1d.Value.MeshWithOthers = false;
-      mem1d.Value.Colour = Color.Red;
-      mem1d.Value.Group = 4;
-      mem1d.Value.Name = "name Name Name";
+      mem1d.Value.ApiMember.MeshSize = 0.9;
+      mem1d.Value.ApiMember.IsIntersector = false;
+      mem1d.Value.ApiMember.Colour = Color.Red;
+      mem1d.Value.ApiMember.Group = 4;
+      mem1d.Value.ApiMember.Name = "name Name Name";
       mem1d.Value.OrientationAngle = new Angle(45, AngleUnit.Degree);
       mem1d.Value.ReleaseEnd = new GsaBool6(true, true, true, false, false, true);
       mem1d.Value.ReleaseStart = new GsaBool6(false, false, false, false, false, false);
-      mem1d.Value.Type = MemberType.COLUMN;
-      mem1d.Value.Type1D = ElementType.BEAM;
+      mem1d.Value.ApiMember.Type = MemberType.COLUMN;
+      mem1d.Value.ApiMember.Type1D = ElementType.BEAM;
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() {

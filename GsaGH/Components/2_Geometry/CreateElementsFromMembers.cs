@@ -249,7 +249,7 @@ namespace GsaGH.Components {
           }
 
           if (ghTyp.Value is GsaMember1dGoo member1DGoo) {
-            inMem1ds.Add(member1DGoo.Value.Duplicate());
+            inMem1ds.Add(member1DGoo.Value);
           } else {
             this.AddRuntimeError("Error in Mem1D input");
             return;
@@ -269,7 +269,7 @@ namespace GsaGH.Components {
           }
 
           if (ghTyp.Value is GsaMember2dGoo member2DGoo) {
-            inMem2ds.Add(member2DGoo.Value.Duplicate());
+            inMem2ds.Add(member2DGoo.Value);
           } else {
             this.AddRuntimeError("Error in Mem2D input");
             return;

@@ -1,9 +1,4 @@
 ﻿using Grasshopper.Kernel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocsGeneration.Data.Helpers {
   public class Exposure {

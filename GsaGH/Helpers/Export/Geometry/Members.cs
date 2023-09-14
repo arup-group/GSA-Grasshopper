@@ -4,6 +4,7 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -29,14 +30,14 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Node> apiNodes, 
       LengthUnit unit,
       ref Properties apiProperties) {
-      Member apiMember = member1d.GetAPI_MemberClone();
-      apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
+      Member apiMember = member1d.DuplicateApiObject();
+      apiMember.MeshSize = new Length(member1d.ApiMember.MeshSize, unit).Meters;
 
       string topo
         = CreateTopology(member1d.Topology, member1d.TopologyType, ref apiNodes, unit);
       if (topo != string.Empty) {
         try {
-          apiMember.Topology = string.Copy(topo.Replace("  ", " "));
+          apiMember.Topology = string.Copy(topo.TrimSpaces());
         } catch (Exception) {
           var errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
           string error = string.Join(", ", errors);
@@ -62,8 +63,8 @@ namespace GsaGH.Helpers.Export {
       LengthUnit unit,
       ref Properties apiProperties,
       ref GsaIntDictionary<Axis> apiAxes) {
-      Member apiMember = member2d.GetAPI_MemberClone();
-      apiMember.MeshSize = new Length(member2d.MeshSize, unit).Meters;
+      Member apiMember = member2d.DuplicateApiObject();
+      apiMember.MeshSize = new Length(member2d.ApiMember.MeshSize, unit).Meters;
 
       string topo
         = CreateTopology(member2d.Topology, member2d.TopologyType, ref apiNodes, unit);
@@ -75,10 +76,10 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      if (member2d.IncLinesTopology != null) {
-        for (int i = 0; i < member2d.IncLinesTopology.Count; i++) {
-          topo += " L(" + CreateTopology(member2d.IncLinesTopology[i],
-            member2d.IncLinesTopologyType[i], ref apiNodes, unit) + ")";
+      if (member2d.InclusionLinesTopology != null) {
+        for (int i = 0; i < member2d.InclusionLinesTopology.Count; i++) {
+          topo += " L(" + CreateTopology(member2d.InclusionLinesTopology[i],
+            member2d.InclusionLinesTopologyType[i], ref apiNodes, unit) + ")";
         }
       }
 
@@ -88,7 +89,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       try {
-        apiMember.Topology = string.Copy(topo.Replace("( ", "(").Replace("  ", " "));
+        apiMember.Topology = string.Copy(topo.Replace("( ", "(").TrimSpaces());
       } catch (Exception) {
         var errors = member2d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
         string error = string.Join(", ", errors);
@@ -120,8 +121,8 @@ namespace GsaGH.Helpers.Export {
       GsaMember3d member3d, ref GsaGuidDictionary<Member> apiMembers,
       ref GsaIntDictionary<Node> apiNodes, LengthUnit unit,
       ref Properties apiProperties) {
-      Member apiMember = member3d.GetAPI_MemberClone();
-      apiMember.MeshSize = new Length(member3d.MeshSize, unit).Meters;
+      Member apiMember = member3d.DuplicateApiObject();
+      apiMember.MeshSize = new Length(member3d.ApiMember.MeshSize, unit).Meters;
 
       var topos = new List<string>();
 
@@ -167,7 +168,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     private static string CreateTopology(
-      IReadOnlyList<Point3d> topology, IReadOnlyList<string> topoType,
+      Point3dList topology, IReadOnlyList<string> topoType,
       ref GsaIntDictionary<Node> existingNodes, LengthUnit unit) {
       string topo = string.Empty;
       if (topology == null) {

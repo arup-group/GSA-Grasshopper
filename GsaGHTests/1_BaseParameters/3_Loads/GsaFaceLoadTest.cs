@@ -1,9 +1,10 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using System;
 using Xunit;
-using LoadCase = GsaGH.Parameters.Enums.LoadCase;
+using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -12,8 +13,7 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest() {
       var load = new GsaFaceLoad();
 
-      Assert.Equal(LoadType.Face, load.LoadType);
-      Assert.Equal(FaceLoadType.CONSTANT, load.FaceLoad.Type);
+      Assert.Equal(FaceLoadType.CONSTANT, load.ApiLoad.Type);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters {
       var duplicateType = (FaceLoadType)Enum.Parse(typeof(FaceLoadType), duplicateTypeString);
 
       var original = new GsaFaceLoad {
-        FaceLoad = {
+        ApiLoad = {
           AxisProperty = 5,
           Case = 6,
           Direction = Direction.ZZ,
@@ -48,46 +48,45 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.FaceLoad.Type = duplicateType;
-      duplicate.FaceLoad.AxisProperty = 1;
-      duplicate.FaceLoad.Case = 1;
-      duplicate.FaceLoad.Direction = Direction.XX;
-      duplicate.FaceLoad.EntityList = "";
-      duplicate.FaceLoad.Name = "";
-      duplicate.FaceLoad.IsProjected = true;
-      duplicate.FaceLoad.SetValue(0, 99);
-      duplicate.FaceLoad.SetValue(1, 99);
-      duplicate.FaceLoad.SetValue(2, 99);
-      duplicate.FaceLoad.SetValue(3, 99);
+      duplicate.ApiLoad.Type = duplicateType;
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.XX;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.IsProjected = true;
+      duplicate.ApiLoad.SetValue(0, 99);
+      duplicate.ApiLoad.SetValue(1, 99);
+      duplicate.ApiLoad.SetValue(2, 99);
+      duplicate.ApiLoad.SetValue(3, 99);
 
-      Assert.Equal(LoadType.Face, original.LoadType);
-      Assert.Equal(originalType, original.FaceLoad.Type);
-      Assert.Equal(5, original.FaceLoad.AxisProperty);
-      Assert.Equal(6, original.FaceLoad.Case);
-      Assert.Equal(Direction.ZZ, original.FaceLoad.Direction);
-      Assert.Equal("all", original.FaceLoad.EntityList);
-      Assert.Equal(GsaAPI.EntityType.Element, original.FaceLoad.EntityType);
-      Assert.Equal("name", original.FaceLoad.Name);
+      Assert.Equal(originalType, original.ApiLoad.Type);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.ZZ, original.ApiLoad.Direction);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("name", original.ApiLoad.Name);
 
-      switch (original.FaceLoad.Type) {
+      switch (original.ApiLoad.Type) {
         case FaceLoadType.CONSTANT:
-          Assert.False(original.FaceLoad.IsProjected);
-          Assert.Equal(0, original.FaceLoad.Value(0));
+          Assert.False(original.ApiLoad.IsProjected);
+          Assert.Equal(0, original.ApiLoad.Value(0));
           break;
 
         case FaceLoadType.GENERAL:
-          Assert.False(original.FaceLoad.IsProjected);
-          Assert.Equal(0, original.FaceLoad.Value(0));
-          Assert.Equal(0, original.FaceLoad.Value(1));
-          Assert.Equal(0, original.FaceLoad.Value(2));
-          Assert.Equal(0, original.FaceLoad.Value(3));
+          Assert.False(original.ApiLoad.IsProjected);
+          Assert.Equal(0, original.ApiLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Value(2));
+          Assert.Equal(0, original.ApiLoad.Value(3));
           break;
 
         case FaceLoadType.POINT:
-          Assert.False(original.FaceLoad.IsProjected);
-          Assert.Equal(0, original.FaceLoad.Value(0));
-          Assert.Equal(0, original.FaceLoad.Position.X);
-          Assert.Equal(0, original.FaceLoad.Position.Y);
+          Assert.False(original.ApiLoad.IsProjected);
+          Assert.Equal(0, original.ApiLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Position.X);
+          Assert.Equal(0, original.ApiLoad.Position.Y);
           break;
       }
     }
@@ -104,7 +103,8 @@ namespace GsaGHTests.Parameters {
       duplicate = (GsaFaceLoad)load.Duplicate();
       Assert.Equal(99, duplicate.LoadCase.Id);
 
-      duplicate.LoadCase = new GsaLoadCase(1, LoadCase.LoadCaseType.Dead, "DeadLoad");
+      duplicate.LoadCase = new GsaLoadCase(1, LoadCaseType.Dead, "DeadLoad");
+
       Assert.Equal(99, load.LoadCase.Id);
       Assert.Equal(1, duplicate.LoadCase.Id);
       Assert.Equal("Dead", duplicate.LoadCase.LoadCase.CaseType.ToString());

@@ -6,6 +6,8 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
@@ -30,7 +32,7 @@ namespace GsaGH.Helpers.Export {
 
       lists = lists.OrderByDescending(x => x.Id).ToList();
       foreach (GsaList list in lists.Where(list => list != null
-      && list.EntityType == Parameters.EntityType.Node)) {
+      && list.EntityType == EntityType.Node)) {
         AddNodeList(list, ref apiLists, ref apiNodes, modelUnit);
       }
     }
@@ -47,26 +49,45 @@ namespace GsaGH.Helpers.Export {
         ids.Add(Nodes.AddNode(ref apiNodes, node.Value.GetApiNodeToUnit(unit)));
       }
 
-      copyList._definition = GsaList.CreateListDefinition(ids);
+      copyList.Definition = GsaList.CreateListDefinition(ids);
 
       AddList(copyList, ref apiLists);
     }
 
     internal static string GetElementList(GsaList list, ref ModelAssembly model, GH_Component owner) {
-      if (list.EntityType == Parameters.EntityType.Element 
+      if (list.EntityType == EntityType.Element 
         && model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
         return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
       }
 
-      if (list.EntityType == Parameters.EntityType.Member) {
+      if (list.EntityType == EntityType.Member) {
         AddMemberList(list.Duplicate(), ref model.Lists, model.Members, owner);
         string name = model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[list.Guid]].Name;
-        list._name = $"Children of '{name}'";
-        list.EntityType = Parameters.EntityType.Element;
+        list.Name = $"Children of '{name}'";
+        list.EntityType = EntityType.Element;
       }
 
       GsaList copyList = AddPropertiesList(list, model.Properties, owner);
       AddElementList(copyList, ref model, owner);
+
+      return $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
+    }
+
+    internal static string GetElementOrMemberList(GsaList list, ref ModelAssembly model, GH_Component owner) {
+      if (model.Lists.GuidDictionary.TryGetValue(list.Guid, out int id)) {
+        return $"\"{model.Lists.ReadOnlyDictionary[id].Name}\"";
+      }
+
+      GsaList copyList = AddPropertiesList(list, model.Properties, owner);
+      switch (list.EntityType) {
+        case EntityType.Element:
+          AddElementList(copyList, ref model, owner);
+          break;
+
+        case EntityType.Member:
+          AddMemberList(copyList, ref model.Lists, model.Members, owner);
+          break;
+      }
 
       return $"\"{model.Lists.ReadOnlyDictionary[model.Lists.GuidDictionary[copyList.Guid]].Name}\"";
     }
@@ -89,19 +110,19 @@ namespace GsaGH.Helpers.Export {
       }
       GsaList copyList;
       switch (list.EntityType) {
-        case Parameters.EntityType.Element:
+        case EntityType.Element:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddElementList(copyList, ref model, owner);
           break;
 
-        case Parameters.EntityType.Member:
+        case EntityType.Member:
           copyList = AddPropertiesList(list, model.Properties, owner);
           AddMemberList(copyList, ref model.Lists, model.Members, owner);
           break;
 
-        case Parameters.EntityType.Case:
+        case EntityType.Case:
           copyList = list.Duplicate();
-          list._definition += GsaList.CreateListDefinition(list._cases);
+          list.Definition += GsaList.CreateListDefinition(list._cases);
           AddList(list, ref model.Lists);
           break;
       }
@@ -165,7 +186,7 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition = string.Join(" ", ids);
+      copyList.Definition = string.Join(" ", ids);
       return copyList;
     }
 
@@ -292,8 +313,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      copyList._definition += " " + string.Join(" ", ids);
-
+      copyList.Definition += " " + string.Join(" ", ids);
       AddList(copyList, ref model.Lists);
     }
 
@@ -354,20 +374,19 @@ namespace GsaGH.Helpers.Export {
         ids.Add(id);
       }
 
-      copyList._definition += " " + string.Join(" ", ids);
-
+      copyList.Definition += " " + string.Join(" ", ids);
       AddList(copyList, ref apiLists);
     }
 
     private static void AddList(GsaList list, ref GsaGuidDictionary<EntityList> apiLists) {
       if (list.Id > 0) {
         if (list.Name == null || list.Name.Length == 0) {
-          list._name = list.EntityType.ToString() + " List [" + list.Id + "]";
+          list.Name = list.EntityType.ToString() + " List [" + list.Id + "]";
         }
         apiLists.SetValue(list.Id, list.Guid, list.GetApiList());
       } else {
         if (list.Name == null || list.Name.Length == 0) {
-          list._name = list.EntityType.ToString() + " List [" + (apiLists.Count + 1) + "]";
+          list.Name = list.EntityType.ToString() + " List [" + (apiLists.Count + 1) + "]";
         }
         apiLists.AddValue(list.Guid, list.GetApiList());
       }

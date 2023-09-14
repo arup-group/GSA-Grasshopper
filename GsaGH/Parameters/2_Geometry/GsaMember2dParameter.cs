@@ -10,6 +10,7 @@ using OasysGH.Parameters;
 using Rhino.DocObjects;
 using Rhino;
 using Rhino.Geometry;
+using Rhino.Collections;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -34,7 +35,7 @@ namespace GsaGH.Parameters {
     protected override GsaMember2dGoo PreferredCast(object data) {
       var brep = new Brep();
       if (GH_Convert.ToBrep(data, ref brep, GH_Conversion.Both)) {
-        return new GsaMember2dGoo(new GsaMember2d(brep, new List<Curve>(), new List<Point3d>()));
+        return new GsaMember2dGoo(new GsaMember2d(brep, new List<Curve>(), new Point3dList()));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member2d");
@@ -47,7 +48,7 @@ namespace GsaGH.Parameters {
       att.ColorSource = ObjectColorSource.ColorFromObject;
       foreach (GsaMember2dGoo goo in m_data.AllData(true).Cast<GsaMember2dGoo>()) {
         ObjectAttributes objAtt = att.Duplicate();
-        objAtt.ObjectColor = goo.Value.Colour;
+        objAtt.ObjectColor = (Color)goo.Value.ApiMember.Colour;
         gH_BakeUtility.BakeObject(new GH_Brep(goo.Value.Brep), objAtt, doc);
         goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }

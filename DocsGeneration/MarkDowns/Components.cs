@@ -4,6 +4,7 @@ using System.Linq;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 using GsaGH.Components.Helpers;
+using GsaGH.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Components {
@@ -129,7 +130,7 @@ namespace DocsGeneration.MarkDowns {
 
         text += table.Finalise();
         if (!string.IsNullOrEmpty(note)) {
-          note = note.Replace(Environment.NewLine, " ").Replace("  ", " ");
+          note = note.Replace(Environment.NewLine, " ").TrimSpaces();
           text += "\n\n" + StringHelper.MakeItalic("* " + note) + "\n\n";
         }
       }

@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
+using GsaGH.Helpers.Export;
 using GsaGH.Parameters;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.GH {
   internal class Inputs {
@@ -161,7 +166,8 @@ namespace GsaGH.Helpers.GH {
         if (ghType.Value is GsaListGoo listGoo) {
           if (listGoo.Value.EntityType != EntityType.Element
             && listGoo.Value.EntityType != EntityType.Member) {
-            owner.AddRuntimeWarning("List must be of type Element to apply to element filter");
+            owner.AddRuntimeWarning("List must be of either Element or Member type to apply to " +
+              "element filter");
             return string.Empty;
           }
 
@@ -174,10 +180,41 @@ namespace GsaGH.Helpers.GH {
             return "\"" + listGoo.Value.Name + "\"";
           }
 
-          if (model.Model.Lists().Values.Where(
-            x => x.Type == GsaAPI.EntityType.Member && x.Name == listGoo.Value.Name).Any()) {
-            return "\"" + "Children of '" + listGoo.Value.Name + "'\"";
+          if (listGoo.Value.EntityType == EntityType.Member) {
+            if (model.Model.Lists().Values.Where(
+            x => x.Type == GsaAPI.EntityType.Element
+            && x.Name == $"Children of '{listGoo.Value.Name}'").Any()) {
+              return "\"" + listGoo.Value.Name + "\"";
+            }
+
+            foreach (EntityList list in model.Model.Lists().Values) { 
+              if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
+                continue;
+              }
+
+              ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
+              ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship 
+                = ElementListFromReference.GetMemberElementRelationship(model.Model);
+              
+              var elementIds = new List<int>();
+              var warnings = new List<int>(); ;
+              foreach (int memberId in memberIds) {
+                if (!memberElementRelationship.ContainsKey(memberId)) {
+                  continue;
+                }
+
+                elementIds.AddRange(memberElementRelationship[memberId]);
+              }
+
+              if (warnings.Count > 0) {
+                string warningIds = GsaList.CreateListDefinition(warnings);
+                owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
+              }
+
+              return GsaList.CreateListDefinition(elementIds);
+            }
           }
+          
           
           return listGoo.Value.Definition;
           

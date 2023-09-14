@@ -49,7 +49,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      return base.CastTo<Q>(ref target);
+      return base.CastTo(ref target);
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
@@ -116,19 +116,15 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var duplicateCurve = (PolyCurve)Value._curve.Duplicate();
-      xmorph.Morph(duplicateCurve);
-      GsaGridLine duplicate = Value.Clone();
-      duplicate._curve = duplicateCurve;
-      return new GsaGridLineGoo(duplicate);
+      var gridline = new GsaGridLine(Value);
+      xmorph.Morph(gridline._curve);
+      return new GsaGridLineGoo(gridline);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      var duplicateCurve = (PolyCurve)Value._curve.Duplicate();
-      duplicateCurve.Transform(xform);
-      GsaGridLine duplicate = Value.Clone();
-      duplicate._curve = duplicateCurve;
-      return new GsaGridLineGoo(duplicate);
+      var gridline = new GsaGridLine(Value);
+      gridline._curve.Transform(xform);
+      return new GsaGridLineGoo(gridline);
     }
   }
 }

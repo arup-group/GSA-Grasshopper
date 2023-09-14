@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace GsaGH.Helpers.GH {
+namespace GsaGH.Helpers {
   public static class StringExtension {
 
     /// <summary>
@@ -26,6 +26,13 @@ namespace GsaGH.Helpers.GH {
     public static string ToSentenceCase(this string value) {
       value = Regex.Replace(value, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
       return value.Replace("_", " ");
+    }
+
+    public static string TrimSpaces(this string value) {
+      while (value.Contains("  ")) {
+        value = value.Replace("  ", " ");
+      }
+      return value.Trim();
     }
   }
 }

@@ -8,6 +8,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -75,10 +76,10 @@ namespace GsaGH.Components {
       GH_Brep ghbrep = null;
       da.GetData(0, ref ghbrep);
 
-      var points = new List<Point3d>();
+      var points = new Point3dList();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
-        points = ghpts.Select(pt => pt.Value).ToList();
+        points = new Point3dList(ghpts.ConvertAll(pt => pt.Value));
       }
 
       var crvs = new List<Curve>();
@@ -93,25 +94,25 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref prop2dGoo)) {
           mem.Prop2d = prop2dGoo.Value;
         if (Preview3dSection) {
-          mem.UpdatePreview();
+          mem.Section3dPreview = new Section3dPreview(mem);
         }
       }
 
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.ApiMember.MeshSize = meshSize;
       }
 
       bool internalOffset = false;
       if (da.GetData(5, ref internalOffset)) {
-        mem.AutomaticInternalOffset = internalOffset;
+        mem.ApiMember.AutomaticOffset.Internal = internalOffset;
       }
 
       if (_selectedItems[0] != _dropDownItems[0][1]) {
         if (_selectedItems[0] == _dropDownItems[0][0]) {
-          mem.MeshMode = GsaAPI.MeshMode2d.Tri;
+          mem.ApiMember.MeshMode2d = GsaAPI.MeshMode2d.Tri;
         } else {
-          mem.MeshMode = GsaAPI.MeshMode2d.Quad;
+          mem.ApiMember.MeshMode2d = GsaAPI.MeshMode2d.Quad;
         }
       }
 

@@ -100,7 +100,7 @@ namespace GsaGH.Components {
 
       GsaMember3dGoo member3dGoo = null;
       if (da.GetData(0, ref member3dGoo)) {
-        mem = member3dGoo.Value.Clone();
+        mem = new GsaMember3d(member3dGoo.Value);
       }
 
       int id = 0;
@@ -113,9 +113,9 @@ namespace GsaGH.Components {
         var brep = new Brep();
         var mesh = new Mesh();
         if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
-          mem = mem.UpdateGeometry(brep);
+          mem.UpdateGeometry(brep);
         } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
-          mem = mem.UpdateGeometry(mesh);
+          mem.UpdateGeometry(mesh);
         } else {
           this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
           return;
@@ -129,44 +129,46 @@ namespace GsaGH.Components {
 
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.ApiMember.MeshSize = meshSize;
       }
 
       bool intersector = false;
       if (da.GetData(5, ref intersector)) {
-        mem.MeshWithOthers = intersector;
+        mem.ApiMember.IsIntersector = intersector;
       }
 
       string name = string.Empty;
       if (da.GetData(6, ref name)) {
-        mem.Name = name;
+        mem.ApiMember.Name = name;
       }
 
       int group = 0;
       if (da.GetData(7, ref group)) {
-        mem.Group = group;
+        mem.ApiMember.Group = group;
       }
 
       Color colour = Color.Empty;
       if (da.GetData(8, ref colour)) {
-        mem.Colour = colour;
+        mem.ApiMember.Colour = colour;
       }
 
       bool dummy = false;
       if (da.GetData(9, ref dummy)) {
-        mem.IsDummy = dummy;
+        mem.ApiMember.IsDummy = dummy;
       }
+
+      mem.UpdatePreview();
 
       da.SetData(0, new GsaMember3dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.SolidMesh);
       da.SetData(3, new GsaProperty3dGoo(mem.Prop3d));
-      da.SetData(4, mem.MeshSize);
-      da.SetData(5, mem.MeshWithOthers);
-      da.SetData(6, mem.Name);
-      da.SetData(7, mem.Group);
-      da.SetData(8, mem.Colour);
-      da.SetData(9, mem.IsDummy);
+      da.SetData(4, mem.ApiMember.MeshSize);
+      da.SetData(5, mem.ApiMember.IsIntersector);
+      da.SetData(6, mem.ApiMember.Name);
+      da.SetData(7, mem.ApiMember.Group);
+      da.SetData(8, (Color)mem.ApiMember.Colour);
+      da.SetData(9, mem.ApiMember.IsDummy);
       da.SetData(10, mem.ApiMember.Topology);
     }
   }

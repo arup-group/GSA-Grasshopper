@@ -60,7 +60,7 @@ namespace GsaGH.Components {
 
       double meshSize = 0;
       if (da.GetData(2, ref meshSize)) {
-        member.MeshSize = meshSize;
+        member.ApiMember.MeshSize = meshSize;
       }
 
       da.SetData(0, new GsaMember3dGoo(member));
