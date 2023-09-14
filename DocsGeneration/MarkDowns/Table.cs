@@ -20,7 +20,7 @@ namespace DocsGeneration.MarkDowns {
 
       Headers = headers;
       for (int i = 0; i < headers.Count; i++) {
-        string width = $"<img width={columnWidths[i]}/>";
+        string width = $"<img width=\"{columnWidths[i]}\"/>";
         _table += $"|{width} {headers[i]} ";
       }
 
