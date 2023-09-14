@@ -17,6 +17,7 @@ namespace DocsGeneration.MarkDowns {
         "This part of the sidebar file has been auto-generated, do not change it manually! Edit" +
         " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
       sb += ",{\r\n";
+      sb += AddLine(ind, "type: 'category',");
       sb += "\tlabel: 'GSA Grasshopper plugin',\r\n";
       int ind = 4;
       sb += AddLine(ind, "items: [");
@@ -25,6 +26,7 @@ namespace DocsGeneration.MarkDowns {
       // Parameter sidebar
       sb += AddLine(ind, "{");
       ind += 2;
+      sb += AddLine(ind, "type: 'category',");
       sb += AddLine(ind, "label: 'Parameters',");
       sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-parameters'}},");
       sb += AddLine(ind, "items: [");
@@ -44,6 +46,7 @@ namespace DocsGeneration.MarkDowns {
       // Components sidebar
       sb += AddLine(ind, "{");
       ind += 2;
+      sb += AddLine(ind, "type: 'category',");
       sb += AddLine(ind, "label: 'Components',");
       sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-components'}},");
       sb += AddLine(ind, "items: [");
@@ -53,6 +56,7 @@ namespace DocsGeneration.MarkDowns {
       foreach (string key in components.Keys) {
         sb += AddLine(ind, "{");
         ind += 2;
+        sb += AddLine(ind, "type: 'category',");
         sb += AddLine(ind, $"label: '{key}',");
         sb += AddLine(ind, $"path: '{page}gsagh-{key.ToLower()}-components-overview',");
         sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'}},");
