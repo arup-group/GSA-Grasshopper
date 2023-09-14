@@ -12,6 +12,11 @@ namespace GsaGH.Parameters {
     public GridLine GridLine { get; internal set; }
     public PolyCurve Curve { get; internal set; }
 
+    public GsaGridLine() {
+      GridLine = new GridLine("A");
+      Curve = new PolyCurve();
+    }
+
     internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
       GridLine = gridLine;
       Curve = curve;

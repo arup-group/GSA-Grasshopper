@@ -26,7 +26,7 @@ namespace GsaGH.Parameters {
     public LineCurve Line { get; internal set; } = new LineCurve();
     public GsaNode OrientationNode { get; set; }
     public GsaSection Section { get; set; }
-    public GsaLocalAxes LocalAxes { get; private set; }
+    public LocalAxes LocalAxes { get; private set; }
     public Section3dPreview Section3dPreview { get; private set; }
     public ReleasePreview ReleasePreview { get; private set; }
 
@@ -100,7 +100,7 @@ namespace GsaGH.Parameters {
       Line = new LineCurve(new Line(
         Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
         Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
-      LocalAxes = new GsaLocalAxes(localAxes);
+      LocalAxes = new LocalAxes(localAxes);
       Section = section;
     }
 
