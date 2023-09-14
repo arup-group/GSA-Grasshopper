@@ -116,31 +116,6 @@ namespace GsaGH.Parameters {
       return prop;
     }
 
-    internal void SetPlaneFromAxis(Axis axis) {
-      LocalAxis = new Plane(new Point3d(axis.Origin.X, axis.Origin.Y, axis.Origin.Z),
-            new Vector3d(axis.XVector.X, axis.XVector.Y, axis.XVector.Z),
-            new Vector3d(axis.XYPlane.X, axis.XYPlane.Y, axis.XYPlane.Z));
-    }
-
-    internal Axis GetAxisFromPlane(LengthUnit unit) {
-      var axis = new Axis();
-      axis.Origin.X = (unit == LengthUnit.Meter) ? LocalAxis.OriginX :
-        new Length(LocalAxis.OriginX, unit).Meters;
-      axis.Origin.Y = (unit == LengthUnit.Meter) ? LocalAxis.OriginY :
-        new Length(LocalAxis.OriginY, unit).Meters;
-      axis.Origin.Z = (unit == LengthUnit.Meter) ? LocalAxis.OriginZ :
-        new Length(LocalAxis.OriginZ, unit).Meters;
-
-      axis.XVector.X = LocalAxis.XAxis.X;
-      axis.XVector.Y = LocalAxis.XAxis.Y;
-      axis.XVector.Z = LocalAxis.XAxis.Z;
-      axis.XYPlane.X = LocalAxis.YAxis.X;
-      axis.XYPlane.Y = LocalAxis.YAxis.Y;
-      axis.XYPlane.Z = LocalAxis.YAxis.Z;
-
-      return axis;
-    }
-
     public override string ToString() {
       string pa = (Id > 0) ? "PA" + Id : string.Empty;
       if (IsReferencedById) {
@@ -172,6 +147,31 @@ namespace GsaGH.Parameters {
         type = type.Replace("LOAD_PANEL", "LOAD");
         return (Property2D_Type)Enum.Parse(typeof(Property2D_Type), type);
       }
+    }
+
+    internal void SetPlaneFromAxis(Axis axis) {
+      LocalAxis = new Plane(new Point3d(axis.Origin.X, axis.Origin.Y, axis.Origin.Z),
+            new Vector3d(axis.XVector.X, axis.XVector.Y, axis.XVector.Z),
+            new Vector3d(axis.XYPlane.X, axis.XYPlane.Y, axis.XYPlane.Z));
+    }
+
+    internal Axis GetAxisFromPlane(LengthUnit unit) {
+      var axis = new Axis();
+      axis.Origin.X = (unit == LengthUnit.Meter) ? LocalAxis.OriginX :
+        new Length(LocalAxis.OriginX, unit).Meters;
+      axis.Origin.Y = (unit == LengthUnit.Meter) ? LocalAxis.OriginY :
+        new Length(LocalAxis.OriginY, unit).Meters;
+      axis.Origin.Z = (unit == LengthUnit.Meter) ? LocalAxis.OriginZ :
+        new Length(LocalAxis.OriginZ, unit).Meters;
+
+      axis.XVector.X = LocalAxis.XAxis.X;
+      axis.XVector.Y = LocalAxis.XAxis.Y;
+      axis.XVector.Z = LocalAxis.XAxis.Z;
+      axis.XYPlane.X = LocalAxis.YAxis.X;
+      axis.XYPlane.Y = LocalAxis.YAxis.Y;
+      axis.XYPlane.Z = LocalAxis.YAxis.Z;
+
+      return axis;
     }
 
     private static Length ConvertDescriptionToLength(string description) {

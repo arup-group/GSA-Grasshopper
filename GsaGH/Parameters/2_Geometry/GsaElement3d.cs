@@ -102,51 +102,6 @@ namespace GsaGH.Parameters {
       UpdateMeshColours();
     }
 
-    public override string ToString() {
-      if (NgonMesh == null || NgonMesh.Ngons.Count == 0) {
-        return "Invalid 3D Element";
-      }
-
-      var types = ApiElements.Select(t => Mappings.elementTypeMapping.FirstOrDefault(
-        x => x.Value == t.Type).Key).ToList();
-      string type = string.Join("/", types.Distinct());
-      string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type, info).TrimSpaces();
-    }
-
-    public DataTree<int> GetTopologyIDs() {
-      var topos = new DataTree<int>();
-      for (int i = 0; i < ApiElements.Count; i++) {
-        if (ApiElements[i] != null) {
-          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
-        }
-      }
-
-      return topos;
-    }
-
-    private void CreateDisplayMesh() {
-      _displayMesh = new Mesh();
-      Mesh x = NgonMesh;
-
-      _displayMesh.Vertices.AddVertices(x.Vertices.ToList());
-      var ngons = x.GetNgonAndFacesEnumerable().ToList();
-
-      foreach (int faceIndex in ngons
-       .Select(ngon => ngon.FaceIndexList().Select(u => (int)u).ToList())
-       .SelectMany(faceindex => faceindex)) {
-        _displayMesh.Faces.AddFace(x.Faces[faceIndex]);
-      }
-
-      _displayMesh.RebuildNormals();
-    }
-
-    public void UpdateMeshColours() {
-      for (int i = 0; i < ApiElements.Count; i++) {
-        NgonMesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
-      }
-    }
-
     public List<Element> DuplicateApiObjects() {
       if (ApiElements.IsNullOrEmpty()) {
         return ApiElements;
@@ -178,6 +133,51 @@ namespace GsaGH.Parameters {
       }
 
       return elems;
+    }
+
+    public DataTree<int> GetTopologyIDs() {
+      var topos = new DataTree<int>();
+      for (int i = 0; i < ApiElements.Count; i++) {
+        if (ApiElements[i] != null) {
+          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
+        }
+      }
+
+      return topos;
+    }
+
+    public override string ToString() {
+      if (NgonMesh == null || NgonMesh.Ngons.Count == 0) {
+        return "Invalid 3D Element";
+      }
+
+      var types = ApiElements.Select(t => Mappings.elementTypeMapping.FirstOrDefault(
+        x => x.Value == t.Type).Key).ToList();
+      string type = string.Join("/", types.Distinct());
+      string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;
+      return string.Join(" ", type, info).TrimSpaces();
+    }
+
+    public void UpdateMeshColours() {
+      for (int i = 0; i < ApiElements.Count; i++) {
+        NgonMesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
+      }
+    }
+
+    private void CreateDisplayMesh() {
+      _displayMesh = new Mesh();
+      Mesh x = NgonMesh;
+
+      _displayMesh.Vertices.AddVertices(x.Vertices.ToList());
+      var ngons = x.GetNgonAndFacesEnumerable().ToList();
+
+      foreach (int faceIndex in ngons
+       .Select(ngon => ngon.FaceIndexList().Select(u => (int)u).ToList())
+       .SelectMany(faceindex => faceindex)) {
+        _displayMesh.Faces.AddFace(x.Faces[faceIndex]);
+      }
+
+      _displayMesh.RebuildNormals();
     }
   }
 }

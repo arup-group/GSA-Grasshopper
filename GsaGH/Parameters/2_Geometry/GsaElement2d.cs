@@ -107,36 +107,8 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override string ToString() {
-      if (!Mesh.IsValid) {
-        return "Null";
-      }
-
-      string type = Mappings.elementTypeMapping.FirstOrDefault(
-        x => x.Value == ApiElements.First().Type).Key;
-      string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type, info).TrimSpaces();
-    }
-
     public void CreateSection3dPreview() {
       Section3dPreview = new Section3dPreview(this);
-    }
-
-    public DataTree<int> GetTopologyIDs() {
-      var topos = new DataTree<int>();
-      for (int i = 0; i < ApiElements.Count; i++) {
-        if (ApiElements[i] != null) {
-          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
-        }
-      }
-
-      return topos;
-    }
-
-    public void UpdateMeshColours() {
-      for (int i = 0; i < ApiElements.Count; i++) {
-        Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
-      }
     }
 
     public List<Element> DuplicateApiObjects() {
@@ -170,6 +142,34 @@ namespace GsaGH.Parameters {
       }
 
       return elems;
+    }
+
+    public DataTree<int> GetTopologyIDs() {
+      var topos = new DataTree<int>();
+      for (int i = 0; i < ApiElements.Count; i++) {
+        if (ApiElements[i] != null) {
+          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
+        }
+      }
+
+      return topos;
+    }
+
+    public override string ToString() {
+      if (!Mesh.IsValid) {
+        return "Null";
+      }
+
+      string type = Mappings.elementTypeMapping.FirstOrDefault(
+        x => x.Value == ApiElements.First().Type).Key;
+      string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
+      return string.Join(" ", type, info).TrimSpaces();
+    }
+
+    public void UpdateMeshColours() {
+      for (int i = 0; i < ApiElements.Count; i++) {
+        Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
+      }
     }
   }
 }

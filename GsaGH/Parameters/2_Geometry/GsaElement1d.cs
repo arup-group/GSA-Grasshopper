@@ -104,17 +104,6 @@ namespace GsaGH.Parameters {
       Section = section;
     }
 
-    public override string ToString() {
-      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
-      string pb = string.Empty;
-      if (Section != null) {
-        pb = Section.Id > 0 ? $"PB{Section.Id}"
-        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
-      }
-
-      return string.Join(" ", id, type, pb).TrimSpaces();
-    }
     public void CreateSection3dPreview() {
       Section3dPreview = new Section3dPreview(this);
     }
@@ -145,6 +134,18 @@ namespace GsaGH.Parameters {
       }
 
       return elem;
+    }
+
+    public override string ToString() {
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
+      string pb = string.Empty;
+      if (Section != null) {
+        pb = Section.Id > 0 ? $"PB{Section.Id}"
+        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      }
+
+      return string.Join(" ", id, type, pb).TrimSpaces();
     }
 
     public void UpdateReleasesPreview() {
