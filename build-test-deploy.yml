@@ -125,12 +125,12 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-  displayName: Publish GsaGHTest Coverage Artifact
+  displayName: Publish GsaGHTest xml to Azure
   artifact: GsaGHTestsCoverage
   continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  displayName: Publish IntegrationTests Coverage Artifact
+  displayName: Publish IntegrationTest xml to Azure
   artifact: IntegrationTestsCoverage
   continueOnError: true
 
@@ -209,6 +209,7 @@ steps:
   continueOnError: false
 
 - task: GitHubRelease@1
+  displayName: 'Publishing assets to Github'
   inputs:
     gitHubConnection: 'github.com_MJCramp'
     repositoryName: 'arup-group/GSA-Grasshopper'
@@ -229,7 +230,6 @@ steps:
     isPreRelease: true
     addChangeLog: false
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-  displayName: 'Publishing assets to Github'
 
 - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
   displayName: 'Delete orphan .ghlink files'
