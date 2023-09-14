@@ -26,7 +26,7 @@ namespace DocsGeneration.MarkDowns {
       sb += AddLine(ind, "{");
       ind += 2;
       sb += AddLine(ind, "label: 'Parameters',");
-      sb += AddLine(ind, $"link: \{type: 'doc', id: '{page}gsagh-parameters'\},");
+      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-parameters'}},");
       sb += AddLine(ind, "items: [");
       ind += 2;
       foreach(string key in parameters.Keys) {
@@ -45,7 +45,7 @@ namespace DocsGeneration.MarkDowns {
       sb += AddLine(ind, "{");
       ind += 2;
       sb += AddLine(ind, "label: 'Components',");
-      sb += AddLine(ind, $"link: \{type: 'doc', id: '{page}gsagh-components'\},");
+      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-components'}},");
       sb += AddLine(ind, "items: [");
       
       // Per category sidebar
@@ -55,7 +55,7 @@ namespace DocsGeneration.MarkDowns {
         ind += 2;
         sb += AddLine(ind, $"label: '{key}',");
         sb += AddLine(ind, $"path: '{page}gsagh-{key.ToLower()}-components-overview',");
-        sb += AddLine(ind, $"link: \{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'\},");
+        sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'}},");
         sb += AddLine(ind, "items: [");
         ind += 2;
 
