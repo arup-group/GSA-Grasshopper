@@ -21,13 +21,13 @@ namespace GsaGH.Parameters {
   /// 
   /// </summary>
   public class GsaElement3d {
-    public List<Element> ApiElements { get; set; }
+    public List<Element> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public Mesh NgonMesh { get; set; } = new Mesh();
-    public List<List<int>> FaceInt { get; set; }
-    public List<List<int>> TopoInt { get; set; }
-    public Point3dList Topology { get; set; }
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public Mesh NgonMesh { get; internal set; } = new Mesh();
+    public List<List<int>> FaceInt { get; internal set; }
+    public List<List<int>> TopoInt { get; internal set; }
+    public Point3dList Topology { get; internal set; }
     public List<GsaProperty3d> Prop3ds { get; set; }
     public Mesh DisplayMesh {
       get {

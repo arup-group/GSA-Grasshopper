@@ -94,7 +94,7 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref prop2dGoo)) {
           mem.Prop2d = prop2dGoo.Value;
         if (Preview3dSection) {
-          mem.Section3dPreview = new Section3dPreview(mem);
+          mem.CreateSection3dPreview();
         }
       }
 

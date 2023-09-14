@@ -339,7 +339,7 @@ namespace GsaGH.Components {
       }
 
       if (Preview3dSection || mem.Section3dPreview != null) {
-        mem.Section3dPreview = new Section3dPreview(mem);
+        mem.CreateSection3dPreview();
       }
 
       mem.UpdateReleasesPreview();

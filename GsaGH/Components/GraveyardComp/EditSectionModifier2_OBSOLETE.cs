@@ -389,7 +389,7 @@ namespace GsaGH.Components {
       var obj = new GH_ObjectWrapper();
       if (da.GetData(11, ref obj)) {
         if (GH_Convert.ToInt32(obj.Value, out int stress, GH_Conversion.Both)) {
-          modifier.StressOption = (GsaSectionModifier.StressOptionType)stress;
+          modifier.StressOption = (StressOptionType)stress;
         }
       }
 

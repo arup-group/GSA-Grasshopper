@@ -34,8 +34,7 @@ namespace GsaGH.Components {
     });
     private LinearDensityUnit _densityUnit = DefaultUnits.LinearDensityUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private GsaSectionModifier.StressOptionType _stressOption
-      = GsaSectionModifier.StressOptionType.NoCalculation;
+    private StressOptionType _stressOption = StressOptionType.NoCalculation;
     private bool _toMode = false;
 
     public CreateSectionModifier() : base("Create Section Modifier", "SectionModifier",
@@ -84,15 +83,15 @@ namespace GsaGH.Components {
         case 2 when !_toMode:
           switch (j) {
             case 0:
-              _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+              _stressOption = StressOptionType.NoCalculation;
               break;
 
             case 1:
-              _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+              _stressOption = StressOptionType.UseUnmodified;
               break;
 
             case 2:
-              _stressOption = GsaSectionModifier.StressOptionType.UseModified;
+              _stressOption = StressOptionType.UseModified;
               break;
           }
 
@@ -106,15 +105,15 @@ namespace GsaGH.Components {
         case 3:
           switch (j) {
             case 0:
-              _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+              _stressOption = StressOptionType.NoCalculation;
               break;
 
             case 1:
-              _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+              _stressOption = StressOptionType.UseUnmodified;
               break;
 
             case 2:
-              _stressOption = GsaSectionModifier.StressOptionType.UseModified;
+              _stressOption = StressOptionType.UseModified;
               break;
           }
 
@@ -308,29 +307,29 @@ namespace GsaGH.Components {
         _densityUnit
           = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[2]);
         if (_selectedItems[3] == _stressOptions[0]) {
-          _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+          _stressOption = StressOptionType.NoCalculation;
         }
 
         if (_selectedItems[3] == _stressOptions[1]) {
-          _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+          _stressOption = StressOptionType.UseUnmodified;
         }
 
         if (_selectedItems[3] == _stressOptions[2]) {
-          _stressOption = GsaSectionModifier.StressOptionType.UseModified;
+          _stressOption = StressOptionType.UseModified;
         }
       } else {
         _densityUnit
           = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[1]);
         if (_selectedItems[2] == _stressOptions[0]) {
-          _stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+          _stressOption = StressOptionType.NoCalculation;
         }
 
         if (_selectedItems[2] == _stressOptions[1]) {
-          _stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+          _stressOption = StressOptionType.UseUnmodified;
         }
 
         if (_selectedItems[2] == _stressOptions[2]) {
-          _stressOption = GsaSectionModifier.StressOptionType.UseModified;
+          _stressOption = StressOptionType.UseModified;
         }
       }
 

@@ -11,8 +11,8 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest() {
       var gridLine = new GsaGridLine(new GridLine("label"), new PolyCurve());
 
-      Assert.NotNull(gridLine._gridLine);
-      Assert.Equal("label", gridLine._gridLine.Label);
+      Assert.NotNull(gridLine.GridLine);
+      Assert.Equal("label", gridLine.GridLine.Label);
     }
 
     [Fact]
@@ -23,11 +23,11 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate._gridLine = new GridLine("label2");
-      duplicate._curve = new PolyCurve();
+      duplicate.GridLine = new GridLine("label2");
+      duplicate.Curve = new PolyCurve();
 
-      Assert.NotNull(original._gridLine);
-      Assert.Equal("label1", original._gridLine.Label);
+      Assert.NotNull(original.GridLine);
+      Assert.Equal("label1", original.GridLine.Label);
     }
   }
 }

@@ -42,7 +42,7 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref sectionGoo)) {
         elem.Section = sectionGoo.Value;
         if (Preview3dSection) {
-          elem.Section3dPreview = new Section3dPreview(elem);
+          elem.CreateSection3dPreview();
         }
       }
 

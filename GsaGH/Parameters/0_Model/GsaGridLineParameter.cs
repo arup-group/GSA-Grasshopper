@@ -43,7 +43,7 @@ namespace GsaGH.Parameters {
         objAtt.ColorSource = ObjectColorSource.ColorFromObject;
         objAtt.LinetypeSource = ObjectLinetypeSource.LinetypeFromObject;
         objAtt.LinetypeIndex = doc.Linetypes.Find("Center");
-        gH_BakeUtility.BakeObject(new GH_Curve(goo.Value._curve), objAtt, doc);
+        gH_BakeUtility.BakeObject(new GH_Curve(goo.Value.Curve), objAtt, doc);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }

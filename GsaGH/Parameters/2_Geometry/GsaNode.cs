@@ -14,10 +14,10 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-node.html">Node</see> to read more.</para>
   /// </summary>
   public class GsaNode {
-    public Node ApiNode { get; set; }
+    public Node ApiNode { get; internal set; }
     public int Id { get; set; } = 0;
     public Plane LocalAxis { get; set; } = Plane.WorldXY;
-    public SupportPreview SupportPreview { get; set; }
+    public SupportPreview SupportPreview { get; private set; }
     public bool IsSupport => IsRestrained();
     public bool IsGlobalAxis => CheckGlobalAxis();
     public Point3d Point {
@@ -29,16 +29,37 @@ namespace GsaGH.Parameters {
       set => SetRestraint(value);
     }
 
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
     public GsaNode() {
       ApiNode = new Node();
     }
 
-    public GsaNode(Point3d position) {
+    /// <summary>
+    /// Create new instance by casting from a Point
+    /// </summary>
+    /// <param name="point"></param>
+    public GsaNode(Point3d point) {
       ApiNode = new Node();
-      Point = position;
+      Point = point;
       UpdatePreview();
     }
 
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
+    public GsaNode(GsaNode other) {
+      Id = other.Id;
+      ApiNode = other.DuplicateApiObject();
+      LocalAxis = other.LocalAxis;
+      SupportPreview = other.SupportPreview;
+    }
+
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
     internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane()) {
       Id = id;
       ApiNode = node;
@@ -53,13 +74,6 @@ namespace GsaGH.Parameters {
         LocalAxis = localAxis;
       }
       UpdatePreview();
-    }
-
-    public GsaNode(GsaNode other) {
-      Id = other.Id;
-      ApiNode = other.DuplicateApiObject();
-      LocalAxis = other.LocalAxis;
-      SupportPreview = other.SupportPreview;
     }
 
     public override string ToString() {

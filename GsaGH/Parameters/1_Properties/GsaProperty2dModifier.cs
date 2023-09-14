@@ -19,14 +19,6 @@ namespace GsaGH.Parameters {
 
     public GsaProperty2dModifier() { }
 
-    internal GsaProperty2dModifier(IQuantity additionalMass, IQuantity inPlane, IQuantity bending, IQuantity shear, IQuantity volume) {
-      AdditionalMass = additionalMass;
-      InPlane = inPlane;
-      Shear = bending;
-      Volume = shear;
-      Volume = volume;
-    }
-
     internal GsaProperty2dModifier(Prop2DModifier apiModifier) {
       if (apiModifier.InPlane.Option == Prop2DModifierOptionType.BY) {
         InPlane = new Ratio(100 * apiModifier.InPlane.Value, RatioUnit.Percent);

@@ -42,10 +42,10 @@ namespace GsaGH.Components {
       }
 
       GH_Curve curve = null;
+      GsaGridLine gridLine = null;
       if (da.GetData(0, ref curve)) {
         var ghLine = new GH_Line();
         var ghArc = new GH_Arc();
-        GridLine gridLine;
         var polyCurve = new PolyCurve();
         if (ghLine.CastFrom(curve)) {
           Line line = ghLine.Value;
@@ -57,8 +57,8 @@ namespace GsaGH.Components {
             this.AddRuntimeWarning(message);
             return;
           }
-          gridLine = GsaGridLine.FromLine(line, label);
-          polyCurve.Append(line);
+
+          gridLine = new GsaGridLine(line, label);
         } else if (ghArc.CastFrom(curve)) {
           Arc arc = ghArc.Value;
           // project onto WorldXY
@@ -73,15 +73,15 @@ namespace GsaGH.Components {
             this.AddRuntimeWarning(message);
             return;
           }
-          gridLine = GsaGridLine.FromArc(arc, label);
-          polyCurve.Append(arc);
+
+          gridLine = new GsaGridLine(arc, label);
         } else {
           string message = "Invalid input geometry, curve needs to be a straight line or a circular arc.";
           this.AddRuntimeWarning(message);
           return;
         }
 
-        da.SetData(0, new GsaGridLineGoo(new GsaGridLine(gridLine, polyCurve)));
+        da.SetData(0, new GsaGridLineGoo(gridLine));
       }
     }
   }

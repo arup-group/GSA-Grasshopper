@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateTest() {
       var original = new GsaSectionModifier {
-        StressOption = GsaSectionModifier.StressOptionType.NoCalculation,
+        StressOption = StressOptionType.NoCalculation,
       };
       
       var duplicate = new GsaSectionModifier(original);
@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters {
       duplicate.K22Modifier = new Ratio(2, RatioUnit.DecimalFraction);
       duplicate.VolumeModifier = new VolumePerLength(2, VolumePerLengthUnit.CubicMeterPerMeter);
       duplicate.AdditionalMass = new LinearDensity(2, LinearDensityUnit.KilogramPerMeter);
-      duplicate.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+      duplicate.StressOption = StressOptionType.UseModified;
       duplicate.IsBendingAxesPrincipal = true;
       duplicate.IsReferencePointCentroid = true;
 
@@ -66,7 +66,7 @@ namespace GsaGHTests.Parameters {
       Assert.NotEqual(2, original.K22Modifier.Value);
       Assert.NotEqual(2, original.VolumeModifier.Value);
       Assert.NotEqual(2, original.AdditionalMass.Value);
-      Assert.NotEqual(GsaSectionModifier.StressOptionType.UseModified, original.StressOption);
+      Assert.NotEqual(StressOptionType.UseModified, original.StressOption);
       Assert.False(original.IsBendingAxesPrincipal);
       Assert.False(original.IsReferencePointCentroid);
     }

@@ -120,7 +120,6 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var mem = new GsaMember1d(Value) {
         Id = 0,
-        LocalAxes = null,
       };
       mem.Topology?.Morph(xmorph);
       PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
@@ -136,7 +135,6 @@ namespace GsaGH.Parameters {
       xpts.Transform(xform);
       var mem = new GsaMember1d(Value) {
         Id = 0,
-        LocalAxes = null,
         Topology = xpts
       };
       PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
