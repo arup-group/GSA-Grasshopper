@@ -6,7 +6,7 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class SideBar {
-    public static string page = "/references/gsagh/";
+    public static string page = "references/gsagh/";
 
     public static void CreateSideBar(
       Dictionary<string, List<Component>> components,
