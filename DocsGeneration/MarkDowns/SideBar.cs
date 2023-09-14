@@ -16,10 +16,10 @@ namespace DocsGeneration.MarkDowns {
       string sb = "/*\n --- Start of auto-generated text --- \n" +
         "This part of the sidebar file has been auto-generated, do not change it manually! Edit" +
         " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
+      int ind = 2;
       sb += "{\r\n";
       sb += AddLine(ind, "type: 'category',");
       sb += "\tlabel: 'GSA Grasshopper plugin',\r\n";
-      int ind = 2;
       sb += AddLine(ind, "items: [");
       ind += 2;
 
