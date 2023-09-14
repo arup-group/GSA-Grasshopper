@@ -23,18 +23,18 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement2d {
-    public List<Element> ApiElements { get; set; }
+    public List<Element> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
-    public Guid Guid { get; set; } = Guid.NewGuid();
+    public Guid Guid { get; private set; } = Guid.NewGuid();
     public Mesh Mesh { get; set; } = new Mesh();
-    public List<List<int>> TopoInt { get; set; }
-    public Point3dList Topology { get; set; }
+    public List<List<int>> TopoInt { get; internal set; }
+    public Point3dList Topology { get; internal set; }
     public List<GsaOffset> Offsets => ApiElements.Select(
       e => new GsaOffset(e.Offset.X1, e.Offset.X2, e.Offset.Y, e.Offset.Z)).ToList();
     public List<Angle> OrientationAngles => ApiElements.Select(
       e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();
     public List<GsaProperty2d> Prop2ds { get; set; }
-    internal Section3dPreview Section3dPreview { get; set; }
+    public Section3dPreview Section3dPreview { get; private set; }
 
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
@@ -107,32 +107,8 @@ namespace GsaGH.Parameters {
       }
     }
 
-    public override string ToString() {
-      if (!Mesh.IsValid) {
-        return "Null";
-      }
-
-      string type = Mappings.elementTypeMapping.FirstOrDefault(
-        x => x.Value == ApiElements.First().Type).Key;
-      string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type, info).TrimSpaces();
-    }
-
-    public DataTree<int> GetTopologyIDs() {
-      var topos = new DataTree<int>();
-      for (int i = 0; i < ApiElements.Count; i++) {
-        if (ApiElements[i] != null) {
-          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
-        }
-      }
-
-      return topos;
-    }
-
-    public void UpdateMeshColours() {
-      for (int i = 0; i < ApiElements.Count; i++) {
-        Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
-      }
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
     }
 
     public List<Element> DuplicateApiObjects() {
@@ -166,6 +142,34 @@ namespace GsaGH.Parameters {
       }
 
       return elems;
+    }
+
+    public DataTree<int> GetTopologyIDs() {
+      var topos = new DataTree<int>();
+      for (int i = 0; i < ApiElements.Count; i++) {
+        if (ApiElements[i] != null) {
+          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
+        }
+      }
+
+      return topos;
+    }
+
+    public override string ToString() {
+      if (!Mesh.IsValid) {
+        return "Null";
+      }
+
+      string type = Mappings.elementTypeMapping.FirstOrDefault(
+        x => x.Value == ApiElements.First().Type).Key;
+      string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
+      return string.Join(" ", type, info).TrimSpaces();
+    }
+
+    public void UpdateMeshColours() {
+      for (int i = 0; i < ApiElements.Count; i++) {
+        Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
+      }
     }
   }
 }

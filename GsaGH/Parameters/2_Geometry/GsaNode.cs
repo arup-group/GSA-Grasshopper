@@ -14,10 +14,10 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-node.html">Node</see> to read more.</para>
   /// </summary>
   public class GsaNode {
-    public Node ApiNode { get; set; }
+    public Node ApiNode { get; internal set; }
     public int Id { get; set; } = 0;
     public Plane LocalAxis { get; set; } = Plane.WorldXY;
-    public SupportPreview SupportPreview { get; set; }
+    public SupportPreview SupportPreview { get; private set; }
     public bool IsSupport => IsRestrained();
     public bool IsGlobalAxis => CheckGlobalAxis();
     public Point3d Point {
@@ -29,16 +29,37 @@ namespace GsaGH.Parameters {
       set => SetRestraint(value);
     }
 
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
     public GsaNode() {
       ApiNode = new Node();
     }
 
-    public GsaNode(Point3d position) {
+    /// <summary>
+    /// Create new instance by casting from a Point
+    /// </summary>
+    /// <param name="point"></param>
+    public GsaNode(Point3d point) {
       ApiNode = new Node();
-      Point = position;
+      Point = point;
       UpdatePreview();
     }
 
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
+    public GsaNode(GsaNode other) {
+      Id = other.Id;
+      ApiNode = other.DuplicateApiObject();
+      LocalAxis = other.LocalAxis;
+      SupportPreview = other.SupportPreview;
+    }
+
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
     internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane()) {
       Id = id;
       ApiNode = node;
@@ -53,40 +74,6 @@ namespace GsaGH.Parameters {
         LocalAxis = localAxis;
       }
       UpdatePreview();
-    }
-
-    public GsaNode(GsaNode other) {
-      Id = other.Id;
-      ApiNode = other.DuplicateApiObject();
-      LocalAxis = other.LocalAxis;
-      SupportPreview = other.SupportPreview;
-    }
-
-    public override string ToString() {
-      if (ApiNode == null) {
-        return "Invalid Node";
-      }
-
-      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string sptTxt = !IsSupport ? string.Empty 
-        : ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z 
-          & !ApiNode.Restraint.XX & !ApiNode.Restraint.YY & !ApiNode.Restraint.ZZ ? "Pin" 
-          : ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z 
-            & ApiNode.Restraint.XX & ApiNode.Restraint.YY & ApiNode.Restraint.ZZ ? "Fix" 
-            : "X:" + (ApiNode.Restraint.X ? "\u2713" : "\u2610") 
-              + " Y:" + (ApiNode.Restraint.Y ? "\u2713" : "\u2610") 
-              + " Z:"  + (ApiNode.Restraint.Z ? "\u2713" : "\u2610") 
-              + " XX:" + (ApiNode.Restraint.XX ? "\u2713" : "\u2610") 
-              + " YY:" + (ApiNode.Restraint.YY ? "\u2713" : "\u2610") 
-              + " ZZ:" + (ApiNode.Restraint.ZZ ? "\u2713" : "\u2610");
-
-      string localTxt = string.Empty;
-      if (!IsGlobalAxis) {
-        var ghPlane = new GH_Plane(LocalAxis);
-        localTxt = " Axis:{" + ghPlane.ToString() + "}";
-      }
-
-      return string.Join(" ", id, $"Pos:{new GH_Point(Point)}", sptTxt, localTxt).TrimSpaces();
     }
 
     public Node DuplicateApiObject() {
@@ -132,7 +119,42 @@ namespace GsaGH.Parameters {
       return node;
     }
 
-    public bool CheckGlobalAxis() {
+    public override string ToString() {
+      if (ApiNode == null) {
+        return "Invalid Node";
+      }
+
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string sptTxt = !IsSupport ? string.Empty
+        : ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z
+          & !ApiNode.Restraint.XX & !ApiNode.Restraint.YY & !ApiNode.Restraint.ZZ ? "Pin"
+          : ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z
+            & ApiNode.Restraint.XX & ApiNode.Restraint.YY & ApiNode.Restraint.ZZ ? "Fix"
+            : "X:" + (ApiNode.Restraint.X ? "\u2713" : "\u2610")
+              + " Y:" + (ApiNode.Restraint.Y ? "\u2713" : "\u2610")
+              + " Z:" + (ApiNode.Restraint.Z ? "\u2713" : "\u2610")
+              + " XX:" + (ApiNode.Restraint.XX ? "\u2713" : "\u2610")
+              + " YY:" + (ApiNode.Restraint.YY ? "\u2713" : "\u2610")
+              + " ZZ:" + (ApiNode.Restraint.ZZ ? "\u2713" : "\u2610");
+
+      string localTxt = string.Empty;
+      if (!IsGlobalAxis) {
+        var ghPlane = new GH_Plane(LocalAxis);
+        localTxt = " Axis:{" + ghPlane.ToString() + "}";
+      }
+
+      return string.Join(" ", id, $"Pos:{new GH_Point(Point)}", sptTxt, localTxt).TrimSpaces();
+    }
+
+    public void UpdatePreview() {
+      if (!IsSupport) {
+        SupportPreview = null;
+      }
+
+      SupportPreview = new SupportPreview(Restraint, LocalAxis, Point, IsGlobalAxis);
+    }
+
+    private bool CheckGlobalAxis() {
       // AxisProperty = 0 is Global but 0 is also the default value,
       // so if we have set a local Plane the AxisProperty might still
       // be 0 as it is only updated in the node assembly method
@@ -158,14 +180,6 @@ namespace GsaGH.Parameters {
         ZAxis = new Vector3d(0, 0, 0),
       };
       return LocalAxis == invalidPlane;
-    }
-
-    public void UpdatePreview() {
-      if (!IsSupport) {
-        SupportPreview = null;
-      }
-
-      SupportPreview = new SupportPreview(Restraint, LocalAxis, Point, IsGlobalAxis);
     }
 
     private GsaBool6 GetRestraint() {

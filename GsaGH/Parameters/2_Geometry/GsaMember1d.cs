@@ -20,17 +20,17 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-1d.html">1D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember1d {
-    public Member ApiMember { get; set; }
+    public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public PolyCurve PolyCurve { get; set; } = new PolyCurve();
-    public Point3dList Topology { get; set; }
-    public List<string> TopologyType { get; set; }
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public PolyCurve PolyCurve { get; internal set; } = new PolyCurve();
+    public Point3dList Topology { get; internal set; }
+    public List<string> TopologyType { get; internal set; }
     public GsaNode OrientationNode { get; set; }
-    public ReleasePreview ReleasePreview { get; set; } = new ReleasePreview();
     public GsaSection Section { get; set; }
-    public GsaLocalAxes LocalAxes { get; set; }
-    public Section3dPreview Section3dPreview { get; set; }
+    public GsaLocalAxes LocalAxes { get; private set; }
+    public Section3dPreview Section3dPreview { get; private set; }
+    public ReleasePreview ReleasePreview { get; private set; }
 
     public GsaOffset Offset {
       get => GetOffSetFromApiMember();
@@ -85,7 +85,6 @@ namespace GsaGH.Parameters {
       PolyCurve = (PolyCurve)other.PolyCurve.DuplicateShallow();
       Topology = other.Topology;
       TopologyType = other.TopologyType;
-      LocalAxes = other.LocalAxes;
       OrientationNode = other.OrientationNode;
       Section = other.Section;
       Section3dPreview = other.Section3dPreview;
@@ -108,16 +107,8 @@ namespace GsaGH.Parameters {
       UpdateReleasesPreview();
     }
 
-    public override string ToString() {
-      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
-      string pb = string.Empty;
-      if (Section != null) {
-        pb = Section.Id > 0 ? $"PB{Section.Id}"
-        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
-      }
-
-      return string.Join(" ", id, type, pb).TrimSpaces();
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
     }
 
     public Member DuplicateApiObject() {
@@ -157,6 +148,18 @@ namespace GsaGH.Parameters {
       return mem;
     }
 
+    public override string ToString() {
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string pb = string.Empty;
+      if (Section != null) {
+        pb = Section.Id > 0 ? $"PB{Section.Id}"
+        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      }
+
+      return string.Join(" ", id, type, pb).TrimSpaces();
+    }
+
     public void UpdateGeometry(Curve crv) {
       Tuple<PolyCurve, Point3dList, List<string>> convertCrv
         = RhinoConversions.ConvertMem1dCrv(crv);
@@ -186,13 +189,11 @@ namespace GsaGH.Parameters {
       Bool6 s = ApiMember.GetEndRelease(0).Releases;
       Bool6 e = ApiMember.GetEndRelease(1).Releases;
 
-      if (s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
-        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ) {
-        ReleasePreview = new ReleasePreview(PolyCurve,
-          ApiMember.OrientationAngle * Math.PI / 180.0, s, e);
-      } else {
-        ReleasePreview = new ReleasePreview();
-      }
+      ReleasePreview = s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
+        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ
+        ? new ReleasePreview(PolyCurve,
+          ApiMember.OrientationAngle * Math.PI / 180.0, s, e)
+        : new ReleasePreview();
     }
   }
 }

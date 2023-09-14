@@ -408,15 +408,15 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(obj, out int stress, GH_Conversion.Both)) {
           switch (stress) {
             case 0:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+              modifier.StressOption = StressOptionType.NoCalculation;
               break;
 
             case 1:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+              modifier.StressOption = StressOptionType.UseModified;
               break;
 
             case 2:
-              modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+              modifier.StressOption = StressOptionType.UseUnmodified;
               break;
 
             default:
@@ -426,11 +426,11 @@ namespace GsaGH.Components {
           }
         } else if (GH_Convert.ToString(obj, out string stressString, GH_Conversion.Both)) {
           if (stressString.ToLower().Contains("no")) {
-            modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+            modifier.StressOption = StressOptionType.NoCalculation;
           } else if (stressString.ToLower().Replace(" ", string.Empty).Contains("unmod")) {
-            modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+            modifier.StressOption = StressOptionType.UseUnmodified;
           } else if (stressString.ToLower().Replace(" ", string.Empty).Contains("mod")) {
-            modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+            modifier.StressOption = StressOptionType.UseModified;
           } else {
             this.AddRuntimeError("Error in " + Params.Input[11].NickName
               + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '"

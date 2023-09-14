@@ -9,7 +9,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-3d.html">3D Element Properties</see> to read more.</para>
   /// </summary>
   public class GsaProperty3d : Property {
-    public Prop3D ApiProp3d { get; set; }
+    public Prop3D ApiProp3d { get; internal set; }
 
     /// <summary>
     /// Empty constructor instantiating a new API object

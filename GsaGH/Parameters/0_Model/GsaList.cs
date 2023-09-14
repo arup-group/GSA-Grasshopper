@@ -18,10 +18,10 @@ namespace GsaGH.Parameters {
   /// <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>.</para>
   /// </summary>
   public class GsaList {
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public int Id { get; set; } = 0;
     public string Definition { get; set; }
     public EntityType EntityType { get; set; } = EntityType.Undefined;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public int Id { get; set; }
     public string Name { get; set; }
 
     internal List<int> _cases;
@@ -37,7 +37,6 @@ namespace GsaGH.Parameters {
     public GsaList() { }
     internal GsaList(string name, string definition, GsaAPI.EntityType type) {
       EntityType = GetEntityFromAPI(type);
-      Id = 0;
       Name = string.IsNullOrEmpty(name) ? $"{type} list" : name;
       Definition = definition;
     }

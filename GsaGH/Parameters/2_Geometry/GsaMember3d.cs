@@ -20,13 +20,13 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> to read more.</para>
   /// </summary>
   public class GsaMember3d {
-    public Member ApiMember { get; set; }
+    public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public Mesh SolidMesh { get; set; }
-    public List<Line> PreviewEdgeLines { get; set; }
-    public List<Polyline> PreviewHiddenLines { get; set; }
-    public Point3dList PreviewPts { get; set; }
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public Mesh SolidMesh { get; private set; }
+    public List<Line> PreviewEdgeLines { get; private set; }
+    public List<Polyline> PreviewHiddenLines { get; private set; }
+    public Point3dList PreviewPts { get; private set; }
     public GsaProperty3d Prop3d { get; set; }
 
     /// <summary>
@@ -85,6 +85,36 @@ namespace GsaGH.Parameters {
       ApiMember.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       UpdatePreview();
     }
+    
+    public Member DuplicateApiObject() {
+      var mem = new Member {
+        Group = ApiMember.Group,
+        IsDummy = ApiMember.IsDummy,
+        IsIntersector = ApiMember.IsIntersector,
+        MeshSize = ApiMember.MeshSize,
+        Name = ApiMember.Name,
+        OrientationAngle = ApiMember.OrientationAngle,
+        OrientationNode = ApiMember.OrientationNode,
+        Property = ApiMember.Property,
+        Type = ApiMember.Type,
+      };
+      if (ApiMember.Topology != string.Empty) {
+        mem.Topology = ApiMember.Topology;
+      }
+
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
+
+      if ((Color)ApiMember.Colour
+        != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+      {
+        mem.Colour = ApiMember.Colour;
+      }
+
+      return mem;
+    }
 
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
@@ -128,36 +158,6 @@ namespace GsaGH.Parameters {
       }
 
       PreviewPts = new Point3dList(SolidMesh.Vertices.ToPoint3dArray());
-    }
-
-    public Member DuplicateApiObject() {
-      var mem = new Member {
-        Group = ApiMember.Group,
-        IsDummy = ApiMember.IsDummy,
-        IsIntersector = ApiMember.IsIntersector,
-        MeshSize = ApiMember.MeshSize,
-        Name = ApiMember.Name,
-        OrientationAngle = ApiMember.OrientationAngle,
-        OrientationNode = ApiMember.OrientationNode,
-        Property = ApiMember.Property,
-        Type = ApiMember.Type,
-      };
-      if (ApiMember.Topology != string.Empty) {
-        mem.Topology = ApiMember.Topology;
-      }
-
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
-
-      if ((Color)ApiMember.Colour
-        != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
-      {
-        mem.Colour = ApiMember.Colour;
-      }
-
-      return mem;
     }
   }
 }

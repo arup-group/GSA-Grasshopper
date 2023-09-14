@@ -431,8 +431,8 @@ namespace GsaGH.Helpers.Export {
     internal void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {
       if (gridLines != null) {
         int id = 1;
-        foreach (GsaGridLine gridLine in gridLines.OrderBy(x => x._gridLine.Label)) {
-          _gridLines.SetValue(id, gridLine._gridLine);
+        foreach (GsaGridLine gridLine in gridLines.OrderBy(x => x.GridLine.Label)) {
+          _gridLines.SetValue(id, gridLine.GridLine);
           id++;
         }
         Model.SetGridLines(_gridLines.ReadOnlyDictionary);

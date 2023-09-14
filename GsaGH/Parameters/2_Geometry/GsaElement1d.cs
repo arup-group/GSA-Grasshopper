@@ -20,15 +20,15 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement1d {
-    public Element ApiElement { get; set; }
+    public Element ApiElement { get; internal set; }
     public int Id { get; set; } = 0;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public LineCurve Line { get; set; } = new LineCurve();
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public LineCurve Line { get; internal set; } = new LineCurve();
     public GsaNode OrientationNode { get; set; }
-    public ReleasePreview ReleasePreview = new ReleasePreview();
     public GsaSection Section { get; set; }
-    public GsaLocalAxes LocalAxes { get; set; }
-    public Section3dPreview Section3dPreview { get; set; }
+    public GsaLocalAxes LocalAxes { get; private set; }
+    public Section3dPreview Section3dPreview { get; private set; }
+    public ReleasePreview ReleasePreview { get; private set; }
 
     public GsaOffset Offset {
       get => GetOffSetFromApiElement();
@@ -80,7 +80,6 @@ namespace GsaGH.Parameters {
       ApiElement = other.DuplicateApiObject();
       LocalAxes = other.LocalAxes;
       Line = (LineCurve)other.Line.DuplicateShallow();
-      LocalAxes = other.LocalAxes;
       OrientationNode = other.OrientationNode;
       Section = other.Section;
       Section3dPreview = other.Section3dPreview;
@@ -105,16 +104,8 @@ namespace GsaGH.Parameters {
       Section = section;
     }
 
-    public override string ToString() {
-      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
-      string pb = string.Empty;
-      if (Section != null) {
-        pb = Section.Id > 0 ? $"PB{Section.Id}"
-        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
-      }
-
-      return string.Join(" ", id, type, pb).TrimSpaces();
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
     }
 
     public Element DuplicateApiObject() {
@@ -145,21 +136,16 @@ namespace GsaGH.Parameters {
       return elem;
     }
 
-    private GsaOffset GetOffSetFromApiElement() {
-      return new GsaOffset(
-        ApiElement.Offset.X1, ApiElement.Offset.X2, ApiElement.Offset.Y, ApiElement.Offset.Z);
-    }
+    public override string ToString() {
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
+      string pb = string.Empty;
+      if (Section != null) {
+        pb = Section.Id > 0 ? $"PB{Section.Id}"
+        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      }
 
-    private void SetOffsetInApiElement(GsaOffset offset) {
-      ApiElement.Offset.X1 = offset.X1.Meters;
-      ApiElement.Offset.X2 = offset.X2.Meters;
-      ApiElement.Offset.Y = offset.Y.Meters;
-      ApiElement.Offset.Z = offset.Z.Meters;
-    }
-
-    private void SetRelease(GsaBool6 bool6, int pos) {
-      ApiElement.SetEndRelease(pos, new EndRelease(bool6.ApiBool6));
-      UpdateReleasesPreview();
+      return string.Join(" ", id, type, pb).TrimSpaces();
     }
 
     public void UpdateReleasesPreview() {
@@ -175,6 +161,23 @@ namespace GsaGH.Parameters {
       } else {
         ReleasePreview = new ReleasePreview();
       }
+    }
+
+    private GsaOffset GetOffSetFromApiElement() {
+      return new GsaOffset(
+        ApiElement.Offset.X1, ApiElement.Offset.X2, ApiElement.Offset.Y, ApiElement.Offset.Z);
+    }
+
+    private void SetOffsetInApiElement(GsaOffset offset) {
+      ApiElement.Offset.X1 = offset.X1.Meters;
+      ApiElement.Offset.X2 = offset.X2.Meters;
+      ApiElement.Offset.Y = offset.Y.Meters;
+      ApiElement.Offset.Z = offset.Z.Meters;
+    }
+
+    private void SetRelease(GsaBool6 bool6, int pos) {
+      ApiElement.SetEndRelease(pos, new EndRelease(bool6.ApiBool6));
+      UpdateReleasesPreview();
     }
   }
 }

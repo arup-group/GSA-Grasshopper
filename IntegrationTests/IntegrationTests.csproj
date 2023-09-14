@@ -28,7 +28,7 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Interop.Gsa_10_1">
+    <Reference Include="Interop.Gsa_10_2">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
     </Reference>
   </ItemGroup>

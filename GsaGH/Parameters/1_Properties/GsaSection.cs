@@ -12,7 +12,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-sect-lib.html">Sections</see> to read more.</para>
   /// </summary>
   public class GsaSection : Property {
-    public Section ApiSection { get; set; }
+    public Section ApiSection { get; internal set; }
     public GsaSectionModifier Modifier { get; set; }
     public GsaSectionProperties SectionProperties 
       => new GsaSectionProperties(ApiSection.Properties());

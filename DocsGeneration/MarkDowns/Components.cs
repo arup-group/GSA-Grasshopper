@@ -111,7 +111,6 @@ namespace DocsGeneration.MarkDowns {
         text += table.Finalise();
       }
 
-
       if (component.Outputs != null && component.Outputs.Count != 0) {
         var table = new Table("Output parameters", 3, headers, widths);
 

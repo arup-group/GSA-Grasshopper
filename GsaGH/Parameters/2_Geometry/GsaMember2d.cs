@@ -19,22 +19,22 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
   /// </summary>
   public class GsaMember2d {
-    public Member ApiMember { get; set; }
+    public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
-    public Guid Guid { get; set; } = Guid.NewGuid();
-    public Brep Brep { get; set; }
-    public PolyCurve PolyCurve { get; set; }
-    public Point3dList Topology { get; set; }
-    public List<string> TopologyType { get; set; }
-    public List<PolyCurve> VoidCurves { get; set; }
-    public List<Point3dList> VoidTopology { get; set; }
-    public List<List<string>> VoidTopologyType { get; set; }
-    public List<PolyCurve> InclusionLines { get; set; }
-    public List<Point3dList> InclusionLinesTopology { get; set; }
-    public List<List<string>> InclusionLinesTopologyType { get; set; }
-    public Point3dList InclusionPoints { get; set; }
+    public Guid Guid { get; private set; } = Guid.NewGuid();
+    public Brep Brep { get; internal set; }
+    public PolyCurve PolyCurve { get; internal set; }
+    public Point3dList Topology { get; internal set; }
+    public List<string> TopologyType { get; internal set; }
+    public List<PolyCurve> VoidCurves { get; internal set; }
+    public List<Point3dList> VoidTopology { get; internal set; }
+    public List<List<string>> VoidTopologyType { get; internal set; }
+    public List<PolyCurve> InclusionLines { get; internal set; }
+    public List<Point3dList> InclusionLinesTopology { get; internal set; }
+    public List<List<string>> InclusionLinesTopologyType { get; internal set; }
+    public Point3dList InclusionPoints { get; internal set; }
     public GsaProperty2d Prop2d { get; set; }
-    public Section3dPreview Section3dPreview { get; set; }
+    public Section3dPreview Section3dPreview { get; private set; }
 
     public GsaOffset Offset {
       get => GetOffSetFromApiMember();
@@ -191,6 +191,42 @@ namespace GsaGH.Parameters {
       Prop2d = prop2d;
     }
 
+    public void CreateSection3dPreview() {
+      Section3dPreview = new Section3dPreview(this);
+    }
+
+    public Member DuplicateApiObject() {
+      var mem = new Member {
+        Group = ApiMember.Group,
+        IsDummy = ApiMember.IsDummy,
+        MeshSize = ApiMember.MeshSize,
+        Name = ApiMember.Name.ToString(),
+        OrientationAngle = ApiMember.OrientationAngle,
+        OrientationNode = ApiMember.OrientationNode,
+        Property = ApiMember.Property,
+        Type = ApiMember.Type,
+        Type2D = ApiMember.Type2D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
+        IsIntersector = ApiMember.IsIntersector,
+        MeshMode2d = ApiMember.MeshMode2d,
+      };
+      if (ApiMember.Topology != string.Empty) {
+        mem.Topology = ApiMember.Topology;
+      }
+
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
+
+      // workaround to handle that Color is non-nullable type
+      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
+        mem.Colour = ApiMember.Colour;
+      }
+
+      return mem;
+    }
+
     public override string ToString() {
       string incl = string.Empty;
       if (!InclusionLines.IsNullOrEmpty()) {
@@ -249,38 +285,6 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
-    }
-
-    public Member DuplicateApiObject() {
-      var mem = new Member {
-        Group = ApiMember.Group,
-        IsDummy = ApiMember.IsDummy,
-        MeshSize = ApiMember.MeshSize,
-        Name = ApiMember.Name.ToString(),
-        OrientationAngle = ApiMember.OrientationAngle,
-        OrientationNode = ApiMember.OrientationNode,
-        Property = ApiMember.Property,
-        Type = ApiMember.Type,
-        Type2D = ApiMember.Type2D,
-        AutomaticOffset = ApiMember.AutomaticOffset,
-        IsIntersector = ApiMember.IsIntersector,
-        MeshMode2d = ApiMember.MeshMode2d,
-      };
-      if (ApiMember.Topology != string.Empty) {
-        mem.Topology = ApiMember.Topology;
-      }
-
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
-
-      // workaround to handle that Color is non-nullable type
-      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
-        mem.Colour = ApiMember.Colour;
-      }
-
-      return mem;
     }
 
     private GsaOffset GetOffSetFromApiMember() {
