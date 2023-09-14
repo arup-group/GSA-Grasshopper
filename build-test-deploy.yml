@@ -109,6 +109,7 @@ steps:
   failOnStderr: true
 
 - task: PublishCodeCoverageResults@1
+  displayName: Create Azure GsaGH CodeCoverage
   inputs:
     codeCoverageTool: 'cobertura'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
@@ -116,6 +117,7 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - task: PublishCodeCoverageResults@1
+  displayName: Create Azure IntegrationTest CodeCoverage
   inputs:
     codeCoverageTool: 'cobertura'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
@@ -123,12 +125,13 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+  displayName: Publish GsaGHTest Coverage Artifact
   artifact: GsaGHTestsCoverage
-  displayName: GsaGHTest Azure Coverage
   continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  artifact: IntegrationTests Azure Coverage
+  displayName: Publish IntegrationTests Coverage Artifact
+  artifact: IntegrationTestsCoverage
   continueOnError: true
 
 - task: PowerShell@2
@@ -201,8 +204,8 @@ steps:
   failOnStderr: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
-  artifact: Docs
   displayName: Publish Docs artifact
+  artifact: Docs
   continueOnError: false
 
 - task: GitHubRelease@1
