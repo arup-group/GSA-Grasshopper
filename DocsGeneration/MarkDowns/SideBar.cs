@@ -58,7 +58,6 @@ namespace DocsGeneration.MarkDowns {
         ind += 2;
         sb += AddLine(ind, "type: 'category',");
         sb += AddLine(ind, $"label: '{key}',");
-        sb += AddLine(ind, $"path: '{page}gsagh-{key.ToLower()}-components-overview',");
         sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'}},");
         sb += AddLine(ind, "items: [");
         ind += 2;
