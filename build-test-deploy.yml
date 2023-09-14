@@ -199,6 +199,10 @@ steps:
   displayName: Generate docs site
   failOnStderr: true
 
+- publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
+  artifact: Docs
+  continueOnError: false
+
 - task: GitHubRelease@1
   inputs:
     gitHubConnection: 'github.com_MJCramp'
