@@ -361,7 +361,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddColourParameter("Colour", "Co",
         "Optional list of colours to override default colours" + Environment.NewLine
@@ -425,7 +425,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
+      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();

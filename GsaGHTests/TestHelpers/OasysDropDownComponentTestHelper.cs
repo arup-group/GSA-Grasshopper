@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Grasshopper.Kernel;
 using OasysGH.Components;
@@ -55,7 +56,7 @@ namespace GsaGHTests.Helpers {
       deserializedComponent.ExpireSolution(true);
       deserializedComponent.Params.Output[0].CollectData();
 
-      Duplicates.AreEqual(originalComponent, deserializedComponent, true);
+      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
     }
   }
 }

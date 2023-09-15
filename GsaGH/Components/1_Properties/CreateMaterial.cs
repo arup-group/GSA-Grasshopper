@@ -9,7 +9,6 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -74,8 +73,7 @@ namespace GsaGH.Components {
       _concreteCode = _dropDownItems[1][8];
       _selectedItems.Add(_concreteCode); // EC2-1-1
 
-      _dropDownItems.Add(GetGradeNames(
-        MatType.Concrete, _concreteCode, string.Empty));
+      _dropDownItems.Add(GsaMaterialFactory.GetGradeNames(MatType.Concrete, _concreteCode, string.Empty));
       _selectedItems.Add(_dropDownItems[2][4]); // C30/37
 
       _isInitialised = true;
@@ -144,13 +142,13 @@ namespace GsaGH.Components {
           code = concreteCode;
           break;
 
-        case MatType.Steel: 
-          code = steelCode; 
+        case MatType.Steel:
+          code = steelCode;
           break;
       }
 
-      da.SetData(0, new GsaMaterialGoo(
-        new GsaMaterial(type, _selectedItems.Last(), code)));
+      var material = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(type, _selectedItems.Last(), code);
+      da.SetData(0, new GsaMaterialGoo(material));
     }
 
     private void UpdateMaterialType() {
@@ -200,7 +198,7 @@ namespace GsaGH.Components {
       var type = (MatType)Enum.Parse(
         typeof(MatType), _selectedItems[0], ignoreCase: true);
 
-      List<string> grades = GetGradeNames(type, _concreteCode, _steelCode);
+      List<string> grades = GsaMaterialFactory.GetGradeNames(type, _concreteCode, _steelCode);
       for (int i = grades.Count - 1; i >= 0; i--) {
         if (grades[i].StartsWith("<")) {
           grades.RemoveAt(i);
@@ -225,8 +223,7 @@ namespace GsaGH.Components {
       foreach (string grade in grades) {
         _gradeMaterials.Add(
           grade.ToLower().Replace(".", string.Empty).Replace("*", string.Empty)
-          .Replace(" ", string.Empty),
-          new GsaMaterial(type, grade, code));
+          .Replace(" ", string.Empty), (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(type, grade, code));
       }
     }
 

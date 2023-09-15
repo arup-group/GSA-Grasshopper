@@ -157,8 +157,7 @@ namespace GsaGH.Parameters {
        = UnitMapping.GetApiUnit(OasysGH.Units.DefaultUnits.VelocityUnit);
     }
 
-    internal static Model CreateModelFromCodes(
-      string concreteDesignCode = "", string steelDesignCode = "") {
+    internal static Model CreateModelFromCodes(string concreteDesignCode = "", string steelDesignCode = "") {
       if (concreteDesignCode == string.Empty) {
         concreteDesignCode = DesignCode.GetConcreteDesignCodeNames()[8];
       }

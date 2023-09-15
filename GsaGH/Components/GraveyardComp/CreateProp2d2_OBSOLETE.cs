@@ -170,10 +170,10 @@ namespace GsaGH.Components {
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(1, ref ghTyp)) {
             if (ghTyp.Value is GsaMaterialGoo materialGoo) {
-              prop.Material = materialGoo.Value.Duplicate() ?? new GsaMaterial();
+              prop.Material = GsaMaterialFactory.CreateMaterial(materialGoo.Value);
             } else {
               if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-                prop.Material = new GsaMaterial(idd);
+                prop.Material = new GsaReferencedMaterial(idd);
               } else {
                 this.AddRuntimeError(
                   "Unable to convert PB input to a Section Property of reference integer");
@@ -181,10 +181,10 @@ namespace GsaGH.Components {
               }
             }
           } else {
-            prop.Material = new GsaMaterial(2);
+            prop.Material = new GsaReferencedMaterial(2);
           }
         } else {
-          prop.Material = new GsaMaterial(8);
+          prop.Material = new GsaReferencedMaterial(8);
         }
       } else {
         prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;

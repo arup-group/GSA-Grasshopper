@@ -16,11 +16,11 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.SteelMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.Equal(GsaMaterial.MatType.Steel, kvp.Value.MaterialType);
+        Assert.Equal(MatType.Steel, kvp.Value.MaterialType);
         Assert.Equal("EN 1993-1-1:2005", kvp.Value.SteelDesignCodeName);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
-        Assert.False(kvp.Value.IsCustom);
+        Assert.False(kvp.Value.IsUserDefined);
       }
     }
 
@@ -31,12 +31,12 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.ConcreteMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.NotNull(kvp.Value.StandardMaterial);
-        Assert.Equal(GsaMaterial.MatType.Concrete, kvp.Value.MaterialType);
+        Assert.NotNull(((IGsaStandardMaterial)kvp.Value).StandardMaterial);
+        Assert.Equal(MatType.Concrete, kvp.Value.MaterialType);
         Assert.Equal("EC2-1-1", kvp.Value.ConcreteDesignCodeName);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
-        Assert.False(kvp.Value.IsCustom);
+        Assert.False(kvp.Value.IsUserDefined);
       }
     }
 
@@ -47,11 +47,11 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.FrpMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.NotNull(kvp.Value.StandardMaterial);
-        Assert.Equal(GsaMaterial.MatType.Frp, kvp.Value.MaterialType);
+        Assert.NotNull(((IGsaStandardMaterial)kvp.Value).StandardMaterial);
+        Assert.Equal(MatType.Frp, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
-        Assert.False(kvp.Value.IsCustom);
+        Assert.False(kvp.Value.IsUserDefined);
       }
     }
 
@@ -62,11 +62,11 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AluminiumMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.NotNull(kvp.Value.StandardMaterial);
-        Assert.Equal(GsaMaterial.MatType.Aluminium, kvp.Value.MaterialType);
+        Assert.NotNull(((IGsaStandardMaterial)kvp.Value).StandardMaterial);
+        Assert.Equal(MatType.Aluminium, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
-        Assert.False(kvp.Value.IsCustom);
+        Assert.False(kvp.Value.IsUserDefined);
       }
     }
 
@@ -77,11 +77,11 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.TimberMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.NotNull(kvp.Value.StandardMaterial);
-        Assert.Equal(GsaMaterial.MatType.Timber, kvp.Value.MaterialType);
+        Assert.NotNull(((IGsaStandardMaterial)kvp.Value).StandardMaterial);
+        Assert.Equal(MatType.Timber, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
-        Assert.False(kvp.Value.IsCustom);
+        Assert.False(kvp.Value.IsUserDefined);
       }
     }
 
@@ -92,11 +92,11 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.GlassMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.NotNull(kvp.Value.StandardMaterial);
-        Assert.Equal(GsaMaterial.MatType.Glass, kvp.Value.MaterialType);
+        Assert.NotNull(((IGsaStandardMaterial)kvp.Value).StandardMaterial);
+        Assert.Equal(MatType.Glass, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
         GsaMaterialTest.DuplicateTest(kvp.Value);
-        Assert.False(kvp.Value.IsCustom);
+        Assert.False(kvp.Value.IsUserDefined);
       }
     }
 
@@ -107,12 +107,11 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.FabricMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.NotNull(kvp.Value.StandardMaterial);
-        Assert.Equal(GsaMaterial.MatType.Fabric, kvp.Value.MaterialType);
+        Assert.NotNull(((IGsaStandardMaterial)kvp.Value).StandardMaterial);
+        Assert.Equal(MatType.Fabric, kvp.Value.MaterialType);
         Assert.Equal(i++, kvp.Key);
-        Assert.False(kvp.Value.IsCustom);
-        Assert.Throws<System.Reflection.TargetInvocationException>(
-          () => GsaMaterialTest.DuplicateTest(kvp.Value));
+        Assert.False(kvp.Value.IsUserDefined);
+        GsaMaterialTest.DuplicateTest(kvp.Value);
       }
     }
 
@@ -123,11 +122,10 @@ namespace GsaGHTests.Helpers.Import {
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AnalysisMaterials) {
         Assert.NotNull(kvp.Value);
-        Assert.Equal(GsaMaterial.MatType.Generic, kvp.Value.MaterialType);
+        Assert.Equal(MatType.Custom, kvp.Value.MaterialType);
         GsaMaterialTest.DuplicateTest(kvp.Value);
         Assert.Equal(i++, kvp.Key);
-        Assert.True(kvp.Value.IsCustom);
-        Assert.Throws<Exception>(() => kvp.Value.StandardMaterial);
+        Assert.True(kvp.Value.IsUserDefined);
       }
     }
     
@@ -136,26 +134,26 @@ namespace GsaGHTests.Helpers.Import {
       string concreteCodeName = "EC2-1-1";
       var model = new GsaAPI.Model(concreteCodeName, steelCodeName);
 
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Steel, string.Empty, steelCodeName)) {
+      foreach (string grade in GsaMaterialFactory.GetGradeNames(MatType.Steel, string.Empty, steelCodeName)) {
         model.AddSteelMaterial(model.CreateSteelMaterial(grade));
       }
       foreach (string grade in
-        GsaMaterial.GetGradeNames(GsaMaterial.MatType.Concrete, concreteCodeName, string.Empty)) {
+        GsaMaterialFactory.GetGradeNames(MatType.Concrete, concreteCodeName, string.Empty)) {
         model.AddConcreteMaterial(model.CreateConcreteMaterial(grade));
       }
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Frp)) {
+      foreach (string grade in GsaMaterialFactory.GetGradeNames(MatType.Frp)) {
         model.AddFrpMaterial(model.CreateFrpMaterial(grade));
       }
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Aluminium)) {
+      foreach (string grade in GsaMaterialFactory.GetGradeNames(MatType.Aluminium)) {
         model.AddAluminiumMaterial(model.CreateAluminiumMaterial(grade));
       }
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Timber)) {
+      foreach (string grade in GsaMaterialFactory.GetGradeNames(MatType.Timber)) {
         model.AddTimberMaterial(model.CreateTimberMaterial(grade));
       }
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Glass)) {
+      foreach (string grade in GsaMaterialFactory.GetGradeNames(MatType.Glass)) {
         model.AddGlassMaterial(model.CreateGlassMaterial(grade));
       }
-      foreach (string grade in GsaMaterial.GetGradeNames(GsaMaterial.MatType.Fabric)) {
+      foreach (string grade in GsaMaterialFactory.GetGradeNames(MatType.Fabric)) {
         model.AddFabricMaterial(model.CreateFabricMaterial(grade));
       }
 

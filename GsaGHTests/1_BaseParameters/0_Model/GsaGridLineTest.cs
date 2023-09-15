@@ -2,7 +2,9 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
+using System;
 using Xunit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -28,6 +30,38 @@ namespace GsaGHTests.Parameters {
 
       Assert.NotNull(original.GridLine);
       Assert.Equal("label1", original.GridLine.Label);
+    }
+
+    [Fact]
+    public void ArcGridLineTest() {
+      var arc = new Arc(new Point3d(0, 0, 0), 0.5, Math.PI / 4);
+      var gridline = new GsaGridLine(arc, "Arc");
+
+      Assert.True(gridline.Curve.GetLength(0) > 0);
+      Assert.Equal(arc.Length, gridline.Curve.GetLength(0));
+      Assert.Equal("Arc", gridline.GridLine.Label);
+      Assert.Equal(GridLineShape.Arc, gridline.GridLine.Shape);
+      Assert.Equal(0, gridline.GridLine.X);
+      Assert.Equal(0, gridline.GridLine.Y);
+      Assert.Equal(0.5, gridline.GridLine.Length);
+      Assert.Equal(0, gridline.GridLine.Theta1);
+      Assert.Equal(45, gridline.GridLine.Theta2);
+    }
+
+    [Fact]
+    public void LineGridLineTest() {
+      var line = new Line(new Point3d(10, 15, 0), new Point3d(20, 15, 0));
+      var gridline = new GsaGridLine(line, "Line");
+
+      Assert.True(gridline.Curve.GetLength(0) > 0);
+      Assert.Equal(10, gridline.Curve.GetLength(0));
+      Assert.Equal("Line", gridline.GridLine.Label);
+      Assert.Equal(GridLineShape.Line, gridline.GridLine.Shape);
+      Assert.Equal(10, gridline.GridLine.X);
+      Assert.Equal(15, gridline.GridLine.Y);
+      Assert.Equal(10, gridline.GridLine.Length);
+      Assert.Equal(0, gridline.GridLine.Theta1);
+      Assert.Equal(0, gridline.GridLine.Theta2);
     }
   }
 }

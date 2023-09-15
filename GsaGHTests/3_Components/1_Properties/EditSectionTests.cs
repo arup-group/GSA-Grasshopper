@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Components;
@@ -74,7 +75,7 @@ namespace GsaGHTests.Components.Properties {
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(comp, 10);
 
-      Duplicates.AreEqual(edit, sectionGoo.Value, true);
+      Duplicates.AreEqual(edit, sectionGoo.Value, new List<string>() { "Guid" });
       Assert.Equal(42, id.Value);
       Assert.Equal("STD I 300 400 10 20", profile.Value);
       Duplicates.AreEqual(material.Value, mat.Value);

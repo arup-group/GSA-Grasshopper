@@ -165,35 +165,35 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.Generic:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Generic);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Custom);
           break;
 
         case FoldMode.Steel:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Steel);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Steel);
           break;
 
         case FoldMode.Concrete:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Concrete);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Concrete);
           break;
 
         case FoldMode.Timber:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Timber);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Timber);
           break;
 
         case FoldMode.Aluminium:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Aluminium);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Aluminium);
           break;
 
         case FoldMode.Frp:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Frp);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Frp);
           break;
 
         case FoldMode.Glass:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Glass);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Glass);
           break;
 
         case FoldMode.Fabric:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Fabric);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Fabric);
           break;
       }
 
