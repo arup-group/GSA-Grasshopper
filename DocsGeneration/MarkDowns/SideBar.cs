@@ -6,7 +6,7 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class SideBar {
-    public static string page = "/references/gsagh/";
+    public static string page = "references/gsagh/";
 
     public static void CreateSideBar(
       Dictionary<string, List<Component>> components,
@@ -16,18 +16,20 @@ namespace DocsGeneration.MarkDowns {
       string sb = "/*\n --- Start of auto-generated text --- \n" +
         "This part of the sidebar file has been auto-generated, do not change it manually! Edit" +
         " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
-      sb += ",{\r\n";
-      sb += "\ttitle: 'GSA Grasshopper plugin',\r\n";
-      int ind = 4;
-      sb += AddLine(ind, "children: [");
+      int ind = 2;
+      sb += "{\r\n";
+      sb += AddLine(ind, "type: 'category',");
+      sb += "\tlabel: 'GSA Grasshopper plugin',\r\n";
+      sb += AddLine(ind, "items: [");
       ind += 2;
 
       // Parameter sidebar
       sb += AddLine(ind, "{");
       ind += 2;
-      sb += AddLine(ind, "title: 'Parameters',");
-      sb += AddLine(ind, $"path: '{page}gsagh-parameters',");
-      sb += AddLine(ind, "children: [");
+      sb += AddLine(ind, "type: 'category',");
+      sb += AddLine(ind, "label: 'Parameters',");
+      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-parameters'}},");
+      sb += AddLine(ind, "items: [");
       ind += 2;
       foreach(string key in parameters.Keys) {
         foreach (Parameter parameter in parameters[key]) {
@@ -44,18 +46,20 @@ namespace DocsGeneration.MarkDowns {
       // Components sidebar
       sb += AddLine(ind, "{");
       ind += 2;
-      sb += AddLine(ind, "title: 'Components',");
-      sb += AddLine(ind, $"path: '{page}gsagh-components',");
-      sb += AddLine(ind, "children: [");
+      sb += AddLine(ind, "type: 'category',");
+      sb += AddLine(ind, "label: 'Components',");
+      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-components'}},");
+      sb += AddLine(ind, "items: [");
       
       // Per category sidebar
       ind += 2;
       foreach (string key in components.Keys) {
         sb += AddLine(ind, "{");
         ind += 2;
-        sb += AddLine(ind, $"title: '{key}',");
-        sb += AddLine(ind, $"path: '{page}gsagh-{key.ToLower()}-components-overview',");
-        sb += AddLine(ind, "children: [");
+        sb += AddLine(ind, "type: 'category',");
+        sb += AddLine(ind, $"label: '{key}',");
+        sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'}},");
+        sb += AddLine(ind, "items: [");
         ind += 2;
 
         for (int i = 0; i < 7; i++) {

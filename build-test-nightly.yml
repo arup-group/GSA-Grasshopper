@@ -111,13 +111,13 @@ steps:
   failOnStderr: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-  artifact: GsaGHTestsCoverage
   displayName: Publish GsaGHTest xml to Azure
+  artifact: GsaGHTestsCoverage
   continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  artifact: IntegrationTestsCoverage
   displayName: Publish IntegrationTest xml to Azure
+  artifact: IntegrationTestsCoverage
   continueOnError: true
 
 - powershell: |
@@ -147,8 +147,8 @@ steps:
   displayName: Package yak
 
 - publish: $(System.DefaultWorkingDirectory)\results\yak\
-  artifact: Yak Package
   displayName: Publish Yak Package to Azure
+  artifact: Yak Package
   continueOnError: false
 
 - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
