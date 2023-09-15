@@ -10,9 +10,9 @@ namespace GsaGHTests.GooWrappers {
     [Theory]
     // 0_Model
     [InlineData(typeof(GsaListParameter))]
-    [InlineData(typeof(GsaElementListParameter))]
-    [InlineData(typeof(GsaMemberListParameter))]
-    [InlineData(typeof(GsaNodeListParameter))]
+    [InlineData(typeof(GsaElementListParameter), true)]
+    [InlineData(typeof(GsaMemberListParameter), true)]
+    [InlineData(typeof(GsaNodeListParameter), true)]
     [InlineData(typeof(GsaGridLineParameter))]
     [InlineData(typeof(GsaModelParameter))]
     // 1_Properties
@@ -43,12 +43,17 @@ namespace GsaGHTests.GooWrappers {
     // 5_Results
     [InlineData(typeof(GsaResultParameter))]
     // 6_Display
-    [InlineData(typeof(GsaAnnotationParameter))]
-    [InlineData(typeof(GsaDiagramParameter))]
-    public void GH_OasysComponentTest(Type t) {
+    [InlineData(typeof(GsaAnnotationParameter), true)]
+    [InlineData(typeof(GsaDiagramParameter), true)]
+    public void GH_OasysComponentTest(Type t, bool isHidden = false) {
       var param = (IGH_Param)Activator.CreateInstance(t);
       Assert.NotNull(param.Icon_24x24);
-      Assert.NotEqual(GH_Exposure.hidden, param.Exposure);
+      if (isHidden) {
+        Assert.Equal(GH_Exposure.hidden, param.Exposure);
+      } else {
+        Assert.NotEqual(GH_Exposure.hidden, param.Exposure);
+      }
+
       Assert.NotEqual(new Guid(), param.ComponentGuid);
       Assert.NotNull(param.InstanceDescription);
       Assert.NotNull(param.TypeName);
