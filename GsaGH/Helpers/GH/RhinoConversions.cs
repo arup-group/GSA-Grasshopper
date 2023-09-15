@@ -93,8 +93,11 @@ namespace GsaGH.Helpers.GH {
       inBrep.Faces.ShrinkFaces();
       var unroller = new Unroller(inBrep);
       var types = new List<int>();
+      var finalNodes = new Point3dList(points);
       if (inCurves != null) {
         foreach (Curve crv in inCurves) {
+          finalNodes.Add(crv.PointAtStart);
+          finalNodes.Add(crv.PointAtEnd);
           unroller.AddFollowingGeometry(crv);
           types.Add(0);
         }
@@ -102,6 +105,8 @@ namespace GsaGH.Helpers.GH {
 
       if (inElem1ds != null) {
         foreach (GsaElement1d elem in inElem1ds) {
+          finalNodes.Add(elem.Line.PointAtEnd);
+          finalNodes.Add(elem.Line.PointAtEnd);
           unroller.AddFollowingGeometry(elem.Line);
           types.Add(1);
         }
@@ -109,6 +114,9 @@ namespace GsaGH.Helpers.GH {
 
       if (inMem1ds != null) {
         foreach (GsaMember1d mem1d in inMem1ds) {
+          foreach (Point3d ctrlPt in mem1d.Topology) {
+            finalNodes.Add(ctrlPt);
+          }
           unroller.AddFollowingGeometry(mem1d.PolyCurve);
           types.Add(2);
         }
@@ -118,6 +126,7 @@ namespace GsaGH.Helpers.GH {
       int nodeid = 0;
       if (inNodes != null) {
         foreach (GsaNode node in inNodes) {
+          finalNodes.Add(node.Point);
           inBrep.Surfaces[0].ClosestPoint(node.Point, out double u, out double v);
           var dot = new TextDot(node.ApiNode.Name, inBrep.Surfaces[0].PointAt(u, v));
           unroller.AddFollowingGeometry(dot);
@@ -215,10 +224,20 @@ namespace GsaGH.Helpers.GH {
       Surface flat = flattened[0].Surfaces[0];
       Surface orig = inBrep.Surfaces[0];
 
+      double inclPtTolerance = 0.5 * new Length(mem.ApiMember.MeshSize, LengthUnit.Meter).As(unit);
+
       MeshVertexList vertices = mesh.Vertices;
       for (int i = 0; i < vertices.Count; i++) {
         flat.ClosestPoint(vertices.Point3dAt(i), out double u, out double v);
         Point3d mapVertex = orig.PointAt(u, v);
+        
+        if (!finalNodes.IsNullOrEmpty()) {
+          Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapVertex);
+          if (closest.DistanceTo(mapVertex) <= inclPtTolerance) {
+            mapVertex = closest;
+          }
+        }
+
         vertices.SetVertex(i, mapVertex);
       }
 
@@ -236,6 +255,13 @@ namespace GsaGH.Helpers.GH {
           var pt = new Point3d(pos.X, pos.Y, pos.Z);
           flat.ClosestPoint(pt, out double u, out double v);
           Point3d mapPt = orig.PointAt(u, v);
+          if (!finalNodes.IsNullOrEmpty()) {
+            Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapPt);
+            if (closest.DistanceTo(mapPt) <= inclPtTolerance) {
+              mapPt = closest;
+            }
+          }
+
           nodes[i].Point = mapPt;
           outNodes.Add(nodes[i]);
         }
@@ -258,10 +284,24 @@ namespace GsaGH.Helpers.GH {
         var start = new Point3d(posS.X, posS.Y, posS.Z);
         flat.ClosestPoint(start, out double us, out double vs);
         Point3d mapPts = orig.PointAt(us, vs);
+        if (!finalNodes.IsNullOrEmpty()) {
+          Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapPts);
+          if (closest.DistanceTo(mapPts) <= inclPtTolerance) {
+            mapPts = closest;
+          }
+        }
+
         Vector3 posE = nodeDict[elem.Topology[1]].Position;
         var end = new Point3d(posE.X, posE.Y, posE.Z);
         flat.ClosestPoint(end, out double ue, out double ve);
         Point3d mapPte = orig.PointAt(ue, ve);
+        if (!finalNodes.IsNullOrEmpty()) {
+          Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapPte);
+          if (closest.DistanceTo(mapPte) <= inclPtTolerance) {
+            mapPte = closest;
+          }
+        }
+
         element1ds[kvp.Key].Line = new LineCurve(mapPts, mapPte);
         outElem1ds.Add(element1ds[kvp.Key]);
       }

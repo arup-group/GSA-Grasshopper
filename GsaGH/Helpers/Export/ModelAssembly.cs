@@ -411,9 +411,6 @@ namespace GsaGH.Helpers.Export {
     }
 
     private void CreateModelFromDesignCodes() {
-
-      // is the model not supposed to be null here??
-
       string concreteCode = Properties.Materials.GetConcreteDesignCode(Model);
       string steelCode = Properties.Materials.GetSteelDesignCode(Model);
 

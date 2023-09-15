@@ -7,7 +7,6 @@ namespace GsaGH.Parameters {
   internal class GsaMaterialFactory {
     internal static GsaMaterial CreateMaterial(GsaMaterial other) {
       GsaMaterial material = null;
-
       switch (other) {
         case GsaAluminiumMaterial aluminiumMaterial:
           material = new GsaAluminiumMaterial(aluminiumMaterial);
@@ -37,7 +36,7 @@ namespace GsaGH.Parameters {
 
       return material;
     }
-    
+
     internal static GsaMaterial CreateMaterialFromApi(object standardMaterial, int id, Model model) {
       GsaMaterial material;
       switch (standardMaterial) {
@@ -93,19 +92,22 @@ namespace GsaGH.Parameters {
         return material;
       }
 
-      // check if analysis material properties are according to code
+      // fabric material has no analysis material that could be modified
       if (material.MaterialType == MatType.Fabric) {
         return material;
       }
 
-      if (!AreAnalysisMaterialsEqual(CreateCodeAnalysisMaterial(material), material.AnalysisMaterial)) {
-        // analysis material properties are not according to code/have been modified
-        material.IsUserDefined = true;
-      }
+      // check if analysis material properties are according to code
+      try {
+        if (!AreAnalysisMaterialsEqual(CreateCodeAnalysisMaterial(material), material.AnalysisMaterial)) {
+          // analysis material properties are not according to code/have been modified
+          material.IsUserDefined = true;
+        }
+      } catch { }
 
       return material;
     }
-    
+
     internal static IGsaStandardMaterial CreateStandardMaterial(MatType type, string materialName, string codeName = "") {
       string concreteDesignCode = type == MatType.Concrete ? codeName : string.Empty;
       string steelDesignCode = type == MatType.Steel ? codeName : string.Empty;
@@ -150,7 +152,7 @@ namespace GsaGH.Parameters {
       Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       return GetGradeNames(type, m);
     }
-    
+
     internal static GsaMaterial RecreateForDesignCode(GsaMaterial material, Model model) {
       GsaMaterial recreation = null;
 
@@ -187,10 +189,6 @@ namespace GsaGH.Parameters {
 
         case GsaTimberMaterial timberMaterial:
           recreation = new GsaTimberMaterial(model.CreateTimberMaterial(material.Name));
-          break;
-
-        default:
-          //_analysisMaterial = DuplicateAnalysisMaterial(AnalysisMaterial);
           break;
       }
 

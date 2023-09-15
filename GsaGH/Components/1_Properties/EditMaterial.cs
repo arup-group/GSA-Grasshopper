@@ -24,10 +24,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name,
-        GsaMaterialGoo.NickName,
-        GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new "
-        + GsaMaterialGoo.Name, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddIntegerParameter("Material ID", "ID",
         "(Optional) Set Material ID corrosponding to the desired ID in the material type's table " +
         "(Steel, Concrete, etc).", GH_ParamAccess.item);
@@ -45,7 +42,7 @@ namespace GsaGH.Components {
         + Environment.NewLine + "Glass : 4" + Environment.NewLine + "FRP : 5" + Environment.NewLine
         + "Timber : 7" + Environment.NewLine + "Fabric : 8", GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++) {
+      for (int i = 1; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
       }
     }
