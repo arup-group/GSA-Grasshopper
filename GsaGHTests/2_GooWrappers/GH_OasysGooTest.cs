@@ -2,6 +2,7 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Xunit;
 
@@ -83,7 +84,7 @@ namespace GsaGHTests.GooWrappers {
             ConstructorInfo duplicateConstructor = gooValue.GetType()
               .GetConstructor(new Type[] { gooValue.GetType() }); // new GsaObj(GsaObj other);
             object duplicateValue = duplicateConstructor.Invoke(new object[] { gooValue });
-            Duplicates.AreEqual(gooValue, duplicateValue, true);
+            Duplicates.AreEqual(gooValue, duplicateValue, new List<string>() { "Guid" });
           }
 
           hasValue = true;

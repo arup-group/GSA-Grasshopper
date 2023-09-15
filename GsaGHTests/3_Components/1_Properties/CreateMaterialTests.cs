@@ -1,11 +1,10 @@
-﻿using GsaGH.Components;
+﻿using System.Collections.Generic;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 using OasysGH.Components;
-using System.Collections.Generic;
 using Xunit;
-using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
@@ -24,9 +23,9 @@ namespace GsaGHTests.Components.Properties {
       var output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(MatType.Concrete, output.Value.MaterialType);
 
-      var expected = new GsaMaterial(MatType.Concrete, "C30/37", "EC2-1-1");
+      IGsaStandardMaterial expected = GsaMaterialFactory.CreateStandardMaterial(MatType.Concrete, "C30/37", "EC2-1-1");
 
-      Duplicates.AreEqual(expected, output.Value);
+      Duplicates.AreEqual(expected, output.Value, new List<string>() { "Guid" });
     }
 
     [Fact]
@@ -58,7 +57,7 @@ namespace GsaGHTests.Components.Properties {
         }, null, null);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(createModel);
-      
+
       GsaMaterial assembledMaterial = null;
       switch (material.Value.MaterialType) {
         case MatType.Steel:
@@ -89,13 +88,20 @@ namespace GsaGHTests.Components.Properties {
           assembledMaterial = modelGoo.Value.Materials.FabricMaterials[1];
           Assert.NotNull(assembledMaterial);
           assembledMaterial.Id = 0;
-          Duplicates.AreEqual(material.Value.StandardMaterial, assembledMaterial.StandardMaterial);
+          Duplicates.AreEqual(((IGsaStandardMaterial)material.Value).StandardMaterial, ((IGsaStandardMaterial)assembledMaterial).StandardMaterial);
           return;
       }
-      
+
       Assert.NotNull(assembledMaterial);
       assembledMaterial.Id = 0;
-      Duplicates.AreEqual(material.Value, assembledMaterial, true);
+
+      var excludes = new List<string>() { "Guid", "IsFromApi", "ConcreteDesignCodeName", "SteelDesignCodeName" };
+      if (material.Value.MaterialType == MatType.Concrete) {
+        excludes.Remove("ConcreteDesignCodeName");
+      } else if (material.Value.MaterialType == MatType.Steel) {
+        excludes.Remove("SteelDesignCodeName");
+      }
+      Duplicates.AreEqual(material.Value, assembledMaterial, excludes);
     }
   }
 }

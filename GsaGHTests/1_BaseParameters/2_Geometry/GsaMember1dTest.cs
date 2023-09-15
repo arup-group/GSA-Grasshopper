@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
@@ -27,7 +28,7 @@ namespace GsaGHTests.Parameters {
 
       var duplicate = new GsaMember1d(original);
 
-      Duplicates.AreEqual(original, duplicate, true);
+      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
     }
 
     [Fact]

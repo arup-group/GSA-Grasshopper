@@ -16,7 +16,7 @@ namespace GsaGH.Helpers.Export {
         ConvertProp3d(prop3D, ref existingProperties);
       }
     }
-    
+
     internal static int ConvertProp3d(GsaProperty3d prop3d, ref Properties existingProperties) {
       if (prop3d == null) {
         return 0;
@@ -30,8 +30,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int AddProp3d(GsaProperty3d prop, ref Properties existingProperties) {
-      Materials.AddMaterial(ref prop, ref existingProperties.Materials);
-      
+      existingProperties.Materials.AddMaterial(ref prop);
+
       if (prop.Id <= 0) {
         return existingProperties.Prop3ds.AddValue(prop.Guid, prop.ApiProp3d);
       }

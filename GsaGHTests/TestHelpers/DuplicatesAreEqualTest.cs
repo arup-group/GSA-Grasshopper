@@ -8,10 +8,8 @@ using Xunit;
 namespace GsaGHTests.Helpers {
   public class Duplicates {
 
-    public static bool AreEqual(object objA, object objB, bool excludeGuid = false) {
-      if (!(excludeGuid && objA.Equals(typeof(Guid)))) {
-        Assert.Equal(objA.ToString(), objB.ToString());
-      }
+    public static bool AreEqual(object objA, object objB, List<string> excluded = null) {
+      Assert.Equal(objA.ToString(), objB.ToString());
 
       Type typeA = objA.GetType();
       Type typeB = objB.GetType();
@@ -108,7 +106,7 @@ namespace GsaGHTests.Helpers {
             }
           } else if (propertyTypeA.IsValueType || propertyTypeA.IsEnum
             || propertyTypeA.Equals(typeof(string))) {
-            if (excludeGuid && propertyTypeA.Equals(typeof(Guid))) {
+            if (IsExcluded(propertyA, excluded)) {
               continue;
             }
 
@@ -116,12 +114,25 @@ namespace GsaGHTests.Helpers {
           } else if (objPropertyValueA == null || objPropertyValueB == null) {
             Assert.Equal(objPropertyValueA, objPropertyValueB);
           } else {
-            AreEqual(objPropertyValueA, objPropertyValueB, excludeGuid);
+            AreEqual(objPropertyValueA, objPropertyValueB, excluded);
           }
         } catch (TargetParameterCountException) { }
       }
 
       return true;
+    }
+
+    private static bool IsExcluded(PropertyInfo info, List<string> excluded) {
+      if (excluded == null) {
+        return false;
+      }
+
+      foreach (string property in excluded) {
+        if (info.Name == property) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 }

@@ -45,7 +45,7 @@ namespace GsaGHTests.Helpers.Import {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
       GsaElement3d elem = elements.Element3ds.First().Value;
-      Assert.Equal(GsaMaterial.MatType.Timber, elem.Prop3ds[0].Material.MaterialType);
+      Assert.Equal(MatType.Timber, elem.Prop3ds[0].Material.MaterialType);
       Duplicates.AreEqual(model.Materials.TimberMaterials[1], elem.Prop3ds[0].Material);
       Duplicates.AreEqual(model.Properties.Prop3ds[5].Value, elem.Prop3ds[0]);
 

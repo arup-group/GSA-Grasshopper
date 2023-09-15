@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Components;
@@ -43,7 +44,7 @@ namespace GsaGHTests.Properties {
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
-      Duplicates.AreEqual(prop2d, prop2dGoo.Value, true);
+      Duplicates.AreEqual(prop2d, prop2dGoo.Value, new List<string>() { "Guid" });
       Assert.NotEqual(prop2d, prop2dGoo.Value);
       Assert.Equal(0, id.Value);
       Assert.Equal("", name.Value);
@@ -86,7 +87,7 @@ namespace GsaGHTests.Properties {
       var supportType = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 11);
       var referenceEdge = (GH_Integer)ComponentTestHelper.GetOutput(comp, 12);
 
-      Duplicates.AreEqual(prop2d, prop2dGoo.Value, true);
+      Duplicates.AreEqual(prop2d, prop2dGoo.Value, new List<string>() { "Guid" });
       Assert.NotEqual(prop2d, prop2dGoo.Value);
       Assert.Equal(0, id.Value);
       Assert.Equal("", name.Value);
