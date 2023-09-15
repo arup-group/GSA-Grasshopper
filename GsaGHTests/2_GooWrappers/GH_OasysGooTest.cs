@@ -14,7 +14,7 @@ namespace GsaGHTests.GooWrappers {
     // 0_Model
     [InlineData(typeof(GsaListGoo), typeof(GsaList))]
     [InlineData(typeof(GsaModelGoo), typeof(GsaModel), true)]
-    [InlineData(typeof(GsaGridLineGoo), typeof(GsaGridLine))]
+    //[InlineData(typeof(GsaGridLineGoo), typeof(GsaGridLine))]
     // 1_Properties
     [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]

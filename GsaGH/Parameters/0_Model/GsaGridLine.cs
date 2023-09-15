@@ -12,11 +12,6 @@ namespace GsaGH.Parameters {
     public GridLine GridLine { get; internal set; }
     public PolyCurve Curve { get; internal set; }
 
-    public GsaGridLine() {
-      GridLine = new GridLine("A");
-      Curve = new PolyCurve();
-    }
-
     internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
       GridLine = gridLine;
       Curve = curve;
@@ -98,6 +93,7 @@ namespace GsaGH.Parameters {
         Theta1 = other.GridLine.Theta1,
         X = other.GridLine.X,
         Y = other.GridLine.Y,
+        Length = other.GridLine.Length,
       };
       
       if (GridLine.Shape == GridLineShape.Arc) {
