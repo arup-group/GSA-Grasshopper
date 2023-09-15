@@ -27,7 +27,7 @@ namespace GsaGH.Parameters {
       _frpMaterial = frpMaterial;
     }
 
-    internal GsaFrpMaterial(GsaFrpMaterial other) : base(other) {
+    public GsaFrpMaterial(GsaFrpMaterial other) : base(other) {
       Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _frpMaterial = model.CreateFrpMaterial(other.Name);
 

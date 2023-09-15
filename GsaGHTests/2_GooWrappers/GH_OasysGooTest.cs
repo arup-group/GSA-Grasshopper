@@ -18,7 +18,12 @@ namespace GsaGHTests.GooWrappers {
     // 1_Properties
     [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
-    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
+    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaConcreteMaterial))]
+    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaCustomMaterial))]
+    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaFabricMaterial))]
+    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaFrpMaterial))]
+    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaGlassMaterial))]
+    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaSteelMaterial))]
     [InlineData(typeof(GsaProperty2dGoo), typeof(GsaProperty2d))]
     [InlineData(typeof(GsaProperty3dGoo), typeof(GsaProperty3d))]
     [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
@@ -74,7 +79,8 @@ namespace GsaGHTests.GooWrappers {
       gooType = objectGoo.GetType();
 
       IGH_Goo duplicate = ((IGH_Goo)objectGoo).Duplicate();
-      Duplicates.AreEqual(objectGoo, duplicate, excludeGuid);
+      List<string> excluded = excludeGuid ? new List<string>() { "Guid" } : null;
+      Duplicates.AreEqual(objectGoo, duplicate, excluded);
 
       bool hasValue = false;
       bool hasToString = false;
@@ -87,14 +93,14 @@ namespace GsaGHTests.GooWrappers {
       foreach (PropertyInfo gooProperty in gooPropertyInfo) {
         if (gooProperty.Name == "Value") {
           object gooValue = gooProperty.GetValue(objectGoo, null);
-          Duplicates.AreEqual(value, gooValue, excludeGuid);
+          Duplicates.AreEqual(value, gooValue, excluded);
 
           MethodInfo methodInfo = gooValue.GetType().GetMethod("Clone");
           if (methodInfo != null) {
             object cloneValue = methodInfo.Invoke(gooValue, null);
             cloneValue = methodInfo.Invoke(gooValue, null);
             Assert.NotSame(gooValue, cloneValue);
-            Duplicates.AreEqual(gooValue, cloneValue, excludeGuid);
+            Duplicates.AreEqual(gooValue, cloneValue, excluded);
           }
 
           methodInfo = gooValue.GetType().GetMethod("Duplicate");
