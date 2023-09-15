@@ -199,7 +199,7 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("Case filter list", "C",
         $"Filter import by list.{Environment.NewLine}The case list should take the form:" +
         $"{Environment.NewLine} 1 L1 M1 A1 C1 C2p1 A3 to A5 T1.", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter());
       pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
         false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
@@ -244,7 +244,7 @@ namespace GsaGH.Components {
         _selectedItems[0] = caseList;
       }
 
-      string elementlist = Inputs.GetElementListNameForResults(this, da, 2, _gsaModel);
+      string elementlist = Inputs.GetElementListDefinition(this, da, 2, _gsaModel);
       if (string.IsNullOrEmpty(elementlist)) {
         return;
       }

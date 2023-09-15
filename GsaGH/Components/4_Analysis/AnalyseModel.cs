@@ -273,6 +273,10 @@ namespace GsaGH.Components {
             if (model.Model.Analyse(task.Key)) {
               PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
+            } else {
+              string message = "Analysis Task " + task.Key +
+                " has one or more errors. Check report output for details";
+              this.AddRuntimeError($" {message}");
             }
 
             string report = model.Model.AnalysisTaskReport(task.Key);

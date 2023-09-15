@@ -24,6 +24,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Serialization.JsonNet;
+using Rhino.Commands;
 using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -436,7 +437,13 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
       pManager.AddParameter(new GsaNodeListParameter());
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter(), "Element filter list",
+        "El", $"Filter the Elements by list. (by default 'all'){Environment.NewLine}" +
+        $"Element/Member list should take the form:{Environment.NewLine}" +
+        $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
+        $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary." 
+        + $"{Environment.NewLine}You can input a member list to get child elements.", 
+        GH_ParamAccess.item);
       pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -493,7 +500,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          elemList = elementListGoo.Value.Definition;
+          elemList = Inputs.GetElementListDefinition(this, data, 2, modelGoo.Value);
           elementFilterHasInput = true;
         }
 
