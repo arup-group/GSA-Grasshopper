@@ -64,11 +64,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var material = new GsaMaterial();
+      GsaMaterial material = null;
 
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(0, ref materialGoo)) {
-        material = materialGoo.Value.Clone();
+        material = GsaMaterialFactory.CreateMaterial(materialGoo.Value);
       }
 
       int id = 0;
@@ -82,52 +82,52 @@ namespace GsaGH.Components {
       }
 
       GsaMaterialGoo customMaterialGoo = null;
-      GsaMaterial customMaterial = material.Duplicate();
+      GsaMaterial customMaterial = GsaMaterialFactory.CreateMaterial(material);
       if (da.GetData(3, ref customMaterialGoo)) {
-        customMaterial = customMaterialGoo.Value.Duplicate();
+        customMaterial = GsaMaterialFactory.CreateMaterial(customMaterialGoo.Value);
         material.AnalysisMaterial = customMaterial.AnalysisMaterial;
       }
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(4, ref ghTyp)) {
-        if (!material.IsCustom) {
+        if (material.MaterialType != MatType.Custom) {
           this.AddRuntimeWarning("MaterialType can only be changed for Custom Materials");
         }
 
-        GsaMaterial.MatType type = material.MaterialType;
+        MatType type = material.MaterialType;
         switch (ghTyp.Value) {
           case GH_Integer ghInt: {
               switch (ghInt.Value) {
                 case 1:
-                  type = GsaMaterial.MatType.Steel;
+                  type = MatType.Steel;
                   break;
 
                 case 2:
-                  type = GsaMaterial.MatType.Concrete;
+                  type = MatType.Concrete;
                   break;
 
                 case 5:
-                  type = GsaMaterial.MatType.Frp;
+                  type = MatType.Frp;
                   break;
 
                 case 3:
-                  type = GsaMaterial.MatType.Aluminium;
+                  type = MatType.Aluminium;
                   break;
 
                 case 7:
-                  type = GsaMaterial.MatType.Timber;
+                  type = MatType.Timber;
                   break;
 
                 case 4:
-                  type = GsaMaterial.MatType.Glass;
+                  type = MatType.Glass;
                   break;
 
                 case 8:
-                  type = GsaMaterial.MatType.Fabric;
+                  type = MatType.Fabric;
                   break;
 
                 case 0:
-                  type = GsaMaterial.MatType.Generic;
+                  type = MatType.Custom;
                   break;
               }
 
@@ -137,35 +137,35 @@ namespace GsaGH.Components {
           case GH_String ghString: {
               switch (ghString.Value.ToUpper()) {
                 case "STEEL":
-                  type = GsaMaterial.MatType.Steel;
+                  type = MatType.Steel;
                   break;
 
                 case "CONCRETE":
-                  type = GsaMaterial.MatType.Concrete;
+                  type = MatType.Concrete;
                   break;
 
                 case "FRP":
-                  type = GsaMaterial.MatType.Frp;
+                  type = MatType.Frp;
                   break;
 
                 case "ALUMINIUM":
-                  type = GsaMaterial.MatType.Aluminium;
+                  type = MatType.Aluminium;
                   break;
 
                 case "TIMBER":
-                  type = GsaMaterial.MatType.Timber;
+                  type = MatType.Timber;
                   break;
 
                 case "GLASS":
-                  type = GsaMaterial.MatType.Glass;
+                  type = MatType.Glass;
                   break;
 
                 case "FABRIC":
-                  type = GsaMaterial.MatType.Fabric;
+                  type = MatType.Fabric;
                   break;
 
                 case "GENERIC":
-                  type = GsaMaterial.MatType.Generic;
+                  type = MatType.Custom;
                   break;
               }
 
@@ -177,7 +177,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        customMaterial = new GsaMaterial(customMaterial.AnalysisMaterial, id, type);
+        customMaterial = new GsaCustomMaterial(customMaterial.AnalysisMaterial, id, type);
         if (type != material.MaterialType) {
           customMaterial.Name = $"created from {material.MaterialType} {material.Name}";
         }

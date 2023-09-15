@@ -14,7 +14,7 @@ namespace GsaGH.Helpers.Import {
     internal ReadOnlyDictionary<int, GsaMaterial> GlassMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> FabricMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> AnalysisMaterials { get; private set; }
-    
+
     internal Materials(Model model) {
       SteelMaterials =
         CreateMaterialsFromAPI(model.SteelMaterials(), model);
@@ -52,7 +52,7 @@ namespace GsaGH.Helpers.Import {
         if (AnalysisMaterials.ContainsKey(id)) {
           return AnalysisMaterials[id];
         } else {
-          return new GsaMaterial(id);
+          return new GsaReferencedMaterial(id);
         }
       }
 
@@ -88,7 +88,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, AluminiumMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, AluminiumMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -98,7 +98,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, ConcreteMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, ConcreteMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -108,7 +108,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, FabricMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, FabricMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -118,7 +118,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, FrpMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, FrpMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -128,7 +128,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, GlassMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, GlassMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -138,7 +138,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, SteelMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, SteelMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -148,7 +148,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, TimberMaterial> materials, Model model) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, TimberMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key, model);
+        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
@@ -158,7 +158,7 @@ namespace GsaGH.Helpers.Import {
       ReadOnlyDictionary<int, AnalysisMaterial> materials) {
       var dict = new Dictionary<int, GsaMaterial>();
       foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
-        var gsaMaterial = new GsaMaterial(mat.Value, mat.Key);
+        GsaMaterial gsaMaterial = new GsaCustomMaterial(mat.Value, mat.Key);
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);

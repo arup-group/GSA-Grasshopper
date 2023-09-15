@@ -25,6 +25,7 @@ namespace GsaGH.Parameters {
       target = default;
       return false;
     }
+
     public override IGH_Goo Duplicate() {
       return new GsaMaterialGoo(Value);
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using GsaAPI;
 using GsaGH.Helpers.Export;
@@ -24,7 +25,7 @@ namespace GsaGHTests.Parameters {
         null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, 
         false, null), };
 
-      Duplicates.AreEqual(original, assembled, true);
+      Duplicates.AreEqual(original, assembled, new List<string>() { "Guid" });
     }
 
     [Fact]

@@ -11,12 +11,14 @@ namespace GsaGH.Helpers.Export {
     internal GsaGuidDictionary<Prop3D> Prop3ds;
     internal Materials Materials;
     internal int Count => Sections.Count + Prop2ds.Count + Prop3ds.Count;
+
     internal Properties(GsaModel model) { 
       Materials = new Materials(model);
       (Sections, SecionModifiers) = GetSectionDictionary(model);
       Prop2ds = GetProp2dDictionary(model);
       Prop3ds = GetProp3dDictionary(model);
     }
+
     internal void Assemble(ref Model apiModel) {
       apiModel.SetSections(Sections.ReadOnlyDictionary);
       apiModel.SetSectionModifiers(SecionModifiers.ReadOnlyDictionary);

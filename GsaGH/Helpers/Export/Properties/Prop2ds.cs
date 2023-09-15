@@ -7,7 +7,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal class Prop2ds {
-    internal static void ConvertProp2ds(List<GsaProperty2d> prop2Ds, 
+    internal static void ConvertProp2ds(List<GsaProperty2d> prop2Ds,
       ref Properties existingProperties, ref GsaIntDictionary<Axis> apiAxes,
       LengthUnit unit) {
       if (prop2Ds == null) {
@@ -35,8 +35,8 @@ namespace GsaGH.Helpers.Export {
 
     internal static int AddProp2d(GsaProperty2d prop, ref Properties existingProperties,
       ref GsaIntDictionary<Axis> apiAxes, LengthUnit unit) {
-      Materials.AddMaterial(ref prop, ref existingProperties.Materials);
-      
+      existingProperties.Materials.AddMaterial(ref prop);
+
       if (prop.LocalAxis != null && prop.LocalAxis.IsValid) {
         if (prop.LocalAxis != Plane.WorldXY && prop.LocalAxis != Plane.Unset) {
           Axis ax = prop.GetAxisFromPlane(unit);

@@ -53,8 +53,8 @@ namespace IntegrationTests.Parameters {
       0.000012,
     })]
     [InlineData("MatType", new string[] {
-      "Generic",
-      "Generic",
+      "Custom",
+      "Custom",
     })]
     [InlineData("Pool", 1)]
     [InlineData("PbName", new string[] {

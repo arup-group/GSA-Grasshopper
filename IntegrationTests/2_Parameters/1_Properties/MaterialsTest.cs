@@ -36,7 +36,7 @@ namespace IntegrationTests.Parameters {
       "Timber",
       "Glass",
       "Fabric",
-      "Generic",
+      "Custom",
     })]
     [InlineData("E-modulus", new double[] {
       210000,
