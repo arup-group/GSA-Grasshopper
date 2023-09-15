@@ -20,7 +20,6 @@ namespace DocsGeneration.MarkDowns {
       sb += "{\r\n";
       sb += AddLine(ind, "type: 'category',");
       sb += "\tlabel: 'GSA Grasshopper plugin',\r\n";
-      sb += AddLine(ind, "collapsed: false,");
       sb += AddLine(ind, "items: [");
       ind += 2;
 
@@ -29,7 +28,6 @@ namespace DocsGeneration.MarkDowns {
       ind += 2;
       sb += AddLine(ind, "type: 'category',");
       sb += AddLine(ind, "label: 'Parameters',");
-      sb += AddLine(ind, "collapsed: false,");
       sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-parameters'}},");
       sb += AddLine(ind, "items: [");
       ind += 2;
@@ -50,7 +48,6 @@ namespace DocsGeneration.MarkDowns {
       ind += 2;
       sb += AddLine(ind, "type: 'category',");
       sb += AddLine(ind, "label: 'Components',");
-      sb += AddLine(ind, "collapsed: false,");
       sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-components'}},");
       sb += AddLine(ind, "items: [");
       
@@ -61,7 +58,6 @@ namespace DocsGeneration.MarkDowns {
         ind += 2;
         sb += AddLine(ind, "type: 'category',");
         sb += AddLine(ind, $"label: '{key}',");
-        sb += AddLine(ind, "collapsed: false,");
         sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'}},");
         sb += AddLine(ind, "items: [");
         ind += 2;
