@@ -64,7 +64,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter());
       pManager[1].Optional = true;
     }
 
@@ -82,7 +82,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref resultGoo);
       GsaResult result = resultGoo.Value;
 
-      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, resultGoo.Value.Model);
+      string elementlist = Inputs.GetElementListDefinition(this, da, 1, resultGoo.Value.Model);
       _section3dPreview = new Section3dPreview(result, elementlist, _defScale);
 
       da.SetData(0, _section3dPreview.Mesh);
