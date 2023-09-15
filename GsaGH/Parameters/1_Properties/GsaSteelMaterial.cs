@@ -33,7 +33,7 @@ namespace GsaGH.Parameters {
       _steelMaterial = steelMaterial;
     }
 
-    internal GsaSteelMaterial(GsaSteelMaterial other) : base(other) {
+    public GsaSteelMaterial(GsaSteelMaterial other) : base(other) {
       Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _steelMaterial = model.CreateSteelMaterial(other.Name);
 

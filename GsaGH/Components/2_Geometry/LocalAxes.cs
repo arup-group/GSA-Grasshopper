@@ -66,7 +66,7 @@ namespace GsaGH.Components {
       GsaElement1d element;
       Point3d midPt;
       double size;
-      GsaLocalAxes axes;
+      Parameters.LocalAxes axes;
       switch (ghTyp.Value) {
         case GsaMember1dGoo memberGoo: {
           if (memberGoo == null || memberGoo.Value == null) {
@@ -81,7 +81,7 @@ namespace GsaGH.Components {
               Model = Assembler.AssembleForLocalAxis(member)
             };
 
-            axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
+            axes = new Parameters.LocalAxes(model.Model.MemberDirectionCosine(1));
             this.AddRuntimeWarning(
               "Members´s local axes might deviate from the local axes in the assembled GSA model.");
           }
@@ -103,7 +103,7 @@ namespace GsaGH.Components {
               Model = Assembler.AssembleForLocalAxis(element)
             };
 
-            axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
+            axes = new Parameters.LocalAxes(model.Model.ElementDirectionCosine(1));
             this.AddRuntimeWarning(
               "Element´s local axes might deviate from the local axes in the assembled GSA model.");
           }

@@ -93,6 +93,7 @@ namespace GsaGH.Parameters {
         Theta1 = other.GridLine.Theta1,
         X = other.GridLine.X,
         Y = other.GridLine.Y,
+        Length = other.GridLine.Length,
       };
       
       if (GridLine.Shape == GridLineShape.Arc) {

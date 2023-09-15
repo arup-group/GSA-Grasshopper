@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
     internal void CoordinateTransformationTo(Plane plane, Model model) {
       // coordinate transformation
       Parallel.ForEach(XyzResults.Keys, elementId => {
-        var localAxes = new GsaLocalAxes(model.ElementDirectionCosine(elementId));
+        var localAxes = new LocalAxes(model.ElementDirectionCosine(elementId));
         var local = new Plane(Point3d.Origin, localAxes.X, localAxes.Y);
         // create quaternion from two planes
         var q = Quaternion.Rotation(plane, local);

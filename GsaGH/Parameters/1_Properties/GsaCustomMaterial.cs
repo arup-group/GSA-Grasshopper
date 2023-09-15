@@ -15,7 +15,7 @@ namespace GsaGH.Parameters {
       MaterialType = type;
     }
 
-    internal GsaCustomMaterial(GsaCustomMaterial other) : base(other) {
+    public GsaCustomMaterial(GsaCustomMaterial other) : base(other) {
       AnalysisMaterial = new AnalysisMaterial();
       DuplicateAnalysisMaterial(other);
       Name = other.Name;
