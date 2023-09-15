@@ -110,6 +110,11 @@ namespace GsaGH.Components {
         ModelUnit = UnitMapping.GetUnit(model)
       };
       UpdateMessage(fileName);
+
+      if(gsaModel.Materials.SanitizeGenericCodeNames()) {
+        this.AddRuntimeRemark("The opened model contains generic materials with no design code");
+      }
+
       da.SetData(0, new GsaModelGoo(gsaModel));
       PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
         (int)(new FileInfo(fileName).Length / 1024));
