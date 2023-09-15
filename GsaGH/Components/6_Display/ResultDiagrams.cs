@@ -154,7 +154,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter());
       pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
         false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
@@ -219,7 +219,7 @@ namespace GsaGH.Components {
         }
       }
 
-      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
+      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
       var ghScale = new GH_Number();
       double scale = 1;
