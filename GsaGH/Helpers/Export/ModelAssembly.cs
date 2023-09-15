@@ -53,11 +53,17 @@ namespace GsaGH.Helpers.Export {
       Nodes.UpdateFirstEmptyKeyToMaxKey();
     }
 
-    internal void ConvertProperties(List<GsaSection> sections,
-      List<GsaProperty2d> prop2Ds,
-      List<GsaProperty3d> prop3Ds) {
-      if ((!sections.IsNullOrEmpty()) || (!prop2Ds.IsNullOrEmpty()) || (!prop3Ds.IsNullOrEmpty())) {
+    internal void ConvertProperties(List<GsaMaterial> materials, List<GsaSection> sections,
+      List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds) {
+      if ((!materials.IsNullOrEmpty()) || (!sections.IsNullOrEmpty()) 
+        || (!prop2Ds.IsNullOrEmpty()) || (!prop3Ds.IsNullOrEmpty())) {
         _deleteResults = true;
+      }
+
+      if (!materials.IsNullOrEmpty()) {
+        foreach (GsaMaterial material in materials) {
+          Properties.Materials.ConvertMaterial(material);
+        }
       }
 
       Sections.ConvertSections(sections, ref Properties);

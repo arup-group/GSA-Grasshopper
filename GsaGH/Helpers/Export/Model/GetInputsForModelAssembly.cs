@@ -337,10 +337,11 @@ namespace GsaGH.Helpers.Export {
       return (null, null, null);
     }
 
-    internal static Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>> GetProperties(
+    internal static Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>> GetProperties(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
+        var inMat = new List<GsaMaterial>();
         var inSect = new List<GsaSection>();
         var inProp2d = new List<GsaProperty2d>();
         var inProp3d = new List<GsaProperty3d>();
@@ -353,6 +354,10 @@ namespace GsaGH.Helpers.Export {
           }
 
           switch (ghTyp.Value) {
+            case GsaMaterialGoo materialGoo: {
+                inMat.Add(materialGoo.Value);
+                break;
+              }
             case GsaSectionGoo sectionGoo: {
                 inSect.Add(sectionGoo.Value);
                 break;
@@ -388,8 +393,8 @@ namespace GsaGH.Helpers.Export {
           inProp3d = null;
         }
 
-        return new Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>(inSect, inProp2d,
-          inProp3d);
+        return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>
+          (inMat, inSect, inProp2d, inProp3d);
       }
 
       if (!isOptional) {
@@ -397,7 +402,8 @@ namespace GsaGH.Helpers.Export {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>(null, null, null);
+      return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>
+        (null, null, null, null);
     }
   }
 }

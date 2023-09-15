@@ -39,23 +39,17 @@ namespace GsaGH.Helpers.Export {
     internal void Assemble(ref Model apiModel) {
       ValidateMaterialsToDesignCodes(apiModel);
 
-      //if (CustomMaterials.Count > 0) {
       foreach (KeyValuePair<int, AnalysisMaterial> mat in CustomMaterials.ReadOnlyDictionary) {
         apiModel.SetAnalysisMaterial(mat.Key, mat.Value);
       }
-      //}
 
-      //if (AluminiumMaterials.Count > 0) {
       foreach (KeyValuePair<int, AluminiumMaterial> mat in AluminiumMaterials.ReadOnlyDictionary) {
         apiModel.SetAluminiumMaterial(mat.Key, mat.Value);
       }
-      //}
 
-      //if (ConcreteMaterials.Count > 0) {
       foreach (KeyValuePair<int, ConcreteMaterial> mat in ConcreteMaterials.ReadOnlyDictionary) {
         apiModel.SetConcreteMaterial(mat.Key, mat.Value);
       }
-      //}
 
       if (FabricMaterials.Count > 0) {
         foreach (KeyValuePair<int, FabricMaterial> mat in FabricMaterials.ReadOnlyDictionary) {
@@ -223,7 +217,7 @@ namespace GsaGH.Helpers.Export {
       return (MaterialType)Enum.Parse(typeof(MaterialType), value, true);
     }
 
-    private int ConvertMaterial(GsaMaterial material) {
+    internal int ConvertMaterial(GsaMaterial material) {
       return material == null ? 0 : AddMaterial(material);
     }
 

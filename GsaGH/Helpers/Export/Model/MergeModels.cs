@@ -148,7 +148,7 @@ namespace GsaGH.Helpers.Export {
 
       mainModel.Model = Assembler.AssembleModel(
         mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
-        sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, mainModel.ModelUnit,
+        null, sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, mainModel.ModelUnit,
         tolerance, false, owner);
       return mainModel;
     }

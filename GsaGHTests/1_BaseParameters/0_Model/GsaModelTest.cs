@@ -22,7 +22,7 @@ namespace GsaGHTests.Parameters {
 
       var assembled = new GsaModel {
         Model = Assembler.AssembleModel(original, null, null, null, null, null, null, null, null, 
-        null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, 
+        null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, 
         false, null), };
 
       Duplicates.AreEqual(original, assembled, new List<string>() { "Guid" });
