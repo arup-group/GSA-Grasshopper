@@ -18,8 +18,6 @@ namespace GsaGH.Parameters {
     public string SteelDesignCodeName { get; protected set; } = string.Empty;
     public bool IsUserDefined { get; set; }
 
-    private AnalysisMaterial _analysisMaterial;
-
     protected GsaMaterial() { }
 
     protected GsaMaterial(GsaMaterial other) {
