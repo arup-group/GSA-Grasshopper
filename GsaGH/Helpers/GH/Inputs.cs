@@ -175,101 +175,106 @@ namespace GsaGH.Helpers.GH {
       // to-do GSAGH-350
       string elementlist = "All";
       var ghType = new GH_ObjectWrapper();
-      if (da.GetData(inputid, ref ghType)) {
-        if (ghType.Value is GsaListGoo listGoo) {
-          if (listGoo.Value.EntityType != EntityType.Element
-            && listGoo.Value.EntityType != EntityType.Member) {
-            owner.AddRuntimeWarning("List must be of either Element or Member type to apply to " +
-              "element filter");
-            return string.Empty;
+      if (!da.GetData(inputid, ref ghType)) {
+        return elementlist;
+      }
+
+      if (!(ghType.Value is GsaListGoo listGoo)) {
+        GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
+        if (string.IsNullOrEmpty(elementlist) || elementlist.ToLower() == "all") {
+          elementlist = "All";
+        }
+
+        return elementlist;
+      }
+
+      if (listGoo.Value.EntityType != EntityType.Element
+        && listGoo.Value.EntityType != EntityType.Member) {
+        owner.AddRuntimeWarning("List must be of either Element or Member type to apply to " +
+          "element filter");
+        return string.Empty;
+      }
+
+      if (listGoo.Value.EntityType == EntityType.Element) {
+        if (model.Model.Lists().Values.Where(
+          x => x.Type == GsaAPI.EntityType.Element && x.Name == listGoo.Value.Name).Any()) {
+          return "\"" + listGoo.Value.Name + "\"";
+        }
+
+        return listGoo.Value.Definition;
+      }
+
+      // list is Member list
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
+              = ElementListFromReference.GetMemberElementRelationship(model.Model);
+
+      // try find existing list of same name in model
+      if (listGoo.Value.Name != null && listGoo.Value.Name != string.Empty) {
+        if (model.Model.Lists().Values.Where(
+          x => x.Type == GsaAPI.EntityType.Element
+          && x.Name == $"Children of '{listGoo.Value.Name}'").Any()) {
+          owner.AddRuntimeRemark($"Element definition was derived from Children of " +
+            $"'{listGoo.Value.Name}' List");
+          return "\"" + listGoo.Value.Name + "\"";
+        }
+
+        foreach (EntityList list in model.Model.Lists().Values) {
+          if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
+            continue;
           }
 
-          ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
-                  = ElementListFromReference.GetMemberElementRelationship(model.Model);
+          ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
 
-          if (listGoo.Value.Name != null && listGoo.Value.Name != string.Empty) {
-            if (model.Model.Lists().Values.Where(
-              x => x.Type == GsaAPI.EntityType.Element && x.Name == listGoo.Value.Name).Any()) {
-              return "\"" + listGoo.Value.Name + "\"";
-            }
-
-            if (listGoo.Value.EntityType == EntityType.Member) {
-              if (model.Model.Lists().Values.Where(
-              x => x.Type == GsaAPI.EntityType.Element
-              && x.Name == $"Children of '{listGoo.Value.Name}'").Any()) {
-                owner.AddRuntimeRemark($"Element definition was derived from Children of " +
-                  $"'{listGoo.Value.Name}' List");
-                return "\"" + listGoo.Value.Name + "\"";
-              }
-
-              foreach (EntityList list in model.Model.Lists().Values) {
-                if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
-                  continue;
-                }
-
-                ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
-
-                var elementIds = new List<int>();
-                var warnings = new List<int>(); ;
-                foreach (int memberId in memberIds) {
-                  if (!memberElementRelationship.ContainsKey(memberId)) {
-                    continue;
-                  }
-
-                  elementIds.AddRange(memberElementRelationship[memberId]);
-                }
-
-                if (warnings.Count > 0) {
-                  string warningIds = GsaList.CreateListDefinition(warnings);
-                  owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
-                }
-
-                owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent " +
-                  $"Member included in '{listGoo.Value.Name}' List");
-                return GsaList.CreateListDefinition(elementIds);
-              }
-            }
-          }
-
-          EntityList tempList = listGoo.Value.GetApiList();
-          if (string.IsNullOrEmpty(tempList.Name)) {
-            tempList.Name = "List";
-          }
-          ReadOnlyCollection<int> memberIds2 = model.Model.ExpandList(tempList);
-
-          var elementIds2 = new List<int>();
-          var warnings2 = new List<int>(); ;
-          foreach (int memberId in memberIds2) {
+          var elementIds = new List<int>();
+          var warnings = new List<int>(); ;
+          foreach (int memberId in memberIds) {
             if (!memberElementRelationship.ContainsKey(memberId)) {
               continue;
             }
 
-            elementIds2.AddRange(memberElementRelationship[memberId]);
+            elementIds.AddRange(memberElementRelationship[memberId]);
           }
 
-          if (elementIds2.Count > 0) {
-            if (warnings2.Count > 0) {
-              string warningIds = GsaList.CreateListDefinition(warnings2);
-              owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
-            }
-
-            owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
-              + $"Member included in '{listGoo.Value.Name}' List");
-            return GsaList.CreateListDefinition(elementIds2);
+          if (warnings.Count > 0) {
+            string warningIds = GsaList.CreateListDefinition(warnings);
+            owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
           }
 
-          return listGoo.Value.Definition;
-
-        } else {
-          GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
+          owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent " +
+            $"Member included in '{listGoo.Value.Name}' List");
+          return GsaList.CreateListDefinition(elementIds);
         }
       }
 
-      if (string.IsNullOrEmpty(elementlist) || elementlist.ToLower() == "all") {
-        elementlist = "All";
+      // try convert Member list to child elements
+      EntityList tempList = listGoo.Value.GetApiList();
+      if (string.IsNullOrEmpty(tempList.Name)) {
+        tempList.Name = "List";
+      }
+      ReadOnlyCollection<int> memberIds2 = model.Model.ExpandList(tempList);
+
+      var elementIds2 = new List<int>();
+      var warnings2 = new List<int>(); ;
+      foreach (int memberId in memberIds2) {
+        if (!memberElementRelationship.ContainsKey(memberId)) {
+          continue;
+        }
+
+        elementIds2.AddRange(memberElementRelationship[memberId]);
       }
 
-      return elementlist;
+      if (elementIds2.Count > 0) {
+        if (warnings2.Count > 0) {
+          string warningIds = GsaList.CreateListDefinition(warnings2);
+          owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
+        }
+
+        owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
+          + $"Member included in '{listGoo.Value.Name}' List");
+        return GsaList.CreateListDefinition(elementIds2);
+      }
+
+      return string.Empty;
     }
 
     internal static string GetNodeListNameForResults(
