@@ -7,6 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace GsaGH.Helpers.Export {
   internal class Materials {
+    public const string GenericConcreteCodeName = "generic conc.";
+    public const string GenericSteelCodeName = "<steel generic>";
+
     internal GsaGuidDictionary<SteelMaterial> SteelMaterials;
     internal GsaGuidDictionary<ConcreteMaterial> ConcreteMaterials;
     internal GsaGuidDictionary<FrpMaterial> FrpMaterials;
@@ -39,52 +42,36 @@ namespace GsaGH.Helpers.Export {
     internal void Assemble(ref Model apiModel) {
       ValidateMaterialsToDesignCodes(apiModel);
 
-      //if (CustomMaterials.Count > 0) {
       foreach (KeyValuePair<int, AnalysisMaterial> mat in CustomMaterials.ReadOnlyDictionary) {
         apiModel.SetAnalysisMaterial(mat.Key, mat.Value);
       }
-      //}
 
-      //if (AluminiumMaterials.Count > 0) {
       foreach (KeyValuePair<int, AluminiumMaterial> mat in AluminiumMaterials.ReadOnlyDictionary) {
         apiModel.SetAluminiumMaterial(mat.Key, mat.Value);
       }
-      //}
 
-      //if (ConcreteMaterials.Count > 0) {
       foreach (KeyValuePair<int, ConcreteMaterial> mat in ConcreteMaterials.ReadOnlyDictionary) {
         apiModel.SetConcreteMaterial(mat.Key, mat.Value);
       }
-      //}
 
-      if (FabricMaterials.Count > 0) {
-        foreach (KeyValuePair<int, FabricMaterial> mat in FabricMaterials.ReadOnlyDictionary) {
-          apiModel.SetFabricMaterial(mat.Key, mat.Value);
-        }
+      foreach (KeyValuePair<int, FabricMaterial> mat in FabricMaterials.ReadOnlyDictionary) {
+        apiModel.SetFabricMaterial(mat.Key, mat.Value);
       }
 
-      if (FrpMaterials.Count > 0) {
-        foreach (KeyValuePair<int, FrpMaterial> mat in FrpMaterials.ReadOnlyDictionary) {
-          apiModel.SetFrpMaterial(mat.Key, mat.Value);
-        }
+      foreach (KeyValuePair<int, FrpMaterial> mat in FrpMaterials.ReadOnlyDictionary) {
+        apiModel.SetFrpMaterial(mat.Key, mat.Value);
       }
 
-      if (GlassMaterials.Count > 0) {
-        foreach (KeyValuePair<int, GlassMaterial> mat in GlassMaterials.ReadOnlyDictionary) {
-          apiModel.SetGlassMaterial(mat.Key, mat.Value);
-        }
+      foreach (KeyValuePair<int, GlassMaterial> mat in GlassMaterials.ReadOnlyDictionary) {
+        apiModel.SetGlassMaterial(mat.Key, mat.Value);
       }
 
-      if (SteelMaterials.Count > 0) {
-        foreach (KeyValuePair<int, SteelMaterial> mat in SteelMaterials.ReadOnlyDictionary) {
-          apiModel.SetSteelMaterial(mat.Key, mat.Value);
-        }
+      foreach (KeyValuePair<int, SteelMaterial> mat in SteelMaterials.ReadOnlyDictionary) {
+        apiModel.SetSteelMaterial(mat.Key, mat.Value);
       }
 
-      if (TimberMaterials.Count > 0) {
-        foreach (KeyValuePair<int, TimberMaterial> mat in TimberMaterials.ReadOnlyDictionary) {
-          apiModel.SetTimberMaterial(mat.Key, mat.Value);
-        }
+      foreach (KeyValuePair<int, TimberMaterial> mat in TimberMaterials.ReadOnlyDictionary) {
+        apiModel.SetTimberMaterial(mat.Key, mat.Value);
       }
     }
 
@@ -96,7 +83,9 @@ namespace GsaGH.Helpers.Export {
           if (!material.IsFromApi) {
             continue;
           }
-          if (material.ConcreteDesignCodeName != string.Empty) {
+          if (material.ConcreteDesignCodeName != string.Empty &&
+            material.ConcreteDesignCodeName != GenericConcreteCodeName) {
+
             return material.ConcreteDesignCodeName;
           }
         }
@@ -121,7 +110,9 @@ namespace GsaGH.Helpers.Export {
           if (!material.IsFromApi) {
             continue;
           }
-          if (material.SteelDesignCodeName != string.Empty) {
+          if (material.SteelDesignCodeName != string.Empty &&
+            material.SteelDesignCodeName != GenericSteelCodeName) {
+
             return material.SteelDesignCodeName;
           }
         }
@@ -373,10 +364,13 @@ namespace GsaGH.Helpers.Export {
           if (material.IsFromApi) {
             CheckConcreteDesignCode(material);
             CheckSteelDesignCode(material);
+
           } else {
+            // material was created in Grasshopper
             if (material.MaterialType == MatType.Concrete) {
               CheckConcreteDesignCode(material);
-            }
+            } 
+
             if (material.MaterialType == MatType.Steel) {
               CheckSteelDesignCode(material);
             }
@@ -390,18 +384,20 @@ namespace GsaGH.Helpers.Export {
     }
 
     private void CheckConcreteDesignCode(GsaMaterial material) {
-      if (_concreteDesignCode == string.Empty) {
+      if (_concreteDesignCode == string.Empty || material.ConcreteDesignCodeName == string.Empty ||
+        material.ConcreteDesignCodeName == GenericConcreteCodeName) {
         return;
       }
 
-      if (_concreteDesignCode != material.ConcreteDesignCodeName) {
+      if (material.ConcreteDesignCodeName != _concreteDesignCode) {
         throw new Exception($"Material with {material.ConcreteDesignCodeName} Design Code" +
           $" cannot be added to a model with {_concreteDesignCode} Design Code.");
       }
     }
 
     private void CheckSteelDesignCode(GsaMaterial material) {
-      if (_steelDesignCode == string.Empty) {
+      if (_steelDesignCode == string.Empty || material.SteelDesignCodeName == string.Empty ||
+        material.SteelDesignCodeName == GenericSteelCodeName) {
         return;
       }
 
@@ -416,12 +412,13 @@ namespace GsaGH.Helpers.Export {
         return;
       }
 
-      if (_concreteDesignCode == string.Empty && material.MaterialType == MatType.Concrete) {
+      if (material.MaterialType == MatType.Concrete && _concreteDesignCode == string.Empty && material.ConcreteDesignCodeName != GenericConcreteCodeName) {
         _concreteDesignCode = material.ConcreteDesignCodeName;
         return;
       }
 
-      if (_steelDesignCode == string.Empty && material.MaterialType == MatType.Steel) {
+      if (material.MaterialType == MatType.Steel && _steelDesignCode == string.Empty &&
+        material.SteelDesignCodeName != GenericSteelCodeName) {
         _steelDesignCode = material.SteelDesignCodeName;
         return;
       }
