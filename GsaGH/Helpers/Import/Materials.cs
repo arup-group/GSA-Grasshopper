@@ -6,6 +6,9 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
   internal class Materials {
+    public const string GenericConcreteCodeName = "generic conc.";
+    public const string GenericSteelCodeName = "<steel generic>";
+
     internal ReadOnlyDictionary<int, GsaMaterial> SteelMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> ConcreteMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> FrpMaterials { get; private set; }
@@ -162,6 +165,46 @@ namespace GsaGH.Helpers.Import {
         dict.Add(gsaMaterial.Id, gsaMaterial);
       }
       return new ReadOnlyDictionary<int, GsaMaterial>(dict);
+    }
+
+    internal bool SanitizeGenericCodeNames() {
+      if (SanitizeGenericCodeNames(AluminiumMaterials)) {
+        return true;
+      }
+      if (SanitizeGenericCodeNames(ConcreteMaterials)) {
+        return true;
+      }
+      if (SanitizeGenericCodeNames(FabricMaterials)) {
+        return true;
+      }
+      if (SanitizeGenericCodeNames(FrpMaterials)) {
+        return true;
+      }
+      if (SanitizeGenericCodeNames(GlassMaterials)) {
+        return true;
+      }
+      if (SanitizeGenericCodeNames(TimberMaterials)) {
+        return true;
+      }
+      if (SanitizeGenericCodeNames(SteelMaterials)) {
+        return true;
+      }
+
+      return false;
+    }
+
+    private bool SanitizeGenericCodeNames(ReadOnlyDictionary<int, GsaMaterial> materials) {
+      foreach (GsaMaterial material in materials.Values) {
+        if (material.ConcreteDesignCodeName == GenericConcreteCodeName) {
+          return true;
+        }
+
+        if (material.SteelDesignCodeName == GenericSteelCodeName) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }
 }
