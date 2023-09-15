@@ -229,30 +229,33 @@ namespace GsaGH.Helpers.GH {
                 return GsaList.CreateListDefinition(elementIds);
               }
             }
+          }
 
-            ReadOnlyCollection<int> memberIds2 = model.Model.ExpandList(
-              listGoo.Value.GetApiList());
+          EntityList tempList = listGoo.Value.GetApiList();
+          if (string.IsNullOrEmpty(tempList.Name)) {
+            tempList.Name = "List";
+          }
+          ReadOnlyCollection<int> memberIds2 = model.Model.ExpandList(tempList);
 
-            var elementIds2 = new List<int>();
-            var warnings2 = new List<int>(); ;
-            foreach (int memberId in memberIds2) {
-              if (!memberElementRelationship.ContainsKey(memberId)) {
-                continue;
-              }
-
-              elementIds2.AddRange(memberElementRelationship[memberId]);
+          var elementIds2 = new List<int>();
+          var warnings2 = new List<int>(); ;
+          foreach (int memberId in memberIds2) {
+            if (!memberElementRelationship.ContainsKey(memberId)) {
+              continue;
             }
 
-            if (elementIds2.Count > 0) {
-              if (warnings2.Count > 0) {
-                string warningIds = GsaList.CreateListDefinition(warnings2);
-                owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
-              }
+            elementIds2.AddRange(memberElementRelationship[memberId]);
+          }
 
-              owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
-                + $"Member included in '{listGoo.Value.Name}' List");
-              return GsaList.CreateListDefinition(elementIds2);
+          if (elementIds2.Count > 0) {
+            if (warnings2.Count > 0) {
+              string warningIds = GsaList.CreateListDefinition(warnings2);
+              owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
             }
+
+            owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
+              + $"Member included in '{listGoo.Value.Name}' List");
+            return GsaList.CreateListDefinition(elementIds2);
           }
 
           return listGoo.Value.Definition;
