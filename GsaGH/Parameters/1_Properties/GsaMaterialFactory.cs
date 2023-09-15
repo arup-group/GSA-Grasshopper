@@ -37,47 +37,7 @@ namespace GsaGH.Parameters {
 
       return material;
     }
-
-    internal static IGsaStandardMaterial CreateStandardMaterial(MatType type, string materialName, string codeName = "") {
-      string concreteDesignCode = type == MatType.Concrete ? codeName : string.Empty;
-      string steelDesignCode = type == MatType.Steel ? codeName : string.Empty;
-      Model model = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
-
-      IGsaStandardMaterial material;
-      switch (type) {
-        case MatType.Aluminium:
-          material = new GsaAluminiumMaterial(model.CreateAluminiumMaterial(materialName));
-          return material;
-
-        case MatType.Concrete:
-          material = new GsaConcreteMaterial(model.CreateConcreteMaterial(materialName), codeName);
-          return material;
-
-        case MatType.Fabric:
-          material = new GsaFabricMaterial(model.CreateFabricMaterial(materialName));
-          return material;
-
-        case MatType.Frp:
-          material = new GsaFrpMaterial(model.CreateFrpMaterial(materialName));
-          return material;
-
-        case MatType.Glass:
-          material = new GsaGlassMaterial(model.CreateGlassMaterial(materialName));
-          return material;
-
-        case MatType.Steel:
-          material = new GsaSteelMaterial(model.CreateSteelMaterial(materialName), codeName);
-          return material;
-
-        case MatType.Timber:
-          material = new GsaTimberMaterial(model.CreateTimberMaterial(materialName));
-          return material;
-
-        default:
-          throw new Exception($"Material type {type} does not have standard materials");
-      }
-    }
-
+    
     internal static GsaMaterial CreateMaterialFromApi(object standardMaterial, int id, Model model) {
       GsaMaterial material;
       switch (standardMaterial) {
@@ -145,54 +105,52 @@ namespace GsaGH.Parameters {
 
       return material;
     }
+    
+    internal static IGsaStandardMaterial CreateStandardMaterial(MatType type, string materialName, string codeName = "") {
+      string concreteDesignCode = type == MatType.Concrete ? codeName : string.Empty;
+      string steelDesignCode = type == MatType.Steel ? codeName : string.Empty;
+      Model model = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
 
-    private static bool AreAnalysisMaterialsEqual(AnalysisMaterial a, AnalysisMaterial b) {
-      if (a == null || b == null) {
-        return false;
+      IGsaStandardMaterial material;
+      switch (type) {
+        case MatType.Aluminium:
+          material = new GsaAluminiumMaterial(model.CreateAluminiumMaterial(materialName));
+          return material;
+
+        case MatType.Concrete:
+          material = new GsaConcreteMaterial(model.CreateConcreteMaterial(materialName), codeName);
+          return material;
+
+        case MatType.Fabric:
+          material = new GsaFabricMaterial(model.CreateFabricMaterial(materialName));
+          return material;
+
+        case MatType.Frp:
+          material = new GsaFrpMaterial(model.CreateFrpMaterial(materialName));
+          return material;
+
+        case MatType.Glass:
+          material = new GsaGlassMaterial(model.CreateGlassMaterial(materialName));
+          return material;
+
+        case MatType.Steel:
+          material = new GsaSteelMaterial(model.CreateSteelMaterial(materialName), codeName);
+          return material;
+
+        case MatType.Timber:
+          material = new GsaTimberMaterial(model.CreateTimberMaterial(materialName));
+          return material;
+
+        default:
+          throw new Exception($"Material type {type} does not have standard materials");
       }
-
-      return Math.Round(a.CoefficientOfThermalExpansion, 11) ==
-        Math.Round(b.CoefficientOfThermalExpansion, 11)
-        && Math.Round(a.Density, 11) == Math.Round(b.Density, 11)
-        && Math.Round(a.ElasticModulus, 11) == Math.Round(b.ElasticModulus, 11)
-        && Math.Round(a.PoissonsRatio, 11) == Math.Round(b.PoissonsRatio, 11);
-    }
-
-    private static AnalysisMaterial CreateCodeAnalysisMaterial(GsaMaterial material) {
-      if (material.MaterialType == MatType.Fabric) {
-        throw new ArgumentException("Can not create analysis material for fabric material");
-      }
-
-      Model m = GsaModel.CreateModelFromCodes(material.ConcreteDesignCodeName, material.SteelDesignCodeName);
-      return material.MaterialType switch {
-        MatType.Aluminium => m.CreateAluminiumMaterial(material.Name).AnalysisMaterial,
-        MatType.Concrete => m.CreateConcreteMaterial(material.Name).AnalysisMaterial,
-        MatType.Frp => m.CreateFrpMaterial(material.Name).AnalysisMaterial,
-        MatType.Glass => m.CreateGlassMaterial(material.Name).AnalysisMaterial,
-        MatType.Steel => m.CreateSteelMaterial(material.Name).AnalysisMaterial,
-        MatType.Timber => m.CreateTimberMaterial(material.Name).AnalysisMaterial,
-        _ => null,
-      };
     }
 
     internal static List<string> GetGradeNames(MatType type, string concreteDesignCode = "", string steelDesignCode = "") {
       Model m = GsaModel.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       return GetGradeNames(type, m);
     }
-
-    private static List<string> GetGradeNames(MatType type, Model model) {
-      return type switch {
-        MatType.Aluminium => new List<string>(model.GetStandardAluminumMaterialNames()),
-        MatType.Concrete => new List<string>(model.GetStandardConcreteMaterialNames()),
-        MatType.Fabric => new List<string>(model.GetStandardFabricMaterialNames()),
-        MatType.Frp => new List<string>(model.GetStandardFrpMaterialNames()),
-        MatType.Glass => new List<string>(model.GetStandardGlassMaterialNames()),
-        MatType.Steel => new List<string>(model.GetStandardSteelMaterialNames()),
-        MatType.Timber => new List<string>(model.GetStandardTimberMaterialNames()),
-        _ => throw new Exception($"Material type {type} does not have standard materials"),
-      };
-    }
-
+    
     internal static GsaMaterial RecreateForDesignCode(GsaMaterial material, Model model) {
       GsaMaterial recreation = null;
 
@@ -242,6 +200,48 @@ namespace GsaGH.Parameters {
       }
 
       return recreation;
+    }
+
+    private static bool AreAnalysisMaterialsEqual(AnalysisMaterial a, AnalysisMaterial b) {
+      if (a == null || b == null) {
+        return false;
+      }
+
+      return Math.Round(a.CoefficientOfThermalExpansion, 11) ==
+        Math.Round(b.CoefficientOfThermalExpansion, 11)
+        && Math.Round(a.Density, 11) == Math.Round(b.Density, 11)
+        && Math.Round(a.ElasticModulus, 11) == Math.Round(b.ElasticModulus, 11)
+        && Math.Round(a.PoissonsRatio, 11) == Math.Round(b.PoissonsRatio, 11);
+    }
+
+    private static AnalysisMaterial CreateCodeAnalysisMaterial(GsaMaterial material) {
+      if (material.MaterialType == MatType.Fabric) {
+        throw new ArgumentException("Can not create analysis material for fabric material");
+      }
+
+      Model m = GsaModel.CreateModelFromCodes(material.ConcreteDesignCodeName, material.SteelDesignCodeName);
+      return material.MaterialType switch {
+        MatType.Aluminium => m.CreateAluminiumMaterial(material.Name).AnalysisMaterial,
+        MatType.Concrete => m.CreateConcreteMaterial(material.Name).AnalysisMaterial,
+        MatType.Frp => m.CreateFrpMaterial(material.Name).AnalysisMaterial,
+        MatType.Glass => m.CreateGlassMaterial(material.Name).AnalysisMaterial,
+        MatType.Steel => m.CreateSteelMaterial(material.Name).AnalysisMaterial,
+        MatType.Timber => m.CreateTimberMaterial(material.Name).AnalysisMaterial,
+        _ => null,
+      };
+    }
+
+    private static List<string> GetGradeNames(MatType type, Model model) {
+      return type switch {
+        MatType.Aluminium => new List<string>(model.GetStandardAluminumMaterialNames()),
+        MatType.Concrete => new List<string>(model.GetStandardConcreteMaterialNames()),
+        MatType.Fabric => new List<string>(model.GetStandardFabricMaterialNames()),
+        MatType.Frp => new List<string>(model.GetStandardFrpMaterialNames()),
+        MatType.Glass => new List<string>(model.GetStandardGlassMaterialNames()),
+        MatType.Steel => new List<string>(model.GetStandardSteelMaterialNames()),
+        MatType.Timber => new List<string>(model.GetStandardTimberMaterialNames()),
+        _ => throw new Exception($"Material type {type} does not have standard materials"),
+      };
     }
   }
 }
