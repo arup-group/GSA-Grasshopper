@@ -30,6 +30,19 @@ namespace GsaGH.Helpers.GH {
             continue;
           }
 
+          if (gh_typ.Value is GH_Integer integer) {
+            list.Add(integer.Value.ToString());
+            continue;
+          }
+
+          if (gh_typ.Value is GH_Number number) {
+            string val = number.Value.ToString();
+            if (!val.Contains(".")) {
+              list.Add(val);
+              continue;
+            }
+          }
+
           switch (type) {
             case EntityType.Node:
               if (gh_typ.Value is GsaNodeGoo nodeGoo) {
