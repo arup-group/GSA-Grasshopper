@@ -30,6 +30,19 @@ namespace GsaGH.Helpers.GH {
             continue;
           }
 
+          if (gh_typ.Value is GH_Integer integer) {
+            list.Add(integer.Value.ToString());
+            continue;
+          }
+
+          if (gh_typ.Value is GH_Number number) {
+            string val = number.Value.ToString();
+            if (!val.Contains(".")) {
+              list.Add(val);
+              continue;
+            }
+          }
+
           switch (type) {
             case EntityType.Node:
               if (gh_typ.Value is GsaNodeGoo nodeGoo) {
@@ -187,15 +200,15 @@ namespace GsaGH.Helpers.GH {
               return "\"" + listGoo.Value.Name + "\"";
             }
 
-            foreach (EntityList list in model.Model.Lists().Values) { 
+            foreach (EntityList list in model.Model.Lists().Values) {
               if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
                 continue;
               }
 
               ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
-              ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship 
+              ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
                 = ElementListFromReference.GetMemberElementRelationship(model.Model);
-              
+
               var elementIds = new List<int>();
               var warnings = new List<int>(); ;
               foreach (int memberId in memberIds) {
@@ -214,10 +227,10 @@ namespace GsaGH.Helpers.GH {
               return GsaList.CreateListDefinition(elementIds);
             }
           }
-          
-          
+
+
           return listGoo.Value.Definition;
-          
+
         } else {
           GH_Convert.ToString(ghType.Value, out elementlist, GH_Conversion.Both);
         }
