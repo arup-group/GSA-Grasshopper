@@ -171,54 +171,51 @@ namespace GsaGH.Helpers.GH {
             return string.Empty;
           }
 
-          if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
-            return listGoo.Value.Definition;
-          }
+          ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
+                  = ElementListFromReference.GetMemberElementRelationship(model.Model);
 
-          if (model.Model.Lists().Values.Where(
-            x => x.Type == GsaAPI.EntityType.Element && x.Name == listGoo.Value.Name).Any()) {
-            return "\"" + listGoo.Value.Name + "\"";
-          }
-
-          if (listGoo.Value.EntityType == EntityType.Member) {
+          if (listGoo.Value.Name != null && listGoo.Value.Name != string.Empty) {
             if (model.Model.Lists().Values.Where(
-            x => x.Type == GsaAPI.EntityType.Element
-            && x.Name == $"Children of '{listGoo.Value.Name}'").Any()) {
-              owner.AddRuntimeRemark($"Element definition was derived from Children of " +
-                $"'{listGoo.Value.Name}' List");
+              x => x.Type == GsaAPI.EntityType.Element && x.Name == listGoo.Value.Name).Any()) {
               return "\"" + listGoo.Value.Name + "\"";
             }
 
-            ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
-                = ElementListFromReference.GetMemberElementRelationship(model.Model);
-
-            foreach (EntityList list in model.Model.Lists().Values) {
-              if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
-                continue;
+            if (listGoo.Value.EntityType == EntityType.Member) {
+              if (model.Model.Lists().Values.Where(
+              x => x.Type == GsaAPI.EntityType.Element
+              && x.Name == $"Children of '{listGoo.Value.Name}'").Any()) {
+                owner.AddRuntimeRemark($"Element definition was derived from Children of " +
+                  $"'{listGoo.Value.Name}' List");
+                return "\"" + listGoo.Value.Name + "\"";
               }
 
-              ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
-
-              var elementIds = new List<int>();
-              var warnings = new List<int>(); ;
-              foreach (int memberId in memberIds) {
-                if (!memberElementRelationship.ContainsKey(memberId)) {
+              foreach (EntityList list in model.Model.Lists().Values) {
+                if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
                   continue;
                 }
 
-                elementIds.AddRange(memberElementRelationship[memberId]);
-              }
+                ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
 
-              if (warnings.Count > 0) {
-                string warningIds = GsaList.CreateListDefinition(warnings);
-                owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
-              }
+                var elementIds = new List<int>();
+                var warnings = new List<int>(); ;
+                foreach (int memberId in memberIds) {
+                  if (!memberElementRelationship.ContainsKey(memberId)) {
+                    continue;
+                  }
 
-              owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent " +
-                $"Member included in '{listGoo.Value.Name}' List");
-              return GsaList.CreateListDefinition(elementIds);
+                  elementIds.AddRange(memberElementRelationship[memberId]);
+                }
+
+                if (warnings.Count > 0) {
+                  string warningIds = GsaList.CreateListDefinition(warnings);
+                  owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
+                }
+
+                owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent " +
+                  $"Member included in '{listGoo.Value.Name}' List");
+                return GsaList.CreateListDefinition(elementIds);
+              }
             }
-
 
             ReadOnlyCollection<int> memberIds2 = model.Model.ExpandList(
               listGoo.Value.GetApiList());
