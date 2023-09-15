@@ -70,7 +70,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
@@ -131,7 +131,7 @@ namespace GsaGH.Components {
 
         if (ghTyp.Value is GsaResultGoo goo) {
           result = goo.Value;
-          elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
+          elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         } else {
           this.AddRuntimeError("Error converting input to GSA Result");
           return;

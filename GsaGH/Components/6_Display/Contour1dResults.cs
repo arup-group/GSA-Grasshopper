@@ -455,7 +455,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaElementListParameter());
+      pManager.AddParameter(new GsaElementMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 10)", GH_ParamAccess.item, 10);
@@ -528,7 +528,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string elementlist = Inputs.GetElementListNameForResults(this, da, 1, result.Model);
+      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
       var ghDiv = new GH_Integer();
       da.GetData(2, ref ghDiv);
