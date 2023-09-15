@@ -76,9 +76,8 @@ namespace GsaGH.Components {
       }
 
       string name = _type.ToString() + " List";
-      if (DA.GetData(1, ref name)) {
-        list.Name = name;
-      }
+      DA.GetData(1, ref name);
+      list.Name = name;
 
       List<object> listGooObjects = Inputs.GetGooObjectsForLists(this, DA, 2, _type);
 
