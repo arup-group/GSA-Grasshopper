@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     public List<string> TopologyType { get; internal set; }
     public GsaNode OrientationNode { get; set; }
     public GsaSection Section { get; set; }
-    public GsaLocalAxes LocalAxes { get; private set; }
+    public LocalAxes LocalAxes { get; private set; }
     public Section3dPreview Section3dPreview { get; private set; }
     public ReleasePreview ReleasePreview { get; private set; }
 
@@ -103,7 +103,7 @@ namespace GsaGH.Parameters {
       Topology = topology;
       TopologyType = topoType;
       OrientationNode = orientationNode;
-      LocalAxes = new GsaLocalAxes(localAxis);
+      LocalAxes = new LocalAxes(localAxis);
       UpdateReleasesPreview();
     }
 

@@ -20,7 +20,7 @@ namespace GsaGH.Parameters {
 
     protected GsaMaterial() { }
 
-    protected GsaMaterial(GsaMaterial other) {
+    public GsaMaterial(GsaMaterial other) {
       ConcreteDesignCodeName = other.ConcreteDesignCodeName;
       Guid = System.Guid.NewGuid();
       Id = other.Id;

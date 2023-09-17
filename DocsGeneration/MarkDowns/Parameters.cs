@@ -8,7 +8,7 @@ namespace DocsGeneration.MarkDowns {
     public static readonly string ParametersOverview =
       "# Parameters\n" +
       "\n" +
-      "::: warning" +
+      ":::danger" +
       "\nGSA-Grasshopper plugin is pre-release and under active development, including further testing to be undertaken. It is provided \\\"as-is\\\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using the plugin should not be relied upon without thorough and independent checking.\n:::\n" +
       "\n" +
       "The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters are what is passed from one component's output to another component's input.\n" +

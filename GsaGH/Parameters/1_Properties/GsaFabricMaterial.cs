@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
       _fabricMaterial = fabricMaterial;
     }
 
-    internal GsaFabricMaterial(GsaFabricMaterial other) : base(other) {
+    public GsaFabricMaterial(GsaFabricMaterial other) : base(other) {
       Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _fabricMaterial = model.CreateFabricMaterial(other.Name);
     }

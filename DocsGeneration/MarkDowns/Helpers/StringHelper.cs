@@ -9,18 +9,18 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return Warning(txt);
     }
     public static string Tip(string headline, string text) {
-      // ::: tip Did you know?
+      // :::tip Did you know?
       // The `Bool6` icon takes inspiration from the central pin / hinge / charnier connection[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge).
       // ![Kingsgate Footbridge Durham](./ images / gsagh / Kingsgate - Footbridge - Durham.jpg)
       // * (c)Giles Rocholl / Arup *
       // :::
-      return $"::: tip {headline}\n{text}\n:::\n\n";
+      return $":::tip {headline}\n{text}\n:::\n\n";
     }
     public static string Warning(string text) {
-      // ::: warning
+      // :::danger
       // GSA - Grasshopper plugin[GsaGH] is pre - release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
       // :::
-      return $"::: warning\n{text}\n:::\n\n";
+      return $":::danger\n{text}\n:::\n\n";
     }
 
     public static string MakeBold(string text) {

@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
       _aluminiumMaterial = aluminiumMaterial;
     }
 
-    internal GsaAluminiumMaterial(GsaAluminiumMaterial other) : base(other) {
+    public GsaAluminiumMaterial(GsaAluminiumMaterial other) : base(other) {
       Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _aluminiumMaterial = model.CreateAluminiumMaterial(other.Name);
 

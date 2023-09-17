@@ -27,7 +27,7 @@ namespace GsaGH.Parameters {
       _glassMaterial = glassMaterial;
     }
 
-    internal GsaGlassMaterial(GsaGlassMaterial other) : base(other) {
+    public GsaGlassMaterial(GsaGlassMaterial other) : base(other) {
       Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _glassMaterial = model.CreateGlassMaterial(other.Name);
 
