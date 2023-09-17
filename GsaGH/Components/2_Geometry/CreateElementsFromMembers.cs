@@ -33,43 +33,21 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateElementsFromMembers;
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = string.Empty;
+    internal ToleranceMenu ToleranceMenu {
+      get {
+        _toleranceMenu ??= new ToleranceMenu(this);
+        return _toleranceMenu;
+      }
+    }
+    private ToleranceMenu _toleranceMenu;
 
     public CreateElementsFromMembers() : base("Create Elements from Members", "ElemFromMem",
       "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
+      if (menu is ContextMenuStrip) {
+        ToleranceMenu.AppendAdditionalMenuItems(menu);
       }
-      
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      var menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateMessage();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
@@ -128,27 +106,27 @@ namespace GsaGH.Components {
 
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
-        _tolerance = new Length(tol, _lengthUnit);
+        ToleranceMenu.Tolerance = new Length(tol, ToleranceMenu.LengthUnit);
       } else {
-        _tolerance = DefaultUnits.Tolerance;
+        ToleranceMenu.Tolerance = DefaultUnits.Tolerance;
       }
 
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
       return flag;
     }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      UpdateMessage();
+      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.UpdateMessage();
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(ToleranceMenu.LengthUnit);
 
       int i = 0;
       Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
@@ -158,13 +136,13 @@ namespace GsaGH.Components {
     }
 
     public override bool Write(GH_IWriter writer) {
-      writer.SetDouble("Tolerance", _tolerance.Value);
+      writer.SetDouble("Tolerance", ToleranceMenu.Tolerance.Value);
       return base.Write(writer);
     }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
     }
 
     protected override void InitialiseDropdowns() {
@@ -176,13 +154,13 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(ToleranceMenu.LengthUnit));
 
       _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(ToleranceMenu.LengthUnit);
 
       pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No",
         "Nodes to be included in meshing", GH_ParamAccess.list);
@@ -305,11 +283,11 @@ namespace GsaGH.Components {
 
       Model gsa = Assembler.AssembleModel(
         null, null, null, inNodes, null, null, null, inMem1ds, inMem2ds, inMem3ds, 
-        null, null, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
+        null, null, null, null, null, null, null, null, null, ToleranceMenu.LengthUnit, ToleranceMenu.Tolerance, true, this);
 
       var outModel = new GsaModel {
         Model = gsa,
-        ModelUnit = _lengthUnit,
+        ModelUnit = ToleranceMenu.LengthUnit,
       };
       
       ConcurrentBag<GsaNodeGoo> nodes = Nodes.GetNodes(outModel.ApiNodes, outModel.ModelUnit);
@@ -321,37 +299,8 @@ namespace GsaGH.Components {
       da.SetDataList(3, elements.Element3ds.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
       _element2ds = elements.Element2ds;
-    }
-
-    private void MaintainText(ToolStripTextBox tolerance) {
-      _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
-        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
-    }
-
-    private void UpdateMessage() {
-      if (_toleranceTxt != string.Empty) {
-        try {
-          _tolerance = Length.Parse(_toleranceTxt);
-        } catch (Exception e) {
-          MessageBox.Show(e.Message);
-          return;
-        }
-      }
-
-      _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
-      if (_tolerance.Meters < 0.001) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite small, you can change this by right-clicking the component.");
-      }
-
-      if (_tolerance.Meters > 0.25) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite large, you can change this by right-clicking the component.");
-      }
     }
   }
 }

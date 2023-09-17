@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -15,7 +14,6 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
-using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Collections;
@@ -31,41 +29,21 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = string.Empty;
+    internal ToleranceMenu ToleranceMenu {
+      get {
+        _toleranceMenu ??= new ToleranceMenu(this);
+        return _toleranceMenu;
+      }
+    }
+    private ToleranceMenu _toleranceMenu;
 
     public Create2dElementsFromBrep() : base("Create 2D Elements from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
+      if (menu is ContextMenuStrip) {
+        ToleranceMenu.AppendAdditionalMenuItems(menu);
       }
-
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToString();
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      //only for init submenu
-      var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateMessage();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -84,17 +62,18 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.UpdateMessage();
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(ToleranceMenu.LengthUnit) + "]";
     }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
     }
 
     protected override void InitialiseDropdowns() {
@@ -106,7 +85,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(ToleranceMenu.LengthUnit));
 
       _isInitialised = true;
     }
@@ -225,11 +204,11 @@ namespace GsaGH.Components {
         }
       }
 
-      var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
+      var meshSize = (Length)Input.UnitNumber(this, da, 4, ToleranceMenu.LengthUnit, true);
 
       Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
         = GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
-          meshSize.As(_lengthUnit), _lengthUnit, _tolerance);
+          meshSize.As(ToleranceMenu.LengthUnit), ToleranceMenu.LengthUnit, ToleranceMenu.Tolerance);
       GsaElement2d elem2d = tuple.Item1;
 
       var ghTyp = new GH_ObjectWrapper();
@@ -272,37 +251,8 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
-    }
-
-    private void MaintainText(ToolStripTextBox tolerance) {
-      _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
-        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
-    }
-
-    private void UpdateMessage() {
-      if (_toleranceTxt != string.Empty) {
-        try {
-          var newTolerance = Length.Parse(_toleranceTxt);
-          _tolerance = newTolerance;
-        } catch (Exception e) {
-          MessageBox.Show(e.Message);
-          return;
-        }
-      }
-
-      Message = "Tol: " + _tolerance.ToString();
-      if (_tolerance.Meters < 0.001) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite small, you can change this by right-clicking the component.");
-      }
-
-      if (_tolerance.Meters > 0.25) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite large, you can change this by right-clicking the component.");
-      }
     }
 
     private Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(

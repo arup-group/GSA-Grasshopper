@@ -34,48 +34,24 @@ namespace GsaGH.Components {
     private List<bool> _initialCheckState = new List<bool>() {
       true,
     };
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private bool _reMesh = true;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = string.Empty;
+    internal ToleranceMenu ToleranceMenu {
+      get {
+        _toleranceMenu ??= new ToleranceMenu(this);
+        return _toleranceMenu;
+      }
+    }
+    private ToleranceMenu _toleranceMenu;
 
     public CreateModel() : base("Create Model", "Model", "Assemble a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
     }
 
-    [ExcludeFromCodeCoverage]
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
+      if (menu is ContextMenuStrip) {
+        ToleranceMenu.AppendAdditionalMenuItems(menu);
       }
-
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      //only for init submenu
-      var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateMessage();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
     }
 
     public override void CreateAttributes() {
@@ -106,12 +82,12 @@ namespace GsaGH.Components {
 
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
-        _tolerance = new Length(tol, _lengthUnit);
+        ToleranceMenu.Tolerance = new Length(tol, ToleranceMenu.LengthUnit);
       } else {
-        _tolerance = DefaultUnits.Tolerance;
+        ToleranceMenu.Tolerance = DefaultUnits.Tolerance;
       }
 
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
       return base.Read(reader);
     }
 
@@ -121,24 +97,24 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      UpdateMessage();
+      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.UpdateMessage();
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
+      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(ToleranceMenu.LengthUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("ReMesh", _reMesh);
-      writer.SetDouble("Tolerance", _tolerance.Value);
+      writer.SetDouble("Tolerance", ToleranceMenu.Tolerance.Value);
       return base.Write(writer);
     }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
     }
 
     protected override void InitialiseDropdowns() {
@@ -151,7 +127,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(ToleranceMenu.LengthUnit));
 
       _isInitialised = true;
     }
@@ -166,7 +142,7 @@ namespace GsaGH.Components {
         + Environment.NewLine + "Properties already added to Elements or Members"
         + Environment.NewLine + "will automatically be added with Geometry input",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]",
+      pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(ToleranceMenu.LengthUnit) + "]",
         "Geo",
         "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model",
         GH_ParamAccess.list);
@@ -210,7 +186,7 @@ namespace GsaGH.Components {
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
-            ? MergeModels.MergeModel(models, this, _tolerance) :
+            ? MergeModels.MergeModel(models, this, ToleranceMenu.Tolerance) :
             models[0].Clone();
         }
       }
@@ -218,47 +194,16 @@ namespace GsaGH.Components {
       model.Model = Assembler.AssembleModel(
         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
         materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
-        analysisTasks, combinationCases, _lengthUnit, _tolerance, _reMesh, this);
+        analysisTasks, combinationCases, ToleranceMenu.LengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
 
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage();
 
       da.SetData(0, new GsaModelGoo(model));
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
-    }
-
-    [ExcludeFromCodeCoverage]
-    private void MaintainText(ToolStripItem tolerance) {
-      _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
-        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
-    }
-
-    [ExcludeFromCodeCoverage]
-    private void UpdateMessage() {
-      if (_toleranceTxt != string.Empty) {
-        try {
-          _tolerance = Length.Parse(_toleranceTxt);
-        } catch (Exception e) {
-          MessageBox.Show(e.Message);
-          return;
-        }
-      }
-
-      _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
-      if (_tolerance.Meters < 0.001) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite small, you can change this by right-clicking the component.");
-      }
-
-      if (_tolerance.Meters > 0.25) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite large, you can change this by right-clicking the component.");
-      }
     }
   }
 }
