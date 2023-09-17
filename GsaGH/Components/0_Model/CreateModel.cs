@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -43,6 +44,7 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    [ExcludeFromCodeCoverage]
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
@@ -228,12 +230,14 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
+    [ExcludeFromCodeCoverage]
     private void MaintainText(ToolStripItem tolerance) {
       _toleranceTxt = tolerance.Text;
       tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
         Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
     }
 
+    [ExcludeFromCodeCoverage]
     private void UpdateMessage() {
       if (_toleranceTxt != string.Empty) {
         try {
