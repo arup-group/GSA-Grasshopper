@@ -117,7 +117,6 @@ namespace GsaGH.Parameters {
           OrientationAngle = ApiElements[i].OrientationAngle,
           ParentMember = ApiElements[i].ParentMember,
           Property = ApiElements[i].Property,
-          Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology.ToList()),
           Type = ApiElements[i].Type,
         });
 
@@ -125,6 +124,7 @@ namespace GsaGH.Parameters {
         elems[i].Offset.X2 = ApiElements[i].Offset.X2;
         elems[i].Offset.Y = ApiElements[i].Offset.Y;
         elems[i].Offset.Z = ApiElements[i].Offset.Z;
+        elems[i].Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology);
 
         // workaround to handle that Color is non-nullable type
         if ((Color)ApiElements[i].Colour != Color.FromArgb(0, 0, 0)) {
