@@ -11,17 +11,13 @@ using System.Linq;
 using System.Windows.Forms;
 
 namespace GsaGH.Components {
-  internal class ToleranceMenu {
-    internal LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+  internal class ToleranceContextMenu {
     internal Length Tolerance = DefaultUnits.Tolerance;
     internal string Text = string.Empty;
-    internal GH_Component Component;
 
-    internal ToleranceMenu(GH_Component owner) {
-      Component = owner;
-    }
+    internal ToleranceContextMenu() { }
 
-    internal void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+    internal void AppendAdditionalMenuItems(GH_Component owner, ToolStripDropDown menu, LengthUnit unit) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
@@ -29,7 +25,7 @@ namespace GsaGH.Components {
       GH_DocumentObject.Menu_AppendSeparator(menu);
 
       var tolerance = new ToolStripTextBox();
-      Text = Tolerance.ToUnit(LengthUnit).ToString().Replace(" ", string.Empty);
+      Text = Tolerance.ToUnit(unit).ToString().Replace(" ", string.Empty);
       tolerance.Text = Text;
       tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
@@ -42,16 +38,16 @@ namespace GsaGH.Components {
       //only for init submenu
       var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
       toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateMessage();
+        UpdateMessage(owner, unit);
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        Component.ExpireSolution(true);
+        owner.ExpireSolution(true);
       };
       menu.Items.Add(toleranceMenu);
 
       GH_DocumentObject.Menu_AppendSeparator(menu);
 
-      (Component as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Component.ExpireSolution(true);
+      (owner as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      owner.ExpireSolution(true);
     }
 
     internal void MaintainText(ToolStripItem tolerance) {
@@ -60,7 +56,7 @@ namespace GsaGH.Components {
         Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
     }
 
-    internal void UpdateMessage() {
+    internal void UpdateMessage(GH_Component owner, LengthUnit unit) {
       if (Text != string.Empty) {
         try {
           Tolerance = Length.Parse(Text);
@@ -71,36 +67,36 @@ namespace GsaGH.Components {
         }
       }
 
-      Tolerance = Tolerance.ToUnit(LengthUnit);
-      Component.Message = "Tol: " + Tolerance.ToString().Replace(" ", string.Empty);
+      Tolerance = Tolerance.ToUnit(unit);
+      owner.Message = "Tol: " + Tolerance.ToString().Replace(" ", string.Empty);
       if (Tolerance.Meters < 0.001) {
-        Component.AddRuntimeRemark(
+        owner.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
       }
       else if (Tolerance.Meters > 0.25) {
-        Component.AddRuntimeRemark(
+        owner.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
       }
       else {
-        ClearToleranceRuntimeRemarkMessages();
+        ClearToleranceRuntimeRemarkMessages(owner);
       }
     }
 
-    private void ClearToleranceRuntimeRemarkMessages() {
-      var remarks = Component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).ToList();
-      var warnings = Component.RuntimeMessages(GH_RuntimeMessageLevel.Warning).ToList();
-      var errors = Component.RuntimeMessages(GH_RuntimeMessageLevel.Error).ToList();
-      Component.ClearRuntimeMessages();
+    private void ClearToleranceRuntimeRemarkMessages(GH_Component owner) {
+      var remarks = owner.RuntimeMessages(GH_RuntimeMessageLevel.Remark).ToList();
+      var warnings = owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).ToList();
+      var errors = owner.RuntimeMessages(GH_RuntimeMessageLevel.Error).ToList();
+      owner.ClearRuntimeMessages();
       foreach (string remark in remarks) {
         if (!remark.StartsWith("Set tolerance is quite ")) {
-          Component.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, remark);
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, remark);
         }
       }
       foreach (string warning in warnings) {
-        Component.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
       }
       foreach (string error in errors) {
-        Component.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, error);
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, error);
       }
     }
   }

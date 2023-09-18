@@ -33,21 +33,14 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateElementsFromMembers;
     private ConcurrentBag<GsaElement2dGoo> _element2ds;
-    internal ToleranceMenu ToleranceMenu {
-      get {
-        _toleranceMenu ??= new ToleranceMenu(this);
-        return _toleranceMenu;
-      }
-    }
-    private ToleranceMenu _toleranceMenu;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
     public CreateElementsFromMembers() : base("Create Elements from Members", "ElemFromMem",
       "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (menu is ContextMenuStrip) {
-        ToleranceMenu.AppendAdditionalMenuItems(menu);
-      }
+      ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
@@ -106,27 +99,27 @@ namespace GsaGH.Components {
 
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
-      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
-        ToleranceMenu.Tolerance = new Length(tol, ToleranceMenu.LengthUnit);
+        ToleranceMenu.Tolerance = new Length(tol, _lengthUnit);
       } else {
         ToleranceMenu.Tolerance = DefaultUnits.Tolerance;
       }
 
-      ToleranceMenu.UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       return flag;
     }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      ToleranceMenu.UpdateMessage();
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      string unitAbbreviation = Length.GetAbbreviation(ToleranceMenu.LengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
       Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
@@ -142,7 +135,7 @@ namespace GsaGH.Components {
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      ToleranceMenu.UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
     }
 
     protected override void InitialiseDropdowns() {
@@ -154,13 +147,13 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(ToleranceMenu.LengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      string unitAbbreviation = Length.GetAbbreviation(ToleranceMenu.LengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       pManager.AddParameter(new GsaNodeParameter(), "Nodes [" + unitAbbreviation + "]", "No",
         "Nodes to be included in meshing", GH_ParamAccess.list);
@@ -282,14 +275,14 @@ namespace GsaGH.Components {
       }
 
       Model gsa = Assembler.AssembleModel(
-        null, null, null, inNodes, null, null, null, inMem1ds, inMem2ds, inMem3ds, 
-        null, null, null, null, null, null, null, null, null, ToleranceMenu.LengthUnit, ToleranceMenu.Tolerance, true, this);
+        null, null, null, inNodes, null, null, null, inMem1ds, inMem2ds, inMem3ds,
+        null, null, null, null, null, null, null, null, null, _lengthUnit, ToleranceMenu.Tolerance, true, this);
 
       var outModel = new GsaModel {
         Model = gsa,
-        ModelUnit = ToleranceMenu.LengthUnit,
+        ModelUnit = _lengthUnit,
       };
-      
+
       ConcurrentBag<GsaNodeGoo> nodes = Nodes.GetNodes(outModel.ApiNodes, outModel.ModelUnit);
       var elements = new Elements(outModel);
 
@@ -299,7 +292,7 @@ namespace GsaGH.Components {
       da.SetDataList(3, elements.Element3ds.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
-      ToleranceMenu.UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       _element2ds = elements.Element2ds;
     }
   }

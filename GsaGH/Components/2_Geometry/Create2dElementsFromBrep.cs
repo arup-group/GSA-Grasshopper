@@ -14,6 +14,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
+using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Collections;
@@ -29,21 +30,14 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
-    internal ToleranceMenu ToleranceMenu {
-      get {
-        _toleranceMenu ??= new ToleranceMenu(this);
-        return _toleranceMenu;
-      }
-    }
-    private ToleranceMenu _toleranceMenu;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
     public Create2dElementsFromBrep() : base("Create 2D Elements from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (menu is ContextMenuStrip) {
-        ToleranceMenu.AppendAdditionalMenuItems(menu);
-      }
+      ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -62,18 +56,18 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      ToleranceMenu.UpdateMessage();
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(ToleranceMenu.LengthUnit) + "]";
+      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      ToleranceMenu.UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
     }
 
     protected override void InitialiseDropdowns() {
@@ -85,7 +79,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(ToleranceMenu.LengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       _isInitialised = true;
     }
@@ -204,11 +198,11 @@ namespace GsaGH.Components {
         }
       }
 
-      var meshSize = (Length)Input.UnitNumber(this, da, 4, ToleranceMenu.LengthUnit, true);
+      var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
 
       Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
         = GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
-          meshSize.As(ToleranceMenu.LengthUnit), ToleranceMenu.LengthUnit, ToleranceMenu.Tolerance);
+          meshSize.As(_lengthUnit), _lengthUnit, ToleranceMenu.Tolerance);
       GsaElement2d elem2d = tuple.Item1;
 
       var ghTyp = new GH_ObjectWrapper();
@@ -251,7 +245,7 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 

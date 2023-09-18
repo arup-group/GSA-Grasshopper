@@ -42,13 +42,8 @@ namespace GsaGH.Components {
     };
     
     private bool _reMesh = true;
-    internal ToleranceMenu ToleranceMenu {
-      get {
-        _toleranceMenu ??= new ToleranceMenu(this);
-        return _toleranceMenu;
-      }
-    }
-    private ToleranceMenu _toleranceMenu;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
     public AnalyseModel() : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat4()) {
@@ -56,9 +51,7 @@ namespace GsaGH.Components {
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (menu is ContextMenuStrip) {
-        ToleranceMenu.AppendAdditionalMenuItems(menu);
-      }
+      ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
     }
 
     public override void CreateAttributes() {
@@ -80,12 +73,12 @@ namespace GsaGH.Components {
       bool flag = base.Read(reader);
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
-        ToleranceMenu.Tolerance = new Length(tol, ToleranceMenu.LengthUnit);
+        ToleranceMenu.Tolerance = new Length(tol, _lengthUnit);
       } else {
         ToleranceMenu.Tolerance = DefaultUnits.Tolerance;
       }
 
-      ToleranceMenu.UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       return flag;
     }
 
@@ -96,13 +89,13 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      ToleranceMenu.UpdateMessage();
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(ToleranceMenu.LengthUnit) + "]";
+      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]";
     }
 
     public override bool Write(GH_IWriter writer) {
@@ -114,7 +107,7 @@ namespace GsaGH.Components {
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      ToleranceMenu.UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
 
       // add report output to old components
       if (Params.Output.Count == 1) {
@@ -137,7 +130,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(ToleranceMenu.LengthUnit));
+      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       _isInitialised = true;
     }
@@ -152,7 +145,7 @@ namespace GsaGH.Components {
         + Environment.NewLine + "Properties already added to Elements or Members"
         + Environment.NewLine + "will automatically be added with Geometry input",
         GH_ParamAccess.list);
-      pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(ToleranceMenu.LengthUnit) + "]",
+      pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(_lengthUnit) + "]",
         "Geo",
         "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model",
         GH_ParamAccess.list);
@@ -205,7 +198,7 @@ namespace GsaGH.Components {
       model.Model = Assembler.AssembleModel(
         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
         materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
-        analysisTasks, combinationCases, ToleranceMenu.LengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+        analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
       // Run analysis
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
@@ -288,12 +281,12 @@ namespace GsaGH.Components {
         }
       }
 
-      model.ModelUnit = ToleranceMenu.LengthUnit;
+      model.ModelUnit = _lengthUnit;
       da.SetData(0, new GsaModelGoo(model));
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      ToleranceMenu.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
