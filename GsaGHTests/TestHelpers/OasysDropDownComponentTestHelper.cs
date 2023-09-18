@@ -57,6 +57,7 @@ namespace GsaGHTests.Helpers {
       deserializedComponent.Params.Output[0].CollectData();
 
       Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
+      doc.Dispose();
     }
   }
 }

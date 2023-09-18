@@ -18,7 +18,7 @@ namespace GsaGHTests.GooWrappers {
     public void GsaNodeParameterBakeTest() {
       GH_OasysComponent comp = CreateSupportTests.ComponentMother();
       var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
-
+      
       var param = new GsaNodeParameter();
       param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
 
@@ -27,6 +27,7 @@ namespace GsaGHTests.GooWrappers {
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);
       Assert.Single(doc.Objects);
+      doc.Dispose();
     }
 
     [Fact]

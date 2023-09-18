@@ -19,7 +19,7 @@ namespace GsaGHTests.GooWrappers {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
       comp.Preview3dSection = true;
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
-
+      
       var param = new GsaElement2dParameter();
       param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
 
@@ -28,6 +28,7 @@ namespace GsaGHTests.GooWrappers {
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);
       Assert.Equal(10, doc.Objects.Count);
+      doc.Dispose();
     }
 
     [Fact]
