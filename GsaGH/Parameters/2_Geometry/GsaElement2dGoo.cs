@@ -34,18 +34,13 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-      if (Value == null || Value.Mesh == null) {
-        return;
-      }
-
-      args.Pipeline.DrawMeshShaded(Value.Mesh,
-        // this is a workaround to change colour between selected and not
+      if (Value != null && Value.Mesh != null) {
+        args.Pipeline.DrawMeshShaded(Value?.Mesh,
         args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
           ? Colours.Element2dFace : Colours.Element2dFaceSelected);
-
-      if (Value.Section3dPreview != null) {
-        args.Pipeline.DrawMeshFalseColors(Value.Section3dPreview.Mesh);
       }
+
+      Value?.Section3dPreview?.DrawViewportMeshes(args);
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {

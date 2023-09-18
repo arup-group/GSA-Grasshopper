@@ -32,7 +32,11 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
-
+    private List<string> _meshMode = new List<string>() {
+      "Tri-6 only",
+      "Planar Quads",
+      "Quad-8 only"
+    };
     public Create2dElementsFromBrep() : base("Create 2D Elements from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
 
@@ -56,7 +60,9 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      if (i == 1) {
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      }
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
       base.UpdateUI();
     }
@@ -72,11 +78,15 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
+        "Mesh mode",
         "Unit",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
+
+      _dropDownItems.Add(_meshMode);
+      _selectedItems.Add(_meshMode[0]); // tri only
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -97,19 +107,16 @@ namespace GsaGH.Components {
       pManager[2].Optional = true;
       pManager[3].Optional = true;
       pManager[4].Optional = true;
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaNodeParameter(), "Incl. Nodes", "No",
-        "Inclusion Nodes which may have been moved during the meshing process",
+        "Inclusion Nodes",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaElement1dParameter(), "Incl. Element1Ds", "E1D",
-        "Inclusion 1D Elements which may have been moved during the meshing process",
+        "Inclusion 1D Elements created from 1D Members",
         GH_ParamAccess.list);
     }
 
@@ -245,7 +252,16 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      int i = _selectedItems.Count == 1 ? 0 : 1;
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+
+      if (_selectedItems.Count == 1 ) {
+        _dropDownItems.Insert(0, _meshMode);
+        _selectedItems.Insert(0, _meshMode[1]);
+
+        _spacerDescriptions.Insert(0, "Mesh mode");
+      }
+
       base.UpdateUIFromSelectedItems();
     }
 
@@ -254,9 +270,21 @@ namespace GsaGH.Components {
       List<GsaElement1d> elem1ds, List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit,
       Length tolerance) {
       var gsaElement2D = new GsaElement2d();
+
+      MeshMode2d meshMode2d = MeshMode2d.Tri;
+      bool triangulate = false;
+      if (_selectedItems[0] == _meshMode[1]) {
+        meshMode2d = MeshMode2d.Mixed;
+        triangulate = true;
+      }
+
+      if (_selectedItems[0] == _meshMode[2]) {
+        meshMode2d = MeshMode2d.Quad;
+      }
+
       Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple
         = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
-          unit, tolerance);
+          unit, tolerance, meshMode2d, triangulate);
       gsaElement2D.Mesh = tuple.Item1;
       Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);
