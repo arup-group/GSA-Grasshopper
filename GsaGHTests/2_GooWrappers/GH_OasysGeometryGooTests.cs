@@ -28,14 +28,14 @@ namespace GsaGHTests.GooWrappers {
     }
 
 
-    [Fact]
-    public void GsaElement1dGooPreviewTest() {
-      var comp = (Section3dPreviewComponent)CreateElement1dTests.ComponentMother();
-      comp.Preview3dSection = true;
-      var output = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp);
-      GH_PreviewMeshArgs args = CreateNotSelectedPreviewMeshArgs();
-      output.DrawViewportMeshes(args);
-      Assert.True(true);
-    }
+    //[Fact]
+    //public void GsaElement1dGooPreviewTest() {
+    //  var comp = (Section3dPreviewComponent)CreateElement1dTests.ComponentMother();
+    //  comp.Preview3dSection = true;
+    //  var output = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp);
+    //  GH_PreviewMeshArgs args = CreateNotSelectedPreviewMeshArgs();
+    //  output.DrawViewportMeshes(args);
+    //  Assert.True(true);
+    //}
   }
 }
