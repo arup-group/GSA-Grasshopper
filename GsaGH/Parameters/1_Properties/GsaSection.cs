@@ -1,349 +1,120 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Helpers.Export;
-using GsaGH.Helpers.GsaApi;
-using OasysGH.Units;
+using GsaGH.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
-using AngleUnit = OasysUnits.Units.AngleUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section" />
+  /// A Section is used by <see cref="GsaElement1d"/> and <see cref="GsaMember1d"/> and generally contains information about it's `Profile` and <see cref="GsaMaterial"/>. 
+  /// <para>Use the <see cref="Components.CreateProfile"/> component to create Catalogue and custom profiles.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-sect-lib.html">Sections</see> to read more.</para>
   /// </summary>
-  public class GsaSection {
+  public class GsaSection : Property {
+    public Section ApiSection { get; internal set; }
+    public GsaSectionModifier Modifier { get; set; }
+    public GsaSectionProperties SectionProperties 
+      => new GsaSectionProperties(ApiSection.Properties());
     public Length AdditionalOffsetY {
-      get => new Length(_section.AdditionalOffsetY, UnitSystem.SI);
-      set {
-        CloneApiObject();
-        _section.AdditionalOffsetY = value.Meters;
-        IsReferencedById = false;
-      }
+      get => ApiSection == null ? Length.Zero 
+        : new Length(ApiSection.AdditionalOffsetY, LengthUnit.Meter);
+      set => ApiSection.AdditionalOffsetY = value.Meters;
     }
     public Length AdditionalOffsetZ {
-      get => new Length(_section.AdditionalOffsetZ, UnitSystem.SI);
-      set {
-        CloneApiObject();
-        _section.AdditionalOffsetZ = value.Meters;
-        IsReferencedById = false;
-      }
+      get => ApiSection == null ? Length.Zero 
+        : new Length(ApiSection.AdditionalOffsetZ, LengthUnit.Meter);
+      set => ApiSection.AdditionalOffsetZ = value.Meters;
     }
-    public Angle Angle {
-      get {
-        var angle = new Angle(_section.Properties().Angle, AngleUnit.Degree);
-        return angle.ToUnit(DefaultUnits.AngleUnit);
-      }
-    }
-    public Area Area {
-      get {
-        var area = new Area(_section.Properties().Area, UnitSystem.SI);
-        return area.ToUnit(DefaultUnits.SectionAreaUnit);
-      }
-    }
-    public BasicOffset BasicOffset {
-      get => _section.BasicOffset;
-      set {
-        CloneApiObject();
-        _section.BasicOffset = value;
-        IsReferencedById = false;
-      }
-    }
-    public SectionModulus C {
-      get {
-        var c = new SectionModulus(_section.Properties().C, UnitSystem.SI);
-        return c.ToUnit(SectionModulusUnit.CubicMillimeter);
-      }
-    }
-    public Color Colour {
-      get => (Color)_section.Colour;
-      set {
-        CloneApiObject();
-        _section.Colour = value;
-        IsReferencedById = false;
-      }
-    }
-    public Length Cy {
-      get {
-        var cy = new Length(_section.Properties().Cy, UnitSystem.SI);
-        return cy.ToUnit(DefaultUnits.LengthUnitSection);
-      }
-    }
-    public Length Cz {
-      get {
-        var cz = new Length(_section.Properties().Cz, UnitSystem.SI);
-        return cz.ToUnit(DefaultUnits.LengthUnitSection);
-      }
-    }
-    public Guid Guid => _guid;
-    public int Id {
-      get => _id;
-      set {
-        CloneApiObject();
-        _id = value;
-      }
-    }
-    public AreaMomentOfInertia Iuu {
-      get {
-        var iuu = new AreaMomentOfInertia(_section.Properties().Iuu, UnitSystem.SI);
-        return iuu.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-    }
-    public AreaMomentOfInertia Ivv {
-      get {
-        var ivv = new AreaMomentOfInertia(_section.Properties().Ivv, UnitSystem.SI);
-        return ivv.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-    }
-    public AreaMomentOfInertia Iyy {
-      get {
-        var iyy = new AreaMomentOfInertia(_section.Properties().Iyy, UnitSystem.SI);
-        return iyy.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-    }
-    public AreaMomentOfInertia Iyz {
-      get {
-        var iyz = new AreaMomentOfInertia(_section.Properties().Iyz, UnitSystem.SI);
-        return iyz.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-    }
-    public AreaMomentOfInertia Izz {
-      get {
-        var izz = new AreaMomentOfInertia(_section.Properties().Izz, UnitSystem.SI);
-        return izz.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-    }
-    public AreaMomentOfInertia J {
-      get {
-        var j = new AreaMomentOfInertia(_section.Properties().J, UnitSystem.SI);
-        return j.ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
-      }
-    }
-    public double Kuu => _section.Properties().Kuu;
-    public double Kvv => _section.Properties().Kvv;
-    public double Kyy => _section.Properties().Kyy;
-    public double Kzz => _section.Properties().Kzz;
-    public GsaMaterial Material {
-      get => _material;
-      set {
-        _material = value;
-        if (_section == null) {
-          _section = new Section();
-        } else {
-          CloneApiObject();
-        }
 
-        _section.MaterialType = Materials.GetMaterialType(_material);
-        if (_material.IsCustom) {
-          _section.MaterialAnalysisProperty = _material.Id;
-        } else {
-          _section.MaterialGradeProperty = _material.Id;
-        }
-        IsReferencedById = false;
-      }
+    /// <summary>
+    /// Empty constructor instantiating a new API object
+    /// </summary>
+    public GsaSection() { 
+      ApiSection = new Section();
     }
-    public GsaSectionModifier Modifier {
-      get => _modifier;
-      set {
-        CloneApiObject();
-        _modifier = value;
-        IsReferencedById = false;
-      }
-    }
-    public string Name {
-      get => _section.Name;
-      set {
-        CloneApiObject();
-        _section.Name = value;
-        IsReferencedById = false;
-      }
-    }
-    public int Pool {
-      get => _section.Pool;
-      set {
-        CloneApiObject();
-        _section.Pool = value;
-        IsReferencedById = false;
-      }
-    }
-    public string Profile {
-      get => _section.Profile.Replace("%", " ");
-      set {
-        if (!ValidProfile(value)) {
-          return;
-        }
 
-        CloneApiObject();
-        _section.Profile = value;
-        IsReferencedById = false;
-      }
-    }
-    public Length Ry {
-      get {
-        var ry = new Length(_section.Properties().Ry, UnitSystem.SI);
-        return ry.ToUnit(DefaultUnits.LengthUnitSection);
-      }
-    }
-    public Length Rz {
-      get {
-        var rz = new Length(_section.Properties().Rz, UnitSystem.SI);
-        return rz.ToUnit(DefaultUnits.LengthUnitSection);
-      }
-    }
-    public IQuantity SurfaceAreaPerLength {
-      get {
-        var area = new Area(_section.Properties().SurfaceAreaPerLength, UnitSystem.SI);
-        var len = new Length(1, UnitSystem.SI);
-        Area unitArea = len * len;
-        return area / len;
-      }
-    }
-    public VolumePerLength VolumePerLength
-      => new VolumePerLength(_section.Properties().VolumePerLength, UnitSystem.SI);
-    public SectionModulus Zpy {
-      get {
-        var zpy = new SectionModulus(_section.Properties().Zpy, UnitSystem.SI);
-        return zpy.ToUnit(DefaultUnits.SectionModulusUnit);
-      }
-    }
-    public SectionModulus Zpz {
-      get {
-        var zpz = new SectionModulus(_section.Properties().Zpz, UnitSystem.SI);
-        return zpz.ToUnit(DefaultUnits.SectionModulusUnit);
-      }
-    }
-    public SectionModulus Zy {
-      get {
-        var zy = new SectionModulus(_section.Properties().Zy, UnitSystem.SI);
-        return zy.ToUnit(DefaultUnits.SectionModulusUnit);
-      }
-    }
-    public SectionModulus Zz {
-      get {
-        var zz = new SectionModulus(_section.Properties().Zz, UnitSystem.SI);
-        return zz.ToUnit(DefaultUnits.SectionModulusUnit);
-      }
-    }
-    internal Section ApiSection {
-      get => _section;
-      set {
-        _guid = Guid.NewGuid();
-        _section = value;
-        _material = Material.Duplicate();
-        IsReferencedById = false;
-      }
-    }
-    internal bool IsReferencedById { get; set; } = false;
-    private Guid _guid = Guid.NewGuid();
-    private int _id;
-    private GsaMaterial _material = new GsaMaterial();
-    private GsaSectionModifier _modifier = new GsaSectionModifier();
-    private Section _section = new Section();
-
-    public GsaSection() { }
-
+    /// <summary>
+    /// Create a new instance with reference to an Id and no API object
+    /// </summary>
+    /// <param name="id"></param>
     public GsaSection(int id) {
-      _id = id;
+      Id = id;
       IsReferencedById = true;
     }
 
+    /// <summary>
+    /// Create new instance by casting from a Profile string
+    /// </summary>
+    /// <param name="profile"></param>
     public GsaSection(string profile) {
-      _section.Profile = profile;
-    }
-
-    public GsaSection(string profile, int id = 0) {
-      _section.Profile = profile;
-      _id = id;
-    }
-
-    internal GsaSection(
-      ReadOnlyDictionary<int, Section> sDict, int id,
-      ReadOnlyDictionary<int, SectionModifier> modDict,
-      ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
-      if (!sDict.ContainsKey(id)) {
-        return;
-      }
-
-      _section = sDict[id];
-      IsReferencedById = false;
-      if (modDict.ContainsKey(id)) {
-        _modifier = new GsaSectionModifier(modDict[id]);
-      }
-
-      if (_section.MaterialAnalysisProperty != 0
-        && matDict.ContainsKey(_section.MaterialAnalysisProperty)) {
-        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
-      }
-
-      _material = Material.Duplicate();
-    }
-
-    public GsaSection Clone() {
-      var dup = new GsaSection {
-        _section = _section,
-        _id = _id,
-        _material = _material.Duplicate(),
-        _modifier = _modifier.Duplicate(),
-        _guid = new Guid(_guid.ToString()),
-        IsReferencedById = IsReferencedById,
+      ApiSection = new Section {
+        Profile = profile
       };
-      dup.CloneApiObject();
-      return dup;
     }
 
-    public GsaSection Duplicate() {
-      return this;
+    /// <summary>
+    /// Create a duplicate instance from another instance
+    /// </summary>
+    /// <param name="other"></param>
+    public GsaSection(GsaSection other) {
+      Id = other.Id;
+      IsReferencedById = other.IsReferencedById;
+      if (!IsReferencedById) {
+        ApiSection = other.DuplicateApiObject();
+        Material = other.Material;
+        Modifier = other.Modifier;
+      }
+    }
+
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
+    /// <param name="section"></param>
+    internal GsaSection(KeyValuePair<int, Section> section) {
+      Id = section.Key;
+      ApiSection = section.Value;
+      IsReferencedById = false;
+    }
+
+    public Section DuplicateApiObject() {
+      var sec = new Section() {
+        MaterialAnalysisProperty = ApiSection.MaterialAnalysisProperty,
+        MaterialGradeProperty = ApiSection.MaterialGradeProperty,
+        MaterialType = ApiSection.MaterialType,
+        Name = ApiSection.Name.ToString(),
+        BasicOffset = ApiSection.BasicOffset,
+        AdditionalOffsetY = ApiSection.AdditionalOffsetY,
+        AdditionalOffsetZ = ApiSection.AdditionalOffsetZ,
+        Pool = ApiSection.Pool,
+        Profile = ApiSection.Profile,
+      };
+      // workaround to handle that Color is non-nullable type
+      if ((Color)ApiSection.Colour != Color.FromArgb(0, 0, 0)) {
+        sec.Colour = ApiSection.Colour;
+      }
+
+      return sec;
     }
 
     public override string ToString() {
-      string pb = Id > 0 ? "PB" + Id + " " : string.Empty;
-      string prof = _section.Profile.Replace("%", " ") + " ";
-      string mat = Mappings.materialTypeMapping
-       .FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
-      string mod = _modifier.IsModified ? " modified" : string.Empty;
-      return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim()
-       .Replace("  ", " ");
+      string pb = Id > 0 ? $"PB{Id}" : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{pb} (referenced)" : string.Empty;
+      }
+
+      string prof = ApiSection.Profile.Replace("%", " ");
+      string mat = Material != null ? MaterialType 
+        : ApiSection.MaterialType.ToString().ToPascalCase();
+      string mod = (Modifier != null && Modifier.IsModified) ? "modified" : string.Empty;
+      return string.Join(" ", pb, prof, mat, mod).TrimSpaces();
     }
 
-    internal static bool ValidProfile(string profile) {
+    internal static bool IsValidProfile(string profile) {
       var test = new Section {
         Profile = profile,
       };
       return test.Properties().Area != 0;
-    }
-
-    private void CloneApiObject() {
-      // temp profile clone
-      string prfl = _section.Profile.Replace("%", " ");
-      string[] pfs = prfl.Split(' ');
-      if (pfs.Last() == "S/S") {
-        prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
-      }
-
-      var sec = new Section() {
-        MaterialAnalysisProperty = _section.MaterialAnalysisProperty,
-        MaterialGradeProperty = _section.MaterialGradeProperty,
-        MaterialType = _section.MaterialType,
-        Name = _section.Name.ToString(),
-        BasicOffset = _section.BasicOffset,
-        AdditionalOffsetY = _section.AdditionalOffsetY,
-        AdditionalOffsetZ = _section.AdditionalOffsetZ,
-        Pool = _section.Pool,
-        Profile = prfl,
-      };
-      if ((Color)_section.Colour
-        != Color.FromArgb(0, 0,
-          0)) // workaround to handle that System.Drawing.Color is non-nullable type
-      {
-        sec.Colour = _section.Colour;
-      }
-
-      _section = sec;
-      _modifier = Modifier.Clone();
-      _guid = Guid.NewGuid();
     }
   }
 }

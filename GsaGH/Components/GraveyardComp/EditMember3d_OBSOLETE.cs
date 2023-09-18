@@ -26,7 +26,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditMem3d;
+    protected override Bitmap Icon => Resources.Edit3dMember;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public EditMember3d_OBSOLETE() : base("Edit 3D Member", "Mem3dEdit", "Modify GSA 3D Member",
@@ -39,7 +39,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -86,7 +86,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Set new 3D Property.",
+      pManager.AddParameter(new GsaProperty3dParameter(), "3D Property", "PV", "Set new 3D Property.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
         "Set Member Mesh Size", GH_ParamAccess.item);
@@ -115,7 +115,7 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
       pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Get 3D Property",
+      pManager.AddParameter(new GsaProperty3dParameter(), "3D Property", "PV", "Get 3D Property",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(_lengthUnit) + "]", "Ms",
         "Get Targe mesh size", GH_ParamAccess.item);
@@ -136,7 +136,7 @@ namespace GsaGH.Components {
 
       GsaMember3dGoo member3dGoo = null;
       if (da.GetData(0, ref member3dGoo)) {
-        mem = member3dGoo.Value.Clone();
+        mem = new GsaMember3d(member3dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -151,29 +151,29 @@ namespace GsaGH.Components {
         var brep = new Brep();
         var mesh = new Mesh();
         if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
-          mem = mem.UpdateGeometry(brep);
+          mem.UpdateGeometry(brep);
         } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
-          mem = mem.UpdateGeometry(mesh);
+          mem.UpdateGeometry(mesh);
         } else {
           this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
           return;
         }
       }
 
-      GsaProp3dGoo prop3dGoo = null;
+      GsaProperty3dGoo prop3dGoo = null;
       if (da.GetData(3, ref prop3dGoo)) {
         mem.Prop3d = prop3dGoo.Value;
       }
 
       if (Params.Input[4].Sources.Count > 0) {
-        mem.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
+        mem.ApiMember.MeshSize = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit, true)).Meters;
       }
 
       var ghBoolean = new GH_Boolean();
       if (da.GetData(5, ref ghBoolean)) {
         if (GH_Convert.ToBoolean(ghBoolean, out bool mbool, GH_Conversion.Both)) {
-          if (mem.MeshWithOthers != mbool) {
-            mem.MeshWithOthers = mbool;
+          if (mem.ApiMember.IsIntersector != mbool) {
+            mem.ApiMember.IsIntersector = mbool;
           }
         }
       }
@@ -181,42 +181,42 @@ namespace GsaGH.Components {
       var ghName = new GH_String();
       if (da.GetData(6, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          mem.Name = name;
+          mem.ApiMember.Name = name;
         }
       }
 
       var ghGroup = new GH_Integer();
       if (da.GetData(7, ref ghGroup)) {
         if (GH_Convert.ToInt32(ghGroup, out int grp, GH_Conversion.Both)) {
-          mem.Group = grp;
+          mem.ApiMember.Group = grp;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(8, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          mem.Colour = col;
+          mem.ApiMember.Colour = col;
         }
       }
 
       var ghDummy = new GH_Boolean();
       if (da.GetData(9, ref ghDummy)) {
         if (GH_Convert.ToBoolean(ghDummy, out bool dum, GH_Conversion.Both)) {
-          mem.IsDummy = dum;
+          mem.ApiMember.IsDummy = dum;
         }
       }
 
       da.SetData(0, new GsaMember3dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.SolidMesh);
-      da.SetData(3, new GsaProp3dGoo(mem.Prop3d));
+      da.SetData(3, new GsaProperty3dGoo(mem.Prop3d));
       da.SetData(4,
-        new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
-      da.SetData(5, mem.MeshWithOthers);
-      da.SetData(6, mem.Name);
-      da.SetData(7, mem.Group);
-      da.SetData(8, mem.Colour);
-      da.SetData(9, mem.IsDummy);
+        new GH_UnitNumber(new Length(mem.ApiMember.MeshSize, LengthUnit.Meter).ToUnit(_lengthUnit)));
+      da.SetData(5, mem.ApiMember.IsIntersector);
+      da.SetData(6, mem.ApiMember.Name);
+      da.SetData(7, mem.ApiMember.Group);
+      da.SetData(8, mem.ApiMember.Colour);
+      da.SetData(9, mem.ApiMember.IsDummy);
       da.SetData(10, mem.ApiMember.Topology);
     }
 

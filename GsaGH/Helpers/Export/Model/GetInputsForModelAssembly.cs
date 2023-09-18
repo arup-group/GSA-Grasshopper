@@ -84,31 +84,31 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaNodeGoo nodeGoo: {
-                inNodes.Add(nodeGoo.Value.Duplicate());
+                inNodes.Add(nodeGoo.Value);
                 break;
               }
             case GsaElement1dGoo element1dGoo: {
-                inElem1ds.Add(element1dGoo.Value.Duplicate());
+                inElem1ds.Add(element1dGoo.Value);
                 break;
               }
             case GsaElement2dGoo element2dGoo: {
-                inElem2ds.Add(element2dGoo.Value.Duplicate());
+                inElem2ds.Add(element2dGoo.Value);
                 break;
               }
             case GsaElement3dGoo element3dGoo: {
-                inElem3ds.Add(element3dGoo.Value.Duplicate());
+                inElem3ds.Add(element3dGoo.Value);
                 break;
               }
             case GsaMember1dGoo member1dGoo: {
-                inMem1ds.Add(member1dGoo.Value.Duplicate());
+                inMem1ds.Add(member1dGoo.Value);
                 break;
               }
             case GsaMember2dGoo member2dGoo: {
-                inMem2ds.Add(member2dGoo.Value.Duplicate());
+                inMem2ds.Add(member2dGoo.Value);
                 break;
               }
             case GsaMember3dGoo member3dGoo: {
-                inMem3ds.Add(member3dGoo.Value.Duplicate());
+                inMem3ds.Add(member3dGoo.Value);
                 break;
               }
             default: {
@@ -168,12 +168,13 @@ namespace GsaGH.Helpers.Export {
           null, null);
     }
 
-    internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>> GetLoading(
+    internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>> GetLoading(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
         var inLoads = new List<IGsaLoad>();
         var inGps = new List<GsaGridPlaneSurface>();
+        var inCases = new List<GsaLoadCase>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -183,11 +184,15 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaLoadGoo loadGoo: {
-                inLoads.Add(loadGoo.Value.Duplicate());
+                inLoads.Add(loadGoo.Value);
                 break;
               }
             case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo: {
-                inGps.Add(gridPlaneSurfaceGoo.Value.Duplicate());
+                inGps.Add(gridPlaneSurfaceGoo.Value);
+                break;
+              }
+            case GsaLoadCaseGoo loadCaseGoo: {
+                inCases.Add(loadCaseGoo.Value);
                 break;
               }
             default: {
@@ -209,13 +214,15 @@ namespace GsaGH.Helpers.Export {
           inGps = null;
         }
 
-        return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>>(inLoads, inGps);
+        return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
+          (inLoads, inGps, inCases);
       } else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
           + " failed to collect data!");
       }
 
-      return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>>(null, null);
+      return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
+        (null, null, null);
     }
 
     internal static Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetMembers(
@@ -235,15 +242,15 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaMember1dGoo member1dGoo: {
-                inMem1ds.Add(member1dGoo.Value.Duplicate());
+                inMem1ds.Add(member1dGoo.Value);
                 break;
               }
             case GsaMember2dGoo member2dGoo: {
-                inMem2ds.Add(member2dGoo.Value.Duplicate());
+                inMem2ds.Add(member2dGoo.Value);
                 break;
               }
             case GsaMember3dGoo member3dGoo: {
-                inMem3ds.Add(member3dGoo.Value.Duplicate());
+                inMem3ds.Add(member3dGoo.Value);
                 break;
               }
             default: {
@@ -282,12 +289,13 @@ namespace GsaGH.Helpers.Export {
       return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null);
     }
 
-    internal static (List<GsaModel> models, List<GsaList> lists) GetModelsAndLists(
+    internal static (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) GetModelsAndLists(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
         var inModels = new List<GsaModel>();
         var inLists = new List<GsaList>();
+        var inGridLines = new List<GsaGridLine>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -304,17 +312,21 @@ namespace GsaGH.Helpers.Export {
               inLists.Add(listGoo.Value);
               break;
 
+            case GsaGridLineGoo gridLineGoo:
+              inGridLines.Add(gridLineGoo.Value);
+              break;
+
             default:
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert GSA input parameter of type " + type
                 + " to GsaModel or GsaList");
-              return (null, null);
+              return (null, null, null);
           }
         }
 
-        return (inModels, inLists);
+        return (inModels, inLists, inGridLines);
       }
 
       if (!isOptional) {
@@ -322,16 +334,16 @@ namespace GsaGH.Helpers.Export {
           + " failed to collect data!");
       }
 
-      return (null, null);
+      return (null, null, null);
     }
 
-    internal static Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>> GetProperties(
+    internal static Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>> GetProperties(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
         var inSect = new List<GsaSection>();
-        var inProp2d = new List<GsaProp2d>();
-        var inProp3d = new List<GsaProp3d>();
+        var inProp2d = new List<GsaProperty2d>();
+        var inProp3d = new List<GsaProperty3d>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -342,15 +354,15 @@ namespace GsaGH.Helpers.Export {
 
           switch (ghTyp.Value) {
             case GsaSectionGoo sectionGoo: {
-                inSect.Add(sectionGoo.Value.Duplicate());
+                inSect.Add(sectionGoo.Value);
                 break;
               }
-            case GsaProp2dGoo prop2dGoo: {
-                inProp2d.Add(prop2dGoo.Value.Duplicate());
+            case GsaProperty2dGoo prop2dGoo: {
+                inProp2d.Add(prop2dGoo.Value);
                 break;
               }
-            case GsaProp3dGoo prop3dGoo: {
-                inProp3d.Add(prop3dGoo.Value.Duplicate());
+            case GsaProperty3dGoo prop3dGoo: {
+                inProp3d.Add(prop3dGoo.Value);
                 break;
               }
             default: {
@@ -376,7 +388,7 @@ namespace GsaGH.Helpers.Export {
           inProp3d = null;
         }
 
-        return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(inSect, inProp2d,
+        return new Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>(inSect, inProp2d,
           inProp3d);
       }
 
@@ -385,7 +397,7 @@ namespace GsaGH.Helpers.Export {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(null, null, null);
+      return new Tuple<List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>(null, null, null);
     }
   }
 }

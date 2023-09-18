@@ -12,15 +12,11 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
     public static string Description => "GSA 1D Element";
-    public static string Name => "Element1D";
+    public static string Name => "Element 1D";
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaElement1dGoo(GsaElement1d item) : base(item) { }
-
-    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null) {
-      Value = duplicate ? item.Duplicate() : item;
-    }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
@@ -37,6 +33,11 @@ namespace GsaGH.Parameters {
         return true;
       }
 
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)) && Value.Section3dPreview != null) {
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Section3dPreview.Mesh);
+        return true;
+      }
+
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
         if (Value != null) {
           target = (TQ)(object)new GH_Integer(Value.Id);
@@ -48,31 +49,33 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      Value?.Section3dPreview?.DrawViewportMeshes(args);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null) {
         return;
       }
 
+      Value.Section3dPreview?.DrawViewportWires(args);
+
       if (Value.Line != null) {
-        if (args.Color
-          == Color.FromArgb(255, 150, 0,
-            0)) // this is a workaround to change colour between selected and not
-        {
-          if (Value.IsDummy) {
+        // this is a workaround to change colour between selected and not
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          if (Value.ApiElement.IsDummy) {
             args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd,
               Colours.Dummy1D);
           } else {
-            if (Value.Colour != Color.FromArgb(0, 0, 0)) {
-              args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
+            if ((Color)Value.ApiElement.Colour != Color.FromArgb(0, 0, 0)) {
+              args.Pipeline.DrawCurve(Value.Line, (Color)Value.ApiElement.Colour, 2);
             } else {
-              Color col = Colours.ElementType(Value.Type);
+              Color col = Colours.ElementType(Value.ApiElement.Type);
               args.Pipeline.DrawCurve(Value.Line, col, 2);
             }
           }
         } else {
-          if (Value.IsDummy) {
+          if (Value.ApiElement.IsDummy) {
             args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd,
               Colours.Element1dSelected);
           } else {
@@ -81,16 +84,8 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.IsDummy || Value._previewGreenLines == null) {
-        return;
-      }
-
-      foreach (Line ln1 in Value._previewGreenLines) {
-        args.Pipeline.DrawLine(ln1, Colours.Support);
-      }
-
-      foreach (Line ln2 in Value._previewRedLines) {
-        args.Pipeline.DrawLine(ln2, Colours.Release);
+      if (!Value.ApiElement.IsDummy) {
+        Value.ReleasePreview?.DrawViewportWires(args);
       }
     }
 
@@ -103,11 +98,27 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      return new GsaElement1dGoo(Value.Morph(xmorph));
+      var elem = new GsaElement1d(Value) {
+        Id = 0,
+      };
+      LineCurve xLn = elem.Line;
+      xmorph.Morph(xLn);
+      elem.Line = xLn;
+      elem.UpdateReleasesPreview();
+      elem.Section3dPreview?.Morph(xmorph); 
+      return new GsaElement1dGoo(elem);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      return new GsaElement1dGoo(Value.Transform(xform));
+      var elem = new GsaElement1d(Value) {
+        Id = 0,
+      };
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+      elem.UpdateReleasesPreview();
+      elem.Section3dPreview?.Transform(xform);
+      return new GsaElement1dGoo(elem);
     }
   }
 }

@@ -14,7 +14,7 @@ namespace GsaGHTests.Helpers.Import {
       var members = new Members(model);
       GsaMember1d mem = members.Member1ds.First().Value;
       Assert.Equal("EN 1993-1-1:2005", mem.Section.Material.SteelDesignCodeName);
-      Assert.Equal("STD R 800 400", mem.Section.Profile);
+      Assert.Equal("STD R 800 400", mem.Section.ApiSection.Profile);
       Duplicates.AreEqual(model.Materials.SteelMaterials[1], mem.Section.Material);
       Duplicates.AreEqual(model.Properties.Sections[1].Value, mem.Section);
 
@@ -43,7 +43,7 @@ namespace GsaGHTests.Helpers.Import {
       var model = new GsaModel(ImportMembersMotherModel());
       var members = new Members(model);
       GsaMember3d mem = members.Member3ds.First().Value;
-      Assert.Equal(GsaMaterial.MatType.Timber, mem.Prop3d.Material.MaterialType);
+      Assert.Equal(MatType.Timber, mem.Prop3d.Material.MaterialType);
       Duplicates.AreEqual(model.Materials.TimberMaterials[1], mem.Prop3d.Material);
       Duplicates.AreEqual(model.Properties.Prop3ds[5].Value, mem.Prop3d);
 

@@ -22,7 +22,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EditProp2d;
+    protected override Bitmap Icon => Resources.Edit2dProperty;
 
     public EditProp2d2_OBSOLETE() : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
@@ -68,11 +68,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var prop = new GsaProp2d();
+      var prop = new GsaProperty2d();
 
-      GsaProp2dGoo prop2dGoo = null;
+      GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(0, ref prop2dGoo)) {
-        prop = prop2dGoo.Value.Clone();
+        prop = new GsaProperty2d(prop2dGoo.Value);
       }
 
       var ghId = new GH_Integer();
@@ -95,29 +95,29 @@ namespace GsaGH.Components {
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
         if (GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both)) {
-          prop.AxisProperty = axis;
+          prop.ApiProp2d.AxisProperty = axis;
         }
       }
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string name, GH_Conversion.Both)) {
-          prop.Name = name;
+          prop.ApiProp2d.Name = name;
         }
       }
 
       var ghColour = new GH_Colour();
       if (da.GetData(6, ref ghColour)) {
         if (GH_Convert.ToColor(ghColour, out Color col, GH_Conversion.Both)) {
-          prop.Colour = col;
+          prop.ApiProp2d.Colour = col;
         }
       }
 
-      int ax = (prop.ApiProp2d == null) ? 0 : prop.AxisProperty;
-      string nm = (prop.ApiProp2d == null) ? "--" : prop.Name;
+      int ax = (prop.ApiProp2d == null) ? 0 : prop.ApiProp2d.AxisProperty;
+      string nm = (prop.ApiProp2d == null) ? "--" : prop.ApiProp2d.Name;
       ValueType colour = prop.ApiProp2d?.Colour;
 
-      da.SetData(0, new GsaProp2dGoo(prop));
+      da.SetData(0, new GsaProperty2dGoo(prop));
       da.SetData(1, prop.Id);
       da.SetData(2, new GsaMaterialGoo(prop.Material));
       da.SetData(3,
@@ -127,7 +127,7 @@ namespace GsaGH.Components {
       da.SetData(5, nm);
       da.SetData(6, colour);
 
-      string str = (prop.ApiProp2d == null) ? "--" : prop.Type.ToString();
+      string str = (prop.ApiProp2d == null) ? "--" : prop.ApiProp2d.Type.ToString();
       if (prop.ApiProp2d == null) {
         str = char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
       }

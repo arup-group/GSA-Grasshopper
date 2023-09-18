@@ -24,7 +24,7 @@ namespace GsaGH.Parameters {
       $"Filter the Elements by list. (by default 'all'){Environment.NewLine}" +
       $"Element list should take the form:{Environment.NewLine}" +
       $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
-      $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.", 
+      $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
@@ -33,11 +33,6 @@ namespace GsaGH.Parameters {
         case GsaListGoo list:
           if (list.Value.EntityType == _type) {
             return list;
-          } else if (list.Value.EntityType == EntityType.Member) {
-            GsaList dup = list.Value.Duplicate();
-            dup.EntityType = _type;
-            dup.Definition = "\"" + "Children of '" + list.Value.Name + "'\"";
-            return new GsaListGoo(dup);
           } else if (list.Value.EntityType == EntityType.Undefined) {
             GsaList dup = list.Value.Duplicate();
             dup.EntityType = _type;

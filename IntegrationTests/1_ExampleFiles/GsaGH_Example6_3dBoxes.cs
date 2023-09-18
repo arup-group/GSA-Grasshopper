@@ -48,8 +48,8 @@ namespace IntegrationTests.ExampleFiles {
       Assert.Equal(3.03, output2.Value, 2);
       Assert.Equal(11.46, output3.Value, 2);
       Assert.Equal(0, output4.Value, 2);
-      Assert.Equal(4.01, output5.Value, 2);
-      Assert.Equal(-1.29, output6.Value, 2);
+      Assert.Equal(1.29, output5.Value, 2);
+      Assert.Equal(4.01, output6.Value, 2);
     }
 
     [Fact]

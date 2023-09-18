@@ -12,9 +12,6 @@ variables:
 pool: 'rhino-compute'
 
 steps:
-- powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
-  displayName: 'Delete orphan .ghlink files'
-
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
     aws s3 cp s3://oasys-installer-store/GSA/latest . --exclude "*" --include *Arup*.msi --recursive
@@ -57,10 +54,6 @@ steps:
   displayName: 'Register GSA COM'
   failOnStderr: false
 
-- powershell: |
-    Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{DA9D8CF0-713B-4E11-B1EB-5C2C47FD32A5}"  
-  displayName: 'List GSA Registry Fields'
-
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -85,18 +78,6 @@ steps:
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.0\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
   displayName: dotnet tests
   failOnStderr: true
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
 
 - powershell: |
     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) { 
@@ -127,11 +108,29 @@ steps:
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
 
+- task: PublishCodeCoverageResults@1
+  displayName: Create Azure GsaGH CodeCoverage
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+- task: PublishCodeCoverageResults@1
+  displayName: Create Azure IntegrationTest CodeCoverage
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+  displayName: Publish GsaGHTest xml to Azure
   artifact: GsaGHTestsCoverage
   continueOnError: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+  displayName: Publish IntegrationTest xml to Azure
   artifact: IntegrationTestsCoverage
   continueOnError: true
 
@@ -198,7 +197,19 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
   displayName: Package NuGet
 
+- powershell: |
+    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
+    Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
+  displayName: Generate docs site
+  failOnStderr: true
+
+- publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
+  displayName: Publish Docs artifact
+  artifact: Docs
+  continueOnError: false
+
 - task: GitHubRelease@1
+  displayName: 'Publishing assets to Github'
   inputs:
     gitHubConnection: 'github.com_MJCramp'
     repositoryName: 'arup-group/GSA-Grasshopper'
@@ -213,12 +224,16 @@ steps:
       $(System.DefaultWorkingDirectory)/**/*.yak
       $(System.DefaultWorkingDirectory)/**/*.nupkg
       $(System.DefaultWorkingDirectory)/**/*.snupkg
+      $(System.DefaultWorkingDirectory)/**/$(dotSeparatedTag)-docs.zip
     assetUploadMode: 'replace'
     isDraft: true
     isPreRelease: true
     addChangeLog: false
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-  displayName: 'Publishing assets to Github'
+
+- powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
+  displayName: 'Delete orphan .ghlink files'
+  condition: always()
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)

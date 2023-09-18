@@ -1,25 +1,26 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Parameters.Enums;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   public class GsaNodeLoad : IGsaLoad {
-    public enum NodeLoadType // direct copy from GSA API enums
-    {
-      NodeLoad = 0,
-      AppliedDisp = 1,
-      Settlement = 2,
-      Gravity = 3,
-      NumTypes = 4, W
-    }
-
-    public NodeLoad NodeLoad { get; set; } = new NodeLoad();
-    public NodeLoadType Type;
-    public LoadType LoadType => LoadType.Node;
+    public NodeLoad ApiLoad { get; set; } = new NodeLoad();
+    public NodeLoadType Type { get; set; }
+    public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
     public GsaList ReferenceList { get; set; }
 
     public Guid RefObjectGuid => throw new NotImplementedException();
+
+    public int CaseId { 
+      get => ApiLoad.Case; 
+      set => ApiLoad.Case = value; 
+    }
+    public string Name {
+      get => ApiLoad.Name;
+      set => ApiLoad.Name = value;
+    }
 
     internal Point3d _refPoint = Point3d.Unset;
 
@@ -27,22 +28,23 @@ namespace GsaGH.Parameters {
       Type = NodeLoadType.NodeLoad;
     }
 
-    public int CaseId() {
-      return NodeLoad.Case;
-    }
-
     public IGsaLoad Duplicate() {
       var dup = new GsaNodeLoad {
-        NodeLoad = {
-          AxisProperty = NodeLoad.AxisProperty,
-          Case = NodeLoad.Case,
-          Direction = NodeLoad.Direction,
-          Nodes = NodeLoad.Nodes.ToString(),
-          Name = NodeLoad.Name.ToString(),
-          Value = NodeLoad.Value,
+        ApiLoad = {
+          AxisProperty = ApiLoad.AxisProperty,
+          Case = ApiLoad.Case,
+          Direction = ApiLoad.Direction,
+          Nodes = ApiLoad.Nodes.ToString(),
+          Name = ApiLoad.Name.ToString(),
+          Value = ApiLoad.Value,
         },
         Type = Type,
       };
+
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       if (_refPoint != Point3d.Unset) {
         dup._refPoint = new Point3d(_refPoint);
       }
@@ -52,10 +54,6 @@ namespace GsaGH.Parameters {
       }
 
       return dup;
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), NodeLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

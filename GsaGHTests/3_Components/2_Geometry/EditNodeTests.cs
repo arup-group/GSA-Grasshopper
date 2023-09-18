@@ -56,11 +56,11 @@ namespace GsaGHTests.Components.Geometry {
       Duplicates.AreEqual(Plane.WorldXY, output0.Value.LocalAxis);
       Duplicates.AreEqual(Plane.WorldXY, output3.Value);
 
-      Assert.Equal(0, output0.Value.DamperProperty);
+      Assert.Equal(0, output0.Value.ApiNode.DamperProperty);
       Assert.Equal(0, output5.Value);
-      Assert.Equal(0, output0.Value.MassProperty);
+      Assert.Equal(0, output0.Value.ApiNode.MassProperty);
       Assert.Equal(0, output6.Value);
-      Assert.Equal(0, output0.Value.SpringProperty);
+      Assert.Equal(0, output0.Value.ApiNode.SpringProperty);
       Assert.Equal(0, output7.Value);
 
       Assert.Equal("", output8.Value);
@@ -115,11 +115,11 @@ namespace GsaGHTests.Components.Geometry {
       Duplicates.AreEqual(Plane.WorldYZ, output0.Value.LocalAxis);
       Duplicates.AreEqual(Plane.WorldYZ, output3.Value);
 
-      Assert.Equal(3, output0.Value.DamperProperty);
+      Assert.Equal(3, output0.Value.ApiNode.DamperProperty);
       Assert.Equal(3, output5.Value);
-      Assert.Equal(6, output0.Value.MassProperty);
+      Assert.Equal(6, output0.Value.ApiNode.MassProperty);
       Assert.Equal(6, output6.Value);
-      Assert.Equal(9, output0.Value.SpringProperty);
+      Assert.Equal(9, output0.Value.ApiNode.SpringProperty);
       Assert.Equal(9, output7.Value);
 
       Assert.Equal("name", output8.Value);

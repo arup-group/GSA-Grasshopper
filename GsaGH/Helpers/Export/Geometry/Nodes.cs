@@ -45,7 +45,7 @@ namespace GsaGH.Helpers.Export {
       ref GsaIntDictionary<Axis> apiAxes, LengthUnit unit) {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
-      if (!node.IsGlobalAxis()) {
+      if (!node.IsGlobalAxis) {
         var ax = new Axis();
         Plane pln = node.LocalAxis;
         ax.Origin.X = (unit == LengthUnit.Meter) ? pln.OriginX :

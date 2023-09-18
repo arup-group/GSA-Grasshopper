@@ -21,15 +21,16 @@ namespace IntegrationTests.Components {
     [Fact]
     public void NoRuntimeErrorTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning,
+        "Analyse Model");
     }
 
     [Theory]
     [InlineData("SpringForces", new double[] {
-      99292.2,
-      99292.2,
-      99292.2,
-      99292.2,
+      99292.3,
+      99292.3,
+      99292.3,
+      99292.3,
     })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);

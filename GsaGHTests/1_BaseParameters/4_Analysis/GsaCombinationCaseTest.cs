@@ -14,7 +14,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(id, combinationCase.Id);
       Assert.Equal(name, combinationCase.Name);
-      Assert.Equal(description, combinationCase.Description);
+      Assert.Equal(description, combinationCase.Definition);
     }
 
     [Theory]
@@ -24,7 +24,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(0, combinationCase.Id);
       Assert.Equal(name, combinationCase.Name);
-      Assert.Equal(description, combinationCase.Description);
+      Assert.Equal(description, combinationCase.Definition);
     }
 
     [Fact]
@@ -37,11 +37,11 @@ namespace GsaGHTests.Parameters {
 
       duplicate.Id = 0;
       duplicate.Name = "";
-      duplicate.Description = "";
+      duplicate.Definition = "";
 
       Assert.Equal(1, original.Id);
       Assert.Equal("name", original.Name);
-      Assert.Equal("description", original.Description);
+      Assert.Equal("description", original.Definition);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(0, combinationCase.Id);
       Assert.Null(combinationCase.Name);
-      Assert.Null(combinationCase.Description);
+      Assert.Null(combinationCase.Definition);
     }
   }
 }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 using GsaGH.Parameters;
 using Xunit;
+using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {
@@ -27,7 +28,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, list.Id);
       Assert.Equal("undef List", list.Name);
       Assert.Equal("1 to 5 not 3", list.Definition);
-      Assert.Equal(GsaGH.Parameters.EntityType.Undefined, list.EntityType);
+      Assert.Equal(EntityType.Undefined, list.EntityType);
       Assert.Equal("1 to 5 not 3", (string)list.GetListObjects(LengthUnit.Undefined)[0]);
     }
 
@@ -56,7 +57,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, list.Id);
       Assert.Equal("node List", list.Name);
       Assert.Equal("all not 2", list.Definition);
-      Assert.Equal(GsaGH.Parameters.EntityType.Node, list.EntityType);
+      Assert.Equal(EntityType.Node, list.EntityType);
       List<object> nodes = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(2, nodes.Count);
       Assert.Equal(1, ((GsaNodeGoo)nodes[0]).Value.Id);
@@ -100,7 +101,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, list.Id);
       Assert.Equal("elem List", list.Name);
       Assert.Equal("1 2 4", list.Definition);
-      Assert.Equal(GsaGH.Parameters.EntityType.Element, list.EntityType);
+      Assert.Equal(EntityType.Element, list.EntityType);
       List<object> elems = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(3, elems.Count);
       Assert.Equal(1, ((GsaElement1dGoo)elems[0]).Value.Id);
@@ -143,7 +144,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, list.Id);
       Assert.Equal("mem List", list.Name);
       Assert.Equal("all not 1", list.Definition);
-      Assert.Equal(GsaGH.Parameters.EntityType.Member, list.EntityType);
+      Assert.Equal(EntityType.Member, list.EntityType);
       List<object> mems = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(2, mems.Count);
       Assert.Equal(3, ((GsaMember1dGoo)mems[0]).Value.Id);

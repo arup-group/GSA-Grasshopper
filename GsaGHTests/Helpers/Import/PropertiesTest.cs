@@ -11,17 +11,17 @@ namespace GsaGHTests.Helpers.Import {
       Materials materials = MaterialsTest.ImportMaterialsMother();
       var properties = new GsaGH.Helpers.Import.Properties(model, materials);
 
-      Assert.Equal("STD R 800 400", properties.Sections[1].Value.Profile);
+      Assert.Equal("STD R 800 400", properties.Sections[1].Value.ApiSection.Profile);
       Duplicates.AreEqual(materials.SteelMaterials[1], properties.Sections[1].Value.Material);
-      Assert.Equal("STD R 800 400", properties.Sections[2].Value.Profile);
+      Assert.Equal("STD R 800 400", properties.Sections[2].Value.ApiSection.Profile);
       Duplicates.AreEqual(materials.ConcreteMaterials[1], properties.Sections[2].Value.Material);
-      Assert.Equal("STD R 800 400", properties.Sections[3].Value.Profile);
+      Assert.Equal("STD R 800 400", properties.Sections[3].Value.ApiSection.Profile);
       Duplicates.AreEqual(materials.FrpMaterials[1], properties.Sections[3].Value.Material);
-      Assert.Equal("STD R 800 400", properties.Sections[4].Value.Profile);
+      Assert.Equal("STD R 800 400", properties.Sections[4].Value.ApiSection.Profile);
       Duplicates.AreEqual(materials.AluminiumMaterials[1], properties.Sections[4].Value.Material);
-      Assert.Equal("STD R 800 400", properties.Sections[5].Value.Profile);
+      Assert.Equal("STD R 800 400", properties.Sections[5].Value.ApiSection.Profile);
       Duplicates.AreEqual(materials.TimberMaterials[1], properties.Sections[5].Value.Material);
-      Assert.Equal("STD R 800 400", properties.Sections[6].Value.Profile);
+      Assert.Equal("STD R 800 400", properties.Sections[6].Value.ApiSection.Profile);
       Duplicates.AreEqual(materials.GlassMaterials[1], properties.Sections[6].Value.Material);
     }
 

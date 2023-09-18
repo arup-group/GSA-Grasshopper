@@ -1,4 +1,5 @@
-﻿using GsaAPI;
+﻿using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Properties;
@@ -6,6 +7,7 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysUnits;
 using Rhino.Geometry;
+using System.Linq;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -14,7 +16,7 @@ namespace GsaGHTests.Components.Geometry {
   public class CreateMember2dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateMember2d();
+      var comp = new Create2dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
@@ -33,9 +35,23 @@ namespace GsaGHTests.Components.Geometry {
 
       var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(100, output.Value.Brep.GetArea());
-      Assert.Equal(Property2D_Type.PLATE, output.Value.Prop2d.Type);
+      Assert.Equal(Property2D_Type.PLATE, output.Value.Prop2d.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2d.Thickness);
-      Assert.Equal(0.5, output.Value.MeshSize);
+      Assert.Equal(0.5, output.Value.ApiMember.MeshSize);
+    }
+
+    [Fact]
+    public void CreateComponentWithSection3dPreviewTest() {
+      var comp = (Section3dPreviewDropDownComponent)ComponentMother();
+      comp.Preview3dSection = true;
+      comp.ExpireSolution(true);
+
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(10, output.Value.Section3dPreview.Mesh.Vertices.Count);
+      Assert.Equal(12, output.Value.Section3dPreview.Outlines.Count());
+
+      var mesh = new GH_Mesh();
+      Assert.True(output.CastTo(ref mesh));
     }
 
     [Fact]
@@ -64,6 +80,22 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new Point3d(1, 1, 0), 1);
       output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(2, output.Value.InclusionPoints.Count);
+    }
+
+    [Fact]
+    public void MeshModeTest() {
+      var comp = (GH_OasysDropDownComponent)ComponentMother();
+      comp.CreateAttributes();
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MeshMode2d.Mixed, output.Value.ApiMember.MeshMode2d);
+
+      comp.SetSelected(0, 0); // tri mode
+      output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MeshMode2d.Tri, output.Value.ApiMember.MeshMode2d);
+
+      comp.SetSelected(0, 2); // quad mode
+      output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MeshMode2d.Quad, output.Value.ApiMember.MeshMode2d);
     }
   }
 }

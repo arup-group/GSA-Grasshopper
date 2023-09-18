@@ -3,6 +3,7 @@ using System.Drawing;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 
@@ -12,29 +13,37 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void CloneApiObjectTest() {
-      var member1d = new GsaMember1d {
-        Name = "Name",
-      };
+      var member1d = new GsaMember1d();
+      member1d.ApiMember.Name = "Name";
       Member original = member1d.ApiMember;
-      Member duplicate = member1d.GetAPI_MemberClone();
+      Member duplicate = member1d.DuplicateApiObject();
 
       Duplicates.AreEqual(original, duplicate);
+    }
+
+    [Fact]
+    public void CloneTest() {
+      var original = new GsaMember1d();
+      original.ApiMember.Name = "Name";
+
+      var duplicate = new GsaMember1d(original);
+
+      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
     }
 
     [Fact]
     public void DuplicateTest() {
-      var original = new GsaMember1d {
-        Name = "Name",
-      };
+      var original = new GsaMember1d();
+      original.ApiMember.Name = "Name";
 
-      GsaMember1d duplicate = original.Duplicate();
+      GsaMember1d duplicate = original;
 
-      Duplicates.AreEqual(original, duplicate);
+      Assert.Equal(original, duplicate);
     }
 
     [Fact]
     public void TestCreateGsaMem1dFromCrv() {
-      var pts = new List<Point3d> {
+      var pts = new Point3dList {
         new Point3d(-3, -4, 0),
         new Point3d(5, -2, 0),
         new Point3d(2, 2, 0),
@@ -44,17 +53,18 @@ namespace GsaGHTests.Parameters {
       var crv = new PolylineCurve(pts);
 
       var mem = new GsaMember1d(crv) {
-        Colour = Color.Red,
-        Id = 3,
-        Name = "gemma",
-        IsDummy = true,
-        Offset = new GsaOffset(0, 0, 0, -0.45),
-        Section = {
-          Id = 2,
+        ApiMember = new Member() {
+          Colour = Color.Red,
+          Name = "gemma",
+          IsDummy = true,
+          Type1D = ElementType.BEAM,
+          Type = MemberType.BEAM,
         },
-        Type1D = ElementType.BEAM,
-        Type = MemberType.BEAM,
+        Id = 3,
+        Offset = new GsaOffset(0, 0, 0, -0.45),
+        Section = new GsaSection(2),
       };
+
 
       Assert.Equal(mem.PolyCurve.PointAtStart.X, mem.Topology[0].X);
       Assert.Equal(mem.PolyCurve.PointAtStart.Y, mem.Topology[0].Y);
@@ -66,79 +76,79 @@ namespace GsaGHTests.Parameters {
           || mem.PolyCurve.SegmentCurve(i).IsArc());
       }
 
-      Assert.Equal(Color.FromArgb(255, 255, 0, 0), mem.Colour);
+      Assert.Equal(Color.FromArgb(255, 255, 0, 0), (Color)mem.ApiMember.Colour);
       Assert.Equal(3, mem.Id);
-      Assert.Equal("gemma", mem.Name);
-      Assert.True(mem.IsDummy);
+      Assert.Equal("gemma", mem.ApiMember.Name);
+      Assert.True(mem.ApiMember.IsDummy);
       Assert.Equal(-0.45, mem.Offset.Z.Value);
       Assert.Equal(2, mem.Section.Id);
-      Assert.Equal(ElementType.BEAM, mem.Type1D);
-      Assert.Equal(MemberType.BEAM, mem.Type);
+      Assert.Equal(ElementType.BEAM, mem.ApiMember.Type1D);
+      Assert.Equal(MemberType.BEAM, mem.ApiMember.Type);
     }
 
     [Fact]
     public void TestDuplicateMem1d() {
-      var pts = new List<Point3d> {
+      var pts = new Point3dList {
         new Point3d(0, 0, 0),
         new Point3d(0, 10, 0),
       };
       var crv = NurbsCurve.Create(false, 1, pts);
 
       var orig = new GsaMember1d(crv) {
-        Colour = Color.Green,
-        Id = 2,
-        Name = "Sally",
-        IsDummy = false,
-        Offset = new GsaOffset(0, 0.1, 0, 0),
-        Section = new GsaSection {
-          Id = 4,
+        ApiMember = new Member() {
+          Colour = Color.Green,
+          Name = "Sally",
+          IsDummy = false,
+          Group = 99,
+          Type1D = ElementType.BAR,
+          Type = MemberType.COLUMN,
         },
-        Group = 99,
-        Type1D = ElementType.BAR,
-        Type = MemberType.COLUMN,
+        Id = 2,
+        Offset = new GsaOffset(0, 0.1, 0, 0),
+        Section = new GsaSection(4),
       };
 
-      GsaMember1d dup = orig.Clone();
+      var dup = new GsaMember1d(orig);
 
-      Assert.Equal(Color.FromArgb(255, 0, 128, 0), dup.Colour);
+      Assert.Equal(Color.FromArgb(255, 0, 128, 0), (Color)dup.ApiMember.Colour);
       Assert.Equal(2, dup.Id);
-      Assert.Equal("Sally", dup.Name);
-      Assert.False(dup.IsDummy);
+      Assert.Equal("Sally", dup.ApiMember.Name);
+      Assert.False(dup.ApiMember.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
       Assert.Equal(4, dup.Section.Id);
-      Assert.Equal(99, dup.Group);
-      Assert.Equal(ElementType.BAR, dup.Type1D);
-      Assert.Equal(MemberType.COLUMN, dup.Type);
+      Assert.Equal(99, dup.ApiMember.Group);
+      Assert.Equal(ElementType.BAR, dup.ApiMember.Type1D);
+      Assert.Equal(MemberType.COLUMN, dup.ApiMember.Type);
 
-      orig.Colour = Color.White;
+      orig.ApiMember.Colour = Color.White;
       orig.Id = 1;
-      orig.Name = "Peter Peterson";
-      orig.IsDummy = true;
+      orig.ApiMember.Name = "Peter Peterson";
+      orig.ApiMember.IsDummy = true;
       orig.Offset = new GsaOffset(0, 0.4, 0, 0);
       orig.Section.Id = 1;
-      orig.Group = 4;
-      orig.Type1D = ElementType.BEAM;
-      orig.Type = MemberType.BEAM;
+      orig.ApiMember.Group = 4;
+      orig.ApiMember.Type1D = ElementType.BEAM;
+      orig.ApiMember.Type = MemberType.BEAM;
 
-      Assert.Equal(Color.FromArgb(255, 0, 128, 0), dup.Colour);
+      Assert.Equal(Color.FromArgb(255, 0, 128, 0), (Color)dup.ApiMember.Colour);
       Assert.Equal(2, dup.Id);
-      Assert.Equal("Sally", dup.Name);
-      Assert.False(dup.IsDummy);
+      Assert.Equal("Sally", dup.ApiMember.Name);
+      Assert.False(dup.ApiMember.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
       Assert.Equal(1, dup.Section.Id);
-      Assert.Equal(99, dup.Group);
-      Assert.Equal(ElementType.BAR, dup.Type1D);
-      Assert.Equal(MemberType.COLUMN, dup.Type);
+      Assert.Equal(99, dup.ApiMember.Group);
+      Assert.Equal(ElementType.BAR, dup.ApiMember.Type1D);
+      Assert.Equal(MemberType.COLUMN, dup.ApiMember.Type);
 
-      Assert.Equal(Color.FromArgb(255, 255, 255, 255), orig.Colour);
+      Assert.Equal(Color.FromArgb(255, 255, 255, 255), (Color)orig.ApiMember.Colour);
       Assert.Equal(1, orig.Id);
-      Assert.Equal("Peter Peterson", orig.Name);
-      Assert.True(orig.IsDummy);
+      Assert.Equal("Peter Peterson", orig.ApiMember.Name);
+      Assert.True(orig.ApiMember.IsDummy);
       Assert.Equal(0.4, orig.Offset.X2.Value);
       Assert.Equal(1, orig.Section.Id);
-      Assert.Equal(4, orig.Group);
-      Assert.Equal(ElementType.BEAM, orig.Type1D);
-      Assert.Equal(MemberType.BEAM, orig.Type);
+      Assert.Equal(4, orig.ApiMember.Group);
+      Assert.Equal(ElementType.BEAM, orig.ApiMember.Type1D);
+      Assert.Equal(MemberType.BEAM, orig.ApiMember.Type);
     }
   }
 }

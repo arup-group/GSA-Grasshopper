@@ -1,50 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using GsaAPI;
-using Rhino.Geometry;
+using GsaGH.Parameters.Enums;
+using Rhino.Collections;
 
 namespace GsaGH.Parameters {
-  public class GsaGridAreaLoad : IGsaLoad {
-    public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
+  public class GsaGridAreaLoad : IGsaGridLoad {
+    public GridAreaLoad ApiLoad { get; set; } = new GridAreaLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
+    public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
-
-    internal List<Point3d> Points { get; set; } = new List<Point3d>();
-    public LoadType LoadType => LoadType.GridArea;
+    public int CaseId {
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
+    }
+    public string Name {
+      get => ApiLoad.Name;
+      set => ApiLoad.Name = value;
+    }
+    internal Point3dList Points { get; set; } = new Point3dList();
 
     public GsaGridAreaLoad() {
-      GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
-    }
-
-    public int CaseId() {
-      return GridAreaLoad.Case;
+      ApiLoad.Type = GridAreaPolyLineType.PLANE;
     }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridAreaLoad {
-        GridAreaLoad = {
-          AxisProperty = GridAreaLoad.AxisProperty,
-          Case = GridAreaLoad.Case,
-          Direction = GridAreaLoad.Direction,
-          GridSurface = GridAreaLoad.GridSurface,
-          IsProjected = GridAreaLoad.IsProjected,
-          Name = GridAreaLoad.Name.ToString(),
-          PolyLineDefinition = GridAreaLoad.PolyLineDefinition.ToString(),
-          PolyLineReference = GridAreaLoad.PolyLineReference,
-          Type = GridAreaLoad.Type,
-          Value = GridAreaLoad.Value,
+        ApiLoad = {
+          AxisProperty = ApiLoad.AxisProperty,
+          Case = ApiLoad.Case,
+          Direction = ApiLoad.Direction,
+          GridSurface = ApiLoad.GridSurface,
+          IsProjected = ApiLoad.IsProjected,
+          Name = ApiLoad.Name.ToString(),
+          PolyLineDefinition = ApiLoad.PolyLineDefinition.ToString(),
+          PolyLineReference = ApiLoad.PolyLineReference,
+          Type = ApiLoad.Type,
+          Value = ApiLoad.Value,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
-        Points = Points.ToList(),
+        Points = Points,
       };
-      return dup;
-    }
 
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), GridAreaLoad.Name.Trim()).Trim().Replace("  ", " ");
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
+      return dup;
     }
   }
 }

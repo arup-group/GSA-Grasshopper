@@ -12,8 +12,8 @@ namespace GsaGHTests.Helpers.Export {
     [Fact]
     public void AssembleModelWithNodesTest() {
       var node1 = new GsaNodeGoo(new GsaNode());
-      node1.Value.Colour = Color.Red;
-      node1.Value.Name = "name Name Name";
+      node1.Value.ApiNode.Colour = Color.Red;
+      node1.Value.ApiNode.Name = "name Name Name";
       node1.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
       node1.Value.Point = new Point3d(1, 1, 1);
       node1.Value.Id = 2;
@@ -35,14 +35,14 @@ namespace GsaGHTests.Helpers.Export {
     [Fact]
     public void AssembleModelWithNodeTest() {
       var node = new GsaNodeGoo(new GsaNode());
-      node.Value.Colour = Color.Red;
-      node.Value.Name = "name Name Name";
+      node.Value.ApiNode.Colour = Color.Red;
+      node.Value.ApiNode.Name = "name Name Name";
       node.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
       node.Value.Point = new Point3d(4, 66, -10.0802);
       node.Value.LocalAxis = new Plane(new Point3d(1, 2, 3), new Vector3d(4, 3, 1));
-      node.Value.DamperProperty = 4;
-      node.Value.MassProperty = 3;
-      node.Value.SpringProperty = 2;
+      node.Value.ApiNode.DamperProperty = 4;
+      node.Value.ApiNode.MassProperty = 3;
+      node.Value.ApiNode.SpringProperty = 2;
       node.Value.Id = 42;
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
@@ -56,8 +56,8 @@ namespace GsaGHTests.Helpers.Export {
     [Fact]
     public void AssembleModelFromModelsWithNodesTest() {
       var node1 = new GsaNodeGoo(new GsaNode());
-      node1.Value.Colour = Color.Red;
-      node1.Value.Name = "name Name Name";
+      node1.Value.ApiNode.Colour = Color.Red;
+      node1.Value.ApiNode.Name = "name Name Name";
       node1.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
       node1.Value.Point = new Point3d(1, 1, 1);
 

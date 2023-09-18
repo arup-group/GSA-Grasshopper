@@ -2,7 +2,9 @@
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Export {
   internal partial class Loads {
@@ -11,10 +13,10 @@ namespace GsaGH.Helpers.Export {
       model.Lists = new GsaGuidDictionary<EntityList>(model.Model.Lists());
 
       // Add lists embedded in loads as they may have ID > 0 set
-      if (lists == null && loads != null && loads.Count > 0) {
-        lists = Loads.GetLoadLists(loads);
-      } else if (loads != null && loads.Count > 0) {
-        lists.AddRange(Loads.GetLoadLists(loads));
+      if (lists == null && !loads.IsNullOrEmpty()) {
+        lists = GetLoadLists(loads);
+      } else if (!loads.IsNullOrEmpty()) {
+        lists.AddRange(GetLoadLists(loads));
       }
 
       Lists.ConvertList(lists, ref model, owner);
@@ -32,22 +34,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     private static GsaList GetLoadList(IGsaLoad load) {
-      if (load == null) {
-        return null;
-      }
-      switch (load.LoadType) {
-        case LoadType.Gravity:
-        case LoadType.Beam:
-        case LoadType.Face:
-        case LoadType.GridPoint:
-        case LoadType.GridLine:
-        case LoadType.GridArea:
-          if (load.ReferenceType == ReferenceType.List) {
-            return load.ReferenceList;
-          }
-          break;
-      }
-      return null;
+      return load == null ? null 
+        : load.ReferenceType == ReferenceType.List ? load.ReferenceList : null;
     }
   }
 }

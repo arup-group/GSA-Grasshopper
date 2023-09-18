@@ -14,7 +14,7 @@ namespace GsaGH.Parameters {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaBool6Goo.Name + " parameter" :
-        base.InstanceDescription;
+        GsaBool6Goo.Description;
     public override string TypeName => SourceCount == 0 ? GsaBool6Goo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Bool6Param;
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -35,7 +38,7 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      Params.Output[4].Name = "List Objects [" + unitAbbreviation + "]";
+      Params.Output[4].Name = "List Objects in [" + unitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -53,6 +56,17 @@ namespace GsaGH.Components {
       _isInitialised = true;
     }
 
+    protected override void BeforeSolveInstance() {
+      if (Params.Output.Count == 5) {
+        Params.RegisterOutputParam(new Param_Integer());
+        Params.Output[5].Name = "Expand List";
+        Params.Output[5].NickName = "Exp";
+        Params.Output[5].Description = "Expanded list IDs";
+        Params.Output[5].Access = GH_ParamAccess.list;
+        VariableParameterMaintenance();
+      }
+    }
+
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaListParameter());
     }
@@ -64,11 +78,13 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Type", "Ty", "Entity Type", GH_ParamAccess.item);
       pManager.AddTextParameter("Definition", "Def", "List Definition", GH_ParamAccess.item);
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      pManager.AddGenericParameter("List Objects [" + unitAbbreviation + "]", "Obj",
+      pManager.AddGenericParameter("List Objects in [" + unitAbbreviation + "]", "Obj",
         "Expanded objects contained in the input list", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Expand List", "Exp",
+        "Expanded list IDs", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess DA) {
+    protected override void SolveInternal(IGH_DataAccess DA) {
       var list = new GsaList();
 
       GsaListGoo listGoo = null;
@@ -80,6 +96,15 @@ namespace GsaGH.Components {
       DA.SetData(2, list.EntityType.ToString());
       DA.SetData(3, list.Definition);
       DA.SetDataList(4, list.GetListObjects(_lengthUnit));
+      try {
+        DA.SetDataList(5, list.ExpandListDefinition());
+      } catch (ArgumentException e) {
+        if (e.Message == "Invalid EntityList definition") {
+          this.AddRuntimeRemark($"Unable to expand list '{list.Definition}'");
+        } else {
+          throw e;
+        }
+      }
     }
   }
 }

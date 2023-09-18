@@ -1,4 +1,5 @@
-﻿using GsaGH.Parameters;
+﻿using System.Collections.Generic;
+using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Xunit;
 
@@ -8,13 +9,28 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateTest() {
-      var original = new GsaProp3d(new GsaMaterial()) {
-        Name = "Name",
+      var original = new GsaProperty3d(new GsaCustomMaterial(GsaMaterialTest.TestAnalysisMaterial(), 99)) {
       };
 
-      GsaProp3d duplicate = original.Duplicate();
+      var duplicate = new GsaProperty3d(original);
 
-      Duplicates.AreEqual(original, duplicate);
+      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
+    }
+
+    [Fact]
+    public void DuplicateReferenceTest() {
+      var original = new GsaProperty3d(4);
+      var duplicate = new GsaProperty3d(original);
+
+      Assert.Equal(4, duplicate.Id);
+      Assert.True(duplicate.IsReferencedById);
+    }
+
+    [Fact]
+    public void DuplicateReferenceTest2() {
+      var original = new GsaProperty3d(4);
+      var duplicate = new GsaProperty3d(original);
+      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
     }
   }
 }

@@ -29,7 +29,7 @@ namespace GsaGH.Helpers.Export {
     }
 
     internal static int AddSection(GsaSection section, ref Properties apiProperties) {
-      Materials.AddMaterial(ref section, ref apiProperties.Materials);
+      apiProperties.Materials.AddMaterial(ref section);
 
       int outId;
       if (section.Id > 0) {
@@ -40,7 +40,7 @@ namespace GsaGH.Helpers.Export {
       }
 
       if (section.Modifier != null && section.Modifier.IsModified) {
-        apiProperties.SecionModifiers.SetValue(outId, section.Modifier._sectionModifier);
+        apiProperties.SecionModifiers.SetValue(outId, section.Modifier.ApiSectionModifier);
       }
 
       return outId;

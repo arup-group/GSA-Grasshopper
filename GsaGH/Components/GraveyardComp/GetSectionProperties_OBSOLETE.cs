@@ -39,7 +39,7 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.Units) {
+      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
@@ -129,19 +129,21 @@ namespace GsaGH.Components {
       AreaUnit areaUnit = UnitsHelper.GetAreaUnit(_lengthUnit);
       AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit);
 
-      da.SetData(0, new GH_UnitNumber(new Area(section.Area.As(areaUnit), areaUnit)));
+      GsaSectionProperties props = section.SectionProperties;
+
+      da.SetData(0, new GH_UnitNumber(new Area(props.Area.As(areaUnit), areaUnit)));
       da.SetData(1,
-        new GH_UnitNumber(new AreaMomentOfInertia(section.Iyy.As(inertiaUnit), inertiaUnit)));
+        new GH_UnitNumber(new AreaMomentOfInertia(props.Iyy.As(inertiaUnit), inertiaUnit)));
       da.SetData(2,
-        new GH_UnitNumber(new AreaMomentOfInertia(section.Izz.As(inertiaUnit), inertiaUnit)));
+        new GH_UnitNumber(new AreaMomentOfInertia(props.Izz.As(inertiaUnit), inertiaUnit)));
       da.SetData(3,
-        new GH_UnitNumber(new AreaMomentOfInertia(section.Iyz.As(inertiaUnit), inertiaUnit)));
+        new GH_UnitNumber(new AreaMomentOfInertia(props.Iyz.As(inertiaUnit), inertiaUnit)));
       da.SetData(4,
-        new GH_UnitNumber(new AreaMomentOfInertia(section.J.As(inertiaUnit), inertiaUnit)));
-      da.SetData(5, section.Kyy);
-      da.SetData(6, section.Kzz);
-      da.SetData(7, new GH_UnitNumber(section.SurfaceAreaPerLength));
-      da.SetData(8, new GH_UnitNumber(section.VolumePerLength));
+        new GH_UnitNumber(new AreaMomentOfInertia(props.J.As(inertiaUnit), inertiaUnit)));
+      da.SetData(5, props.Kyy);
+      da.SetData(6, props.Kzz);
+      da.SetData(7, new GH_UnitNumber(props.SurfaceAreaPerLength));
+      da.SetData(8, new GH_UnitNumber(props.VolumePerLength));
     }
 
     private void Update(string unit) {

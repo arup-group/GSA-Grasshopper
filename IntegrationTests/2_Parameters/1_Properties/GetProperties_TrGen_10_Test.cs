@@ -53,8 +53,8 @@ namespace IntegrationTests.Parameters {
       0.000012,
     })]
     [InlineData("MatType", new string[] {
-      "Generic",
-      "Generic",
+      "Custom",
+      "Custom",
     })]
     [InlineData("Pool", 1)]
     [InlineData("PbName", new string[] {
@@ -153,26 +153,26 @@ namespace IntegrationTests.Parameters {
     [Fact]
     public void TestPAsAreEqual() {
       IGH_Param sectionFromGetPropertyParam = Helper.FindParameter(Document, "PAs");
-      var sectionsFromGetProperty = new List<GsaProp2d>();
+      var sectionsFromGetProperty = new List<GsaProperty2d>();
       for (int i = 0; i < sectionFromGetPropertyParam.VolatileDataCount; i++) {
         sectionsFromGetProperty.Add(
-          ((GsaProp2dGoo)sectionFromGetPropertyParam.VolatileData.get_Branch(0)[i]).Value);
+          ((GsaProperty2dGoo)sectionFromGetPropertyParam.VolatileData.get_Branch(0)[i]).Value);
       }
 
       IGH_Param sectionFromGetGeometryElemParam = Helper.FindParameter(Document, "PAsFromElem");
-      var sectionFromGetGeometryElem = new List<GsaProp2d>();
+      var sectionFromGetGeometryElem = new List<GsaProperty2d>();
       for (int i = 0; i < sectionFromGetGeometryElemParam.VolatileDataCount; i++) {
         sectionFromGetGeometryElem.Add(
-          ((GsaProp2dGoo)sectionFromGetGeometryElemParam.VolatileData.get_Branch(0)[i]).Value);
+          ((GsaProperty2dGoo)sectionFromGetGeometryElemParam.VolatileData.get_Branch(0)[i]).Value);
       }
 
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryElem));
 
       IGH_Param sectionFromGetGeometryMemParam = Helper.FindParameter(Document, "PAsFromMem");
-      var sectionFromGetGeometryMem = new List<GsaProp2d>();
+      var sectionFromGetGeometryMem = new List<GsaProperty2d>();
       for (int i = 0; i < sectionFromGetGeometryMemParam.VolatileDataCount; i++) {
         sectionFromGetGeometryMem.Add(
-          ((GsaProp2dGoo)sectionFromGetGeometryMemParam.VolatileData.get_Branch(0)[i]).Value);
+          ((GsaProperty2dGoo)sectionFromGetGeometryMemParam.VolatileData.get_Branch(0)[i]).Value);
       }
 
       Assert.True(Duplicates.AreEqual(sectionsFromGetProperty, sectionFromGetGeometryMem));

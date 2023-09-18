@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -17,15 +16,16 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
-using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
+using ExpansionType = GsaGH.Parameters.ExpansionType;
 
 namespace GsaGH.Components {
   public class CreateGridLineLoad : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.LineLoad;
+    protected override Bitmap Icon => Resources.CreateGridLineLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
@@ -102,8 +102,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddCurveParameter("PolyLine", "L",
         "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.",
         GH_ParamAccess.item);
@@ -140,15 +139,18 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var gridlineload = new GsaGridLineLoad();
-      int loadCase = 1;
-      var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc)) {
-        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+
+      var loadcase = new GsaLoadCase(1);
+      GsaLoadCaseGoo loadCaseGoo = null;
+      if (da.GetData(0, ref loadCaseGoo)) {
+        if (loadCaseGoo.Value != null) {
+          loadcase = loadCaseGoo.Value;
+        }
       }
 
-      gridlineload.GridLineLoad.Case = loadCase;
+      gridlineload.LoadCase = loadcase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;
@@ -176,7 +178,7 @@ namespace GsaGH.Components {
 
           default: {
               if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                gridlineload.GridLineLoad.GridSurface = id;
+                gridlineload.ApiLoad.GridSurface = id;
                 gridlineload.GridPlaneSurface = null;
               } else {
                 this.AddRuntimeError(
@@ -198,7 +200,7 @@ namespace GsaGH.Components {
         GH_Convert.ToCurve(ghCurve, ref curve, GH_Conversion.Both);
 
         if (curve.TryGetPolyline(out Polyline ln)) {
-          var controlPoints = ln.ToList();
+          var controlPoints = new Point3dList(ln);
           gridlineload.Points = controlPoints;
 
           if (!planeSet) {
@@ -218,12 +220,12 @@ namespace GsaGH.Components {
           } else {
             curve = Curve.ProjectToPlane(curve, plane);
             curve.TryGetPolyline(out ln);
-            controlPoints = ln.ToList();
+            controlPoints = new Point3dList(ln);
           }
 
-          gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
+          gridlineload.ApiLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
           string definition = GridLoadHelper.CreateDefinition(controlPoints, plane);
-          gridlineload.GridLineLoad.PolyLineDefinition = definition;
+          gridlineload.ApiLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Curve to Polyline");
         }
@@ -268,34 +270,34 @@ namespace GsaGH.Components {
           break;
       }
 
-      gridlineload.GridLineLoad.Direction = direc;
+      gridlineload.ApiLoad.Direction = direc;
 
-      gridlineload.GridLineLoad.AxisProperty = 0;
+      gridlineload.ApiLoad.AxisProperty = 0;
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
         GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1) {
-          gridlineload.GridLineLoad.AxisProperty = axis;
+          gridlineload.ApiLoad.AxisProperty = axis;
         }
       }
 
       var ghProj = new GH_Boolean();
       if (da.GetData(5, ref ghProj)) {
         if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both)) {
-          gridlineload.GridLineLoad.IsProjected = proj;
+          gridlineload.ApiLoad.IsProjected = proj;
         }
       }
 
       var ghName = new GH_String();
       if (da.GetData(6, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          gridlineload.GridLineLoad.Name = name;
+          gridlineload.ApiLoad.Name = name;
         }
       }
 
       double load1 = ((ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit))
        .NewtonsPerMeter;
-      gridlineload.GridLineLoad.ValueAtStart = load1;
+      gridlineload.ApiLoad.ValueAtStart = load1;
 
       double load2 = load1;
       if (Params.Input[8].SourceCount > 0) {
@@ -303,7 +305,7 @@ namespace GsaGH.Components {
          .NewtonsPerMeter;
       }
 
-      gridlineload.GridLineLoad.ValueAtEnd = load2;
+      gridlineload.ApiLoad.ValueAtEnd = load2;
 
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }

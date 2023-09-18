@@ -4,7 +4,9 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using OasysUnits;
+using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.Export {
   internal class GridPlaneSurfaces {
@@ -66,7 +68,7 @@ namespace GsaGH.Helpers.Export {
             return -12;
           }
         }
-        axisId = Export.Axes.TryGetExistingAxisId(ref model.Axes, axis);
+        axisId = Axes.TryGetExistingAxisId(ref model.Axes, axis);
       }
 
       if (model.Axes.ReadOnlyDictionary[axisId].Name == string.Empty) {
@@ -154,8 +156,8 @@ namespace GsaGH.Helpers.Export {
       if (grdPlnSrf._referenceType != ReferenceType.None) {
         if (grdPlnSrf._referenceType == ReferenceType.List) {
           if (grdPlnSrf._refList == null
-            || grdPlnSrf._refList.EntityType != Parameters.EntityType.Element
-            || grdPlnSrf._refList.EntityType != Parameters.EntityType.Member) {
+            || grdPlnSrf._refList.EntityType != EntityType.Element
+            || grdPlnSrf._refList.EntityType != EntityType.Member) {
             owner.AddRuntimeWarning("Invalid List type for GridSurface " + grdPlnSrf.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
@@ -180,12 +182,6 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      if (model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].
-        Name == string.Empty) {
-        model.Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].
-          Name = "Grid surface " + gridSurfaceId;
-      }
-
       return gridSurfaceId;
     }
 
@@ -194,7 +190,7 @@ namespace GsaGH.Helpers.Export {
       GridPlane newPlane = grdPlnSrf.GridPlane;
       foreach (KeyValuePair<int, GridPlane> kvp in
         model.Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary) {
-        if (kvp.Key < 0) {
+        if (kvp.Key < 1) {
           continue;
         }
 
@@ -203,7 +199,7 @@ namespace GsaGH.Helpers.Export {
           && kvp.Value.IsStoreyType == newPlane.IsStoreyType
           && kvp.Value.ToleranceAbove == newPlane.ToleranceAbove
           && kvp.Value.ToleranceBelow == newPlane.ToleranceBelow
-          && newPlane.Name == string.Empty) {
+          && (kvp.Value.Name == newPlane.Name || newPlane.Name == string.Empty)) {
           return kvp.Key;
         }
       }

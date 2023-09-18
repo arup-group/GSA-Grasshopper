@@ -16,11 +16,11 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateSection : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("d779f9b7-5380-4474-aadd-d1e88f9d45b8");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateSection;
 
-    public CreateSection() : base("Create Section", "Section", "Create GSA Section",
+    public CreateSection() : base("Create Section", "Section", "Create a GSA Section",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -57,13 +57,13 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaSectionParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaSection = new GsaSection();
+    protected override void SolveInternal(IGH_DataAccess da) {
+      var section = new GsaSection();
       string profile = string.Empty;
       da.GetData(0, ref profile);
 
-      if (GsaSection.ValidProfile(profile)) {
-        gsaSection = new GsaSection(profile);
+      if (GsaSection.IsValidProfile(profile)) {
+        section = new GsaSection(profile);
       } else {
         this.AddRuntimeError("Invalid profile syntax: " + profile);
         return;
@@ -71,12 +71,12 @@ namespace GsaGH.Components {
 
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(1, ref materialGoo)) {
-        gsaSection.Material = materialGoo.Value;
+        section.Material = materialGoo.Value;
       } 
 
-      gsaSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);
+      section.ApiSection.BasicOffset = (BasicOffset)Enum.Parse(typeof(BasicOffset), _selectedItems[0]);
 
-      da.SetData(0, new GsaSectionGoo(gsaSection));
+      da.SetData(0, new GsaSectionGoo(section));
     }
   }
 }

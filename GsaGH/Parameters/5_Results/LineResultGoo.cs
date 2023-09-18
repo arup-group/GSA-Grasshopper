@@ -101,10 +101,6 @@ namespace GsaGH.Parameters {
       return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2, ElementId);
     }
 
-    public override object ScriptVariable() {
-      return Value;
-    }
-
     public override string ToString() {
       return $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
     }

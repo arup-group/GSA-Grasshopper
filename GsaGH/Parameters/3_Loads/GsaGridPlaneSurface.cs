@@ -1,5 +1,7 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Helpers;
+using GsaGH.Parameters.Enums;
 using OasysUnits;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -7,7 +9,11 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
+  /// <para>A Grid Plane Surface is used by <see href="https://docs.oasys-software.com/structural/gsa/explanations/grid-loads.html">Grid Loads</see>.</para>
+  /// <para>A grid plane defines the geometry of a surface, and the load behaviour of the grid plane is defined by a grid surface.</para>
+  /// <para>In Grasshopper, a Grid Plane Surface contains both the information of what in GSA is known as a <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-grid-plane.html">Grid Plane</see> and a <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-grid-surface.html">Grid Surface</see></para>
+  /// <para>The Grasshopper plugin will automatically create a fitting Grid Plane Surface when using the <see cref="Components.CreateGridPointLoad"/>, <see cref="Components.CreateGridLineLoad"/> or <see cref="Components.CreateGridAreaLoad"/> components. </para>
+  /// <para>Grid Plane Surfaces can also be created independently using the <see cref="Components.CreateGridPlane"/> and <see cref="Components.CreateGridSurface"/> components.</para>
   /// </summary>
   public class GsaGridPlaneSurface {
     public int AxisId {
@@ -88,7 +94,7 @@ namespace GsaGH.Parameters {
     private GridPlane _gridPln = new GridPlane();
     private Guid _gridPlnGuid = Guid.NewGuid();
     private int _gridPlnId = 0;
-    private GridSurface _gridSrf = new GridSurface();
+    private GridSurface _gridSrf = new GridSurface("");
     private Guid _gridSrfGuid = Guid.NewGuid();
     private int _gridSrfId;
     private Plane _pln = Plane.WorldXY;
@@ -100,7 +106,7 @@ namespace GsaGH.Parameters {
       _gridPlnGuid = tryUseExisting ? new Guid() // will create 0000-00000-00000-00000
         : Guid.NewGuid(); // will create random guid
 
-      _gridSrf = new GridSurface {
+      _gridSrf = new GridSurface("") {
         Direction = 0,
         Elements = "all",
         ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL,
@@ -121,15 +127,14 @@ namespace GsaGH.Parameters {
           ToleranceAbove = _gridPln.ToleranceAbove,
           ToleranceBelow = _gridPln.ToleranceBelow,
         },
-        GridSurface = new GridSurface {
+        GridSurface = new GridSurface(_gridSrf.Name) {
           Direction = _gridSrf.Direction,
           Elements = _gridSrf.Elements.ToString(),
           ElementType = _gridSrf.ElementType,
           ExpansionType = _gridSrf.ExpansionType,
           GridPlane = _gridSrf.GridPlane,
-          Name = _gridSrf.Name.ToString(),
           SpanType = _gridSrf.SpanType,
-          Tolerance = _gridSrf.Tolerance,
+          Tolerance = _gridSrf.Tolerance
         },
         Elevation = Elevation,
         Tolerance = Tolerance,
@@ -214,8 +219,7 @@ namespace GsaGH.Parameters {
 
       gs += GridSurface.Elements == "all" ? string.Empty : GridSurface.Elements;
 
-      return string.Join(" ", ax.Trim(), gp.Trim(), gs.Trim()).Replace("''", string.Empty).Trim()
-       .Replace("  ", " ");
+      return string.Join(" ", ax, gp, gs).Replace("''", string.Empty).TrimSpaces();
     }
 
     internal Axis GetAxis(LengthUnit modelUnit) {

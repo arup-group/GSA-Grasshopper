@@ -21,10 +21,6 @@ namespace GsaGH.Parameters {
 
     public GsaNodeGoo(GsaNode item) : base(item) { }
 
-    internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null) {
-      Value = duplicate ? item.Duplicate() : item;
-    }
-
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Point))) {
         target = Value == null ? default : (TQ)(object)new GH_Point(Value.Point);
@@ -49,39 +45,19 @@ namespace GsaGH.Parameters {
         return;
       }
 
-      if (args.Color
-        == Color.FromArgb(255, 150, 0,
-          0)) // this is a workaround to change colour between selected and not
-      {
-        if (Value.Colour != Color.FromArgb(0, 0, 0)) {
-          args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundSimple, 3, Value.Colour);
+      Value.SupportPreview?.DrawViewportWires(args);
+
+      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+        // this is a workaround to change colour between selected and not
+        if ((Color)Value.ApiNode.Colour != Color.FromArgb(0, 0, 0)) {
+          args.Pipeline.DrawPoint(
+            Value.Point, PointStyle.RoundSimple, 3, (Color)Value.ApiNode.Colour);
         } else {
-          Color col = Colours.Node;
-          args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundSimple, 3, col);
+          args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundSimple, 3, Colours.Node);
         }
 
-        if (Value._previewSupportSymbol != null) {
-          args.Pipeline.DrawBrepShaded(Value._previewSupportSymbol, Colours.SupportSymbol);
-        }
-
-        if (Value._previewText != null) {
-          args.Pipeline.Draw3dText(Value._previewText, Colours.Support);
-        }
       } else {
         args.Pipeline.DrawPoint(Value.Point, PointStyle.RoundControlPoint, 3, Colours.NodeSelected);
-        if (Value._previewSupportSymbol != null) {
-          args.Pipeline.DrawBrepShaded(Value._previewSupportSymbol, Colours.SupportSymbolSelected);
-        }
-
-        if (Value._previewText != null) {
-          args.Pipeline.Draw3dText(Value._previewText, Colours.NodeSelected);
-        }
-      }
-
-      if (!Value.IsGlobalAxis()) {
-        args.Pipeline.DrawLine(Value._previewXaxis, Color.FromArgb(255, 244, 96, 96), 1);
-        args.Pipeline.DrawLine(Value._previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
-        args.Pipeline.DrawLine(Value._previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
       }
     }
 
@@ -103,11 +79,23 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      return new GsaNodeGoo(Value.Morph(xmorph));
+      var node = new GsaNode(Value) {
+        Id = 0
+      };
+      var pt = new Point3d(node.Point);
+      xmorph.MorphPoint(pt);
+      node.Point = pt;
+      return new GsaNodeGoo(node);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      return new GsaNodeGoo(Value.Transform(xform));
+      var node = new GsaNode(Value) {
+        Id = 0
+      };
+      var pt = new Point3d(node.Point);
+      pt.Transform(xform);
+      node.Point = pt;
+      return new GsaNodeGoo(node);
     }
   }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -17,16 +16,17 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
-using ExpansionType = GsaGH.Parameters.Enums.GridLoad.ExpansionType;
+using ExpansionType = GsaGH.Parameters.ExpansionType;
 
 namespace GsaGH.Components {
   public class CreateGridAreaLoad : GH_OasysDropDownComponent {
 
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.AreaLoad;
+    protected override Bitmap Icon => Resources.CreateGridAreaLoad;
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
@@ -105,8 +105,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string unitAbbreviation = Pressure.GetAbbreviation(_forcePerAreaUnit);
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)",
-        GH_ParamAccess.item, 1);
+      pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddBrepParameter("Brep", "B",
         "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.",
         GH_ParamAccess.item);
@@ -141,15 +140,18 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var gridareaload = new GsaGridAreaLoad();
-      int loadCase = 1;
-      var ghLc = new GH_Integer();
-      if (da.GetData(0, ref ghLc)) {
-        GH_Convert.ToInt32(ghLc, out loadCase, GH_Conversion.Both);
+
+      var loadcase = new GsaLoadCase(1);
+      GsaLoadCaseGoo loadCaseGoo = null;
+      if (da.GetData(0, ref loadCaseGoo)) {
+        if (loadCaseGoo.Value != null) {
+          loadcase = loadCaseGoo.Value;
+        }
       }
 
-      gridareaload.GridAreaLoad.Case = loadCase;
+      gridareaload.LoadCase = loadcase;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       Plane plane = Plane.WorldXY;
@@ -177,7 +179,7 @@ namespace GsaGH.Components {
 
           default: {
               if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                gridareaload.GridAreaLoad.GridSurface = id;
+                gridareaload.ApiLoad.GridSurface = id;
                 gridareaload.GridPlaneSurface = null;
               } else {
                 this.AddRuntimeError(
@@ -203,8 +205,8 @@ namespace GsaGH.Components {
         Curve curve = edges[0];
 
         if (curve.TryGetPolyline(out Polyline polyline)) {
-          var ctrlPts = polyline.ToList();
-          gridareaload.Points = polyline.ToList();
+          var ctrlPts = new Point3dList(polyline);
+          gridareaload.Points = ctrlPts;
 
           if (!planeSet) {
             plane = RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrlPts);
@@ -225,9 +227,9 @@ namespace GsaGH.Components {
           curve = Curve.ProjectToPlane(curve, plane);
           curve.TryGetPolyline(out polyline);
 
-          gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
+          gridareaload.ApiLoad.Type = GridAreaPolyLineType.POLYGON;
           string definition = GridLoadHelper.CreateDefinition(ctrlPts, plane);
-          gridareaload.GridAreaLoad.PolyLineDefinition = definition;
+          gridareaload.ApiLoad.PolyLineDefinition = definition;
         } else {
           this.AddRuntimeError("Could not convert Brep edge to Polyline");
         }
@@ -272,31 +274,31 @@ namespace GsaGH.Components {
           break;
       }
 
-      gridareaload.GridAreaLoad.Direction = direc;
-      gridareaload.GridAreaLoad.AxisProperty = 0;
+      gridareaload.ApiLoad.Direction = direc;
+      gridareaload.ApiLoad.AxisProperty = 0;
       var ghAxis = new GH_Integer();
       if (da.GetData(4, ref ghAxis)) {
         GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1) {
-          gridareaload.GridAreaLoad.AxisProperty = axis;
+          gridareaload.ApiLoad.AxisProperty = axis;
         }
       }
 
       var ghProj = new GH_Boolean();
       if (da.GetData(5, ref ghProj)) {
         if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both)) {
-          gridareaload.GridAreaLoad.IsProjected = proj;
+          gridareaload.ApiLoad.IsProjected = proj;
         }
       }
 
       var ghName = new GH_String();
       if (da.GetData(6, ref ghName)) {
         if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both)) {
-          gridareaload.GridAreaLoad.Name = name;
+          gridareaload.ApiLoad.Name = name;
         }
       }
 
-      gridareaload.GridAreaLoad.Value = ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit))
+      gridareaload.ApiLoad.Value = ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit))
        .NewtonsPerSquareMeter;
 
       da.SetData(0, new GsaLoadGoo(gridareaload));

@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using GsaGH.Helpers.Export;
+﻿using GsaGH.Helpers.Export;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 
@@ -19,9 +16,7 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null, null, null, new List<GsaElement1d>() { e1d }, 
-        null, null, null, null, null, null, null, null, null, null, null, null,
-          LengthUnit.Meter, Length.Zero, false, null),
+        Model = Assembler.AssembleForLocalAxis(e1d),
       };
 
       var startAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(0));
@@ -39,9 +34,7 @@ namespace GsaGHTests.Parameters {
       };
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(null, null, null, null, null, null, 
-        new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, 
-        LengthUnit.Meter, Length.Zero, false, null),
+        Model = Assembler.AssembleForLocalAxis(m1d),
       };
 
       var startAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(0).Releases);
@@ -71,7 +64,7 @@ namespace GsaGHTests.Parameters {
     public void DuplicateTest(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
       var original = new GsaBool6(x, y, z, xx, yy, zz);
 
-      GsaBool6 duplicate = original.Duplicate();
+      var duplicate = new GsaBool6(original);
 
       _ = Duplicates.AreEqual(original, duplicate);
 

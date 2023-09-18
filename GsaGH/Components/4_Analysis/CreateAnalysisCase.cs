@@ -13,12 +13,12 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateAnalysisCase : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("75bf9454-92c4-4a3c-8abf-75f1d449bb85");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisCase;
 
     public CreateAnalysisCase() : base(
-      "Create " + GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty),
+      "Create " + GsaAnalysisCaseGoo.Name,
       GsaAnalysisCaseGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisCaseGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;

@@ -21,9 +21,9 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridPlane;
+    protected override Bitmap Icon => Resources.CreateGridPlane;
     private readonly List<string> _type = new List<string>(new string[] {
       "General",
       "Storey",
@@ -131,7 +131,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       Plane pln = Plane.WorldXY;
 
       var ghPlane = new GH_Plane();

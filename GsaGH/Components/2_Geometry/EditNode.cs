@@ -23,7 +23,7 @@ namespace GsaGH.Components {
     }
 
     public override Guid ComponentGuid => new Guid("418e222d-16b8-4a8e-bb3d-98ad72b913d8");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditNode;
     private FoldMode _mode = FoldMode.DoNotGetConnected;
@@ -146,7 +146,7 @@ namespace GsaGH.Components {
 
       GsaNodeGoo nodeGoo = null;
       if (da.GetData(0, ref nodeGoo)) {
-        node = nodeGoo.Value.Clone();
+        node = new GsaNode(nodeGoo.Value);
       } else {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0) {
@@ -177,27 +177,27 @@ namespace GsaGH.Components {
 
       int damperId = 0;
       if (da.GetData(5, ref damperId)) {
-        node.DamperProperty = damperId;
+        node.ApiNode.DamperProperty = damperId;
       }
 
       int massId = 0;
       if (da.GetData(6, ref massId)) {
-        node.MassProperty = massId;
+        node.ApiNode.MassProperty = massId;
       }
 
       int springId = 0;
       if (da.GetData(7, ref springId)) {
-        node.SpringProperty = springId;
+        node.ApiNode.SpringProperty = springId;
       }
 
       string name = string.Empty;
       if (da.GetData(8, ref name)) {
-        node.Name = name;
+        node.ApiNode.Name = name;
       }
 
       Color colour = Color.Empty;
       if (da.GetData(9, ref colour)) {
-        node.Colour = colour;
+        node.ApiNode.Colour = colour;
       }
 
       da.SetData(0, new GsaNodeGoo(node));
@@ -205,11 +205,11 @@ namespace GsaGH.Components {
       da.SetData(2, node.Point);
       da.SetData(3, new GH_Plane(node.LocalAxis));
       da.SetData(4, new GsaBool6Goo(node.Restraint));
-      da.SetData(5, node.DamperProperty);
-      da.SetData(6, node.MassProperty);
-      da.SetData(7, node.SpringProperty);
+      da.SetData(5, node.ApiNode.DamperProperty);
+      da.SetData(6, node.ApiNode.MassProperty);
+      da.SetData(7, node.ApiNode.SpringProperty);
       da.SetData(8, node.ApiNode?.Name);
-      da.SetData(9, node.Colour);
+      da.SetData(9, node.ApiNode.Colour);
 
       // only get connected elements/members if enabled (computationally expensive)
       if (_mode != FoldMode.GetConnected) {

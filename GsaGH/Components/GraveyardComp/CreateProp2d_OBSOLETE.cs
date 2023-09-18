@@ -5,8 +5,8 @@ using System.Linq;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateProp2d;
+    protected override Bitmap Icon => Resources.Create2dProperty;
     private readonly List<string> _dropdownTopList = new List<string>(new[] {
       "Plane Stress",
       "Fabric",
@@ -336,40 +336,12 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var prop = new GsaProp2d();
+      var prop = new GsaProperty2d();
 
-      switch (_mode) {
-        case FoldMode.PlaneStress:
-          prop.Type = Property2D_Type.PL_STRESS;
-          break;
-
-        case FoldMode.Fabric:
-          prop.Type = Property2D_Type.FABRIC;
-          break;
-
-        case FoldMode.FlatPlate:
-          prop.Type = Property2D_Type.PLATE;
-          break;
-
-        case FoldMode.Shell:
-          prop.Type = Property2D_Type.SHELL;
-          break;
-
-        case FoldMode.CurvedShell:
-          prop.Type = Property2D_Type.CURVED_SHELL;
-          break;
-
-        case FoldMode.LoadPanel:
-          prop.Type = Property2D_Type.LOAD;
-          break;
-
-        default:
-          prop.Type = Property2D_Type.UNDEF;
-          break;
-      }
+      prop.ApiProp2d.Type = Mappings.GetProperty2D_Type(_mode.ToString());
 
       if (_mode != FoldMode.LoadPanel) {
-        prop.AxisProperty = 0;
+        prop.ApiProp2d.AxisProperty = 0;
 
         if (_mode != FoldMode.Fabric) {
           GsaMaterialGoo materialGoo = null;
@@ -381,7 +353,7 @@ namespace GsaGH.Components {
         } 
       }
 
-      da.SetData(0, new GsaProp2dGoo(prop));
+      da.SetData(0, new GsaProperty2dGoo(prop));
     }
 
     private void Mode1Clicked() {

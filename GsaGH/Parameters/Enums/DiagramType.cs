@@ -1,21 +1,8 @@
-﻿namespace GsaGH.Parameters.Enums {
+﻿namespace GsaGH.Parameters {
   public enum DiagramType {
-    AxialForceFx,
-    ShearForceFy,
-    ShearForceFz,
-    TorsionMxx,
-    MomentMyy,
-    MomentMzz,
-    ResolvedShearFyz,
-    ResolvedMomentMyz,
-    AxialStressA,
-    ShearStressSy,
-    ShearStressSz,
-    BendingStressByPositiveZ,
-    BendingStressByNegativeZ,
-    BendingStressBzPositiveY,
-    BendingStressBzNegativeY,
-    CombinedStressC1,
-    CombinedStressC2,
+    Vector,
+    Line,
+    ArrowHead,
+    Load
   }
 }

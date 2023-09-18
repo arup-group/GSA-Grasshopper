@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI.Materials;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -34,7 +34,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CustomMaterial;
+    protected override Bitmap Icon => Resources.CreateCustomMaterial;
     private DensityUnit _densityUnit = DefaultUnits.DensityUnit;
     private FoldMode _mode = FoldMode.Timber;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
@@ -134,7 +134,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       int id = 0;
       da.GetData(0, ref id);
 
@@ -165,35 +165,35 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case FoldMode.Generic:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Generic);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Custom);
           break;
 
         case FoldMode.Steel:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Steel);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Steel);
           break;
 
         case FoldMode.Concrete:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Concrete);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Concrete);
           break;
 
         case FoldMode.Timber:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Timber);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Timber);
           break;
 
         case FoldMode.Aluminium:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Aluminium);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Aluminium);
           break;
 
         case FoldMode.Frp:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Frp);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Frp);
           break;
 
         case FoldMode.Glass:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Glass);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Glass);
           break;
 
         case FoldMode.Fabric:
-          material = new GsaMaterial(analysisMaterial, id, GsaMaterial.MatType.Fabric);
+          material = new GsaCustomMaterial(analysisMaterial, id, MatType.Fabric);
           break;
       }
 

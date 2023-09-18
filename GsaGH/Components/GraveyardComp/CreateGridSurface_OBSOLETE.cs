@@ -32,7 +32,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GridSurface;
+    protected override Bitmap Icon => Resources.CreateGridSurface;
     private readonly List<string> _type = new List<string>(new[] {
       "1D, One-way span",
       "1D, Two-way span",
@@ -192,7 +192,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       GsaGridPlaneSurface gsaGridPlaneSurface;
       Plane plane = Plane.Unset;
       bool idSet = false;
@@ -209,8 +209,17 @@ namespace GsaGH.Components {
         gsaGridPlaneSurface = new GsaGridPlaneSurface(plane);
       }
 
+
+      var ghtxt = new GH_String();
+      string name = "";
       bool changeGs = false;
-      var gs = new GridSurface();
+      if (da.GetData(3, ref ghtxt)) {
+        if (GH_Convert.ToString(ghtxt, out  name, GH_Conversion.Both)) {
+          changeGs = true;
+        }
+      }
+
+      var gs = new GridSurface(name);
       if (idSet) {
         gs.GridPlane = gsaGridPlaneSurface.GridSurface.GridPlane;
       }
@@ -239,14 +248,6 @@ namespace GsaGH.Components {
       if (da.GetData(2, ref ghString)) {
         if (GH_Convert.ToString(ghString, out string elem, GH_Conversion.Both)) {
           gs.Elements = elem;
-          changeGs = true;
-        }
-      }
-
-      var ghtxt = new GH_String();
-      if (da.GetData(3, ref ghtxt)) {
-        if (GH_Convert.ToString(ghtxt, out string name, GH_Conversion.Both)) {
-          gs.Name = name;
           changeGs = true;
         }
       }

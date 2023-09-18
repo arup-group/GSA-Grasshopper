@@ -10,14 +10,17 @@ namespace GsaGHTests.GooWrappers {
     [Theory]
     // 0_Model
     [InlineData(typeof(GsaListParameter))]
+    [InlineData(typeof(GsaElementListParameter), true)]
+    [InlineData(typeof(GsaMemberListParameter), true)]
+    [InlineData(typeof(GsaNodeListParameter), true)]
+    [InlineData(typeof(GsaGridLineParameter))]
     [InlineData(typeof(GsaModelParameter))]
     // 1_Properties
     [InlineData(typeof(GsaBool6Parameter))]
-    [InlineData(typeof(GsaBucklingLengthFactorsParameter))]
     [InlineData(typeof(GsaMaterialParameter))]
     [InlineData(typeof(GsaOffsetParameter))]
-    [InlineData(typeof(GsaProp2dParameter))]
-    [InlineData(typeof(GsaProp3dParameter))]
+    [InlineData(typeof(GsaProperty2dParameter))]
+    [InlineData(typeof(GsaProperty3dParameter))]
     [InlineData(typeof(GsaSectionModifierParameter))]
     [InlineData(typeof(GsaSectionParameter))]
     // 2_Geometry
@@ -28,8 +31,10 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaMember2dParameter))]
     [InlineData(typeof(GsaMember3dParameter))]
     [InlineData(typeof(GsaNodeParameter))]
+    [InlineData(typeof(GsaBucklingFactorsParameter))]
     // 3_Loads
     [InlineData(typeof(GsaLoadParameter))]
+    [InlineData(typeof(GsaLoadCaseParameter))]
     [InlineData(typeof(GsaGridPlaneSurfaceParameter))]
     // 4_Analysis
     [InlineData(typeof(GsaAnalysisCaseParameter))]
@@ -37,10 +42,18 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaCombinationCaseParameter))]
     // 5_Results
     [InlineData(typeof(GsaResultParameter))]
-    public void GH_OasysComponentTest(Type t) {
+    // 6_Display
+    [InlineData(typeof(GsaAnnotationParameter), true)]
+    [InlineData(typeof(GsaDiagramParameter), true)]
+    public void GH_OasysComponentTest(Type t, bool isHidden = false) {
       var param = (IGH_Param)Activator.CreateInstance(t);
       Assert.NotNull(param.Icon_24x24);
-      Assert.NotEqual(GH_Exposure.hidden, param.Exposure);
+      if (isHidden) {
+        Assert.Equal(GH_Exposure.hidden, param.Exposure);
+      } else {
+        Assert.NotEqual(GH_Exposure.hidden, param.Exposure);
+      }
+
       Assert.NotEqual(new Guid(), param.ComponentGuid);
       Assert.NotNull(param.InstanceDescription);
       Assert.NotNull(param.TypeName);

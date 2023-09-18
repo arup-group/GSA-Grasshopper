@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Geometry {
   public class EditMember3dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new EditMember3d();
+      var comp = new Edit3dMember();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
@@ -28,7 +28,7 @@ namespace GsaGHTests.Components.Geometry {
       var output0 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
-      var output3 = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var output3 = (GsaProperty3dGoo)ComponentTestHelper.GetOutput(comp, 3);
       var output4 = (GH_Number)ComponentTestHelper.GetOutput(comp, 4);
       var output5 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
@@ -38,7 +38,7 @@ namespace GsaGHTests.Components.Geometry {
       var output10 = (GH_String)ComponentTestHelper.GetOutput(comp, 10);
 
       Assert.Equal(MatType.Concrete, output0.Value.Prop3d.Material.MaterialType);
-      Assert.Equal(0.5, output0.Value.MeshSize);
+      Assert.Equal(0.5, output0.Value.ApiMember.MeshSize);
       Assert.Equal(0, output1.Value);
       Assert.NotNull(output2.Value);
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
@@ -67,7 +67,7 @@ namespace GsaGHTests.Components.Geometry {
       var output0 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
-      var output3 = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var output3 = (GsaProperty3dGoo)ComponentTestHelper.GetOutput(comp, 3);
       var output4 = (GH_Number)ComponentTestHelper.GetOutput(comp, 4);
       var output5 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
@@ -77,7 +77,7 @@ namespace GsaGHTests.Components.Geometry {
       var output10 = (GH_String)ComponentTestHelper.GetOutput(comp, 10);
 
       Assert.Equal(MatType.Concrete, output0.Value.Prop3d.Material.MaterialType);
-      Assert.Equal(0.7, output0.Value.MeshSize);
+      Assert.Equal(0.7, output0.Value.ApiMember.MeshSize);
       Assert.Equal(7, output1.Value);
       Assert.NotNull(output2.Value);
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);

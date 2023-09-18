@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Section class, this class defines the basic properties and methods for any Gsa Section
+  /// <para>An analysis task is a package of work for the solver. Thus we can have a static analysis task, a modal analysis task, etc. Each analysis task has one or more analysis case(s). The distinction is that the cases corresponds to result sets and define items such as loading (in the static case) while the task describes what the solver has to do. </para>
+  /// <para>In Grasshopper, it is only possible to create linear static analysis tasks.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/analysistasks.html">Analysis Tasks</see> to read more.</para>
   /// </summary>
   public class GsaAnalysisTask {
     public enum AnalysisType {
@@ -68,8 +71,8 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return (Id > 0 ? "ID:" + Id : string.Empty + " '" + Name + "' " + Type.ToString().Replace("_", " "))
-       .Trim().Replace("  ", " ");
+      return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{Name}' {Type}".Replace("_", " ")
+        .TrimSpaces();
     }
 
     internal void CreateDeafultCases(GsaModel gsaModel) {

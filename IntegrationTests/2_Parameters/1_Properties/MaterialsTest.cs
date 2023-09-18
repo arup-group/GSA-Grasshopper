@@ -1,15 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types.Transforms;
-using GsaGH.Parameters;
-using GsaGHTests.Helpers;
-using OasysUnits;
-using Rhino.Geometry;
 using Xunit;
-using static System.Net.WebRequestMethods;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -44,7 +36,7 @@ namespace IntegrationTests.Parameters {
       "Timber",
       "Glass",
       "Fabric",
-      "Generic",
+      "Custom",
     })]
     [InlineData("E-modulus", new double[] {
       210000,

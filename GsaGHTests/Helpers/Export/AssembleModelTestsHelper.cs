@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
@@ -43,10 +42,10 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiEnd.Position.Y, new Length(expected.Line.PointAtEnd.Y, unit).Meters);
       Assert.Equal(apiEnd.Position.Z, new Length(expected.Line.PointAtEnd.Z, unit).Meters);
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Type, api.Type);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiElement.Group, api.Group);
+      Assert.Equal(expected.ApiElement.Type, api.Type);
+      Assert.Equal(expected.ApiElement.Name, api.Name);
+      Assert.Equal(expected.ApiElement.IsDummy, api.IsDummy);
       Assert.Equal(expected.Offset.X1.Meters, api.Offset.X1);
       Assert.Equal(expected.Offset.X2.Meters, api.Offset.X2);
       Assert.Equal(expected.Offset.Y.Meters, api.Offset.Y);
@@ -80,38 +79,34 @@ namespace GsaGHTests.Helpers.Export {
       GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel) {
       ReadOnlyDictionary<int, Element> apiElements = actualModel.Model.Elements();
       ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
-      int j = 0;
 
+      int i = 0;
       foreach (int id in expectedIds) {
         Assert.True(apiElements.ContainsKey(id),
           "Element with id " + id + " is not present in model");
-
         Element api = apiElements[id];
-
-        List<int> topoInts = expected.TopoInt[j++];
-        int i = 0;
+        List<int> topoInts = expected.TopoInt[i];
+        int j = 0;
         foreach (int topo in api.Topology) {
           Node apiNode = apiNodes[topo];
-          Point3d pt = expected.Topology[topoInts[i++]];
+          Point3d pt = expected.Topology[topoInts[j++]];
           Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
           Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
           Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
         }
 
-        int group = (i > expected.Groups.Count - 1) ? expected.Groups.Last() : expected.Groups[i];
+        int group = expected.ApiElements[i].Group;
         Assert.Equal(group, api.Group);
-        bool dummy = (i > expected.IsDummies.Count - 1) ? expected.IsDummies.Last() :
-          expected.IsDummies[i];
+        bool dummy = expected.ApiElements[i].IsDummy;
         Assert.Equal(dummy, api.IsDummy);
-        string name = (i > expected.Names.Count - 1) ? expected.Names.Last() : expected.Names[i];
+        string name = expected.ApiElements[i].Name;
         Assert.Equal(name, api.Name);
-        GsaOffset offset = (i > expected.Offsets.Count - 1) ? expected.Offsets.Last() :
-          expected.Offsets[i];
+        GsaOffset offset = expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
-        GsaProp2d prop = (i > expected.Prop2ds.Count - 1) ? expected.Prop2ds.Last() :
-          expected.Prop2ds[i];
+        GsaProperty2d prop = expected.Prop2ds[i];
         TestProp2d(prop, api.Property, actualModel);
+        i++;
       }
     }
 
@@ -133,13 +128,13 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Type, api.Type);
-      Assert.Equal(expected.Type1D, api.Type1D);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
-      Assert.Equal(expected.MeshSize, api.MeshSize);
-      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.ApiMember.Group, api.Group);
+      Assert.Equal(expected.ApiMember.Type, api.Type);
+      Assert.Equal(expected.ApiMember.Type1D, api.Type1D);
+      Assert.Equal(expected.ApiMember.Name, api.Name);
+      Assert.Equal(expected.ApiMember.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiMember.MeshSize, api.MeshSize);
+      Assert.Equal(expected.ApiMember.IsIntersector, api.IsIntersector);
       Assert.Equal(expected.Offset.X1.Meters, api.Offset.X1);
       Assert.Equal(expected.Offset.X2.Meters, api.Offset.X2);
       Assert.Equal(expected.Offset.Y.Meters, api.Offset.Y);
@@ -186,13 +181,13 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Type, api.Type);
-      Assert.Equal(expected.Type2D, api.Type2D);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
-      Assert.Equal(expected.MeshSize, api.MeshSize);
-      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.ApiMember.Group, api.Group);
+      Assert.Equal(expected.ApiMember.Type, api.Type);
+      Assert.Equal(expected.ApiMember.Type2D, api.Type2D);
+      Assert.Equal(expected.ApiMember.Name, api.Name);
+      Assert.Equal(expected.ApiMember.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiMember.MeshSize, api.MeshSize);
+      Assert.Equal(expected.ApiMember.IsIntersector, api.IsIntersector);
       Assert.Equal(expected.Offset.Z.Meters, api.Offset.Z);
       Assert.Equal(expected.OrientationAngle.Degrees, api.OrientationAngle);
 
@@ -232,11 +227,11 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
 
-      Assert.Equal(expected.Group, api.Group);
-      Assert.Equal(expected.Name, api.Name);
-      Assert.Equal(expected.IsDummy, api.IsDummy);
-      Assert.Equal(expected.MeshSize, api.MeshSize);
-      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.ApiMember.Group, api.Group);
+      Assert.Equal(expected.ApiMember.Name, api.Name);
+      Assert.Equal(expected.ApiMember.IsDummy, api.IsDummy);
+      Assert.Equal(expected.ApiMember.MeshSize, api.MeshSize);
+      Assert.Equal(expected.ApiMember.IsIntersector, api.IsIntersector);
 
       TestProp3d(expected.Prop3d, api.Property, actualModel);
     }
@@ -260,7 +255,7 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiNode.Restraint.YY, expected.Restraint.Yy);
       Assert.Equal(apiNode.Restraint.ZZ, expected.Restraint.Zz);
 
-      if (!expected.IsGlobalAxis()) {
+      if (!expected.IsGlobalAxis) {
         ReadOnlyDictionary<int, Axis> apiAxes = actualModel.Model.Axes();
         Assert.True(apiAxes.ContainsKey(apiNode.AxisProperty),
           "Axis with id " + apiNode.AxisProperty + " is not present in model");
@@ -277,14 +272,14 @@ namespace GsaGHTests.Helpers.Export {
         Assert.Equal(apiAxis.XYPlane.Z, expected.LocalAxis.YAxis.Z);
       }
 
-      Assert.Equal(apiNode.Name, expected.Name);
-      Assert.Equal(apiNode.Colour, expected.Colour);
-      Assert.Equal(apiNode.DamperProperty, expected.DamperProperty);
-      Assert.Equal(apiNode.MassProperty, expected.MassProperty);
-      Assert.Equal(apiNode.SpringProperty, expected.SpringProperty);
+      Assert.Equal(apiNode.Name, expected.ApiNode.Name);
+      Assert.Equal(apiNode.Colour, expected.ApiNode.Colour);
+      Assert.Equal(apiNode.DamperProperty, expected.ApiNode.DamperProperty);
+      Assert.Equal(apiNode.MassProperty, expected.ApiNode.MassProperty);
+      Assert.Equal(apiNode.SpringProperty, expected.ApiNode.SpringProperty);
     }
 
-    internal void TestProp2d(GsaProp2d expected, int expectedId, GsaModel actualModel) {
+    internal void TestProp2d(GsaProperty2d expected, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Prop2D> apiProp2ds = actualModel.Model.Prop2Ds();
       Assert.True(apiProp2ds.ContainsKey(expectedId),
         "Prop2d with id " + expectedId + " is not present in model");
@@ -299,7 +294,7 @@ namespace GsaGHTests.Helpers.Export {
       }
     }
 
-    internal void TestProp3d(GsaProp3d expected, int expectedId, GsaModel actualModel) {
+    internal void TestProp3d(GsaProperty3d expected, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Prop3D> apiProp3ds = actualModel.Model.Prop3Ds();
       Assert.True(apiProp3ds.ContainsKey(expectedId),
         "Prop3d with id " + expectedId + " is not present in model");

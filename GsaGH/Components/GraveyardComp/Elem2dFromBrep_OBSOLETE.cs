@@ -12,6 +12,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -23,7 +24,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateElemsFromBreps;
+    protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep", "Elem2dFromBrep",
@@ -68,7 +69,7 @@ namespace GsaGH.Components {
         "Inclusion points or Nodes", GH_ParamAccess.list);
       pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]",
         "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddParameter(new GsaProperty2dParameter());
       pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size",
         GH_ParamAccess.item, 0);
 
@@ -85,7 +86,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
       if (!da.GetData(0, ref ghbrep)) {
         return;
@@ -101,7 +102,7 @@ namespace GsaGH.Components {
       }
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      var point3ds = new List<Point3d>();
+      var point3ds = new Point3dList();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper objectWrapper in ghTypes) {
@@ -147,14 +148,16 @@ namespace GsaGH.Components {
         meshSize = new Length(size, _lengthUnit).ToUnit(LengthUnit.Meter);
       }
 
+#pragma warning disable CS0618 // Type or member is obsolete
       var elem2d = new GsaElement2d(brep, crvs, point3ds, meshSize.Value, mem1ds, nodes,
         _lengthUnit, DefaultUnits.Tolerance);
+#pragma warning restore CS0618 // Type or member is obsolete
 
       var ghTyp = new GH_ObjectWrapper();
-      var prop2d = new GsaProp2d();
+      var prop2d = new GsaProperty2d();
       if (da.GetData(3, ref ghTyp)) {
-        if (ghTyp.Value is GsaProp2dGoo prop2DGoo) {
-          prop2d = prop2DGoo.Value.Duplicate();
+        if (ghTyp.Value is GsaProperty2dGoo prop2DGoo) {
+          prop2d = prop2DGoo.Value;
         } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
@@ -168,7 +171,7 @@ namespace GsaGH.Components {
         prop2d.Id = 1;
       }
 
-      var prop2Ds = new List<GsaProp2d>();
+      var prop2Ds = new List<GsaProperty2d>();
       for (int i = 0; i < elem2d.ApiElements.Count; i++) {
         prop2Ds.Add(prop2d);
       }

@@ -9,6 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components.GraveyardComp {
@@ -18,8 +19,8 @@ namespace GsaGH.Components.GraveyardComp {
     public override Guid ComponentGuid => new Guid("e01fde68-b591-4ada-b590-9506fc962114");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ShowID;
-    private List<Point3d> _pts;
+    protected override Bitmap Icon => Resources.Annotate;
+    private Point3dList _pts;
     private List<string> _txts;
 
     public ShowId_OBSOLETE() : base("ShowID", "ID",
@@ -54,7 +55,7 @@ namespace GsaGH.Components.GraveyardComp {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      _pts = new List<Point3d>();
+      _pts = new Point3dList();
       _txts = new List<string>();
 
       if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
@@ -142,8 +143,8 @@ namespace GsaGH.Components.GraveyardComp {
               pt = resLine.Value.PointAt(0.5);
               break;
 
-            case DiagramGoo resVector:
-              pt = resVector.StartingPoint;
+            case GsaVectorDiagram resVector:
+              pt = resVector.AnchorPoint;
               break;
 
             default:

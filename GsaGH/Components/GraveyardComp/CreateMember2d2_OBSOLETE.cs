@@ -8,6 +8,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -18,7 +19,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("01450bfc-7ac1-4c51-97a2-42d81d6476b6");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateMem2d;
+    protected override Bitmap Icon => Resources.Create2dMember;
 
     public CreateMember2d2_OBSOLETE() : base("Create 2D Member", "Mem2D", "Create GSA Member 2D",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -32,7 +33,7 @@ namespace GsaGH.Components {
       pManager.AddCurveParameter("Incl. Curves", "(C)",
         "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddParameter(new GsaProperty2dParameter());
       pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size",
         GH_ParamAccess.item);
 
@@ -65,7 +66,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      var points = new List<Point3d>();
+      var points = new Point3dList();
       var ghpts = new List<GH_Point>();
       if (da.GetDataList(1, ghpts)) {
         foreach (GH_Point point in ghpts) {
@@ -94,14 +95,14 @@ namespace GsaGH.Components {
         this.AddRuntimeWarning(e.Message);
       }
 
-      GsaProp2dGoo prop2dGoo = null;
+      GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
         mem.Prop2d = prop2dGoo.Value;
       }
 
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.MeshSize = meshSize;
+        mem.ApiMember.MeshSize = meshSize;
       }
 
       da.SetData(0, new GsaMember2dGoo(mem));

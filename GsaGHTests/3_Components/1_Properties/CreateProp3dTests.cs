@@ -10,7 +10,7 @@ namespace GsaGHTests.Components.Properties {
   public class CreateProp3dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new CreateProp3d();
+      var comp = new Create3dProperty();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp, 
@@ -23,7 +23,7 @@ namespace GsaGHTests.Components.Properties {
     public void CreateComponent() {
       GH_OasysComponent comp = ComponentMother();
 
-      var output = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaProperty3dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(MatType.Concrete, output.Value.Material.MaterialType);
     }
   }

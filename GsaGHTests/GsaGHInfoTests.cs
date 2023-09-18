@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using GsaGH;
-using GsaGH.Components;
-using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests {

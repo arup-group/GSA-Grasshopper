@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.Import {
     internal ConcurrentBag<GsaElement3dGoo> Element3ds { get; private set; }
     
     internal Elements(GsaModel model, string elementList = "All") {
-      Element1ds = new ConcurrentBag<GsaElement1dGoo>();
+      var elem1dDict = new ConcurrentDictionary<int, Element>();
       var elem2dDict = new ConcurrentDictionary<int, Element>();
       var elem3dDict = new ConcurrentDictionary<int, Element>();
       ReadOnlyDictionary<int, Element> eDict = model.Model.Elements(elementList);
@@ -45,9 +45,8 @@ namespace GsaGH.Helpers.Import {
 
         switch (elemDimension) {
           case 1:
-            GsaSection section = model.Properties.GetSection(item.Value);
-            Element1ds.Add(new GsaElement1dGoo(new GsaElement1d(
-              item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit)));
+            elem1dDict.TryAdd(item.Key, item.Value);
+            
             break;
 
           case 2:
@@ -60,15 +59,33 @@ namespace GsaGH.Helpers.Import {
         }
       });
 
-      Element2ds = new ConcurrentBag<GsaElement2dGoo>();
-      if (elem2dDict.Count > 0) {
-        Element2ds = CreateElement2dFromApi(elem2dDict, model);
-      }
+      var steps = new List<int> {
+        0, 1, 2
+      };
+      Parallel.ForEach(steps, i => {
+        switch (i) {
+          case 0:
+            Element1ds = new ConcurrentBag<GsaElement1dGoo>();
+            if (elem1dDict.Count > 0) {
+              Element1ds = CreateElement1dFromApi(elem1dDict, model);
+            }
+            break;
 
-      Element3ds = new ConcurrentBag<GsaElement3dGoo>();
-      if (elem3dDict.Count > 0) {
-        Element3ds = CreateElement3dFromApi(elem3dDict, model);
-      }
+          case 1:
+            Element2ds = new ConcurrentBag<GsaElement2dGoo>();
+            if (elem2dDict.Count > 0) {
+              Element2ds = CreateElement2dFromApi(elem2dDict, model);
+            }
+            break;
+
+          case 2:
+            Element3ds = new ConcurrentBag<GsaElement3dGoo>();
+            if (elem3dDict.Count > 0) {
+              Element3ds = CreateElement3dFromApi(elem3dDict, model);
+            }
+            break;
+        }
+      });
     }
     internal static Mesh GetMeshFromApiElement2d(
       Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
@@ -258,10 +275,22 @@ namespace GsaGH.Helpers.Import {
       return outMesh;
     }
 
+    private static ConcurrentBag<GsaElement1dGoo> CreateElement1dFromApi(
+      ConcurrentDictionary<int, Element> elements, GsaModel model) {
+      var elem1dGoos = new ConcurrentBag<GsaElement1dGoo>();
+      Parallel.ForEach(elements, item => {
+        GsaSection section = model.Properties.GetSection(item.Value);
+        var elem = new GsaElement1d(
+          item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
+        elem1dGoos.Add(new GsaElement1dGoo(elem));
+      });
+      return elem1dGoos;
+    }
+
     private static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
       ConcurrentDictionary<int, Element> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis > axDict = model.Model.Axes();
+      ReadOnlyDictionary<int, Axis> axDict = model.Model.Axes();
 
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
       Parallel.ForEach(elements, elem => {
@@ -282,7 +311,7 @@ namespace GsaGH.Helpers.Import {
       Parallel.For(0, sortedElements.Count, i => {
         int parentId = sortedElements.Keys.ElementAt(i);
         ConcurrentDictionary<int, Element> elems = sortedElements[parentId];
-        var prop2Ds = new ConcurrentDictionary<int, GsaProp2d>();
+        var prop2Ds = new ConcurrentDictionary<int, GsaProperty2d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j => {
@@ -293,7 +322,10 @@ namespace GsaGH.Helpers.Import {
           }
 
           mList[elementId] = faceMesh;
-          prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
+          GsaProperty2d prop2d = model.Properties.GetProp2d(elems[elementId]);
+          if (prop2d != null) {
+            prop2Ds.TryAdd(elementId, model.Properties.GetProp2d(elems[elementId]));
+          }
         });
 
         // create one large mesh from single mesh face using
@@ -312,8 +344,8 @@ namespace GsaGH.Helpers.Import {
             var apiElems = new ConcurrentDictionary<int, Element>();
             apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
-            prop2Ds.TryGetValue(key, out GsaProp2d prop);
-            var propList = new ConcurrentDictionary<int, GsaProp2d>();
+            prop2Ds.TryGetValue(key, out GsaProperty2d prop);
+            var propList = new ConcurrentDictionary<int, GsaProperty2d>();
             propList.TryAdd(key, prop);
             var singleelement2D = new GsaElement2d(apiElems, mesh, propList);
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
@@ -357,7 +389,7 @@ namespace GsaGH.Helpers.Import {
         int parentId = sortedElements.Keys.ElementAt(i);
 
         ConcurrentDictionary<int, Element> elems = sortedElements[parentId];
-        var prop3Ds = new ConcurrentDictionary<int, GsaProp3d>();
+        var prop3Ds = new ConcurrentDictionary<int, GsaProperty3d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j => {
@@ -369,7 +401,10 @@ namespace GsaGH.Helpers.Import {
 
           mList[elementId] = ngonClosedMesh;
 
-          prop3Ds.TryAdd(elementId, model.Properties.GetProp3d(elems[elementId]));
+          GsaProperty3d prop3d = model.Properties.GetProp3d(elems[elementId]);
+          if (prop3d != null) {
+            prop3Ds.TryAdd(elementId, prop3d);
+          }
         });
 
         // create one large mesh from single mesh face using
@@ -385,10 +420,13 @@ namespace GsaGH.Helpers.Import {
           foreach (int key in elems.Keys) {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element apiElem);
+            var apiElems = new ConcurrentDictionary<int, Element>();
+            apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
-            prop3Ds.TryGetValue(key, out GsaProp3d prop);
-
-            var singleelement3D = new GsaElement3d(apiElem, key, mesh, prop);
+            prop3Ds.TryGetValue(key, out GsaProperty3d prop);
+            var propList = new ConcurrentDictionary<int, GsaProperty3d>();
+            propList.TryAdd(key, prop);
+            var singleelement3D = new GsaElement3d(apiElems, mesh, propList);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
         } else {

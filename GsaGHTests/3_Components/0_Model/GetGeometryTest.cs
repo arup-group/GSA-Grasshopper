@@ -4,6 +4,7 @@ using GsaGHTests.Helpers;
 using System.IO;
 using System;
 using Xunit;
+using System.Collections.Generic;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
@@ -11,13 +12,13 @@ namespace GsaGHTests.Model {
     
     [Fact]
     public void CreateGetGeometryTest() {
-      var comp = new GetGeometry();
+      var comp = new GetModelGeometry();
       comp.CreateAttributes();
       ChangeDropDownTest(comp);
     }
 
     private static void ChangeDropDownTest(
-      GetGeometry comp, bool ignoreSpacerDescriptionsCount = false) {
+      GetModelGeometry comp, bool ignoreSpacerDescriptionsCount = false) {
       Assert.True(comp._isInitialised);
       if (!ignoreSpacerDescriptionsCount) {
         Assert.Equal(comp._dropDownItems.Count, comp._spacerDescriptions.Count);
@@ -36,7 +37,7 @@ namespace GsaGHTests.Model {
       }
     }
 
-    private static void TestDeserialize(GetGeometry comp, string customIdentifier = "") {
+    private static void TestDeserialize(GetModelGeometry comp, string customIdentifier = "") {
       comp.CreateAttributes();
 
       var doc = new GH_Document();
@@ -64,7 +65,7 @@ namespace GsaGHTests.Model {
       deserializedComponent.ExpireSolution(true);
       deserializedComponent.Params.Output[0].CollectData();
 
-      Duplicates.AreEqual(originalComponent, deserializedComponent, true);
+      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
     }
   }
 }

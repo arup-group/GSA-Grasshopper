@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using GsaGH.Components;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
-using GsaGHTests.Helpers;
-using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 
@@ -13,7 +10,7 @@ namespace GsaGHTests.Helpers.Export.GH {
   public class RhinoConversionsTests {
     [Fact]
     public void BuildArcLineCurveFromPtsAndTopoTypeTestArc1d() {
-      var topolist = new List<Point3d>() {
+      var topolist = new Point3dList() {
         new Point3d(0, 0, 0),
         new Point3d(2, 2, 0),
         new Point3d(4, 0, 0)
@@ -31,7 +28,7 @@ namespace GsaGHTests.Helpers.Export.GH {
 
     [Fact]
     public void ConvertMem1dCrvTest() {
-      var topolist = new List<Point3d>() {
+      var topolist = new Point3dList() {
         new Point3d(0, 0, 0),
         new Point3d(2, 2, 0),
         new Point3d(4, 0, 0)
@@ -39,8 +36,8 @@ namespace GsaGHTests.Helpers.Export.GH {
       var crvs = new PolyCurve();
       crvs.Append(new Arc(topolist[0], topolist[1], topolist[2]));
 
-      Tuple<PolyCurve, List<Point3d>, List<string>> mem1d = RhinoConversions.ConvertMem1dCrv(
-        crvs);
+      Tuple<PolyCurve, Point3dList, List<string>> mem1d 
+        = RhinoConversions.ConvertMem1dCrv(crvs);
 
       Assert.True(mem1d.Item1.IsArc());
       Assert.Equal(3, mem1d.Item2.Count);

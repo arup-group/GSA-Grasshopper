@@ -16,11 +16,11 @@ namespace GsaGH.Components {
   /// </summary>
   public class FootfallResults : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Footfall;
+    protected override Bitmap Icon => Resources.FootfallResults;
 
-    public FootfallResults() : base("Footfall Result", "Footfall",
+    public FootfallResults() : base("Footfall Results", "Footfall",
       "Get the maximum response factor for a footfall analysis case", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
@@ -54,7 +54,7 @@ namespace GsaGH.Components {
 
         case GsaResultGoo goo: {
           result = goo.Value;
-          if (result.Type == GsaResult.CaseType.Combination) {
+          if (result.Type == CaseType.Combination) {
             this.AddRuntimeError("Footfall Result only available for Analysis Cases");
             return;
           }
@@ -66,7 +66,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = Inputs.GetNodeListNameForesults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
 
       GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
       GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);

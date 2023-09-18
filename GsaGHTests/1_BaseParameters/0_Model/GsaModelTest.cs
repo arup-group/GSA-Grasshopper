@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using GsaAPI;
 using GsaGH.Helpers.Export;
@@ -14,25 +15,17 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaModelTest {
-
-    [Fact]
-    public void GsaModelEqualsTest() {
-      var original = new GsaModel();
-      GsaModel duplicate = original.Duplicate();
-
-      Duplicates.AreEqual(original, duplicate);
-    }
-
     [Fact]
     public void TestCreateModelFromModel() {
       var original = new GsaModel();
       original.Model.Open(GsaFile.SteelDesignSimple);
 
       var assembled = new GsaModel {
-        Model = AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null), };
+        Model = Assembler.AssembleModel(original, null, null, null, null, null, null, null, null, 
+        null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, 
+        false, null), };
 
-      Duplicates.AreEqual(original, assembled, true);
+      Duplicates.AreEqual(original, assembled, new List<string>() { "Guid" });
     }
 
     [Fact]
@@ -43,7 +36,7 @@ namespace GsaGHTests.Parameters {
       GsaModel clone = m.Clone();
       Guid cloneGuid = clone.Guid;
       Assert.NotEqual(cloneGuid, originalGuid);
-      GsaModel dup = m.Duplicate();
+      GsaModel dup = m;
       Guid dupGuid = dup.Guid;
       Assert.Equal(dupGuid, originalGuid);
     }

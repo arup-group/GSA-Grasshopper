@@ -11,7 +11,7 @@ namespace GsaGHTests.Model {
   public class UnitsTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new Units();
+      var comp = new ModelUnits();
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp, ModelTests.GsaModelGooMother, 0);
@@ -32,6 +32,8 @@ namespace GsaGHTests.Model {
       string lengthSmall = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string mass = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string stress = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
+      string strain = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
+      string temperature = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string timeLong = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string timeMedium = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string timeShort = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
@@ -44,6 +46,8 @@ namespace GsaGHTests.Model {
       Assert.Equal("Meter", lengthSmall);
       Assert.Equal("Kilogram", mass);
       Assert.Equal("Pascal", stress);
+      Assert.Equal("Ratio", strain);
+      Assert.Equal("Celsius", temperature);
       Assert.Equal("Day", timeLong);
       Assert.Equal("Minute", timeMedium);
       Assert.Equal("Second", timeShort);
@@ -63,6 +67,8 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.SetInput(comp, "Inch", i++);
       ComponentTestHelper.SetInput(comp, "Slug", i++);
       ComponentTestHelper.SetInput(comp, "Gigapascal", i++);
+      ComponentTestHelper.SetInput(comp, "Permille", i++);
+      ComponentTestHelper.SetInput(comp, "Kelvin", i++);
       ComponentTestHelper.SetInput(comp, "Day", i++);
       ComponentTestHelper.SetInput(comp, "Hour", i++);
       ComponentTestHelper.SetInput(comp, "Minute", i++);
@@ -80,6 +86,8 @@ namespace GsaGHTests.Model {
       Assert.Equal("Inch", units.LengthSmall.ToString());
       Assert.Equal("Slug", units.Mass.ToString());
       Assert.Equal("Gigapascal", units.Stress.ToString());
+      Assert.Equal("Permille", units.Strain.ToString());
+      Assert.Equal("Kelvin", units.Temperature.ToString());
       Assert.Equal("Day", units.TimeLong.ToString());
       Assert.Equal("Hour", units.TimeMedium.ToString());
       Assert.Equal("Minute", units.TimeShort.ToString());
@@ -95,6 +103,8 @@ namespace GsaGHTests.Model {
       string lengthSmall = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string mass = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string stress = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
+      string strain = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
+      string temperature = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string timeLong = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string timeMedium = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
       string timeShort = ((GH_String)ComponentTestHelper.GetOutput(comp, i++)).Value;
@@ -108,6 +118,8 @@ namespace GsaGHTests.Model {
       Assert.Equal("Inch", lengthSmall);
       Assert.Equal("Slug", mass);
       Assert.Equal("Gigapascal", stress);
+      Assert.Equal("Permille", strain);
+      Assert.Equal("Kelvin", temperature);
       Assert.Equal("Day", timeLong);
       Assert.Equal("Hour", timeMedium);
       Assert.Equal("Minute", timeShort);
@@ -124,10 +136,12 @@ namespace GsaGHTests.Model {
     [InlineData(7)] // lengthSmall
     [InlineData(8)] // mass
     [InlineData(9)] // stress
-    [InlineData(10)] // timeLong
-    [InlineData(11)] // timeMedium
-    [InlineData(12)] // timeShort
-    [InlineData(13)] // velocity
+    [InlineData(10)] // strain
+    [InlineData(11)] // temperature
+    [InlineData(12)] // timeLong
+    [InlineData(13)] // timeMedium
+    [InlineData(14)] // timeShort
+    [InlineData(15)] // velocity
     public void TestErrorFromWrongInput(int id) {
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, "invalid", id);

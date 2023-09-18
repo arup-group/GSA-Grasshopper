@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
   public class GsaNodeParameter : GH_OasysPersistentGeometryParam<GsaNodeGoo>, 
     IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaNodeGoo.Name + " parameter" :
         base.InstanceDescription;
@@ -45,7 +45,13 @@ namespace GsaGH.Parameters {
 
     public void BakeGeometry(RhinoDoc doc, ObjectAttributes att, List<Guid> obj_ids) {
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
-      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Point(x.Value.Point)), att, doc);
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      foreach (GsaNodeGoo goo in m_data.AllData(true).Cast<GsaNodeGoo>()) {
+        ObjectAttributes objAtt = att.Duplicate();
+        objAtt.ObjectColor = (Color)goo.Value.ApiNode.Colour;
+        gH_BakeUtility.BakeObject(new GH_Point(goo.Value.Point), objAtt, doc);
+      }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 

@@ -2,6 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 using OasysGH.Parameters;
 using Rhino.Geometry;
@@ -12,35 +13,38 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaGridPlaneSurfaceParameter : GH_OasysPersistentGeometryParam<GsaGridPlaneSurfaceGoo> {
     public override Guid ComponentGuid => new Guid("161e2439-83b6-4fda-abb9-2ed938612530");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override string InstanceDescription
       => m_data.DataCount == 0 ? "Empty " + GsaGridPlaneSurfaceGoo.Name + " parameter" :
         base.InstanceDescription;
     public override string TypeName
       => SourceCount == 0 ? GsaGridPlaneSurfaceGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.GridPlaneParam;
+    protected override Bitmap Icon => Resources.GridPlaneSurfaceParam;
 
-    public GsaGridPlaneSurfaceParameter() : base(new GH_InstanceDescription(GsaGridPlaneSurfaceGoo.Name,
-      GsaGridPlaneSurfaceGoo.NickName, GsaGridPlaneSurfaceGoo.Description + " parameter",
+    public GsaGridPlaneSurfaceParameter() : base(new GH_InstanceDescription(
+      GsaGridPlaneSurfaceGoo.Name, GsaGridPlaneSurfaceGoo.NickName, 
+      GsaGridPlaneSurfaceGoo.Description + " parameter",
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data) {
       if (data.GetType() == typeof(GsaLoadGoo)) {
         var loadGoo = (GsaLoadGoo)data;
         if (loadGoo.Value != null) {
-          switch (loadGoo.Value.LoadType) {
-            case LoadType.GridPoint:
-              return new GsaGridPlaneSurfaceGoo(((GsaGridPointLoad)loadGoo.Value).GridPlaneSurface);
+          switch (loadGoo.Value) {
+            case GsaGridPointLoad point:
+              return new GsaGridPlaneSurfaceGoo(point.GridPlaneSurface);
 
-            case LoadType.GridLine:
-              return new GsaGridPlaneSurfaceGoo(((GsaGridLineLoad)loadGoo.Value).GridPlaneSurface);
+            case GsaGridLineLoad line:
+              return new GsaGridPlaneSurfaceGoo(line.GridPlaneSurface);
 
-            case LoadType.GridArea:
-              return new GsaGridPlaneSurfaceGoo(((GsaGridAreaLoad)loadGoo.Value).GridPlaneSurface);
+            case GsaGridAreaLoad area:
+              return new GsaGridPlaneSurfaceGoo(area.GridPlaneSurface);
 
             default:
               this.AddRuntimeError(
-                $"Load is {loadGoo.Value.LoadType} but must be a GridLoad to convert to GridPlaneSurface");
+                "Load is " + loadGoo.Value.GetType().ToString()
+                .Replace("Gsa", string.Empty).Replace("Load", string.Empty) +
+                $" but must be a GridLoad to convert to GridPlaneSurface");
               return new GsaGridPlaneSurfaceGoo(null);
           }
         }

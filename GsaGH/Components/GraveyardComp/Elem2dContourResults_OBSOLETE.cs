@@ -27,6 +27,7 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Collections;
 using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -58,7 +59,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("935d359a-9394-42fc-a76e-ea08ccb84135");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Result2D;
+    protected override Bitmap Icon => Resources.Contour2dResults;
     private readonly List<string> _displacement = new List<string>(new[] {
       "Translation Ux",
       "Translation Uy",
@@ -419,7 +420,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var result = new GsaResult();
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
@@ -431,7 +432,7 @@ namespace GsaGH.Components {
       if (ghTyp.Value is GsaResultGoo goo) {
         result = goo.Value;
         switch (result.Type) {
-          case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+          case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
             this.AddRuntimeWarning("Combination case contains "
               + result.SelectedPermutationIds.Count
               + " - only one permutation can be displayed at a time." + Environment.NewLine
@@ -439,11 +440,11 @@ namespace GsaGH.Components {
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             break;
 
-          case GsaResult.CaseType.Combination:
+          case CaseType.Combination:
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
             break;
 
-          case GsaResult.CaseType.AnalysisCase:
+          case CaseType.AnalysisCase:
             _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
             break;
         }
@@ -633,12 +634,12 @@ namespace GsaGH.Components {
       #region create mesh
 
       var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
-        new List<List<Point3d>>(), new List<int>());
+        new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
       var values = new ConcurrentDictionary<int, List<IQuantity>>();
       values.AsParallel().AsOrdered();
-      var verticies = new ConcurrentDictionary<int, List<Point3d>>();
+      var verticies = new ConcurrentDictionary<int, Point3dList>();
       verticies.AsParallel().AsOrdered();
 
       Parallel.ForEach(elems.Keys, key => {
@@ -752,14 +753,14 @@ namespace GsaGH.Components {
 
         meshes[key] = tempmesh;
         values[key] = vals;
-        verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
+        verticies[key] = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
 
         #endregion
       });
 
       #endregion
 
-      resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
+      resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
         meshes.Keys.ToList());
 
       #region Legend

@@ -2,14 +2,14 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using OasysUnits;
+using Rhino.Collections;
 using Rhino.Geometry;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Import {
   internal class Members {
@@ -24,6 +24,9 @@ namespace GsaGH.Helpers.Import {
 
       ReadOnlyDictionary<int, Member> mDict = model.Model.Members(memberList);
 
+      var errors1d = new ConcurrentBag<int>();
+      var errors2d = new ConcurrentBag<int>();
+
       Parallel.ForEach(mDict, item => {
         string toporg = item.Value.Topology;
 
@@ -35,7 +38,7 @@ namespace GsaGH.Helpers.Import {
               = Topology.Topology_detangler(toporg);
           (List<int> topoInt, List<string> topoType) = item1;
 
-          var topopts = new List<Point3d>();
+          var topopts = new Point3dList();
           foreach (int t in topoInt) {
             if (model.ApiNodes.TryGetValue(t, out Node node)) {
               topopts.Add(Nodes.Point3dFromNode(node, model.ModelUnit));
@@ -54,22 +57,27 @@ namespace GsaGH.Helpers.Import {
             case MemberType.PILE:
 
               if (topopts.Count < 2) {
-                string error = " Invalid topology Mem1D ID: " + item.Key + ".";
-                owner?.AddRuntimeWarning(error);
+                errors1d.Add(item.Key);
                 return;
               }
 
-              GsaSection section = model.Properties.GetSection(item.Value);
+              GsaNode orientationNode = null;
+              if (model.ApiNodes.Keys.Contains(item.Value.OrientationNode)) {
+                orientationNode = new GsaNode(Nodes.Point3dFromNode(
+                  model.ApiNodes[item.Value.OrientationNode], model.ModelUnit));
+              }
+
               var mem1d = new GsaMember1d(
-                item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], section, model.ModelUnit);
+                item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], orientationNode, model.ModelUnit) {
+                Section = model.Properties.GetSection(item.Value)
+              };
               Member1ds.Add(new GsaMember1dGoo(mem1d));
               break;
 
             default: 
               // ### Member 2d ###
               if (topopts.Count < 2) {
-                string error = " Invalid topology Mem2D ID: " + item.Key + ".";
-                owner?.AddRuntimeWarning(error);
+                errors2d.Add(item.Key);
                 return;
               }
 
@@ -81,9 +89,9 @@ namespace GsaGH.Helpers.Import {
               List<List<string>> inclLinesTopoType = lineTuple.Item2;
 
               //list of lists of void points /member2d
-              var voidTopo = new List<List<Point3d>>();
+              var voidTopo = new List<Point3dList>();
               for (int i = 0; i < voidTopoInt.Count; i++) {
-                voidTopo.Add(new List<Point3d>());
+                voidTopo.Add(new Point3dList());
                 for (int j = 0; j < voidTopoInt[i].Count; j++) {
                   if (model.ApiNodes.TryGetValue(voidTopoInt[i][j], out Node node)) {
                     voidTopo[i].Add(Nodes.Point3dFromNode(node, model.ModelUnit));
@@ -92,9 +100,9 @@ namespace GsaGH.Helpers.Import {
               }
 
               //list of lists of line inclusion topology points /member2d
-              var incLinesTopo = new List<List<Point3d>>();
+              var incLinesTopo = new List<Point3dList>();
               for (int i = 0; i < incLinesTopoInt.Count; i++) {
-                incLinesTopo.Add(new List<Point3d>());
+                incLinesTopo.Add(new Point3dList());
                 for (int j = 0; j < incLinesTopoInt[i].Count; j++) {
                   if (model.ApiNodes.TryGetValue(incLinesTopoInt[i][j], out Node node)) {
                     incLinesTopo[i].Add(Nodes.Point3dFromNode(node, model.ModelUnit));
@@ -103,7 +111,7 @@ namespace GsaGH.Helpers.Import {
               }
 
               //list of points for inclusion /member2d
-              var inclPts = new List<Point3d>();
+              var inclPts = new Point3dList();
               foreach (int point in inclpts) {
                 if (!model.ApiNodes.TryGetValue(point, out Node node)) {
                   continue;
@@ -112,7 +120,7 @@ namespace GsaGH.Helpers.Import {
                 inclPts.Add(Nodes.Point3dFromNode(node, model.ModelUnit));
               }
 
-              GsaProp2d prop2d = model.Properties.GetProp2d(item.Value);
+              GsaProperty2d prop2d = model.Properties.GetProp2d(item.Value);
               var mem2d = new GsaMember2d(item, topopts, topoType, voidTopo, voidTopoType,
                 incLinesTopo, inclLinesTopoType, inclPts, prop2d, model.ModelUnit);
               Member2ds.Add(new GsaMember2dGoo(mem2d));
@@ -142,12 +150,23 @@ namespace GsaGH.Helpers.Import {
           // append list of meshes (faster than appending each mesh one by one)
           m.Append(mList);
 
-          GsaProp3d prop = model.Properties.GetProp3d(item.Value);
-          var mem3d = new GsaMember3d(item.Value, item.Key, m, prop,
-            new Length(item.Value.MeshSize, LengthUnit.Meter).As(model.ModelUnit));
+          GsaProperty3d prop = model.Properties.GetProp3d(item.Value);
+          var mem3d = new GsaMember3d(item.Value, item.Key, m, prop, model.ModelUnit);
           Member3ds.Add(new GsaMember3dGoo(mem3d));
         }
       });
+
+      if (errors1d.Count > 0) {
+        string ids = string.Join(Environment.NewLine, errors1d.OrderBy(x => x));
+        string err = $" Invalid definition for 1D Member ID(s):{Environment.NewLine}{ids}";
+        owner.AddRuntimeWarning(err);
+      }
+
+      if (errors2d.Count > 0) {
+        string ids = string.Join(Environment.NewLine, errors2d.OrderBy(x => x));
+        string err = $" Invalid definition for 2D Member ID(s):{Environment.NewLine}{ids}";
+        owner.AddRuntimeWarning(err);
+      }
     }
   }
 }

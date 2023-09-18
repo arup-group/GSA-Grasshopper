@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Properties {
   public class CreateProp2dTests {
 
     public static GH_OasysDropDownComponent ComponentMother(bool isLoadType) {
-      var comp = new CreateProp2d();
+      var comp = new Create2dProperty();
       comp.CreateAttributes();
 
       comp.SetSelected(0, isLoadType ? 5 : 2); // set type to 2-"Flat Plate" or 5-"Load"
@@ -33,8 +33,8 @@ namespace GsaGHTests.Components.Properties {
     public void CreateFlatComponent() {
       GH_OasysDropDownComponent comp = ComponentMother(false);
 
-      var output = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(Property2D_Type.PLATE, output.Value.Type);
+      var output = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(Property2D_Type.PLATE, output.Value.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Thickness);
     }
 
@@ -42,10 +42,10 @@ namespace GsaGHTests.Components.Properties {
     public void CreateLoadComponent() {
       GH_OasysDropDownComponent comp = ComponentMother(true);
 
-      var output = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(Property2D_Type.LOAD, output.Value.Type);
-      Assert.Equal(SupportType.TwoEdges, output.Value.SupportType);
-      Assert.Equal(2, output.Value.ReferenceEdge);
+      var output = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(Property2D_Type.LOAD, output.Value.ApiProp2d.Type);
+      Assert.Equal(SupportType.TwoEdges, output.Value.ApiProp2d.SupportType);
+      Assert.Equal(2, output.Value.ApiProp2d.ReferenceEdge);
     }
   }
 }

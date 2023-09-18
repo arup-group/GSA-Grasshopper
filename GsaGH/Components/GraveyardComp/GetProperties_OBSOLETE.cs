@@ -17,7 +17,7 @@ namespace GsaGH.Components.GraveyardComp {
     public override Guid ComponentGuid => new Guid("e7914f27-ea03-48e4-b7bd-a87121141f1e");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetSection;
+    protected override Bitmap Icon => Resources.GetModelProperties;
 
     public GetProperties_OBSOLETE() : base("Get Model Properties", "GetProps",
       "Get Sections, 2D Properties and Springs from GSA model", CategoryName.Name(),
@@ -33,9 +33,9 @@ namespace GsaGH.Components.GraveyardComp {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSectionParameter(), "Sections", "PB",
         "Section Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp2dParameter(), "2D Properties", "PA",
+      pManager.AddParameter(new GsaProperty2dParameter(), "2D Properties", "PA",
         "2D Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaProp3dParameter(), "3D Properties", "PV",
+      pManager.AddParameter(new GsaProperty3dParameter(), "3D Properties", "PV",
         "3D Properties from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaMaterialParameter(), "Custom Materials", "Mat",
         "Custom Materials from GSA Model", GH_ParamAccess.list);

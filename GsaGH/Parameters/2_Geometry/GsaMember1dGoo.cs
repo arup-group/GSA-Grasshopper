@@ -1,28 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using OasysGH;
 using OasysGH.Parameters;
+using Rhino.Collections;
 using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
   /// </summary>
   public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d> {
     public static string Description => "GSA 1D Member";
-    public static string Name => "Member1D";
+    public static string Name => "Member 1D";
     public static string NickName => "M1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaMember1dGoo(GsaMember1d item) : base(item) { }
-
-    internal GsaMember1dGoo(GsaMember1d item, bool duplicate) : base(null) {
-      Value = duplicate ? item.Duplicate() : item;
-    }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
@@ -30,6 +27,11 @@ namespace GsaGH.Parameters {
           target = (TQ)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
           return true;
         }
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)) && Value.Section3dPreview != null) {
+        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Section3dPreview.Mesh);
+        return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer))) {
@@ -43,30 +45,32 @@ namespace GsaGH.Parameters {
       return false;
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
+      Value?.Section3dPreview?.DrawViewportMeshes(args);
+    }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
       if (Value == null) {
         return;
       }
 
+      Value.Section3dPreview?.DrawViewportWires(args);
+
       if (Value.PolyCurve != null) {
-        if (args.Color
-          == Color.FromArgb(255, 150, 0,
-            0)) // this is a workaround to change colour between selected and not
-        {
-          if (Value.IsDummy) {
+        // this is a workaround to change colour between selected and not
+        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+          if (Value.ApiMember.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Dummy1D, false);
           } else {
-            if (Value.Colour != Color.FromArgb(0, 0, 0)) {
-              args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
+            if ((Color)Value.ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
+              args.Pipeline.DrawCurve(Value.PolyCurve, (Color)Value.ApiMember.Colour, 2);
             } else {
-              Color col = Colours.ElementType(Value.Type1D);
+              Color col = Colours.ElementType(Value.ApiMember.Type1D);
               args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
             }
           }
         } else {
-          if (Value.IsDummy) {
+          if (Value.ApiMember.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Member1dSelected, false);
           } else {
             args.Pipeline.DrawCurve(Value.PolyCurve, Colours.Member1dSelected, 2);
@@ -75,22 +79,20 @@ namespace GsaGH.Parameters {
       }
 
       if (Value.Topology != null) {
-        if (!Value.IsDummy) {
-          List<Point3d> pts = Value.Topology;
+        if (!Value.ApiMember.IsDummy) {
+          Point3dList pts = Value.Topology;
           for (int i = 0; i < pts.Count; i++) {
-            if (args.Color
-              == Color.FromArgb(255, 150, 0,
-                0)) // this is a workaround to change colour between selected and not
-            {
-              if (i == 0 | i == pts.Count - 1) // draw first point bigger
-              {
+            // this is a workaround to change colour between selected and not
+            if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+              if (i == 0 | i == pts.Count - 1) {
+                // draw first point bigger
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 2, Colours.Member1dNode);
               } else {
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 1, Colours.Member1dNode);
               }
             } else {
-              if (i == 0 | i == pts.Count - 1) // draw first point bigger
-              {
+              if (i == 0 | i == pts.Count - 1) {
+                // draw first point bigger
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundControlPoint, 2,
                   Colours.Member1dNodeSelected);
               } else {
@@ -102,16 +104,8 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.IsDummy || Value._previewGreenLines == null) {
-        return;
-      }
-
-      foreach (Line ln1 in Value._previewGreenLines) {
-        args.Pipeline.DrawLine(ln1, Colours.Support);
-      }
-
-      foreach (Line ln2 in Value._previewRedLines) {
-        args.Pipeline.DrawLine(ln2, Colours.Release);
+      if (!Value.ApiMember.IsDummy) {
+        Value.ReleasePreview.DrawViewportWires(args);
       }
     }
 
@@ -124,11 +118,31 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      return new GsaMember1dGoo(Value.Morph(xmorph));
+      var mem = new GsaMember1d(Value) {
+        Id = 0,
+      };
+      mem.Topology?.Morph(xmorph);
+      PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
+      xmorph.Morph(crv);
+      mem.PolyCurve = crv;
+      mem.UpdateReleasesPreview();
+      mem.Section3dPreview?.Morph(xmorph);
+      return new GsaMember1dGoo(mem);
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      return new GsaMember1dGoo(Value.Transform(xform));
+      var xpts = new Point3dList(Value.Topology);
+      xpts.Transform(xform);
+      var mem = new GsaMember1d(Value) {
+        Id = 0,
+        Topology = xpts
+      };
+      PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
+      crv.Transform(xform);
+      mem.PolyCurve = crv;
+      mem.UpdateReleasesPreview();
+      mem.Section3dPreview?.Transform(xform);
+      return new GsaMember1dGoo(mem);
     }
   }
 }

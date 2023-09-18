@@ -1,4 +1,4 @@
-﻿namespace GsaGH.Parameters.Enums {
+﻿namespace GsaGH.Parameters {
   public enum Prop2dType {
     Undefined = 0,
     PlaneStress = 1,

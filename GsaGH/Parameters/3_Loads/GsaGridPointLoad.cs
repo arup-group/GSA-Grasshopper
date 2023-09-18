@@ -1,51 +1,56 @@
 ﻿using System;
 using GsaAPI;
+using GsaGH.Parameters.Enums;
 using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
-  public class GsaGridPointLoad : IGsaLoad {
+  public class GsaGridPointLoad : IGsaGridLoad {
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
-    public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
-    public LoadType LoadType => LoadType.GridPoint;
+    public GridPointLoad ApiLoad { get; set; } = new GridPointLoad();
+    public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
     public GsaList ReferenceList => GridPlaneSurface._refList;
     public Guid RefObjectGuid => GridPlaneSurface._refObjectGuid;
-
-    public GsaGridPointLoad() { }
-
-    public int CaseId() {
-      return GridPointLoad.Case;
+    public int CaseId {
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
     }
+    public string Name {
+      get => ApiLoad.Name;
+      set => ApiLoad.Name = value;
+    }
+    public GsaGridPointLoad() { }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridPointLoad {
-        GridPointLoad = {
-          AxisProperty = GridPointLoad.AxisProperty,
-          Case = GridPointLoad.Case,
-          Direction = GridPointLoad.Direction,
-          GridSurface = GridPointLoad.GridSurface,
-          Name = GridPointLoad.Name.ToString(),
-          X = GridPointLoad.X,
-          Y = GridPointLoad.Y,
-          Value = GridPointLoad.Value,
+        ApiLoad = {
+          AxisProperty = ApiLoad.AxisProperty,
+          Case = ApiLoad.Case,
+          Direction = ApiLoad.Direction,
+          GridSurface = ApiLoad.GridSurface,
+          Name = ApiLoad.Name.ToString(),
+          X = ApiLoad.X,
+          Y = ApiLoad.Y,
+          Value = ApiLoad.Value,
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
       };
+      
+      if (LoadCase != null) {
+        dup.LoadCase = LoadCase;
+      }
+
       return dup;
     }
 
     internal Point3d GetPoint(LengthUnit unit) {
       LengthUnit m = LengthUnit.Meter;
       return new Point3d(
-              new Length(GridPointLoad.X, m).As(unit),
-              new Length(GridPointLoad.Y, m).As(unit),
+              new Length(ApiLoad.X, m).As(unit),
+              new Length(ApiLoad.Y, m).As(unit),
               new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
-    }
-
-    public override string ToString() {
-      return string.Join(" ", LoadType.ToString().Trim(), GridPointLoad.Name.Trim()).Trim().Replace("  ", " ");
     }
   }
 }

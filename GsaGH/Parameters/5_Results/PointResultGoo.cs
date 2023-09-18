@@ -78,10 +78,6 @@ namespace GsaGH.Parameters {
       return new PointResultGoo(point, Result, _color, _size, NodeId);
     }
 
-    public override object ScriptVariable() {
-      return Value;
-    }
-
     public override string ToString() {
       return $"PointResult: P {NodeId}:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{Result:0.0}";
     }

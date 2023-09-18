@@ -19,13 +19,13 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class GetSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("495dab75-6404-43b5-9f20-4a8caaaf41ab");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetSectionModifier;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
 
-    public GetSectionModifier() : base("Get Section Modifier", "GetModifier",
+    public GetSectionModifier() : base("Get Section Modifier", "GetPBM",
       "Get GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
@@ -60,7 +60,7 @@ namespace GsaGH.Components {
         densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,
         densityUnitsMenu,
@@ -167,27 +167,27 @@ namespace GsaGH.Components {
 
       GsaSectionModifierGoo modifierGoo = null;
       if (da.GetData(0, ref modifierGoo)) {
-        modifier = modifierGoo.Value.Duplicate();
+        modifier = modifierGoo.Value;
       }
 
       da.SetData(0, new GsaSectionModifierGoo(modifier));
       da.SetData(1,
-        modifier._sectionModifier.AreaModifier.Option == SectionModifierOptionType.BY ?
+        modifier.ApiSectionModifier.AreaModifier.Option == SectionModifierOptionType.BY ?
           new GH_UnitNumber(modifier.AreaModifier) :
           new GH_UnitNumber(modifier.AreaModifier.ToUnit(UnitsHelper.GetAreaUnit(_lengthUnit))));
 
       da.SetData(2,
-        modifier._sectionModifier.I11Modifier.Option == SectionModifierOptionType.BY ?
+        modifier.ApiSectionModifier.I11Modifier.Option == SectionModifierOptionType.BY ?
           new GH_UnitNumber(modifier.I11Modifier) : new GH_UnitNumber(
             modifier.I11Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
 
       da.SetData(3,
-        modifier._sectionModifier.I22Modifier.Option == SectionModifierOptionType.BY ?
+        modifier.ApiSectionModifier.I22Modifier.Option == SectionModifierOptionType.BY ?
           new GH_UnitNumber(modifier.I22Modifier) : new GH_UnitNumber(
             modifier.I22Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
 
       da.SetData(4,
-        modifier._sectionModifier.JModifier.Option == SectionModifierOptionType.BY ?
+        modifier.ApiSectionModifier.JModifier.Option == SectionModifierOptionType.BY ?
           new GH_UnitNumber(modifier.JModifier) : new GH_UnitNumber(
             modifier.JModifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
 
@@ -195,7 +195,7 @@ namespace GsaGH.Components {
       da.SetData(6, new GH_UnitNumber(modifier.K22Modifier));
 
       da.SetData(7,
-        modifier._sectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY ?
+        modifier.ApiSectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY ?
           new GH_UnitNumber(modifier.VolumeModifier) : new GH_UnitNumber(
             modifier.VolumeModifier.ToUnit(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit))));
 
