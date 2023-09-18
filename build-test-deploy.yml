@@ -95,6 +95,10 @@ steps:
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
     echo $coverage_file_integration
+    if($coverage_file_gsagh.Length -lt 2 -Or $coverage_file_integration.Length -lt 2){
+      Write-Output "Coverlet failed to collect coverage"
+      exit(1)
+    }
     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
     $ProgressPreference = 'SilentlyContinue'
