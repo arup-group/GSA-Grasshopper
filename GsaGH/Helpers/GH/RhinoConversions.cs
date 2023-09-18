@@ -88,7 +88,8 @@ namespace GsaGH.Helpers.GH {
     internal static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(
       Brep brep, Point3dList points, List<GsaNode> inNodes, List<Curve> inCurves,
       List<GsaElement1d> inElem1ds, List<GsaMember1d> inMem1ds, double meshSize, LengthUnit unit,
-      Length tolerance, MeshMode2d meshMode = MeshMode2d.Mixed, bool convertNonPlanarQuads = true) {
+      Length tolerance, MeshMode2d meshMode) {
+      bool convertNonPlanarQuads = meshMode == MeshMode2d.Mixed;
       Brep inBrep = brep.DuplicateBrep();
       inBrep.Faces.ShrinkFaces();
       var unroller = new Unroller(inBrep);

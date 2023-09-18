@@ -78,8 +78,8 @@ namespace GsaGH.Parameters {
       Brep brep, List<Curve> curves, Point3dList points, double meshSize,
       List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance,
       int prop = 0) {
-      Mesh = RhinoConversions.ConvertBrepToMesh(
-        brep, points, nodes, curves, null, mem1ds, meshSize, unit, tolerance).Item1;
+      Mesh = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, null, mem1ds, 
+        meshSize, unit, tolerance, MeshMode2d.Mixed).Item1;
       Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, prop, true);
       ApiElements = convertMesh.Item1;

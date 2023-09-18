@@ -284,7 +284,7 @@ namespace GsaGH.Components {
 
       Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple
         = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
-          unit, tolerance, meshMode2d, triangulate);
+          unit, tolerance, meshMode2d);
       gsaElement2D.Mesh = tuple.Item1;
       Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);
