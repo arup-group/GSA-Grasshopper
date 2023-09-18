@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using GsaGH.Components;
-using GsaGH.Helpers.GH;
 using System.Drawing;
 using System.Windows.Forms;
 using Xunit;

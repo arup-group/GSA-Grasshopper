@@ -1,5 +1,6 @@
 ﻿using Grasshopper.GUI;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Units;
 using OasysUnits;
@@ -9,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace GsaGH.Helpers.GH {
+namespace GsaGH.Components {
   public class ToleranceMenu {
     public LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     public Length Tolerance = DefaultUnits.Tolerance;
@@ -63,7 +64,8 @@ namespace GsaGH.Helpers.GH {
       if (Text != string.Empty) {
         try {
           Tolerance = Length.Parse(Text);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }
@@ -74,10 +76,12 @@ namespace GsaGH.Helpers.GH {
       if (Tolerance.Meters < 0.001) {
         Component.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
-      } else if (Tolerance.Meters > 0.25) {
+      }
+      else if (Tolerance.Meters > 0.25) {
         Component.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
-      } else {
+      }
+      else {
         ClearToleranceRuntimeRemarkMessages();
       }
     }
