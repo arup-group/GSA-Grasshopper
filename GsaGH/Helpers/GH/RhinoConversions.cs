@@ -208,30 +208,11 @@ namespace GsaGH.Helpers.GH {
       mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
 
       Model model = Assembler.AssembleModel(
-        null,
-        null,
-        null,
-        nodes,
-        elem1ds,
-        null,
-        null,
-        mem1ds,
+        null, null, null, nodes, elem1ds, null, null, mem1ds,
         new List<GsaMember2d> {
           mem,
         },
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        unit,
-        tolerance,
-        true,
-        null);
+        null, null, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
 
       var tempModel = new GsaModel(model);
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();

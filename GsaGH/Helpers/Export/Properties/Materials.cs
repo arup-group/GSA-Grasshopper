@@ -260,6 +260,10 @@ namespace GsaGH.Helpers.Export {
       return _steelDesignCode;
     }
 
+    internal int ConvertMaterial(GsaMaterial material) {
+      return material == null ? 0 : AddMaterial(material);
+    }
+
     private int AddMaterial(GsaMaterial material) {
       if (!_materials.ContainsKey(material.Guid)) {
         _materials.Add(material.Guid, material);
@@ -321,10 +325,6 @@ namespace GsaGH.Helpers.Export {
         throw new Exception($"Material with {material.SteelDesignCodeName} Design Code" +
           $" cannot be added to a model with {_steelDesignCode} Design Code.");
       }
-    }
-
-    private int ConvertMaterial(GsaMaterial material) {
-      return material == null ? 0 : AddMaterial(material);
     }
 
     private void GetGsaGhMaterialsDictionary(Import.Materials materials) {

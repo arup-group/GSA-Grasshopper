@@ -192,8 +192,8 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
-      (List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds)
-        = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
+      (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
+        List<GsaProperty3d> prop3Ds) = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
         List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
@@ -222,8 +222,8 @@ namespace GsaGH.Components {
       // Assemble model
       model.Model = Assembler.AssembleModel(
         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
-        sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, analysisTasks,
-        combinationCases, _lengthUnit, _tolerance, _reMesh, this);
+        materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
+        analysisTasks, combinationCases, _lengthUnit, _tolerance, _reMesh, this);
       // Run analysis
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
