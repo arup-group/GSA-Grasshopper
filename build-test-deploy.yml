@@ -95,8 +95,6 @@ steps:
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
     echo $coverage_file_integration
-    Write-Output "GsaGH test coverage file size: " $coverage_file_gsagh.Length/1MB "MB"
-    Write-Output  "Integration test coverage file size: " $coverage_file_integration.Length/1MB "MB"
     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
     $ProgressPreference = 'SilentlyContinue'
@@ -105,8 +103,12 @@ steps:
     cd $(System.DefaultWorkingDirectory)\
     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+    $gsaghsize = [math]::Round(($coverage_file_gsagh.Length/1MB),2)
+    $integrationsize = [math]::Round(($coverage_file_integration.Length/1MB),2)
+    Write-Output "GsaGH test coverage file $gsaghsize MB"
+    Write-Output  "Integration test coverage file $integrationsize MB"
     if($coverage_file_gsagh.Length/1MB -lt 1 -Or $coverage_file_integration.Length/1MB -lt 1){
-      Write-Output "Coverlet failed to collect coverage"
+      Write-Output "Coverlet seems to have failed to collect coverage as xml is very small."
       exit(1)
     }
   env:
