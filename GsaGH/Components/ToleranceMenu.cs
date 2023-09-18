@@ -11,17 +11,17 @@ using System.Linq;
 using System.Windows.Forms;
 
 namespace GsaGH.Components {
-  public class ToleranceMenu {
-    public LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    public Length Tolerance = DefaultUnits.Tolerance;
-    public string Text = string.Empty;
-    public GH_Component Component;
+  internal class ToleranceMenu {
+    internal LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    internal Length Tolerance = DefaultUnits.Tolerance;
+    internal string Text = string.Empty;
+    internal GH_Component Component;
 
-    public ToleranceMenu(GH_Component owner) {
+    internal ToleranceMenu(GH_Component owner) {
       Component = owner;
     }
 
-    public void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+    internal void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
