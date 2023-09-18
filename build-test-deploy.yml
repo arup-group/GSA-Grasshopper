@@ -98,6 +98,9 @@ steps:
     if($coverage_file_gsagh.Length -lt 2 -Or $coverage_file_integration.Length -lt 2){
       Write-Output "Coverlet failed to collect coverage"
       exit(1)
+    } else { 
+      Write-Output $coverage_file_gsagh $coverage_file_gsagh.Length
+      Write-Output $coverage_file_integration $coverage_file_integration.Length
     }
     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
