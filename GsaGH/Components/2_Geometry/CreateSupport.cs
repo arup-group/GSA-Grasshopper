@@ -84,7 +84,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddGenericParameter("Node", "No", "GSA Node with Restraint", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaNodeParameter(), "Node", "No", "GSA Node with Restraint", GH_ParamAccess.item);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
@@ -118,6 +118,8 @@ namespace GsaGH.Components {
           Zz = _zz,
         },
       };
+
+      node.UpdatePreview();
 
       da.SetData(0, new GsaNodeGoo(node));
     }

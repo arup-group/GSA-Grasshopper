@@ -43,7 +43,6 @@ namespace GsaGH.Parameters {
     public GsaNode(Point3d point) {
       ApiNode = new Node();
       Point = point;
-      UpdatePreview();
     }
 
     /// <summary>
@@ -73,6 +72,7 @@ namespace GsaGH.Parameters {
       if (localAxis != new Plane()) {
         LocalAxis = localAxis;
       }
+
       UpdatePreview();
     }
 
@@ -149,6 +149,7 @@ namespace GsaGH.Parameters {
     public void UpdatePreview() {
       if (!IsSupport) {
         SupportPreview = null;
+        return;
       }
 
       SupportPreview = new SupportPreview(Restraint, LocalAxis, Point, IsGlobalAxis);

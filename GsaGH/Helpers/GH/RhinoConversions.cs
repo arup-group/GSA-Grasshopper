@@ -85,10 +85,10 @@ namespace GsaGH.Helpers.GH {
       return null;
     }
 
-    public static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(
+    internal static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(
       Brep brep, Point3dList points, List<GsaNode> inNodes, List<Curve> inCurves,
       List<GsaElement1d> inElem1ds, List<GsaMember1d> inMem1ds, double meshSize, LengthUnit unit,
-      Length tolerance) {
+      Length tolerance, MeshMode2d meshMode = MeshMode2d.Mixed, bool convertNonPlanarQuads = true) {
       Brep inBrep = brep.DuplicateBrep();
       inBrep.Faces.ShrinkFaces();
       var unroller = new Unroller(inBrep);
@@ -206,6 +206,7 @@ namespace GsaGH.Helpers.GH {
 
       var mem = new GsaMember2d(flattened[0], curves, inclusionPoints);
       mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
+      mem.ApiMember.MeshMode2d = meshMode;
 
       Model model = Assembler.AssembleModel(
         null, null, null, nodes, elem1ds, null, null, mem1ds,
@@ -224,25 +225,30 @@ namespace GsaGH.Helpers.GH {
       Surface flat = flattened[0].Surfaces[0];
       Surface orig = inBrep.Surfaces[0];
 
-      double inclPtTolerance = 0.5 * new Length(mem.ApiMember.MeshSize, LengthUnit.Meter).As(unit);
-
-      MeshVertexList vertices = mesh.Vertices;
+      // map flat mesh onto original surface
+      mesh.Vertices.CombineIdentical(true, true);
+      var vertices = new Point3dList(mesh.Vertices.ToPoint3dArray());
       for (int i = 0; i < vertices.Count; i++) {
-        flat.ClosestPoint(vertices.Point3dAt(i), out double u, out double v);
-        Point3d mapVertex = orig.PointAt(u, v);
-        
-        if (!finalNodes.IsNullOrEmpty()) {
-          Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapVertex);
-          if (closest.DistanceTo(mapVertex) <= inclPtTolerance) {
-            mapVertex = closest;
-          }
-        }
-
-        vertices.SetVertex(i, mapVertex);
+        flat.ClosestPoint(vertices[i], out double u, out double v);
+        vertices[i] = orig.PointAt(u, v);
       }
 
-      mesh.Faces.ConvertNonPlanarQuadsToTriangles(tolerance.As(unit),
-        RhinoMath.DefaultAngleTolerance, 0);
+      // swap closest points in mapped mesh with original inclusion points
+      if (!finalNodes.IsNullOrEmpty()) {
+        foreach (Point3d finalNode in finalNodes) {
+          int index = Point3dList.ClosestIndexInList(vertices, finalNode);
+          vertices[index] = finalNode;
+        }
+      }
+
+      for (int i = 0; i < mesh.Vertices.Count; i++) {
+        mesh.Vertices.SetVertex(i, vertices[i]);
+      }
+
+      if (convertNonPlanarQuads) {
+        mesh.Faces.ConvertNonPlanarQuadsToTriangles(tolerance.As(unit),
+          RhinoMath.DefaultAngleTolerance, 0);
+      }
 
       List<GsaNode> outNodes = null;
       if (!nodes.IsNullOrEmpty()) {
@@ -254,15 +260,8 @@ namespace GsaGH.Helpers.GH {
           Vector3 pos = nodeDict[topoInts[i + add]].Position;
           var pt = new Point3d(pos.X, pos.Y, pos.Z);
           flat.ClosestPoint(pt, out double u, out double v);
-          Point3d mapPt = orig.PointAt(u, v);
-          if (!finalNodes.IsNullOrEmpty()) {
-            Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapPt);
-            if (closest.DistanceTo(mapPt) <= inclPtTolerance) {
-              mapPt = closest;
-            }
-          }
-
-          nodes[i].Point = mapPt;
+          pt = orig.PointAt(u, v);
+          nodes[i].Point = Point3dList.ClosestPointInList(vertices, pt);
           outNodes.Add(nodes[i]);
         }
       }
@@ -282,25 +281,15 @@ namespace GsaGH.Helpers.GH {
 
         Vector3 posS = nodeDict[elem.Topology[0]].Position;
         var start = new Point3d(posS.X, posS.Y, posS.Z);
-        flat.ClosestPoint(start, out double us, out double vs);
-        Point3d mapPts = orig.PointAt(us, vs);
-        if (!finalNodes.IsNullOrEmpty()) {
-          Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapPts);
-          if (closest.DistanceTo(mapPts) <= inclPtTolerance) {
-            mapPts = closest;
-          }
-        }
+        flat.ClosestPoint(start, out double u1, out double v1);
+        start = orig.PointAt(u1, v1);
+        Point3d mapPts = Point3dList.ClosestPointInList(vertices, start);
 
         Vector3 posE = nodeDict[elem.Topology[1]].Position;
         var end = new Point3d(posE.X, posE.Y, posE.Z);
-        flat.ClosestPoint(end, out double ue, out double ve);
-        Point3d mapPte = orig.PointAt(ue, ve);
-        if (!finalNodes.IsNullOrEmpty()) {
-          Point3d closest = Point3dList.ClosestPointInList(finalNodes, mapPte);
-          if (closest.DistanceTo(mapPte) <= inclPtTolerance) {
-            mapPte = closest;
-          }
-        }
+        flat.ClosestPoint(end, out double u2, out double v2);
+        end = orig.PointAt(u2, v2);
+        Point3d mapPte = Point3dList.ClosestPointInList(vertices, end);
 
         element1ds[kvp.Key].Line = new LineCurve(mapPts, mapPte);
         outElem1ds.Add(element1ds[kvp.Key]);

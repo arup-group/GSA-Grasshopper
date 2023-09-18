@@ -2,6 +2,7 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 
@@ -52,6 +53,53 @@ namespace GsaGHTests.Model {
 
       var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
       Assert.NotNull(output.Value.GridLine);
+    }
+
+    [Fact]
+    public void CreateGridArcComponentError() {
+      var comp = new CreateGridLine();
+      comp.CreateAttributes();
+
+      var arc = new Arc(new Point3d(0, 0, 0), new Point3d(0, 0, 0), new Point3d(0, 0, 0));
+      ComponentTestHelper.SetInput(comp, arc, 0);
+      ComponentTestHelper.SetInput(comp, "Arc", 1);
+
+      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void CreateGridLineComponentError() {
+      var comp = new CreateGridLine();
+      comp.CreateAttributes();
+
+      var line = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 0));
+      ComponentTestHelper.SetInput(comp, line, 0);
+      ComponentTestHelper.SetInput(comp, "Line", 1);
+
+      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void CreateGridCurveComponentError() {
+      var comp = new CreateGridLine();
+      comp.CreateAttributes();
+
+      var pts = new Point3dList {
+        new Point3d(0, 0, 0),
+        new Point3d(10, 0, 0),
+        new Point3d(10, 10, 0),
+        new Point3d(10, 10, 10)
+      };
+
+      var crv = Curve.CreateControlPointCurve(pts, 3);
+
+      ComponentTestHelper.SetInput(comp, crv, 0);
+      ComponentTestHelper.SetInput(comp, "Line", 1);
+
+      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
     }
   }
 }

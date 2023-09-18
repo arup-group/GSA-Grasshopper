@@ -13,7 +13,7 @@ using Xunit;
 namespace GsaGHTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class ComponentClassNameTests {
-
+    // This test it used to enforce naming convention required by Docs Generator
     [Theory]
     [ClassData(typeof(TestDataGenerator))]
     public void ClassNamesEqualComponentNamesTest(string className, GH_Component component) {

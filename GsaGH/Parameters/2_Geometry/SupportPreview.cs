@@ -1,6 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
+using Rhino;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
@@ -73,7 +76,7 @@ namespace GsaGH.Parameters {
         };
       }
 
-      if (!isGlobalAxis) {
+      if (isGlobalAxis) {
         return;
       }
 
@@ -83,6 +86,38 @@ namespace GsaGH.Parameters {
       Xaxis = new Line(pt, local.XAxis, 0.5);
       Yaxis = new Line(pt, local.YAxis, 0.5);
       Zaxis = new Line(pt, local.ZAxis, 0.5);
+    }
+
+    public void BakeGeometry(
+      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+      att ??= doc.CreateDefaultAttributes();
+      att.ColorSource = ObjectColorSource.ColorFromObject;
+      ObjectAttributes meshAtt = att.Duplicate();
+      if (SupportSymbol != null) {
+        gH_BakeUtility.BakeObject(new GH_Brep(SupportSymbol), meshAtt, doc);
+      }
+
+      if (Xaxis != null) {
+        ObjectAttributes lnAtt = att.Duplicate();
+        lnAtt.ObjectColor = Color.FromArgb(255, 244, 96, 96);
+        gH_BakeUtility.BakeObject(new GH_Line(Xaxis), lnAtt, doc);
+      }
+
+      if (Yaxis != null) {
+        ObjectAttributes lnAtt = att.Duplicate();
+        lnAtt.ObjectColor = Color.FromArgb(255, 96, 244, 96);
+        gH_BakeUtility.BakeObject(new GH_Line(Yaxis), lnAtt, doc);
+      }
+
+      if (Zaxis != null) {
+        ObjectAttributes lnAtt = att.Duplicate();
+        lnAtt.ObjectColor = Color.FromArgb(255, 96, 96, 234);
+        gH_BakeUtility.BakeObject(new GH_Line(Zaxis), lnAtt, doc);
+      }
+
+      if (Text != null) {
+        gH_BakeUtility.BakeObject(Text, att.Duplicate(), doc);
+      }
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
