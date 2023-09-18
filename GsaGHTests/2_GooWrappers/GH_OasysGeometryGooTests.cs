@@ -14,6 +14,7 @@ namespace GsaGHTests.GooWrappers {
       rhinoDocument.Views.DefaultViewLayout();
       DisplayPipeline displayPipeline = rhinoDocument.Views.ActiveView.DisplayPipeline;
       var grasshopperDocument = new GH_Document();
+      Grasshopper.CentralSettings.PreviewMeshEdges = true;
       MeshingParameters mp = grasshopperDocument.PreviewCurrentMeshParameters();
       var notSelectedMaterial = new DisplayMaterial {
         Diffuse = Color.FromArgb(255, 150, 0, 0),
