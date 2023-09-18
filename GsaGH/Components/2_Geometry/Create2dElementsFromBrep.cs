@@ -272,10 +272,8 @@ namespace GsaGH.Components {
       var gsaElement2D = new GsaElement2d();
 
       MeshMode2d meshMode2d = MeshMode2d.Tri;
-      bool triangulate = false;
       if (_selectedItems[0] == _meshMode[1]) {
         meshMode2d = MeshMode2d.Mixed;
-        triangulate = true;
       }
 
       if (_selectedItems[0] == _meshMode[2]) {
