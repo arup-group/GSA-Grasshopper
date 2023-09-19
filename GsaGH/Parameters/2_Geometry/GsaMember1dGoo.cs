@@ -114,7 +114,15 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value == null ? null : (GeometryBase)Value.PolyCurve;
+      if (Value == null) {
+        return null;
+      }
+
+      if (Value.Section3dPreview != null && Value.Section3dPreview.Mesh != null) {
+        return Value.Section3dPreview.Mesh;
+      }
+
+      return Value.PolyCurve;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
