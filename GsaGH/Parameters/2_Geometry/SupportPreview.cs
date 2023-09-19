@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using Grasshopper.Documentation;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
@@ -7,6 +9,7 @@ using Rhino;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
+using static System.Net.Mime.MediaTypeNames;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
@@ -18,33 +21,21 @@ namespace GsaGH.Parameters {
     public Line Zaxis { get; set; }
 
     public SupportPreview(GsaBool6 restraint, Plane localAxis, Point3d pt, bool isGlobalAxis) {
-      if (restraint.X & restraint.Y & restraint.Z & !restraint.Xx & !restraint.Yy & !restraint.Zz) {
-        Plane plane = localAxis.Clone();
-        if (!plane.IsValid) {
-          plane = Plane.WorldXY;
-        }
+      Plane plane = localAxis.Clone();
+      if (!plane.IsValid) {
+        plane = Plane.WorldXY;
+      }
+      plane.Origin = pt;
 
-        plane.Origin = pt;
+      if (restraint.X & restraint.Y & restraint.Z & !restraint.Xx & !restraint.Yy & !restraint.Zz) {
         var pin = new Cone(plane, -0.4, 0.4);
         SupportSymbol = pin.ToBrep(true);
       } else if (restraint.X & restraint.Y & restraint.Z & restraint.Xx & restraint.Yy
         & restraint.Zz) {
-        Plane plane = localAxis.Clone();
-        if (!plane.IsValid) {
-          plane = Plane.WorldXY;
-        }
-
-        plane.Origin = pt;
         var fix = new Box(plane, new Interval(-0.3, 0.3), new Interval(-0.3, 0.3),
           new Interval(-0.2, 0));
         SupportSymbol = fix.ToBrep();
       } else {
-        Plane plane = localAxis.Clone();
-        if (!plane.IsValid) {
-          plane = Plane.WorldXY;
-        }
-
-        plane.Origin = pt;
         string rest = string.Empty;
         if (restraint.X) {
           rest += "X";
@@ -80,16 +71,13 @@ namespace GsaGH.Parameters {
         return;
       }
 
-      Plane local = localAxis.Clone();
-      local.Origin = pt;
-
-      Xaxis = new Line(pt, local.XAxis, 0.5);
-      Yaxis = new Line(pt, local.YAxis, 0.5);
-      Zaxis = new Line(pt, local.ZAxis, 0.5);
+      Xaxis = new Line(pt, plane.XAxis, 0.5);
+      Yaxis = new Line(pt, plane.YAxis, 0.5);
+      Zaxis = new Line(pt, plane.ZAxis, 0.5);
     }
 
     public void BakeGeometry(
-      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+      ref GH_BakeUtility gH_BakeUtility, ref List<Guid> objIds, RhinoDoc doc, ObjectAttributes att) {
       att ??= doc.CreateDefaultAttributes();
       att.ColorSource = ObjectColorSource.ColorFromObject;
       ObjectAttributes meshAtt = att.Duplicate();
@@ -116,7 +104,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Text != null) {
-        gH_BakeUtility.BakeObject(Text, att.Duplicate(), doc);
+        objIds.Add(doc.Objects.AddText(Text, att));
       }
     }
 
