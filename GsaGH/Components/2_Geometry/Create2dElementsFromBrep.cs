@@ -272,10 +272,8 @@ namespace GsaGH.Components {
       var gsaElement2D = new GsaElement2d();
 
       MeshMode2d meshMode2d = MeshMode2d.Tri;
-      bool triangulate = false;
       if (_selectedItems[0] == _meshMode[1]) {
         meshMode2d = MeshMode2d.Mixed;
-        triangulate = true;
       }
 
       if (_selectedItems[0] == _meshMode[2]) {
@@ -284,7 +282,7 @@ namespace GsaGH.Components {
 
       Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple
         = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
-          unit, tolerance, meshMode2d, triangulate);
+          unit, tolerance, meshMode2d);
       gsaElement2D.Mesh = tuple.Item1;
       Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);

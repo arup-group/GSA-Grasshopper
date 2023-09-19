@@ -25,7 +25,6 @@ namespace GsaGH.Parameters {
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
         target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Mesh);
-
         return true;
       }
 
@@ -70,7 +69,15 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value == null ? null : (GeometryBase)Value.Mesh;
+      if (Value == null) {
+        return null;
+      }
+
+      if (Value.Section3dPreview != null && Value.Section3dPreview.Mesh != null) {
+        return Value.Section3dPreview.Mesh;
+      }
+
+      return Value.Mesh;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using Grasshopper;
@@ -73,13 +74,14 @@ namespace GsaGH.Parameters {
       Section3dPreview = other.Section3dPreview;
     }
 
+    [ExcludeFromCodeCoverage]
     [Obsolete("This method is only used by obsolete components and will be removed in GsaGH 1.0")]
     public GsaElement2d(
       Brep brep, List<Curve> curves, Point3dList points, double meshSize,
       List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance,
       int prop = 0) {
-      Mesh = RhinoConversions.ConvertBrepToMesh(
-        brep, points, nodes, curves, null, mem1ds, meshSize, unit, tolerance).Item1;
+      Mesh = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, null, mem1ds, 
+        meshSize, unit, tolerance, MeshMode2d.Mixed).Item1;
       Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, prop, true);
       ApiElements = convertMesh.Item1;
