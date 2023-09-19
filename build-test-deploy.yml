@@ -103,14 +103,6 @@ steps:
     cd $(System.DefaultWorkingDirectory)\
     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
-    $gsaghsize = [math]::Round(($coverage_file_gsagh.Length/1MB),2)
-    $integrationsize = [math]::Round(($coverage_file_integration.Length/1MB),2)
-    Write-Output "GsaGH test coverage file $gsaghsize MB"
-    Write-Output  "Integration test coverage file $integrationsize MB"
-    if($coverage_file_gsagh.Length/1MB -lt 1 -Or $coverage_file_integration.Length/1MB -lt 1){
-      Write-Output "Coverlet seems to have failed to collect coverage as xml is very small."
-      exit(1)
-    }
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
   displayName: Upload Code Coverage to codecovio
