@@ -18,20 +18,9 @@ namespace GsaGH.Graphics {
       pictureBox.Image = icon;
     }
 
-    private void AboutBox_Load(object sender, EventArgs e) { }
-
-
-    private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-      Process.Start(@"https://www.oasys-software.com/");
-    }
-
     private void OkButton_Click(object sender, EventArgs e) {
       Process.Start(ProcessString);
       Close();
-    }
-
-    private void LabelProductName_Click(object sender, EventArgs e) {
-
     }
   }
 }

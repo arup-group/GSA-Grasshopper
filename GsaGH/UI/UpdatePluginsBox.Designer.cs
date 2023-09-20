@@ -127,7 +127,6 @@ namespace GsaGH.Graphics
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Oasys plugin update available";
-      this.Load += new System.EventHandler(this.AboutBox_Load);
       this.tableLayoutPanel.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
       this.ResumeLayout(false);
@@ -140,7 +139,7 @@ namespace GsaGH.Graphics
     private System.Windows.Forms.Button okButton;
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.PictureBox pictureBox;
-    private System.Windows.Forms.Label textBox;
+    internal System.Windows.Forms.PictureBox pictureBox;
+    internal System.Windows.Forms.Label textBox;
   }
 }
