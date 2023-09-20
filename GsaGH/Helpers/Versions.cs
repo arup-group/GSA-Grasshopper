@@ -5,6 +5,7 @@ using System.Reflection;
 using Grasshopper;
 using Grasshopper.Kernel;
 using GsaGH.Graphics;
+using Rhino;
 
 namespace GsaGH.Helpers {
   internal class Versions {
@@ -22,13 +23,17 @@ namespace GsaGH.Helpers {
     }
     private static Version _oasysGhVersion = null;
 
-    internal static UpdatePluginsBox Check(bool? isAdSecOutdatedTest = null, bool? isComposOutdatedTest = null) {
-      bool isAdSecOutdated = isAdSecOutdatedTest ?? IsPluginOutdated(AdSecGuid);
-      bool isComposOutdated = isComposOutdatedTest ?? IsPluginOutdated(ComposGuid);
+    internal static void Check() {
+      bool isAdSecOutdated = IsPluginOutdated(AdSecGuid);
+      bool isComposOutdated = IsPluginOutdated(ComposGuid);
       if (!isAdSecOutdated && !isComposOutdated) {
-        return null;
+        return;
       }
 
+      CreatePluginBox(isAdSecOutdated, isComposOutdated);
+    }
+
+    internal static UpdatePluginsBox CreatePluginBox(bool isAdSecOutdated, bool isComposOutdated) { 
       string process = @"rhino://package/search?name=guid:";
       string text = "An update is available for ";
       string header = "Update ";
@@ -58,7 +63,7 @@ namespace GsaGH.Helpers {
 
       text += ".\n\nClick OK to update now.";
       var updateComposBox = new UpdatePluginsBox(header, text, process, icon);
-      if (isAdSecOutdatedTest == null && isComposOutdatedTest == null) {
+      if (!RhinoApp.IsRunningHeadless) {
         updateComposBox.ShowDialog();
       }
 
