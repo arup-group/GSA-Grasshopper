@@ -9,6 +9,7 @@ namespace GsaGH.Parameters {
   public class ReleasePreview {
     public List<Line> PreviewGreenLines { get; set; } = new List<Line>();
     public List<Line> PreviewRedLines { get; set; } = new List<Line>();
+    public List<Line> PreviewXXLines { get; set; } = new List<Line>();
 
     public ReleasePreview() { }
 
@@ -25,10 +26,10 @@ namespace GsaGH.Parameters {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
-          pt = crv.PointAtNormalizedLength(0.05);
+          pt = crv.PointAtNormalizedLength(0);
           scale = crv.GetLength();
         } else {
-          pt = crv.PointAtLength(0.05);
+          pt = crv.PointAtLength(0);
         }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
@@ -171,11 +172,11 @@ namespace GsaGH.Parameters {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
-          pt = crv.PointAtNormalizedLength(0.95);
+          pt = crv.PointAtNormalizedLength(1);
           scale = crv.GetLength();
         } else {
           double len = crv.GetLength();
-          pt = crv.PointAtLength(len - 0.05);
+          pt = crv.PointAtLength(len);
         }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
@@ -197,10 +198,7 @@ namespace GsaGH.Parameters {
         vec.Reverse();
         PreviewGreenLines.Add(new Line(pt1, vec));
         PreviewGreenLines.Add(new Line(pt2, vec));
-      } else {
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-      }
+      } 
 
       if (end.Y) {
         Point3d pt;
@@ -251,12 +249,7 @@ namespace GsaGH.Parameters {
         PreviewGreenLines.Add(new Line(pt3B, vecRev));
         PreviewGreenLines.Add(new Line(pt4A, vec));
         PreviewGreenLines.Add(new Line(pt4B, vecRev));
-      } else {
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-      }
+      } 
 
       if (end.Z) {
         Point3d pt;
@@ -307,12 +300,7 @@ namespace GsaGH.Parameters {
         PreviewGreenLines.Add(new Line(pt3B, vecRev));
         PreviewGreenLines.Add(new Line(pt4A, vec));
         PreviewGreenLines.Add(new Line(pt4B, vecRev));
-      } else {
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-        PreviewGreenLines.Add(Line.Unset);
-      }
+      } 
 
       #endregion
 
@@ -321,20 +309,18 @@ namespace GsaGH.Parameters {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
-          pt = crv.PointAtNormalizedLength(0.05);
+          pt = crv.PointAtNormalizedLength(0);
           scale = crv.GetLength();
         } else {
-          pt = crv.PointAtLength(0.05);
+          pt = crv.PointAtLength(0);
         }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
         var vec = new Vector3d(pln.Normal);
         vec.Unitize();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-        PreviewRedLines.Add(new Line(pt, vec));
-      } else {
-        PreviewRedLines.Add(Line.Unset);
-      }
+        PreviewXXLines.Add(new Line(pt, vec));
+      } 
 
       if (start.YY) {
         Point3d pt;
@@ -367,10 +353,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } else {
-        PreviewRedLines.Add(Line.Unset);
-        PreviewRedLines.Add(Line.Unset);
-      }
+      } 
 
       if (start.ZZ) {
         Point3d pt;
@@ -403,10 +386,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } else {
-        PreviewRedLines.Add(Line.Unset);
-        PreviewRedLines.Add(Line.Unset);
-      }
+      } 
 
       #endregion
 
@@ -415,11 +395,11 @@ namespace GsaGH.Parameters {
         Point3d pt;
         double scale = 1;
         if (crv.GetLength() < 1) {
-          pt = crv.PointAtNormalizedLength(0.95);
+          pt = crv.PointAtNormalizedLength(1);
           scale = crv.GetLength();
         } else {
           double len = crv.GetLength();
-          pt = crv.PointAtLength(len - 0.05);
+          pt = crv.PointAtLength(len);
         }
 
         crv.PerpendicularFrameAt(0.02, out Plane pln);
@@ -427,10 +407,8 @@ namespace GsaGH.Parameters {
         vec.Unitize();
         vec.Reverse();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-        PreviewRedLines.Add(new Line(pt, vec));
-      } else {
-        PreviewRedLines.Add(Line.Unset);
-      }
+        PreviewXXLines.Add(new Line(pt, vec));
+      } 
 
       if (end.YY) {
         Point3d pt;
@@ -464,10 +442,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } else {
-        PreviewRedLines.Add(Line.Unset);
-        PreviewRedLines.Add(Line.Unset);
-      }
+      } 
 
       if (end.ZZ) {
         Point3d pt;
@@ -501,17 +476,15 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } else {
-        PreviewRedLines.Add(Line.Unset);
-        PreviewRedLines.Add(Line.Unset);
-      }
+      } 
 
       #endregion
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      args.Pipeline.DrawLines(PreviewGreenLines, Colours.Support);
-      args.Pipeline.DrawLines(PreviewRedLines, Colours.Release);
+      args.Pipeline.DrawLines(PreviewGreenLines, Colours.Support, 2);
+      args.Pipeline.DrawLines(PreviewRedLines, Colours.Release, 2);
+      args.Pipeline.DrawLines(PreviewXXLines, Colours.Release, 4);
     }
   }
 }
