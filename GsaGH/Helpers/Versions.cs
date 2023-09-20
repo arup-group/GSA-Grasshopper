@@ -6,6 +6,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using GsaGH.Graphics;
 using Rhino;
+using Rhino.PlugIns;
 
 namespace GsaGH.Helpers {
   internal class Versions {
@@ -76,7 +77,10 @@ namespace GsaGH.Helpers {
         return false;
       }
 
-      Version pluginOasysGhVersion = GetOasyGhVersion(pluginInfo.Location);
+      return IsVersionOutdated(GetOasyGhVersion(pluginInfo.Location));
+    }
+
+    internal static bool IsVersionOutdated(Version pluginOasysGhVersion) {
       return pluginOasysGhVersion.CompareTo(OasysGhVersion) < 0;
     }
 

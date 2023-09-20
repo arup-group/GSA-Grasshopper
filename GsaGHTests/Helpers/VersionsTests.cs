@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using GsaGH.Graphics;
 using GsaGH.Helpers;
 using GsaGH.Properties;
@@ -7,15 +8,24 @@ using Xunit;
 namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class VersionsTests {
-    [Fact]
-    public void IsPluginOutdatedTest() {
-      Assert.False(Versions.IsPluginOutdated(GsaGH.GsaGhInfo.guid));
-    }
 
     [Fact]
     public void CheckTest() {
       Versions.Check();
       Assert.True(true);
+    }
+
+    [Fact]
+    public void IsPluginOutdatedTest() {
+      Assert.False(Versions.IsPluginOutdated(GsaGH.GsaGhInfo.guid));
+    }
+
+    [Theory]
+    [InlineData("0.0.1", true)]
+    [InlineData("2.0", false)]
+    public void IsVersionOutdatedTest(string version, bool expected) {
+      var v = new Version(version);
+      Assert.Equal(expected, Versions.IsVersionOutdated(v));
     }
 
     [Fact]
