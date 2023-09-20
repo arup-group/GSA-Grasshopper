@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -9,7 +10,6 @@ namespace GsaGH.Helpers {
   internal class Versions {
     internal static readonly Guid AdSecGuid = new Guid("f815c29a-e1eb-4ca6-9e56-0554777ff9c9");
     internal static readonly Guid ComposGuid = new Guid("c3884cdc-ac5b-4151-afc2-93590cef4f8f");
-    internal static readonly Guid GsaGuid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
 
     internal static Version OasysGhVersion {
       get {
@@ -22,11 +22,11 @@ namespace GsaGH.Helpers {
     }
     private static Version _oasysGhVersion = null;
 
-    internal static void Check() {
-      bool isAdSecOutdated = IsPluginOutdated(AdSecGuid);
-      bool isComposOutdated = IsPluginOutdated(ComposGuid);
+    internal static UpdatePluginsBox Check(bool? isAdSecOutdatedTest = null, bool? isComposOutdatedTest = null) {
+      bool isAdSecOutdated = isAdSecOutdatedTest ?? IsPluginOutdated(AdSecGuid);
+      bool isComposOutdated = isComposOutdatedTest ?? IsPluginOutdated(ComposGuid);
       if (!isAdSecOutdated && !isComposOutdated) {
-        return;
+        return null;
       }
 
       string process = @"rhino://package/search?name=guid:";
@@ -36,16 +36,16 @@ namespace GsaGH.Helpers {
 
       switch (isAdSecOutdated, isComposOutdated) {
         case (true, false):
-          text += "AdSec";
+          text += "AdSecGH Plugin";
           process += AdSecGuid;
-          header += "AdSecGH Plugin";
+          header += "AdSec";
           icon = Properties.Resources.AdSecGHUpdate;
           break;
 
         case (false, true):
-          text += "Compos";
+          text += "ComposGH Plugin";
           process += ComposGuid;
-          header += "ComposGH Plugin";
+          header += "Compos";
           icon = Properties.Resources.ComposGHUpdate;
           break;
 
@@ -58,10 +58,14 @@ namespace GsaGH.Helpers {
 
       text += ".\n\nClick OK to update now.";
       var updateComposBox = new UpdatePluginsBox(header, text, process, icon);
-      updateComposBox.ShowDialog();
+      if (isAdSecOutdatedTest == null && isComposOutdatedTest == null) {
+        updateComposBox.ShowDialog();
+      }
+
+      return updateComposBox;
     }
 
-    private static bool IsPluginOutdated(Guid guid) {
+    internal static bool IsPluginOutdated(Guid guid) {
       GH_AssemblyInfo pluginInfo = Instances.ComponentServer.FindAssembly(guid);
       if (pluginInfo == null) {
         return false;
@@ -77,7 +81,8 @@ namespace GsaGH.Helpers {
     }
 
     private static Version GetOasyGhVersion(string path) {
-      var oasyGh = AssemblyName.GetAssemblyName(path + @"\OasysGH.dll");
+      string file = Path.Combine(Path.GetDirectoryName(path), "OasysGH.dll");
+      var oasyGh = AssemblyName.GetAssemblyName(file);
       return oasyGh.Version;
     }
   }
