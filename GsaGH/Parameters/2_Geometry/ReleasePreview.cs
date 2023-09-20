@@ -178,7 +178,7 @@ namespace GsaGH.Parameters {
           pt = crv.PointAtLength(len - 0.05);
         }
 
-        crv.PerpendicularFrameAt(0.98, out Plane pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angleRadian, pln.Normal);
         var vec1 = new Vector3d(pln.XAxis);
         vec1.Unitize();
