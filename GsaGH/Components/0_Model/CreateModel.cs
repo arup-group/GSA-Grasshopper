@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -33,10 +34,9 @@ namespace GsaGH.Components {
     private List<bool> _initialCheckState = new List<bool>() {
       true,
     };
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private bool _reMesh = true;
-    private Length _tolerance = DefaultUnits.Tolerance;
-    private string _toleranceTxt = string.Empty;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
     public CreateModel() : base("Create Model", "Model", "Assemble a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
@@ -44,36 +44,7 @@ namespace GsaGH.Components {
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
-      }
-
-      Menu_AppendSeparator(menu);
-
-      var tolerance = new ToolStripTextBox();
-      _toleranceTxt = _tolerance.ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
-      tolerance.Text = _toleranceTxt;
-      tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
-      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
-
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-
-      //only for init submenu
-      var useless = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateMessage();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
-      menu.Items.Add(toleranceMenu);
-
-      Menu_AppendSeparator(menu);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
+      ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
     }
 
     public override void CreateAttributes() {
@@ -104,12 +75,12 @@ namespace GsaGH.Components {
 
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
-        _tolerance = new Length(tol, _lengthUnit);
+        ToleranceMenu.Tolerance = new Length(tol, _lengthUnit);
       } else {
-        _tolerance = DefaultUnits.Tolerance;
+        ToleranceMenu.Tolerance = DefaultUnits.Tolerance;
       }
 
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       return base.Read(reader);
     }
 
@@ -120,7 +91,7 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
       base.UpdateUI();
     }
 
@@ -130,13 +101,13 @@ namespace GsaGH.Components {
 
     public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("ReMesh", _reMesh);
-      writer.SetDouble("Tolerance", _tolerance.Value);
+      writer.SetDouble("Tolerance", ToleranceMenu.Tolerance.Value);
       return base.Write(writer);
     }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
     }
 
     protected override void InitialiseDropdowns() {
@@ -186,8 +157,8 @@ namespace GsaGH.Components {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) =
         GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
-      (List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds)
-        = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
+      (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds, 
+        List<GsaProperty3d> prop3Ds) = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
         List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
@@ -197,8 +168,8 @@ namespace GsaGH.Components {
         = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
       if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
-        & elem2ds is null & mem1ds is null & mem2ds is null & mem3ds is null & sections is null
-        & prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
+        & elem2ds is null & mem1ds is null & mem2ds is null & mem3ds is null & materials is null
+        & sections is null & prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
@@ -208,17 +179,17 @@ namespace GsaGH.Components {
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
-            ? MergeModels.MergeModel(models, this, _tolerance) :
+            ? MergeModels.MergeModel(models, this, ToleranceMenu.Tolerance) :
             models[0].Clone();
         }
       }
       // Assemble model
       model.Model = Assembler.AssembleModel(
-        model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
-        sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, analysisTasks,
-        combinationCases, _lengthUnit, _tolerance, _reMesh, this);
+        model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
+        materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
+        analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
 
-      UpdateMessage();
+      ToleranceMenu.UpdateMessage(this, _lengthUnit);
 
       da.SetData(0, new GsaModelGoo(model));
     }
@@ -226,35 +197,6 @@ namespace GsaGH.Components {
     protected override void UpdateUIFromSelectedItems() {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
-    }
-
-    private void MaintainText(ToolStripItem tolerance) {
-      _toleranceTxt = tolerance.Text;
-      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _) ?
-        Color.FromArgb(255, 180, 255, 150) : Color.FromArgb(255, 255, 100, 100);
-    }
-
-    private void UpdateMessage() {
-      if (_toleranceTxt != string.Empty) {
-        try {
-          _tolerance = Length.Parse(_toleranceTxt);
-        } catch (Exception e) {
-          MessageBox.Show(e.Message);
-          return;
-        }
-      }
-
-      _tolerance = _tolerance.ToUnit(_lengthUnit);
-      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
-      if (_tolerance.Meters < 0.001) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite small, you can change this by right-clicking the component.");
-      }
-
-      if (_tolerance.Meters > 0.25) {
-        this.AddRuntimeRemark(
-          "Set tolerance is quite large, you can change this by right-clicking the component.");
-      }
     }
   }
 }

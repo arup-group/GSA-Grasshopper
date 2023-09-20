@@ -42,14 +42,14 @@ namespace GsaGH.Helpers.Export {
       GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, List<GsaNode> nodes, 
       List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds, 
       List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds, 
-      List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds, 
-      List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, 
+      List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds, 
+      List<GsaProperty3d> prop3Ds, List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, 
       List<GsaLoadCase> loadCases, List<GsaAnalysisTask> analysisTasks, 
       List<GsaCombinationCase> combinations, LengthUnit modelUnit, 
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
       var assembledModel = new ModelAssembly(model, modelUnit);
       assembledModel.ConvertNodes(nodes);
-      assembledModel.ConvertProperties(sections, prop2Ds, prop3Ds);
+      assembledModel.ConvertProperties(mats, sections, prop2Ds, prop3Ds);
       assembledModel.ConvertElements(elem1ds, elem2ds, elem3ds);
       assembledModel.ConvertMembers(mem1ds, mem2ds, mem3ds);
       assembledModel.ConvertNodeList(lists);

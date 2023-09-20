@@ -94,7 +94,15 @@ namespace GsaGH.Parameters {
     }
 
     public override GeometryBase GetGeometry() {
-      return Value == null ? null : (GeometryBase)Value.Line;
+      if (Value == null) {
+        return null;
+      }
+
+      if (Value.Section3dPreview != null && Value.Section3dPreview.Mesh != null) {
+        return Value.Section3dPreview.Mesh;
+      }
+
+      return Value.Line;
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

@@ -68,7 +68,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaDiagramGoo), typeof(GsaVectorDiagram))]
     [InlineData(typeof(GsaAnnotationGoo), typeof(GsaAnnotation3d))]
     [InlineData(typeof(GsaAnnotationGoo), typeof(GsaAnnotationDot))]
-    public void GenericGH_OasysGeometricGooTest(
+    public void GenericGH_OasysGooTest(
       Type gooType, Type wrapType, bool excludeGuid = false) {
       object value = Activator.CreateInstance(wrapType, true);
       object[] parameters = {

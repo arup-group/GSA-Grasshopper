@@ -70,6 +70,10 @@ namespace GsaGH.Parameters {
         return null;
       }
 
+      if (Value.SupportPreview != null && Value.SupportPreview.SupportSymbol != null) {
+        return Value.SupportPreview.SupportSymbol;
+      }
+
       Point3d pt1 = Value.Point;
       pt1.Z += DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry) / 2;
       Point3d pt2 = Value.Point;
@@ -85,6 +89,7 @@ namespace GsaGH.Parameters {
       var pt = new Point3d(node.Point);
       xmorph.MorphPoint(pt);
       node.Point = pt;
+      node.UpdatePreview();
       return new GsaNodeGoo(node);
     }
 
@@ -95,6 +100,7 @@ namespace GsaGH.Parameters {
       var pt = new Point3d(node.Point);
       pt.Transform(xform);
       node.Point = pt;
+      node.UpdatePreview();
       return new GsaNodeGoo(node);
     }
   }

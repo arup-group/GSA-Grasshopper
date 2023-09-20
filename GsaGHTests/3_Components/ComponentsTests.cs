@@ -22,7 +22,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateSection), 1)]
     [InlineData(typeof(CreateSectionModifier), 3)]
     //Geometry
-    [InlineData(typeof(Create2dElementsFromBrep), 1)]
+    [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
     //Loads
@@ -98,7 +98,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateSection), "Centroid", "BottomRight")]
     [InlineData(typeof(CreateSectionModifier), "Modify by", "Modify to")]
     //Geometry
-    [InlineData(typeof(Create2dElementsFromBrep), "m", "ft")]
+    [InlineData(typeof(Create2dElementsFromBrep), "Tri-6 only", "Quad-8 only")]
     [InlineData(typeof(CreateElementsFromMembers), "m", "ft")]
     [InlineData(typeof(SectionAlignment), "Centroid", "BottomRight")]
     //Loads
