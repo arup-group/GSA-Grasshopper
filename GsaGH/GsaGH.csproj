@@ -115,12 +115,18 @@ Copyright © Oasys 1985 - 2022</Description>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="UI\UpdatePluginsBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\UpdatePluginsBox.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   
