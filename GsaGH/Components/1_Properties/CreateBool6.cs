@@ -8,6 +8,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Components.Utility;
 using OasysGH.UI;
 
 namespace GsaGH.Components {
@@ -30,7 +31,7 @@ namespace GsaGH.Components {
       GsaBool6Goo.NickName.Replace(" ", string.Empty), "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
-      //InputParameterCacheManager = new InputParameterCacheManager(new OasysUnitsParameterExpirationManager());
+      InputParameterCacheManager = new InputParameterCacheManager(new DuplicateExpirationManager());
     }
 
     public override void CreateAttributes() {

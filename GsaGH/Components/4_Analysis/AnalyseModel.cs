@@ -15,6 +15,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Components.Utility;
 using OasysGH.Helpers;
 using OasysGH.UI;
 using OasysGH.Units;
@@ -48,6 +49,7 @@ namespace GsaGH.Components {
     public AnalyseModel() : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
       CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
+      InputParameterCacheManager = new InputParameterCacheManager(new DuplicateExpirationManager());
     }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
