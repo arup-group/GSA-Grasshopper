@@ -22,6 +22,7 @@ namespace GsaGHTests.Helpers {
 
     [Theory]
     [InlineData("0.0.1", true)]
+    [InlineData("0.2.2147483647", true)]
     [InlineData("2.0", false)]
     public void IsVersionOutdatedTest(string version, bool expected) {
       var v = new Version(version);
