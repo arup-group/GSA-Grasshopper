@@ -42,21 +42,21 @@ namespace GsaGH.Helpers {
 
       switch (isAdSecOutdated, isComposOutdated) {
         case (true, false):
-          text += "AdSecGH Plugin";
+          text += "AdSec";
           process += AdSecGuid;
           header += "AdSec";
           icon = Properties.Resources.AdSecGHUpdate;
           break;
 
         case (false, true):
-          text += "ComposGH Plugin";
+          text += "Compos";
           process += ComposGuid;
           header += "Compos";
           icon = Properties.Resources.ComposGHUpdate;
           break;
 
         default:
-          text = "Updates are avaiable for AdSecGH and ComposGH";
+          text = "Updates are available for AdSec and Compos";
           process = @"rhino://package/search?name=oasys";
           header += "Oasys Plugins";
           break;
