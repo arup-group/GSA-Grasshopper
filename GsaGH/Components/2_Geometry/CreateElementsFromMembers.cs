@@ -16,6 +16,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Components.Utility;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -37,7 +38,9 @@ namespace GsaGH.Components {
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
     public CreateElementsFromMembers() : base("Create Elements from Members", "ElemFromMem",
-      "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) { }
+      "Create Elements from Members", CategoryName.Name(), SubCategoryName.Cat2()) {
+      InputParameterCacheManager = new InputParameterCacheManager(new DuplicateExpirationManager());
+    }
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);

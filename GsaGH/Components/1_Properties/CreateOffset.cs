@@ -7,6 +7,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Components.Utility;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
@@ -27,6 +28,7 @@ namespace GsaGH.Components {
     public CreateOffset() : base("Create Offset", "Offset", "Create an GSA Offset",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
+      InputParameterCacheManager = new InputParameterCacheManager(new DuplicateExpirationManager());
     }
 
     public override void SetSelected(int i, int j) {

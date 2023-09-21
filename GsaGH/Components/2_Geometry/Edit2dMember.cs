@@ -156,7 +156,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInstance (IGH_DataAccess da) {
       var mem = new GsaMember2d();
 
       GsaMember2dGoo member2dGoo = null;

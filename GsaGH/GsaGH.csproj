@@ -61,11 +61,13 @@ Copyright © Oasys 1985 - 2022</Description>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
-    <PackageReference Include="OasysGH" Version="0.6.13-beta" />
+    <PackageReference Include="OasysUnits.NumberExtensions" Version="1.0.0" />
+    <PackageReference Include="OasysUnits.Serialization.JsonNet" Version="1.0.0" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   
   <ItemGroup>
@@ -78,11 +80,15 @@ Copyright © Oasys 1985 - 2022</Description>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="OasysGH">
+      <HintPath>..\..\OasysGH\OasysGH\bin\x64\Debug\net48\OasysGH.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />

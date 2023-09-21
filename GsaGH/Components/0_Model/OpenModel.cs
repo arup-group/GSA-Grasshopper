@@ -116,6 +116,7 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
+
       PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
         (int)(new FileInfo(fileName).Length / 1024));
     }

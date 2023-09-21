@@ -30,6 +30,7 @@ namespace GsaGH.Components {
       GsaBool6Goo.NickName.Replace(" ", string.Empty), "Create a " + GsaBool6Goo.Description,
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
+      //InputParameterCacheManager = new InputParameterCacheManager(new OasysUnitsParameterExpirationManager());
     }
 
     public override void CreateAttributes() {

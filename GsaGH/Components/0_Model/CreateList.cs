@@ -66,21 +66,21 @@ namespace GsaGH.Components {
         + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
 
-    protected override void SolveInternal(IGH_DataAccess DA) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var list = new GsaList() {
         EntityType = _type,
       };
       int id = 0;
-      if (DA.GetData(0, ref id)) {
+      if (da.GetData(0, ref id)) {
         list.Id = id;
       }
 
       string name = _type.ToString() + " List";
-      if (DA.GetData(1, ref name)) {
+      if (da.GetData(1, ref name)) {
         list.Name = name;
       }
 
-      List<object> listGooObjects = Inputs.GetGooObjectsForLists(this, DA, 2, _type);
+      List<object> listGooObjects = Inputs.GetGooObjectsForLists(this, da, 2, _type);
 
       try {
         list.SetListGooObjects(listGooObjects);
@@ -113,7 +113,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      DA.SetData(0, new GsaListGoo(list));
+      da.SetData(0, new GsaListGoo(list));
     }
 
     protected override void UpdateUIFromSelectedItems() {

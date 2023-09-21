@@ -9,6 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Components.Utility;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
@@ -53,6 +54,7 @@ namespace GsaGH.Components {
       "Create a Custom GSA Analysis Material",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
+      InputParameterCacheManager = new InputParameterCacheManager(new DuplicateExpirationManager());
     }
 
     public override void SetSelected(int i, int j) {
@@ -213,8 +215,6 @@ namespace GsaGH.Components {
           material = new GsaCustomMaterial(analysisMaterial, id, MatType.Fabric);
           break;
       }
-
-      
 
       da.SetData(0, new GsaMaterialGoo(material));
     }
