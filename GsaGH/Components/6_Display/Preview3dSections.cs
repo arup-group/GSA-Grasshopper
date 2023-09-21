@@ -73,6 +73,13 @@ namespace GsaGH.Components {
       pManager.HideParameter(3);
     }
 
+    protected override void BeforeSolveInstance() {
+      // reset preview
+      _analysisSection3dPreview = null;
+      _designSection3dPreview = null;
+      base.BeforeSolveInstance();
+    }
+
     protected override void SolveInternal(IGH_DataAccess da) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(0, ghTypes)) {
@@ -161,9 +168,6 @@ namespace GsaGH.Components {
         // Assemble model
         GsaAPI.Model previewModel = Assembler.AssembleForPreview(
           model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
-
-        _analysisSection3dPreview = null;
-        _designSection3dPreview = null;
 
         var steps = new List<int> {
         0, 1,
