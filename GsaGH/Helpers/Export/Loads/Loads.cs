@@ -52,7 +52,10 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertLoad(IGsaLoad load, ref ModelAssembly model, GH_Component owner) {
       ConvertLoadCase(load.LoadCase, ref model, owner);
-      load.CaseId = load.LoadCase.Id;
+      if (load.LoadCase != null) {
+        load.CaseId = load.LoadCase.Id;
+      }
+
       switch (load) {
         case GsaGravityLoad gravity:
           ConvertGravityLoad(gravity, ref model, owner);
@@ -90,7 +93,7 @@ namespace GsaGH.Helpers.Export {
 
     internal static void ConvertLoadCase(
       GsaLoadCase loadCase, ref ModelAssembly model, GH_Component owner) {
-      if (loadCase == null) {
+      if (loadCase == null || loadCase.LoadCase == null) {
         return;
       }
 
@@ -99,15 +102,16 @@ namespace GsaGH.Helpers.Export {
         LoadCase newCase = loadCase.LoadCase;
         if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
           model.Loads.LoadCases[loadCase.Id] = newCase;
+
           owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
-           $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
+           $"or two load cases with ID:{loadCase.Id} were added.{Environment.NewLine}" +
            $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
         }
-      } else {
-        if (loadCase.LoadCase != null) {
-          model.Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
-        }
+
+        return;
       }
+
+      model.Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
     }
 
     private static void ConvertGridAreaLoad(GsaGridAreaLoad load, ref ModelAssembly model, GH_Component owner) {

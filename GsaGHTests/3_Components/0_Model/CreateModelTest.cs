@@ -153,7 +153,7 @@ namespace GsaGHTests.Model {
       comp.Params.Input[3].DataMapping = GH_DataMapping.Flatten;
       if (loads != null) {
         foreach (IGsaLoad input in loads) {
-          ComponentTestHelper.SetInput(comp, input, 3);
+          ComponentTestHelper.SetInput(comp, new GsaLoadGoo(input), 3);
         }
       }
 
