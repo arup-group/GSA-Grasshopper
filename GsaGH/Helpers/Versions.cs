@@ -24,17 +24,20 @@ namespace GsaGH.Helpers {
     }
     private static Version _oasysGhVersion = null;
 
-    internal static void Check() {
+    internal static void CheckAndShowDialogue() {
       bool isAdSecOutdated = IsPluginOutdated(AdSecGuid);
       bool isComposOutdated = IsPluginOutdated(ComposGuid);
       if (!isAdSecOutdated && !isComposOutdated) {
         return;
       }
 
-      CreatePluginBox(isAdSecOutdated, isComposOutdated);
+      UpdatePluginsBox dialogue = CreatePluginUpdateDialogue(isAdSecOutdated, isComposOutdated);
+      if (!RhinoApp.IsRunningHeadless) {
+        dialogue.ShowDialog();
+      }
     }
 
-    internal static UpdatePluginsBox CreatePluginBox(bool isAdSecOutdated, bool isComposOutdated) { 
+    internal static UpdatePluginsBox CreatePluginUpdateDialogue(bool isAdSecOutdated, bool isComposOutdated) { 
       string process = @"rhino://package/search?name=guid:";
       string text = "An update is available for ";
       string header = "Update ";
@@ -64,10 +67,6 @@ namespace GsaGH.Helpers {
 
       text += ".\n\nClick OK to update now.";
       var updateComposBox = new UpdatePluginsBox(header, text, process, icon);
-      if (!RhinoApp.IsRunningHeadless) {
-        updateComposBox.ShowDialog();
-      }
-
       return updateComposBox;
     }
 

@@ -11,7 +11,7 @@ namespace GsaGHTests.Helpers {
 
     [Fact]
     public void CheckTest() {
-      Versions.Check();
+      Versions.CheckAndShowDialogue();
       Assert.True(true);
     }
 
@@ -30,7 +30,7 @@ namespace GsaGHTests.Helpers {
 
     [Fact]
     public void CheckAdSecIsOutdatedTest() {
-      UpdatePluginsBox box = Versions.CreatePluginBox(true, false);
+      UpdatePluginsBox box = Versions.CreatePluginUpdateDialogue(true, false);
 
       string text = "An update is available for AdSecGH Plugin.\n\nClick OK to update now.";
       string header = "Update AdSec";
@@ -41,7 +41,7 @@ namespace GsaGHTests.Helpers {
 
     [Fact]
     public void CheckComposIsOutdatedTest() {
-      UpdatePluginsBox box = Versions.CreatePluginBox(false, true);
+      UpdatePluginsBox box = Versions.CreatePluginUpdateDialogue(false, true);
 
       string text = "An update is available for ComposGH Plugin.\n\nClick OK to update now.";
       string header = "Update Compos";
@@ -52,7 +52,7 @@ namespace GsaGHTests.Helpers {
 
     [Fact]
     public void CheckBothAreOutdatedTest() {
-      UpdatePluginsBox box = Versions.CreatePluginBox(true, true);
+      UpdatePluginsBox box = Versions.CreatePluginUpdateDialogue(true, true);
 
       string text = "Updates are avaiable for AdSecGH and ComposGH.\n\nClick OK to update now.";
       string header = "Update Oasys Plugins";

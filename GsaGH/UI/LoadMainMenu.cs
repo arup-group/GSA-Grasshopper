@@ -36,7 +36,7 @@ namespace GsaGH.Graphics.Menu {
       }
      
       Instances.CanvasCreated -= OnStartup;
-      Versions.Check();
+      Versions.CheckAndShowDialogue();
     }
 
     internal static void PopulateSub(ToolStripMenuItem menuItem) {
