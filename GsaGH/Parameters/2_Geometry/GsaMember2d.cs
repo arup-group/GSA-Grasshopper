@@ -104,8 +104,8 @@ namespace GsaGH.Parameters {
       TopologyType = other.TopologyType;
 
       VoidCurves = other.VoidCurves?.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
-      VoidTopology = VoidTopology;
-      VoidTopologyType = VoidTopologyType;
+      VoidTopology = other.VoidTopology;
+      VoidTopologyType = other.VoidTopologyType;
 
       InclusionLines = other.InclusionLines?.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
       InclusionLinesTopology = other.InclusionLinesTopology;
