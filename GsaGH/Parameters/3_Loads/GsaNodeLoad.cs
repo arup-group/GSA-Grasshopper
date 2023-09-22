@@ -5,7 +5,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   public class GsaNodeLoad : IGsaLoad {
-    public NodeLoad ApiLoad { get; set; } = new NodeLoad();
+    public NodeLoad ApiLoad { get; set; }
     public NodeLoadType Type { get; set; }
     public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType { get; set; } = ReferenceType.None;
@@ -25,6 +25,7 @@ namespace GsaGH.Parameters {
     internal Point3d _refPoint = Point3d.Unset;
 
     public GsaNodeLoad() {
+      ApiLoad = new NodeLoad();
       Type = NodeLoadType.NodeLoad;
     }
 

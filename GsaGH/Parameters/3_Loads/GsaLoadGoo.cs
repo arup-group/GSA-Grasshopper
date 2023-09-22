@@ -1,10 +1,8 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers;
-using GsaGH.Parameters.Enums;
 using OasysGH;
 using OasysGH.Parameters;
-using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -113,8 +111,8 @@ namespace GsaGH.Parameters {
       }
 
       string caseid = $"LC{Value.CaseId}";
-      string type = Value.GetType().ToString()
-       .Replace("Gsa", string.Empty).Replace("Load", string.Empty);
+      string type = Value.GetType().ToString().Replace("Gsa", string.Empty)
+       .Replace("GH.Parameters.", string.Empty).Replace("Load", string.Empty);
       string name = Value.Name;
       string value = string.Join(" ", caseid, type, name).TrimSpaces();
       return $"{PluginInfo.ProductName} {TypeName} ({value})";

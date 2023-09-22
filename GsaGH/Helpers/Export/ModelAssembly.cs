@@ -112,7 +112,7 @@ namespace GsaGH.Helpers.Export {
         || (!member3ds.IsNullOrEmpty())) {
         _deleteResults = true;
       }
-
+      
       Export.Members.ConvertMember1ds(member1ds, ref Members, ref Nodes, Unit, ref Properties);
       Export.Members.ConvertMember2ds(
         member2ds, ref Members, ref Nodes, Unit, ref Properties, ref Axes);

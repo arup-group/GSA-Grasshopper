@@ -55,7 +55,9 @@ namespace GsaGH.Helpers.Export.Load {
           load.ReferenceList, ref apiLists, ref apiNodes, unit);
       }
 
-      load.CaseId = load.LoadCase.Id;
+      if (load.LoadCase != null) {
+        load.CaseId = load.LoadCase.Id;
+      }
 
       switch (load.Type) {
         case NodeLoadType.AppliedDisp:
