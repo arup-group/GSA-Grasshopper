@@ -22,7 +22,7 @@ namespace GsaGH.Components {
     internal Line _previewYaxis;
     internal Line _previewZaxis;
     protected override Bitmap Icon => Resources.LocalAxes;
-    public LocalAxes() : base("Local Axes", "Axes", 
+    public LocalAxes() : base("Local Axes", "Axes",
       "Get the local axes from a 1D Element or Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
@@ -69,49 +69,51 @@ namespace GsaGH.Components {
       Parameters.LocalAxes axes;
       switch (ghTyp.Value) {
         case GsaMember1dGoo memberGoo: {
-          if (memberGoo == null || memberGoo.Value == null) {
-            this.AddRuntimeError("Input is null");
-            return;
+            if (memberGoo == null || memberGoo.Value == null) {
+              this.AddRuntimeError("Input is null");
+              return;
+            }
+
+            member = memberGoo.Value;
+            axes = member.LocalAxes;
+            if (axes == null) {
+              var assembly = new ModelAssembly(member);
+              var model = new GsaModel {
+                Model = assembly.GetModel()
+              };
+
+              axes = new Parameters.LocalAxes(model.Model.MemberDirectionCosine(1));
+              this.AddRuntimeWarning(
+                "Members´s local axes might deviate from the local axes in the assembled GSA model.");
+            }
+
+            midPt = member.PolyCurve.PointAtNormalizedLength(0.5);
+            size = member.PolyCurve.GetLength() * 0.05;
+            break;
           }
-
-          member = memberGoo.Value;
-          axes = member.LocalAxes;
-          if (axes == null) {
-            var model = new GsaModel {
-              Model = Assembler.AssembleForLocalAxis(member)
-            };
-
-            axes = new Parameters.LocalAxes(model.Model.MemberDirectionCosine(1));
-            this.AddRuntimeWarning(
-              "Members´s local axes might deviate from the local axes in the assembled GSA model.");
-          }
-
-          midPt = member.PolyCurve.PointAtNormalizedLength(0.5);
-          size = member.PolyCurve.GetLength() * 0.05;
-          break;
-        }
         case GsaElement1dGoo elementGoo: {
-          if (elementGoo == null || elementGoo.Value == null) {
-            this.AddRuntimeError("Input is null");
-            return;
+            if (elementGoo == null || elementGoo.Value == null) {
+              this.AddRuntimeError("Input is null");
+              return;
+            }
+
+            element = elementGoo.Value;
+            axes = element.LocalAxes;
+            if (axes == null) {
+              var assembly = new ModelAssembly(element);
+              var model = new GsaModel() {
+                Model = assembly.GetModel()
+              };
+
+              axes = new Parameters.LocalAxes(model.Model.ElementDirectionCosine(1));
+              this.AddRuntimeWarning(
+                "Element´s local axes might deviate from the local axes in the assembled GSA model.");
+            }
+
+            midPt = element.Line.PointAtNormalizedLength(0.5);
+            size = element.Line.GetLength() * 0.05;
+            break;
           }
-
-          element = elementGoo.Value;
-          axes = element.LocalAxes;
-          if (axes == null) {
-            var model = new GsaModel() {
-              Model = Assembler.AssembleForLocalAxis(element)
-            };
-
-            axes = new Parameters.LocalAxes(model.Model.ElementDirectionCosine(1));
-            this.AddRuntimeWarning(
-              "Element´s local axes might deviate from the local axes in the assembled GSA model.");
-          }
-
-          midPt = element.Line.PointAtNormalizedLength(0.5);
-          size = element.Line.GetLength() * 0.05;
-          break;
-        }
         default:
           this.AddRuntimeError("Unable to convert input to Element1D or Member1D");
           return;

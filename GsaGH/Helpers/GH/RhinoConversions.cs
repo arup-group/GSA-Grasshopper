@@ -209,12 +209,13 @@ namespace GsaGH.Helpers.GH {
       mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
       mem.ApiMember.MeshMode2d = meshMode;
 
-      Model model = Assembler.AssembleModel(
-        null, null, null, nodes, elem1ds, null, null, mem1ds,
-        new List<GsaMember2d> {
+      var assembly = new ModelAssembly(
+       null, null, null, nodes, elem1ds, null, null, mem1ds,
+       new List<GsaMember2d> {
           mem,
-        },
-        null, null, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
+       },
+       null, null, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
+      Model model = assembly.GetModel();
 
       var tempModel = new GsaModel(model);
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
@@ -618,7 +619,7 @@ namespace GsaGH.Helpers.GH {
             throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
               "3D Element type");
         }
-        
+
         faceInts.Add(faces);
         elems.Add(elem);
       }

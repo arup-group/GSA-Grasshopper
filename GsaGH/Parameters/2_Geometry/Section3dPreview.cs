@@ -133,8 +133,8 @@ namespace GsaGH.Parameters {
       var model = new Model();
       LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       var topo = new List<int> {
-        model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.From, unit)),
-        model.AddNode(Nodes.NodeFromPoint(elem.Line.Line.To, unit))
+        model.AddNode(ModelAssembly.NodeFromPoint(elem.Line.Line.From, unit)),
+        model.AddNode(ModelAssembly.NodeFromPoint(elem.Line.Line.To, unit))
       };
       Element elem1d = elem.DuplicateApiObject();
       elem1d.Topology = new ReadOnlyCollection<int>(topo);
@@ -149,7 +149,7 @@ namespace GsaGH.Parameters {
       string topo = string.Empty;
       for (int i = 0; i < mem.Topology.Count; i++) {
         int id = model.AddNode(
-          Nodes.NodeFromPoint(mem.Topology[i], unit));
+          ModelAssembly.NodeFromPoint(mem.Topology[i], unit));
         topo += $" {mem.TopologyType[i]}{id}";
       };
       Member mem1d = mem.DuplicateApiObject();
@@ -165,7 +165,7 @@ namespace GsaGH.Parameters {
       for (int i = 0; i < elem.ApiElements.Count; i++) {
         var topo = new List<int>();
         foreach (int id in elem.TopoInt[i]) {
-          topo.Add(model.AddNode(Nodes.NodeFromPoint(elem.Topology[id], unit)));
+          topo.Add(model.AddNode(ModelAssembly.NodeFromPoint(elem.Topology[id], unit)));
         };
         Element element = elem.ApiElements[i];
         element.Topology = new ReadOnlyCollection<int>(topo);
@@ -181,7 +181,7 @@ namespace GsaGH.Parameters {
       LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       string topo = string.Empty;
       for (int i = 0; i < mem.Topology.Count; i++) {
-        int id = model.AddNode(Nodes.NodeFromPoint(mem.Topology[i], unit));
+        int id = model.AddNode(ModelAssembly.NodeFromPoint(mem.Topology[i], unit));
         topo += $" {mem.TopologyType[i]}{id}";
       };
       Member mem2d = mem.DuplicateApiObject();

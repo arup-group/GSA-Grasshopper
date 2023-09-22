@@ -274,9 +274,10 @@ namespace GsaGH.Components {
         return;
       }
 
-      Model gsa = Assembler.AssembleModel(
+      var assembly = new ModelAssembly(
         null, null, null, inNodes, null, null, null, inMem1ds, inMem2ds, inMem3ds,
         null, null, null, null, null, null, null, null, null, _lengthUnit, ToleranceMenu.Tolerance, true, this);
+      Model gsa = assembly.GetModel();
 
       var outModel = new GsaModel {
         Model = gsa,

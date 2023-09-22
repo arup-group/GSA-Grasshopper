@@ -166,8 +166,9 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        GsaAPI.Model previewModel = Assembler.AssembleForPreview(
-          model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        var assembly = new ModelAssembly(
+           model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
         0, 1,

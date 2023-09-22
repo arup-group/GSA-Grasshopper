@@ -3,11 +3,11 @@ using GsaAPI;
 using OasysGH.Units;
 
 namespace GsaGH.Helpers.Export {
-  internal class Axes {
-    internal static int TryGetExistingAxisId(ref GsaIntDictionary<Axis> apiAxes, Axis testAxis) {
+  internal partial class ModelAssembly {
+    internal int TryGetExistingAxisId(Axis testAxis) {
       double tolerance = DefaultUnits.Tolerance.Meters;
-      foreach (int key in apiAxes.ReadOnlyDictionary.Keys) {
-        if (!apiAxes.ReadOnlyDictionary.TryGetValue(key, out Axis gsaAxis)) {
+      foreach (int key in Axes.ReadOnlyDictionary.Keys) {
+        if (!Axes.ReadOnlyDictionary.TryGetValue(key, out Axis gsaAxis)) {
           continue;
         }
 
@@ -26,7 +26,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      return apiAxes.AddValue(testAxis);
+      return Axes.AddValue(testAxis);
     }
   }
 }

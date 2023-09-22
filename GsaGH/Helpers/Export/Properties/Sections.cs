@@ -3,20 +3,19 @@ using System.Linq;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
-  internal class Sections {
-    internal static void ConvertSections(List<GsaSection> sections, ref Properties apiProperties) {
+  internal partial class ModelAssembly {
+    internal void ConvertSections(List<GsaSection> sections) {
       if (sections == null) {
         return;
       }
 
       sections = sections.OrderByDescending(s => s.Id).ToList();
       foreach (GsaSection section in sections.Where(section => section != null)) {
-        ConvertSection(section, ref apiProperties);
+        ConvertSection(section);
       }
     }
 
-    internal static int ConvertSection(
-      GsaSection section, ref Properties apiProperties) {
+    internal int ConvertSection(GsaSection section) {
       if (section == null) {
         return 0;
       }
@@ -25,22 +24,22 @@ namespace GsaGH.Helpers.Export {
         return section.Id;
       }
 
-      return AddSection(section, ref apiProperties);
+      return AddSection(section);
     }
 
-    internal static int AddSection(GsaSection section, ref Properties apiProperties) {
-      apiProperties.Materials.AddMaterial(ref section);
+    internal int AddSection(GsaSection section) {
+      AddMaterial(ref section);
 
       int outId;
       if (section.Id > 0) {
-        apiProperties.Sections.SetValue(section.Id, section.Guid, section.ApiSection);
+        _sections.SetValue(section.Id, section.Guid, section.ApiSection);
         outId = section.Id;
       } else {
-        outId = apiProperties.Sections.AddValue(section.Guid, section.ApiSection);
+        outId = _sections.AddValue(section.Guid, section.ApiSection);
       }
 
       if (section.Modifier != null && section.Modifier.IsModified) {
-        apiProperties.SecionModifiers.SetValue(outId, section.Modifier.ApiSectionModifier);
+        _secionModifiers.SetValue(outId, section.Modifier.ApiSectionModifier);
       }
 
       return outId;

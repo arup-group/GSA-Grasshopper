@@ -34,7 +34,7 @@ namespace GsaGH.Helpers.Export {
     public static GsaModel MergeModel(
       GsaModel mainModel, GsaModel appendModel, GH_Component owner, Length tolerance) {
       appendModel.ModelUnit = mainModel.ModelUnit;
-      ConcurrentBag<GsaNodeGoo> goonodes = 
+      ConcurrentBag<GsaNodeGoo> goonodes =
         Import.Nodes.GetNodes(appendModel.ApiNodes, mainModel.ModelUnit);
       var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
@@ -129,10 +129,10 @@ namespace GsaGH.Helpers.Export {
         appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
         LengthUnit.Meter));
       gooloads.AddRange(Import.Loads.GetGridLineLoads(
-        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases, 
+        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
         LengthUnit.Meter));
       gooloads.AddRange(Import.Loads.GetGridAreaLoads(
-        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases, 
+        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
         LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
@@ -143,13 +143,14 @@ namespace GsaGH.Helpers.Export {
 
       List<GsaList> lists = Import.Lists.GetLists(appendModel);
       List<GsaGridLine> gridLines = Import.GridLines.GetGridLines(appendModel);
-      var gsaLoadCases = 
+      var gsaLoadCases =
         Import.Loads.GetLoadCases(loadCases).Select(n => n.Value).ToList();
 
-      mainModel.Model = Assembler.AssembleModel(
-        mainModel, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, 
-        null, sections, prop2Ds, prop3Ds, loads, gps, gsaLoadCases, null, null, mainModel.ModelUnit,
-        tolerance, false, owner);
+      var assembly = new ModelAssembly(mainModel, lists, gridLines, nodes, elem1ds, elem2ds,
+        elem3ds, mem1ds, mem2ds, mem3ds, null, sections, prop2Ds, prop3Ds, loads, gps,
+        gsaLoadCases, null, null, mainModel.ModelUnit, tolerance, false, owner);
+      mainModel.Model = assembly.GetModel();
+
       return mainModel;
     }
   }

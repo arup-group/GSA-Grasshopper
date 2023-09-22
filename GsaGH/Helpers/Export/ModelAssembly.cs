@@ -5,8 +5,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -15,23 +17,101 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
 
 namespace GsaGH.Helpers.Export {
-  internal class ModelAssembly {
+  internal partial class ModelAssembly {
     internal Model Model;
-    internal GsaIntDictionary<Node> Nodes;
-    internal GsaIntDictionary<Axis> Axes;
-    internal Properties Properties;
-    internal GsaGuidIntListDictionary<Element> Elements;
-    internal GsaGuidDictionary<Member> Members;
-    internal GsaGuidDictionary<EntityList> Lists;
-    internal GsaIntDictionary<GridLine> _gridLines;
-    internal Loads Loads;
-    internal ConcurrentDictionary<int, ConcurrentBag<int>> MemberElementRelationship;
-    internal LengthUnit Unit = LengthUnit.Meter;
+    private GsaIntDictionary<Node> Nodes;
+    private GsaIntDictionary<Axis> Axes;
+    private GsaGuidIntListDictionary<Element> Elements;
+    private GsaGuidDictionary<Member> Members;
+    private GsaGuidDictionary<EntityList> Lists;
+    private GsaIntDictionary<GridLine> _gridLines;
+
+    private ConcurrentDictionary<int, ConcurrentBag<int>> MemberElementRelationship;
+    private LengthUnit Unit = LengthUnit.Meter;
     private bool _deleteResults = false;
     private int _initialNodeCount = 0;
     private bool _isSeedModel = true;
 
-    internal ModelAssembly(GsaModel model, LengthUnit unit) {
+    // assemble for local axis
+    internal ModelAssembly(GsaMember1d member) {
+      SetupModel(null, LengthUnit.Meter);
+      var mem1ds = new List<GsaMember1d>() {
+        member
+      };
+      ConvertMembers(mem1ds, null, null);
+      AssembleNodesElementsMembersAndLists();
+    }
+
+    // assemble for local axis
+    internal ModelAssembly(GsaElement1d element) {
+      SetupModel(null, LengthUnit.Meter);
+      var elem1ds = new List<GsaElement1d>() {
+        element
+      };
+      ConvertElements(elem1ds, null, null);
+      AssembleNodesElementsMembersAndLists();
+    }
+
+    // assemble for preview
+    internal ModelAssembly(GsaModel model, List<GsaList> lists,
+      List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaMember1d> mem1ds,
+      List<GsaMember2d> mem2ds, LengthUnit modelUnit) {
+      SetupModel(model, modelUnit);
+      ConvertElements(elem1ds, elem2ds, null);
+      ConvertMembers(mem1ds, mem2ds, null);
+      ConvertLists(lists);
+      AssembleNodesElementsMembersAndLists();
+    }
+
+    internal ModelAssembly(
+      GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, List<GsaNode> nodes,
+      List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
+      List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
+      List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
+      List<GsaProperty3d> prop3Ds, List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
+      List<GsaLoadCase> loadCases, List<GsaAnalysisTask> analysisTasks,
+      List<GsaCombinationCase> combinations, LengthUnit modelUnit,
+      Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
+
+
+      SetupModel(model, modelUnit);
+
+
+
+      ConvertNodes(nodes);
+      ConvertProperties(mats, sections, prop2Ds, prop3Ds);
+      ConvertElements(elem1ds, elem2ds, elem3ds);
+      ConvertMembers(mem1ds, mem2ds, mem3ds);
+      ConvertNodeList(lists);
+      ConvertNodeLoads(loads);
+      AssembleNodesElementsMembersAndLists();
+      ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
+
+      ConvertList(lists, loads, owner);
+      ConvertGridPlaneSurface(gridPlaneSurfaces, owner);
+      ConvertLoad(loads, owner);
+      ConvertLoadCases(loadCases, owner);
+
+      AssembleLoadsCasesAxesGridPlaneSurfacesAndLists(owner);
+      ConvertAndAssembleGridLines(gridLines);
+      ConvertAndAssembleAnalysisTasks(analysisTasks);
+      ConvertAndAssembleCombinations(combinations);
+
+      DeleteExistingResults();
+    }
+
+
+
+    public Model GetModel() {
+      return Model;
+    }
+
+
+
+
+
+
+    internal void SetupModel(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
       Model = model.Model;
       Unit = unit;
@@ -39,36 +119,63 @@ namespace GsaGH.Helpers.Export {
       UiUnits units = Model.UiUnits();
       Nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       Axes = new GsaIntDictionary<Axis>(model.ApiAxis);
-      Properties = new Properties(model);
       Elements = new GsaGuidIntListDictionary<Element>(Model.Elements());
       Members = new GsaGuidDictionary<Member>(Model.Members());
       Lists = new GsaGuidDictionary<EntityList>(Model.Lists());
       _gridLines = new GsaIntDictionary<GridLine>(Model.GridLines());
-      Loads = new Loads(Model);
-      CheckIfModelIsEmpty();
-    }
 
-    internal void ConvertNodes(List<GsaNode> nodes) {
-      Export.Nodes.ConvertNodes(nodes, ref Nodes, ref Axes, Unit);
-      Nodes.UpdateFirstEmptyKeyToMaxKey();
+
+
+      GetLoadCasesFromModel(Model);
+      _gridPlanes = new GsaGuidDictionary<GridPlane>(Model.GridPlanes());
+      _gridSurfaces = new GsaGuidDictionary<GridSurface>(Model.GridSurfaces());
+
+      (_sections, _secionModifiers) = GetSectionDictionary(model);
+      _prop2ds = GetProp2dDictionary(model);
+      _prop3ds = GetProp3dDictionary(model);
+
+      _steelMaterials = GetStandardMaterialDictionary<SteelMaterial>(model.Materials.SteelMaterials);
+      _concreteMaterials = GetStandardMaterialDictionary<ConcreteMaterial>(model.Materials.ConcreteMaterials);
+      _frpMaterials = GetStandardMaterialDictionary<FrpMaterial>(model.Materials.FrpMaterials);
+      _aluminiumMaterials = GetStandardMaterialDictionary<AluminiumMaterial>(model.Materials.AluminiumMaterials);
+      _timberMaterials = GetStandardMaterialDictionary<TimberMaterial>(model.Materials.TimberMaterials);
+      _glassMaterials = GetStandardMaterialDictionary<GlassMaterial>(model.Materials.GlassMaterials);
+      _fabricMaterials = GetStandardMaterialDictionary<FabricMaterial>(model.Materials.FabricMaterials);
+      _customMaterials = GetCustomMaterialDictionary(model.Materials.AnalysisMaterials);
+      _concreteDesignCode = model.Model.ConcreteDesignCode();
+      _steelDesignCode = model.Model.SteelDesignCode();
+      GetGsaGhMaterialsDictionary(model.Materials);
+
+
+
+      CheckIfModelIsEmpty();
+
+
+      _nodeLoads = new List<NodeLoad>();
+      _displacements = new List<NodeLoad>();
+      _settlements = new List<NodeLoad>();
+
+
+
+
     }
 
     internal void ConvertProperties(List<GsaMaterial> materials, List<GsaSection> sections,
       List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds) {
-      if ((!materials.IsNullOrEmpty()) || (!sections.IsNullOrEmpty()) 
+      if ((!materials.IsNullOrEmpty()) || (!sections.IsNullOrEmpty())
         || (!prop2Ds.IsNullOrEmpty()) || (!prop3Ds.IsNullOrEmpty())) {
         _deleteResults = true;
       }
 
       if (!materials.IsNullOrEmpty()) {
         foreach (GsaMaterial material in materials) {
-          Properties.Materials.ConvertMaterial(material);
+          ConvertMaterial(material);
         }
       }
 
-      Sections.ConvertSections(sections, ref Properties);
-      Prop2ds.ConvertProp2ds(prop2Ds, ref Properties, ref Axes, Unit);
-      Prop3ds.ConvertProp3ds(prop3Ds, ref Properties);
+      ConvertSections(sections);
+      ConvertProp2ds(prop2Ds);
+      ConvertProp3ds(prop3Ds);
     }
 
     internal void ConvertElements(
@@ -80,10 +187,9 @@ namespace GsaGH.Helpers.Export {
         _deleteResults = true;
       }
 
-      Export.Elements.ConvertElement1ds(element1ds, ref Elements, ref Nodes, Unit, ref Properties);
-      Export.Elements.ConvertElement2ds(
-        element2ds, ref Elements, ref Nodes, Unit, ref Properties, ref Axes);
-      Export.Elements.ConvertElement3ds(element3ds, ref Elements, ref Nodes, Unit, ref Properties);
+      ConvertElement1ds(element1ds);
+      ConvertElement2ds(element2ds);
+      ConvertElement3ds(element3ds);
 
       if (!element2ds.IsNullOrEmpty()) {
         foreach (GsaElement2d e2d in element2ds) {
@@ -112,27 +218,18 @@ namespace GsaGH.Helpers.Export {
         || (!member3ds.IsNullOrEmpty())) {
         _deleteResults = true;
       }
-      
-      Export.Members.ConvertMember1ds(member1ds, ref Members, ref Nodes, Unit, ref Properties);
-      Export.Members.ConvertMember2ds(
-        member2ds, ref Members, ref Nodes, Unit, ref Properties, ref Axes);
-      Export.Members.ConvertMember3ds(member3ds, ref Members, ref Nodes, Unit, ref Properties);
+
+      ConvertMember1ds(member1ds);
+      ConvertMember2ds(member2ds);
+      ConvertMember3ds(member3ds);
     }
 
     internal void ConvertNodeList(List<GsaList> lists) {
       int nodeCountBefore = Nodes.Count;
-      Export.Lists.ConvertNodeLists(lists, ref Lists, ref Nodes, Unit);
+      ConvertNodeLists(lists);
       if (nodeCountBefore > Nodes.Count) {
         _deleteResults = true;
       }
-    }
-
-    internal void ConvertNodeLoads(List<IGsaLoad> loads) {
-      if (!loads.IsNullOrEmpty()) {
-        _deleteResults = true;
-      }
-
-      Load.NodeLoads.ConvertNodeLoads(loads, ref Loads.Nodes, ref Nodes, ref Lists, Unit);
     }
 
     internal void ConvertLoadCases(List<GsaLoadCase> loadCases, GH_Component owner) {
@@ -141,17 +238,17 @@ namespace GsaGH.Helpers.Export {
       }
 
       foreach (GsaLoadCase loadCase in loadCases) {
-        if (Loads.LoadCases.ContainsKey(loadCase.Id)) {
-          LoadCase existingCase = Loads.LoadCases[loadCase.Id];
+        if (_loadCases.ContainsKey(loadCase.Id)) {
+          LoadCase existingCase = _loadCases[loadCase.Id];
           LoadCase newCase = loadCase.LoadCase;
           if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
-            Loads.LoadCases[loadCase.Id] = newCase;
+            _loadCases[loadCase.Id] = newCase;
             owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
              $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
              $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
           }
         } else {
-          Loads.LoadCases.Add(loadCase.Id, loadCase.LoadCase);
+          _loadCases.Add(loadCase.Id, loadCase.LoadCase);
         }
       }
     }
@@ -201,10 +298,15 @@ namespace GsaGH.Helpers.Export {
       Model.SetMembers(Members.ReadOnlyDictionary);
 
       // Set API Sections and Materials in model
-      Properties.Assemble(ref Model);
+      Model.SetSections(_sections.ReadOnlyDictionary);
+      Model.SetSectionModifiers(_secionModifiers.ReadOnlyDictionary);
+      Model.SetProp2Ds(_prop2ds.ReadOnlyDictionary);
+      Model.SetProp3Ds(_prop3ds.ReadOnlyDictionary);
 
       // Add API Node loads to model
-      Loads.Nodes.Assemble(ref Model);
+      Model.AddNodeLoads(GsaAPI.NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(_displacements));
+      Model.AddNodeLoads(GsaAPI.NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(_nodeLoads));
+      Model.AddNodeLoads(GsaAPI.NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(_settlements));
 
       // Set API lists for Nodes in model
       Model.SetLists(Lists.ReadOnlyDictionary);
@@ -215,7 +317,7 @@ namespace GsaGH.Helpers.Export {
 
       if (createElementsFromMembers && Members.Count != 0) {
         ConcurrentDictionary<int, ConcurrentBag<int>> initialMemberElementRelationship
-        = ElementListFromReference.GetMemberElementRelationship(Model);
+        = GetMemberElementRelationship(Model);
         var elemIds = new List<int>();
         foreach (int id in Members.ReadOnlyDictionary.Keys) {
           if (initialMemberElementRelationship.ContainsKey(id)) {
@@ -288,29 +390,29 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      MemberElementRelationship = ElementListFromReference.GetMemberElementRelationship(Model);
+      MemberElementRelationship = GetMemberElementRelationship(Model);
     }
 
     internal void AssembleLoadsCasesAxesGridPlaneSurfacesAndLists(GH_Component owner) {
       // Add API Loads in model
-      Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(Loads.LoadCases));
-      Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(Loads.Gravities));
-      Model.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(Loads.Beams));
-      Model.AddBeamThermalLoads(new ReadOnlyCollection<BeamThermalLoad>(Loads.BeamThermals));
-      Model.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(Loads.Faces));
-      Model.AddFaceThermalLoads(new ReadOnlyCollection<FaceThermalLoad>(Loads.FaceThermals));
-      Model.AddGridPointLoads(new ReadOnlyCollection<GridPointLoad>(Loads.GridPoints));
-      Model.AddGridLineLoads(new ReadOnlyCollection<GridLineLoad>(Loads.GridLines));
-      Model.AddGridAreaLoads(new ReadOnlyCollection<GridAreaLoad>(Loads.GridAreas));
+      Model.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(_loadCases));
+      Model.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(_gravityLoads));
+      Model.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(_beamLoads));
+      Model.AddBeamThermalLoads(new ReadOnlyCollection<BeamThermalLoad>(_beamThermalLoads));
+      Model.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(_faceLoads));
+      Model.AddFaceThermalLoads(new ReadOnlyCollection<FaceThermalLoad>(_faceThermalLoads));
+      Model.AddGridPointLoads(new ReadOnlyCollection<GridPointLoad>(_gridPointLoads));
+      Model.AddGridLineLoads(new ReadOnlyCollection<GridLineLoad>(_gridLineLoads));
+      Model.AddGridAreaLoads(new ReadOnlyCollection<GridAreaLoad>(_gridAreaLoads));
       // Set API Axis, GridPlanes and GridSurface in model
       Model.SetAxes(Axes.ReadOnlyDictionary);
-      Model.SetGridPlanes(Loads.GridPlaneSurfaces.GridPlanes.ReadOnlyDictionary);
-      foreach (int gridSurfaceId in Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary.Keys) {
+      Model.SetGridPlanes(_gridPlanes.ReadOnlyDictionary);
+      foreach (int gridSurfaceId in _gridSurfaces.ReadOnlyDictionary.Keys) {
         try {
-          Model.SetGridSurface(gridSurfaceId, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
+          Model.SetGridSurface(gridSurfaceId, _gridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
         } catch (ArgumentException e) {
           ReportWarningFromAddingGridSurfacesOrList(
-            e.Message, Loads.GridPlaneSurfaces.GridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name,
+            e.Message, _gridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name,
             "Grid Surface", owner);
         }
       }
@@ -400,8 +502,8 @@ namespace GsaGH.Helpers.Export {
 
     private void CheckIfModelIsEmpty() {
       if (Nodes.Count == 0
-        && Properties.Materials.Count == 0
-        && Properties.Count == 0
+        && _materialCount == 0
+        && _propertiesCount == 0
         && Elements.Count == 0
         && Members.Count == 0
         && Model.ConcreteDesignCode() == string.Empty
@@ -411,8 +513,8 @@ namespace GsaGH.Helpers.Export {
     }
 
     private void CreateModelFromDesignCodes() {
-      string concreteCode = Properties.Materials.GetConcreteDesignCode(Model);
-      string steelCode = Properties.Materials.GetSteelDesignCode(Model);
+      string concreteCode = GetConcreteDesignCode(Model);
+      string steelCode = GetSteelDesignCode(Model);
 
       Model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
     }

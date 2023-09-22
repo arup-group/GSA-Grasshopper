@@ -1,46 +1,30 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
-  internal class Properties {
-    internal GsaGuidDictionary<Section> Sections;
-    internal GsaIntDictionary<SectionModifier> SecionModifiers;
-    internal GsaGuidDictionary<Prop2D> Prop2ds;
-    internal GsaGuidDictionary<Prop3D> Prop3ds;
-    internal Materials Materials;
-    internal int Count => Sections.Count + Prop2ds.Count + Prop3ds.Count;
+  internal partial class ModelAssembly {
+    private GsaGuidDictionary<Section> _sections;
+    private GsaIntDictionary<SectionModifier> _secionModifiers;
+    private GsaGuidDictionary<Prop2D> _prop2ds;
+    private GsaGuidDictionary<Prop3D> _prop3ds;
+    private int _propertiesCount => _sections.Count + _prop2ds.Count + _prop3ds.Count;
 
-    internal Properties(GsaModel model) { 
-      Materials = new Materials(model);
-      (Sections, SecionModifiers) = GetSectionDictionary(model);
-      Prop2ds = GetProp2dDictionary(model);
-      Prop3ds = GetProp3dDictionary(model);
-    }
-
-    internal void Assemble(ref Model apiModel) {
-      apiModel.SetSections(Sections.ReadOnlyDictionary);
-      apiModel.SetSectionModifiers(SecionModifiers.ReadOnlyDictionary);
-      apiModel.SetProp2Ds(Prop2ds.ReadOnlyDictionary);
-      apiModel.SetProp3Ds(Prop3ds.ReadOnlyDictionary);
-      Materials.Assemble(ref apiModel);
-    }
-
-    internal string GetReferenceDefinition(Guid guid) {
-      if (Sections.GuidDictionary.TryGetValue(guid, out int steelId)) {
+    internal string GetReferenceDefinition3(Guid guid) {
+      if (_sections.GuidDictionary.TryGetValue(guid, out int steelId)) {
         return "PB" + steelId;
       }
 
-      if (Prop2ds.GuidDictionary.TryGetValue(guid, out int concreteId)) {
+      if (_prop2ds.GuidDictionary.TryGetValue(guid, out int concreteId)) {
         return "PA" + concreteId;
       }
 
-      if (Prop3ds.GuidDictionary.TryGetValue(guid, out int frpId)) {
+      if (_prop3ds.GuidDictionary.TryGetValue(guid, out int frpId)) {
         return "PV" + frpId;
       }
 
-      return Materials.GetReferenceDefinition(guid);
+      return GetMaterialReferenceDefinition(guid);
     }
 
     internal static (GsaGuidDictionary<Section>, GsaIntDictionary<SectionModifier>)

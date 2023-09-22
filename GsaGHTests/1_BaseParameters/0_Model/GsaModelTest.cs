@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using GsaAPI;
 using GsaGH.Helpers.Export;
 using GsaGH.Helpers.GsaApi.EnumMappings;
@@ -20,10 +21,12 @@ namespace GsaGHTests.Parameters {
       var original = new GsaModel();
       original.Model.Open(GsaFile.SteelDesignSimple);
 
-      var assembled = new GsaModel {
-        Model = Assembler.AssembleModel(original, null, null, null, null, null, null, null, null, 
-        null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, 
-        false, null), };
+      var assembly = new ModelAssembly(original, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero,
+        false, null);
+      var assembled = new GsaModel() {
+        Model = assembly.GetModel()
+      };
 
       Duplicates.AreEqual(original, assembled, new List<string>() { "Guid" });
     }

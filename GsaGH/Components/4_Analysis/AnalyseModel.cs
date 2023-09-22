@@ -195,10 +195,12 @@ namespace GsaGH.Components {
       }
 
       // Assemble model
-      model.Model = Assembler.AssembleModel(
-        model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
+      var assembly = new ModelAssembly(
+         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
         materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
         analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      model.Model = assembly.GetModel();
+
       // Run analysis
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();

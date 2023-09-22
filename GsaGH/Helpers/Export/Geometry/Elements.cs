@@ -6,55 +6,38 @@ using GsaAPI;
 using GsaGH.Parameters;
 using Rhino.Collections;
 using Rhino.Geometry;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
-  internal class Elements {
-    internal static void ConvertElement1D(
-      GsaElement1d element1d, 
-      ref GsaGuidIntListDictionary<Element> apiElements,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties) {
+  internal partial class ModelAssembly {
+    internal void ConvertElement1D(GsaElement1d element1d) {
       LineCurve line = element1d.Line;
       Element apiElement = element1d.DuplicateApiObject();
       var topo = new List<int> {
-        Nodes.AddNode(ref apiNodes, line.PointAtStart, unit),
-        Nodes.AddNode(ref apiNodes, line.PointAtEnd, unit),
+        AddNode( line.PointAtStart),
+        AddNode(line.PointAtEnd),
       };
       apiElement.Topology = new ReadOnlyCollection<int>(topo);
       if (element1d.OrientationNode != null) {
         apiElement.OrientationNode
-          = Nodes.AddNode(ref apiNodes, element1d.OrientationNode.Point, unit);
+          = AddNode(element1d.OrientationNode.Point);
       }
 
-      apiElement.Property = Sections.ConvertSection(element1d.Section, ref apiProperties);
-      AddElement(element1d.Id, element1d.Guid, apiElement, true, ref apiElements);
+      apiElement.Property = ConvertSection(element1d.Section);
+      AddElement(element1d.Id, element1d.Guid, apiElement, true);
     }
 
-    internal static void ConvertElement1ds(
-      List<GsaElement1d> element1ds, 
-      ref GsaGuidIntListDictionary<Element> apiElements,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties) {
+    internal void ConvertElement1ds(List<GsaElement1d> element1ds) {
       if (element1ds == null) {
         return;
       }
 
       element1ds = element1ds.OrderByDescending(x => x.Id).ToList();
       foreach (GsaElement1d element1d in element1ds.Where(element1d => element1d != null)) {
-        ConvertElement1D(element1d, ref apiElements, ref apiNodes, unit, ref apiProperties);
+        ConvertElement1D(element1d);
       }
     }
 
-    internal static void ConvertElement2D(
-      GsaElement2d element2d, 
-      ref GsaGuidIntListDictionary<Element> apiElements,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties,
-      ref GsaIntDictionary<Axis> existingAxes) {
+    internal void ConvertElement2D(GsaElement2d element2d) {
       Point3dList meshVerticies = element2d.Topology;
       List<Element> apiElems = element2d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
@@ -63,28 +46,21 @@ namespace GsaGH.Helpers.Export {
 
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
-          topo.Add(Nodes.AddNode(ref apiNodes, meshVerticies[mesh], unit));
+          topo.Add(AddNode(meshVerticies[mesh]));
         }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
         if (!element2d.Prop2ds.IsNullOrEmpty()) {
           GsaProperty2d prop = (i > element2d.Prop2ds.Count - 1) ? element2d.Prop2ds.Last() :
           element2d.Prop2ds[i];
-          apiMeshElement.Property = Prop2ds.ConvertProp2d(
-            prop, ref apiProperties, ref existingAxes, unit);
+          apiMeshElement.Property = ConvertProp2d(prop);
         }
-        
-        AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false, ref apiElements);
+
+        AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false);
       }
     }
 
-    internal static void ConvertElement2ds(
-      List<GsaElement2d> element2ds, 
-      ref GsaGuidIntListDictionary<Element> apiElements,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties,
-      ref GsaIntDictionary<Axis> apiAxes) {
+    internal void ConvertElement2ds(List<GsaElement2d> element2ds) {
       if (element2ds == null) {
         return;
       }
@@ -92,18 +68,12 @@ namespace GsaGH.Helpers.Export {
       element2ds = element2ds.OrderByDescending(e => e.Ids.First()).ToList();
       foreach (GsaElement2d element2d in element2ds) {
         if (element2d != null) {
-          ConvertElement2D(
-            element2d, ref apiElements, ref apiNodes, unit, ref apiProperties, ref apiAxes);
+          ConvertElement2D(element2d);
         }
       }
     }
 
-    internal static void ConvertElement3D(
-      GsaElement3d element3d, 
-      ref GsaGuidIntListDictionary<Element> apiElements,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties) {
+    internal void ConvertElement3D(GsaElement3d element3d) {
       Point3dList meshVerticies = element3d.Topology;
       List<Element> apiElems = element3d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
@@ -111,26 +81,22 @@ namespace GsaGH.Helpers.Export {
         List<int> meshVertexIndex = element3d.TopoInt[i];
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
-          topo.Add(Nodes.AddNode(ref apiNodes, meshVerticies[mesh], unit));
+          topo.Add(AddNode(meshVerticies[mesh]));
         }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
         if (!element3d.Prop3ds.IsNullOrEmpty()) {
           GsaProperty3d prop = (i > element3d.Prop3ds.Count - 1) ? element3d.Prop3ds.Last() :
           element3d.Prop3ds[i];
-          apiMeshElement.Property = Prop3ds.ConvertProp3d(prop, ref apiProperties);
+          apiMeshElement.Property = ConvertProp3d(prop);
         }
-        
-        AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false, ref apiElements);
+
+        AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false);
       }
     }
 
-    internal static void ConvertElement3ds(
-      List<GsaElement3d> element3ds, 
-      ref GsaGuidIntListDictionary<Element> apiElements,
-      ref GsaIntDictionary<Node> apiNodes, 
-      LengthUnit unit,
-      ref Properties apiProperties) {
+    internal void ConvertElement3ds(
+      List<GsaElement3d> element3ds) {
       if (element3ds == null) {
         return;
       }
@@ -138,21 +104,16 @@ namespace GsaGH.Helpers.Export {
       element3ds = element3ds.OrderByDescending(e => e.Ids.First()).ToList();
       foreach (GsaElement3d element3d in element3ds) {
         if (element3d != null) {
-          ConvertElement3D(element3d, ref apiElements, ref apiNodes, unit, ref apiProperties);
+          ConvertElement3D(element3d);
         }
       }
     }
 
-    private static void AddElement(
-      int id, 
-      Guid guid, 
-      Element apiElement, 
-      bool overwrite,
-      ref GsaGuidIntListDictionary<Element> apiElements) {
+    private void AddElement(int id, Guid guid, Element apiElement, bool overwrite) {
       if (id > 0) {
-        apiElements.SetValue(id, guid, apiElement, overwrite);
+        Elements.SetValue(id, guid, apiElement, overwrite);
       } else {
-        apiElements.AddValue(guid, apiElement);
+        Elements.AddValue(guid, apiElement);
       }
     }
   }

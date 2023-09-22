@@ -8,7 +8,7 @@ using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Export {
-  internal class ElementListFromReference {
+  internal partial class ModelAssembly {
 
     internal static ConcurrentDictionary<int, ConcurrentBag<int>> GetMemberElementRelationship(
       Model model) {
@@ -19,59 +19,45 @@ namespace GsaGH.Helpers.Export {
       return relationships;
     }
 
-    internal static string GetReferenceElementIdsDefinition(
-      GsaGridPlaneSurface load, ModelAssembly model) {
-      return GetReferenceDefinition(
-        load._refObjectGuid,
-        load._referenceType,
-        model.Properties,
-        model.Elements,
-        model.Members,
-        model.MemberElementRelationship);
+    internal string GetReferenceElementIdsDefinition(GsaGridPlaneSurface load) {
+      return GetReferenceDefinition1(load._refObjectGuid, load._referenceType);
     }
 
-    internal static string GetMemberChildElementReferenceIdsDefinition(
-      int memberId, ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
-      return memberElementRelationship.TryGetValue(memberId, out ConcurrentBag<int> ids) ?
+    internal string GetMemberChildElementReferenceIdsDefinition(int memberId) {
+      return MemberElementRelationship.TryGetValue(memberId, out ConcurrentBag<int> ids) ?
           GsaList.CreateListDefinition(ids.ToList()) : string.Empty;
     }
 
-    private static string GetElementsReferenceDefinition<T>(Guid guid, GsaGuidIntListDictionary<T> dictionary) {
-      return dictionary.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
+    private string GetElementsReferenceDefinition4(Guid guid) {
+      return Elements.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
         GsaList.CreateListDefinition(ids.ToList()) : string.Empty;
     }
 
-    private static string GetMemberChildElementsReferenceDefinition<T>(
-      Guid guid, GsaGuidDictionary<T> dictionary,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
-      return !dictionary.GuidDictionary.TryGetValue(guid, out int id) ?
+    private string GetMemberChildElementsReferenceDefinition(Guid guid) {
+      return !Members.GuidDictionary.TryGetValue(guid, out int id) ?
         string.Empty :
-        GetMemberChildElementReferenceIdsDefinition(id, memberElementRelationship);
+        GetMemberChildElementReferenceIdsDefinition(id);
     }
 
-    internal static string GetReferenceDefinition(IGsaLoad load, ModelAssembly model) {
-      return GetReferenceDefinition(load.RefObjectGuid, load.ReferenceType, model.Properties, model.Elements, model.Members, model.MemberElementRelationship);
+    internal string GetReferenceDefinition2(IGsaLoad load) {
+      return GetReferenceDefinition1(load.RefObjectGuid, load.ReferenceType);
     }
 
-    internal static string GetReferenceDefinition(
+    internal string GetReferenceDefinition1(
       Guid guid,
-      ReferenceType referenceType,
-      Properties apiProperties,
-      GsaGuidIntListDictionary<Element> apiElements,
-      GsaGuidDictionary<Member> apiMembers,
-      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship) {
+      ReferenceType referenceType) {
       switch (referenceType) {
         case ReferenceType.Property:
-          return apiProperties.GetReferenceDefinition(guid);
+          return GetReferenceDefinition3(guid);
 
         case ReferenceType.Element:
-          return GetElementsReferenceDefinition(guid, apiElements);
+          return GetElementsReferenceDefinition4(guid);
 
         case ReferenceType.MemberChildElements:
-          return GetMemberChildElementsReferenceDefinition(guid, apiMembers, memberElementRelationship);
+          return GetMemberChildElementsReferenceDefinition(guid);
 
         case ReferenceType.Member:
-          return apiMembers.GuidDictionary.TryGetValue(guid, out int id)
+          return Members.GuidDictionary.TryGetValue(guid, out int id)
             ? id.ToString() : string.Empty;
 
         case ReferenceType.None:
