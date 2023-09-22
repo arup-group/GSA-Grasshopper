@@ -5,7 +5,7 @@
     <Platforms>x64</Platforms>
     <Title>GsaGH</Title>
 	    <Company>Oasys</Company>
-    <Copyright>Copyright © Oasys 1985 - 2022</Copyright>
+    <Copyright>Copyright © Oasys 1985 - 2023</Copyright>
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
