@@ -71,42 +71,6 @@ namespace GsaGH.Helpers.Export {
       return materialsDictionary;
     }
 
-    internal void Assemble(ref Model apiModel) {
-      ValidateMaterialsToDesignCodes(apiModel);
-
-      foreach (KeyValuePair<int, AnalysisMaterial> mat in _customMaterials.ReadOnlyDictionary) {
-        apiModel.SetAnalysisMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, AluminiumMaterial> mat in _aluminiumMaterials.ReadOnlyDictionary) {
-        apiModel.SetAluminiumMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, ConcreteMaterial> mat in _concreteMaterials.ReadOnlyDictionary) {
-        apiModel.SetConcreteMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, FabricMaterial> mat in _fabricMaterials.ReadOnlyDictionary) {
-        apiModel.SetFabricMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, FrpMaterial> mat in _frpMaterials.ReadOnlyDictionary) {
-        apiModel.SetFrpMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, GlassMaterial> mat in _glassMaterials.ReadOnlyDictionary) {
-        apiModel.SetGlassMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, SteelMaterial> mat in _steelMaterials.ReadOnlyDictionary) {
-        apiModel.SetSteelMaterial(mat.Key, mat.Value);
-      }
-
-      foreach (KeyValuePair<int, TimberMaterial> mat in _timberMaterials.ReadOnlyDictionary) {
-        apiModel.SetTimberMaterial(mat.Key, mat.Value);
-      }
-    }
-
     internal void AddMaterial(ref GsaProperty2d prop2d) {
       if (prop2d.Material != null) {
         // set material type in API prop

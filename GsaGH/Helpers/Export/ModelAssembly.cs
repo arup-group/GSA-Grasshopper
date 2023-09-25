@@ -303,6 +303,40 @@ namespace GsaGH.Helpers.Export {
       Model.SetProp2Ds(_prop2ds.ReadOnlyDictionary);
       Model.SetProp3Ds(_prop3ds.ReadOnlyDictionary);
 
+      ValidateMaterialsToDesignCodes(Model);
+
+      foreach (KeyValuePair<int, AnalysisMaterial> mat in _customMaterials.ReadOnlyDictionary) {
+        Model.SetAnalysisMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, AluminiumMaterial> mat in _aluminiumMaterials.ReadOnlyDictionary) {
+        Model.SetAluminiumMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, ConcreteMaterial> mat in _concreteMaterials.ReadOnlyDictionary) {
+        Model.SetConcreteMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, FabricMaterial> mat in _fabricMaterials.ReadOnlyDictionary) {
+        Model.SetFabricMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, FrpMaterial> mat in _frpMaterials.ReadOnlyDictionary) {
+        Model.SetFrpMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, GlassMaterial> mat in _glassMaterials.ReadOnlyDictionary) {
+        Model.SetGlassMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, SteelMaterial> mat in _steelMaterials.ReadOnlyDictionary) {
+        Model.SetSteelMaterial(mat.Key, mat.Value);
+      }
+
+      foreach (KeyValuePair<int, TimberMaterial> mat in _timberMaterials.ReadOnlyDictionary) {
+        Model.SetTimberMaterial(mat.Key, mat.Value);
+      }
+
       // Add API Node loads to model
       Model.AddNodeLoads(GsaAPI.NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(_displacements));
       Model.AddNodeLoads(GsaAPI.NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(_nodeLoads));
