@@ -75,7 +75,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(Create1dMember))]
     [InlineData(typeof(CreateSupport))]
-    [InlineData(typeof(CreateMember1d_OBSOLETE))]
     public void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeNull(Type t) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       obj.InitialiseDropdowns();

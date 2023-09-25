@@ -4,7 +4,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 
-namespace GsaGH.Components.GraveyardComp {
+namespace GsaGH.Helpers.GH {
   internal class BaseReader {
 
     internal static bool Read(
@@ -47,7 +47,8 @@ namespace GsaGH.Components.GraveyardComp {
         GH_IReader ghIReader2 = reader.FindChunk("Attributes");
         if (ghIReader2 != null) {
           owner.Attributes.Read(ghIReader2);
-        } else {
+        }
+        else {
           reader.AddMessage("Attributes chunk is missing. Could be a hint something's wrong.",
             GH_Message_Type.info);
         }
@@ -57,7 +58,8 @@ namespace GsaGH.Components.GraveyardComp {
         bool value1 = false;
         if (reader.TryGetBoolean("Hidden", ref value1)) {
           previewObject.Hidden = value1;
-        } else {
+        }
+        else {
           bool value2 = true;
           if (reader.TryGetBoolean("Preview", ref value2)) {
             previewObject.Hidden = !value2;
