@@ -8,7 +8,7 @@ using Xunit;
 
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class GetSectionDimensionsTests {
+  public class ProfileDimensionsTests {
 
     public static GH_OasysComponent ComponentMother() {
       var comp = new ProfileDimensions();
@@ -45,6 +45,7 @@ namespace GsaGHTests.Components.Properties {
     [InlineData("STD RC 250 300", 250, 300, 0, 0, 0, 0, 0, 0, 0, LengthUnit.Millimeter)]
     [InlineData("STD TR 250 150 300", 250, 300, 150, 300, 0, 0, 0, 0, 0, LengthUnit.Millimeter)]
     [InlineData("STD T 250 150 7 15", 250, 150, 150, 7, 15, 0, 7, 0, 0, LengthUnit.Millimeter)]
+    [InlineData("CAT HE HE100.B", 100.0, 100.0, 100.0, 100.0, 10, 10, 6, 12, 0, LengthUnit.Millimeter)]
     public void CreateComponent(
       string profile, double expectedDepth, double expectedWidth, double expectedWidthTop,
       double expectedWidthBottom, double expectedFlngThkTop, double expectedFlngThkBtm,
@@ -64,6 +65,9 @@ namespace GsaGHTests.Components.Properties {
       var spacing = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, i++);
       string type = ((GH_String)ComponentTestHelper.GetOutput(comp, i)).Value;
       string expectedType = profile.Split(' ')[1];
+      if (profile.StartsWith("CAT")) {
+        expectedType = "CAT " + expectedType;
+      }
 
       Assert.Equal(expectedDepth, depth.Value.As(unit), 6);
       if (expectedWidth > 0) {
@@ -99,6 +103,13 @@ namespace GsaGHTests.Components.Properties {
       }
 
       Assert.StartsWith(type, expectedType);
+    }
+
+    [Fact]
+    public void UpdateCustomUITest() {
+      var comp = (ProfileDimensions)ComponentMother();
+      comp.Update("ft");
+      Assert.Equal("ft", comp.Message);
     }
   }
 }

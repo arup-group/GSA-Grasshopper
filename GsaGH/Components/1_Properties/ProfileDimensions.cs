@@ -509,17 +509,17 @@ namespace GsaGH.Components {
       }
     }
 
-    private void SetOutput(IGH_DataAccess da, int outputId, string outputValue, LengthUnit unit) {
-      double val = double.Parse(outputValue, CultureInfo.InvariantCulture);
-      var length = new Length(val, unit);
-      da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
-    }
-
-    private void Update(string unit) {
+    internal void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
+    }
+
+    private void SetOutput(IGH_DataAccess da, int outputId, string outputValue, LengthUnit unit) {
+      double val = double.Parse(outputValue, CultureInfo.InvariantCulture);
+      var length = new Length(val, unit);
+      da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
     }
   }
 }
