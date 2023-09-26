@@ -127,5 +127,12 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(255, output9.Value.G);
       Assert.Equal(255, output9.Value.B);
     }
+
+    [Fact]
+    public void FlipModeTest() {
+      var comp = (EditNode)ComponentMother();
+      comp.FlipMode(null, null);
+      Assert.Equal(12, comp.Params.Output.Count);
+    }
   }
 }

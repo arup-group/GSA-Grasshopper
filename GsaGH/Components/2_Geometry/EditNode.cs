@@ -229,7 +229,7 @@ namespace GsaGH.Components {
       }
     }
 
-    private void FlipMode(object sender, EventArgs e) {
+    internal void FlipMode(object sender, EventArgs e) {
       RecordUndoEvent("GetConnected Parameters");
       if (_mode == FoldMode.GetConnected) {
         _mode = FoldMode.DoNotGetConnected;
