@@ -5,11 +5,11 @@ using OasysGH.Components;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
+using static Grasshopper.Kernel.Special.GH_Panel;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class SectionAlignmentTests {
-
     public static GH_OasysComponent ComponentMother() {
       var comp = new SectionAlignment();
       comp.CreateAttributes();
@@ -79,6 +79,54 @@ namespace GsaGHTests.Components.Geometry {
 
       Assert.Equal(expectedY, output.Value.Y.Millimeters, 6);
       Assert.Equal(expectedZ, output.Value.Z.Millimeters, 6);
+    }
+
+    [Fact]
+    public void SectionAlignmentElement1dTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+
+      var element = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
+        Section = new GsaSection("CAT HE HE300.B"),
+      };
+      var goo = new GsaElement1dGoo(element);
+
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
+
+      Assert.Equal(-150, output.Value.Y.Millimeters, 6);
+      Assert.Equal(-150, output.Value.Z.Millimeters, 6);
+    }
+
+    [Fact]
+    public void SectionAlignmentElement2dTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+
+      var goo = (GsaElement2dGoo)ComponentTestHelper.GetOutput(
+        CreateElement2dTests.ComponentMother());
+
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
+
+      Assert.Equal(-7, output.Value.Z.Inches, 6);
+    }
+
+    [Fact]
+    public void SectionAlignmentMember2dTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+
+      var goo = (GsaMember2dGoo)ComponentTestHelper.GetOutput(
+        CreateMember2dTests.ComponentMother());
+
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
+
+      Assert.Equal(-7, output.Value.Z.Inches, 6);
     }
   }
 }
