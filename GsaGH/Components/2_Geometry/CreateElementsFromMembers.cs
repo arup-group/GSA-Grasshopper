@@ -32,7 +32,6 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateElementsFromMembers;
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
@@ -41,60 +40,6 @@ namespace GsaGH.Components {
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
-    }
-
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
-      base.DrawViewportMeshes(args);
-
-      if (_element2ds == null) {
-        return;
-      }
-
-      foreach (GsaElement2dGoo element in _element2ds) {
-        if (element?.Value.Mesh == null || element.Value.ApiElements[0].ParentMember.Member > 0) {
-          continue;
-        }
-
-        args.Display.DrawMeshShaded(element.Value.Mesh,
-          Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace);
-      }
-    }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      if (_element2ds == null) {
-        return;
-      }
-
-      foreach (GsaElement2dGoo element in _element2ds) {
-        if (element == null || element.Value.Mesh == null) {
-          continue;
-        }
-
-        if (element.Value.ApiElements[0].ParentMember.Member
-          > 0) // only draw mesh shading if no parent member exist.
-        {
-          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1) {
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Color.FromArgb(255, 229, 229, 229), 1);
-            }
-          }
-        } else {
-          if (Attributes.Selected) {
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdgeSelected, 2);
-            }
-          } else {
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdge, 1);
-            }
-          }
-        }
-      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -168,11 +113,6 @@ namespace GsaGH.Components {
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
-
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
-      pManager.HideParameter(3);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -293,7 +233,6 @@ namespace GsaGH.Components {
       da.SetData(4, new GsaModelGoo(outModel));
 
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
-      _element2ds = elements.Element2ds;
     }
   }
 }
