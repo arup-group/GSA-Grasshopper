@@ -23,6 +23,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(EditSection))]
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(EditNode))]
+    [InlineData(typeof(GetModelGeometry))]
     public void DropDownComponentTest(Type t) {
       var comp = (IGH_VariableParameterComponent)Activator.CreateInstance(t);
       Assert.False(comp.CanRemoveParameter(GH_ParameterSide.Input, 0));
