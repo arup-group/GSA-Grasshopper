@@ -33,14 +33,13 @@ namespace IntegrationTests {
               }
             }
 
-            Assert.True(false,
-              "Unable to find component in group with Nickname " + groupIdentifier);
+            Assert.Fail("Unable to find component in group with Nickname " + groupIdentifier);
             return null;
           }
         }
       }
 
-      Assert.True(false, "Unable to find group with Nickname " + groupIdentifier);
+      Assert.Fail("Unable to find group with Nickname " + groupIdentifier);
       return null;
     }
 
