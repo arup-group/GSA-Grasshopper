@@ -59,12 +59,7 @@ namespace GsaGH.Components {
     public bool _isInitialised;
     public List<string> _selectedItems;
     public List<string> _spacerDescriptions;
-    public bool AlwaysExpireDownStream;
-    public Dictionary<int, List<string>> ExistingOutputsSerialized
-      = new Dictionary<int, List<string>>();
     protected override Bitmap Icon => Resources.GetModelGeometry;
-    private static readonly OasysUnitsIQuantityJsonConverter converter
-      = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;
     private List<Mesh> _cachedDisplayMeshWithoutParent;
     private List<Mesh> _cachedDisplayMeshWithParent;
@@ -72,8 +67,6 @@ namespace GsaGH.Components {
     private List<Mesh> _cachedDisplayNgonMeshWithParent;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
-    private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
-    private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
     private bool _showSupports = true;
 
@@ -239,35 +232,6 @@ namespace GsaGH.Components {
       _isInitialised = true;
     }
 
-    public void OutputChanged<T>(T data, int outputIndex, int index) where T : IGH_Goo {
-      if (!ExistingOutputsSerialized.ContainsKey(outputIndex)) {
-        ExistingOutputsSerialized.Add(outputIndex, new List<string>());
-        _outputsAreExpired.Add(outputIndex, new List<bool>());
-      }
-
-      string text;
-      if (data.GetType() == typeof(GH_UnitNumber)) {
-        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, converter);
-      } else {
-        object value = data.ScriptVariable();
-        try {
-          text = JsonConvert.SerializeObject(value);
-        } catch (Exception) {
-          text = data.GetHashCode().ToString();
-        }
-      }
-
-      if (ExistingOutputsSerialized[outputIndex].Count == index) {
-        ExistingOutputsSerialized[outputIndex].Add(text);
-        _outputsAreExpired[outputIndex].Add(true);
-      } else if (ExistingOutputsSerialized[outputIndex][index] != text) {
-        ExistingOutputsSerialized[outputIndex][index] = text;
-        _outputsAreExpired[outputIndex][index] = true;
-      } else {
-        _outputsAreExpired[outputIndex][index] = false;
-      }
-    }
-
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       ReadDropDownComponents(ref reader, ref _dropDownItems, ref _selectedItems,
@@ -412,24 +376,6 @@ namespace GsaGH.Components {
 
       Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
       Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
-    }
-
-    protected override void ExpireDownStreamObjects() {
-      if (AlwaysExpireDownStream) {
-        base.ExpireDownStreamObjects();
-        return;
-      }
-
-      SetExpireDownStream();
-      if (_outputIsExpired.Count > 0) {
-        for (int i = 0; i < Params.Output.Count; i++) {
-          if (_outputIsExpired[i]) {
-            Params.Output[i].ExpireSolution(false);
-          }
-        }
-      } else {
-        base.ExpireDownStreamObjects();
-      }
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -807,21 +753,6 @@ namespace GsaGH.Components {
       Params.OnParametersChanged();
       Message = "Import as List";
       ExpireSolution(true);
-    }
-
-    private void SetExpireDownStream() {
-      if (_outputsAreExpired == null || _outputsAreExpired.Count <= 0) {
-        return;
-      }
-
-      _outputIsExpired = new Dictionary<int, bool>();
-      for (int i = 0; i < Params.Output.Count; i++) {
-        if (_outputsAreExpired.ContainsKey(i)) {
-          _outputIsExpired.Add(i, _outputsAreExpired[i].Any(c => c));
-        } else {
-          _outputIsExpired.Add(i, true);
-        }
-      }
     }
 
     private void UpdateHiddenOutputs(bool nodeFilter, bool elementFilter, bool memberFilter) {
