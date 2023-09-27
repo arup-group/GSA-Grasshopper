@@ -58,14 +58,13 @@ namespace IntegrationTests {
               }
             }
 
-            Assert.True(false,
-              "Unable to find parameter in group with Nickname " + groupIdentifier);
+            Assert.Fail("Unable to find parameter in group with Nickname " + groupIdentifier);
             return null;
           }
         }
       }
 
-      Assert.True(false, "Unable to find group with Nickname " + groupIdentifier);
+      Assert.Fail("Unable to find group with Nickname " + groupIdentifier);
       return null;
     }
 
@@ -103,7 +102,7 @@ namespace IntegrationTests {
           Assert.Equal(((double[])expected)[i], valOut.Value, tolerance);
         }
       } else {
-        Assert.True(false, "Expected type not found!");
+        Assert.Fail("Expected type not found!");
       }
     }
 
