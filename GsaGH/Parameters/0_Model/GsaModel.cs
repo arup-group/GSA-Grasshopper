@@ -105,6 +105,33 @@ namespace GsaGH.Parameters {
       return this;
     }
 
+    public override string ToString() {
+      string s = "New GsaGH Model";
+      if (Model != null && Titles != null) {
+        if (!string.IsNullOrEmpty(FileNameAndPath)) {
+          s = Path.GetFileName(FileNameAndPath).Replace(".gwb", string.Empty);
+        }
+
+        if (Titles?.Title != null && Titles.Title != string.Empty) {
+          if (s == string.Empty || s == "Invalid") {
+            s = Titles.Title;
+          } else {
+            s += " {" + Titles.Title + "}";
+          }
+        }
+      }
+
+      if (ModelUnit != LengthUnit.Undefined) {
+        s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
+      }
+
+      return s;
+    }
+
+    internal void SetUserDefaultUnits() {
+      GsaModelFactory.SetUserDefaultUnits(_model);
+    }
+
     private BoundingBox GetBoundingBox() {
       var outNodes = new ConcurrentDictionary<int, Node>(Model.Nodes());
       var pts = new ConcurrentBag<Point3d>();
@@ -130,33 +157,6 @@ namespace GsaGH.Parameters {
                 Model.Members().Keys.ToDictionary(id => id, id => Model.MemberDirectionCosine(id)));
       ApiElementLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
             Model.Elements().Keys.ToDictionary(id => id, id => Model.ElementDirectionCosine(id)));
-    }
-
-    internal void SetUserDefaultUnits() {
-      GsaModelFactory.SetUserDefaultUnits(_model);
-    }
-
-    public override string ToString() {
-      string s = "New GsaGH Model";
-      if (Model != null && Titles != null) {
-        if (!string.IsNullOrEmpty(FileNameAndPath)) {
-          s = Path.GetFileName(FileNameAndPath).Replace(".gwb", string.Empty);
-        }
-
-        if (Titles?.Title != null && Titles.Title != string.Empty) {
-          if (s == string.Empty || s == "Invalid") {
-            s = Titles.Title;
-          } else {
-            s += " {" + Titles.Title + "}";
-          }
-        }
-      }
-
-      if (ModelUnit != LengthUnit.Undefined) {
-        s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
-      }
-
-      return s;
     }
   }
 }
