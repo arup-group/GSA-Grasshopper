@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaConcreteMaterial(GsaConcreteMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = GsaModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _concreteMaterial = model.CreateConcreteMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);

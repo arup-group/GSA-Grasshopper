@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaGlassMaterial(GsaGlassMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = GsaModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _glassMaterial = model.CreateGlassMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);

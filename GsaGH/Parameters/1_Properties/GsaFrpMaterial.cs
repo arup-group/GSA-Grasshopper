@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaFrpMaterial(GsaFrpMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = GsaModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _frpMaterial = model.CreateFrpMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);

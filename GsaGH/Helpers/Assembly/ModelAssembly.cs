@@ -105,7 +105,7 @@ namespace GsaGH.Helpers.Assembly {
     private void AssembleNodesElementsMembersAndLists() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
-        GsaModel.SetUserDefaultUnits(_model.UiUnits());
+        GsaModelFactory.SetUserDefaultUnits(_model);
         _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       }
 
@@ -196,7 +196,7 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
     }
-    
+
     private void CheckIfModelIsEmpty() {
       if (_nodes.Count == 0
         && MaterialCount == 0
@@ -208,7 +208,7 @@ namespace GsaGH.Helpers.Assembly {
         _isSeedModel = false;
       }
     }
-    
+
     private void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
@@ -250,7 +250,7 @@ namespace GsaGH.Helpers.Assembly {
       }
       _model.SetCombinationCases(new ReadOnlyDictionary<int, CombinationCase>(existing));
     }
-    
+
     private void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {
       if (gridLines != null) {
         int id = 1;
@@ -261,7 +261,7 @@ namespace GsaGH.Helpers.Assembly {
         _model.SetGridLines(_gridLines.ReadOnlyDictionary);
       }
     }
-    
+
     private void ConvertElements(List<GsaElement1d> element1ds, List<GsaElement2d> element2ds, List<GsaElement3d> element3ds) {
       if ((!element1ds.IsNullOrEmpty()) || (!element2ds.IsNullOrEmpty())
         || (!element3ds.IsNullOrEmpty())) {
@@ -290,7 +290,7 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
     }
-    
+
     private void ConvertLists(List<GsaList> lists) {
       if (lists.IsNullOrEmpty()) {
         return;
@@ -322,7 +322,7 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
     }
-    
+
     private void ConvertLoadCases(List<GsaLoadCase> loadCases, GH_Component owner) {
       if (loadCases.IsNullOrEmpty()) {
         return;
@@ -343,7 +343,7 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
     }
-    
+
     private void ConvertMembers(List<GsaMember1d> member1ds, List<GsaMember2d> member2ds, List<GsaMember3d> member3ds) {
       if ((!member1ds.IsNullOrEmpty()) || (!member2ds.IsNullOrEmpty())
         || (!member3ds.IsNullOrEmpty())) {
@@ -354,7 +354,7 @@ namespace GsaGH.Helpers.Assembly {
       ConvertMember2ds(member2ds);
       ConvertMember3ds(member3ds);
     }
-    
+
     private void ConvertNodeList(List<GsaList> lists) {
       int nodeCountBefore = _nodes.Count;
       ConvertNodeLists(lists);
@@ -385,7 +385,7 @@ namespace GsaGH.Helpers.Assembly {
       string concreteCode = GetConcreteDesignCode(_model);
       string steelCode = GetSteelDesignCode(_model);
 
-      _model = GsaModel.CreateModelFromCodes(concreteCode, steelCode);
+      _model = GsaModelFactory.CreateModelFromCodes(concreteCode, steelCode);
     }
 
     private void DeleteExistingResults() {
@@ -397,7 +397,7 @@ namespace GsaGH.Helpers.Assembly {
         _model.DeleteResults(taskId);
       }
     }
-    
+
     private void ElementsFromMembers(bool createElementsFromMembers, Length toleranceCoincidentNodes, GH_Component owner) {
       _initialNodeCount += _nodes.Count;
 
@@ -478,7 +478,7 @@ namespace GsaGH.Helpers.Assembly {
 
       memberElementRelationship = GetMemberElementRelationship(_model);
     }
-    
+
     private void ReportWarningFromAddingGridSurfacesOrList(string mes, string troubleName, string type, GH_Component owner) {
       foreach (KeyValuePair<int, GridSurface> gridSurface in _model.GridSurfaces()) {
         if (gridSurface.Value.Name == troubleName) {
@@ -498,7 +498,7 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
     }
-    
+
     private void SetupModel(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
       _model = model.Model;

@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaTimberMaterial(GsaTimberMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = GsaModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _timberMaterial = model.CreateTimberMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);
