@@ -13,7 +13,7 @@ namespace GsaGH.Helpers.Import {
   /// <summary>
   ///   Class containing functions to import various object types from GSA
   /// </summary>
-  internal class Loads {
+  internal static class Loads {
     /// <summary>
     ///   Method to import Load Cases from a GSA model.
     ///   Will output a list of GsaLoadCase.

@@ -10,7 +10,7 @@ namespace GsaGH.Helpers.Import {
   /// <summary>
   ///   Class containing functions to import various object types from GSA
   /// </summary>
-  internal class Diagrams {
+  internal static class Diagrams {
     internal static Line ConvertLine(GsaAPI.Line line, double scaleFactor) {
       return new Line(
         ConvertPoint(line.Start, scaleFactor), 

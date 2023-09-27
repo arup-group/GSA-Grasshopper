@@ -9,7 +9,7 @@ namespace GsaGH.Helpers.Import {
   /// <summary>
   ///   Class containing functions to import various object types from GSA
   /// </summary>
-  internal class Analyses {
+  internal static class AnalysisHelper {
     internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>
       GetAnalysisTasksAndCombinations(GsaModel gsaModel) {
       return GetAnalysisTasksAndCombinations(gsaModel.Model);

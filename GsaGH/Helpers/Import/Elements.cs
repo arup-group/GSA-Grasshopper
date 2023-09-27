@@ -87,6 +87,7 @@ namespace GsaGH.Helpers.Import {
         }
       });
     }
+
     internal static Mesh GetMeshFromApiElement2d(
       Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;

@@ -4,7 +4,7 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
-  internal class GridLines {
+  internal static class GridLines {
     internal static List<GsaGridLine> GetGridLines(GsaModel model) {
       var gridLines = new List<GsaGridLine>();
       foreach (GridLine gridLine in model.Model.GridLines().Values) {

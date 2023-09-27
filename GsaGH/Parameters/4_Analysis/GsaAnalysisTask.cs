@@ -77,13 +77,13 @@ namespace GsaGH.Parameters {
 
     internal void CreateDeafultCases(GsaModel gsaModel) {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(gsaModel);
+        = Analysis.GetAnalysisTasksAndCombinations(gsaModel);
       Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
 
     internal void CreateDefaultCases(Model model) {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(model);
+        = Analysis.GetAnalysisTasksAndCombinations(model);
       Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
   }
