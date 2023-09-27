@@ -4,11 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers {
   public class MergeModels {
 
     public static GsaModel MergeModel(List<GsaModel> models, GH_Component owner, Length tolerance) {

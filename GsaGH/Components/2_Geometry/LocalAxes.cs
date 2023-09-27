@@ -2,7 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;

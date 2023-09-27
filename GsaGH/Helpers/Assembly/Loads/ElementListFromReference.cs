@@ -7,7 +7,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     internal static ConcurrentDictionary<int, ConcurrentBag<int>> GetMemberElementRelationship(Model model) {
       var relationships = new ConcurrentDictionary<int, ConcurrentBag<int>>();

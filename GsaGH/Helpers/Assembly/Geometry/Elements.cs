@@ -7,7 +7,7 @@ using GsaGH.Parameters;
 using Rhino.Collections;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private void AddElement(int id, Guid guid, Element apiElement, bool overwrite) {
       if (id > 0) {

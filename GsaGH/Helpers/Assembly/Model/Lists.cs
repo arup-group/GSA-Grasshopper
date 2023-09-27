@@ -8,7 +8,7 @@ using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using EntityType = GsaGH.Parameters.EntityType;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private void AddElementList(GsaList list, GH_Component owner) {
       GsaList copyList = list.Duplicate();

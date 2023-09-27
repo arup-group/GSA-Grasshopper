@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private GsaGuidDictionary<Section> _sections;
     private GsaIntDictionary<SectionModifier> _secionModifiers;

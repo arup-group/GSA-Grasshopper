@@ -8,7 +8,6 @@ using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -16,7 +15,7 @@ using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private GsaIntDictionary<Axis> _axes;
     private GsaGuidIntListDictionary<Element> _elements;

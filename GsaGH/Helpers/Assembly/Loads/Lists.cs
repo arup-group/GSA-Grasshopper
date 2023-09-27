@@ -6,7 +6,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private void ConvertList(List<GsaList> lists, List<IGsaLoad> loads, GH_Component owner) {
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());

@@ -4,7 +4,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private int AddProp2d(GsaProperty2d prop) {
       AddMaterial(ref prop);

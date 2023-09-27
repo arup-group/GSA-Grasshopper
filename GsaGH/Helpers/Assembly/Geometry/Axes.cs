@@ -2,7 +2,7 @@
 using GsaAPI;
 using OasysGH.Units;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private int TryGetExistingAxisId(Axis testAxis) {
       double tolerance = DefaultUnits.Tolerance.Meters;

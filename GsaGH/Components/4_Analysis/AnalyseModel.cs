@@ -4,18 +4,17 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
@@ -40,7 +39,7 @@ namespace GsaGH.Components {
       true,
       true,
     };
-    
+
     private bool _reMesh = true;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
@@ -185,7 +184,7 @@ namespace GsaGH.Components {
       }
 
       // Merge models
-      var model = new GsaModel();      
+      var model = new GsaModel();
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
@@ -195,10 +194,9 @@ namespace GsaGH.Components {
       }
 
       // Assemble model
-      var assembly = new ModelAssembly(
-         model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
-        materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
-        analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      var assembly = new ModelAssembly(model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds,
+        mem1ds, mem2ds, mem3ds, materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces,
+        loadCases, analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
       model.Model = assembly.GetModel();
 
       // Run analysis
@@ -248,7 +246,7 @@ namespace GsaGH.Components {
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             if (model.Model.Analyse(task.Key)) {
-              PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
+              OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
             } else {
               string message = "Analysis Task " + task.Key +
@@ -315,9 +313,9 @@ namespace GsaGH.Components {
 
             string warning = "Member and element synchronisation check\n" +
               "Warning: Creating Elements From Members will recreate child Elements. " +
-            Environment.NewLine +"This will update the Element's property to the parent " +
+            Environment.NewLine + "This will update the Element's property to the parent " +
             "Member's property, and may also renumber element IDs. " +
-            Environment.NewLine + "The following former Element IDs were updated:" 
+            Environment.NewLine + "The following former Element IDs were updated:"
             + Environment.NewLine;
             string ids = split[1].Replace(
               "(list may be too long to display, click to copy)", string.Empty)

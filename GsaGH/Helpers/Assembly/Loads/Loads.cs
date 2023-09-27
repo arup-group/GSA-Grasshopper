@@ -11,7 +11,7 @@ using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private List<GravityLoad> _gravityLoads = new List<GravityLoad>();
     private List<BeamLoad> _beamLoads = new List<BeamLoad>();

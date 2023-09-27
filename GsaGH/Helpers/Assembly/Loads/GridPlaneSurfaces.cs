@@ -8,7 +8,7 @@ using GsaGH.Parameters.Enums;
 using OasysUnits;
 using EntityType = GsaGH.Parameters.EntityType;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private GsaGuidDictionary<GridPlane> _gridPlanes;
     private GsaGuidDictionary<GridSurface> _gridSurfaces;

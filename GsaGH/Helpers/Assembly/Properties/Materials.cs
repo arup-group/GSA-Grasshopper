@@ -5,7 +5,7 @@ using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     public const string GenericConcreteCodeName = "generic conc.";
     public const string GenericSteelCodeName = "<steel generic>";

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaGH.Components.GraveyardComp;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -184,10 +183,9 @@ namespace GsaGH.Components {
         }
       }
       // Assemble model
-      var assembly = new ModelAssembly(
-           model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
-        materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases,
-        analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      var assembly = new ModelAssembly(model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds,
+        mem1ds, mem2ds, mem3ds, materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces,
+        loadCases, analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
       model.Model = assembly.GetModel();
 
       ToleranceMenu.UpdateMessage(this, _lengthUnit);

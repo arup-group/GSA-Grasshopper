@@ -7,7 +7,7 @@ using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private void AddMember(int id, Guid guid, Member apiMember) {
       if (id > 0) {

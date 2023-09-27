@@ -2,7 +2,7 @@
 using System.Linq;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private int AddProp3d(GsaProperty3d prop) {
       AddMaterial(ref prop);

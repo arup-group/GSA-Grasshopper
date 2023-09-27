@@ -5,7 +5,7 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 using NodeLoadType = GsaGH.Parameters.NodeLoadType;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private List<NodeLoad> _nodeLoads;
     private List<NodeLoad> _displacements;

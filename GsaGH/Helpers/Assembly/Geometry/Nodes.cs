@@ -6,7 +6,7 @@ using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     internal static Node NodeFromPoint(Point3d point, LengthUnit unit) {
       if (unit == LengthUnit.Meter) {
