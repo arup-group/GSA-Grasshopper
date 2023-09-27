@@ -14,26 +14,32 @@ using Rhino.Display;
 using System.Drawing;
 using System.Reflection;
 using GsaGHTests.Components.Geometry;
+using GsaAPI;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class GetModelGeometryTests {
     [Fact]
     public void GetModelGeometryNodeDrawViewportMeshesAndWiresTest() {
-      var node = new GsaNode {
+      var nodeWithSupportSymbol = new GsaNode {
         Restraint = new GsaBool6(true, true, true, false, false, false),
         LocalAxis = new Plane(new Point3d(10, 10, 10), new Vector3d(10, 10, 10))
       };
-      node.UpdatePreview();
+      nodeWithSupportSymbol.UpdatePreview();
 
-      var node2 = new GsaNode(node);
-      node2.ApiNode.Colour = Color.Blue;
-      
+      var nodeWithDefaultGsaColor = new GsaNode(nodeWithSupportSymbol);
+      nodeWithDefaultGsaColor.ApiNode.Colour = Color.FromArgb(0, 0, 0);
+
+      var NodeWithSupportText = new GsaNode(nodeWithSupportSymbol) {
+        Restraint = new GsaBool6(true, false, true, false, true, false)
+      };
+
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
           (GsaNodeGoo)ComponentTestHelper.GetOutput(CreateSupportTests.ComponentMother()),
-          new GsaNodeGoo(node),
-          new GsaNodeGoo(node2),
+          new GsaNodeGoo(nodeWithSupportSymbol),
+          new GsaNodeGoo(nodeWithDefaultGsaColor),
+          new GsaNodeGoo(NodeWithSupportText),
         }, null, null, null, null, null, ModelUnit.M));
 
       var comp = new GetModelGeometry();

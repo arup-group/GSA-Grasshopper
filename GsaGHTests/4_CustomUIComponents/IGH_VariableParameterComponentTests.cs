@@ -31,5 +31,12 @@ namespace GsaGHTests.CustomComponent {
       Assert.False(comp.CanInsertParameter(GH_ParameterSide.Input, 0));
       Assert.False(comp.CanInsertParameter(GH_ParameterSide.Output, 0));
     }
+
+    [Fact]
+    public void GetModelGeometryIGH_VariableParameterComponentTest() {
+      IGH_VariableParameterComponent comp = new GetModelGeometry();
+      Assert.Null(comp.CreateParameter(GH_ParameterSide.Input, 0));
+      Assert.False(comp.DestroyParameter(GH_ParameterSide.Input, 0));
+    }
   }
 }
