@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using OasysUnits;
@@ -129,7 +130,7 @@ namespace GsaGH.Parameters {
     }
 
     internal void SetUserDefaultUnits() {
-      GsaModelFactory.SetUserDefaultUnits(_model);
+      ModelFactory.SetUserDefaultUnits(_model);
     }
 
     private BoundingBox GetBoundingBox() {

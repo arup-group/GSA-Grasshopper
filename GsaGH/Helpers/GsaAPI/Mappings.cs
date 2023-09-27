@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GsaApi.EnumMappings;
-using static GsaGH.Parameters.GsaMaterial;
-using Diagram = GsaGH.Parameters;
-using AlignmentType = GsaGH.Parameters.AlignmentType;
 using GsaGH.Parameters;
+using AlignmentType = GsaGH.Parameters.AlignmentType;
+using Diagram = GsaGH.Parameters;
 using DiagramType = GsaAPI.DiagramType;
 
 namespace GsaGH.Helpers.GsaApi {
-  internal class Mappings {
+  internal static class Mappings {
 
     internal static readonly Dictionary<string, AlignmentType> alignmentTypeMapping
       = new Dictionary<string, AlignmentType>() {

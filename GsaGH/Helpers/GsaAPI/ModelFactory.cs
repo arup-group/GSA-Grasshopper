@@ -3,8 +3,8 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 
-namespace GsaGH.Parameters {
-  internal static class GsaModelFactory {
+namespace GsaGH.Helpers.GsaApi {
+  internal static class ModelFactory {
     internal static Model CreateModelFromCodes(string concreteDesignCode = "", string steelDesignCode = "") {
       if (concreteDesignCode == string.Empty) {
         concreteDesignCode = DesignCode.GetConcreteDesignCodeNames()[8];
@@ -57,7 +57,8 @@ namespace GsaGH.Parameters {
       try {
         // will fail for superseeded codesd
         return new Model(concreteDesignCode, steelDesignCode);
-      } catch (GsaApiException) { //GsaAPI.GsaApiException: 'Concrete design code is not supported.'
+      }
+      catch (GsaApiException) { //GsaAPI.GsaApiException: 'Concrete design code is not supported.'
         ReadOnlyCollection<string> concreteCodes = DesignCode.GetConcreteDesignCodeNames();
         if (!concreteCodes.Contains(concreteDesignCode)) {
           concreteDesignCode = FindSimilarCode(concreteDesignCode, concreteCodes);

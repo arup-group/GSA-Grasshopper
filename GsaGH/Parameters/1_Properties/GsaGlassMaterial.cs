@@ -1,5 +1,6 @@
 ﻿using GsaAPI;
 using GsaAPI.Materials;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   public class GsaGlassMaterial : GsaMaterial, IGsaStandardMaterial {
@@ -28,7 +29,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaGlassMaterial(GsaGlassMaterial other) : base(other) {
-      Model model = GsaModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = ModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _glassMaterial = model.CreateGlassMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);

@@ -19,21 +19,13 @@ namespace GsaGH.Helpers.Import {
     internal ReadOnlyDictionary<int, GsaMaterial> AnalysisMaterials { get; private set; }
 
     internal Materials(Model model) {
-      SteelMaterials =
-        CreateMaterialsFromAPI(model.SteelMaterials(), model);
-      ConcreteMaterials =
-        CreateMaterialsFromAPI(model.ConcreteMaterials(), model);
-      FrpMaterials =
-        CreateMaterialsFromAPI(model.FrpMaterials(), model);
-      AluminiumMaterials =
-        CreateMaterialsFromAPI(model.AluminiumMaterials(), model);
-      TimberMaterials =
-        CreateMaterialsFromAPI(model.TimberMaterials(), model);
-      GlassMaterials =
-        CreateMaterialsFromAPI(model.GlassMaterials(), model);
-      FabricMaterials =
-        CreateMaterialsFromAPI(model.FabricMaterials(), model);
-
+      SteelMaterials = CreateMaterialsFromAPI(model.SteelMaterials(), model);
+      ConcreteMaterials = CreateMaterialsFromAPI(model.ConcreteMaterials(), model);
+      FrpMaterials = CreateMaterialsFromAPI(model.FrpMaterials(), model);
+      AluminiumMaterials = CreateMaterialsFromAPI(model.AluminiumMaterials(), model);
+      TimberMaterials = CreateMaterialsFromAPI(model.TimberMaterials(), model);
+      GlassMaterials = CreateMaterialsFromAPI(model.GlassMaterials(), model);
+      FabricMaterials = CreateMaterialsFromAPI(model.FabricMaterials(), model);
       AnalysisMaterials = CreateMaterialsFromAPI(model.AnalysisMaterials());
     }
 

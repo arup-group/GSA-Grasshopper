@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GsaAPI;
 using GsaAPI.Materials;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   internal static class GsaMaterialFactory {
@@ -111,7 +112,7 @@ namespace GsaGH.Parameters {
     internal static IGsaStandardMaterial CreateStandardMaterial(MatType type, string materialName, string codeName = "") {
       string concreteDesignCode = type == MatType.Concrete ? codeName : string.Empty;
       string steelDesignCode = type == MatType.Steel ? codeName : string.Empty;
-      Model model = GsaModelFactory.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
+      Model model = ModelFactory.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
 
       IGsaStandardMaterial material;
       switch (type) {
@@ -149,7 +150,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static List<string> GetGradeNames(MatType type, string concreteDesignCode = "", string steelDesignCode = "") {
-      Model m = GsaModelFactory.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
+      Model m = ModelFactory.CreateModelFromCodes(concreteDesignCode, steelDesignCode);
       return GetGradeNames(type, m);
     }
 
@@ -217,7 +218,7 @@ namespace GsaGH.Parameters {
         throw new ArgumentException("Can not create analysis material for fabric material");
       }
 
-      Model m = GsaModelFactory.CreateModelFromCodes(material.ConcreteDesignCodeName, material.SteelDesignCodeName);
+      Model m = ModelFactory.CreateModelFromCodes(material.ConcreteDesignCodeName, material.SteelDesignCodeName);
       return material.MaterialType switch {
         MatType.Aluminium => m.CreateAluminiumMaterial(material.Name).AnalysisMaterial,
         MatType.Concrete => m.CreateConcreteMaterial(material.Name).AnalysisMaterial,

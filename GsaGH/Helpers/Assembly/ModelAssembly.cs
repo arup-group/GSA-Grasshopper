@@ -7,6 +7,7 @@ using Grasshopper.Kernel;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -105,7 +106,7 @@ namespace GsaGH.Helpers.Assembly {
     private void AssembleNodesElementsMembersAndLists() {
       if (!_isSeedModel) {
         CreateModelFromDesignCodes();
-        GsaModelFactory.SetUserDefaultUnits(_model);
+        ModelFactory.SetUserDefaultUnits(_model);
         _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       }
 
@@ -385,7 +386,7 @@ namespace GsaGH.Helpers.Assembly {
       string concreteCode = GetConcreteDesignCode(_model);
       string steelCode = GetSteelDesignCode(_model);
 
-      _model = GsaModelFactory.CreateModelFromCodes(concreteCode, steelCode);
+      _model = ModelFactory.CreateModelFromCodes(concreteCode, steelCode);
     }
 
     private void DeleteExistingResults() {

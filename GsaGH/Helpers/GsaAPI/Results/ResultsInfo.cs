@@ -8,7 +8,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GsaApi {
-  internal partial class ResultHelper {
+  internal static partial class ResultHelper {
 
     public static Tuple<List<string>, List<int>, DataTree<int?>> GetAvalailableResults(
       GsaModel model) {

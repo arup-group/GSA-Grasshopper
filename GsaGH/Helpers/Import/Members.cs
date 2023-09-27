@@ -34,8 +34,7 @@ namespace GsaGH.Helpers.Import {
           (Tuple<List<int>, List<string>> item1,
             Tuple<List<List<int>>, List<List<string>>> voidTuple,
             Tuple<List<List<int>>, List<List<string>>> lineTuple,
-            List<int> inclpts)
-              = Topology.Topology_detangler(toporg);
+            List<int> inclpts) = Topology.Topology_detangler(toporg);
           (List<int> topoInt, List<string> topoType) = item1;
 
           var topopts = new Point3dList();
@@ -74,7 +73,7 @@ namespace GsaGH.Helpers.Import {
               Member1ds.Add(new GsaMember1dGoo(mem1d));
               break;
 
-            default: 
+            default:
               // ### Member 2d ###
               if (topopts.Count < 2) {
                 errors2d.Add(item.Key);
