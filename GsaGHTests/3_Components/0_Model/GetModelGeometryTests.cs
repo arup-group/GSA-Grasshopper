@@ -1,20 +1,15 @@
-﻿using Grasshopper.Kernel;
-using GsaGH.Components;
-using GsaGHTests.Helpers;
-using System.IO;
+﻿using System.IO;
 using System;
-using Xunit;
 using System.Collections.Generic;
-using GsaGH.Parameters;
-using Rhino.Geometry;
-using static GsaGHTests.Helpers.Export.AssembleModelTests;
-using Grasshopper.Kernel.Types;
-using OasysGH.Parameters;
-using Rhino.Display;
 using System.Drawing;
-using System.Reflection;
+using Grasshopper.Kernel;
+using GsaGH.Components;
+using GsaGH.Parameters;
 using GsaGHTests.Components.Geometry;
-using GsaAPI;
+using GsaGHTests.Helpers;
+using Rhino.Geometry;
+using Xunit;
+using static GsaGHTests.Helpers.Export.AssembleModelTests;
 
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
@@ -45,7 +40,7 @@ namespace GsaGHTests.Model {
       var comp = new GetModelGeometry();
       ComponentTestHelper.SetInput(comp, modelGoo);
       var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 0);
-      DrawViewportMeshesAndWiresTest(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     [Fact]
@@ -58,7 +53,7 @@ namespace GsaGHTests.Model {
       var comp = new GetModelGeometry();
       ComponentTestHelper.SetInput(comp, modelGoo);
       var output = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp, 1);
-      DrawViewportMeshesAndWiresTest(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     [Fact]
@@ -71,7 +66,7 @@ namespace GsaGHTests.Model {
       var comp = new GetModelGeometry();
       ComponentTestHelper.SetInput(comp, modelGoo);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp, 2);
-      DrawViewportMeshesAndWiresTest(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     [Fact]
@@ -84,7 +79,7 @@ namespace GsaGHTests.Model {
       var comp = new GetModelGeometry();
       ComponentTestHelper.SetInput(comp, modelGoo);
       var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 4);
-      DrawViewportMeshesAndWiresTest(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     [Fact]
@@ -97,7 +92,7 @@ namespace GsaGHTests.Model {
       var comp = new GetModelGeometry();
       ComponentTestHelper.SetInput(comp, modelGoo);
       var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 5);
-      DrawViewportMeshesAndWiresTest(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     [Fact]
@@ -111,7 +106,7 @@ namespace GsaGHTests.Model {
       var comp = new GetModelGeometry();
       ComponentTestHelper.SetInput(comp, modelGoo);
       var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 6);
-      DrawViewportMeshesAndWiresTest(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     [Fact]
@@ -139,55 +134,6 @@ namespace GsaGHTests.Model {
           Assert.Equal(comp._selectedItems[i], comp._dropDownItems[i][j]);
         }
       }
-    }
-
-    private static void DrawViewportMeshesAndWiresTest(GetModelGeometry component) {
-      var rhinoViewPort = new RhinoViewport();
-      var rhinoDocument = Rhino.RhinoDoc.CreateHeadless(null);
-      rhinoDocument.Views.DefaultViewLayout();
-      DisplayPipeline displayPipeline = rhinoDocument.Views.ActiveView.DisplayPipeline;
-      var grasshopperDocument = new GH_Document();
-      Grasshopper.CentralSettings.PreviewMeshEdges = true;
-      MeshingParameters mp = grasshopperDocument.PreviewCurrentMeshParameters();
-      var notSelectedMaterial = new DisplayMaterial {
-        Diffuse = Color.FromArgb(255, 150, 0, 0),
-        Emission = Color.FromArgb(50, 190, 190, 190),
-        Transparency = 0.1,
-      };
-      var selectedMaterial = new DisplayMaterial {
-        Diffuse = Color.FromArgb(255, 150, 0, 1),
-        Emission = Color.FromArgb(50, 190, 190, 190),
-        Transparency = 0.1,
-      };
-
-      object[] parameters = {
-        grasshopperDocument,
-        displayPipeline, 
-        rhinoViewPort, 
-        3,
-        Color.FromArgb(255, 150, 0, 0), 
-        Color.FromArgb(255, 150, 0, 1),
-        notSelectedMaterial,
-        selectedMaterial,
-        mp
-      };
-
-      // create GH_PreviewArgs with reflection as constructor is internal in GH
-      BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-      var args = (GH_PreviewArgs)Activator.CreateInstance(
-        typeof(GH_PreviewArgs), flags, null, parameters, null);
-
-      component.Attributes.Selected = false;
-      component.DrawViewportMeshes(args);
-      component.DrawViewportWires(args);
-      component.Attributes.Selected = true;
-      component.DrawViewportMeshes(args);
-      component.DrawViewportWires(args);
-
-      Assert.True(true);
-
-      rhinoDocument.Dispose();
-      grasshopperDocument.Dispose();
     }
 
     private static void TestDeserialize(GetModelGeometry comp, string customIdentifier = "") {
