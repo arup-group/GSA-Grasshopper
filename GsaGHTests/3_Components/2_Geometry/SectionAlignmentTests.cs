@@ -81,6 +81,44 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(expectedZ, output.Value.Z.Millimeters, 6);
     }
 
+    [Theory]
+    [InlineData("STD A(cm) 20 20 1.5 1.5", 100, 100)]
+    [InlineData("STD CH(cm) 20 20 1.5 1.5", 100, 100)]
+    [InlineData("STD CHS(cm) 20 1.5", 100, 100)]
+    [InlineData("STD C(cm) 20", 100, 100)]
+    [InlineData("STD X(cm) 20 20 1.5 1.5", 100, 100)]
+    [InlineData("STD OVAL(cm) 20 20 1.5", 100, 100)]
+    [InlineData("STD E(cm) 20 20 2", 100, 100)]
+    [InlineData("STD GC(cm) 20 20 1.5 1.5", 100, 100)]
+    [InlineData("STD GZ(cm) 20 20 20 1.5 1.5 1.5", 100, 100)]
+    [InlineData("STD GI(cm) 20 20 20 1.5 1.5 1.5", 100, 100)]
+    [InlineData("STD CB(cm) 20 20 20 1.5 1.5 1.5", 100, 100)]
+    [InlineData("STD I(cm) 20 20 1.5 1.5", 100, 100)]
+    [InlineData("STD RHS(cm) 20 20 1.5 1.5", 100, 100)]
+    [InlineData("STD R(cm) 20 20", 100, 100)]
+    [InlineData("STD RE 200 200 150 120 2", 100, 100)]
+    [InlineData("STD RC(cm) 20 20", 100, 100)]
+    [InlineData("STD SP(cm) 20 10 2", 150, 100)]
+    [InlineData("STD SPW(cm) 20 10 2", 100, 100)]
+    [InlineData("STD SHT(cm) 20 20 5 5 2 1", 100, 100)]
+    [InlineData("STD TR(cm) 20 10 20", 100, 100)]
+    [InlineData("STD T(cm) 20 20 2 2", 100, 100)]
+    public void AlignmentProfileTest(string profile, double expectedY, double expectedZ) {
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
+        Section = new GsaSection(profile),
+      };
+      var goo = new GsaMember1dGoo(member);
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, goo, 0);
+      ComponentTestHelper.SetInput(comp, "Bottom-Right", 1);
+
+      var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
+
+      Assert.Equal(expectedY, output.Value.Y.Millimeters, 6);
+      Assert.Equal(expectedZ, output.Value.Z.Millimeters, 6);
+    }
+
     [Fact]
     public void SectionAlignmentElement1dTest() {
       var comp = new SectionAlignment();
