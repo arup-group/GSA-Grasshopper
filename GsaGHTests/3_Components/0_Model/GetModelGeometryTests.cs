@@ -19,6 +19,30 @@ namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class GetModelGeometryTests {
     [Fact]
+    public void GetModelGeometryNodeDrawViewportMeshesAndWiresTest() {
+      var node = new GsaNode {
+        Restraint = new GsaBool6(true, true, true, false, false, false),
+        LocalAxis = new Plane(new Point3d(10, 10, 10), new Vector3d(10, 10, 10))
+      };
+      node.UpdatePreview();
+
+      var node2 = new GsaNode(node);
+      node2.ApiNode.Colour = Color.Blue;
+      
+      var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
+        CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
+          (GsaNodeGoo)ComponentTestHelper.GetOutput(CreateSupportTests.ComponentMother()),
+          new GsaNodeGoo(node),
+          new GsaNodeGoo(node2),
+        }, null, null, null, null, null, ModelUnit.M));
+
+      var comp = new GetModelGeometry();
+      ComponentTestHelper.SetInput(comp, modelGoo);
+      var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 0);
+      DrawViewportMeshesAndWiresTest(comp);
+    }
+
+    [Fact]
     public void GetModelGeometryElement1dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement1dGoo>() {

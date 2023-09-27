@@ -195,7 +195,6 @@ namespace GsaGH.Components {
 
           if (node.Value.SupportPreview != null) {
             if (!Attributes.Selected) {
-
               if (node.Value.SupportPreview.SupportSymbol != null) {
                 args.Display.DrawBrepShaded(node.Value.SupportPreview.SupportSymbol, Colours.SupportSymbol);
               }
