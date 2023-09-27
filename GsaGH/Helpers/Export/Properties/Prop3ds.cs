@@ -4,7 +4,18 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal partial class ModelAssembly {
-    internal void ConvertProp3ds(List<GsaProperty3d> prop3Ds) {
+    private int AddProp3d(GsaProperty3d prop) {
+      AddMaterial(ref prop);
+
+      if (prop.Id <= 0) {
+        return _prop3ds.AddValue(prop.Guid, prop.ApiProp3d);
+      }
+
+      _prop3ds.SetValue(prop.Id, prop.Guid, prop.ApiProp3d);
+      return prop.Id;
+    }
+
+    private void ConvertProp3ds(List<GsaProperty3d> prop3Ds) {
       if (prop3Ds == null) {
         return;
       }
@@ -15,7 +26,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal int ConvertProp3d(GsaProperty3d prop3d) {
+    private int ConvertProp3d(GsaProperty3d prop3d) {
       if (prop3d == null) {
         return 0;
       }
@@ -25,17 +36,6 @@ namespace GsaGH.Helpers.Export {
       }
 
       return AddProp3d(prop3d);
-    }
-
-    internal int AddProp3d(GsaProperty3d prop) {
-      AddMaterial(ref prop);
-
-      if (prop.Id <= 0) {
-        return _prop3ds.AddValue(prop.Guid, prop.ApiProp3d);
-      }
-
-      _prop3ds.SetValue(prop.Id, prop.Guid, prop.ApiProp3d);
-      return prop.Id;
     }
   }
 }

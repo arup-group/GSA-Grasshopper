@@ -13,44 +13,17 @@ namespace GsaGH.Helpers.Export {
     private GsaGuidDictionary<GridPlane> _gridPlanes;
     private GsaGuidDictionary<GridSurface> _gridSurfaces;
 
-    internal int ConvertGridPlaneSurface(GsaGridPlaneSurface gridPlaneSurface, GH_Component owner) {
-      gridPlaneSurface.GridPlane.AxisProperty = AddAxis(gridPlaneSurface);
-      gridPlaneSurface.GridSurface.GridPlane = AddGridPlane(gridPlaneSurface);
-      return AddGridSurface(gridPlaneSurface, owner);
-    }
-
-    internal void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces, GH_Component owner) {
-      if (gridPlaneSurfaces == null) {
-        return;
-      }
-
-      foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces) {
-        if (gridPlaneSurface == null) {
-          continue;
-        }
-
-        GsaGridPlaneSurface gps = gridPlaneSurface;
-
-        if (gps.GridPlane != null) {
-          gps.GridPlane.AxisProperty = AddAxis(gps);
-          gps.GridSurface.GridPlane = AddGridPlane(gps);
-        }
-
-        AddGridSurface(gps, owner);
-      }
-    }
-
-    internal int AddAxis(GsaGridPlaneSurface gridplanesurface) {
+    private int AddAxis(GsaGridPlaneSurface gridplanesurface) {
       int axisId = gridplanesurface.AxisId;
 
-      Axis axis = gridplanesurface.GetAxis(Unit);
+      Axis axis = gridplanesurface.GetAxis(_unit);
 
       if (axisId > 0) {
         gridplanesurface.GridPlane.AxisProperty = axisId;
-        if (Axes.ReadOnlyDictionary.ContainsKey(axisId)) {
-          Axes.SetValue(axisId, axis);
+        if (_axes.ReadOnlyDictionary.ContainsKey(axisId)) {
+          _axes.SetValue(axisId, axis);
         } else {
-          axisId = Axes.AddValue(axis);
+          axisId = _axes.AddValue(axis);
         }
       } else {
         if (string.IsNullOrEmpty(axis.Name)) {
@@ -65,21 +38,21 @@ namespace GsaGH.Helpers.Export {
         axisId = TryGetExistingAxisId(axis);
       }
 
-      if (Axes.ReadOnlyDictionary[axisId].Name == string.Empty) {
-        Axes.ReadOnlyDictionary[axisId].Name = "Axis " + axisId;
+      if (_axes.ReadOnlyDictionary[axisId].Name == string.Empty) {
+        _axes.ReadOnlyDictionary[axisId].Name = "Axis " + axisId;
       }
 
       return axisId;
     }
 
-    internal int AddGridPlane(GsaGridPlaneSurface grdPlnSrf) {
+    private int AddGridPlane(GsaGridPlaneSurface grdPlnSrf) {
       if (grdPlnSrf.Elevation != "0") {
         var elevation = new Length();
         try {
           elevation = Length.Parse(grdPlnSrf.Elevation);
         } catch (Exception) {
           if (double.TryParse(grdPlnSrf.Elevation, out double elev)) {
-            elevation = new Length(elev, Unit);
+            elevation = new Length(elev, _unit);
           }
         }
 
@@ -92,7 +65,7 @@ namespace GsaGH.Helpers.Export {
           tolerance = Length.Parse(grdPlnSrf.StoreyToleranceAbove);
         } catch (Exception) {
           if (double.TryParse(grdPlnSrf.StoreyToleranceAbove, out double tol)) {
-            tolerance = new Length(tol, Unit);
+            tolerance = new Length(tol, _unit);
           }
         }
 
@@ -105,7 +78,7 @@ namespace GsaGH.Helpers.Export {
           tolerance = Length.Parse(grdPlnSrf.StoreyToleranceBelow);
         } catch (Exception) {
           if (double.TryParse(grdPlnSrf.StoreyToleranceBelow, out double tol)) {
-            tolerance = new Length(tol, Unit);
+            tolerance = new Length(tol, _unit);
           }
         }
 
@@ -131,13 +104,13 @@ namespace GsaGH.Helpers.Export {
       return gridPlaneId;
     }
 
-    internal int AddGridSurface(GsaGridPlaneSurface grdPlnSrf, GH_Component owner) {
+    private int AddGridSurface(GsaGridPlaneSurface grdPlnSrf, GH_Component owner) {
       var tolerance = new Length();
       try {
         tolerance = Length.Parse(grdPlnSrf.Tolerance);
       } catch (Exception) {
         if (double.TryParse(grdPlnSrf.Tolerance, out double tol)) {
-          tolerance = new Length(tol, Unit);
+          tolerance = new Length(tol, _unit);
         }
       }
 
@@ -169,6 +142,33 @@ namespace GsaGH.Helpers.Export {
       }
 
       return gridSurfaceId;
+    }
+
+    private int ConvertGridPlaneSurface(GsaGridPlaneSurface gridPlaneSurface, GH_Component owner) {
+      gridPlaneSurface.GridPlane.AxisProperty = AddAxis(gridPlaneSurface);
+      gridPlaneSurface.GridSurface.GridPlane = AddGridPlane(gridPlaneSurface);
+      return AddGridSurface(gridPlaneSurface, owner);
+    }
+
+    private void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces, GH_Component owner) {
+      if (gridPlaneSurfaces == null) {
+        return;
+      }
+
+      foreach (GsaGridPlaneSurface gridPlaneSurface in gridPlaneSurfaces) {
+        if (gridPlaneSurface == null) {
+          continue;
+        }
+
+        GsaGridPlaneSurface gps = gridPlaneSurface;
+
+        if (gps.GridPlane != null) {
+          gps.GridPlane.AxisProperty = AddAxis(gps);
+          gps.GridSurface.GridPlane = AddGridPlane(gps);
+        }
+
+        AddGridSurface(gps, owner);
+      }
     }
 
     private int TryUseExistingGridPlane(GsaGridPlaneSurface grdPlnSrf) {

@@ -166,16 +166,16 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
-      (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
+      (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = InputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
       (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
-        List<GsaProperty3d> prop3Ds) = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
+        List<GsaProperty3d> prop3Ds) = InputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
-        List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
+        List<GsaMember3d> mem3ds) = InputsForModelAssembly.GetGeometry(this, da, 2, true);
       (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases)
-        = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
+        = InputsForModelAssembly.GetLoading(this, da, 3, true);
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
-        = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
+        = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
       if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
         & elem2ds is null & mem1ds is null & mem2ds is null & mem3ds is null & sections is null

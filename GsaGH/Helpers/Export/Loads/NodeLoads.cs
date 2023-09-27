@@ -11,7 +11,7 @@ namespace GsaGH.Helpers.Export {
     private List<NodeLoad> _displacements;
     private List<NodeLoad> _settlements;
 
-    internal void ConvertNodeLoads(List<IGsaLoad> loads) {
+    private void ConvertNodeLoads(List<IGsaLoad> loads) {
       if (!loads.IsNullOrEmpty()) {
         _deleteResults = true;
       }
@@ -25,7 +25,7 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void ConvertNodeLoad(GsaNodeLoad load) {
+    private void ConvertNodeLoad(GsaNodeLoad load) {
       if (load._refPoint != Point3d.Unset) {
         load.ApiLoad.Nodes = AddNode(load._refPoint).ToString();
       }

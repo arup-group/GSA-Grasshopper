@@ -8,8 +8,8 @@ using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Export {
   internal partial class ModelAssembly {
-    internal void ConvertList(List<GsaList> lists, List<IGsaLoad> loads, GH_Component owner) {
-      Lists = new GsaGuidDictionary<EntityList>(Model.Lists());
+    private void ConvertList(List<GsaList> lists, List<IGsaLoad> loads, GH_Component owner) {
+      _lists = new GsaGuidDictionary<EntityList>(_model.Lists());
 
       // Add lists embedded in loads as they may have ID > 0 set
       if (lists == null && !loads.IsNullOrEmpty()) {
@@ -21,7 +21,12 @@ namespace GsaGH.Helpers.Export {
       ConvertList(lists, owner);
     }
 
-    internal static List<GsaList> GetLoadLists(List<IGsaLoad> loads) {
+    private static GsaList GetLoadList(IGsaLoad load) {
+      return load == null ? null
+        : load.ReferenceType == ReferenceType.List ? load.ReferenceList : null;
+    }
+
+    private static List<GsaList> GetLoadLists(List<IGsaLoad> loads) {
       var loadLists = new List<GsaList>();
       foreach (IGsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
         GsaList list = GetLoadList(load);
@@ -30,11 +35,6 @@ namespace GsaGH.Helpers.Export {
         }
       }
       return loadLists;
-    }
-
-    private static GsaList GetLoadList(IGsaLoad load) {
-      return load == null ? null
-        : load.ReferenceType == ReferenceType.List ? load.ReferenceList : null;
     }
   }
 }

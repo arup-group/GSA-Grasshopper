@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.Export {
-  internal class GetInputsForModelAssembly {
+namespace GsaGH.Helpers.GH {
+  internal class InputsForModelAssembly {
     internal static Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>> GetAnalysis(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
@@ -215,7 +214,8 @@ namespace GsaGH.Helpers.Export {
 
         return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
           (inLoads, inGps, inCases);
-      } else if (!isOptional) {
+      }
+      else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
           + " failed to collect data!");
       }

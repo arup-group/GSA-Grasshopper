@@ -9,25 +9,9 @@ namespace GsaGH.Helpers.Export {
     private GsaIntDictionary<SectionModifier> _secionModifiers;
     private GsaGuidDictionary<Prop2D> _prop2ds;
     private GsaGuidDictionary<Prop3D> _prop3ds;
-    private int _propertiesCount => _sections.Count + _prop2ds.Count + _prop3ds.Count;
+    private int PropertiesCount => _sections.Count + _prop2ds.Count + _prop3ds.Count;
 
-    internal string GetReferenceDefinition3(Guid guid) {
-      if (_sections.GuidDictionary.TryGetValue(guid, out int steelId)) {
-        return "PB" + steelId;
-      }
-
-      if (_prop2ds.GuidDictionary.TryGetValue(guid, out int concreteId)) {
-        return "PA" + concreteId;
-      }
-
-      if (_prop3ds.GuidDictionary.TryGetValue(guid, out int frpId)) {
-        return "PV" + frpId;
-      }
-
-      return GetMaterialReferenceDefinition(guid);
-    }
-
-    internal static (GsaGuidDictionary<Section>, GsaIntDictionary<SectionModifier>)
+    private static (GsaGuidDictionary<Section>, GsaIntDictionary<SectionModifier>)
       GetSectionDictionary(GsaModel model) {
       var sections = new GsaGuidDictionary<Section>(new Dictionary<int, Section>());
       var modifiers = new GsaIntDictionary<SectionModifier>(new Dictionary<int, SectionModifier>());
@@ -41,7 +25,7 @@ namespace GsaGH.Helpers.Export {
       return (sections, modifiers);
     }
 
-    internal static GsaGuidDictionary<Prop2D> GetProp2dDictionary(GsaModel model) {
+    private static GsaGuidDictionary<Prop2D> GetProp2dDictionary(GsaModel model) {
       var properties = new GsaGuidDictionary<Prop2D>(new Dictionary<int, Prop2D>());
       foreach (KeyValuePair<int, GsaProperty2dGoo> prop in model.Properties.Prop2ds) {
         properties.SetValue(prop.Key, prop.Value.Value.Guid, prop.Value.Value.ApiProp2d);
@@ -49,12 +33,28 @@ namespace GsaGH.Helpers.Export {
       return properties;
     }
 
-    internal static GsaGuidDictionary<Prop3D> GetProp3dDictionary(GsaModel model) {
+    private static GsaGuidDictionary<Prop3D> GetProp3dDictionary(GsaModel model) {
       var properties = new GsaGuidDictionary<Prop3D>(new Dictionary<int, Prop3D>());
       foreach (KeyValuePair<int, GsaProperty3dGoo> prop in model.Properties.Prop3ds) {
         properties.SetValue(prop.Key, prop.Value.Value.Guid, prop.Value.Value.ApiProp3d);
       }
       return properties;
+    }
+
+    private string GetPropertyReferenceDefinition(Guid guid) {
+      if (_sections.GuidDictionary.TryGetValue(guid, out int steelId)) {
+        return "PB" + steelId;
+      }
+
+      if (_prop2ds.GuidDictionary.TryGetValue(guid, out int concreteId)) {
+        return "PA" + concreteId;
+      }
+
+      if (_prop3ds.GuidDictionary.TryGetValue(guid, out int frpId)) {
+        return "PV" + frpId;
+      }
+
+      return GetMaterialReferenceDefinition(guid);
     }
   }
 }

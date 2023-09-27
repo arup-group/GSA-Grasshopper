@@ -9,20 +9,17 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export {
   internal partial class ModelAssembly {
-    internal void ConvertMember1ds(List<GsaMember1d> member1ds) {
-      if (member1ds == null) {
-        return;
-      }
-
-      member1ds = member1ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember1d member in member1ds.Where(member => member != null)) {
-        ConvertMember1D(member);
+    private void AddMember(int id, Guid guid, Member apiMember) {
+      if (id > 0) {
+        _members.SetValue(id, guid, apiMember);
+      } else {
+        _members.AddValue(guid, apiMember);
       }
     }
 
-    internal void ConvertMember1D(GsaMember1d member1d) {
+    private void ConvertMember1d(GsaMember1d member1d) {
       Member apiMember = member1d.DuplicateApiObject();
-      apiMember.MeshSize = new Length(member1d.ApiMember.MeshSize, Unit).Meters;
+      apiMember.MeshSize = new Length(member1d.ApiMember.MeshSize, _unit).Meters;
 
       string topo = CreateTopology(member1d.Topology, member1d.TopologyType);
       if (topo != string.Empty) {
@@ -45,9 +42,20 @@ namespace GsaGH.Helpers.Export {
       AddMember(member1d.Id, member1d.Guid, apiMember);
     }
 
-    internal void ConvertMember2D(GsaMember2d member2d) {
+    private void ConvertMember1ds(List<GsaMember1d> member1ds) {
+      if (member1ds == null) {
+        return;
+      }
+
+      member1ds = member1ds.OrderByDescending(x => x.Id).ToList();
+      foreach (GsaMember1d member in member1ds.Where(member => member != null)) {
+        ConvertMember1d(member);
+      }
+    }
+
+    private void ConvertMember2d(GsaMember2d member2d) {
       Member apiMember = member2d.DuplicateApiObject();
-      apiMember.MeshSize = new Length(member2d.ApiMember.MeshSize, Unit).Meters;
+      apiMember.MeshSize = new Length(member2d.ApiMember.MeshSize, _unit).Meters;
 
       string topo
         = CreateTopology(member2d.Topology, member2d.TopologyType);
@@ -84,20 +92,20 @@ namespace GsaGH.Helpers.Export {
       AddMember(member2d.Id, member2d.Guid, apiMember);
     }
 
-    internal void ConvertMember2ds(List<GsaMember2d> member2ds) {
+    private void ConvertMember2ds(List<GsaMember2d> member2ds) {
       if (member2ds == null) {
         return;
       }
 
       member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
       foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null)) {
-        ConvertMember2D(member2d);
+        ConvertMember2d(member2d);
       }
     }
 
-    internal void ConvertMember3D(GsaMember3d member3d) {
+    private void ConvertMember3d(GsaMember3d member3d) {
       Member apiMember = member3d.DuplicateApiObject();
-      apiMember.MeshSize = new Length(member3d.ApiMember.MeshSize, Unit).Meters;
+      apiMember.MeshSize = new Length(member3d.ApiMember.MeshSize, _unit).Meters;
 
       var topos = new List<string>();
 
@@ -119,27 +127,18 @@ namespace GsaGH.Helpers.Export {
       AddMember(member3d.Id, member3d.Guid, apiMember);
     }
 
-    internal void ConvertMember3ds(List<GsaMember3d> member3ds) {
+    private void ConvertMember3ds(List<GsaMember3d> member3ds) {
       if (member3ds == null) {
         return;
       }
 
       member3ds = member3ds.OrderByDescending(x => x.Id).ToList();
       foreach (GsaMember3d member3d in member3ds.Where(member3d => member3d != null)) {
-        ConvertMember3D(member3d);
+        ConvertMember3d(member3d);
       }
     }
 
-    private void AddMember(int id, Guid guid, Member apiMember) {
-      if (id > 0) {
-        Members.SetValue(id, guid, apiMember);
-      } else {
-        Members.AddValue(guid, apiMember);
-      }
-    }
-
-    private string CreateTopology(
-      Point3dList topology, IReadOnlyList<string> topoType) {
+    private string CreateTopology(Point3dList topology, IReadOnlyList<string> topoType) {
       string topo = string.Empty;
       if (topology == null) {
         return topo;

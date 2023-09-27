@@ -4,30 +4,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export {
   internal partial class ModelAssembly {
-    internal void ConvertSections(List<GsaSection> sections) {
-      if (sections == null) {
-        return;
-      }
-
-      sections = sections.OrderByDescending(s => s.Id).ToList();
-      foreach (GsaSection section in sections.Where(section => section != null)) {
-        ConvertSection(section);
-      }
-    }
-
-    internal int ConvertSection(GsaSection section) {
-      if (section == null) {
-        return 0;
-      }
-
-      if (section.IsReferencedById || section.ApiSection == null) {
-        return section.Id;
-      }
-
-      return AddSection(section);
-    }
-
-    internal int AddSection(GsaSection section) {
+    private int AddSection(GsaSection section) {
       AddMaterial(ref section);
 
       int outId;
@@ -43,6 +20,29 @@ namespace GsaGH.Helpers.Export {
       }
 
       return outId;
+    }
+
+    private int ConvertSection(GsaSection section) {
+      if (section == null) {
+        return 0;
+      }
+
+      if (section.IsReferencedById || section.ApiSection == null) {
+        return section.Id;
+      }
+
+      return AddSection(section);
+    }
+
+    private void ConvertSections(List<GsaSection> sections) {
+      if (sections == null) {
+        return;
+      }
+
+      sections = sections.OrderByDescending(s => s.Id).ToList();
+      foreach (GsaSection section in sections.Where(section => section != null)) {
+        ConvertSection(section);
+      }
     }
   }
 }

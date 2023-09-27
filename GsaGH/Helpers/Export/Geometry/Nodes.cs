@@ -8,15 +8,6 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.Export {
   internal partial class ModelAssembly {
-
-    internal int AddNode(Point3d testPoint) {
-      return Nodes.AddValue(NodeFromPoint(testPoint, Unit));
-    }
-
-    internal int AddNode(Node node) {
-      return Nodes.AddValue(node);
-    }
-
     internal static Node NodeFromPoint(Point3d point, LengthUnit unit) {
       if (unit == LengthUnit.Meter) {
         var pos = new Vector3() {
@@ -39,18 +30,26 @@ namespace GsaGH.Helpers.Export {
       }
     }
 
-    internal void ConvertNode(GsaNode node) {
-      Node apiNode = node.GetApiNodeToUnit(Unit);
+    private int AddNode(Node node) {
+      return _nodes.AddValue(node);
+    }
+
+    private int AddNode(Point3d testPoint) {
+      return _nodes.AddValue(NodeFromPoint(testPoint, _unit));
+    }
+
+    private void ConvertNode(GsaNode node) {
+      Node apiNode = node.GetApiNodeToUnit(_unit);
 
       if (!node.IsGlobalAxis) {
         var ax = new Axis();
         Plane pln = node.LocalAxis;
-        ax.Origin.X = (Unit == LengthUnit.Meter) ? pln.OriginX :
-          new Length(pln.OriginX, Unit).Meters;
-        ax.Origin.Y = (Unit == LengthUnit.Meter) ? pln.OriginY :
-          new Length(pln.OriginY, Unit).Meters;
-        ax.Origin.Z = (Unit == LengthUnit.Meter) ? pln.OriginZ :
-          new Length(pln.OriginZ, Unit).Meters;
+        ax.Origin.X = (_unit == LengthUnit.Meter) ? pln.OriginX :
+          new Length(pln.OriginX, _unit).Meters;
+        ax.Origin.Y = (_unit == LengthUnit.Meter) ? pln.OriginY :
+          new Length(pln.OriginY, _unit).Meters;
+        ax.Origin.Z = (_unit == LengthUnit.Meter) ? pln.OriginZ :
+          new Length(pln.OriginZ, _unit).Meters;
 
         ax.XVector.X = pln.XAxis.X;
         ax.XVector.Y = pln.XAxis.Y;
@@ -65,13 +64,13 @@ namespace GsaGH.Helpers.Export {
       if (
         // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         node.Id > 0) {
-        Nodes.SetValue(node.Id, apiNode);
+        _nodes.SetValue(node.Id, apiNode);
       } else {
         AddNode(apiNode);
       }
     }
 
-    internal void ConvertNodes(List<GsaNode> nodes) {
+    private void ConvertNodes(List<GsaNode> nodes) {
       if (nodes == null || nodes.Count <= 0) {
         return;
       }
@@ -81,7 +80,7 @@ namespace GsaGH.Helpers.Export {
         ConvertNode(node);
       }
 
-      Nodes.UpdateFirstEmptyKeyToMaxKey();
+      _nodes.UpdateFirstEmptyKeyToMaxKey();
     }
   }
 }

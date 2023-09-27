@@ -4,10 +4,10 @@ using OasysGH.Units;
 
 namespace GsaGH.Helpers.Export {
   internal partial class ModelAssembly {
-    internal int TryGetExistingAxisId(Axis testAxis) {
+    private int TryGetExistingAxisId(Axis testAxis) {
       double tolerance = DefaultUnits.Tolerance.Meters;
-      foreach (int key in Axes.ReadOnlyDictionary.Keys) {
-        if (!Axes.ReadOnlyDictionary.TryGetValue(key, out Axis gsaAxis)) {
+      foreach (int key in _axes.ReadOnlyDictionary.Keys) {
+        if (!_axes.ReadOnlyDictionary.TryGetValue(key, out Axis gsaAxis)) {
           continue;
         }
 
@@ -26,7 +26,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      return Axes.AddValue(testAxis);
+      return _axes.AddValue(testAxis);
     }
   }
 }
