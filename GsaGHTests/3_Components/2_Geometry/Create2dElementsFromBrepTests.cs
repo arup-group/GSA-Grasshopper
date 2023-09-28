@@ -154,5 +154,49 @@ namespace GsaGHTests.Components.Geometry {
       var e2d = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
+
+    [Fact]
+    public void ErrorAndWarningsNullTest() {
+      var comp = new Create2dElementsFromBrep();
+      comp.CreateAttributes();
+      Brep brep = null;
+      ComponentTestHelper.SetInput(comp, brep);
+      comp.ExpireSolution(true);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void NoErrorAndWarningsMultipleSrfsTest() {
+      var comp = new Create2dElementsFromBrep();
+      comp.CreateAttributes();
+      var brep = Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 2.5),
+          new Point3d(10, 10, 0), new Point3d(0, 10, 1.5), 1);
+      var b2 = (Surface)brep.Surfaces[0].Duplicate();
+      b2.Transform(Transform.Translation(new Vector3d(0, 0, 5)));
+      brep.AddSurface(b2.Rebuild(3, 3, 10, 10));
+      ComponentTestHelper.SetInput(comp, brep);
+      comp.ExpireSolution(true);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void RemarkPlanarSrfTest() {
+      var comp = new Create2dElementsFromBrep();
+      comp.CreateAttributes();
+      var brep = Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0),
+          new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1);
+      ComponentTestHelper.SetInput(comp, brep);
+      comp.ExpireSolution(true);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Equal(2, comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark).Count);
+    }
   }
 }
