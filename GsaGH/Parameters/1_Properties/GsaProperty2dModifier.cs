@@ -114,6 +114,10 @@ namespace GsaGH.Parameters {
        .Join(" ", inPlane, bending, shear, volume, mass).
        Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').
        TrimEnd('X').TrimEnd(' ').TrimEnd(',').TrimSpaces();
+      if (innerDesc == string.Empty) {
+        innerDesc = "Unmodified";
+      }
+
       return innerDesc;
     }
   }

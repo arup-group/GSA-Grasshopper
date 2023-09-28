@@ -22,6 +22,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("Prop2d")]
     [InlineData("Prop3d")]
     [InlineData("SectionModifier")]
+    [InlineData("Prop2dModifier")]
     [InlineData("Node")]
     [InlineData("Element1d")]
     [InlineData("Element2d")]
@@ -41,6 +42,7 @@ namespace IntegrationTests.Parameters {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
+        Assert.True(data.ToString().Length > 5);
       }
       
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
