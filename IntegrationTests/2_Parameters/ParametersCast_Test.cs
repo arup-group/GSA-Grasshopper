@@ -35,6 +35,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("AnalysisTask")]
     [InlineData("CombinationCase", false)]
     [InlineData("Result")]
+    [InlineData("GridLine")]
     [InlineData("GridPlaneSurfaceFromLoad")]
     public void TestCast(string groupIdentifier, bool checkError = true) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);

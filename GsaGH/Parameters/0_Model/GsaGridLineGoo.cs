@@ -52,11 +52,19 @@ namespace GsaGH.Parameters {
       return base.CastTo(ref target);
     }
 
-    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-
-    }
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
+      if (Value == null || Value.Curve == null || !Value.Curve.IsValid) {
+        return;
+      }
+
+      int thickness = 1;
+      // this is a workaround to change colour between selected and not
+      if (args.Color != Color.FromArgb(255, 150, 0, 0)) {
+        thickness = 3;
+      }
+
       // we need to scale grid lines according to the users unit settings
       double unitLength = 1;
       LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -86,7 +94,6 @@ namespace GsaGH.Parameters {
         points = segment.DivideEquidistant(segment.GetLength() / 360.0);
       }
       if (points != null) {
-        int thickness = 1;
         Color color = Color.Black;
         int pattern = 999999;
         args.Pipeline.DrawPatternedPolyline(points, color, pattern, thickness, false);
@@ -104,10 +111,14 @@ namespace GsaGH.Parameters {
           HorizontalAlignment = TextHorizontalAlignment.Center,
           VerticalAlignment = TextVerticalAlignment.Middle
         };
+        if (args.Color != Color.FromArgb(255, 150, 0, 0)) {
+          text.Bold = true;
+        }
+
         args.Pipeline.Draw3dText(text, color);
 
         var circle = new Circle(plane, radius);
-        args.Pipeline.DrawCircle(circle, color);
+        args.Pipeline.DrawCircle(circle, color, thickness);
       }
     }
 
