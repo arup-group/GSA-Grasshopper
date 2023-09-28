@@ -9,7 +9,6 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
-using GsaGH.Helpers.Export;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
