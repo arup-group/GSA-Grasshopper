@@ -32,9 +32,11 @@ namespace GsaGHTests.CustomComponent {
       Assert.False(comp.CanInsertParameter(GH_ParameterSide.Output, 0));
     }
 
-    [Fact]
-    public void GetModelGeometryIGH_VariableParameterComponentTest() {
-      IGH_VariableParameterComponent comp = new GetModelGeometry();
+    [Theory]
+    [InlineData(typeof(GetModelGeometry))]
+    [InlineData(typeof(EditNode))]
+    public void CreateDestroyParamIGH_VariableParameterComponentTest(Type t) {
+      var comp = (IGH_VariableParameterComponent)Activator.CreateInstance(t);
       Assert.Null(comp.CreateParameter(GH_ParameterSide.Input, 0));
       Assert.False(comp.DestroyParameter(GH_ParameterSide.Input, 0));
     }

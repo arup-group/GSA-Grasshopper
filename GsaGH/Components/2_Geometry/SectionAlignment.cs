@@ -131,6 +131,11 @@ namespace GsaGH.Components {
             return;
           }
 
+          if (mem2d.Prop2d == null || mem2d.Prop2d.Thickness == Length.Zero) {
+            this.AddRuntimeError("Member has no property attached");
+            return;
+          }
+
           oneD = false;
           break;
 
@@ -138,6 +143,11 @@ namespace GsaGH.Components {
           elem2d = element2DGoo.Value;
           if (elem2d == null) {
             this.AddRuntimeError("Input is null");
+            return;
+          }
+
+          if (elem2d.Prop2ds.IsNullOrEmpty()) {
+            this.AddRuntimeError("Element has no property attached");
             return;
           }
 

@@ -68,12 +68,5 @@ namespace GsaGHTests.Components.Geometry {
 
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
-
-    //[Fact]
-    //public void ErrorAndWarningsNullPtsTest() {
-    //  var comp = new CreateElementsFromMembers();
-    //  comp.CreateAttributes();
-    //  var 
-    //}
   }
 }

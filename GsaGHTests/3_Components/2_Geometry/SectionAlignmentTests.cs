@@ -1,6 +1,7 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using Oasys.Taxonomy.Profiles;
 using OasysGH.Components;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -165,6 +166,130 @@ namespace GsaGHTests.Components.Geometry {
       var output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 1);
 
       Assert.Equal(-7, output.Value.Z.Inches, 6);
+    }
+
+    [Fact]
+    public void SectionAlignmentMember1dNullErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var goo = new GsaMember1dGoo(null);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentMember1dNoProfileErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
+      var goo = new GsaMember1dGoo(member);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentElement1dNullErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var goo = new GsaElement1dGoo(null);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentElement1dNoProfileErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var element = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
+      var goo = new GsaElement1dGoo(element);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentMember2dNullErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var goo = new GsaMember2dGoo(null);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentMember2dNoProfileErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var brep = Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0),
+          new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1);
+      var member = new GsaMember2d(brep);
+      var goo = new GsaMember2dGoo(member);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentElement2dNullErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var goo = new GsaElement2dGoo(null);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void SectionAlignmentElement2dNoProfileErrorTest() {
+      var comp = new SectionAlignment();
+      comp.CreateAttributes();
+      var mesh = new Mesh();
+      mesh.Vertices.Add(new Point3d(0, 0, 0));
+      mesh.Vertices.Add(new Point3d(1, 0, 0));
+      mesh.Vertices.Add(new Point3d(1, 1, 0));
+      mesh.Vertices.Add(new Point3d(0, 1, 0));
+      mesh.Faces.AddFace(0, 1, 2, 3);
+      var element = new GsaElement2d(mesh);
+      var goo = new GsaElement2dGoo(element);
+      ComponentTestHelper.SetInput(comp, goo);
+      ComponentTestHelper.SetInput(comp, "Top-Left", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
   }
 }
