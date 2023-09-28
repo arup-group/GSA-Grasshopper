@@ -75,15 +75,9 @@ namespace GsaGH.Parameters {
         .TrimSpaces();
     }
 
-    internal void CreateDeafultCases(GsaModel gsaModel) {
+    internal void CreateDefaultCases(GsaModel gsaModel) {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analysis.GetAnalysisTasksAndCombinations(gsaModel);
-      Cases = tuple.Item2.Select(x => x.Value).ToList();
-    }
-
-    internal void CreateDefaultCases(Model model) {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analysis.GetAnalysisTasksAndCombinations(model);
+        = gsaModel.GetAnalysisTasksAndCombinations();
       Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
   }

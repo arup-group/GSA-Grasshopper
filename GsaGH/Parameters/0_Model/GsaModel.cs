@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,9 @@ namespace GsaGH.Parameters {
   /// <para>If the model has been analysed you can use the <see cref="Components.SelectResult"/> component to explore the Models structural performance and behaviour.</para>
   /// </summary>
   public class GsaModel {
+
+
+
     public BoundingBox BoundingBox {
       get {
         if (!_boundingBox.IsValid) {
@@ -71,7 +75,9 @@ namespace GsaGH.Parameters {
         _designLayerPreview = null;
       }
     }
-    internal Helpers.Import.Properties Properties { get; private set; }
+    internal ReadOnlyDictionary<int, GsaSectionGoo> Sections { get; private set; }
+    internal ReadOnlyDictionary<int, GsaProperty2dGoo> Prop2ds { get; private set; }
+    internal ReadOnlyDictionary<int, GsaProperty3dGoo> Prop3ds { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
     private Model _model = new Model();
@@ -133,6 +139,39 @@ namespace GsaGH.Parameters {
       ModelFactory.SetUserDefaultUnits(_model);
     }
 
+    internal Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations() {
+      ReadOnlyDictionary<int, AnalysisTask> tasks = Model.AnalysisTasks();
+
+      var tasksList = new List<GsaAnalysisTaskGoo>();
+      var caseList = new List<GsaAnalysisCaseGoo>();
+      var caseIDs = new List<int>();
+
+      foreach (KeyValuePair<int, AnalysisTask> item in tasks) {
+        var task = new GsaAnalysisTask(item.Key, item.Value, Model);
+        tasksList.Add(new GsaAnalysisTaskGoo(task));
+        caseIDs.AddRange(task.Cases.Select(acase => acase.Id));
+      }
+
+      caseIDs.AddRange(GetLoadCases());
+
+      foreach (int caseId in caseIDs) {
+        string caseName = Model.AnalysisCaseName(caseId);
+        if (caseName == string.Empty) {
+          caseName = "Case " + caseId;
+        }
+
+        string caseDescription = Model.AnalysisCaseDescription(caseId);
+        if (caseDescription == string.Empty) {
+          caseDescription = "L" + caseId;
+        }
+
+        caseList.Add(
+          new GsaAnalysisCaseGoo(new GsaAnalysisCase(caseId, caseName, caseDescription)));
+      }
+
+      return new Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>(tasksList, caseList);
+    }
+
     private BoundingBox GetBoundingBox() {
       var outNodes = new ConcurrentDictionary<int, Node>(Model.Nodes());
       var pts = new ConcurrentBag<Point3d>();
@@ -148,12 +187,114 @@ namespace GsaGH.Parameters {
       return new BoundingBox(pts, scale);
     }
 
+    internal List<GsaGridLine> GetGridLines() {
+      var gridLines = new List<GsaGridLine>();
+      foreach (GridLine gridLine in Model.GridLines().Values) {
+        PolyCurve curve = GsaGridLine.ToCurve(gridLine);
+        gridLines.Add(new GsaGridLine(gridLine, curve));
+      }
+      return gridLines;
+    }
+
+    internal List<int> GetLoadCases() {
+      var caseIDs = new List<int>();
+      ReadOnlyCollection<GravityLoad> gravities = Model.GravityLoads();
+      caseIDs.AddRange(gravities.Select(x => x.Case));
+
+      foreach (GsaAPI.NodeLoadType typ in Enum.GetValues(typeof(GsaAPI.NodeLoadType))) {
+        ReadOnlyCollection<NodeLoad> nodeLoads;
+        try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
+        {
+          nodeLoads = Model.NodeLoads(typ);
+          caseIDs.AddRange(nodeLoads.Select(x => x.Case));
+        } catch (Exception) {
+          // ignored
+        }
+      }
+
+      ReadOnlyCollection<BeamLoad> beamLoads = Model.BeamLoads();
+      caseIDs.AddRange(beamLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<BeamThermalLoad> beamThermalLoads = Model.BeamThermalLoads();
+      caseIDs.AddRange(beamThermalLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<FaceLoad> faceLoads = Model.FaceLoads();
+      caseIDs.AddRange(faceLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<FaceThermalLoad> faceThermalLoads = Model.FaceThermalLoads();
+      caseIDs.AddRange(faceThermalLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<GridPointLoad> gridPointLoads = Model.GridPointLoads();
+      caseIDs.AddRange(gridPointLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<GridLineLoad> gridLineLoads = Model.GridLineLoads();
+      caseIDs.AddRange(gridLineLoads.Select(x => x.Case));
+
+      ReadOnlyCollection<GridAreaLoad> gridAreaLoads = Model.GridAreaLoads();
+      caseIDs.AddRange(gridAreaLoads.Select(x => x.Case));
+
+      return caseIDs.GroupBy(x => x).Select(y => y.First()).OrderBy(z => z).ToList();
+    }
+
+    internal List<GsaList> GetLists() {
+      var lists = new List<GsaList>();
+      foreach (KeyValuePair<int, EntityList> apiList in Model.Lists()) {
+        lists.Add(new GsaList(apiList.Key, apiList.Value, this));
+      }
+      return lists;
+    }
+
+    internal GsaProperty2d GetProp2d(Element e) {
+      return Prop2ds.TryGetValue(e.Property, out GsaProperty2dGoo prop)
+        ? prop.Value
+        : e.Property > 0 ? new GsaProperty2d(e.Property) : null;
+    }
+
+    internal GsaProperty2d GetProp2d(Member m) {
+      return Prop2ds.TryGetValue(m.Property, out GsaProperty2dGoo prop)
+        ? prop.Value
+        : m.Property > 0 ? new GsaProperty2d(m.Property) : null;
+    }
+
+    internal GsaProperty3d GetProp3d(Element e) {
+      return Prop3ds.TryGetValue(e.Property, out GsaProperty3dGoo prop)
+        ? prop.Value
+        : e.Property > 0 ? new GsaProperty3d(e.Property) : null;
+    }
+
+    internal GsaProperty3d GetProp3d(Member m) {
+      return Prop3ds.TryGetValue(m.Property, out GsaProperty3dGoo prop)
+        ? prop.Value
+        : m.Property > 0 ? new GsaProperty3d(m.Property) : null;
+    }
+
+    internal GsaSection GetSection(Element e) {
+      return Sections.TryGetValue(e.Property, out GsaSectionGoo section)
+        ? section.Value
+        : e.Property > 0 ? new GsaSection(e.Property) : null;
+    }
+
+    internal GsaSection GetSection(Member m) {
+      return Sections.TryGetValue(m.Property, out GsaSectionGoo section)
+        ? section.Value
+        : m.Property > 0 ? new GsaSection(m.Property) : null;
+    }
+
     private void InstantiateApiFields() {
       ApiNodes = Model.Nodes();
       ApiAxis = Model.Axes();
       _lengthUnit = UnitMapping.GetUnit(Model.UiUnits().LengthLarge);
+
+
+      // those are not really api fields?!
+      // this could happen in a parallel thread!
+
       Materials = new Materials(Model);
-      Properties = new Helpers.Import.Properties(Model, Materials);
+      Sections = GsaPropertyFactory.CreateSectionsFromApi(Model.Sections(), Materials, Model.SectionModifiers());
+      Prop2ds = GsaPropertyFactory.CreateProp2dsFromApi(Model.Prop2Ds(), Materials, Model.Axes());
+      Prop3ds = GsaPropertyFactory.CreateProp3dsFromApi(Model.Prop3Ds(), Materials);
+
+
       ApiMemberLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
                 Model.Members().Keys.ToDictionary(id => id, id => Model.MemberDirectionCosine(id)));
       ApiElementLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(

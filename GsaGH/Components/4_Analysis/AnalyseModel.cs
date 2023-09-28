@@ -206,7 +206,7 @@ namespace GsaGH.Components {
           var task = new GsaAnalysisTask {
             Id = model.Model.AddAnalysisTask(),
           };
-          task.CreateDefaultCases(model.Model);
+          task.CreateDefaultCases(model);
           if (task.Cases == null || task.Cases.Count == 0) {
             this.AddRuntimeWarning(
               " Model contains no loads and has not been analysed, but has been assembled.");

@@ -46,7 +46,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref modelGoo);
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analysis.GetAnalysisTasksAndCombinations(modelGoo.Value);
+        = modelGoo.Value.GetAnalysisTasksAndCombinations();
       var combinationCaseGoos = modelGoo.Value.Model.CombinationCases().Select(keyValuePair
         => new GsaCombinationCaseGoo(new GsaCombinationCase(keyValuePair))).ToList();
 

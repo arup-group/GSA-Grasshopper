@@ -19,26 +19,26 @@ namespace GsaGH.Helpers.Import {
     internal ReadOnlyDictionary<int, GsaMaterial> AnalysisMaterials { get; private set; }
 
     internal Materials(Model model) {
-      SteelMaterials = CreateMaterialsFromAPI(model.SteelMaterials(), model);
-      ConcreteMaterials = CreateMaterialsFromAPI(model.ConcreteMaterials(), model);
-      FrpMaterials = CreateMaterialsFromAPI(model.FrpMaterials(), model);
-      AluminiumMaterials = CreateMaterialsFromAPI(model.AluminiumMaterials(), model);
-      TimberMaterials = CreateMaterialsFromAPI(model.TimberMaterials(), model);
-      GlassMaterials = CreateMaterialsFromAPI(model.GlassMaterials(), model);
-      FabricMaterials = CreateMaterialsFromAPI(model.FabricMaterials(), model);
-      AnalysisMaterials = CreateMaterialsFromAPI(model.AnalysisMaterials());
+      SteelMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.SteelMaterials(), model);
+      ConcreteMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.ConcreteMaterials(), model);
+      FrpMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.FrpMaterials(), model);
+      AluminiumMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.AluminiumMaterials(), model);
+      TimberMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.TimberMaterials(), model);
+      GlassMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.GlassMaterials(), model);
+      FabricMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.FabricMaterials(), model);
+      AnalysisMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.AnalysisMaterials());
     }
 
-    internal GsaMaterial GetMaterial(Section s) {
-      return GetMaterial(s.MaterialType, s.MaterialAnalysisProperty, s.MaterialGradeProperty);
+    internal GsaMaterial GetMaterial(Section section) {
+      return GetMaterial(section.MaterialType, section.MaterialAnalysisProperty, section.MaterialGradeProperty);
     }
 
-    internal GsaMaterial GetMaterial(Prop2D p) {
-      return GetMaterial(p.MaterialType, p.MaterialAnalysisProperty, p.MaterialGradeProperty);
+    internal GsaMaterial GetMaterial(Prop2D property) {
+      return GetMaterial(property.MaterialType, property.MaterialAnalysisProperty, property.MaterialGradeProperty);
     }
 
-    internal GsaMaterial GetMaterial(Prop3D p) {
-      return GetMaterial(p.MaterialType, p.MaterialAnalysisProperty, p.MaterialGradeProperty);
+    internal GsaMaterial GetMaterial(Prop3D property) {
+      return GetMaterial(property.MaterialType, property.MaterialAnalysisProperty, property.MaterialGradeProperty);
     }
 
     private GsaMaterial GetMaterial(MaterialType type, int analysisProp, int gradeProp) {
@@ -77,86 +77,6 @@ namespace GsaGH.Helpers.Import {
         default:
           return null;
       }
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, AluminiumMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, AluminiumMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, ConcreteMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, ConcreteMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, FabricMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, FabricMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, FrpMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, FrpMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, GlassMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, GlassMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, SteelMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, SteelMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, TimberMaterial> materials, Model model) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, TimberMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = GsaMaterialFactory.CreateMaterialFromApi(mat.Value, mat.Key, model);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
-    }
-
-    internal static ReadOnlyDictionary<int, GsaMaterial> CreateMaterialsFromAPI(
-      ReadOnlyDictionary<int, AnalysisMaterial> materials) {
-      var dict = new Dictionary<int, GsaMaterial>();
-      foreach (KeyValuePair<int, AnalysisMaterial> mat in materials) {
-        GsaMaterial gsaMaterial = new GsaCustomMaterial(mat.Value, mat.Key);
-        dict.Add(gsaMaterial.Id, gsaMaterial);
-      }
-      return new ReadOnlyDictionary<int, GsaMaterial>(dict);
     }
 
     internal bool SanitizeGenericCodeNames() {

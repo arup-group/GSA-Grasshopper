@@ -63,9 +63,9 @@ namespace GsaGH.Components.GraveyardComp {
       materials.AddRange(
         modelGoo.Value.Materials.AnalysisMaterials.Values.Select(x => new GsaMaterialGoo(x)));
 
-      da.SetDataList(0, modelGoo.Value.Properties.Sections.Values);
-      da.SetDataList(1, modelGoo.Value.Properties.Prop2ds.Values);
-      da.SetDataList(2, modelGoo.Value.Properties.Prop3ds.Values);
+      da.SetDataList(0, modelGoo.Value.Sections.Values);
+      da.SetDataList(1, modelGoo.Value.Prop2ds.Values);
+      da.SetDataList(2, modelGoo.Value.Prop3ds.Values);
       da.SetDataList(3, materials);
     }
   }

@@ -84,8 +84,8 @@ namespace GsaGH.Helpers {
         return c;
       }).ToList();
 
-      var existingSectionIds = mainModel.Properties.Sections.Keys.ToList();
-      var sections = appendModel.Properties.Sections.
+      var existingSectionIds = mainModel.Sections.Keys.ToList();
+      var sections = appendModel.Sections.
         Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       sections.Select(c => {
         if (existingSectionIds.Contains(c.Id)) {
@@ -94,8 +94,8 @@ namespace GsaGH.Helpers {
         return c;
       }).ToList();
 
-      var existingProp2dIds = mainModel.Properties.Prop2ds.Keys.ToList();
-      var prop2Ds = appendModel.Properties.Prop2ds.
+      var existingProp2dIds = mainModel.Prop2ds.Keys.ToList();
+      var prop2Ds = appendModel.Prop2ds.
         Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop2Ds.Select(c => {
         if (existingProp2dIds.Contains(c.Id)) {
@@ -104,8 +104,8 @@ namespace GsaGH.Helpers {
         return c;
       }).ToList();
 
-      var existingProp3dIds = mainModel.Properties.Prop3ds.Keys.ToList();
-      var prop3Ds = appendModel.Properties.Prop3ds.
+      var existingProp3dIds = mainModel.Prop3ds.Keys.ToList();
+      var prop3Ds = appendModel.Prop3ds.
         Select(n => n.Value.Value).OrderByDescending(x => x.Id).ToList();
       prop3Ds.Select(c => {
         if (existingProp3dIds.Contains(c.Id)) {
@@ -116,36 +116,36 @@ namespace GsaGH.Helpers {
 
       var gooloads = new List<GsaLoadGoo>();
       ReadOnlyDictionary<int, LoadCase> loadCases = appendModel.Model.LoadCases();
-      gooloads.AddRange(Import.Loads.GetGravityLoads(appendModel.Model.GravityLoads(), loadCases));
-      gooloads.AddRange(Import.Loads.GetNodeLoads(appendModel.Model, loadCases));
-      gooloads.AddRange(Import.Loads.GetBeamLoads(appendModel.Model.BeamLoads(), loadCases));
-      gooloads.AddRange(Import.Loads.GetBeamThermalLoads(appendModel.Model.BeamThermalLoads(), loadCases));
-      gooloads.AddRange(Import.Loads.GetFaceLoads(appendModel.Model.FaceLoads(), loadCases));
-      gooloads.AddRange(Import.Loads.GetFaceThermalLoads(appendModel.Model.FaceThermalLoads(), loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateGravityLoadsFromApi(appendModel.Model.GravityLoads(), loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateNodeLoadsFromApi(appendModel.Model, loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateBeamLoadsFromApi(appendModel.Model.BeamLoads(), loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateBeamThermalLoadsFromApi(appendModel.Model.BeamThermalLoads(), loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateFaceLoadsFromApi(appendModel.Model.FaceLoads(), loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateFaceThermalLoadsFromApi(appendModel.Model.FaceThermalLoads(), loadCases));
 
       IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.Model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.Model.GridPlanes();
 
-      gooloads.AddRange(Import.Loads.GetGridPointLoads(
+      gooloads.AddRange(GsaLoadFactory.CreateGridPointLoadsFromApi(
         appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
         LengthUnit.Meter));
-      gooloads.AddRange(Import.Loads.GetGridLineLoads(
+      gooloads.AddRange(GsaLoadFactory.CreateGridLineLoadsFromApi(
         appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
         LengthUnit.Meter));
-      gooloads.AddRange(Import.Loads.GetGridAreaLoads(
+      gooloads.AddRange(GsaLoadFactory.CreateGridAreaLoadsFromApi(
         appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
         LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
       var gpsgoo = srfDict.Keys.Select(key => new GsaGridPlaneSurfaceGoo(
-            Import.Loads.GetGridPlaneSurface(
+           GsaLoadFactory.CreateGridPlaneSurfaceFromApi(
               srfDict, plnDict, appendModel.ApiAxis, key, LengthUnit.Meter))).ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();
 
-      List<GsaList> lists = Import.Lists.GetLists(appendModel);
-      List<GsaGridLine> gridLines = Import.GridLines.GetGridLines(appendModel);
+      List<GsaList> lists = appendModel.GetLists();
+      List<GsaGridLine> gridLines = appendModel.GetGridLines();
       var gsaLoadCases =
-        Import.Loads.GetLoadCases(loadCases).Select(n => n.Value).ToList();
+        GsaLoadFactory.CreateLoadCasesFromApi(loadCases).Select(n => n.Value).ToList();
 
       var assembly = new ModelAssembly(mainModel, lists, gridLines, nodes, elem1ds, elem2ds,
         elem3ds, mem1ds, mem2ds, mem3ds, null, sections, prop2Ds, prop3Ds, loads, gps,

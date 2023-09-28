@@ -21,6 +21,7 @@ namespace GsaGH.Helpers.Assembly {
     private GsaIntDictionary<Axis> _axes;
     private GsaGuidIntListDictionary<Element> _elements;
     private GsaIntDictionary<GridLine> _gridLines;
+    private GsaModel _gsaModel;
     private GsaGuidDictionary<EntityList> _lists;
     private ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship;
     private GsaGuidDictionary<Member> _members;
@@ -72,11 +73,8 @@ namespace GsaGH.Helpers.Assembly {
       List<GsaCombinationCase> combinations, LengthUnit modelUnit,
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
 
-
       SetupModel(model, modelUnit);
-
-
-
+      
       ConvertNodes(nodes);
       ConvertProperties(mats, sections, prop2Ds, prop3Ds);
       ConvertElements(elem1ds, elem2ds, elem3ds);
@@ -220,7 +218,7 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           if (task.Cases == null || task.Cases.Count == 0) {
-            task.CreateDefaultCases(_model);
+            task.CreateDefaultCases(_gsaModel);
           }
 
           if (task.Cases == null) {
@@ -503,6 +501,7 @@ namespace GsaGH.Helpers.Assembly {
     private void SetupModel(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
       _model = model.Model;
+      _gsaModel = model;
       _unit = unit;
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();
@@ -512,8 +511,6 @@ namespace GsaGH.Helpers.Assembly {
       _members = new GsaGuidDictionary<Member>(_model.Members());
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());
       _gridLines = new GsaIntDictionary<GridLine>(_model.GridLines());
-
-
 
       GetLoadCasesFromModel(_model);
       _gridPlanes = new GsaGuidDictionary<GridPlane>(_model.GridPlanes());
@@ -535,18 +532,11 @@ namespace GsaGH.Helpers.Assembly {
       _steelDesignCode = model.Model.SteelDesignCode();
       GetGsaGhMaterialsDictionary(model.Materials);
 
-
-
       CheckIfModelIsEmpty();
-
 
       _nodeLoads = new List<NodeLoad>();
       _displacements = new List<NodeLoad>();
       _settlements = new List<NodeLoad>();
-
-
-
-
     }
   }
 }

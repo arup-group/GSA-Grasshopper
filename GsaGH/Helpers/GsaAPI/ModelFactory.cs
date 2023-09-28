@@ -55,7 +55,7 @@ namespace GsaGH.Helpers.GsaApi {
       string concreteDesignCode = ssConcreteCode;
       string steelDesignCode = ssSteelCode;
       try {
-        // will fail for superseeded codesd
+        // will fail for superseeded codes
         return new Model(concreteDesignCode, steelDesignCode);
       }
       catch (GsaApiException) { //GsaAPI.GsaApiException: 'Concrete design code is not supported.'
