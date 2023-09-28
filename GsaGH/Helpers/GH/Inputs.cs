@@ -277,7 +277,7 @@ namespace GsaGH.Helpers.GH {
       return string.Empty;
     }
 
-    internal static string GetNodeListNameForResults(
+    internal static string GetNodeListDefinition(
       GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
       string nodeList = "All";
       var ghType = new GH_ObjectWrapper();

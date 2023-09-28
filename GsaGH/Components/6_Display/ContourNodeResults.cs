@@ -451,7 +451,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();

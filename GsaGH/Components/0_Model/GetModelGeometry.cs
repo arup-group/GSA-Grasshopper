@@ -434,7 +434,11 @@ namespace GsaGH.Components {
             return;
           }
 
-          nodeList = nodeListGoo.Value.Definition;
+          if (nodeListGoo.Value.EntityType != EntityType.Node) {
+            this.AddRuntimeWarning("List must be of Node type to apply to node filter");
+          }
+
+          nodeList = Inputs.GetNodeListDefinition(this, data, 1, modelGoo.Value);
           nodeFilterHasInput = true;
         }
 
