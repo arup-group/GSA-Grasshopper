@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysGH.Units;
@@ -12,7 +12,6 @@ using OasysUnits;
 using Rhino;
 using Rhino.Collections;
 using Rhino.Geometry;
-using Rhino.Geometry.Collections;
 using Elements = GsaGH.Helpers.Import.Elements;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
@@ -209,12 +208,10 @@ namespace GsaGH.Helpers.GH {
       mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
       mem.ApiMember.MeshMode2d = meshMode;
 
-      Model model = Assembler.AssembleModel(
-        null, null, null, nodes, elem1ds, null, null, mem1ds,
-        new List<GsaMember2d> {
-          mem,
-        },
-        null, null, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
+      var assembly = new ModelAssembly(null, null, null, nodes, elem1ds, null, null, mem1ds,
+        new List<GsaMember2d> { mem }, null, null, null, null, null, null, null, null, null, null,
+        unit, tolerance, true, null);
+      Model model = assembly.GetModel();
 
       var tempModel = new GsaModel(model);
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
@@ -618,7 +615,7 @@ namespace GsaGH.Helpers.GH {
             throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
               "3D Element type");
         }
-        
+
         faceInts.Add(faces);
         elems.Add(elem);
       }

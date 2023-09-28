@@ -423,7 +423,7 @@ namespace GsaGH.Components {
         = ResultHelper.GetAvalailableResults(_gsaModel);
       var cases = new List<string>();
 
-      List<int> caseIds = Loads.GetLoadCases(_gsaModel.Model);
+      List<int> caseIds = _gsaModel.GetLoadCases();
       foreach (int caseId in caseIds) {
         cases.Add($"L{caseId}");
       }

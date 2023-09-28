@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GsaGH.Helpers.GsaApi {
-  internal partial class ResultHelper {
+  internal static partial class ResultHelper {
 
     internal static double RoundToSignificantDigits(double d, int digits) {
       if (d == 0.0) {

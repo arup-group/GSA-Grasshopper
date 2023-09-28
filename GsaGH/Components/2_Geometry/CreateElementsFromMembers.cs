@@ -5,12 +5,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.Export;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
@@ -159,9 +159,10 @@ namespace GsaGH.Components {
         return;
       }
 
-      Model gsa = Assembler.AssembleModel(
-        null, null, null, nodes, null, null, null, member1ds, member2ds, member3ds,
-        null, null, null, null, null, null, null, null, null, _lengthUnit, ToleranceMenu.Tolerance, true, this);
+      var assembly = new ModelAssembly(null, null, null, inNodes, null, null, null, inMem1ds,
+        inMem2ds, inMem3ds, null, null, null, null, null, null, null, null, null, _lengthUnit,
+        ToleranceMenu.Tolerance, true, this);
+      Model gsa = assembly.GetModel();
 
       var outModel = new GsaModel {
         Model = gsa,

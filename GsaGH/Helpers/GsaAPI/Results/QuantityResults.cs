@@ -10,7 +10,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 using MassUnit = OasysUnits.Units.MassUnit;
 
 namespace GsaGH.Helpers.GsaApi {
-  internal partial class ResultHelper {
+  internal static partial class ResultHelper {
 
     internal static GsaResultQuantity GetQuantityResult(
       Double6 result, ForceUnit unit, bool isBeam = false) {

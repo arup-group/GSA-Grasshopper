@@ -35,7 +35,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
-      List<GsaGridLine> gridLines = GridLines.GetGridLines(modelGoo.Value);
+      List<GsaGridLine> gridLines = modelGoo.Value.GetGridLines();
       da.SetDataList(0, gridLines.Select(x => new GsaGridLineGoo(x)));
     }
   }

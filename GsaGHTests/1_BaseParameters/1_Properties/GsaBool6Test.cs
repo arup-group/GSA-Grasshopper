@@ -1,4 +1,4 @@
-﻿using GsaGH.Helpers.Export;
+﻿using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
@@ -15,12 +15,11 @@ namespace GsaGHTests.Parameters {
         ReleaseEnd = new GsaBool6(false, true, false, true, false, true),
       };
 
-      var assembled = new GsaModel {
-        Model = Assembler.AssembleForLocalAxis(e1d),
-      };
+      var assembly = new ModelAssembly(e1d);
+      GsaAPI.Model assembled = assembly.GetModel();
 
-      var startAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(0));
-      var endAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(1));
+      var startAssembled = new GsaBool6(assembled.Elements()[1].Release(0));
+      var endAssembled = new GsaBool6(assembled.Elements()[1].Release(1));
 
       _ = Duplicates.AreEqual(e1d.ReleaseStart, startAssembled);
       _ = Duplicates.AreEqual(e1d.ReleaseEnd, endAssembled);
@@ -33,12 +32,11 @@ namespace GsaGHTests.Parameters {
         ReleaseEnd = new GsaBool6(false, true, false, true, false, true),
       };
 
-      var assembled = new GsaModel {
-        Model = Assembler.AssembleForLocalAxis(m1d),
-      };
+      var assembly = new ModelAssembly(m1d);
+      GsaAPI.Model assembled = assembly.GetModel();
 
-      var startAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(0).Releases);
-      var endAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(1).Releases);
+      var startAssembled = new GsaBool6(assembled.Members()[1].GetEndRelease(0).Releases);
+      var endAssembled = new GsaBool6(assembled.Members()[1].GetEndRelease(1).Releases);
 
       _ = Duplicates.AreEqual(m1d.ReleaseStart, startAssembled);
       _ = Duplicates.AreEqual(m1d.ReleaseEnd, endAssembled);

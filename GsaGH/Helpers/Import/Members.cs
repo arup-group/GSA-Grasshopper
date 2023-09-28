@@ -34,8 +34,7 @@ namespace GsaGH.Helpers.Import {
           (Tuple<List<int>, List<string>> item1,
             Tuple<List<List<int>>, List<List<string>>> voidTuple,
             Tuple<List<List<int>>, List<List<string>>> lineTuple,
-            List<int> inclpts)
-              = Topology.Topology_detangler(toporg);
+            List<int> inclpts) = Topology.Topology_detangler(toporg);
           (List<int> topoInt, List<string> topoType) = item1;
 
           var topopts = new Point3dList();
@@ -69,12 +68,12 @@ namespace GsaGH.Helpers.Import {
 
               var mem1d = new GsaMember1d(
                 item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], orientationNode, model.ModelUnit) {
-                Section = model.Properties.GetSection(item.Value)
+                Section = model.GetSection(item.Value)
               };
               Member1ds.Add(new GsaMember1dGoo(mem1d));
               break;
 
-            default: 
+            default:
               // ### Member 2d ###
               if (topopts.Count < 2) {
                 errors2d.Add(item.Key);
@@ -120,7 +119,7 @@ namespace GsaGH.Helpers.Import {
                 inclPts.Add(Nodes.Point3dFromNode(node, model.ModelUnit));
               }
 
-              GsaProperty2d prop2d = model.Properties.GetProp2d(item.Value);
+              GsaProperty2d prop2d = model.GetProp2d(item.Value);
               var mem2d = new GsaMember2d(item, topopts, topoType, voidTopo, voidTopoType,
                 incLinesTopo, inclLinesTopoType, inclPts, prop2d, model.ModelUnit);
               Member2ds.Add(new GsaMember2dGoo(mem2d));
@@ -150,7 +149,7 @@ namespace GsaGH.Helpers.Import {
           // append list of meshes (faster than appending each mesh one by one)
           m.Append(mList);
 
-          GsaProperty3d prop = model.Properties.GetProp3d(item.Value);
+          GsaProperty3d prop = model.GetProp3d(item.Value);
           var mem3d = new GsaMember3d(item.Value, item.Key, m, prop, model.ModelUnit);
           Member3ds.Add(new GsaMember3dGoo(mem3d));
         }
