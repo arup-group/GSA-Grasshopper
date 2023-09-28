@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace GsaGH.Helpers.Export {
+namespace GsaGH.Helpers {
   internal class GsaGuidDictionary<T> {
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> ReadOnlyDictionary => new ReadOnlyDictionary<int, T>(_dictionary);
@@ -66,7 +66,8 @@ namespace GsaGH.Helpers.Export {
       if (_guidDictionary.ContainsKey(guid)) {
         _dictionary[_firstEmptyKey] = value;
         _guidDictionary[guid].Add(_firstEmptyKey);
-      } else {
+      }
+      else {
         _dictionary[_firstEmptyKey] = value;
         _guidDictionary[guid] = new Collection<int>() {
           _firstEmptyKey,
@@ -82,7 +83,8 @@ namespace GsaGH.Helpers.Export {
         if (!_guidDictionary[guid].Contains(key)) {
           _guidDictionary[guid].Add(key);
         }
-      } else {
+      }
+      else {
         _guidDictionary[guid] = new Collection<int>() {
           key,
         };

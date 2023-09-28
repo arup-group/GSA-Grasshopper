@@ -6,7 +6,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using EntityType = GsaGH.Parameters.EntityType;
 
@@ -206,7 +206,7 @@ namespace GsaGH.Helpers.GH {
 
       // list is Member list
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
-              = ElementListFromReference.GetMemberElementRelationship(model.Model);
+        = ModelAssembly.GetMemberElementRelationship(model.Model);
 
       // try find existing list of same name in model
       if (listGoo.Value.Name != null && listGoo.Value.Name != string.Empty) {

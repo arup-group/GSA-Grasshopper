@@ -2,12 +2,12 @@
 using GsaAPI;
 using OasysGH.Units;
 
-namespace GsaGH.Helpers.Export {
-  internal class Axes {
-    internal static int TryGetExistingAxisId(ref GsaIntDictionary<Axis> apiAxes, Axis testAxis) {
+namespace GsaGH.Helpers.Assembly {
+  internal partial class ModelAssembly {
+    private int TryGetExistingAxisId(Axis testAxis) {
       double tolerance = DefaultUnits.Tolerance.Meters;
-      foreach (int key in apiAxes.ReadOnlyDictionary.Keys) {
-        if (!apiAxes.ReadOnlyDictionary.TryGetValue(key, out Axis gsaAxis)) {
+      foreach (int key in _axes.ReadOnlyDictionary.Keys) {
+        if (!_axes.ReadOnlyDictionary.TryGetValue(key, out Axis gsaAxis)) {
           continue;
         }
 
@@ -26,7 +26,7 @@ namespace GsaGH.Helpers.Export {
         }
       }
 
-      return apiAxes.AddValue(testAxis);
+      return _axes.AddValue(testAxis);
     }
   }
 }

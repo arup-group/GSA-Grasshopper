@@ -95,23 +95,23 @@ namespace GsaGH.Components {
 
       GsaAPI.Model model = modelGoo.Value.Model;
       ReadOnlyDictionary<int, GsaAPI.LoadCase> loadCases = model.LoadCases();
-      List<GsaLoadGoo> gravity = Loads.GetGravityLoads(model.GravityLoads(), loadCases);
-      List<GsaLoadGoo> node = Loads.GetNodeLoads(model, loadCases);
-      List<GsaLoadGoo> beam = Loads.GetBeamLoads(model.BeamLoads(), loadCases);
-      List<GsaLoadGoo> face = Loads.GetFaceLoads(model.FaceLoads(), loadCases);
+      List<GsaLoadGoo> gravity = GsaLoadFactory.CreateGravityLoadsFromApi(model.GravityLoads(), loadCases);
+      List<GsaLoadGoo> node = GsaLoadFactory.CreateNodeLoadsFromApi(model, loadCases);
+      List<GsaLoadGoo> beam = GsaLoadFactory.CreateBeamLoadsFromApi(model.BeamLoads(), loadCases);
+      List<GsaLoadGoo> face = GsaLoadFactory.CreateFaceLoadsFromApi(model.FaceLoads(), loadCases);
 
       IReadOnlyDictionary<int, GsaAPI.GridSurface> srfDict = model.GridSurfaces();
       IReadOnlyDictionary<int, GsaAPI.GridPlane> plnDict = model.GridPlanes();
       IReadOnlyDictionary<int, GsaAPI.Axis> axDict = model.Axes();
-      List<GsaLoadGoo> point = Loads.GetGridPointLoads(
+      List<GsaLoadGoo> point = GsaLoadFactory.CreateGridPointLoadsFromApi(
         model.GridPointLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
-      List<GsaLoadGoo> line = Loads.GetGridLineLoads(
+      List<GsaLoadGoo> line = GsaLoadFactory.CreateGridLineLoadsFromApi(
         model.GridLineLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
-      List<GsaLoadGoo> area = Loads.GetGridAreaLoads(
+      List<GsaLoadGoo> area = GsaLoadFactory.CreateGridAreaLoadsFromApi(
         model.GridAreaLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
 
       var gps = srfDict.Keys.Select(key
-        => new GsaGridPlaneSurfaceGoo(Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key,
+        => new GsaGridPlaneSurfaceGoo(GsaLoadFactory.CreateGridPlaneSurfaceFromApi(srfDict, plnDict, axDict, key,
           _lengthUnit))).ToList();
 
       da.SetDataList(0, gravity);

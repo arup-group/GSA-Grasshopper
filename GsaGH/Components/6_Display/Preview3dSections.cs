@@ -4,7 +4,8 @@ using System.Drawing;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi.EnumMappings;
@@ -166,8 +167,8 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        GsaAPI.Model previewModel = Assembler.AssembleForPreview(
-          model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
         0, 1,

@@ -866,7 +866,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        Mesh tempmesh = Elements.GetMeshFromApiElement2d(element, nodes, lengthUnit);
+        Mesh tempmesh = GsaElementFactory.GetMeshFromApiElement2d(element, nodes, lengthUnit);
         if (tempmesh == null) {
           return;
         }

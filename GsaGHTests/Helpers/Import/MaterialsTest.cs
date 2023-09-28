@@ -11,7 +11,7 @@ namespace GsaGHTests.Helpers.Import {
   public class MaterialsTest {
     [Fact]
     public void ImportSteelMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.SteelMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.SteelMaterials) {
@@ -26,7 +26,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportConcreteMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.ConcreteMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.ConcreteMaterials) {
@@ -42,7 +42,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportFrpMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.FrpMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.FrpMaterials) {
@@ -57,7 +57,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportAluminiumMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.AluminiumMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AluminiumMaterials) {
@@ -72,7 +72,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportTimberMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.TimberMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.TimberMaterials) {
@@ -87,7 +87,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportGlassMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.GlassMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.GlassMaterials) {
@@ -102,7 +102,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportFabricMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.FabricMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.FabricMaterials) {
@@ -117,7 +117,7 @@ namespace GsaGHTests.Helpers.Import {
 
     [Fact]
     public void ImportCustomMaterialTest() {
-      Materials materials = ImportMaterialsMother();
+      GsaMaterials materials = ImportMaterialsMother();
       Assert.True(materials.AnalysisMaterials.Count > 1);
       int i = 1;
       foreach (KeyValuePair<int, GsaMaterial> kvp in materials.AnalysisMaterials) {
@@ -176,8 +176,8 @@ namespace GsaGHTests.Helpers.Import {
       return model;
     }
 
-    internal static Materials ImportMaterialsMother() {
-      return new Materials(ImportMaterialsMotherModel());
+    internal static GsaMaterials ImportMaterialsMother() {
+      return new GsaMaterials(ImportMaterialsMotherModel());
     }
   }
 }

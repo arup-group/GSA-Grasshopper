@@ -13,9 +13,9 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -353,7 +353,7 @@ namespace GsaGH.Components {
             width = new Length(double.Parse(parts[3]), unit);
           } else if (profile.StartsWith("CAT")) {
             string prof = profile.Split(' ')[2];
-            List<double> sqlValues = MicrosoftSQLiteReader.Instance.GetCatalogueProfileValues(prof,
+            List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof,
               Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
             unit = LengthUnit.Meter;
 

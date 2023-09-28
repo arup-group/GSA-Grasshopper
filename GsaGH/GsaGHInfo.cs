@@ -48,7 +48,7 @@ namespace GsaGH {
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     internal static bool isBeta = true;
   }
-  
+
   public class AddReferencePriority : GH_AssemblyPriority {
     public static string PluginPath => pluginPath ?? (pluginPath = TryFindPluginPath("GSA.gha"));
     public static string InstallPath = InstallationFolder.GetPath;
@@ -108,6 +108,12 @@ namespace GsaGH {
         Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
         PostHog.PluginLoaded(PluginInfo.Instance, message);
         return GH_LoadingInstruction.Abort;
+      }
+
+      // this is a temporary fix for TDA
+      // needs more investigation!
+      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
+        Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
       }
 
       Instances.CanvasCreated += MenuLoad.OnStartup;
