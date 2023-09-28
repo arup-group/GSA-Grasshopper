@@ -324,7 +324,8 @@ namespace GsaGH.Components {
           new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
       da.SetData(8, prop.ApiProp2d.ReferenceSurface);
       da.SetData(9, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
-      da.SetData(10, new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier));
+      da.SetData(10, new GsaProperty2dModifierGoo(
+        new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier)));
       da.SetData(11, prop.ApiProp2d.SupportType);
       da.SetData(12, prop.ApiProp2d.SupportType != SupportType.Auto 
         ? prop.ApiProp2d.ReferenceEdge : -1);
