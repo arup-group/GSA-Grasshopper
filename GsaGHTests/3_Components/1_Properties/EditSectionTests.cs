@@ -171,5 +171,12 @@ namespace GsaGHTests.Components.Properties {
       var profile = (GH_String)ComponentTestHelper.GetOutput(comp, 2);
       Assert.Equal("STD I 300 400 10 20", profile.Value);
     }
+
+    [Fact]
+    public void UpdateCustomUITest() {
+      var comp = (EditSection)ComponentMother();
+      comp.Update("ft");
+      Assert.Equal("ft", comp.Message);
+    }
   }
 }

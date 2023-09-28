@@ -25,6 +25,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(EditOffset), 2)]
     [InlineData(typeof(Edit2dProperty), 2)]
     [InlineData(typeof(Edit1dMember), 3)]
+    [InlineData(typeof(EditNode), 4)]
     [InlineData(typeof(Create1dElement), 1)] // Section3dPreviewComponent
     [InlineData(typeof(Create1dMember), 1)] // Section3dPreviewDropDownComponent
     public void DropDownComponentTest(Type t, int expectedItems) {

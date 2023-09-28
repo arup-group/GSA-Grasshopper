@@ -131,6 +131,11 @@ namespace GsaGH.Components {
             return;
           }
 
+          if (mem2d.Prop2d == null || mem2d.Prop2d.Thickness == Length.Zero) {
+            this.AddRuntimeError("Member has no property attached");
+            return;
+          }
+
           oneD = false;
           break;
 
@@ -138,6 +143,11 @@ namespace GsaGH.Components {
           elem2d = element2DGoo.Value;
           if (elem2d == null) {
             this.AddRuntimeError("Input is null");
+            return;
+          }
+
+          if (elem2d.Prop2ds.IsNullOrEmpty()) {
+            this.AddRuntimeError("Element has no property attached");
             return;
           }
 
@@ -179,179 +189,7 @@ namespace GsaGH.Components {
           Length depth = Length.Zero;
           Length width = Length.Zero;
 
-          // angle
-          if (profile.StartsWith("STD A")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // channel
-          else if (profile.StartsWith("STD CH ") || profile.StartsWith("STD CH(")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // circle hollow
-          else if (profile.StartsWith("STD CHS")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[2]), unit);
-          }
-
-          // circle
-          else if (profile.StartsWith("STD C ") || profile.StartsWith("STD C(")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[2]), unit);
-          }
-
-          // ICruciformSymmetricalProfile
-          else if (profile.StartsWith("STD X")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IEllipseHollowProfile
-          else if (profile.StartsWith("STD OVAL")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IEllipseProfile
-          else if (profile.StartsWith("STD E")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IGeneralCProfile
-          else if (profile.StartsWith("STD GC")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IGeneralZProfile
-          else if (profile.StartsWith("STD GZ")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            switch (alignmentType) {
-              case AlignmentType.TopLeft:
-              case AlignmentType.MidLeft:
-              case AlignmentType.BottomLeft:
-                width = new Length(double.Parse(parts[4]), unit);
-                break;
-
-              case AlignmentType.TopRight:
-              case AlignmentType.MidRight:
-              case AlignmentType.BottomRight:
-                width = new Length(double.Parse(parts[3]), unit);
-                break;
-
-              default:
-                width = new Length(double.Parse(parts[3]) + double.Parse(parts[4]), unit);
-                break;
-            }
-          }
-
-          // IIBeamAsymmetricalProfile
-          else if (profile.StartsWith("STD GI")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            double top = double.Parse(parts[3]);
-            double bottom = double.Parse(parts[4]);
-            width = new Length(Math.Max(top, bottom), unit);
-          }
-
-          // IIBeamCellularProfile
-          else if (profile.StartsWith("STD CB")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IIBeamSymmetricalProfile
-          else if (profile.StartsWith("STD I")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IRectangleHollowProfile
-          else if (profile.StartsWith("STD RHS")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IRectangleProfile
-          else if (profile.StartsWith("STD R ") || profile.StartsWith("STD R(")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // IRectoEllipseProfile
-          else if (profile.StartsWith("STD RE")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // ISecantPileProfile
-          else if (profile.StartsWith("STD SP")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            if (profile.StartsWith("STD SPW")) {
-              // STD SPW 250 100 4
-              int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
-              double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
-              width = new Length(count * spacing, unit);
-            } else {
-              // STD SP 250 100 4
-              int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
-              double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
-              double diameter = double.Parse(parts[2], CultureInfo.InvariantCulture);
-              width = new Length(((count - 1) * spacing) + diameter, unit);
-            }
-          }
-
-          // ISheetPileProfile
-          else if (profile.StartsWith("STD SHT")) {
-            this.AddRuntimeError(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile);
-            return;
-          }
-
-          // IStadiumProfile
-          else if (profile.StartsWith("STD RC")) {
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          }
-
-          // ITrapezoidProfile
-          else if (profile.StartsWith("STD TR")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            double top = double.Parse(parts[3]);
-            double bottom = double.Parse(parts[4]);
-            width = new Length(Math.Max(top, bottom), unit);
-          }
-
-          // ITSectionProfile
-          else if (profile.StartsWith("STD T")) {
-            this.AddRuntimeWarning(
-              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
-              + profile + ". Please check output.");
-            depth = new Length(double.Parse(parts[2]), unit);
-            width = new Length(double.Parse(parts[3]), unit);
-          } else if (profile.StartsWith("CAT")) {
+          if (profile.StartsWith("CAT")) {
             string prof = profile.Split(' ')[2];
             List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof,
               Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
@@ -360,7 +198,113 @@ namespace GsaGH.Components {
             depth = new Length(sqlValues[0], unit);
             width = new Length(sqlValues[1], unit);
           } else {
-            this.AddRuntimeError("Unable to get dimensions for Profile " + profile);
+            int count = 0;
+            double spacing = 0;
+            double top = 0;
+            double bottom = 0;
+            switch (type[0]) {
+              case "A":
+              case "CH":
+              case "GC":
+                this.AddRuntimeWarning(
+                "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
+                + profile + ". Please check output.");
+                depth = new Length(double.Parse(parts[2]), unit);
+                width = new Length(double.Parse(parts[3]), unit);
+                break;
+              case "X":
+              case "OVAL":
+              case "E":
+              case "CB":
+              case "I":
+              case "RHS":
+              case "R":
+              case "RE":
+              case "SHT":
+              case "RC":
+                depth = new Length(double.Parse(parts[2]), unit);
+                width = new Length(double.Parse(parts[3]), unit);
+                break;
+
+              case "CHS":
+              case "C":
+                depth = new Length(double.Parse(parts[2]), unit);
+                width = new Length(double.Parse(parts[2]), unit);
+                break;
+
+              case "GZ":
+                this.AddRuntimeWarning(
+                "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
+                + profile + ". Please check output.");
+                depth = new Length(double.Parse(parts[2]), unit);
+                switch (alignmentType) {
+                  case AlignmentType.TopLeft:
+                  case AlignmentType.MidLeft:
+                  case AlignmentType.BottomLeft:
+                    width = new Length(double.Parse(parts[4]), unit);
+                    break;
+
+                  case AlignmentType.TopRight:
+                  case AlignmentType.MidRight:
+                  case AlignmentType.BottomRight:
+                    width = new Length(double.Parse(parts[3]), unit);
+                    break;
+
+                  default:
+                    width = new Length(double.Parse(parts[3]) + double.Parse(parts[4]), unit);
+                    break;
+                }
+                break;
+
+              case "GI":
+                this.AddRuntimeWarning(
+              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
+              + profile + ". Please check output.");
+                depth = new Length(double.Parse(parts[2]), unit);
+                top = double.Parse(parts[3]);
+                bottom = double.Parse(parts[4]);
+                width = new Length(Math.Max(top, bottom), unit);
+                break;
+
+              case "SP":
+                // STD SP 250 100 4
+                depth = new Length(double.Parse(parts[2]), unit);
+                count = int.Parse(parts[4], CultureInfo.InvariantCulture);
+                spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
+                double diameter = double.Parse(parts[2], CultureInfo.InvariantCulture);
+                width = new Length(((count - 1) * spacing) + diameter, unit);
+                break;
+
+              case "SPW":
+                // STD SPW 250 100 4
+                depth = new Length(double.Parse(parts[2]), unit);
+                count = int.Parse(parts[4], CultureInfo.InvariantCulture);
+                spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
+                width = new Length(count * spacing, unit);
+                break;
+
+              case "TR":
+                this.AddRuntimeWarning(
+              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
+              + profile + ". Please check output.");
+                depth = new Length(double.Parse(parts[2]), unit);
+                top = double.Parse(parts[3]);
+                bottom = double.Parse(parts[4]);
+                width = new Length(Math.Max(top, bottom), unit);
+                break;
+
+              case "T":
+                this.AddRuntimeWarning(
+              "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: "
+              + profile + ". Please check output.");
+                depth = new Length(double.Parse(parts[2]), unit);
+                width = new Length(double.Parse(parts[3]), unit);
+                break;
+
+              default:
+                this.AddRuntimeError("Unable to get dimensions for Profile " + profile);
+                return;
+            }
           }
 
           switch (alignmentType) {

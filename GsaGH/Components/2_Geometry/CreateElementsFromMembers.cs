@@ -8,6 +8,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
@@ -31,7 +32,6 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateElementsFromMembers;
-    private ConcurrentBag<GsaElement2dGoo> _element2ds;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
 
@@ -40,60 +40,6 @@ namespace GsaGH.Components {
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
-    }
-
-    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
-      base.DrawViewportMeshes(args);
-
-      if (_element2ds == null) {
-        return;
-      }
-
-      foreach (GsaElement2dGoo element in _element2ds) {
-        if (element?.Value.Mesh == null || element.Value.ApiElements[0].ParentMember.Member > 0) {
-          continue;
-        }
-
-        args.Display.DrawMeshShaded(element.Value.Mesh,
-          Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace);
-      }
-    }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      if (_element2ds == null) {
-        return;
-      }
-
-      foreach (GsaElement2dGoo element in _element2ds) {
-        if (element == null || element.Value.Mesh == null) {
-          continue;
-        }
-
-        if (element.Value.ApiElements[0].ParentMember.Member
-          > 0) // only draw mesh shading if no parent member exist.
-        {
-          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1) {
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Color.FromArgb(255, 229, 229, 229), 1);
-            }
-          }
-        } else {
-          if (Attributes.Selected) {
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdgeSelected, 2);
-            }
-          } else {
-            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
-              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i),
-                Colours.Element2dEdge, 1);
-            }
-          }
-        }
-      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -167,11 +113,6 @@ namespace GsaGH.Components {
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
-
-      pManager.HideParameter(0);
-      pManager.HideParameter(1);
-      pManager.HideParameter(2);
-      pManager.HideParameter(3);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -186,95 +127,39 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      var ghTypes = new List<GH_ObjectWrapper>();
-
-      var inNodes = new List<GsaNode>();
-      if (da.GetDataList(0, ghTypes)) {
-        for (int i = 0; i < ghTypes.Count; i++) {
-          ghTyp = ghTypes[i];
-          if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Node input (index: " + i
-              + ") is null and has been ignored");
-            continue;
-          }
-
-          if (ghTyp.Value is GsaNodeGoo nodeGoo) {
-            inNodes.Add(nodeGoo.Value);
-          } else {
-            this.AddRuntimeError("Error in Node input");
-            return;
-          }
-        }
+      
+      var nodeGoos = new List<GsaNodeGoo>();
+      var nodes = new List<GsaNode>();
+      if (da.GetDataList(0, nodeGoos)) {
+        nodes = nodeGoos.ConvertAll(x => x.Value);
       }
 
-      ghTypes = new List<GH_ObjectWrapper>();
-      var inMem1ds = new List<GsaMember1d>();
-      if (da.GetDataList(1, ghTypes)) {
-        for (int i = 0; i < ghTypes.Count; i++) {
-          ghTyp = ghTypes[i];
-          if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member1D input (index: " + i
-              + ") is null and has been ignored");
-            continue;
-          }
-
-          if (ghTyp.Value is GsaMember1dGoo member1DGoo) {
-            inMem1ds.Add(member1DGoo.Value);
-          } else {
-            this.AddRuntimeError("Error in Mem1D input");
-            return;
-          }
-        }
+      var member1dGoos = new List<GsaMember1dGoo>();
+      var member1ds = new List<GsaMember1d>();
+      if (da.GetDataList(1, member1dGoos)) {
+        member1ds = member1dGoos.ConvertAll(x => x.Value);
       }
 
-      ghTypes = new List<GH_ObjectWrapper>();
-      var inMem2ds = new List<GsaMember2d>();
-      if (da.GetDataList(2, ghTypes)) {
-        for (int i = 0; i < ghTypes.Count; i++) {
-          ghTyp = ghTypes[i];
-          if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member2D input (index: " + i
-              + ") is null and has been ignored");
-            continue;
-          }
-
-          if (ghTyp.Value is GsaMember2dGoo member2DGoo) {
-            inMem2ds.Add(member2DGoo.Value);
-          } else {
-            this.AddRuntimeError("Error in Mem2D input");
-            return;
-          }
-        }
+      var member2dGoos = new List<GsaMember2dGoo>();
+      var member2ds = new List<GsaMember2d>();
+      if (da.GetDataList(2, member2dGoos)) {
+        member2ds = member2dGoos.ConvertAll(x => x.Value);
       }
 
-      ghTypes = new List<GH_ObjectWrapper>();
-      var inMem3ds = new List<GsaMember3d>();
-      if (da.GetDataList(3, ghTypes)) {
-        for (int i = 0; i < ghTypes.Count; i++) {
-          ghTyp = ghTypes[i];
-          if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Member3D input (index: " + i
-              + ") is null and has been ignored");
-            continue;
-          }
-
-          if (ghTyp.Value is GsaMember3dGoo member3DGoo) {
-            inMem3ds.Add(member3DGoo.Value);
-          } else {
-            this.AddRuntimeError("Error in Mem3D input");
-            return;
-          }
-        }
+      var member3dGoos = new List<GsaMember3dGoo>();
+      var member3ds = new List<GsaMember3d>();
+      if (da.GetDataList(3, member3dGoos)) {
+        member3ds = member3dGoos.ConvertAll(x => x.Value);
       }
 
       // manually add a warning if no input is set, as all three inputs are optional
-      if ((inMem1ds.Count < 1) & (inMem2ds.Count < 1) & (inMem3ds.Count < 1)) {
+      if ((member1ds.Count < 1) & (member2ds.Count < 1) & (member3ds.Count < 1)) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
 
-      var assembly = new ModelAssembly(null, null, null, inNodes, null, null, null, inMem1ds,
-        inMem2ds, inMem3ds, null, null, null, null, null, null, null, null, null, _lengthUnit,
+      var assembly = new ModelAssembly(null, null, null, nodes, null, null, null, member1ds,
+        member2ds, member3ds, null, null, null, null, null, null, null, null, null, _lengthUnit,
         ToleranceMenu.Tolerance, true, this);
       Model gsa = assembly.GetModel();
 
@@ -283,17 +168,16 @@ namespace GsaGH.Components {
         ModelUnit = _lengthUnit,
       };
 
-      ConcurrentBag<GsaNodeGoo> nodes = Nodes.GetNodes(outModel.ApiNodes, outModel.ModelUnit);
+      ConcurrentBag<GsaNodeGoo> nodesOut = Nodes.GetNodes(outModel.ApiNodes, outModel.ModelUnit);
       var elements = new Elements(outModel);
 
-      da.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
+      da.SetDataList(0, nodesOut.OrderBy(item => item.Value.Id));
       da.SetDataList(1, elements.Element1ds.OrderBy(item => item.Value.Id));
       da.SetDataList(2, elements.Element2ds.OrderBy(item => item.Value.Ids.First()));
       da.SetDataList(3, elements.Element3ds.OrderBy(item => item.Value.Ids.First()));
       da.SetData(4, new GsaModelGoo(outModel));
 
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
-      _element2ds = elements.Element2ds;
     }
   }
 }

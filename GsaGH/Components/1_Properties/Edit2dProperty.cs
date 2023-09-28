@@ -330,7 +330,7 @@ namespace GsaGH.Components {
         ? prop.ApiProp2d.ReferenceEdge : -1);
     }
 
-    private void Update(string unit) {
+    internal void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
