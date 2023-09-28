@@ -110,11 +110,11 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string caseid = $"LC{Value.CaseId}";
+      int id = Value.LoadCase == null ? Value.CaseId : Value.LoadCase.Id;
       string type = Value.GetType().ToString().Replace("Gsa", string.Empty)
        .Replace("GH.Parameters.", string.Empty).Replace("Load", string.Empty);
       string name = Value.Name;
-      string value = string.Join(" ", caseid, type, name).TrimSpaces();
+      string value = string.Join(" ", $"LC{id}", type, name).TrimSpaces();
       return $"{PluginInfo.ProductName} {TypeName} ({value})";
     }
   }
