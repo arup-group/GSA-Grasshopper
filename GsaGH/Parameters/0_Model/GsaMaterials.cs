@@ -1,14 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using GsaAPI;
-using GsaAPI.Materials;
-using GsaGH.Parameters;
 
-namespace GsaGH.Helpers.Import {
-  internal class Materials {
-    public const string GenericConcreteCodeName = "generic conc.";
-    public const string GenericSteelCodeName = "<steel generic>";
-
+namespace GsaGH.Parameters {
+  internal class GsaMaterials {
     internal ReadOnlyDictionary<int, GsaMaterial> SteelMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> ConcreteMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> FrpMaterials { get; private set; }
@@ -18,7 +12,7 @@ namespace GsaGH.Helpers.Import {
     internal ReadOnlyDictionary<int, GsaMaterial> FabricMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> AnalysisMaterials { get; private set; }
 
-    internal Materials(Model model) {
+    internal GsaMaterials(Model model) {
       SteelMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.SteelMaterials(), model);
       ConcreteMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.ConcreteMaterials(), model);
       FrpMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.FrpMaterials(), model);
@@ -107,11 +101,11 @@ namespace GsaGH.Helpers.Import {
 
     private bool SanitizeGenericCodeNames(ReadOnlyDictionary<int, GsaMaterial> materials) {
       foreach (GsaMaterial material in materials.Values) {
-        if (material.ConcreteDesignCodeName == GenericConcreteCodeName) {
+        if (material.ConcreteDesignCodeName == GsaModel.GenericConcreteCodeName) {
           return true;
         }
 
-        if (material.SteelDesignCodeName == GenericSteelCodeName) {
+        if (material.SteelDesignCodeName == GsaModel.GenericSteelCodeName) {
           return true;
         }
       }

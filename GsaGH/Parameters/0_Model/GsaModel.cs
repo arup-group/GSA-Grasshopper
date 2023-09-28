@@ -20,8 +20,8 @@ namespace GsaGH.Parameters {
   /// <para>If the model has been analysed you can use the <see cref="Components.SelectResult"/> component to explore the Models structural performance and behaviour.</para>
   /// </summary>
   public class GsaModel {
-
-
+    public const string GenericConcreteCodeName = "generic conc.";
+    public const string GenericSteelCodeName = "<steel generic>";
 
     public BoundingBox BoundingBox {
       get {
@@ -49,7 +49,7 @@ namespace GsaGH.Parameters {
     internal ReadOnlyDictionary<int, ReadOnlyCollection<double>> ApiMemberLocalAxes { get; private set; }
     internal ReadOnlyDictionary<int, Node> ApiNodes { get; private set; }
     internal ReadOnlyDictionary<int, Axis> ApiAxis { get; private set; }
-    internal Materials Materials { get; private set; }
+    internal GsaMaterials Materials { get; private set; }
     internal Section3dPreview AnalysisLayerPreview {
       get {
         if (Model.Elements().Count > 0) {
@@ -71,6 +71,7 @@ namespace GsaGH.Parameters {
       set {
         _model = value;
         InstantiateApiFields();
+        Setup();
         _analysisLayerPreview = null;
         _designLayerPreview = null;
       }
@@ -87,11 +88,13 @@ namespace GsaGH.Parameters {
     public GsaModel() {
       SetUserDefaultUnits();
       InstantiateApiFields();
+      Setup();
     }
 
     internal GsaModel(Model model) {
       Model = model;
       InstantiateApiFields();
+      Setup();
     }
 
     /// <summary>
@@ -284,21 +287,17 @@ namespace GsaGH.Parameters {
       ApiNodes = Model.Nodes();
       ApiAxis = Model.Axes();
       _lengthUnit = UnitMapping.GetUnit(Model.UiUnits().LengthLarge);
-
-
-      // those are not really api fields?!
-      // this could happen in a parallel thread!
-
-      Materials = new Materials(Model);
-      Sections = GsaPropertyFactory.CreateSectionsFromApi(Model.Sections(), Materials, Model.SectionModifiers());
-      Prop2ds = GsaPropertyFactory.CreateProp2dsFromApi(Model.Prop2Ds(), Materials, Model.Axes());
-      Prop3ds = GsaPropertyFactory.CreateProp3dsFromApi(Model.Prop3Ds(), Materials);
-
-
       ApiMemberLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
                 Model.Members().Keys.ToDictionary(id => id, id => Model.MemberDirectionCosine(id)));
       ApiElementLocalAxes = new ReadOnlyDictionary<int, ReadOnlyCollection<double>>(
             Model.Elements().Keys.ToDictionary(id => id, id => Model.ElementDirectionCosine(id)));
+    }
+
+    private void Setup() {
+      Materials = new GsaMaterials(Model);
+      Sections = GsaPropertyFactory.CreateSectionsFromApi(Model.Sections(), Materials, Model.SectionModifiers());
+      Prop2ds = GsaPropertyFactory.CreateProp2dsFromApi(Model.Prop2Ds(), Materials, Model.Axes());
+      Prop3ds = GsaPropertyFactory.CreateProp3dsFromApi(Model.Prop3Ds(), Materials);
     }
   }
 }

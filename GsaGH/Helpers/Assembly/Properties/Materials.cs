@@ -223,7 +223,7 @@ namespace GsaGH.Helpers.Assembly {
       return _concreteDesignCode;
     }
 
-    private void GetGsaGhMaterialsDictionary(Import.Materials materials) {
+    private void GetGsaGhMaterialsDictionary(GsaMaterials materials) {
       _materials = new Dictionary<Guid, GsaMaterial>();
       foreach (KeyValuePair<int, GsaMaterial> mat in materials.SteelMaterials) {
         _materials.Add(mat.Value.Guid, mat.Value);

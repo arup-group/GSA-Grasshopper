@@ -8,7 +8,7 @@ using GsaGH.Helpers.Import;
 namespace GsaGH.Parameters {
   public static class GsaPropertyFactory {
     internal static ReadOnlyDictionary<int, GsaSectionGoo> CreateSectionsFromApi(
-      IReadOnlyDictionary<int, Section> sections, Materials materials,
+      IReadOnlyDictionary<int, Section> sections, GsaMaterials materials,
       IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
       var dict = new Dictionary<int, GsaSectionGoo>();
       foreach (KeyValuePair<int, Section> sec in sections) {
@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static ReadOnlyDictionary<int, GsaProperty2dGoo> CreateProp2dsFromApi(
-      IReadOnlyDictionary<int, Prop2D> props, Materials materials,
+      IReadOnlyDictionary<int, Prop2D> props, GsaMaterials materials,
       IReadOnlyDictionary<int, Axis> axes = null) {
       var dict = new Dictionary<int, GsaProperty2dGoo>();
       foreach (KeyValuePair<int, Prop2D> prop in props) {
@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static ReadOnlyDictionary<int, GsaProperty3dGoo> CreateProp3dsFromApi(
-      IReadOnlyDictionary<int, Prop3D> props, Materials materials) {
+      IReadOnlyDictionary<int, Prop3D> props, GsaMaterials materials) {
       var dict = new Dictionary<int, GsaProperty3dGoo>();
       foreach (KeyValuePair<int, Prop3D> prop in props) {
         dict.Add(prop.Key, CreateProp3dFromApi(prop, materials));
@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
     }
 
     private static GsaProperty2dGoo CreateProp2dFromApi(KeyValuePair<int, Prop2D> prop2d,
-      Materials materials, IReadOnlyDictionary<int, Axis> axes) {
+      GsaMaterials materials, IReadOnlyDictionary<int, Axis> axes) {
       var prop = new GsaProperty2d(prop2d);
 
       GsaMaterial material = materials.GetMaterial(prop2d.Value);
@@ -57,7 +57,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static GsaProperty3dGoo CreateProp3dFromApi(KeyValuePair<int, Prop3D> prop3d,
-      Materials materials) {
+      GsaMaterials materials) {
       var prop = new GsaProperty3d(prop3d);
 
       GsaMaterial material = materials.GetMaterial(prop3d.Value);
@@ -69,7 +69,7 @@ namespace GsaGH.Parameters {
     }
 
     private static GsaSectionGoo CreateSectionFromApi(KeyValuePair<int, Section> section,
-      Materials materials, IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
+      GsaMaterials materials, IReadOnlyDictionary<int, SectionModifier> sectionModifiers) {
       var sect = new GsaSection(section);
 
       GsaMaterial material = materials.GetMaterial(section.Value);
