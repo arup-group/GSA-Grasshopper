@@ -1,7 +1,7 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
-using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {
@@ -10,15 +10,14 @@ namespace GsaGHTests.Components.Loads {
     [Fact]
     public void CreateUniformTest() {
       var comp = new CreateBeamLoad();
-
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, -5, 6);
 
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
-
       var load = (GsaBeamLoad)output.Value;
       Assert.Equal(-5000, load.ApiLoad.Value(0));
       Assert.Equal(GsaAPI.BeamLoadType.UNIFORM, load.ApiLoad.Type);
+      Assert.Equal(ReferenceType.None, load.ReferenceType);
     }
 
     [Fact]
@@ -96,13 +95,11 @@ namespace GsaGHTests.Components.Loads {
     [Fact]
     public void NameTest() {
       var comp = new CreateBeamLoad();
-
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, "myBeamLoad", 2);
       ComponentTestHelper.SetInput(comp, -5, 6);
 
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
-
       var load = (GsaBeamLoad)output.Value;
       Assert.Equal(-5000, load.ApiLoad.Value(0));
       Assert.Equal("myBeamLoad", load.ApiLoad.Name);
@@ -111,13 +108,11 @@ namespace GsaGHTests.Components.Loads {
     [Fact]
     public void AxisTest() {
       var comp = new CreateBeamLoad();
-
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, -1, 3);
       ComponentTestHelper.SetInput(comp, -5, 6);
 
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
-
       var load = (GsaBeamLoad)output.Value;
       Assert.Equal(-5000, load.ApiLoad.Value(0));
       Assert.Equal(-1, load.ApiLoad.AxisProperty);
@@ -131,13 +126,11 @@ namespace GsaGHTests.Components.Loads {
     [InlineData("ZZ")]
     public void DirectionTest(string direction) {
       var comp = new CreateBeamLoad();
-
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, direction, 4);
       ComponentTestHelper.SetInput(comp, -5, 6);
 
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
-
       var load = (GsaBeamLoad)output.Value;
       Assert.Equal(-5000, load.ApiLoad.Value(0));
       Assert.Equal(direction, load.ApiLoad.Direction.ToString());
@@ -148,13 +141,11 @@ namespace GsaGHTests.Components.Loads {
     [InlineData(false)]
     public void ProjectedTest(bool project) {
       var comp = new CreateBeamLoad();
-
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, project, 5);
       ComponentTestHelper.SetInput(comp, -5, 6);
 
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
-
       var load = (GsaBeamLoad)output.Value;
       Assert.Equal(-5000, load.ApiLoad.Value(0));
       Assert.Equal(project, load.ApiLoad.IsProjected);
@@ -163,12 +154,11 @@ namespace GsaGHTests.Components.Loads {
     [Fact]
     public void EntityListTypeErrorTest() {
       var comp = new CreateBeamLoad();
-
       var list = new GsaList("test", "1 2 3", GsaAPI.EntityType.Node);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       ComponentTestHelper.SetInput(comp, -5, 6);
-      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
 
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
       Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
