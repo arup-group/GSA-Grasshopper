@@ -37,7 +37,9 @@ namespace IntegrationTests.Parameters {
     [InlineData("CombinationCase", false)]
     [InlineData("Result")]
     [InlineData("GridLine")]
+    [InlineData("GridLineCrv")]
     [InlineData("GridPlaneSurfaceFromLoad")]
+    [InlineData("Special List filters", false)]
     public void TestCast(string groupIdentifier, bool checkError = true) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {

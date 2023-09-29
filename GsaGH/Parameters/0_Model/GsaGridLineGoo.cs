@@ -27,6 +27,24 @@ namespace GsaGH.Parameters {
 
     public override bool CastTo<Q>(ref Q target) {
       if (Value != null) {
+        if (typeof(Q).IsAssignableFrom(typeof(GH_Curve))) {
+          if (Value.GridLine.Shape == GsaAPI.GridLineShape.Line) {
+            var line = GsaGridLine.ToLine(Value.GridLine);
+            var ghLine = new GH_Curve();
+            GH_Convert.ToGHCurve(line, GH_Conversion.Both, ref ghLine);
+            target = (Q)(object)ghLine;
+            return true;
+          }
+          if (Value.GridLine.Shape == GsaAPI.GridLineShape.Arc) {
+            var arc = GsaGridLine.ToArc(Value.GridLine);
+            var ghArc = new GH_Curve();
+            GH_Convert.ToGHCurve(arc, GH_Conversion.Both, ref ghArc);
+            target = (Q)(object)ghArc;
+            return true;
+          } else {
+            return false;
+          }
+        }
         if (typeof(Q).IsAssignableFrom(typeof(GH_Line))) {
           if (Value.GridLine.Shape == GsaAPI.GridLineShape.Line) {
             var line = GsaGridLine.ToLine(Value.GridLine);
@@ -34,6 +52,8 @@ namespace GsaGH.Parameters {
             GH_Convert.ToGHLine(line, GH_Conversion.Both, ref ghLine);
             target = (Q)(object)ghLine;
             return true;
+          } else {
+            return false;
           }
         }
         if (typeof(Q).IsAssignableFrom(typeof(GH_Arc))) {
