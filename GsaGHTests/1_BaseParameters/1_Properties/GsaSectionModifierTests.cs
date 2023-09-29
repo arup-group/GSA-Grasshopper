@@ -3,11 +3,81 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using System;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaSectionModifierTest {
+  public class GsaSectionModifierTests {
+    [Fact]
+    public void CreateFromApiByTest() {
+      var api = new SectionModifier() {
+        AdditionalMass = 10,
+        AreaModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        I11Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        I22Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        JModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        K11Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        K22Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        VolumeModifier = new SectionModifierAttribute(SectionModifierOptionType.BY, 0.1),
+        StressOption = SectionModifierStressType.USE_MOD,
+        IsBendingAxesPrincipal = true,
+        IsReferencePointCentroid = true,
+      };
+
+      var modifier = new GsaSectionModifier(api);
+
+      Assert.Equal(0.1, modifier.AreaModifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(0.1, modifier.I11Modifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(0.1, modifier.I22Modifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(0.1, modifier.JModifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(0.1, modifier.K11Modifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(0.1, modifier.K22Modifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(0.1, modifier.VolumeModifier.As(RatioUnit.DecimalFraction));
+      Assert.Equal(10, modifier.AdditionalMass.Value);
+      Assert.Equal("UseModified", modifier.StressOption.ToString());
+      Assert.True(modifier.IsBendingAxesPrincipal);
+      Assert.True(modifier.IsReferencePointCentroid);
+      Assert.Equal(
+        "A:10% I11:10% I22:10% J:10% K11:10% K22:10% V:10% Add.Mass:10kg/m " +
+        "StressCalc.Opt.:UseModified BendingAxis(UsePringipal(u,v) AnalysisRefPt(UseCentroid)",
+        modifier.ToString());
+    }
+
+    [Fact]
+    public void CreateFromApiToTest() {
+      var api = new SectionModifier() {
+        AdditionalMass = 10,
+        AreaModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 0.01),
+        I11Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 0.000001),
+        I22Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 0.000001),
+        JModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 0.000001),
+        K11Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 0.1),
+        K22Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 0.1),
+        VolumeModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, 10),
+        StressOption = SectionModifierStressType.NO_MOD,
+        IsBendingAxesPrincipal = false,
+        IsReferencePointCentroid = false,
+      };
+
+      var modifier = new GsaSectionModifier(api);
+      Assert.Equal(0.01, modifier.AreaModifier.As(AreaUnit.SquareMeter));
+      Assert.Equal(0.000001, modifier.I11Modifier.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
+      Assert.Equal(0.000001, modifier.I22Modifier.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
+      Assert.Equal(0.000001, modifier.JModifier.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
+      Assert.Equal(10, modifier.K11Modifier.As(RatioUnit.Percent));
+      Assert.Equal(10, modifier.K22Modifier.As(RatioUnit.Percent));
+      Assert.Equal(10, modifier.VolumeModifier.As(VolumePerLengthUnit.CubicMeterPerMeter));
+      Assert.Equal(10, modifier.AdditionalMass.Value);
+      Assert.Equal("NoCalculation", modifier.StressOption.ToString());
+      Assert.False(modifier.IsBendingAxesPrincipal);
+      Assert.False(modifier.IsReferencePointCentroid);
+      Assert.Equal(
+        "A:100cm² I11:100cm⁴ I22:100cm⁴ J:100cm⁴ K11:0.100[-] K22:0.100[-] " +
+        "V:10m³/m Add.Mass:10kg/m",
+        modifier.ToString());
+    }
+
 
     [Fact]
     public void AdditionalMassTest() {
@@ -40,7 +110,7 @@ namespace GsaGHTests.Parameters {
       var original = new GsaSectionModifier {
         StressOption = StressOptionType.NoCalculation,
       };
-      
+
       var duplicate = new GsaSectionModifier(original);
 
       Duplicates.AreEqual(original, duplicate);
@@ -179,6 +249,36 @@ namespace GsaGHTests.Parameters {
       };
       Assert.Equal(1, modifier.VolumeModifier.As(VolumePerLengthUnit.CubicMeterPerMeter));
       Assert.Equal(SectionModifierOptionType.TO, modifier.ApiSectionModifier.VolumeModifier.Option);
+    }
+
+    [Fact]
+    public void AreaModifierThrowsExceptionTest() {
+      var modifier = new GsaSectionModifier();
+      Assert.Throws<ArgumentException>(() => modifier.AreaModifier = Jerk.Zero);
+    }
+
+    [Fact]
+    public void I11ModifierThrowsExceptionTest() {
+      var modifier = new GsaSectionModifier();
+      Assert.Throws<ArgumentException>(() => modifier.I11Modifier = Jerk.Zero);
+    }
+
+    [Fact]
+    public void I22ModifierThrowsExceptionTest() {
+      var modifier = new GsaSectionModifier();
+      Assert.Throws<ArgumentException>(() => modifier.I22Modifier = Jerk.Zero);
+    }
+
+    [Fact]
+    public void JModifierThrowsExceptionTest() {
+      var modifier = new GsaSectionModifier();
+      Assert.Throws<ArgumentException>(() => modifier.JModifier = Jerk.Zero);
+    }
+
+    [Fact]
+    public void VolumeModifierThrowsExceptionTest() {
+      var modifier = new GsaSectionModifier();
+      Assert.Throws<ArgumentException>(() => modifier.VolumeModifier = Jerk.Zero);
     }
   }
 }
