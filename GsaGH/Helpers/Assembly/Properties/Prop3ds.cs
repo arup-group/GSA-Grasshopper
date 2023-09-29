@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private int AddProp3d(GsaProperty3d prop) {
-      AddMaterial(ref prop);
+      Prop3D api = prop.DuplicateApiObject();
+      AddMaterial(prop.Material, ref api);
 
       if (prop.Id <= 0) {
-        return _prop3ds.AddValue(prop.Guid, prop.ApiProp3d);
+        return _prop3ds.AddValue(prop.Guid, api);
       }
 
-      _prop3ds.SetValue(prop.Id, prop.Guid, prop.ApiProp3d);
+      _prop3ds.SetValue(prop.Id, prop.Guid, api);
       return prop.Id;
     }
 
