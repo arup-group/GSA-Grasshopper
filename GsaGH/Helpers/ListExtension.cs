@@ -36,6 +36,15 @@ namespace GsaGH.Helpers {
       value = morphed;
     }
 
+    public static List<Point3dList> Duplicate(this List<Point3dList> value) {
+      var duplicates = new List<Point3dList>();
+      for (int i = 0; i < value.Count; i++) {
+        duplicates.Add(value[i].Duplicate());
+      }
+
+      return duplicates;
+    }
+
     public static void SetMembers<T>(this List<Element> value, IList<T> list) {
       if (value.IsNullOrEmpty()) {
         throw new ArgumentException(
