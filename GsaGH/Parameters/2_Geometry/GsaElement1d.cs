@@ -82,7 +82,7 @@ namespace GsaGH.Parameters {
       Line = (LineCurve)other.Line.DuplicateShallow();
       OrientationNode = other.OrientationNode;
       Section = other.Section;
-      Section3dPreview = other.Section3dPreview;
+      Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
     /// <summary>

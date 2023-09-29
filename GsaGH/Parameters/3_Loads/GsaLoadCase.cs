@@ -37,12 +37,16 @@ namespace GsaGH.Parameters {
           Id = Id
         }
         : new GsaLoadCase() {
-        LoadCase = new LoadCase() {
+          LoadCase = DuplicateApiObject(),
+          Id = Id
+      };
+    }
+
+    internal LoadCase DuplicateApiObject() {
+      return new LoadCase() {
           CaseType = LoadCase.CaseType,
           Name = LoadCase.Name
-        },
-        Id = Id
-      };
+        };
     }
 
     public override string ToString() {
