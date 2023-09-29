@@ -35,14 +35,14 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning("Invalid List type for BeamLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += GetElementOrMemberList(load.ReferenceList, owner);
+          objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
           load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
-          objectElemList += GetLoadReferenceDefinition(load);
+          objectElemList += " " + GetLoadReferenceDefinition(load);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.ApiLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList.Trim();
         } else {
           string warning = "One or more BeamLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -70,14 +70,14 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning("Invalid List type for BeamThermalLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += GetElementOrMemberList(load.ReferenceList, owner);
+          objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
           load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
-          objectElemList += GetLoadReferenceDefinition(load);
+          objectElemList += " " + GetLoadReferenceDefinition(load);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.ApiLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList.Trim();
         } else {
           string warning = "One or more BeamThermalLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -105,14 +105,14 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning("Invalid List type for FaceLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += GetElementOrMemberList(load.ReferenceList, owner);
+          objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
           load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
-          objectElemList += GetLoadReferenceDefinition(load);
+          objectElemList += " " + GetLoadReferenceDefinition(load);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.ApiLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList.Trim();
         } else {
           string warning = "One or more FaceLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -139,14 +139,14 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning("Invalid List type for FaceThermalLoads " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += GetElementOrMemberList(load.ReferenceList, owner);
+          objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
           load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
-          objectElemList += GetLoadReferenceDefinition(load);
+          objectElemList += " " + GetLoadReferenceDefinition(load);
         }
 
         if (objectElemList.Trim() != string.Empty) {
-          load.ApiLoad.EntityList = objectElemList;
+          load.ApiLoad.EntityList = objectElemList.Trim();
         } else {
           string warning = "One or more FaceThermalLoads with reference to a " + load.ReferenceType
             + " could not be added to the model. Ensure the reference " + load.ReferenceType
@@ -173,10 +173,11 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning("Invalid List type for GravityLoad " + load.ToString()
               + Environment.NewLine + "Element list has not been set");
           }
-          objectElemList += GetElementOrMemberList(load.ReferenceList, owner);
+          objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
           load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
         } else {
-          objectElemList += GetLoadReferenceDefinition(load);
+          objectElemList += " " + GetLoadReferenceDefinition(load);
+          objectElemList = objectElemList.Trim();
         }
 
         if (objectElemList.Trim() != string.Empty) {
@@ -270,7 +271,7 @@ namespace GsaGH.Helpers.Assembly {
       }
 
       foreach (IGsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
-        ConvertLoad(load, owner);
+        ConvertLoad(load.Duplicate(), owner);
       }
     }
 
