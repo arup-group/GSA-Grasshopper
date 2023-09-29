@@ -212,7 +212,7 @@ namespace GsaGH.Helpers.GsaApi {
           var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xxyyzzRes.AsParallel().AsOrdered();
 
-          Parallel.For(0, values.Count, i => {
+          Parallel.For(1, values.Count, i => {
             xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
             xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
           });
