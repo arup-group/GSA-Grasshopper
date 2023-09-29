@@ -160,7 +160,7 @@ namespace GsaGH.Helpers.Assembly {
           continue;
         }
 
-        GsaGridPlaneSurface gps = gridPlaneSurface;
+        GsaGridPlaneSurface gps = gridPlaneSurface.Duplicate();
 
         if (gps.GridPlane != null) {
           gps.GridPlane.AxisProperty = AddAxis(gps);

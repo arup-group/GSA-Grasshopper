@@ -111,59 +111,59 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void AddMaterial(ref GsaProperty2d prop2d) {
-      if (prop2d.Material != null) {
+    private void AddMaterial(GsaMaterial material, ref Prop2D prop2d) {
+      if (material != null) {
         // set material type in API prop
-        prop2d.ApiProp2d.MaterialType = GetMaterialType(prop2d.Material);
+        prop2d.MaterialType = GetMaterialType(material);
 
         // convert material and set it in dictionary
-        int id = ConvertMaterial(prop2d.Material);
+        int id = ConvertMaterial(material);
 
         // update API prop depending on std material type
-        if (prop2d.Material is GsaCustomMaterial) {
-          prop2d.ApiProp2d.MaterialGradeProperty = 0;
-          prop2d.ApiProp2d.MaterialAnalysisProperty = id;
+        if (material is GsaCustomMaterial) {
+          prop2d.MaterialGradeProperty = 0;
+          prop2d.MaterialAnalysisProperty = id;
         } else {
-          prop2d.ApiProp2d.MaterialGradeProperty = id;
-          prop2d.ApiProp2d.MaterialAnalysisProperty = 0;
+          prop2d.MaterialGradeProperty = id;
+          prop2d.MaterialAnalysisProperty = 0;
         }
       }
     }
 
-    private void AddMaterial(ref GsaProperty3d prop3d) {
-      if (prop3d.Material != null) {
+    private void AddMaterial(GsaMaterial material, ref Prop3D prop3d) {
+      if (material != null) {
         // set material type in API prop
-        prop3d.ApiProp3d.MaterialType = GetMaterialType(prop3d.Material);
+        prop3d.MaterialType = GetMaterialType(material);
 
         // convert material and set it in dictionary
-        int id = ConvertMaterial(prop3d.Material);
+        int id = ConvertMaterial(material);
 
         // update API prop depending on std material type
-        if (prop3d.Material is GsaCustomMaterial) {
-          prop3d.ApiProp3d.MaterialGradeProperty = 0;
-          prop3d.ApiProp3d.MaterialAnalysisProperty = id;
+        if (material is GsaCustomMaterial) {
+          prop3d.MaterialGradeProperty = 0;
+          prop3d.MaterialAnalysisProperty = id;
         } else {
-          prop3d.ApiProp3d.MaterialGradeProperty = id;
-          prop3d.ApiProp3d.MaterialAnalysisProperty = 0;
+          prop3d.MaterialGradeProperty = id;
+          prop3d.MaterialAnalysisProperty = 0;
         }
       }
     }
 
-    private void AddMaterial(ref GsaSection section) {
-      if (section.Material != null) {
+    private void AddMaterial(GsaMaterial material, ref Section section) {
+      if (material != null) {
         // set material type in API prop
-        section.ApiSection.MaterialType = GetMaterialType(section.Material);
+        section.MaterialType = GetMaterialType(material);
 
         // convert material and set it in dictionary
-        int id = ConvertMaterial(section.Material);
+        int id = ConvertMaterial(material);
 
         // update API prop depending on std material type
-        if (section.Material is GsaCustomMaterial) {
-          section.ApiSection.MaterialGradeProperty = 0;
-          section.ApiSection.MaterialAnalysisProperty = id;
+        if (material is GsaCustomMaterial) {
+          section.MaterialGradeProperty = 0;
+          section.MaterialAnalysisProperty = id;
         } else {
-          section.ApiSection.MaterialGradeProperty = id;
-          section.ApiSection.MaterialAnalysisProperty = 0;
+          section.MaterialGradeProperty = id;
+          section.MaterialAnalysisProperty = 0;
         }
       }
     }

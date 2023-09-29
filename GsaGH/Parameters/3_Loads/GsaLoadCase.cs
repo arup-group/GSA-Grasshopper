@@ -33,15 +33,19 @@ namespace GsaGH.Parameters {
 
     public GsaLoadCase Duplicate() {
       return LoadCase == null
-        ? new GsaLoadCase() { 
+        ? new GsaLoadCase() {
           Id = Id
         }
         : new GsaLoadCase() {
-        LoadCase = new LoadCase() {
-          CaseType = LoadCase.CaseType,
-          Name = LoadCase.Name
-        },
-        Id = Id
+          LoadCase = DuplicateApiObject(),
+          Id = Id
+        };
+    }
+
+    internal LoadCase DuplicateApiObject() {
+      return new LoadCase() {
+        CaseType = LoadCase.CaseType,
+        Name = LoadCase.Name
       };
     }
 
