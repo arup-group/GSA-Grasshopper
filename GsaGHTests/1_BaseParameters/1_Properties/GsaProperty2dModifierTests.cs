@@ -25,6 +25,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0.1, modifier.Shear.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.1, modifier.Volume.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter));
+      Assert.Equal(
+        "In-plane:10% Bending:10% Shear:10% Volume:10% Add.Mass:0.1kg/m²", 
+        modifier.ToString());
     }
 
     [Fact]
@@ -43,6 +46,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0.1, modifier.Shear.As(LengthUnit.Meter));
       Assert.Equal(0.1, modifier.Volume.As(LengthUnit.Meter));
       Assert.Equal(0.1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter));
+      Assert.Equal(
+        "In-plane:0.1m²/m Bending:0.1m⁴/m Shear:0.1m²/m Volume:0.1m³/m² Add.Mass:0.1kg/m²", 
+        modifier.ToString());
     }
 
     [Fact]
