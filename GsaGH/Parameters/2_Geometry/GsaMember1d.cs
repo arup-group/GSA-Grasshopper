@@ -83,11 +83,11 @@ namespace GsaGH.Parameters {
       ApiMember = other.DuplicateApiObject();
       LocalAxes = other.LocalAxes;
       PolyCurve = (PolyCurve)other.PolyCurve.DuplicateShallow();
-      Topology = other.Topology;
+      Topology = other.Topology?.Duplicate();
       TopologyType = other.TopologyType;
       OrientationNode = other.OrientationNode;
       Section = other.Section;
-      Section3dPreview = other.Section3dPreview;
+      Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
     /// <summary>
