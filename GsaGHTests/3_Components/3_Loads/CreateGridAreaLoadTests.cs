@@ -8,7 +8,7 @@ namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridAreaLoadTests {
     [Fact]
-    public void CreateLoadTest() {
+    public void CreateGridAreaLoadTest() {
       var comp = new CreateGridAreaLoad();
       ComponentTestHelper.SetInput(comp, 7, 0);
       ComponentTestHelper.SetInput(comp, "myGridAreaLoad", 6);

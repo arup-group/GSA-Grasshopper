@@ -9,7 +9,7 @@ namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPointLoadTests {
     [Fact]
-    public void CreateLoadTest() {
+    public void CreateGridPointLoadTest() {
       var comp = new CreateGridPointLoad();
       ComponentTestHelper.SetInput(comp, 7, 0);
       ComponentTestHelper.SetInput(comp, new Point3d(10, 5, -1), 1);
