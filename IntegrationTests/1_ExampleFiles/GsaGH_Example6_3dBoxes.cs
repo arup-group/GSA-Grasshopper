@@ -80,7 +80,6 @@ namespace IntegrationTests.ExampleFiles {
       Assert.Equal(0.585575, output3.Value, 4);
     }
 
-
     [Fact]
     public void NoRuntimeErrorsTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
