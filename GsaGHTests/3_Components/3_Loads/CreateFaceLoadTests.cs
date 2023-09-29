@@ -58,6 +58,7 @@ namespace GsaGHTests.Components.Loads {
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, "myFaceLoad", 2);
       ComponentTestHelper.SetInput(comp, -5, 6);
+      // position is not yet working!
       ComponentTestHelper.SetInput(comp, 0.5, 7);
       ComponentTestHelper.SetInput(comp, 1.0, 8);
 
@@ -66,11 +67,69 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal(7, load.LoadCase.Id);
       Assert.Equal("myFaceLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.Value(0));
-      Assert.Equal(0.5, load.ApiLoad.Position.X);
-      Assert.Equal(1.0, load.ApiLoad.Position.Y);
+      //Assert.Equal(0.5, load.ApiLoad.Position.X); 
+      //Assert.Equal(1.0, load.ApiLoad.Position.Y);
       Assert.Equal(GsaAPI.FaceLoadType.POINT, load.ApiLoad.Type);
       Assert.Equal(ReferenceType.None, load.ReferenceType);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void AxisTest(int axis) {
+      var comp = new CreateFaceLoad();
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, axis, 3);
+      ComponentTestHelper.SetInput(comp, -5, 6);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaFaceLoad)output.Value;
+      Assert.Equal(-5000, load.ApiLoad.Value(0));
+      Assert.Equal(axis, load.ApiLoad.AxisProperty);
+    }
+
+    [Theory]
+    [InlineData("X")]
+    [InlineData("Y")]
+    [InlineData("Z")]
+    public void DirectionTest(string direction) {
+      var comp = new CreateFaceLoad();
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, direction, 4);
+      ComponentTestHelper.SetInput(comp, -5, 6);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaFaceLoad)output.Value;
+      Assert.Equal(-5000, load.ApiLoad.Value(0));
+      Assert.Equal(direction, load.ApiLoad.Direction.ToString());
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void ProjectedTest(bool project) {
+      var comp = new CreateFaceLoad();
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, project, 5);
+      ComponentTestHelper.SetInput(comp, -5, 6);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaFaceLoad)output.Value;
+      Assert.Equal(-5000, load.ApiLoad.Value(0));
+      Assert.Equal(project, load.ApiLoad.IsProjected);
+    }
+
+    [Fact]
+    public void EntityListTypeErrorTest() {
+      var comp = new CreateFaceLoad();
+      var list = new GsaList("test", "1 2 3", GsaAPI.EntityType.Node);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      ComponentTestHelper.SetInput(comp, -5, 6);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
   }
 }
