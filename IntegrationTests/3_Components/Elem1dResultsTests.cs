@@ -716,11 +716,11 @@ namespace IntegrationTests.Components {
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
 
       var expectedVals = new List<double>() {
-        459.7E-9,
-        1.029E-6,
-        1.828E-6,
-        2.652E-6,
-        3.342E-6,
+        26.641624,
+18.934925,
+19.042608,
+26.964672,
+42.701118,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
         Assert.Equal(expectedVals[i], output[i].Value, 0.01);
@@ -734,116 +734,52 @@ namespace IntegrationTests.Components {
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
 
       var expectedVals = new List<double>() {
-        459.7E-9,
-        1.029E-6,
-        1.828E-6,
-        2.652E-6,
-        3.342E-6,
-        26.01E-9,
-        37.16E-9,
-        50.99E-9,
-        67.52E-9,
-        86.73E-9,
-        11.17E-6,
-        9.274E-6,
-        7.563E-6,
-        6.032E-6,
-        4.683E-6,
-        0.003189,
-        0.005969,
-        0.009000,
-        0.01168,
-        0.01356,
-        686.5E-6,
-        525.1E-6,
-        388.0E-6,
-        275.4E-6,
-        187.2E-6,
-        0.002943,
-        0.005677,
-        0.008734,
-        0.01149,
-        0.01345,
-        0.005873,
-        0.009208,
-        0.01237,
-        0.01482,
-        0.01618,
-        710.2E-6,
-        565.0E-6,
-        435.2E-6,
-        322.4E-6,
-        228.4E-6,
-        0.3759,
-        0.3179,
-        0.2651,
-        0.2174,
-        0.1748,
-        0.3318,
-        0.2872,
-        0.2462,
-        0.2086,
-        0.1744,
-        0.001563,
-        0.001179,
-        867.1E-6,
-        628.6E-6,
-        462.9E-6,
-        66.19E-6,
-        57.07E-6,
-        49.03E-6,
-        42.05E-6,
-        36.14E-6,
-        0.001022,
-        988.5E-6,
-        959.3E-6,
-        933.8E-6,
-        912.0E-6,
-        138.4E-6,
-        134.2E-6,
-        131.2E-6,
-        129.4E-6,
-        128.8E-6,
-        181.9E-6,
-        225.0E-6,
-        594.1E-6,
-        0.001289,
-        0.002311,
-        0.02112,
-        0.01737,
-        0.01426,
-        0.01180,
-        0.009984,
-        0.01798,
-        0.01268,
-        0.008428,
-        0.005223,
-        0.003065,
-        0.009267,
-        0.002071,
-        0.002782,
-        0.01140,
-        0.02792,
-        0.2594,
-        0.2779,
-        0.3075,
-        0.3483,
-        0.4003,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        26.641624,
+18.934925,
+19.042608,
+26.964672,
+42.701118,
+      };
+      for (int i = 0; i < expectedVals.Count; i++) {
+        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+      }
+    }
+
+    [Fact]
+    public void CombinationStrainEnergyDensityTests() {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "CombinationStrainEnergyDensity");
+      var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+
+      var expectedVals = new List<double>() {
+        319.789713,
+261.51206,
+263.542504,
+325.881045,
+448.527682,
+      };
+      for (int i = 0; i < expectedVals.Count; i++) {
+        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+      }
+    }
+
+    [Fact]
+    public void CombinationAverageStrainEnergyDensityTests() {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "CombinationAverageStrainEnergyDensity");
+      var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+
+      var expectedVals = new List<double>() {
+        308.773577,
+1427.428253,
+305.021729,
+1119.967272,
+6258.026143,
+1109.127358,
+1072.311979,
+6622.261561,
+1302.790141,
+764.514954,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
         Assert.Equal(expectedVals[i], output[i].Value, 0.01);
