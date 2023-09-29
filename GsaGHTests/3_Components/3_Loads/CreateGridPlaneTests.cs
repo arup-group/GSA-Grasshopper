@@ -30,5 +30,42 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal("10", gridPlane.Elevation);
       Assert.Equal("test", gridPlane.GridPlane.Name);
     }
+
+    [Fact]
+    public void ParseElevationErrorTest() {
+      var comp = new CreateGridPlane();
+      ComponentTestHelper.SetInput(comp, "ten", 2);
+
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ParseToleranceAboveWarningTest() {
+      var comp = new CreateGridPlane();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 1); // Storey
+      ComponentTestHelper.SetInput(comp, "one", 4);
+
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void ParseToleranceBelowWarningTest() {
+      var comp = new CreateGridPlane();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 1); // Storey
+      ComponentTestHelper.SetInput(comp, "two", 4);
+
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
   }
 }
