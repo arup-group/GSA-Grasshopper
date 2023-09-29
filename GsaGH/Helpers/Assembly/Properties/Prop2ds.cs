@@ -7,22 +7,23 @@ using Rhino.Geometry;
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private int AddProp2d(GsaProperty2d prop) {
-      AddMaterial(ref prop);
+      Prop2D api = prop.DuplicateApiObject();
+      AddMaterial(prop.Material, ref api);
 
       if (prop.LocalAxis != null && prop.LocalAxis.IsValid) {
         if (prop.LocalAxis != Plane.WorldXY && prop.LocalAxis != Plane.Unset) {
           Axis ax = prop.GetAxisFromPlane(_unit);
-          prop.ApiProp2d.AxisProperty = _axes.AddValue(ax);
+          api.AxisProperty = _axes.AddValue(ax);
         } else {
-          prop.ApiProp2d.AxisProperty = 0;
+          api.AxisProperty = 0;
         }
       }
 
       if (prop.Id <= 0) {
-        return _prop2ds.AddValue(prop.Guid, prop.ApiProp2d);
+        return _prop2ds.AddValue(prop.Guid, api);
       }
 
-      _prop2ds.SetValue(prop.Id, prop.Guid, prop.ApiProp2d);
+      _prop2ds.SetValue(prop.Id, prop.Guid, api);
       return prop.Id;
     }
 

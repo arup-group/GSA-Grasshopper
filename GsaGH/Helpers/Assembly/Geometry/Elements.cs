@@ -18,11 +18,10 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement1d(GsaElement1d element1d) {
-      LineCurve line = element1d.Line;
       Element apiElement = element1d.DuplicateApiObject();
       var topo = new List<int> {
-        AddNode( line.PointAtStart),
-        AddNode(line.PointAtEnd),
+        AddNode(element1d.Line.PointAtStart),
+        AddNode(element1d.Line.PointAtEnd),
       };
       apiElement.Topology = new ReadOnlyCollection<int>(topo);
       if (element1d.OrientationNode != null) {
@@ -46,7 +45,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement2d(GsaElement2d element2d) {
-      Point3dList meshVerticies = element2d.Topology;
       List<Element> apiElems = element2d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
         Element apiMeshElement = apiElems[i];
@@ -54,7 +52,7 @@ namespace GsaGH.Helpers.Assembly {
 
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
-          topo.Add(AddNode(meshVerticies[mesh]));
+          topo.Add(AddNode(element2d.Topology[mesh]));
         }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
@@ -82,14 +80,13 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement3d(GsaElement3d element3d) {
-      Point3dList meshVerticies = element3d.Topology;
       List<Element> apiElems = element3d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
         Element apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element3d.TopoInt[i];
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
-          topo.Add(AddNode(meshVerticies[mesh]));
+          topo.Add(AddNode(element3d.Topology[mesh]));
         }
 
         apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
