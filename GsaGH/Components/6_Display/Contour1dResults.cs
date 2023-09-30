@@ -1023,7 +1023,8 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 1, resultType, _disp.ToString());
     }
 
-    private void CreateGradient() {
+    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
+      doc ??= Instances.ActiveCanvas.Document;
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -1045,11 +1046,12 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[3].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
-      Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      doc.AddObject(gradient, false);
       Params.Input[3].RemoveAllSources();
       Params.Input[3].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
+      return gradient;
     }
 
     private void Mode1Clicked() {

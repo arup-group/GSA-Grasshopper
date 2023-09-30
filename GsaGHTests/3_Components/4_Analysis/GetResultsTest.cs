@@ -2,24 +2,45 @@
 using Grasshopper.Kernel;
 using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
+using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Analysis {
   [Collection("GrasshopperFixture collection")]
   public class GetResultsTest {
+    public static GsaResultGoo Element1dResultsMother() {
+      var open = new OpenModel();
+      open.CreateAttributes();
+      string file = GsaFile.SteelDesignComplex;
+      ComponentTestHelper.SetInput(open, file);
+      var model = (GsaModelGoo)ComponentTestHelper.GetOutput(open);
+      var getResults = new GetResult();
+      getResults.CreateAttributes();
+      
+      ComponentTestHelper.SetInput(getResults, model);
+      ComponentTestHelper.SetInput(getResults, "C", 1);
 
-    [Fact]
-    public void TestAnalysisNoInputs() {
+      return (GsaResultGoo)ComponentTestHelper.GetOutput(getResults);
+    }
+    
+    public static GH_OasysComponent ResultsComponentMother() {
       var comp = new GetResult();
       comp.CreateAttributes();
 
       GsaModelGoo modelInput = ModelTests.GsaModelGooMother;
-
       ComponentTestHelper.SetInput(comp, modelInput, 0);
 
+      return comp;
+    }
+
+    [Fact]
+    public void TestAnalysisNoInputs() {
+      var comp = (GetResult)ResultsComponentMother();
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+
       Assert.Equal(CaseType.AnalysisCase, result.Value.Type);
       Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
