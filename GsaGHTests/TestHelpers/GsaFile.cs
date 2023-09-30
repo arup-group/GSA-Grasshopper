@@ -6,34 +6,45 @@ namespace GsaGHTests.Helper {
       get {
         if (steelDesignComplex == "") {
           steelDesignComplex = FilePath("Steel_Design_Complex.gwb");
-          //= DownloadFile(
-          //  "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
         }
 
         return steelDesignComplex;
       }
     }
+
     internal static string SteelDesignSimple {
       get {
         if (steelDesignSimple == "") {
           steelDesignSimple = FilePath("Steel_Design_Simple.gwb");
-            //= DownloadFile(
-            //  "https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Simple.gwb");
         }
 
         return steelDesignSimple;
       }
     }
+
+    internal static string Element2dSimple {
+      get {
+        if (element2dSimple == "") {
+          element2dSimple = FilePath("Element2d_Simple.gwb");
+        }
+
+        return element2dSimple;
+      }
+    }
+
+    internal static string Element3dSimple {
+      get {
+        if (element3dSimple == "") {
+          element3dSimple = FilePath("Element3d_Simple.gwb");
+        }
+
+        return element3dSimple;
+      }
+    }
     private static string steelDesignComplex = "";
     private static string steelDesignSimple = "";
-
-    //private static string DownloadFile(string url) {
-    //  string path = Path.GetTempPath();
-    //  string fileName = url.Split('/').Last();
-    //  var webClient = new WebClient();
-    //  webClient.DownloadFile(url, path + fileName);
-    //  return path + fileName;
-    //}
+    private static string element2dSimple = "";
+    private static string element3dSimple = "";
 
     private static string FilePath(string fileName) {
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent

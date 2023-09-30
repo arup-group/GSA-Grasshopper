@@ -34,6 +34,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="3_Components\5_Results\" />
+  </ItemGroup>
+
   <Import Project="PreBuild.targets" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

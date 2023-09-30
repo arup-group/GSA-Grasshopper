@@ -352,3 +352,5 @@ dist/*
 /IntegrationTests/obj
 /UnitTestGsaGH/bin/x64/Debug
 /DocsGeneration/bin
+/GsaGHTests/TestHelpers/DawnCache
+/GsaGHTests/TestHelpers/GPUCache
