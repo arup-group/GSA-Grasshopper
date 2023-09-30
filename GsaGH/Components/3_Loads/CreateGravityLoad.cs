@@ -158,7 +158,7 @@ namespace GsaGH.Components {
 
       if (vect.Z > 0) {
         this.AddRuntimeRemark(
-          "Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
+          "Just a friendly reminder that your gravity vector is pointing upwards and that is not normal.");
       }
 
       gravityLoad.ApiLoad.Factor = factor;
