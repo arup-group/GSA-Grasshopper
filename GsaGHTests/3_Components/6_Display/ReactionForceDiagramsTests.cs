@@ -8,7 +8,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using Xunit;
 
-namespace GsaGHTests.Components.Results {
+namespace GsaGHTests.Components.Display {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests {
 
