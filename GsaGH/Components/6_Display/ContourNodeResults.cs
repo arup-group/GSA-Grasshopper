@@ -185,6 +185,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _displacement;
                 _selectedItems[0] = _dropDownItems[0][0];
                 _selectedItems[1] = _dropDownItems[1][3];
+                _disp = DisplayValue.ResXyz;
                 Mode1Clicked();
               }
 
@@ -195,6 +196,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _reaction;
                 _selectedItems[0] = _dropDownItems[0][1];
                 _selectedItems[1] = _dropDownItems[1][3];
+                _disp = DisplayValue.ResXyz;
                 Mode2Clicked();
               }
 
@@ -205,6 +207,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _footfall;
                 _selectedItems[0] = _dropDownItems[0][2];
                 _selectedItems[1] = _dropDownItems[1][0];
+                _disp = DisplayValue.X;
                 Mode3Clicked();
               }
 
@@ -822,7 +825,8 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 0, resultType, _disp.ToString());
     }
 
-    private void CreateGradient() {
+    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
+      doc ??= Instances.ActiveCanvas.Document;
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -844,11 +848,12 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
-      Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      doc.AddObject(gradient, false);
       Params.Input[2].RemoveAllSources();
       Params.Input[2].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
+      return gradient;
     }
 
     private void Mode1Clicked() {
