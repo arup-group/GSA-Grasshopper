@@ -6,7 +6,7 @@ using GsaGHTests.Helpers;
 using OasysGH.UI;
 using Xunit;
 
-namespace GsaGHTests.Components.Loads {
+namespace GsaGHTests.Components.Display {
   [Collection("GrasshopperFixture collection")]
   public class Contour1dResultsTests {
     [Fact]
@@ -49,7 +49,7 @@ namespace GsaGHTests.Components.Loads {
     [Fact]
     public void DrawViewportMeshesAndWiresTest() {
       var comp = new Contour1dResults();
-      ComponentTestHelper.SetInput(comp, GetResultsTest.Element1dResultsMother());
+      ComponentTestHelper.SetInput(comp, GetResultsTest.NodeAndElement1dCombinationResultsMother());
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
 
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
@@ -72,6 +72,15 @@ namespace GsaGHTests.Components.Loads {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 7);
 
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
+    }
+
+    [Fact]
+    public void DrawViewportMeshesAndWiresFootfallTest() {
+      var comp = new Contour1dResults();
+      ComponentTestHelper.SetInput(comp, GetResultsTest.NodeAndElement1dFootfallResultsMother());
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 3);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
     }
