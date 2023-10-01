@@ -12,6 +12,7 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters._5_Results.Refactor;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -134,14 +135,13 @@ namespace GsaGH.Components {
             return;
         }
 
-        (List<GsaResultsValues> vals, List<int> sortedIDs)
-          = result.NodeDisplacementValues(nodeList, _lengthUnit);
+        var gsaNodeDisplacements = new GsaNodeDisplacements(result, nodeList, _lengthUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count).ToList();
+          permutations = Enumerable.Range(1, gsaNodeDisplacements.Results.Count).ToList();
         }
 
         foreach (int perm in permutations) {
@@ -161,9 +161,10 @@ namespace GsaGH.Components {
           {
             switch (item) {
               case 0: {
-                foreach (int id in sortedIDs) {
+                foreach (int id in gsaNodeDisplacements.Ids) {
                   ids.Add(id);
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].XyzResults[id];
+                  ConcurrentDictionary<int, GsaResultQuantity> res
+                    = gsaNodeDisplacements.Results[perm - 1].XyzResults[id];
                   GsaResultQuantity values = res[0]; // there is only one result per node
                   transX.Add(
                     new GH_UnitNumber(
@@ -176,8 +177,9 @@ namespace GsaGH.Components {
                 break;
               }
               case 1: {
-                foreach (GsaResultQuantity values in sortedIDs
-                 .Select(id => vals[perm - 1].XxyyzzResults[id]).Select(res => res[0])) {
+                foreach (GsaResultQuantity values in gsaNodeDisplacements.Ids
+                 .Select(id => gsaNodeDisplacements.Results[perm - 1].XxyyzzResults[id])
+                 .Select(res => res[0])) {
                   rotX.Add(new GH_UnitNumber(values.X));
                   rotY.Add(new GH_UnitNumber(values.Y));
                   rotZ.Add(new GH_UnitNumber(values.Z));

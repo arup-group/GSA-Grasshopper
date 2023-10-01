@@ -22,6 +22,7 @@ using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+using GsaGH.Parameters._5_Results.Refactor;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -426,8 +427,7 @@ namespace GsaGH.Components {
 
         case GsaResultGoo goo: {
           result = goo.Value;
-          if (result.Type == CaseType.Combination
-            && result.SelectedPermutationIds.Count > 1) {
+          if (result.Type == CaseType.Combination && result.SelectedPermutationIds.Count > 1) {
             this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
               + result.SelectedPermutationIds.Count
               + " permutations - only one permutation can be displayed at a time."
@@ -479,9 +479,8 @@ namespace GsaGH.Components {
       var res = new GsaResultsValues();
       switch (_mode) {
         case FoldMode.Displacement:
-          Tuple<List<GsaResultsValues>, List<int>> nodedisp
-            = result.NodeDisplacementValues(nodeList, _lengthResultUnit);
-          res = nodedisp.Item1[0];
+          var gsaNodeDisplacement = new GsaNodeDisplacements(result, nodeList, _lengthResultUnit);
+          res = gsaNodeDisplacement.Results[0];
           break;
 
         case FoldMode.Reaction:
@@ -931,8 +930,7 @@ namespace GsaGH.Components {
     private void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
