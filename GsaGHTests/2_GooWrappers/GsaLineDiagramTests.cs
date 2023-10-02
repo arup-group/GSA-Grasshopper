@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;

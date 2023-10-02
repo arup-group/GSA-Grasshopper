@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -8,10 +9,12 @@ using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Morphs;
 using Xunit;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class VectorDiagramTests {
+  public class GsaVectorDiagramTests {
 
     [Fact]
     public void WhenCreateInstance_ThenObject_ShouldNotBeNull() {
@@ -220,6 +223,21 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(expectedObject.X, actualObject.Boundingbox.Diagonal.X, 6);
       Assert.Equal(expectedObject.Y, actualObject.Boundingbox.Diagonal.Y, 6);
       Assert.Equal(expectedObject.Z, actualObject.Boundingbox.Diagonal.Z, 6);
+    }
+
+    [Fact]
+    public void GetBoundingBoxTest() {
+      var startingPoint = new Point3d(3, 3, 3);
+      var vector3d = new Vector3d(2, 2, 2);
+      var obj = new GsaVectorDiagram(startingPoint, vector3d, false, Color.Empty);
+      var transform = Transform.Translation(new Vector3d(1, 1, 1));
+      BoundingBox boundingBox = obj.GetBoundingBox(transform);
+      Assert.Equal(2, boundingBox.Corner(true, true, true).X, 2);
+      Assert.Equal(2, boundingBox.Corner(true, true, true).Y, 2);
+      Assert.Equal(2, boundingBox.Corner(true, true, true).Z, 2);
+      Assert.Equal(4, boundingBox.Corner(false, false, false).X, 2);
+      Assert.Equal(4, boundingBox.Corner(false, false, false).Y, 2);
+      Assert.Equal(4, boundingBox.Corner(false, false, false).Z, 2);
     }
   }
 }
