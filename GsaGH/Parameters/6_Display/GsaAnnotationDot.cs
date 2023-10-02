@@ -16,7 +16,6 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Annotation";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; } = Colours.GsaDarkBlue;
-    public AnnotationType AnnotationType => AnnotationType.TextDot;
     public string Text => Value.Text;
     public Point3d Location => Value.Point;
 
