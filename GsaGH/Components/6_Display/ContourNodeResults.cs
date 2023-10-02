@@ -480,7 +480,7 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.Displacement:
           var gsaNodeDisplacement = new GsaNodeDisplacements(result, nodeList, _lengthResultUnit);
-          res = gsaNodeDisplacement.Results[0];
+          res = gsaNodeDisplacement.ResultValues[0];
           break;
 
         case FoldMode.Reaction:

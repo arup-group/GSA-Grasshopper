@@ -141,7 +141,7 @@ namespace GsaGH.Components {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, gsaNodeDisplacements.Results.Count).ToList();
+          permutations = Enumerable.Range(1, gsaNodeDisplacements.ResultValues.Count).ToList();
         }
 
         foreach (int perm in permutations) {
@@ -164,7 +164,7 @@ namespace GsaGH.Components {
                 foreach (int id in gsaNodeDisplacements.Ids) {
                   ids.Add(id);
                   ConcurrentDictionary<int, GsaResultQuantity> res
-                    = gsaNodeDisplacements.Results[perm - 1].XyzResults[id];
+                    = gsaNodeDisplacements.ResultValues[perm - 1].XyzResults[id];
                   GsaResultQuantity values = res[0]; // there is only one result per node
                   transX.Add(
                     new GH_UnitNumber(
@@ -178,7 +178,7 @@ namespace GsaGH.Components {
               }
               case 1: {
                 foreach (GsaResultQuantity values in gsaNodeDisplacements.Ids
-                 .Select(id => gsaNodeDisplacements.Results[perm - 1].XxyyzzResults[id])
+                 .Select(id => gsaNodeDisplacements.ResultValues[perm - 1].XxyyzzResults[id])
                  .Select(res => res[0])) {
                   rotX.Add(new GH_UnitNumber(values.X));
                   rotY.Add(new GH_UnitNumber(values.Y));
