@@ -3,6 +3,7 @@ using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Analysis;
 using GsaGHTests.Helpers;
+using GsaGHTests.Parameters;
 using OasysGH.UI;
 using Xunit;
 
@@ -45,7 +46,7 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DrawViewportMeshesAndWiresTest() {
       var comp = new ContourNodeResults();
-      ComponentTestHelper.SetInput(comp, GetResultsTest.NodeAndElement1dCombinationResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
 
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
@@ -71,7 +72,7 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DrawViewportMeshesAndWiresFootfallTest() {
       var comp = new ContourNodeResults();
-      ComponentTestHelper.SetInput(comp, GetResultsTest.NodeAndElement1dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dFootfallResultsMother());
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
