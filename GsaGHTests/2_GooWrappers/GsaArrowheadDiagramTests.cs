@@ -5,7 +5,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using Rhino.Geometry;
 using Xunit;
-using DiagramType = GsaGH.Parameters.DiagramType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -29,7 +28,6 @@ namespace GsaGHTests.Parameters {
       GraphicDrawResult graphic = Element1dUniformLoadDiagramResults();
       var arrowhead = new GsaArrowheadDiagram(graphic.Triangles, 1, Color.Empty);
 
-      Assert.Equal(DiagramType.ArrowHead, arrowhead.DiagramType);
       Assert.Equal("Arrowhead Diagram", arrowhead.TypeName);
       Assert.Equal("A GSA arrowhead diagram.", arrowhead.TypeDescription);
       Assert.Equal(graphic.Triangles.FirstOrDefault().Colour, arrowhead.Value.VertexColors.FirstOrDefault());

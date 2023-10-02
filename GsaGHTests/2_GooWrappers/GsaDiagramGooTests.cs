@@ -1,13 +1,9 @@
 ﻿using System.Drawing;
-using System.Linq;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.GooWrappers;
-using GsaGHTests.Helper;
-using Rhino.Geometry;
 using Xunit;
-using DiagramType = GsaGH.Parameters.DiagramType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]

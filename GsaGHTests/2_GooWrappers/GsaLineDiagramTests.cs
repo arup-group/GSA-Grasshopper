@@ -5,7 +5,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using Rhino.Geometry;
 using Xunit;
-using DiagramType = GsaGH.Parameters.DiagramType;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -29,7 +28,6 @@ namespace GsaGHTests.Parameters {
       GraphicDrawResult graphic = Element1dMyyDiagramResults();
       var linediagram = new GsaLineDiagram(graphic.Lines[1], 1, Color.Empty);
 
-      Assert.Equal(DiagramType.Line, linediagram.DiagramType);
       Assert.Equal("Line Diagram", linediagram.TypeName);
       Assert.Equal("A GSA line diagram.", linediagram.TypeDescription);
       Assert.Equal(graphic.Lines[1].Colour, linediagram.Color);
