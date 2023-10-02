@@ -354,3 +354,4 @@ dist/*
 /DocsGeneration/bin
 /GsaGHTests/TestHelpers/DawnCache
 /GsaGHTests/TestHelpers/GPUCache
+*.lok
