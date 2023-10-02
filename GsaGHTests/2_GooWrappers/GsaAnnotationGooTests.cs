@@ -40,6 +40,21 @@ namespace GsaGHTests.Parameters {
       anno3d.CastTo(ref number);
       Assert.NotNull(number);
       Assert.Equal(32.1, number.Value);
+      bool f = false;
+      Assert.False(anno3d.CastTo(ref f));
+    }
+
+    [Fact]
+    public void CastAnnotation3dToNumberTest() {
+      var pln = new Plane(new Point3d(1, 1, 1), new Vector3d(1, 1, 1));
+      Color col = Color.Teal;
+      string text = "32.1";
+      double height = 8.0;
+      var anno3d = new GsaAnnotationGoo(new GsaAnnotation3d(pln, col, text, height));
+      GH_Number number = null;
+      anno3d.CastTo(ref number);
+      Assert.NotNull(number);
+      Assert.Equal(32.1, number.Value);
     }
 
     [Fact]
@@ -47,6 +62,20 @@ namespace GsaGHTests.Parameters {
       var annoDot = new GsaAnnotationGoo(GsaAnnotationDotTests.AnnotationDotMother());
       GH_Number number = null;
       annoDot.CastTo(ref number);
+      Assert.NotNull(number);
+      Assert.Equal(32.1, number.Value);
+      bool f = false;
+      Assert.False(annoDot.CastTo(ref f));
+    }
+
+    [Fact]
+    public void CastAnnotationDotToNumberTest() {
+      var pt = new Point3d(1, 1, 1);
+      Color col = Color.Teal;
+      string text = "32.1";
+      var anno3d = new GsaAnnotationGoo(new GsaAnnotationDot(pt, col, text));
+      GH_Number number = null;
+      anno3d.CastTo(ref number);
       Assert.NotNull(number);
       Assert.Equal(32.1, number.Value);
     }
