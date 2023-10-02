@@ -25,7 +25,7 @@ namespace GsaGHTests.GooWrappers {
       var guids = new List<Guid>();
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);
-      Assert.Equal(1, doc.Objects.Count);
+      Assert.Single(doc.Objects);
       doc.Dispose();
     }
 
@@ -39,7 +39,7 @@ namespace GsaGHTests.GooWrappers {
       var guids = new List<Guid>();
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);
-      Assert.Equal(1, doc.Objects.Count);
+      Assert.Single(doc.Objects);
       doc.Dispose();
     }
   }
