@@ -95,6 +95,8 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 3);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 4);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 5);
+
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
     }
 
     [Fact]
@@ -104,6 +106,55 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 3);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
+    }
+
+    [Fact]
+    public void ShowLegendTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.ShowLegend(null, null);
+    }
+
+    [Fact]
+    public void UpdateForceTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.UpdateForce("kN/m");
+    }
+
+    [Fact]
+    public void UpdateLengthTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.UpdateLength("mm");
+    }
+
+    [Fact]
+    public void UpdateModelTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.UpdateModel("mm");
+    }
+
+    [Fact]
+    public void UpdateMomentTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.UpdateMoment("kN");
+    }
+
+    [Fact]
+    public void UpdateStressTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.UpdateStress("MPa");
+    }
+
+    [Fact]
+    public void UpdateLegendScaleTest() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      comp.UpdateLegendScale();
     }
 
     private void SetSelectedDrawViewportMeshesAndWiresTest(Contour2dResults comp, int i, int j) {
