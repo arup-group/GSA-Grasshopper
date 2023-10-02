@@ -34,5 +34,29 @@ namespace GsaGHTests.Parameters {
       var goo = new GsaDiagramGoo(new GsaArrowheadDiagram(graphic.Triangles, 1, Color.Empty));
       GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(goo);
     }
+
+    [Fact]
+    public void DrawViewportMeshesAndWiresLineTest() {
+      GraphicDrawResult graphic = GsaLineDiagramTests.Element1dMyyDiagramResults();
+      var goo = new GsaDiagramGoo(new GsaLineDiagram(graphic.Lines[1], 1, Color.Empty));
+      GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(goo);
+    }
+
+    [Fact]
+    public void LineCastToTest() {
+      GraphicDrawResult graphic = GsaLineDiagramTests.Element1dMyyDiagramResults();
+      var goo = new GsaDiagramGoo(new GsaLineDiagram(graphic.Lines[1], 1, Color.Empty));
+
+      GH_Line ln = null;
+      Assert.True(goo.CastTo(ref ln));
+      Assert.NotNull(ln);
+
+      GH_Colour col = null;
+      Assert.True(goo.CastTo(ref col));
+      Assert.NotNull(col);
+
+      double n = 0;
+      Assert.False(goo.CastTo(ref n));
+    }
   }
 }
