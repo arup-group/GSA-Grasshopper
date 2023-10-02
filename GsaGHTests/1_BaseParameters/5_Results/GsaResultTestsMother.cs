@@ -129,15 +129,5 @@ namespace GsaGHTests.Parameters {
 
       return (GsaResultGoo)ComponentTestHelper.GetOutput(getResults);
     }
-
-    public static GH_OasysComponent ResultsComponentMother() {
-      var comp = new GetResult();
-      comp.CreateAttributes();
-
-      GsaModelGoo modelInput = ModelTests.GsaModelGooMother;
-      ComponentTestHelper.SetInput(comp, modelInput, 0);
-
-      return comp;
-    }
   }
 }
