@@ -2,6 +2,7 @@
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
+using GsaGHTests.GooWrappers;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -48,6 +49,18 @@ namespace GsaGHTests.Parameters {
       annoDot.CastTo(ref number);
       Assert.NotNull(number);
       Assert.Equal(32.1, number.Value);
+    }
+
+    [Fact]
+    public void DrawViewportMeshesAndWiresAnnotation3dTest() {
+      var anno3d = new GsaAnnotationGoo(GsaAnnotation3dTests.Annotation3dMother());
+      GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(anno3d);
+    }
+
+    [Fact]
+    public void DrawViewportMeshesAndWiresAnnotationDotTest() {
+      var anno3d = new GsaAnnotationGoo(GsaAnnotationDotTests.AnnotationDotMother());
+      GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(anno3d);
     }
 
     [Fact]
