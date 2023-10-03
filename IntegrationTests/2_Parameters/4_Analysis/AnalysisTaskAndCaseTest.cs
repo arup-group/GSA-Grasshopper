@@ -118,7 +118,7 @@ namespace IntegrationTests.Parameters {
       Assert.Equal("LL", gsaghobject.Cases[1].Name);
       Assert.Equal("L1", gsaghobject.Cases[0].Definition);
       Assert.Equal("L2", gsaghobject.Cases[1].Definition);
-      Assert.Equal(GsaAnalysisTask.AnalysisTaskType.Static, gsaghobject.Type);
+      Assert.Equal(AnalysisTaskType.Static, gsaghobject.Type);
     }
 
     [Fact]
