@@ -14,7 +14,7 @@ namespace GsaGHTests.Components.Analysis {
       var comp = new EditAnalysisTask();
       comp.CreateAttributes();
 
-      var output = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(
+      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(
         CreateAnalysisTaskTests.ComponentMother());
       ComponentTestHelper.SetInput(comp, output);
 
@@ -29,7 +29,6 @@ namespace GsaGHTests.Components.Analysis {
 
       Assert.Equal("my Task", output.Value.Name);
       Assert.Equal(AnalysisTaskType.Static, output.Value.Type);
-      Assert.Equal("1.35A1 + 1.5A2", output.Value.Cases[0].Name);
       Assert.Equal("my Case", output.Value.Cases[0].Name);
       Assert.Equal("1.4L1 + 0.8L3", output.Value.Cases[0].Definition);
     }

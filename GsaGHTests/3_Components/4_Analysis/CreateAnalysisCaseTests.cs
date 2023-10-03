@@ -24,7 +24,7 @@ namespace GsaGHTests.Components.Analysis {
 
       var output = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(comp);
 
-      Assert.Equal("my Combination", output.Value.Name);
+      Assert.Equal("my Case", output.Value.Name);
       Assert.Equal("1.4L1 + 0.8L3", output.Value.Definition);
     }
   }
