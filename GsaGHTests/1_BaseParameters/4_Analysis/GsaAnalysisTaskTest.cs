@@ -18,12 +18,12 @@ namespace GsaGHTests.Parameters {
 
       duplicate.Id = 1;
       duplicate.Name = "name";
-      duplicate.Type = AnalysisType.Buckling;
+      duplicate.Type = AnalysisTaskType.Buckling;
       duplicate.Cases = new List<GsaAnalysisCase>();
 
       Assert.Equal(0, original.Id);
       Assert.Null(original.Name);
-      Assert.Equal(AnalysisType.Static, original.Type);
+      Assert.Equal(AnalysisTaskType.Static, original.Type);
       Assert.Empty(original.Cases);
     }
 
@@ -33,7 +33,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(0, task.Id);
       Assert.Null(task.Name);
-      Assert.Equal(AnalysisType.Static, task.Type);
+      Assert.Equal(AnalysisTaskType.Static, task.Type);
       Assert.Empty(task.Cases);
     }
   }
