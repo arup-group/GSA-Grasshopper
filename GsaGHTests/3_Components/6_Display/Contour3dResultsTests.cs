@@ -59,6 +59,41 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 5);
     }
 
+    [Fact]
+    public void ShowLegendTest() {
+      var comp = new Contour3dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());
+      comp.ShowLegend(null, null);
+    }
+
+    [Fact]
+    public void UpdateLengthTest() {
+      var comp = new Contour3dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());
+      comp.UpdateLength("mm");
+    }
+
+    [Fact]
+    public void UpdateModelTest() {
+      var comp = new Contour3dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());
+      comp.UpdateModel("mm");
+    }
+
+    [Fact]
+    public void UpdateStressTest() {
+      var comp = new Contour3dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());
+      comp.UpdateStress("MPa");
+    }
+
+    [Fact]
+    public void UpdateLegendScaleTest() {
+      var comp = new Contour3dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());
+      comp.UpdateLegendScale();
+    }
+
     private void SetSelectedDrawViewportMeshesAndWiresTest(Contour3dResults comp, int i, int j) {
       comp.SetSelected(i, j);
       var resultsGoo = (MeshResultGoo)ComponentTestHelper.GetOutput(comp);

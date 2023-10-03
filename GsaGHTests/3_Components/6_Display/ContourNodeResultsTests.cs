@@ -78,6 +78,48 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
     }
 
+    [Fact]
+    public void ShowLegendTest() {
+      var comp = new ContourNodeResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.ShowLegend(null, null);
+    }
+
+    [Fact]
+    public void UpdateForceTest() {
+      var comp = new ContourNodeResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.UpdateForce("kN");
+    }
+
+    [Fact]
+    public void UpdateLengthTest() {
+      var comp = new ContourNodeResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.UpdateLength("mm");
+    }
+
+    [Fact]
+    public void UpdateModelTest() {
+      var comp = new ContourNodeResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.UpdateModel("mm");
+    }
+
+    [Fact]
+    public void UpdateMomentTest() {
+      var comp = new ContourNodeResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.UpdateMoment("N·cm");
+    }
+
+    [Fact]
+    public void UpdateLegendScaleTest() {
+      var comp = new ContourNodeResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.UpdateLegendScale();
+    }
+
     private void SetSelectedDrawViewportMeshesAndWiresTest(ContourNodeResults comp, int i, int j) {
       comp.SetSelected(i, j);
       var resultsGoo = (PointResultGoo)ComponentTestHelper.GetOutput(comp);

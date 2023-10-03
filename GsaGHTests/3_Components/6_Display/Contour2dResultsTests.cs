@@ -111,49 +111,49 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void ShowLegendTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.ShowLegend(null, null);
     }
 
     [Fact]
     public void UpdateForceTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.UpdateForce("kN/m");
     }
 
     [Fact]
     public void UpdateLengthTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.UpdateLength("mm");
     }
 
     [Fact]
     public void UpdateModelTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.UpdateModel("mm");
     }
 
     [Fact]
     public void UpdateMomentTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.UpdateMoment("kN");
     }
 
     [Fact]
     public void UpdateStressTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.UpdateStress("MPa");
     }
 
     [Fact]
     public void UpdateLegendScaleTest() {
       var comp = new Contour2dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dFootfallResultsMother());
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
       comp.UpdateLegendScale();
     }
 

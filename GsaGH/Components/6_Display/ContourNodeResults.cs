@@ -904,36 +904,36 @@ namespace GsaGH.Components {
       Attributes.PerformLayout();
     }
 
-    private void ShowLegend(object sender, EventArgs e) {
+    internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
     }
 
-    private void UpdateForce(string unit) {
+    internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateMoment(string unit) {
+    internal void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLegendScale() {
+    internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       }
@@ -948,7 +948,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
       _scaleLegendTxt = menuitem.Text;
     }
   }

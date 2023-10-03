@@ -849,7 +849,7 @@ namespace GsaGH.Components {
       Attributes.PerformLayout();
     }
 
-    private void ShowLegend(object sender, EventArgs e) {
+    internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
     }
@@ -868,25 +868,25 @@ namespace GsaGH.Components {
       ReDrawComponent();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateStress(string unit) {
+    internal void UpdateStress(string unit) {
       _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLegendScale() {
+    internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       }
@@ -901,7 +901,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
       _scaleLegendTxt = menuitem.Text;
     }
   }
