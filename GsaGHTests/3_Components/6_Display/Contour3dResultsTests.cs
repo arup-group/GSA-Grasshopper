@@ -1,7 +1,6 @@
 ﻿using Grasshopper.Kernel.Special;
 using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGHTests.Analysis;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
 using OasysGH.UI;

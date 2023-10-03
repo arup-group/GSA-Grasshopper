@@ -1,9 +1,4 @@
-﻿using Grasshopper.Kernel.Special;
-using GsaGH.Components;
-using GsaGH.Parameters;
-using GsaGHTests.Analysis;
-using GsaGHTests.Helpers;
-using GsaGHTests.Parameters;
+﻿using GsaGH.Components;
 using OasysGH.UI;
 using System.Collections.Generic;
 using Xunit;
@@ -32,7 +27,5 @@ namespace GsaGHTests.Components.Display {
       );
       Assert.NotNull((DropDownCheckBoxesComponentAttributes)comp.Attributes);
     }
-
-    
   }
 }
