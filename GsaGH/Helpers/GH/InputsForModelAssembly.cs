@@ -22,20 +22,26 @@ namespace GsaGH.Helpers.GH {
 
           switch (ghTyp.Value) {
             case GsaAnalysisTaskGoo goo:
-              inTasks.Add(goo.Value.Duplicate());
+              inTasks.Add(goo.Value);
               break;
 
             case GsaCombinationCaseGoo caseGoo:
-              inComb.Add(caseGoo.Value.Duplicate());
+              inComb.Add(caseGoo.Value);
               break;
 
             default: {
                 string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.Gsa", string.Empty);
                 type = type.Replace("GsaGH.Parameters.", string.Empty);
                 type = type.Replace("Goo", string.Empty);
+                string analysisCase = string.Empty;
+                if (type == "AnalysisCase") {
+                  analysisCase = "\nAnalysisCase should be added through an Analysis Task and " +
+                    "cannot be added directly in a model";
+                }
                 owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
                   + " to Analysis Task or Combination Case");
-                return null;
+                break;
               }
           }
         }
@@ -116,7 +122,7 @@ namespace GsaGH.Helpers.GH {
                 owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
                   + Environment.NewLine
                   + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
-                return null;
+                break;
               }
           }
         }
@@ -198,8 +204,8 @@ namespace GsaGH.Helpers.GH {
                 type = type.Replace("GsaGH.Parameters.", string.Empty);
                 type = type.Replace("Goo", string.Empty);
                 owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
-                  + " to Load or GridPlaneSurface");
-                return null;
+                  + " to Load, LoadCase or GridPlaneSurface");
+                break;
               }
           }
         }
@@ -210,6 +216,10 @@ namespace GsaGH.Helpers.GH {
 
         if (!(inGps.Count > 0)) {
           inGps = null;
+        }
+
+        if (!(inCases.Count > 0)) {
+          inCases = null;
         }
 
         return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
@@ -256,9 +266,21 @@ namespace GsaGH.Helpers.GH {
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert GSA input parameter of type " + type
-                + " to GsaModel or GsaList");
-              return (null, null, null);
+                + " to GsaModel, GsaList or GridLine");
+              break;
           }
+        }
+
+        if (!(inModels.Count > 0)) {
+          inModels = null;
+        }
+
+        if (!(inLists.Count > 0)) {
+          inLists = null;
+        }
+
+        if (!(inGridLines.Count > 0)) {
+          inGridLines = null;
         }
 
         return (inModels, inLists, inGridLines);
@@ -311,7 +333,7 @@ namespace GsaGH.Helpers.GH {
                 type = type.Replace("Goo", string.Empty);
                 owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
                   + " to GsaSection or GsaProp2d");
-                return null;
+                break;
               }
           }
         }
