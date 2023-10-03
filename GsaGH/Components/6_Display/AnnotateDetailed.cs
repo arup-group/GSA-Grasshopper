@@ -135,13 +135,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
-        return;
-      }
-
+      da.GetDataTree(0, out GH_Structure<IGH_Goo> tree);
       double size = 1;
       if (!da.GetData(1, ref size)) {
-        size = _text3d ? 1 : 14;
+        size = _text3d ? 0.1 : 14;
       }
 
       if (!da.GetData(2, ref _color)) {
