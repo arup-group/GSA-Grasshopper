@@ -5,7 +5,7 @@ using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests.Helpers.Export.GH {
+namespace GsaGHTests.Helpers.GH {
   [Collection("GrasshopperFixture collection")]
   public class RhinoConversionsTests {
     [Fact]
@@ -36,7 +36,7 @@ namespace GsaGHTests.Helpers.Export.GH {
       var crvs = new PolyCurve();
       crvs.Append(new Arc(topolist[0], topolist[1], topolist[2]));
 
-      Tuple<PolyCurve, Point3dList, List<string>> mem1d 
+      Tuple<PolyCurve, Point3dList, List<string>> mem1d
         = RhinoConversions.ConvertMem1dCrv(crvs);
 
       Assert.True(mem1d.Item1.IsArc());

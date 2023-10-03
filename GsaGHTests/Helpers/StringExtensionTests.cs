@@ -1,7 +1,7 @@
 ﻿using GsaGH.Helpers;
 using Xunit;
 
-namespace GsaGHTests.Helpers.Export.GH {
+namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class StringExtensionTests {
     [Theory]

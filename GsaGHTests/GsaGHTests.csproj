@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Folder Include="3_Components\5_Results\" />
+    <Folder Include="Helpers\GH\" />
   </ItemGroup>
 
   <Import Project="PreBuild.targets" />

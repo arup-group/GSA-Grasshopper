@@ -4,7 +4,7 @@ using GsaGH.Helpers;
 using GsaGH.Parameters;
 using Xunit;
 
-namespace GsaGHTests.Helpers.Export.GH {
+namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class RangeExtensionTests {
     [Theory]
