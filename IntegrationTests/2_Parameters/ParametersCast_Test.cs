@@ -38,6 +38,8 @@ namespace IntegrationTests.Parameters {
     [InlineData("Result")]
     [InlineData("GridLine")]
     [InlineData("GridPlaneSurfaceFromLoad")]
+    [InlineData("AnnoDotWithoutProps", false)]
+    [InlineData("Anno3dWithProps", false)]
     public void TestCast(string groupIdentifier, bool checkError = true) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
