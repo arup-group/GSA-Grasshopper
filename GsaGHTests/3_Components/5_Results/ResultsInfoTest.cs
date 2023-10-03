@@ -6,7 +6,7 @@ using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 using Xunit;
 
-namespace GsaGHTests.Analysis {
+namespace GsaGHTests.Results {
   [Collection("GrasshopperFixture collection")]
   public class ResultsInfoTest {
 
