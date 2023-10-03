@@ -1,5 +1,8 @@
 ﻿using System;
 using GsaAPI;
+using OasysGH.Units;
+using Rhino.Display;
+using Rhino.DocObjects;
 using Rhino.Geometry;
 using Line = Rhino.Geometry.Line;
 
@@ -11,6 +14,10 @@ namespace GsaGH.Parameters {
   public class GsaGridLine {
     public GridLine GridLine { get; internal set; }
     public PolyCurve Curve { get; internal set; }
+
+    internal Point3d[] Points { get; private set; }
+    internal Text3d Text { get; private set; }
+    internal Circle Circle { get; private set; }
 
     internal GsaGridLine(GridLine gridLine, PolyCurve curve) {
       GridLine = gridLine;
@@ -41,6 +48,8 @@ namespace GsaGH.Parameters {
         Theta1 = startAngleDegrees,
         Theta2 = endAngleDegrees
       };
+
+      UpdatePreview();
     }
 
     public GsaGridLine(Line line, string label = "") {
@@ -53,6 +62,8 @@ namespace GsaGH.Parameters {
       };
       Curve = new PolyCurve();
       Curve.Append(line);
+
+      UpdatePreview();
     }
 
     internal static Arc ToArc(GridLine gridLine) {
@@ -101,6 +112,8 @@ namespace GsaGH.Parameters {
       }
 
       Curve = other.Curve.DuplicatePolyCurve();
+
+      UpdatePreview();
     }
 
     public override string ToString() {
@@ -114,6 +127,58 @@ namespace GsaGH.Parameters {
       }
 
       return s;
+    }
+
+    internal void UpdatePreview() {
+      // we want to scale grid lines according to the users unit settings
+      double unitLength = 1;
+      OasysUnits.Units.LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+      switch (DefaultUnits.LengthUnitGeometry) {
+        case OasysUnits.Units.LengthUnit.Millimeter:
+          unitLength = 1000;
+          break;
+        case OasysUnits.Units.LengthUnit.Centimeter:
+          unitLength = 100;
+          break;
+        case OasysUnits.Units.LengthUnit.Inch:
+          unitLength = 39.3701;
+          break;
+        case OasysUnits.Units.LengthUnit.Foot:
+          unitLength = 3.28084;
+          break;
+      }
+
+      Points = null;
+      Curve segment = Curve.SegmentCurve(0);
+      if (segment == null) {
+        return;
+      }
+      if (Curve.IsLinear()) {
+        Points = new Point3d[2] { segment.PointAtStart, segment.PointAtEnd };
+      } else {
+        Points = segment.DivideEquidistant(segment.GetLength() / 360.0);
+      }
+
+      Text = null;
+      Circle = Circle.Unset;
+
+      if (Points != null) {
+        double radius = 0.618046972 * unitLength; // in golden ratio
+        Plane plane = Plane.WorldXY;
+        Point3d origin = Points[0];
+        Vector3d distance = Curve.TangentAtStart;
+        distance.Unitize();
+        distance *= -radius;
+        origin.Transform(Rhino.Geometry.Transform.Translation(distance));
+        plane.Origin = origin;
+
+        Text = new Text3d(GridLine.Label, plane, 0.381982059 * unitLength) { // golden ratio
+          HorizontalAlignment = TextHorizontalAlignment.Center,
+          VerticalAlignment = TextVerticalAlignment.Middle
+        };
+
+        Circle = new Circle(plane, radius);
+      }
     }
   }
 }
