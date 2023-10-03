@@ -30,7 +30,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Analysis Case Name", GH_ParamAccess.item);
-      pManager.AddTextParameter("Description", "De", "The description of the analysis case",
+      pManager.AddTextParameter("Definition", "De", "The definition of the analysis case",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("CaseID", "ID",
         "The Case number if the Analysis Case ever belonged to a model", GH_ParamAccess.item);
@@ -45,7 +45,7 @@ namespace GsaGH.Components {
       if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
         GsaAnalysisCase gsaCase = goo.Value.Duplicate();
         da.SetData(0, gsaCase.Name);
-        da.SetData(1, gsaCase.Description);
+        da.SetData(1, gsaCase.Definition);
         da.SetData(2, gsaCase.Id);
       } else {
         string type = ghTyp.Value.GetType().ToString();
