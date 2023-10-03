@@ -2,9 +2,6 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
-using OasysGH.Components;
-using Rhino.Collections;
-using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Model {

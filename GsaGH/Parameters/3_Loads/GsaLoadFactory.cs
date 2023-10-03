@@ -7,7 +7,6 @@ using GsaGH.Helpers.Import;
 using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using NodeLoadType = GsaGH.Parameters.NodeLoadType;
 
 namespace GsaGH.Parameters {
   public static class GsaLoadFactory {

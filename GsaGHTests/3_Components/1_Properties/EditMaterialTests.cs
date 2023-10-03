@@ -4,9 +4,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysGH.Parameters;
-using OasysUnits;
-using OasysUnits.Units;
 using Xunit;
 
 namespace GsaGHTests.Properties {

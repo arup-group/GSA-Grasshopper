@@ -2,7 +2,6 @@
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 

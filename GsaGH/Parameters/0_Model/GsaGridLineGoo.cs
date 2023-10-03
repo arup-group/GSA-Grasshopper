@@ -3,10 +3,6 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
-using OasysGH.Units;
-using OasysUnits.Units;
-using Rhino.Display;
-using Rhino.DocObjects;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {

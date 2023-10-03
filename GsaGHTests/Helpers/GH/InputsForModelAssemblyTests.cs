@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
+﻿using Grasshopper.Kernel.Types;
 using GsaGH.Components;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Components.Loads;
 using GsaGHTests.Helper;
 using GsaGHTests.Model;
 using OasysGH.Components;
-using Rhino.Collections;
-using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Helpers.GH {

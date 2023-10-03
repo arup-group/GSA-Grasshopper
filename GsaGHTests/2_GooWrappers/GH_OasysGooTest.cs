@@ -1,7 +1,6 @@
 ﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

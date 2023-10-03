@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
-using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
   /// <summary>

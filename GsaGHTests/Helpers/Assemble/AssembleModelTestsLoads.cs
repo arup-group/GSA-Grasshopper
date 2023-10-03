@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Model;
-using OasysUnits.Units;
-using Rhino.Geometry;
 using Xunit;
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 

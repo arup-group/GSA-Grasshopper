@@ -2,9 +2,6 @@
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using GsaGH.Components;
-using GsaGH.Components.GraveyardComp;
-using GsaGHTests.Helpers;
-using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.CustomComponent {

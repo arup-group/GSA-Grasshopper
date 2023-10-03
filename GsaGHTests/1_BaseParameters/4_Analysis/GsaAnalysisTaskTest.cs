@@ -2,7 +2,6 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Xunit;
-using static GsaGH.Parameters.GsaAnalysisTask;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]

@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Grasshopper.Kernel;
-using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

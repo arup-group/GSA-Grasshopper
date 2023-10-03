@@ -1,10 +1,8 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Morphs;

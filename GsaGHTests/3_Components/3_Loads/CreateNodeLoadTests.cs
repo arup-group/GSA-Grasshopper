@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using Grasshopper.Kernel.Types;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;

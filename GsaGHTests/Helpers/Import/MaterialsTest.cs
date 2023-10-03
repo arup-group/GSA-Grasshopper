@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GsaAPI.Materials;
 using GsaGH.Parameters;
-using GsaGH.Helpers.Import;
 using GsaGHTests.Parameters;
 using Xunit;
 

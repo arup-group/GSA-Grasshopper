@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using Grasshopper.Kernel;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using GsaGHTests.Model;
-using OasysGH.Components;
 using OasysGH.Parameters;
 using Xunit;
 
