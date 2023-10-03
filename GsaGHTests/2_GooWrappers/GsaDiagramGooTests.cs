@@ -4,6 +4,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.GooWrappers;
 using Rhino.Geometry;
+using Rhino.Geometry.Morphs;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -51,6 +52,44 @@ namespace GsaGHTests.Parameters {
       var vec = new GsaVectorDiagram(new Point3d(0, 0, 0), new Vector3d(0, 0, -1), true, Color.Teal);
       var goo = new GsaDiagramGoo(vec);
       GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(goo);
+    }
+
+    [Fact]
+    public void MorphArrowheadTest() {
+      GraphicDrawResult graphic =
+        GsaArrowheadDiagramTests.Element1dUniformLoadDiagramResults();
+      var goo = new GsaDiagramGoo(new GsaArrowheadDiagram(graphic.Triangles, 1, Color.Empty));
+      var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(10, 10, 10), 10);
+      var morphed = (GsaArrowheadDiagram)goo.Morph(morph);
+      Assert.NotNull(morphed);
+    }
+
+    [Fact]
+    public void MorphLineTest() {
+      GraphicDrawResult graphic = GsaLineDiagramTests.Element1dMyyDiagramResults();
+      var goo = new GsaDiagramGoo(new GsaLineDiagram(graphic.Lines[1], 1, Color.Empty));
+      var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(10, 10, 10), 10);
+      var morphed = (GsaLineDiagram)goo.Morph(morph);
+      Assert.NotNull(morphed);
+    }
+
+    [Fact]
+    public void TransformArrowheadTest() {
+      GraphicDrawResult graphic =
+        GsaArrowheadDiagramTests.Element1dUniformLoadDiagramResults();
+      var goo = new GsaDiagramGoo(new GsaArrowheadDiagram(graphic.Triangles, 1, Color.Empty));
+      var transform = Transform.Translation(new Vector3d(1, 1, 1));
+      var transformed = (GsaArrowheadDiagram)goo.Transform(transform);
+      Assert.NotNull(transformed);
+    }
+
+    [Fact]
+    public void TransformLineTest() {
+      GraphicDrawResult graphic = GsaLineDiagramTests.Element1dMyyDiagramResults();
+      var goo = new GsaDiagramGoo(new GsaLineDiagram(graphic.Lines[1], 1, Color.Empty));
+      var transform = Transform.Translation(new Vector3d(1, 1, 1));
+      var transformed = (GsaLineDiagram)goo.Transform(transform);
+      Assert.NotNull(transformed);
     }
 
     [Fact]
