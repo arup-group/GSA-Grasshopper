@@ -35,7 +35,7 @@ namespace GsaGH.Graphics {
       string pluginloc = gsaPlugin.Location;
 
       InitializeComponent();
-      Text = $"About {"GsaGH"}";
+      Text = $"About GSA Grasshopper plugin";
       labelProductName.Text = "GSA Grasshopper Plugin";
       labelVersion.Text = $"Version {pluginvers}";
       labelApiVersion.Text = $"API Version {api}";
@@ -43,20 +43,14 @@ namespace GsaGH.Graphics {
       linkWebsite.Text = @"www.oasys-software.com";
       labelContact.Text = "Contact and support:";
       linkEmail.Text = @"oasys@arup.com";
-      disclaimer.Text = GsaGhInfo.disclaimer;
+      disclaimer.Text = GsaGhInfo.isBeta ? string.Empty : GsaGhInfo.disclaimer;
     }
 
     private void AboutBox_Load(object sender, EventArgs e) { }
 
     private void Button1_Click(object sender, EventArgs e) {
-      Process.Start(@"rhino://package/search?name=gsa");
+      Process.Start(@"rhino://package/search?name=guid:a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     }
-
-    private void LabelApiVersion_Click(object sender, EventArgs e) { }
-
-    private void LabelProductName_Click(object sender, EventArgs e) { }
-
-    private void LabelVersion_Click(object sender, EventArgs e) { }
 
     private void LinkEmail_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
       GH_AssemblyInfo gsaPlugin

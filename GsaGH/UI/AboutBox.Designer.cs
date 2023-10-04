@@ -100,7 +100,6 @@ namespace GsaGH.Graphics
       this.labelProductName.TabIndex = 19;
       this.labelProductName.Text = "GSA Grasshopper Plugin";
       this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.labelProductName.Click += new System.EventHandler(this.LabelProductName_Click);
       // 
       // labelVersion
       // 
@@ -113,7 +112,6 @@ namespace GsaGH.Graphics
       this.labelVersion.TabIndex = 0;
       this.labelVersion.Text = "Plugin Version";
       this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.labelVersion.Click += new System.EventHandler(this.LabelVersion_Click);
       // 
       // labelApiVersion
       // 
@@ -127,7 +125,6 @@ namespace GsaGH.Graphics
       this.labelApiVersion.TabIndex = 21;
       this.labelApiVersion.Text = "API Version";
       this.labelApiVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.labelApiVersion.Click += new System.EventHandler(this.LabelApiVersion_Click);
       // 
       // labelCompanyName
       // 
@@ -203,7 +200,7 @@ namespace GsaGH.Graphics
       // 
       // disclaimer
       // 
-      this.disclaimer.AccessibleName = string.Empty;
+      this.disclaimer.AccessibleName = "";
       this.tableLayoutPanel.SetColumnSpan(this.disclaimer, 3);
       this.disclaimer.Location = new System.Drawing.Point(6, 135);
       this.disclaimer.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
@@ -229,7 +226,7 @@ namespace GsaGH.Graphics
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "AboutBox";
-      this.Padding = new System.Windows.Forms.Padding(9, 9, 9, 9);
+      this.Padding = new System.Windows.Forms.Padding(9);
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
