@@ -92,7 +92,7 @@ namespace GsaGH.Components {
         case FoldMode.OneDimensionalOneWay:
           Params.Input[5].NickName = "Dir";
           Params.Input[5].Name = "Span Direction";
-          Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
+          Params.Input[5].Description = "Span Direction between -Pi and Pi";
           Params.Input[5].Access = GH_ParamAccess.item;
           Params.Input[5].Optional = true;
           break;
