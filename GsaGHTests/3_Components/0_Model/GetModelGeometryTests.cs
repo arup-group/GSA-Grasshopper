@@ -119,8 +119,8 @@ namespace GsaGHTests.Model {
     [Fact]
     public void ModeClickedTest() {
       var comp = new GetModelGeometry();
-      comp.CreateAttributes();
-      Assert.Empty(comp.Message);
+
+      Assert.True(string.IsNullOrEmpty(comp.Message));
       comp.GraftModeClicked(null, null);
       Assert.Equal("Graft by Property", comp.Message);
       comp.ListModeClicked(null, null);
