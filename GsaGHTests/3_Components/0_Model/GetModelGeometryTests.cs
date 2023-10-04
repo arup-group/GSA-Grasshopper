@@ -116,6 +116,17 @@ namespace GsaGHTests.Model {
       ChangeDropDownTest(comp);
     }
 
+    [Fact]
+    public void ModeClickedTest() {
+      var comp = new GetModelGeometry();
+      comp.CreateAttributes();
+      Assert.Empty(comp.Message);
+      comp.GraftModeClicked(null, null);
+      Assert.Equal("Graft by Property", comp.Message);
+      comp.ListModeClicked(null, null);
+      Assert.Equal("Import as List", comp.Message);
+    }
+
     private static void ChangeDropDownTest(
       GetModelGeometry comp, bool ignoreSpacerDescriptionsCount = false) {
       Assert.True(comp._isInitialised);
