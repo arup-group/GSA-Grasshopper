@@ -342,7 +342,6 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    // this is the cache object!
     private void UpdateDropdowns() {
       if (_gsaModel == null) {
         return;

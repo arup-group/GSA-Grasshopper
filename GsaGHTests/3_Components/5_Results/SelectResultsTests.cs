@@ -29,7 +29,7 @@ namespace GsaGHTests.Results {
     }
 
     [Fact]
-    public void DefaultDropSelectionsTest() {
+    public void DropSelectionsTest() {
       GH_OasysDropDownComponent comp = ResultsComponentMother();
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("A1", comp._selectedItems[1]);
@@ -65,6 +65,32 @@ namespace GsaGHTests.Results {
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("A1", comp._selectedItems[1]);
       Assert.Equal(2, comp._selectedItems.Count);
+    }
+
+    [Fact]
+    public void SetInputsAfterRunTest() {
+      GH_OasysDropDownComponent comp = ResultsComponentMother();
+      var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal("A1", comp._selectedItems[1]);
+      Assert.Equal(2, comp._selectedItems.Count);
+      result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+
+      ComponentTestHelper.SetInput(comp, 2, 2);
+      result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal("A2", comp._selectedItems[1]);
+
+      ComponentTestHelper.SetInput(comp, "C", 1);
+      result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal("C2", comp._selectedItems[1]);
+    }
+
+    [Fact]
+    public void SetInputsBeforeRunTest() {
+      GH_OasysDropDownComponent comp = ResultsComponentMother();
+      var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+      ComponentTestHelper.SetInput(comp, "C", 1);
+      result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal("C1", comp._selectedItems[1]);
     }
   }
 }
