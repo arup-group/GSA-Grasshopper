@@ -69,10 +69,6 @@ namespace GsaGH.Components {
 
           break;
         }
-        case 1 when _selectedItems[i].ToLower() == "all":
-          _caseId = -1;
-          break;
-
         case 1: {
           int newId = int.Parse(
             string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit)));
