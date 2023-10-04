@@ -183,6 +183,18 @@ namespace GsaGH.Components {
             da.SetData(7, new GH_UnitNumber(outBeamForce2));
             return;
 
+          case GsaBeamThermalLoad beamThermalLoad:
+            da.SetData(0, new GsaLoadCaseGoo(beamThermalLoad.LoadCase
+              ?? new GsaLoadCase(beamThermalLoad.ApiLoad.Case)));
+            da.SetData(1, beamThermalLoad.ApiLoad.Name);
+            var beamThermalList = new GsaList(
+              beamThermalLoad.Name, beamThermalLoad.ApiLoad.EntityList, beamThermalLoad.ApiLoad.EntityType);
+            da.SetData(2, new GsaListGoo(beamThermalList));
+            var apiBeamThermalForce1 = new Temperature(beamThermalLoad.ApiLoad.UniformTemperature,
+              TemperatureUnit.DegreeCelsius);
+            da.SetData(6, new GH_UnitNumber(apiBeamThermalForce1));
+            return;
+
           case GsaFaceLoad faceLoad:
             da.SetData(0, new GsaLoadCaseGoo(faceLoad.LoadCase
               ?? new GsaLoadCase(faceLoad.ApiLoad.Case)));
