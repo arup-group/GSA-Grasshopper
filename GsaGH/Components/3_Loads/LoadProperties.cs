@@ -14,6 +14,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -136,10 +137,10 @@ namespace GsaGH.Components {
         IGsaLoad gsaLoad = loadGoo.Value;
         switch (gsaLoad) {
           case GsaGravityLoad gravityLoad:
-            da.SetData(0, new GsaLoadCaseGoo(gravityLoad.LoadCase 
+            da.SetData(0, new GsaLoadCaseGoo(gravityLoad.LoadCase
               ?? new GsaLoadCase(gravityLoad.ApiLoad.Case)));
             da.SetData(1, gravityLoad.ApiLoad.Name);
-            var gravityList = new GsaList(gravityLoad.Name, 
+            var gravityList = new GsaList(gravityLoad.Name,
               gravityLoad.ApiLoad.EntityList, gravityLoad.ApiLoad.EntityType);
             da.SetData(2, new GsaListGoo(gravityList));
             da.SetData(6, gravityLoad.ApiLoad.Factor.X);
@@ -190,9 +191,9 @@ namespace GsaGH.Components {
             var beamThermalList = new GsaList(
               beamThermalLoad.Name, beamThermalLoad.ApiLoad.EntityList, beamThermalLoad.ApiLoad.EntityType);
             da.SetData(2, new GsaListGoo(beamThermalList));
-            var apiBeamThermalForce1 = new Temperature(beamThermalLoad.ApiLoad.UniformTemperature,
+            var apiBeamUniformTemperature = new Temperature(beamThermalLoad.ApiLoad.UniformTemperature,
               TemperatureUnit.DegreeCelsius);
-            da.SetData(6, new GH_UnitNumber(apiBeamThermalForce1));
+            da.SetData(6, new GH_UnitNumber(apiBeamUniformTemperature));
             return;
 
           case GsaFaceLoad faceLoad:
@@ -221,6 +222,18 @@ namespace GsaGH.Components {
               PressureUnit.NewtonPerSquareMeter);
             var outFaceForce4 = new Pressure(apiFaceForce4.As(forcePerAreaUnit), forcePerAreaUnit);
             da.SetData(9, new GH_UnitNumber(outFaceForce4));
+            return;
+
+          case GsaFaceThermalLoad faceThermalLoad:
+            da.SetData(0, new GsaLoadCaseGoo(faceThermalLoad.LoadCase
+              ?? new GsaLoadCase(faceThermalLoad.ApiLoad.Case)));
+            da.SetData(1, faceThermalLoad.ApiLoad.Name);
+            var faceThermalList = new GsaList(
+              faceThermalLoad.Name, faceThermalLoad.ApiLoad.EntityList, faceThermalLoad.ApiLoad.EntityType);
+            da.SetData(2, new GsaListGoo(faceThermalList));
+            var apiFaceUniformTemperature = new Temperature(faceThermalLoad.ApiLoad.UniformTemperature,
+              TemperatureUnit.DegreeCelsius);
+            da.SetData(6, new GH_UnitNumber(apiFaceUniformTemperature));
             return;
 
           case GsaGridPointLoad gridPointLoad:
@@ -261,13 +274,15 @@ namespace GsaGH.Components {
               ?? new GsaLoadCase(gridAreaLoad.ApiLoad.Case)));
             da.SetData(1, gridAreaLoad.ApiLoad.Name);
             var polyline = new Polyline(gridAreaLoad.Points);
-            if (!polyline.IsClosed) {
+            if (!polyline.IsClosed && gridAreaLoad.Points.Count > 0) {
               var pts = gridAreaLoad.Points.ToList();
               pts.Add(pts[0]);
               polyline = new Polyline(pts);
             }
+            if (polyline.Count > 0) {
+              da.SetData(2, polyline);
+            }
 
-            da.SetData(2, polyline);
             da.SetData(3, gridAreaLoad.ApiLoad.AxisProperty);
             da.SetData(4, gridAreaLoad.ApiLoad.Direction);
             var apiAreaForce = new Pressure(gridAreaLoad.ApiLoad.Value,

@@ -164,6 +164,6 @@ namespace GsaGH.Components {
       gravityLoad.ApiLoad.Factor = factor;
 
       da.SetData(0, new GsaLoadGoo(gravityLoad));
-    }
+     }
   }
 }

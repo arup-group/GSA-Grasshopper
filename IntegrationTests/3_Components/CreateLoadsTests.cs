@@ -26,6 +26,14 @@ namespace IntegrationTests.Components {
 
     [Theory]
     [InlineData("BeamLoad", true)]
+    [InlineData("BeamThermalLoad", true)]
+    [InlineData("FaceLoad", true)]
+    [InlineData("FaceThermalLoad", true)]
+    [InlineData("GravityLoad", true)]
+    [InlineData("NodeLoad", true)]
+    [InlineData("GridAreaLoad", true)]
+    [InlineData("GridLineLoad", true)]
+    [InlineData("GridPointLoad", true)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
