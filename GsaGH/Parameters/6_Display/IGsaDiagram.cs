@@ -9,7 +9,6 @@ namespace GsaGH.Parameters {
   /// <see cref="GsaLineDiagram"/> or <see cref="GsaVectorDiagram"/>.</para>
   /// </summary>
   public interface IGsaDiagram : IGH_GeometricGoo, IGH_PreviewData {
-    public DiagramType DiagramType { get; }
     public bool CastTo<TQ>(ref TQ target);
     public GeometryBase GetGeometry();
   }

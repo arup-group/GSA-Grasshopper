@@ -176,9 +176,12 @@ namespace GsaGH.Components {
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
-        & elem2ds is null & mem1ds is null & mem2ds is null & mem3ds is null & sections is null
-        & prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
+      if (models is null & lists is null & gridLines is null & nodes is null
+        & elem1ds is null & elem2ds is null & elem3ds is null
+        & mem1ds is null & mem2ds is null & mem3ds is null
+        & materials is null & sections is null & prop2Ds is null
+        & loads is null & loadCases is null & gridPlaneSurfaces is null
+        & analysisTasks is null & combinationCases is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
@@ -215,7 +218,7 @@ namespace GsaGH.Components {
               " Model contained no Analysis Tasks. Default Task has been created containing " +
               "all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases) {
-              model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
+              model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
             }
 
             gsaTasks = model.Model.AnalysisTasks();

@@ -7,7 +7,6 @@ using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using Rhino.Geometry;
 using Xunit;
 

@@ -226,7 +226,7 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           foreach (GsaAnalysisCase ca in task.Cases) {
-            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
+            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
           }
         }
       }

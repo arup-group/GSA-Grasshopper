@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
-using Rhino.Collections;
-using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {

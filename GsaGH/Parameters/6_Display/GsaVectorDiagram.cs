@@ -21,7 +21,6 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Vector Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; } = Colours.GsaDarkPurple;
-    public DiagramType DiagramType => DiagramType.Vector;
     public readonly Point3d AnchorPoint;
     internal Line DisplayLine;
     private bool _doubleArrow = false;

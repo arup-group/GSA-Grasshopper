@@ -451,6 +451,72 @@ namespace IntegrationTests.Components {
       5.384,
       4.143,
     }, 3)]
+    [InlineData("Cxx", new double[] {
+      -0.3829,
+-0.4076,
+-0.01809,
+-0.01048,
+-0.3988,
+-0.2299,
+-0.01781,
+-0.2138,
+-0.2254
+    }, 3)]
+    [InlineData("Cyy", new double[] {
+      -1.972,
+-2.090,
+-0.6367,
+-0.5791,
+-2.049,
+-1.367,
+-0.6255,
+-1.279,
+-1.340,
+    }, 3)]
+    [InlineData("Czz", new double[] {
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+    }, 1)]
+    [InlineData("Cxy", new double[] {
+      -0.01388,
+0.007131,
+-0.008022,
+-0.1401,
+-0.003627,
+-0.003452,
+-0.07431,
+-0.07999,
+-0.04197,
+    }, 4)]
+    [InlineData("Cyz", new double[] {
+      -0.1466,
+-0.1536,
+-0.1041,
+-0.09706,
+-0.1501,
+-0.1289,
+-0.1006,
+-0.1218,
+-0.1254
+    }, 4)]
+    [InlineData("Czx", new double[] {
+      0.01187,
+0.009647,
+509.3E-6,
+0.006971,
+0.01076,
+0.005078,
+0.003740,
+0.009423,
+0.007250,
+    }, 5)]
     public void Elem2dStressTests(string name, double[] expectedVals, int precision = 6) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);

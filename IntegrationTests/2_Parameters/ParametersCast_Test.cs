@@ -22,6 +22,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("Prop2d")]
     [InlineData("Prop3d")]
     [InlineData("SectionModifier")]
+    [InlineData("Prop2dModifier")]
     [InlineData("Node")]
     [InlineData("Element1d")]
     [InlineData("Element2d")]
@@ -35,11 +36,15 @@ namespace IntegrationTests.Parameters {
     [InlineData("AnalysisTask")]
     [InlineData("CombinationCase", false)]
     [InlineData("Result")]
+    [InlineData("GridLine")]
     [InlineData("GridPlaneSurfaceFromLoad")]
+    [InlineData("AnnoDotWithoutProps", false)]
+    [InlineData("Anno3dWithProps", false)]
     public void TestCast(string groupIdentifier, bool checkError = true) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
+        Assert.True(data.ToString().Length > 5);
       }
       
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
@@ -50,12 +55,41 @@ namespace IntegrationTests.Parameters {
       }
     }
 
-    private void TestCastError(string groupIdentifier) {
+    [Theory]
+    [InlineData("GridLineLineError", false)]
+    [InlineData("GridLineArcError", false)]
+    public void TestCastError(string groupIdentifier, bool checkIfDataIsValid = true) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
-        Assert.False(data.IsValid);
+      if (checkIfDataIsValid) {
+        foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
+          Assert.False(data.IsValid);
+        }
       }
+      
       Assert.NotEmpty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Theory]
+    [InlineData("Special List filters", false, false, false)]
+    public void TestComponentRemarkWarningError(string groupIdentifier, bool remark, bool warning, bool error) {
+      GH_Component comp = Helper.FindComponent(Document, groupIdentifier);
+      if (remark) {
+        Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      } else {
+        Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      }
+
+      if (warning) {
+        Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      } else {
+        Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      }
+
+      if (error) {
+        Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      } else {
+        Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      }
     }
 
     [Theory]
@@ -98,6 +132,9 @@ namespace IntegrationTests.Parameters {
     [InlineData("GeoTransform")]
     [InlineData("LoadMorph")]
     [InlineData("LoadTransform")]
+    [InlineData("GridLineCrv")]
+    [InlineData("GridLineMorph")]
+    [InlineData("GridLineTransform")]
     public void TestCastTo(string groupIdentifier) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
