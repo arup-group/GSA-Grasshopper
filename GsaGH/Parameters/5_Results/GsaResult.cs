@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Parameters._5_Results.Refactor;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
@@ -15,16 +16,77 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// <para>A Result is used to select Cases from an analysed <see cref="GsaModel"/> and extract the values for post-processing or visualisation.</para>
-  /// <para>The following result types can be extracted if they are present in the model:
-  /// <list type="bullet">
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#noderesult">Node Results</see>: `Displacement` and `Reaction`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element1dresult">1D Element Results</see>: `Displacement`, `Force` and `StrainEnergyDensity`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element2dresult">2D Element Results</see>: `Displacement`, `Force`, `Moment`, `Shear` and `Stress`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element3dresult">3D Element Results</see>: `Displacement` and `Stress`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#globalresult">Global Results</see>: `Frequency`, `LoadFactor`, `ModalGeometricStiffness`, `ModalMass`, `ModalStiffness`, `TotalLoad`, `TotalReaction`, `Mode`, `EffectiveInertia`, `EffectiveMass` and `Eigenvalue`.</description></item>
-  /// </list></para>
-  /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> has been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values</para>
+  ///   <para>
+  ///     A Result is used to select Cases from an analysed <see cref="GsaModel" /> and extract the values for
+  ///     post-processing or visualisation.
+  ///   </para>
+  ///   <para>
+  ///     The following result types can be extracted if they are present in the model:
+  ///     <list type="bullet">
+  ///       <item>
+  ///         <description>
+  ///           <see
+  ///             href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#noderesult">
+  ///             Node
+  ///             Results
+  ///           </see>
+  ///           : `Displacement` and `Reaction`.
+  ///         </description>
+  ///       </item>
+  ///       <item>
+  ///         <description>
+  ///           <see
+  ///             href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element1dresult">
+  ///             1D
+  ///             Element Results
+  ///           </see>
+  ///           : `Displacement`, `Force` and `StrainEnergyDensity`.
+  ///         </description>
+  ///       </item>
+  ///       <item>
+  ///         <description>
+  ///           <see
+  ///             href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element2dresult">
+  ///             2D
+  ///             Element Results
+  ///           </see>
+  ///           : `Displacement`, `Force`, `Moment`, `Shear` and `Stress`.
+  ///         </description>
+  ///       </item>
+  ///       <item>
+  ///         <description>
+  ///           <see
+  ///             href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element3dresult">
+  ///             3D
+  ///             Element Results
+  ///           </see>
+  ///           : `Displacement` and `Stress`.
+  ///         </description>
+  ///       </item>
+  ///       <item>
+  ///         <description>
+  ///           <see
+  ///             href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#globalresult">
+  ///             Global
+  ///             Results
+  ///           </see>
+  ///           : `Frequency`, `LoadFactor`, `ModalGeometricStiffness`, `ModalMass`, `ModalStiffness`,
+  ///           `TotalLoad`, `TotalReaction`, `Mode`, `EffectiveInertia`, `EffectiveMass` and `Eigenvalue`.
+  ///         </description>
+  ///       </item>
+  ///     </list>
+  ///   </para>
+  ///   <para>
+  ///     All result values from the
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see>
+  ///     has been wrapped in
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">
+  ///       Unit
+  ///       Number
+  ///     </see>
+  ///     and can be converted into different measures on the fly. The Result parameter caches the result
+  ///     values
+  ///   </para>
   /// </summary>
   public class GsaResult {
     /// <summary>
@@ -139,8 +201,7 @@ namespace GsaGH.Parameters {
     ///   Append to this dictionary to chache results
     ///   key = elementList
     /// </summary>
-    internal Dictionary<string, GsaResultsValues> ACaseNodeDisplacementValues { get; set; }
-      = new Dictionary<string, GsaResultsValues>();
+    internal GsaNodeDisplacements NodeDisplacementValues { get; set; } = new GsaNodeDisplacements();
     /// <summary>
     ///   Analysis Case Node Footfall Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -198,7 +259,8 @@ namespace GsaGH.Parameters {
     ///   value = Dictionary(elementID, Dictionary(numberOfDivisions, results))
     /// </summary>
     internal
-      Dictionary<Tuple<string, int, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
+      Dictionary<Tuple<string, int, int>,
+        ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
       ComboElement1DResults { get; set; }
       = new Dictionary<Tuple<string, int, int>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
@@ -209,7 +271,8 @@ namespace GsaGH.Parameters {
     ///   value = Dictionary(elementID, Dictionary(numberOfDivisions, results))
     /// </summary>
     internal
-      Dictionary<Tuple<string, int, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
+      Dictionary<Tuple<string, int, int>,
+        ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>
       ComboElement1DResultsInclStrainEnergyDensity { get; set; }
       = new Dictionary<Tuple<string, int, int>,
         ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
@@ -371,14 +434,14 @@ namespace GsaGH.Parameters {
           break;
 
         case CaseType.Combination: {
-            txt = "C" + CaseId;
-            if (SelectedPermutationIds.Count > 0) {
-              txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
-                txt + " p" + SelectedPermutationIds[0];
-            }
-
-            break;
+          txt = "C" + CaseId;
+          if (SelectedPermutationIds.Count > 0) {
+            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
+              txt + " p" + SelectedPermutationIds[0];
           }
+
+          break;
+        }
       }
 
       return txt.TrimSpaces();
@@ -446,6 +509,7 @@ namespace GsaGH.Parameters {
       if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
+
       Plane global = Plane.WorldXY;
 
       var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
@@ -456,7 +520,8 @@ namespace GsaGH.Parameters {
               AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
           }
 
-          GsaResultsValues res = ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit);
+          GsaResultsValues res
+            = ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit);
           if (axisId == 0) {
             res.CoordinateTransformationTo(global, Model.Model);
           }
@@ -465,7 +530,7 @@ namespace GsaGH.Parameters {
         }
 
         return new List<GsaResultsValues> {
-          ACaseElement1DDisplacementValues[key]
+          ACaseElement1DDisplacementValues[key],
         };
       }
 
@@ -526,7 +591,8 @@ namespace GsaGH.Parameters {
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DForceValues(
-      string elementlist, int positionsCount, int axisId, ForceUnit forceUnit, MomentUnit momentUnit) {
+      string elementlist, int positionsCount, int axisId, ForceUnit forceUnit,
+      MomentUnit momentUnit) {
       if (elementlist.ToLower() == "all" || elementlist == string.Empty) {
         elementlist = "All";
       }
@@ -934,24 +1000,24 @@ namespace GsaGH.Parameters {
     /// <param name="nodelist"></param>
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
-    internal Tuple<List<GsaResultsValues>, List<int>> NodeDisplacementValues(
+    internal Tuple<List<GsaResultsValues>, List<int>> GetNodeDisplacementValues(
       string nodelist, LengthUnit lengthUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
       }
 
       if (Type == CaseType.AnalysisCase) {
-        if (!ACaseNodeDisplacementValues.ContainsKey(nodelist)) {
+        if (!NodeDisplacementValues.ACaseResultValues.ContainsKey(nodelist)) {
           if (!ACaseNodeResults.ContainsKey(nodelist)) {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
           }
 
-          ACaseNodeDisplacementValues.Add(nodelist,
+          NodeDisplacementValues.AddACaseValue(nodelist,
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 
         return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
-          ACaseNodeDisplacementValues[nodelist],
+          NodeDisplacementValues.ACaseResultValues[nodelist],
         }, Model.Model.Nodes(nodelist).Keys.ToList());
       }
 
