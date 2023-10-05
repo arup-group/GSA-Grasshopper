@@ -165,8 +165,8 @@ namespace GsaGH.Components {
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
               break;
             }
-          case Plane pln:
-            plane = pln;
+          case GH_Plane pln:
+            plane = pln.Value;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
             gridPointLoad.GridPlaneSurface = gridPlaneSurface;
             UpdateMessage(gridPlaneSurface.GridSurface.ElementType
