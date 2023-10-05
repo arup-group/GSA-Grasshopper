@@ -226,7 +226,7 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           foreach (GsaAnalysisCase ca in task.Cases) {
-            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
+            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
           }
         }
       }
@@ -330,15 +330,17 @@ namespace GsaGH.Helpers.Assembly {
       foreach (GsaLoadCase loadCase in loadCases) {
         if (_loadCases.ContainsKey(loadCase.Id)) {
           LoadCase existingCase = _loadCases[loadCase.Id];
-          LoadCase newCase = loadCase.LoadCase;
+          LoadCase newCase = loadCase.DuplicateApiObject();
           if (newCase.CaseType != existingCase.CaseType || newCase.Name != existingCase.Name) {
             _loadCases[loadCase.Id] = newCase;
             owner?.AddRuntimeRemark($"LoadCase {loadCase.Id} either already existed in the model " +
              $"or two load cases with ID:{loadCase.Id} was added.{Environment.NewLine}" +
              $"{newCase.Name} - {newCase.CaseType} replaced previous LoadCase");
           }
+
+          _loadCases[loadCase.Id] = newCase;
         } else {
-          _loadCases.Add(loadCase.Id, loadCase.LoadCase);
+          _loadCases.Add(loadCase.Id, loadCase.DuplicateApiObject());
         }
       }
     }

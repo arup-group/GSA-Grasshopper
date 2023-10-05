@@ -26,16 +26,9 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaProperty2dModifierGoo PreferredCast(object data) {
-      if (data is GsaProperty2dGoo goo) {
-        GsaProperty2d prop = goo.Value;
-        var modifier = new GsaProperty2dModifier();
-        if (prop.ApiProp2d != null) {
-          modifier = new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier);
-        }
-        
-        return new GsaProperty2dModifierGoo(modifier);
-      } else if (data is GsaProperty2dModifier modifier) {
-        return new GsaProperty2dModifierGoo(modifier);
+      if (data is GsaProperty2dGoo goo && goo.Value?.ApiProp2d != null) {
+        return new GsaProperty2dModifierGoo(
+          new GsaProperty2dModifier(goo.Value.ApiProp2d.PropertyModifier));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Prop2dModifier");

@@ -2,9 +2,6 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
-using OasysGH.Components;
-using Rhino.Collections;
-using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Model {
@@ -28,11 +25,11 @@ namespace GsaGHTests.Model {
       Assert.Equal(1, taskGoo.Value.Id);
       Assert.Equal(2, taskGoo.Value.Cases.Count);
       Assert.Equal("Task 1", taskGoo.Value.Name);
-      Assert.Equal(GsaAnalysisTask.AnalysisType.Static, taskGoo.Value.Type);
+      Assert.Equal(AnalysisTaskType.Static, taskGoo.Value.Type);
 
       Assert.NotNull(caseGoo);
       Assert.Equal(1, caseGoo.Value.Id);
-      Assert.Equal("L1", caseGoo.Value.Description);
+      Assert.Equal("L1", caseGoo.Value.Definition);
       Assert.Equal("DL", caseGoo.Value.Name);
 
       Assert.NotNull(combGoo);

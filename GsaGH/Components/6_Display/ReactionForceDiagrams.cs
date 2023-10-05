@@ -185,7 +185,7 @@ namespace GsaGH.Components {
       }
 
       result = (ghObject.Value as GsaResultGoo).Value;
-      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
         = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);

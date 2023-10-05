@@ -1,15 +1,8 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysUnits;
-using Rhino.Geometry;
-using System.Linq;
 using Xunit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]

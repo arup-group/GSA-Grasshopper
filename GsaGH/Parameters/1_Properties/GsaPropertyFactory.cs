@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
   public static class GsaPropertyFactory {

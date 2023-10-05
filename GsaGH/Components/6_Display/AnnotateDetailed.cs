@@ -53,6 +53,12 @@ namespace GsaGH.Components {
       _showProperty = reader.GetBoolean("property");
       _showMaterial = reader.GetBoolean("material");
       _text3d = reader.GetBoolean("text3d");
+      _initialCheckState = new List<bool>() {
+        _showId,
+        _showName,
+        _showProperty,
+        _showMaterial,
+      };
       return base.Read(reader);
     }
 
@@ -129,13 +135,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      if (!da.GetDataTree(0, out GH_Structure<IGH_Goo> tree)) {
-        return;
-      }
-
+      da.GetDataTree(0, out GH_Structure<IGH_Goo> tree);
       double size = 1;
       if (!da.GetData(1, ref size)) {
-        size = _text3d ? 1 : 14;
+        size = _text3d ? 0.1 : 14;
       }
 
       if (!da.GetData(2, ref _color)) {
@@ -315,42 +318,42 @@ namespace GsaGH.Components {
         case GsaElement2dGoo e2d:
           id = e2d.Value.Ids[i];
           name = GeometryToString(e2d.Value.ApiElements[i].Name, e2d.Value.ApiElements[i].Type);
-          prop = Prop2dToString(e2d.Value.Prop2ds[i]);
-          mat = MaterialToString(e2d.Value.Prop2ds[i].Material);
+          prop = Prop2dToString(e2d.Value.Prop2ds?[i]);
+          mat = MaterialToString(e2d.Value.Prop2ds?[i].Material);
           break;
 
         case GsaElement3dGoo e3d:
           id = e3d.Value.Ids[i];
           name = GeometryToString(e3d.Value.ApiElements[i].Name, e3d.Value.ApiElements[i].Type);
-          prop = Prop3dToString(e3d.Value.Prop3ds[i]);
-          mat = MaterialToString(e3d.Value.Prop3ds[i].Material);
+          prop = Prop3dToString(e3d.Value.Prop3ds?[i]);
+          mat = MaterialToString(e3d.Value.Prop3ds?[i].Material);
           break;
 
         case GsaElement1dGoo e1d:
           id = e1d.Value.Id;
           name = GeometryToString(e1d.Value.ApiElement.Name, e1d.Value.ApiElement.Type);
           prop = SectionToString(e1d.Value.Section);
-          mat = MaterialToString(e1d.Value.Section.Material);
+          mat = MaterialToString(e1d.Value.Section?.Material);
           break;
 
         case GsaMember1dGoo m1d:
           id = m1d.Value.Id;
           name = GeometryToString(m1d.Value.ApiMember.Name, m1d.Value.ApiMember.Type);
           prop = SectionToString(m1d.Value.Section);
-          mat = MaterialToString(m1d.Value.Section.Material);
+          mat = MaterialToString(m1d.Value.Section?.Material);
           break;
 
         case GsaMember2dGoo m2d:
           id = m2d.Value.Id;
           name = GeometryToString(m2d.Value.ApiMember.Name, m2d.Value.ApiMember.Type);
           prop = Prop2dToString(m2d.Value.Prop2d);
-          mat = MaterialToString(m2d.Value.Prop2d.Material);
+          mat = MaterialToString(m2d.Value.Prop2d?.Material);
           break;
         case GsaMember3dGoo m3d:
           id = m3d.Value.Id;
           name = GeometryToString(m3d.Value.ApiMember.Name, string.Empty);
           prop = Prop3dToString(m3d.Value.Prop3d);
-          mat = MaterialToString(m3d.Value.Prop3d.Material);
+          mat = MaterialToString(m3d.Value.Prop3d?.Material);
           break;
 
         default:
@@ -376,6 +379,10 @@ namespace GsaGH.Components {
     }
 
     private static string MaterialToString(GsaMaterial mat) {
+      if (mat == null) {
+        return string.Empty;
+      }
+
       string s = string.Empty;
       s += mat.MaterialType.ToString();
       AddSeparator(ref s);
@@ -394,6 +401,10 @@ namespace GsaGH.Components {
     }
 
     private static string Prop2dToString(GsaProperty2d prop) {
+      if (prop == null) {
+        return string.Empty;
+      }
+
       string s = string.Empty;
       s += prop.Id > 0 ? $"PA{prop.Id}" : string.Empty;
       if (prop.IsReferencedById) {
@@ -411,6 +422,10 @@ namespace GsaGH.Components {
     }
 
     private static string Prop3dToString(GsaProperty3d prop) {
+      if (prop == null) {
+        return string.Empty;
+      }
+
       string s = string.Empty;
       s += prop.Id > 0 ? $"PV{prop.Id}" : string.Empty;
       AddSeparator(ref s);
@@ -419,6 +434,10 @@ namespace GsaGH.Components {
     }
 
     private static string SectionToString(GsaSection section) {
+      if (section == null) {
+        return string.Empty;
+      }
+
       string s = string.Empty;
       s += section.Id > 0 ? $"PB{section.Id}" : string.Empty;
       AddSeparator(ref s);

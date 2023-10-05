@@ -53,6 +53,34 @@ namespace IntegrationTests.ExampleFiles {
     }
 
     [Fact]
+    public void CombinationStress3dTest() {
+      IGH_Param param = Helper.FindParameter(Document(), "Comb3dStress");
+      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
+      var output5 = (GH_Number)param.VolatileData.get_Branch(0)[4];
+      var output6 = (GH_Number)param.VolatileData.get_Branch(0)[5];
+      Assert.Equal(5.52, output1.Value, 1);
+      Assert.Equal(5.24, output2.Value, 1);
+      Assert.Equal(24.3, output3.Value, 1);
+      Assert.Equal(0, output4.Value, 1);
+      Assert.Equal(3.0, output5.Value, 1);
+      Assert.Equal(5.44, output6.Value, 1);
+    }
+
+    [Fact]
+    public void CombinationDisplament3dTest() {
+      IGH_Param param = Helper.FindParameter(Document(), "Comb3dDisplacement");
+      var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
+      Assert.Equal(0.52031, output1.Value, 4);
+      Assert.Equal(0.32057, output2.Value, 4);
+      Assert.Equal(0.585575, output3.Value, 4);
+    }
+
+    [Fact]
     public void NoRuntimeErrorsTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
     }

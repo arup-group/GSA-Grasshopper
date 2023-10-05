@@ -1,15 +1,9 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using GsaGHTests.Helpers;
+﻿using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
 using Xunit;
-using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]

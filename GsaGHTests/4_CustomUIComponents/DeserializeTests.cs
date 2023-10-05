@@ -43,12 +43,15 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(AnalyseModel))]
     //Results
     [InlineData(typeof(BeamStrainEnergyDensity))]
+    //Display
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Contour3dResults))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(ReactionForceDiagrams))]
+    [InlineData(typeof(AnnotateDetailed))]
+    [InlineData(typeof(LoadDiagrams))]
     //Graveyard
     [InlineData(typeof(CreateBool6_OBSOLETE))]
     [InlineData(typeof(CreateGridPlane_OBSOLETE))]

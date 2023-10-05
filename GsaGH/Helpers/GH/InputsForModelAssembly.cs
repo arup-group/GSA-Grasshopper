@@ -22,20 +22,26 @@ namespace GsaGH.Helpers.GH {
 
           switch (ghTyp.Value) {
             case GsaAnalysisTaskGoo goo:
-              inTasks.Add(goo.Value.Duplicate());
+              inTasks.Add(goo.Value);
               break;
 
             case GsaCombinationCaseGoo caseGoo:
-              inComb.Add(caseGoo.Value.Duplicate());
+              inComb.Add(caseGoo.Value);
               break;
 
             default: {
                 string type = ghTyp.Value.GetType().ToString();
+                type = type.Replace("GsaGH.Parameters.Gsa", string.Empty);
                 type = type.Replace("GsaGH.Parameters.", string.Empty);
                 type = type.Replace("Goo", string.Empty);
+                string analysisCase = string.Empty;
+                if (type == "AnalysisCase") {
+                  analysisCase = "\nAnalysisCase should be added through an Analysis Task and " +
+                    "cannot be added directly in a model";
+                }
                 owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
                   + " to Analysis Task or Combination Case");
-                return null;
+                break;
               }
           }
         }
@@ -116,7 +122,7 @@ namespace GsaGH.Helpers.GH {
                 owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
                   + Environment.NewLine
                   + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
-                return null;
+                break;
               }
           }
         }
@@ -198,8 +204,8 @@ namespace GsaGH.Helpers.GH {
                 type = type.Replace("GsaGH.Parameters.", string.Empty);
                 type = type.Replace("Goo", string.Empty);
                 owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
-                  + " to Load or GridPlaneSurface");
-                return null;
+                  + " to Load, LoadCase or GridPlaneSurface");
+                break;
               }
           }
         }
@@ -212,6 +218,10 @@ namespace GsaGH.Helpers.GH {
           inGps = null;
         }
 
+        if (!(inCases.Count > 0)) {
+          inCases = null;
+        }
+
         return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
           (inLoads, inGps, inCases);
       }
@@ -222,70 +232,6 @@ namespace GsaGH.Helpers.GH {
 
       return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
         (null, null, null);
-    }
-
-    internal static Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetMembers(
-      GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
-      var ghTypes = new List<GH_ObjectWrapper>();
-      var inMem1ds = new List<GsaMember1d>();
-      var inMem2ds = new List<GsaMember2d>();
-      var inMem3ds = new List<GsaMember3d>();
-      if (da.GetDataList(inputid, ghTypes)) {
-        for (int i = 0; i < ghTypes.Count; i++) {
-          GH_ObjectWrapper ghTyp = ghTypes[i];
-          if (ghTyp == null) {
-            owner.AddRuntimeWarning(
-              "Geometry input (index: " + i + ") is null and has been ignored");
-            continue;
-          }
-
-          switch (ghTyp.Value) {
-            case GsaMember1dGoo member1dGoo: {
-                inMem1ds.Add(member1dGoo.Value);
-                break;
-              }
-            case GsaMember2dGoo member2dGoo: {
-                inMem2ds.Add(member2dGoo.Value);
-                break;
-              }
-            case GsaMember3dGoo member3dGoo: {
-                inMem3ds.Add(member3dGoo.Value);
-                break;
-              }
-            default: {
-                string type = ghTyp.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", string.Empty);
-                type = type.Replace("Goo", string.Empty);
-                owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
-                  + Environment.NewLine
-                  + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
-                return null;
-              }
-          }
-        }
-
-        if (!(inMem1ds.Count > 0)) {
-          inMem1ds = null;
-        }
-
-        if (!(inMem2ds.Count > 0)) {
-          inMem2ds = null;
-        }
-
-        if (!(inMem3ds.Count > 0)) {
-          inMem3ds = null;
-        }
-
-        return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(inMem1ds,
-          inMem2ds, inMem3ds);
-      }
-
-      if (!isOptional) {
-        owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
-          + " failed to collect data!");
-      }
-
-      return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null);
     }
 
     internal static (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) GetModelsAndLists(
@@ -320,9 +266,21 @@ namespace GsaGH.Helpers.GH {
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
               owner.AddRuntimeError("Unable to convert GSA input parameter of type " + type
-                + " to GsaModel or GsaList");
-              return (null, null, null);
+                + " to GsaModel, GsaList or GridLine");
+              break;
           }
+        }
+
+        if (!(inModels.Count > 0)) {
+          inModels = null;
+        }
+
+        if (!(inLists.Count > 0)) {
+          inLists = null;
+        }
+
+        if (!(inGridLines.Count > 0)) {
+          inGridLines = null;
         }
 
         return (inModels, inLists, inGridLines);
@@ -375,7 +333,7 @@ namespace GsaGH.Helpers.GH {
                 type = type.Replace("Goo", string.Empty);
                 owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
                   + " to GsaSection or GsaProp2d");
-                return null;
+                break;
               }
           }
         }

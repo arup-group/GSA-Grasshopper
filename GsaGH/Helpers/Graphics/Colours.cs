@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Grasshopper.GUI.Gradient;
 using GsaAPI;
@@ -9,6 +10,7 @@ namespace GsaGH.Helpers.Graphics {
   ///   Colour class holding the main colours used in colour scheme.
   ///   Make calls to this class to be able to easy update colours.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   public class Colours {
     public static Brush ActiveBrush => new SolidBrush(ActiveColour);
     public static Color ActiveColour => GsaDarkBlue;

@@ -1,12 +1,10 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using Oasys.Taxonomy.Profiles;
 using OasysGH.Components;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
-using static Grasshopper.Kernel.Special.GH_Panel;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]

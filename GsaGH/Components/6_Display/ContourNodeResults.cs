@@ -186,6 +186,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _displacement;
                 _selectedItems[0] = _dropDownItems[0][0];
                 _selectedItems[1] = _dropDownItems[1][3];
+                _disp = DisplayValue.ResXyz;
                 Mode1Clicked();
               }
 
@@ -196,6 +197,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _reaction;
                 _selectedItems[0] = _dropDownItems[0][1];
                 _selectedItems[1] = _dropDownItems[1][3];
+                _disp = DisplayValue.ResXyz;
                 Mode2Clicked();
               }
 
@@ -206,6 +208,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _footfall;
                 _selectedItems[0] = _dropDownItems[0][2];
                 _selectedItems[1] = _dropDownItems[1][0];
+                _disp = DisplayValue.X;
                 Mode3Clicked();
               }
 
@@ -451,7 +454,7 @@ namespace GsaGH.Components {
           return;
       }
 
-      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -821,7 +824,8 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 0, resultType, _disp.ToString());
     }
 
-    private void CreateGradient() {
+    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
+      doc ??= Instances.ActiveCanvas.Document;
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -843,11 +847,12 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
-      Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      doc.AddObject(gradient, false);
       Params.Input[2].RemoveAllSources();
       Params.Input[2].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
+      return gradient;
     }
 
     private void Mode1Clicked() {
@@ -898,36 +903,36 @@ namespace GsaGH.Components {
       Attributes.PerformLayout();
     }
 
-    private void ShowLegend(object sender, EventArgs e) {
+    internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
     }
 
-    private void UpdateForce(string unit) {
+    internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateMoment(string unit) {
+    internal void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLegendScale() {
+    internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       } catch (Exception e) {
@@ -941,7 +946,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
       _scaleLegendTxt = menuitem.Text;
     }
   }

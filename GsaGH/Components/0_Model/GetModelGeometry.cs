@@ -9,22 +9,17 @@ using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Newtonsoft.Json;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Serialization.JsonNet;
-using Rhino.Commands;
 using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -434,7 +429,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          nodeList = nodeListGoo.Value.Definition;
+          nodeList = Inputs.GetNodeListDefinition(this, data, 1, modelGoo.Value);
           nodeFilterHasInput = true;
         }
 
@@ -727,7 +722,7 @@ namespace GsaGH.Components {
       return results;
     }
 
-    private void GraftModeClicked(object sender, EventArgs e) {
+    internal void GraftModeClicked(object sender, EventArgs e) {
       if (_mode == FoldMode.Graft) {
         return;
       }
@@ -741,7 +736,7 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    private void ListModeClicked(object sender, EventArgs e) {
+    internal void ListModeClicked(object sender, EventArgs e) {
       if (_mode == FoldMode.List) {
         return;
       }

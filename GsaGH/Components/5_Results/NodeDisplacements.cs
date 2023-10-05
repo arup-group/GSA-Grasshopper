@@ -127,7 +127,7 @@ namespace GsaGH.Components {
 
           case GsaResultGoo goo:
             result = goo.Value;
-            nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
+            nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
 
           default:

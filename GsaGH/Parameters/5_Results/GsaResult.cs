@@ -412,16 +412,6 @@ namespace GsaGH.Parameters {
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
     }
 
-    internal GsaResult(GsaModel model, CombinationCaseResult result, int caseId, int permutation) {
-      Model = model;
-      CombinationCaseResult = result;
-      Type = CaseType.Combination;
-      CaseId = caseId;
-      SelectedPermutationIds = new List<int>() {
-        permutation,
-      };
-    }
-
     public GsaResult Duplicate() {
       return this;
     }
