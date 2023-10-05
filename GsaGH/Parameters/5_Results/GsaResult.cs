@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Parameters._5_Results;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
