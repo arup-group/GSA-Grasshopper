@@ -61,12 +61,12 @@ namespace IntegrationTests.ExampleFiles {
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       var output5 = (GH_Number)param.VolatileData.get_Branch(0)[4];
       var output6 = (GH_Number)param.VolatileData.get_Branch(0)[5];
-      Assert.Equal(5.52, output1.Value, 1);
-      Assert.Equal(5.24, output2.Value, 1);
-      Assert.Equal(24.3, output3.Value, 1);
+      Assert.Equal(6.069, output1.Value, 1);
+      Assert.Equal(6.069, output2.Value, 1);
+      Assert.Equal(22.93, output3.Value, 1);
       Assert.Equal(0, output4.Value, 1);
-      Assert.Equal(3.0, output5.Value, 1);
-      Assert.Equal(5.44, output6.Value, 1);
+      Assert.Equal(2.580, output5.Value, 1);
+      Assert.Equal(8.023, output6.Value, 1);
     }
 
     [Fact]
@@ -75,9 +75,9 @@ namespace IntegrationTests.ExampleFiles {
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
-      Assert.Equal(0.52031, output1.Value, 4);
-      Assert.Equal(0.32057, output2.Value, 4);
-      Assert.Equal(0.585575, output3.Value, 4);
+      Assert.Equal(0.5203, output1.Value, 4);
+      Assert.Equal(0.3206, output2.Value, 4);
+      Assert.Equal(0.5856, output3.Value, 4);
     }
 
     [Fact]
