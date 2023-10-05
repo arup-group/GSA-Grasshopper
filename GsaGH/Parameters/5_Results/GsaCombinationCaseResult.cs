@@ -173,21 +173,15 @@ namespace GsaGH.Parameters {
       ComboNodeResults { get; set; }
       = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
     internal GsaModel Model { get; set; }
-    /// <summary>
-    ///   User set permutation ID. If -1 => return all.
-    /// </summary>
-    internal List<int> SelectedPermutationIds { get; set; }
-    internal CaseType Type { get; set; }
 
     public GsaCombinationCaseResult() { }
 
-    internal GsaCombinationCaseResult(
-      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+    internal GsaCombinationCaseResult(GsaModel model, CombinationCaseResult result, int caseId,
+      int permutation) {
       Model = model;
       CombinationCaseResult = result;
-      Type = CaseType.Combination;
       CaseId = caseId;
-      SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
+      Permutation = permutation;
     }
 
     public GsaResultsValues GetNodeDisplacementValues(string nodelist, LengthUnit lengthUnit) {

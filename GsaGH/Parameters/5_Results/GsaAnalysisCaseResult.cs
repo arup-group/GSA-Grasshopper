@@ -56,6 +56,7 @@ namespace GsaGH.Parameters {
     internal AnalysisCaseResult AnalysisCaseResult { get; set; }
     internal int CaseId { get; set; }
     internal string CaseName { get; set; }
+    internal GsaModel Model { get; set; }
 
     public CaseType Type { get; } = CaseType.AnalysisCase;
 
@@ -66,7 +67,6 @@ namespace GsaGH.Parameters {
     internal GsAnalysisCaseResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
       AnalysisCaseResult = result;
-      Type = CaseType.AnalysisCase;
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
     }
