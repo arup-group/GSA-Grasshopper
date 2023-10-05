@@ -1,10 +1,14 @@
-﻿using OasysUnits;
+﻿using System.Globalization;
+using System;
+using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   internal static class GridLoadHelper {
+    private static readonly char ListSeparator = Convert.ToChar(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+
     internal static string CreateDefinition(Point3dList controlPoints, Plane plane) {
       string desc = string.Empty;
       for (int i = 0; i < controlPoints.Count; i++) {
@@ -32,8 +36,8 @@ namespace GsaGH.Parameters {
       foreach (string ptStr in pts) {
         if (ptStr != string.Empty) {
           string pt = ptStr.Replace("(", string.Empty).Trim();
-          var x = new Length(double.Parse(pt.Split(',')[0]), lengthUnit);
-          var y = new Length(double.Parse(pt.Split(',')[1]), lengthUnit);
+          var x = new Length(double.Parse(pt.Split(ListSeparator)[0]), lengthUnit);
+          var y = new Length(double.Parse(pt.Split(ListSeparator)[1]), lengthUnit);
           var point = new Point3d(x.As(desiredUnit), y.As(desiredUnit), 0);
           point.Transform(map);
           points.Add(point);
