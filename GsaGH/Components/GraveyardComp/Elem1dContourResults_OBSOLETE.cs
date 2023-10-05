@@ -405,7 +405,7 @@ namespace GsaGH.Components {
 
       #endregion
 
-      var res = new GsaResultValues();
+      var res = new GsaResultsValues();
 
       switch (_mode) {
         case FoldMode.Displacement:

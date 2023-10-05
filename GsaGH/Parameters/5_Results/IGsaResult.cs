@@ -4,7 +4,7 @@ namespace GsaGH.Parameters {
   public interface IGsaResult {
     CaseType Type { get; }
 
-    GsaResultValues GetNodeDisplacementValues(string nodelist, LengthUnit lengthUnit);
+    GsaResultsValues GetNodeDisplacementValues(string nodelist, LengthUnit lengthUnit);
 
     // etc.
   }

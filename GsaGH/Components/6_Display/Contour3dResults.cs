@@ -445,7 +445,7 @@ namespace GsaGH.Components {
 
       #endregion
 
-      var res = new GsaResultValues();
+      var res = new GsaResultsValues();
       switch (_mode) {
         case FoldMode.Displacement:
           res = result.Element3DDisplacementValues(elementlist, _lengthResultUnit)[0];
@@ -790,7 +790,7 @@ namespace GsaGH.Components {
       da.SetDataList(2, ts);
 
       var resultType
-        = (GsaResultValues.ResultType)Enum.Parse(typeof(GsaResultValues.ResultType),
+        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
           _mode.ToString());
       PostHog.Result(result.Type, 3, resultType, _disp.ToString());
     }

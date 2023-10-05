@@ -127,7 +127,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultValues> vals = result.Element3DStressValues(elementlist, _stresshUnit);
+        List<GsaResultsValues> vals = result.Element3DStressValues(elementlist, _stresshUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -202,7 +202,7 @@ namespace GsaGH.Components {
       da.SetDataTree(4, outYz);
       da.SetDataTree(5, outZx);
 
-      PostHog.Result(result.Type, 3, GsaResultValues.ResultType.Stress);
+      PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Stress);
     }
 
     protected override void UpdateUIFromSelectedItems() {

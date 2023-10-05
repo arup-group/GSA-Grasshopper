@@ -609,8 +609,8 @@ namespace GsaGH.Components {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
 
-      var res = new GsaResultValues();
-      var resShear = new GsaResultValues();
+      var res = new GsaResultsValues();
+      var resShear = new GsaResultsValues();
       switch (_mode) {
         case FoldMode.Displacement:
           res = result.Element2DDisplacementValues(elementlist, _lengthResultUnit)[0];
@@ -1080,7 +1080,7 @@ namespace GsaGH.Components {
       da.SetDataList(2, ts);
 
       var resultType
-        = (GsaResultValues.ResultType)Enum.Parse(typeof(GsaResultValues.ResultType),
+        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
           _mode.ToString());
       PostHog.Result(result.Type, 2, resultType, _disp.ToString());
     }

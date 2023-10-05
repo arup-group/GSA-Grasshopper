@@ -193,9 +193,9 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultValues> vals
+        List<GsaResultsValues> vals
           = result.Element2DForceValues(elementlist, _forceUnit, _momentUnit);
-        List<GsaResultValues> valsShear = result.Element2DShearValues(elementlist, _forceUnit);
+        List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, _forceUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -295,7 +295,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outYy);
       da.SetDataTree(7, outXxyy);
 
-      PostHog.Result(result.Type, 2, GsaResultValues.ResultType.Force);
+      PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Force);
       da.SetDataTree(8, outWaxx);
       da.SetDataTree(9, outWayy);
     }

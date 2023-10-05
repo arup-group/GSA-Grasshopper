@@ -155,7 +155,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        (List<GsaResultValues> vals, List<int> sortedIDs)
+        (List<GsaResultsValues> vals, List<int> sortedIDs)
           = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -233,7 +233,7 @@ namespace GsaGH.Components {
       da.SetDataTree(7, outRotXyz);
       da.SetDataTree(8, outIDs);
 
-      PostHog.Result(result.Type, 0, GsaResultValues.ResultType.Force);
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force);
     }
 
     protected override void UpdateUIFromSelectedItems() {

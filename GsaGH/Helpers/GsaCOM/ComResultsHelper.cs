@@ -18,19 +18,19 @@ namespace GsaGH.Helpers.GsaApi {
       _2D,
     }
 
-    internal static GsaResultValues GetElement1DFootfallResultValues(
-      string elemList, GsaModel model, GsaResultValues nodeFootfallResultValues) {
+    internal static GsaResultsValues GetElement1DFootfallResultValues(
+      string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) {
       return GetElementFootfallResults(elemList, model, nodeFootfallResultValues,
         ElementDimension._1D);
     }
 
-    internal static GsaResultValues GetElement2DFootfallResultValues(
-      string elemList, GsaModel model, GsaResultValues nodeFootfallResultValues) {
+    internal static GsaResultsValues GetElement2DFootfallResultValues(
+      string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues) {
       return GetElementFootfallResults(elemList, model, nodeFootfallResultValues,
         ElementDimension._2D);
     }
 
-    internal static GsaResultValues GetNodeFootfallResultValues(
+    internal static GsaResultsValues GetNodeFootfallResultValues(
       string nodelist, GsaModel model, FootfallResultType type, int caseId) {
       if (model == null) {
         return null;
@@ -49,8 +49,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       gsa.Output_Init(0, "default", aCase + caseId, dataRef, 0);
 
-      var r = new GsaResultValues {
-        Type = GsaResultValues.ResultType.Footfall,
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Footfall,
       };
 
       foreach (int nodeId in nodes.Keys) {
@@ -68,8 +68,8 @@ namespace GsaGH.Helpers.GsaApi {
       return r;
     }
 
-    private static GsaResultValues GetElementFootfallResults(
-      string elemList, GsaModel model, GsaResultValues nodeFootfallResultValues,
+    private static GsaResultsValues GetElementFootfallResults(
+      string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues,
       ElementDimension typ) {
       if (model == null) {
         return null;
@@ -77,8 +77,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       ReadOnlyDictionary<int, Element> elements = model.Model.Elements(elemList);
 
-      var r = new GsaResultValues {
-        Type = GsaResultValues.ResultType.Footfall,
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Footfall,
       };
 
       foreach (int elemId in elements.Keys) {

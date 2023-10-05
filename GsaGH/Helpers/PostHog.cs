@@ -70,7 +70,7 @@ namespace GsaGH.Helpers {
     }
 
     internal static void Result(
-      CaseType caseType, int dimension, GsaResultValues.ResultType resultType,
+      CaseType caseType, int dimension, GsaResultsValues.ResultType resultType,
       string subType = "-") {
       const string eventName = "Result";
       var properties = new Dictionary<string, object>() {

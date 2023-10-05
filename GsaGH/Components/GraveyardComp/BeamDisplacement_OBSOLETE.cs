@@ -146,7 +146,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        List<GsaResultValues> vals
+        List<GsaResultsValues> vals
           = result.Element1DDisplacementValues(elementlist, positionsCount, 0, _lengthUnit);
 
         List<int> permutations = result.SelectedPermutationIds is null ? new List<int>() {
@@ -227,7 +227,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
 
-      PostHog.Result(result.Type, 1, GsaResultValues.ResultType.Displacement);
+      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {

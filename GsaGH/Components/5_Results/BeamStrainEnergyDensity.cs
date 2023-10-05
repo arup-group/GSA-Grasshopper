@@ -170,7 +170,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultValues> vals = _average ?
+        List<GsaResultsValues> vals = _average ?
           result.Element1DAverageStrainEnergyDensityValues(elementlist, 0, _energyUnit) :
           result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, 0, _energyUnit);
 
@@ -207,7 +207,7 @@ namespace GsaGH.Components {
 
       da.SetDataTree(0, outTransX);
 
-      PostHog.Result(result.Type, 1, GsaResultValues.ResultType.StrainEnergy);
+      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
     }
 
     protected override void UpdateUIFromSelectedItems() {

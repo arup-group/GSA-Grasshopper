@@ -155,9 +155,9 @@ namespace GsaGH.Components {
             return;
         }
 
-        Tuple<List<GsaResultValues>, List<int>> resultgetter
+        Tuple<List<GsaResultsValues>, List<int>> resultgetter
           = result.SpringReactionForceValues(nodeList, _forceUnit, _momentUnit);
-        List<GsaResultValues> vals = resultgetter.Item1;
+        List<GsaResultsValues> vals = resultgetter.Item1;
         List<int> sortedIDs = resultgetter.Item2;
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -235,7 +235,7 @@ namespace GsaGH.Components {
       da.SetDataTree(7, outRotXyz);
       da.SetDataTree(8, outIDs);
 
-      PostHog.Result(result.Type, 0, GsaResultValues.ResultType.Force, "Spring");
+      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force, "Spring");
     }
 
     protected override void UpdateUIFromSelectedItems() {
