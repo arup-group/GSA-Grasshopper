@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GsaGH.Parameters._5_Results {
+namespace GsaGH.Parameters {
   public class GsaNodeDisplacement {
     internal Dictionary<string, GsaResultsValues> ACaseResultValues { get; private set; }
       = new Dictionary<string, GsaResultsValues>();
