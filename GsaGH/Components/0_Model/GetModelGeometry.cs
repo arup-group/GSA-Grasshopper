@@ -722,7 +722,7 @@ namespace GsaGH.Components {
       return results;
     }
 
-    private void GraftModeClicked(object sender, EventArgs e) {
+    internal void GraftModeClicked(object sender, EventArgs e) {
       if (_mode == FoldMode.Graft) {
         return;
       }
@@ -736,7 +736,7 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    private void ListModeClicked(object sender, EventArgs e) {
+    internal void ListModeClicked(object sender, EventArgs e) {
       if (_mode == FoldMode.List) {
         return;
       }
