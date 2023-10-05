@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System;
+﻿using GsaAPI;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
@@ -7,7 +6,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   internal static class GridLoadHelper {
-    private static readonly char ListSeparator = Convert.ToChar(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+    internal static char ListSeparator = GetListSeparator();
 
     internal static string CreateDefinition(Point3dList controlPoints, Plane plane) {
       string desc = string.Empty;
@@ -66,6 +65,14 @@ namespace GsaGH.Parameters {
       }
       definition = definition.Replace("(m)", string.Empty);
       return (lengthUnit, definition);
+    }
+
+    internal static char GetListSeparator() {
+      // this is a hack, because GSA doesn´t use CultureInfo.CurrentCulture.TextInfo.ListSeparator
+      var gridLineLoad = new GridLineLoad {
+        PolyLineDefinition = "(0, 0) (1, 0) (m)"
+      };
+      return gridLineLoad.PolyLineDefinition[2];
     }
   }
 }

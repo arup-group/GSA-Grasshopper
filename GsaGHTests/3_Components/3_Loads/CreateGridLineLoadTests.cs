@@ -21,7 +21,7 @@ namespace GsaGHTests.Components.Loads {
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       var load = (GsaGridLineLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
-      Assert.Equal("(10,5) (20,6)(m)", load.ApiLoad.PolyLineDefinition);
+      Assert.Equal("(10" + GridLoadHelper.ListSeparator + "5) (20" + GridLoadHelper.ListSeparator + "6)(m)", load.ApiLoad.PolyLineDefinition);
       Assert.Equal(0, load.ApiLoad.PolyLineReference);
       Assert.Equal("myGridLineLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.ValueAtStart);
