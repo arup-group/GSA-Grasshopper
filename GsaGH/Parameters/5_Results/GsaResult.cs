@@ -936,7 +936,7 @@ namespace GsaGH.Parameters {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
           }
 
-          AnalysisCaseNodeDisplacements.AddAnalysisCaseValue(nodelist,
+          AnalysisCaseNodeDisplacements.AddAnalysisCaseValues(nodelist,
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 

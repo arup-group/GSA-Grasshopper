@@ -9,7 +9,7 @@ namespace GsaGH.Parameters {
     internal Dictionary<string, GsaResultsValues> ACaseResultValues { get; private set; }
       = new Dictionary<string, GsaResultsValues>();
 
-    internal void AddAnalysisCaseValue(string nodelist, GsaResultsValues values) {
+    internal void AddAnalysisCaseValues(string nodelist, GsaResultsValues values) {
       ACaseResultValues.Add(nodelist, values);
     }
   }
