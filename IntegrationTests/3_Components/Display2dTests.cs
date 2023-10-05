@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
-  public class DisplayTests {
+  public class Display2dTests {
     public static GH_Document Document {
       get {
         if (document == null) {
