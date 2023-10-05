@@ -9,7 +9,7 @@ using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
-  internal class GsaResultsValues {
+  public class GsaResultValues {
     internal enum ResultType {
       Displacement,
       Force,
@@ -47,7 +47,7 @@ namespace GsaGH.Parameters {
       XyzResults { get; set; }
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
 
-    internal GsaResultsValues() { }
+    internal GsaResultValues() { }
 
     internal void CoordinateTransformationTo(Plane plane, Model model) {
       // coordinate transformation

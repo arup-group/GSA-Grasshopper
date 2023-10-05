@@ -68,13 +68,13 @@ namespace GsaGH.Components {
 
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
-      GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
-      GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);
+      GsaResultValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
+      GsaResultValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);
 
       da.SetData(0, res.DmaxX.Value);
       da.SetData(1, tra.DmaxX.Value);
 
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
+      PostHog.Result(result.Type, 0, GsaResultValues.ResultType.Footfall, "Max");
     }
   }
 }

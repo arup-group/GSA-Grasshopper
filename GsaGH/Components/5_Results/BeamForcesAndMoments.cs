@@ -165,7 +165,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultsValues> vals
+        List<GsaResultValues> vals
           = result.Element1DForceValues(elementlist, positionsCount, 0, _forceUnit, _momentUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -249,7 +249,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
 
-      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Force);
+      PostHog.Result(result.Type, 1, GsaResultValues.ResultType.Force);
     }
 
     protected override void UpdateUIFromSelectedItems() {

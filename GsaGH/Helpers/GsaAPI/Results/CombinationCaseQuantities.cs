@@ -24,10 +24,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="momentUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement1DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
       ForceUnit forceUnit, MomentUnit momentUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -38,8 +38,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Force,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Force,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -77,10 +77,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <param name="average"></param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement1DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
       EnergyUnit energyUnit, List<int> permutations, bool average = false) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -91,8 +91,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.StrainEnergy,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.StrainEnergy,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -129,10 +129,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="resultLengthUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement1DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
       LengthUnit resultLengthUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -143,8 +143,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Displacement,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Displacement,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -181,10 +181,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="stressUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement2DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
       PressureUnit stressUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -195,8 +195,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Stress,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Stress,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -237,10 +237,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="forceUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement2DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
       ForcePerLengthUnit forceUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -251,8 +251,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Shear,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Shear,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -287,10 +287,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="momentUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement2DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
       ForcePerLengthUnit forceUnit, ForceUnit momentUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -301,8 +301,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Force,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Force,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -352,10 +352,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="resultLengthUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement2DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
       LengthUnit resultLengthUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -366,8 +366,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Displacement,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Displacement,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -407,10 +407,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="lengthUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement3DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement3DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element3DResult>> globalResults,
       LengthUnit lengthUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -421,8 +421,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Displacement,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Displacement,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -454,10 +454,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="stressUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement3DResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetElement3DResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<Element3DResult>> globalResults,
       PressureUnit stressUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -468,8 +468,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Stress,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Stress,
         };
 
         Parallel.ForEach(globalResults.Keys, key => {
@@ -511,10 +511,10 @@ namespace GsaGH.Helpers.GsaApi {
     ///   include results for these IDs even if they are all zero
     /// </param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeReactionForceResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetNodeReactionForceResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults, ForceUnit forceUnit,
       MomentUnit momentUnit, List<int> permutations, ConcurrentBag<int> supportnodeIDs = null) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -525,8 +525,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Force,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Force,
         };
 
         Parallel.ForEach(globalResults.Keys, nodeId => {
@@ -563,10 +563,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="resultLengthUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetNodeResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
       LengthUnit resultLengthUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -577,8 +577,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Displacement,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Displacement,
         };
 
         Parallel.ForEach(globalResults.Keys, nodeId => {
@@ -613,10 +613,10 @@ namespace GsaGH.Helpers.GsaApi {
     ///   include results for these IDs even if they are all zero
     /// </param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeSpringForceResultValues(
+    internal static ConcurrentDictionary<int, GsaResultValues> GetNodeSpringForceResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults, ForceUnit forceUnit,
       MomentUnit momentUnit, List<int> permutations, ConcurrentBag<int> supportnodeIDs = null) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaResultValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -627,8 +627,8 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
-          Type = GsaResultsValues.ResultType.Force,
+        var r = new GsaResultValues {
+          Type = GsaResultValues.ResultType.Force,
         };
 
         Parallel.ForEach(globalResults.Keys, nodeId => {

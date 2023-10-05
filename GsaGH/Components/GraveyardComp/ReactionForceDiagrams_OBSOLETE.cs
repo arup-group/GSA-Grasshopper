@@ -193,9 +193,9 @@ namespace GsaGH.Components {
       result = (ghObject.Value as GsaResultGoo).Value;
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
-      Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
+      Tuple<List<GsaResultValues>, List<int>> reactionForceValues
         = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
-      GsaResultsValues forceValues = reactionForceValues.Item1[0];
+      GsaResultValues forceValues = reactionForceValues.Item1[0];
       nodeList = string.Join(" ", reactionForceValues.Item2);
 
       LengthUnit lengthUnit = GetLengthUnit(result);
@@ -219,11 +219,11 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da);
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force,
+      PostHog.Result(result.Type, 0, GsaResultValues.ResultType.Force,
         _selectedDisplayValue.ToString());
     }
 
-    private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {
+    private double ComputeAutoScale(GsaResultValues forceValues, BoundingBox bbox) {
       double maxValue = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
@@ -266,7 +266,7 @@ namespace GsaGH.Components {
     }
 
     private (GsaVectorDiagram diagram, IQuantity quantity) CreateReactionForceVector(
-      KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale) {
+      KeyValuePair<int, GsaNodeGoo> node, GsaResultValues forceValues, double scale) {
       int nodeId = node.Key;
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = forceValues.XyzResults;

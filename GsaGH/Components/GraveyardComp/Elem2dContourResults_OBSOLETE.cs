@@ -471,8 +471,8 @@ namespace GsaGH.Components {
 
       #endregion
 
-      var res = new GsaResultsValues();
-      var resShear = new GsaResultsValues();
+      var res = new GsaResultValues();
+      var resShear = new GsaResultValues();
       switch (_mode) {
         case FoldMode.Displacement:
           res = result.Element2DDisplacementValues(elementlist, _lengthUnit)[0];

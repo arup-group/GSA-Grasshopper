@@ -479,16 +479,16 @@ namespace GsaGH.Components {
 
       #endregion
 
-      var res = new GsaResultsValues();
+      var res = new GsaResultValues();
       switch (_mode) {
         case FoldMode.Displacement:
-          Tuple<List<GsaResultsValues>, List<int>> nodedisp
+          Tuple<List<GsaResultValues>, List<int>> nodedisp
             = result.NodeDisplacementValues(nodeList, _lengthResultUnit);
           res = nodedisp.Item1[0];
           break;
 
         case FoldMode.Reaction:
-          Tuple<List<GsaResultsValues>, List<int>> resultgetter
+          Tuple<List<GsaResultValues>, List<int>> resultgetter
             = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
           res = resultgetter.Item1[0];
           nodeList = string.Join(" ", resultgetter.Item2);
@@ -818,9 +818,9 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ?
-        GsaResultsValues.ResultType.Force :
-        (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
+      GsaResultValues.ResultType resultType = _mode == FoldMode.Reaction ?
+        GsaResultValues.ResultType.Force :
+        (GsaResultValues.ResultType)Enum.Parse(typeof(GsaResultValues.ResultType),
           _mode.ToString());
       PostHog.Result(result.Type, 0, resultType, _disp.ToString());
     }
