@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Parameters._5_Results;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
@@ -139,8 +140,8 @@ namespace GsaGH.Parameters {
     ///   Append to this dictionary to chache results
     ///   key = elementList
     /// </summary>
-    internal Dictionary<string, GsaResultsValues> ACaseNodeDisplacementValues { get; set; }
-      = new Dictionary<string, GsaResultsValues>();
+    internal GsaNodeDisplacement ACaseNodeDisplacementValues { get; set; }
+      = new GsaNodeDisplacement();
     /// <summary>
     ///   Analysis Case Node Footfall Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -931,17 +932,17 @@ namespace GsaGH.Parameters {
       }
 
       if (Type == CaseType.AnalysisCase) {
-        if (!ACaseNodeDisplacementValues.ContainsKey(nodelist)) {
+        if (!ACaseNodeDisplacementValues.ACaseResultValues.ContainsKey(nodelist)) {
           if (!ACaseNodeResults.ContainsKey(nodelist)) {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
           }
 
-          ACaseNodeDisplacementValues.Add(nodelist,
+          ACaseNodeDisplacementValues.AddACaseValue(nodelist,
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 
         return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
-          ACaseNodeDisplacementValues[nodelist],
+          ACaseNodeDisplacementValues.ACaseResultValues[nodelist],
         }, Model.Model.Nodes(nodelist).Keys.ToList());
       }
 
