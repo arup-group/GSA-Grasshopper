@@ -45,7 +45,7 @@ namespace GsaGH.Parameters {
 
 
 
-    internal Dictionary<int, GsaResultValues> ACaseNodeDisplacementValues { get; set; } = new Dictionary<int, GsaResultValues>();
+    internal Dictionary<int, GsaResultValues> NodeDisplacementValues { get; set; } = new Dictionary<int, GsaResultValues>();
 
 
 
@@ -57,7 +57,9 @@ namespace GsaGH.Parameters {
     internal int CaseId { get; set; }
     internal string CaseName { get; set; }
 
-    internal CaseType Type { get; set; }
+    public CaseType Type { get; } = CaseType.AnalysisCase;
+
+    CaseType IGsaResult.Type => throw new NotImplementedException();
 
     public GsAnalysisCaseResult() { }
 
@@ -69,22 +71,20 @@ namespace GsaGH.Parameters {
       CaseName = model.Model.AnalysisCaseName(CaseId);
     }
 
-
-
-    public GsaResultValues GetNodeDisplacements(string nodelist, LengthUnit lengthUnit) {
+    public GsaResultValues GetNodeDisplacementValues(string nodelist, LengthUnit lengthUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
       }
-        if (!ACaseNodeDisplacementValues.ContainsKey(nodelist)) {
+        if (!NodeDisplacementValues.ContainsKey(nodelist)) {
           if (!ACaseNodeResults.ContainsKey(nodelist)) {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
           }
 
-          ACaseNodeDisplacementValues.Add(nodelist,
+          NodeDisplacementValues.Add(nodelist,
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 
-      return ACaseNodeDisplacementValues[nodelist];
+      return NodeDisplacementValues[nodelist];
     }
 
 

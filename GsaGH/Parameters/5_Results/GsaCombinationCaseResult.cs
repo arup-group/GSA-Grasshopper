@@ -27,6 +27,10 @@ namespace GsaGH.Parameters {
   /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> has been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values</para>
   /// </summary>
   public class GsaCombinationCaseResult : IGsaResult {
+
+    public CaseType Type { get; } = CaseType.Combination;
+    public int Permutation { get; }
+
     internal int CaseId { get; set; }
     internal string CaseName { get; set; }
     internal CombinationCaseResult CombinationCaseResult { get; set; }
@@ -153,21 +157,9 @@ namespace GsaGH.Parameters {
     internal Dictionary<string, ConcurrentDictionary<int, GsaResultValues>>
       ComboElement3DStressValues { get; set; }
       = new Dictionary<string, ConcurrentDictionary<int, GsaResultValues>>();
-    /// <summary>
-    ///   Combination Case Node Displacement Result VALUES Dictionary
-    ///   Append to this dictionary to chache results
-    ///   key = elementList
-    ///   value = Dictionary(permutationID, permutationsResults)
-    /// </summary>
-    internal Dictionary<string, ConcurrentDictionary<int, GsaResultValues>>
-      ComboNodeDisplacementValues { get; set; }
-      = new Dictionary<string, ConcurrentDictionary<int, GsaResultValues>>();
-    /// <summary>
-    ///   Combination Case Node Reaction Force Result VALUES Dictionary
-    ///   Append to this dictionary to chache results
-    ///   key = elementList
-    ///   value = Dictionary(permutationID, permutationsResults)
-    /// </summary>
+
+
+
     internal Dictionary<string, ConcurrentDictionary<int, GsaResultValues>>
       ComboNodeReactionForceValues { get; set; }
       = new Dictionary<string, ConcurrentDictionary<int, GsaResultValues>>();
@@ -196,6 +188,24 @@ namespace GsaGH.Parameters {
       Type = CaseType.Combination;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
+    }
+
+    public GsaResultValues GetNodeDisplacementValues(string nodelist, LengthUnit lengthUnit) {
+      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
+        nodelist = "All";
+      }
+
+      if (!ComboNodeDisplacementValues.ContainsKey(nodelist)) {
+        if (!ComboNodeResults.ContainsKey(nodelist)) {
+          ComboNodeResults.Add(nodelist, CombinationCaseResult.NodeResults(nodelist));
+        }
+
+        ComboNodeDisplacementValues.Add(nodelist,
+          ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit,
+            SelectedPermutationIds));
+      }
+
+      return ComboNodeDisplacementValues[nodelist].Values;
     }
 
     public GsaCombinationCaseResult Duplicate() {
@@ -763,50 +773,6 @@ namespace GsaGH.Parameters {
           SelectedPermutationIds));
 
       return new List<GsaResultValues>(ComboElement3DStressValues[elementlist].Values);
-    }
-
-    /// <summary>
-    ///   Get node displacement values
-    ///   For analysis case the length of the list will be 1
-    ///   This method will use cache data if it exists
-    /// </summary>
-    /// <param name="nodelist"></param>
-    /// <param name="lengthUnit"></param>
-    /// <returns></returns>
-    internal Tuple<List<GsaResultValues>, List<int>> NodeDisplacementValues(
-      string nodelist, LengthUnit lengthUnit) {
-      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
-        nodelist = "All";
-      }
-
-      if (Type == CaseType.AnalysisCase) {
-        if (!ACaseNodeDisplacementValues.ContainsKey(nodelist)) {
-          if (!ACaseNodeResults.ContainsKey(nodelist)) {
-            ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
-          }
-
-          ACaseNodeDisplacementValues.Add(nodelist,
-            ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
-        }
-
-        return new Tuple<List<GsaResultValues>, List<int>>(new List<GsaResultValues> {
-          ACaseNodeDisplacementValues[nodelist],
-        }, Model.Model.Nodes(nodelist).Keys.ToList());
-      }
-
-      if (!ComboNodeDisplacementValues.ContainsKey(nodelist)) {
-        if (!ComboNodeResults.ContainsKey(nodelist)) {
-          ComboNodeResults.Add(nodelist, CombinationCaseResult.NodeResults(nodelist));
-        }
-
-        ComboNodeDisplacementValues.Add(nodelist,
-          ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit,
-            SelectedPermutationIds));
-      }
-
-      return new Tuple<List<GsaResultValues>, List<int>>(
-        new List<GsaResultValues>(ComboNodeDisplacementValues[nodelist].Values),
-        Model.Model.Nodes(nodelist).Keys.ToList());
     }
 
     /// <summary>
