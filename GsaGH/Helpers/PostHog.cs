@@ -10,6 +10,47 @@ namespace GsaGH.Helpers {
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
+    internal static void Diagram(
+      string diagramType, CaseType caseType, string type, GsaAPI.DiagramType subType, EntityType entityType) {
+      const string eventName = "Diagram";
+      var properties = new Dictionary<string, object>() {
+        {
+          "diagramType", diagramType
+        }, {
+          "caseType", caseType
+        }, {
+          "type", type
+        }, {
+          "subType", subType.ToString()
+        }, {
+          "entityType", entityType.ToString()
+        },
+      };
+      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
+
+    internal static void Diagram(
+      string diagramType, string caseId, string type, List<GsaAPI.DiagramType> subTypes, EntityType entityType) {
+      const string eventName = "Diagram";
+      CaseType caseType = caseId.StartsWith("L") ? CaseType.Load
+        : caseId.StartsWith("A") ? CaseType.AnalysisCase : CaseType.Combination;
+      List<string> subType = subTypes.ConvertAll(x => x.ToString());
+      var properties = new Dictionary<string, object>() {
+        {
+          "diagramType", diagramType
+        }, {
+          "caseType", caseType
+        }, {
+          "type", type
+        }, {
+          "subType", subType
+        }, {
+          "entityType", entityType.ToString()
+        },
+      };
+      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
+
     internal static void Gwa(string gwa, bool existingModel) {
       string[] commands = gwa.Split('\n');
       foreach (string command in commands) {

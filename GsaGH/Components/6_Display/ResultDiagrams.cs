@@ -238,11 +238,11 @@ namespace GsaGH.Components {
           $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
       }
 
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
+      DiagramType type = _selectedItems[0] == "Force" 
+        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+          .Select(item => item.GsaApiEnum).FirstOrDefault() 
+        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1])
+          .Select(item => item.GsaApiEnum).FirstOrDefault();
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
@@ -283,7 +283,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.Result(result.Type, 1, "Diagram", type.ToString());
+      PostHog.Diagram("Result", result.Type, _selectedItems[0], type, Parameters.EntityType.Element);
     }
 
     private List<GsaAnnotationGoo> GenerateAnnotations(
