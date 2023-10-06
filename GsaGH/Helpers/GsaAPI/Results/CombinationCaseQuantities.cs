@@ -56,8 +56,15 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(0, values.Count, i => {
-            xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit, true));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit, true));
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
+            && !double.IsNaN(values[i].Z)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit, true));
+            }
+
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            && !double.IsNaN(values[i].ZZ)) {
+              xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit, true));
+            }
           });
           r.XyzResults.TryAdd(key, xyzRes);
           r.XxyyzzResults.TryAdd(key, xxyyzzRes);
@@ -161,8 +168,15 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(0, values.Count, i => {
-            xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
+            && !double.IsNaN(values[i].Z)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
+            }
+
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            && !double.IsNaN(values[i].ZZ)) {
+              xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
+            }
           });
           r.XyzResults.TryAdd(key, xyzRes);
           r.XxyyzzResults.TryAdd(key, xxyyzzRes);
@@ -213,12 +227,25 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, values.Count, i => {
-            xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            && !double.IsNaN(values[i].ZZ)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
+            }
+
+            if (!double.IsNaN(values[i].XY) && !double.IsNaN(values[i].YZ) 
+            && !double.IsNaN(values[i].ZX)) {
+              xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+            }
           });
-          xyzRes.TryAdd(values.Count,
-            GetQuantityResult(values[0], stressUnit)); // add centre point last
-          xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit, true));
+          if (!double.IsNaN(values[0].XX) && !double.IsNaN(values[0].YY) 
+          && !double.IsNaN(values[0].ZZ)) {
+            xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit)); // add centre point last
+          }
+
+          if (!double.IsNaN(values[0].XY) && !double.IsNaN(values[0].YZ) 
+          && !double.IsNaN(values[0].ZX)) {
+            xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit, true));
+          }
 
           r.XyzResults.TryAdd(key, xyzRes);
           r.XxyyzzResults.TryAdd(key, xxyyzzRes);
@@ -266,10 +293,17 @@ namespace GsaGH.Helpers.GsaApi {
           var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
 
-          Parallel.For(1, values.Count,
-            i => xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit)));
-          xyzRes.TryAdd(values.Count,
-            GetQuantityResult(values[0], forceUnit)); // add centre point last
+          Parallel.For(1, values.Count, i => {
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit));
+            }
+          });
+
+          if (!double.IsNaN(values[0].X) && !double.IsNaN(values[0].Y)) {
+            // add centre point last
+            xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], forceUnit)); 
+          }
+
           r.XyzResults.TryAdd(key, xyzRes);
         });
         r.UpdateMinMax();
@@ -320,12 +354,27 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, forceValues.Count, i => {
-            xyzRes.TryAdd(i, GetQuantityResult(forceValues[i], forceUnit));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(momentValues[i], momentUnit));
+            if (!double.IsNaN(forceValues[i].XX) && !double.IsNaN(forceValues[i].YY) 
+            && !double.IsNaN(forceValues[i].XY)) {
+              xyzRes.TryAdd(i, GetQuantityResult(forceValues[i], forceUnit));
+            }
+
+            if (!double.IsNaN(momentValues[i].XX) && !double.IsNaN(momentValues[i].YY) 
+            && !double.IsNaN(momentValues[i].XY)) {
+              xxyyzzRes.TryAdd(i, GetQuantityResult(momentValues[i], momentUnit));
+            }
           });
-          xyzRes.TryAdd(forceValues.Count,
-            GetQuantityResult(forceValues[0], forceUnit)); // add centre point last
-          xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit));
+
+          if (!double.IsNaN(forceValues[0].XX) && !double.IsNaN(forceValues[0].YY) 
+          && !double.IsNaN(forceValues[0].XY)) {
+            xyzRes.TryAdd(forceValues.Count,
+              GetQuantityResult(forceValues[0], forceUnit)); // add centre point last
+          }
+
+          if (!double.IsNaN(momentValues[0].XX) && !double.IsNaN(momentValues[0].YY) 
+          && !double.IsNaN(momentValues[0].XY)) {
+            xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit));
+          }
 
           Parallel.ForEach(xxyyzzRes.Keys, i => {
             xyzRes[i].Xyz = new Force(
@@ -384,8 +433,14 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, values.Count, i => {
-            xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) && !double.IsNaN(values[i].Z)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
+            }
+
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            && !double.IsNaN(values[i].ZZ)) {
+              xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
+            }
           });
           xyzRes.TryAdd(values.Count,
             GetQuantityResult(values[0], resultLengthUnit)); // add centre point last
@@ -436,8 +491,17 @@ namespace GsaGH.Helpers.GsaApi {
           var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
 
-          Parallel.For(0, values.Count,
-            i => xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit)));
+          Parallel.For(1, values.Count, i => {
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
+                && !double.IsNaN(values[i].Z)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit));
+            }
+          });
+          if (!double.IsNaN(values[0].X) && !double.IsNaN(values[0].Y) 
+              && !double.IsNaN(values[0].Z)) {
+            xyzRes[values.Count] = GetQuantityResult(values[0], lengthUnit); // add centre point at the end
+          }
+
           r.XyzResults.TryAdd(key, xyzRes);
         });
         r.UpdateMinMax();
@@ -485,10 +549,28 @@ namespace GsaGH.Helpers.GsaApi {
           var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xxyyzzRes.AsParallel().AsOrdered();
 
-          Parallel.For(0, values.Count, i => {
-            xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+          Parallel.For(1, values.Count, i => {
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            && !double.IsNaN(values[i].ZZ)) {
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
+            }
+
+            if (!double.IsNaN(values[i].XY) && !double.IsNaN(values[i].YZ) 
+            && !double.IsNaN(values[i].ZX)) {
+              xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+            }
           });
+          if (!double.IsNaN(values[0].XX) && !double.IsNaN(values[0].YY) 
+          && !double.IsNaN(values[0].ZZ)) {
+            // add centre point at the end
+            xyzRes[values.Count] = GetQuantityResult(values[0], stressUnit); 
+          }
+
+          if (!double.IsNaN(values[0].XY) && !double.IsNaN(values[0].YZ) 
+          && !double.IsNaN(values[0].ZX)) {
+            xxyyzzRes[values.Count] = GetQuantityResult(values[0], stressUnit, true);
+          }
+
           r.XyzResults.TryAdd(key, xyzRes);
           r.XxyyzzResults.TryAdd(key, xxyyzzRes);
         });
@@ -535,18 +617,23 @@ namespace GsaGH.Helpers.GsaApi {
           Double6 values = result.Reaction;
 
           if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeId)) {
-            if (values.X == 0 & values.Y == 0 & values.Z == 0 & values.XX == 0 & values.YY == 0
-              & values.ZZ == 0) {
+            if (values.X == 0 & values.Y == 0 & values.Z == 0
+              & values.XX == 0 & values.YY == 0 & values.ZZ == 0) {
               return;
             }
           }
 
-          var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
-          xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
-          r.XyzResults.TryAdd(nodeId, xyz);
-          var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
-          xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
-          r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+          if (!double.IsNaN(values.X) && !double.IsNaN(values.Y) && !double.IsNaN(values.Z)) {
+            var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+            xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
+            r.XyzResults.TryAdd(nodeId, xyz);
+          }
+
+          if (!double.IsNaN(values.XX) && !double.IsNaN(values.YY) && !double.IsNaN(values.ZZ)) {
+            var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+            xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
+            r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+          }
         });
 
         r.UpdateMinMax();
@@ -586,12 +673,17 @@ namespace GsaGH.Helpers.GsaApi {
           NodeResult result = results[permutationId - 1];
           Double6 values = result.Displacement;
 
-          var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
-          xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
-          r.XyzResults.TryAdd(nodeId, xyz);
-          var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
-          xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
-          r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+          if (!double.IsNaN(values.X) && !double.IsNaN(values.Y) && !double.IsNaN(values.Z)) {
+            var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+            xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
+            r.XyzResults.TryAdd(nodeId, xyz);
+          }
+
+          if (!double.IsNaN(values.XX) && !double.IsNaN(values.YY) && !double.IsNaN(values.ZZ)) {
+            var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+            xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
+            r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+          }
         });
 
         r.UpdateMinMax();
@@ -643,12 +735,17 @@ namespace GsaGH.Helpers.GsaApi {
             }
           }
 
-          var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
-          xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
-          r.XyzResults.TryAdd(nodeId, xyz);
-          var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
-          xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
-          r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+          if (!double.IsNaN(values.X) && !double.IsNaN(values.Y) && !double.IsNaN(values.Z)) {
+            var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+            xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
+            r.XyzResults.TryAdd(nodeId, xyz);
+          }
+
+          if (!double.IsNaN(values.XX) && !double.IsNaN(values.YY) && !double.IsNaN(values.ZZ)) {
+            var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+            xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
+            r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+          }
         });
 
         r.UpdateMinMax();
