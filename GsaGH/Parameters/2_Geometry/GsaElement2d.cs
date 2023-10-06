@@ -68,10 +68,10 @@ namespace GsaGH.Parameters {
       Ids = other.Ids;
       Mesh = (Mesh)other.Mesh.DuplicateShallow();
       ApiElements = other.DuplicateApiObjects();
-      Topology = other.Topology;
+      Topology = other.Topology?.Duplicate();
       TopoInt = other.TopoInt;
       Prop2ds = other.Prop2ds;
-      Section3dPreview = other.Section3dPreview;
+      Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
     [ExcludeFromCodeCoverage]

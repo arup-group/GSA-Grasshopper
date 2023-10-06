@@ -14,7 +14,7 @@ using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Helpers.GsaApi {
-  internal partial class ResultHelper {
+  internal static partial class ResultHelper {
 
     /// <summary>
     ///   Returns forces result values
@@ -212,7 +212,7 @@ namespace GsaGH.Helpers.GsaApi {
           var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xxyyzzRes.AsParallel().AsOrdered();
 
-          Parallel.For(0, values.Count, i => {
+          Parallel.For(1, values.Count, i => {
             xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
             xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
           });
@@ -436,8 +436,10 @@ namespace GsaGH.Helpers.GsaApi {
           var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
 
-          Parallel.For(0, values.Count,
+          Parallel.For(1, values.Count,
             i => xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit)));
+          xyzRes[values.Count]
+          = GetQuantityResult(values[0], lengthUnit); // add centre point at the end
           r.XyzResults.TryAdd(key, xyzRes);
         });
         r.UpdateMinMax();
@@ -485,10 +487,14 @@ namespace GsaGH.Helpers.GsaApi {
           var xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xxyyzzRes.AsParallel().AsOrdered();
 
-          Parallel.For(0, values.Count, i => {
+          Parallel.For(1, values.Count, i => {
             xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
             xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
           });
+          xyzRes[values.Count]
+          = GetQuantityResult(values[0], stressUnit); // add centre point at the end
+          xxyyzzRes[values.Count] = GetQuantityResult(values[0], stressUnit, true);
+
           r.XyzResults.TryAdd(key, xyzRes);
           r.XxyyzzResults.TryAdd(key, xxyyzzRes);
         });

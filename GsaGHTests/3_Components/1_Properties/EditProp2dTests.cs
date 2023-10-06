@@ -158,5 +158,12 @@ namespace GsaGHTests.Properties {
       Assert.Equal(SupportType.Cantilever, supportType.Value);
       Assert.Equal(3, referenceEdge.Value);
     }
+
+    [Fact]
+    public void UpdateCustomUITest() {
+      var comp = (Edit2dProperty)ComponentMother();
+      comp.Update("ft");
+      Assert.Equal("ft", comp.Message);
+    }
   }
 }

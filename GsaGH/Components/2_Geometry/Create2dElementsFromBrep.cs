@@ -122,32 +122,18 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var ghbrep = new GH_Brep();
-      if (!da.GetData(0, ref ghbrep)) {
-        return;
-      }
+      da.GetData(0, ref ghbrep);
 
-      if (ghbrep == null) {
-        this.AddRuntimeWarning("Brep input is null");
+      if (ghbrep == null || ghbrep.Value == null) {
+        this.AddRuntimeError("Brep input is null");
+        return;
       }
 
       var brep = new Brep();
-      if (!GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both)) {
-        return;
-      }
-
-      if (!brep.IsValidGeometry(out string log)) {
-        this.AddRuntimeError("Input Brep is not valid: " + log);
-        return;
-      }
+      GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
 
       if (brep.Surfaces.Count > 1) {
-        Brep inBrep = brep.DuplicateBrep();
-        inBrep.Faces.ShrinkFaces();
-        if (inBrep.Surfaces.Count > 1) {
-          this.AddRuntimeError(
-            "Input Brep contains more than one surface. This component is will only work with single surfaces.");
-          return;
-        }
+        brep.Faces.ShrinkFaces();
       }
 
       if (brep.Surfaces[0].IsPlanar()) {

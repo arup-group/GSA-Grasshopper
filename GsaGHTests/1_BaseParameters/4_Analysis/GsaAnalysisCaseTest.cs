@@ -14,7 +14,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(id, analysisCase.Id);
       Assert.Equal(name, analysisCase.Name);
-      Assert.Equal(description, analysisCase.Description);
+      Assert.Equal(description, analysisCase.Definition);
     }
 
     [Fact]
@@ -27,11 +27,11 @@ namespace GsaGHTests.Parameters {
 
       duplicate.Id = 0;
       duplicate.Name = "";
-      duplicate.Description = "";
+      duplicate.Definition = "";
 
       Assert.Equal(1, original.Id);
       Assert.Equal("name", original.Name);
-      Assert.Equal("description", original.Description);
+      Assert.Equal("description", original.Definition);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.Equal(0, analysisCase.Id);
       Assert.Null(analysisCase.Name);
-      Assert.Null(analysisCase.Description);
+      Assert.Null(analysisCase.Definition);
     }
   }
 }

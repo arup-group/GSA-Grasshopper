@@ -193,15 +193,25 @@ namespace GsaGH.Components {
       da.SetData(3, new GH_UnitNumber(deltaT));
     }
 
+
+    internal void UpdateDensity(string unit) {
+      _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), unit);
+      Update();
+    }
+
+    internal void UpdateStress(string unit) {
+      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
+      Update();
+    }
+
+    internal void UpdateTemperature(string unit) {
+      _temperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), unit);
+      Update();
+    }
     private void Update() {
       UpdateMessage();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
-    }
-
-    private void UpdateDensity(string unit) {
-      _densityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), unit);
-      Update();
     }
 
     private void UpdateMessage() {
@@ -209,16 +219,6 @@ namespace GsaGH.Components {
         = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
       Message = Pressure.GetAbbreviation(_stressUnit) + ", " + Density.GetAbbreviation(_densityUnit)
         + ", " + CoefficientOfThermalExpansion.GetAbbreviation(temp);
-    }
-
-    private void UpdateStress(string unit) {
-      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
-      Update();
-    }
-
-    private void UpdateTemperature(string unit) {
-      _temperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), unit);
-      Update();
     }
   }
 }

@@ -9,22 +9,17 @@ using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Newtonsoft.Json;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Serialization.JsonNet;
-using Rhino.Commands;
 using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -59,12 +54,7 @@ namespace GsaGH.Components {
     public bool _isInitialised;
     public List<string> _selectedItems;
     public List<string> _spacerDescriptions;
-    public bool AlwaysExpireDownStream;
-    public Dictionary<int, List<string>> ExistingOutputsSerialized
-      = new Dictionary<int, List<string>>();
     protected override Bitmap Icon => Resources.GetModelGeometry;
-    private static readonly OasysUnitsIQuantityJsonConverter converter
-      = new OasysUnitsIQuantityJsonConverter();
     private BoundingBox _boundingBox;
     private List<Mesh> _cachedDisplayMeshWithoutParent;
     private List<Mesh> _cachedDisplayMeshWithParent;
@@ -72,8 +62,6 @@ namespace GsaGH.Components {
     private List<Mesh> _cachedDisplayNgonMeshWithParent;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
-    private Dictionary<int, bool> _outputIsExpired = new Dictionary<int, bool>();
-    private Dictionary<int, List<bool>> _outputsAreExpired = new Dictionary<int, List<bool>>();
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
     private bool _showSupports = true;
 
@@ -195,7 +183,6 @@ namespace GsaGH.Components {
 
           if (node.Value.SupportPreview != null) {
             if (!Attributes.Selected) {
-
               if (node.Value.SupportPreview.SupportSymbol != null) {
                 args.Display.DrawBrepShaded(node.Value.SupportPreview.SupportSymbol, Colours.SupportSymbol);
               }
@@ -238,35 +225,6 @@ namespace GsaGH.Components {
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       _isInitialised = true;
-    }
-
-    public void OutputChanged<T>(T data, int outputIndex, int index) where T : IGH_Goo {
-      if (!ExistingOutputsSerialized.ContainsKey(outputIndex)) {
-        ExistingOutputsSerialized.Add(outputIndex, new List<string>());
-        _outputsAreExpired.Add(outputIndex, new List<bool>());
-      }
-
-      string text;
-      if (data.GetType() == typeof(GH_UnitNumber)) {
-        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, converter);
-      } else {
-        object value = data.ScriptVariable();
-        try {
-          text = JsonConvert.SerializeObject(value);
-        } catch (Exception) {
-          text = data.GetHashCode().ToString();
-        }
-      }
-
-      if (ExistingOutputsSerialized[outputIndex].Count == index) {
-        ExistingOutputsSerialized[outputIndex].Add(text);
-        _outputsAreExpired[outputIndex].Add(true);
-      } else if (ExistingOutputsSerialized[outputIndex][index] != text) {
-        ExistingOutputsSerialized[outputIndex][index] = text;
-        _outputsAreExpired[outputIndex][index] = true;
-      } else {
-        _outputsAreExpired[outputIndex][index] = false;
-      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -415,24 +373,6 @@ namespace GsaGH.Components {
       Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
     }
 
-    protected override void ExpireDownStreamObjects() {
-      if (AlwaysExpireDownStream) {
-        base.ExpireDownStreamObjects();
-        return;
-      }
-
-      SetExpireDownStream();
-      if (_outputIsExpired.Count > 0) {
-        for (int i = 0; i < Params.Output.Count; i++) {
-          if (_outputIsExpired[i]) {
-            Params.Output[i].ExpireSolution(false);
-          }
-        }
-      } else {
-        base.ExpireDownStreamObjects();
-      }
-    }
-
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
         "GSA model containing some geometry", GH_ParamAccess.item);
@@ -489,7 +429,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          nodeList = nodeListGoo.Value.Definition;
+          nodeList = Inputs.GetNodeListDefinition(this, data, 1, modelGoo.Value);
           nodeFilterHasInput = true;
         }
 
@@ -782,7 +722,7 @@ namespace GsaGH.Components {
       return results;
     }
 
-    private void GraftModeClicked(object sender, EventArgs e) {
+    internal void GraftModeClicked(object sender, EventArgs e) {
       if (_mode == FoldMode.Graft) {
         return;
       }
@@ -796,7 +736,7 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    private void ListModeClicked(object sender, EventArgs e) {
+    internal void ListModeClicked(object sender, EventArgs e) {
       if (_mode == FoldMode.List) {
         return;
       }
@@ -808,21 +748,6 @@ namespace GsaGH.Components {
       Params.OnParametersChanged();
       Message = "Import as List";
       ExpireSolution(true);
-    }
-
-    private void SetExpireDownStream() {
-      if (_outputsAreExpired == null || _outputsAreExpired.Count <= 0) {
-        return;
-      }
-
-      _outputIsExpired = new Dictionary<int, bool>();
-      for (int i = 0; i < Params.Output.Count; i++) {
-        if (_outputsAreExpired.ContainsKey(i)) {
-          _outputIsExpired.Add(i, _outputsAreExpired[i].Any(c => c));
-        } else {
-          _outputIsExpired.Add(i, true);
-        }
-      }
     }
 
     private void UpdateHiddenOutputs(bool nodeFilter, bool elementFilter, bool memberFilter) {

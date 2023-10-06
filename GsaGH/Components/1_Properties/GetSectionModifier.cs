@@ -206,20 +206,20 @@ namespace GsaGH.Components {
       da.SetData(11, (int)modifier.StressOption);
     }
 
-    private void Update() {
-      UpdateMessage();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-    }
-
-    private void UpdateDensity(string unit) {
+    internal void UpdateDensity(string unit) {
       _linearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), unit);
       Update();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Update();
+    }
+
+    private void Update() {
+      UpdateMessage();
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
     }
 
     private void UpdateMessage() {

@@ -1,6 +1,8 @@
 ﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using GsaGHTests.Model;
+using OasysGH.Components;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,20 @@ namespace GsaGHTests.GooWrappers {
       var line = new Line(new Point3d(10, 15, 0), new Point3d(20, 15, 0));
       var gridline = new GsaGridLine(line, "Line");
       GsaGridLineGooTest(new GsaGridLineGoo(gridline));
+    }
+
+    [Fact]
+    public void GsaGridLineGooLinePreviewTest() {
+      GH_OasysComponent comp = CreateGridLineTest.GridLineComponentMother();
+      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+    }
+
+    [Fact]
+    public void GsaGridLineGooArcPreviewTest() {
+      GH_OasysComponent comp = CreateGridLineTest.GridArcComponentMother();
+      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
     private void GsaGridLineGooTest(GsaGridLineGoo objectGoo, bool excludeGuid = false) {

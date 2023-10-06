@@ -77,7 +77,7 @@ namespace GsaGH.Parameters {
       Ids = other.Ids;
       NgonMesh = (Mesh)other.NgonMesh.DuplicateShallow();
       ApiElements = other.DuplicateApiObjects();
-      Topology = other.Topology;
+      Topology = other.Topology?.Duplicate();
       TopoInt = other.TopoInt;
       FaceInt = other.FaceInt;
       Prop3ds = other.Prop3ds;

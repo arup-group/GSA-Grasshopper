@@ -8,7 +8,7 @@ using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers {
-  public class ComponentTestHelper {
+  public partial class ComponentTestHelper {
 
     public static object GetOutput(
       GH_Component component, int index = 0, int branch = 0, int item = 0,

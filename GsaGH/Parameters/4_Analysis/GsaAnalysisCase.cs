@@ -6,7 +6,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/analysiscases.html">Analysis cases</see> to read more.</para>
   /// </summary>
   public class GsaAnalysisCase {
-    public string Description { get; set; }
+    public string Definition { get; set; }
     public string Name { get; set; }
     internal int Id { get; set; } = 0;
 
@@ -14,17 +14,17 @@ namespace GsaGH.Parameters {
 
     public GsaAnalysisCase(string name, string description) {
       Name = name;
-      Description = description;
+      Definition = description;
     }
 
     internal GsaAnalysisCase(int id, string name, string description = "") {
       Id = id;
       Name = name;
-      Description = description;
+      Definition = description;
     }
 
     public GsaAnalysisCase Duplicate() {
-      return new GsaAnalysisCase(Id, Name, Description);
+      return new GsaAnalysisCase(Id, Name, Definition);
     }
 
     public override string ToString() {
@@ -34,8 +34,8 @@ namespace GsaGH.Parameters {
         s += " '" + Name + "'";
       }
 
-      if (Description != null) {
-        s += " " + Description;
+      if (Definition != null) {
+        s += " " + Definition;
       }
 
       return string.Join(" ", id, s).TrimSpaces();

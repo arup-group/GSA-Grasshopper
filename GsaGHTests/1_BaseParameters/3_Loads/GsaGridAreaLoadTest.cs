@@ -1,7 +1,6 @@
 ﻿using System;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
 using Xunit;

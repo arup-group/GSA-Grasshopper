@@ -28,20 +28,6 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaListGoo PreferredCast(object data) {
-      switch (data) {
-        case GsaListGoo list:
-          if (list.Value.EntityType == EntityType.Element
-            || list.Value.EntityType == EntityType.Member) {
-            return list;
-          } else if (list.Value.EntityType == EntityType.Undefined) {
-            GsaList dup = list.Value.Duplicate();
-            return new GsaListGoo(dup);
-          } else {
-            this.AddRuntimeError("List must be of type Element to apply to element filter");
-            return new GsaListGoo(null);
-          }
-      }
-
       if (GH_Convert.ToString(data, out string text, GH_Conversion.Both)) {
         var list = new GsaList() {
           EntityType = EntityType.Element,

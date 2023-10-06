@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -49,7 +48,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
-      Materials materials = modelGoo.Value.Materials;
+      GsaMaterials materials = modelGoo.Value.Materials;
       da.SetDataList(0, materials.SteelMaterials.Values.Select(x => new GsaMaterialGoo(x)));
       da.SetDataList(1, materials.ConcreteMaterials.Values.Select(x => new GsaMaterialGoo(x)));
       da.SetDataList(2, materials.FrpMaterials.Values.Select(x => new GsaMaterialGoo(x)));

@@ -13,7 +13,6 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Graveyard;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -141,11 +140,11 @@ namespace GsaGH.Components {
       "Create Profile text-string for a GSA Section", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
       _cataloguedata
-        = MicrosoftSQLiteReader.Instance.GetCataloguesDataFromSQLite(
+        = SqlReader.Instance.GetCataloguesDataFromSQLite(
           Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
-      _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(-1,
+      _typedata = SqlReader.Instance.GetTypesDataFromSQLite(-1,
         Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
-      _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> {
+      _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(new List<int> {
         -1,
       }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
     }
@@ -191,7 +190,7 @@ namespace GsaGH.Components {
           _typeIndex = -1;
           UpdateTypeData();
 
-          _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(_typeNumbers,
+          _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers,
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           _selectedItems.Add(_catalogueNames[0]);
@@ -211,14 +210,14 @@ namespace GsaGH.Components {
           _catalogueIndex = _catalogueNumbers[j];
           _selectedItems[1] = _catalogueNames[j];
 
-          _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
+          _typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
           _typeNames = _typedata.Item1;
           _typeNumbers = _typedata.Item2;
 
           var types = _typeNumbers.ToList();
           types.RemoveAt(0);
-          _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types,
+          _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types,
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           _selectedItems[2] = _typeNames[0];
@@ -241,7 +240,7 @@ namespace GsaGH.Components {
             };
           }
 
-          _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(types,
+          _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types,
             Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
           _selectedItems[3] = _sectionList[0];
@@ -946,7 +945,7 @@ namespace GsaGH.Components {
           if (_inclSs != incl) {
             _inclSs = incl;
             UpdateTypeData();
-            _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(_typeNumbers,
+            _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers,
               Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
 
             _selectedItems[2] = _typeNames[0];
@@ -1352,7 +1351,7 @@ namespace GsaGH.Components {
 
         _catalogueNames = _cataloguedata.Item1;
         _catalogueNumbers = _cataloguedata.Item2;
-        _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
+        _typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex,
           Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSs);
         _typeNames = _typedata.Item1;
         _typeNumbers = _typedata.Item2;
@@ -1379,7 +1378,7 @@ namespace GsaGH.Components {
 
     private static Tuple<List<string>, List<int>> GetTypesDataFromSqLite(
       int catalogueIndex, string filePath, bool inclSuperseeded) {
-      return MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(catalogueIndex, filePath,
+      return SqlReader.Instance.GetTypesDataFromSQLite(catalogueIndex, filePath,
         inclSuperseeded);
     }
 

@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class AnalysisCaseInfo : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("6f5f7379-4469-4ce8-9a1a-85adc3c2126a");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AnalysisCaseInfo;
 
@@ -30,7 +30,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddTextParameter("Name", "Na", "Analysis Case Name", GH_ParamAccess.item);
-      pManager.AddTextParameter("Description", "De", "The description of the analysis case",
+      pManager.AddTextParameter("Definition", "De", "The definition of the analysis case",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("CaseID", "ID",
         "The Case number if the Analysis Case ever belonged to a model", GH_ParamAccess.item);
@@ -45,7 +45,7 @@ namespace GsaGH.Components {
       if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
         GsaAnalysisCase gsaCase = goo.Value.Duplicate();
         da.SetData(0, gsaCase.Name);
-        da.SetData(1, gsaCase.Description);
+        da.SetData(1, gsaCase.Definition);
         da.SetData(2, gsaCase.Id);
       } else {
         string type = ghTyp.Value.GetType().ToString();

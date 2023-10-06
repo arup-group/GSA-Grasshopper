@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -40,7 +39,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
-      List<GsaList> lists = Lists.GetLists(modelGoo.Value);
+      List<GsaList> lists = modelGoo.Value.GetLists();
       da.SetDataList(0, lists.Select(x => new GsaListGoo(x)));
     }
   }
