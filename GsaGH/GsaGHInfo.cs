@@ -120,7 +120,12 @@ namespace GsaGH {
       Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
       Instances.ComponentServer.AddCategoryIcon("GSA", Resources.GSALogo);
 
-      Utility.InitialiseMainMenuAndDefaultUnits();
+      try {
+        Utility.InitialiseMainMenuUnitsAndDependentPluginsCheck();
+      } catch (Exception e) {
+
+        throw;
+      }
 
       PostHog.PluginLoaded(PluginInfo.Instance, gsaVersion);
 

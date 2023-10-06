@@ -412,7 +412,7 @@ namespace GsaGH.Components {
         "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
     }
 
-    protected override void SolveInstance(IGH_DataAccess data) {
+    protected override void SolveInternal(IGH_DataAccess data) {
       if (InPreSolve) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
