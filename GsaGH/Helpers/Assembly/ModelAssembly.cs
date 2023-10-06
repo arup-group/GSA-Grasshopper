@@ -53,12 +53,12 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     // assemble for preview
-    internal ModelAssembly(GsaModel model, List<GsaList> lists,
-      List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaMember1d> mem1ds,
-      List<GsaMember2d> mem2ds, LengthUnit modelUnit) {
+    internal ModelAssembly(GsaModel model, List<GsaList> lists, List<GsaElement1d> elem1ds,
+      List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds,
+      List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds, LengthUnit modelUnit) {
       SetupModel(model, modelUnit);
-      ConvertElements(elem1ds, elem2ds, null);
-      ConvertMembers(mem1ds, mem2ds, null);
+      ConvertElements(elem1ds, elem2ds, elem3ds);
+      ConvertMembers(mem1ds, mem2ds, mem3ds);
       ConvertLists(lists);
       AssembleNodesElementsMembersAndLists();
     }
@@ -74,7 +74,7 @@ namespace GsaGH.Helpers.Assembly {
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
 
       SetupModel(model, modelUnit);
-      
+
       ConvertNodes(nodes);
       ConvertProperties(mats, sections, prop2Ds, prop3Ds);
       ConvertElements(elem1ds, elem2ds, elem3ds);
