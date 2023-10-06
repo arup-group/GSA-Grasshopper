@@ -3,6 +3,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -71,7 +72,7 @@ namespace GsaGH.Components {
                 }
                 break;
               }
-            
+
             case GsaAnnotationDot annotationDot:
               AddAnnotation(annotationDot.Location, annotationDot.Text,
                               annotationDot.Color, path);
@@ -81,9 +82,19 @@ namespace GsaGH.Components {
               break;
 
             case GsaElement2dGoo e2d:
-              for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
-                AddAnnotation(e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Ids[i].ToString(),
-                  Color.Empty, path);
+              int faceIndex = 0;
+              for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
+                AddAnnotation(e2d.Value.Mesh.Faces.GetFaceCenter(faceIndex), e2d.Value.Ids[i].ToString(), Color.Empty, path);
+
+                switch (e2d.Value.ApiElements[0].Type) {
+                  case ElementType.QUAD8:
+                    faceIndex += 8;
+                    break;
+
+                  default:
+                    faceIndex++;
+                    break;
+                }
               }
 
               continue;
