@@ -458,6 +458,10 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = res.XyzResults;
@@ -676,9 +680,8 @@ namespace GsaGH.Components {
             break;
         }
 
-        for (int i = 0; i < vals.Count - 1;
-          i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
-        {
+        // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
+        for (int i = 0; i < tempmesh.Vertices.Count; i++) {
           double tnorm = (2 * (vals[i].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);

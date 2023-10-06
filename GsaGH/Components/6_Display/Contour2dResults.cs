@@ -634,6 +634,10 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = _isShear ? resShear.XyzResults : res.XyzResults;
