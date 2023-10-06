@@ -585,6 +585,10 @@ namespace GsaGH.Components {
 
       var elems = new ConcurrentDictionary<int, Element>(result.Model.Model.Elements(elementlist));
       var nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes());
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = res.XyzResults;
