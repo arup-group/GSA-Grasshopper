@@ -493,12 +493,12 @@ namespace GsaGH.Helpers.GsaApi {
 
           Parallel.For(1, values.Count, i => {
             if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
-            && !double.IsNaN(values[i].Z)) {
+                && !double.IsNaN(values[i].Z)) {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit));
             }
           });
           if (!double.IsNaN(values[0].X) && !double.IsNaN(values[0].Y) 
-          && !double.IsNaN(values[0].Z)) {
+              && !double.IsNaN(values[0].Z)) {
             xyzRes[values.Count] = GetQuantityResult(values[0], lengthUnit); // add centre point at the end
           }
 
