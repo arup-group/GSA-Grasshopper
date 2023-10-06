@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
@@ -31,10 +32,15 @@ namespace GsaGH.Helpers {
 
     internal static void Diagram(
       string diagramType, string caseId, string type, List<GsaAPI.DiagramType> subTypes, EntityType entityType) {
-      const string eventName = "Diagram";
+      
       CaseType caseType = caseId.StartsWith("L") ? CaseType.Load
         : caseId.StartsWith("A") ? CaseType.AnalysisCase : CaseType.Combination;
       List<string> subType = subTypes.ConvertAll(x => x.ToString());
+      
+    }
+
+    private static void Diagram(string diagramType, string caseType, string type, string subTypes, string entityType) {
+      const string eventName = "Diagram";
       var properties = new Dictionary<string, object>() {
         {
           "diagramType", diagramType
