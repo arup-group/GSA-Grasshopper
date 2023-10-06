@@ -11,18 +11,17 @@ namespace GsaGH.Helpers {
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }
 
-    internal static void Diagram(
-      string diagramType, CaseType caseType, string type, GsaAPI.DiagramType subType, EntityType entityType) {
+    internal static void Diagram(string diagramType, CaseType caseType, string type, string subTypes, EntityType entityType) {
       const string eventName = "Diagram";
       var properties = new Dictionary<string, object>() {
         {
           "diagramType", diagramType
         }, {
-          "caseType", caseType
+          "caseType", caseType.ToString()
         }, {
           "type", type
         }, {
-          "subType", subType.ToString()
+          "subType", subTypes
         }, {
           "entityType", entityType.ToString()
         },
@@ -32,29 +31,10 @@ namespace GsaGH.Helpers {
 
     internal static void Diagram(
       string diagramType, string caseId, string type, List<GsaAPI.DiagramType> subTypes, EntityType entityType) {
-      
       CaseType caseType = caseId.StartsWith("L") ? CaseType.Load
         : caseId.StartsWith("A") ? CaseType.AnalysisCase : CaseType.Combination;
       List<string> subType = subTypes.ConvertAll(x => x.ToString());
-      
-    }
-
-    private static void Diagram(string diagramType, string caseType, string type, string subTypes, string entityType) {
-      const string eventName = "Diagram";
-      var properties = new Dictionary<string, object>() {
-        {
-          "diagramType", diagramType
-        }, {
-          "caseType", caseType
-        }, {
-          "type", type
-        }, {
-          "subType", subType
-        }, {
-          "entityType", entityType.ToString()
-        },
-      };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      Diagram(diagramType, caseType, type, string.Join(";", subTypes), entityType);
     }
 
     internal static void Gwa(string gwa, bool existingModel) {
