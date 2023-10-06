@@ -11,6 +11,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
@@ -21,6 +22,7 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Commands;
 using Rhino.Geometry;
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
@@ -320,7 +322,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      //PostHog.Result(modelGoo.Value.Model.case, 1, "Diagram", type.ToString());
+      PostHog.Diagram("Load", _caseId, _selectedItems[1], types, Parameters.EntityType.Element);
     }
 
     private bool IsGhObjectValid(GsaModelGoo modelGoo) {
