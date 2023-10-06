@@ -173,8 +173,7 @@ namespace GsaGH.Parameters {
       return elem3dGoos;
     }
 
-    internal static Mesh GetMeshFromApiElement2d(
-  Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
+    internal static Mesh GetMeshFromApiElement2d(Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
 
       if (topo.Count < 3 || element.Type == ElementType.THREE_D
@@ -203,7 +202,6 @@ namespace GsaGH.Parameters {
         default: {
             if (topo.Count > 4) {
               // so we introduce the average middle point and create more faces
-
               switch (topo.Count) {
                 case 6: {
                     outMesh.Faces.AddFace(0, 3, 5);

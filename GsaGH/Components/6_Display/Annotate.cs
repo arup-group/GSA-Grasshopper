@@ -9,6 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -82,21 +83,10 @@ namespace GsaGH.Components {
               break;
 
             case GsaElement2dGoo e2d:
-              int faceIndex = 0;
+              Point3dList points = e2d.Value.GetCenterPoints();
               for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
-                AddAnnotation(e2d.Value.Mesh.Faces.GetFaceCenter(faceIndex), e2d.Value.Ids[i].ToString(), Color.Empty, path);
-
-                switch (e2d.Value.ApiElements[0].Type) {
-                  case ElementType.QUAD8:
-                    faceIndex += 8;
-                    break;
-
-                  default:
-                    faceIndex++;
-                    break;
-                }
+                AddAnnotation(points[i], e2d.Value.Ids[i].ToString(), Color.Empty, path);
               }
-
               continue;
 
             case GsaElement3dGoo e3d:

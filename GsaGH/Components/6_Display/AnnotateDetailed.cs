@@ -13,6 +13,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -154,23 +155,26 @@ namespace GsaGH.Components {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
           switch (goo) {
             case GsaElement2dGoo e2d:
+              Point3dList points = e2d.Value.GetCenterPoints();
               int faceIndex = 0;
               for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
                 if (_text3d) {
                   if (e2d.Value.Mesh.FaceNormals.Count == 0) {
                     e2d.Value.Mesh.RebuildNormals();
                   }
-                  AddAnnotation3d(
-                    new Plane(e2d.Value.Mesh.Faces.GetFaceCenter(faceIndex), e2d.Value.Mesh.FaceNormals[faceIndex]),
+                  AddAnnotation3d(new Plane(points[i], e2d.Value.Mesh.FaceNormals[faceIndex]),
                     CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
                 } else {
-                  AddAnnotationDot(e2d.Value.Mesh.Faces.GetFaceCenter(faceIndex),
-                    CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
+                  AddAnnotationDot(points[i], CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
                 }
 
-                switch (e2d.Value.ApiElements[0].Type) {
+                switch (e2d.Value.ApiElements[i].Type) {
                   case ElementType.QUAD8:
                     faceIndex += 8;
+                    break;
+
+                  case ElementType.TRI6:
+                    faceIndex += 4;
                     break;
 
                   default:
