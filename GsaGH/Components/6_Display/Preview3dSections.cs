@@ -86,10 +86,8 @@ namespace GsaGH.Components {
       if (da.GetDataList(0, ghTypes)) {
         var elem1ds = new List<GsaElement1d>();
         var elem2ds = new List<GsaElement2d>();
-        var elem3ds = new List<GsaElement3d>();
         var mem1ds = new List<GsaMember1d>();
         var mem2ds = new List<GsaMember2d>();
-        var mem3ds = new List<GsaMember3d>();
         var models = new List<GsaModel>();
         var lists = new List<GsaList>();
         for (int i = 0; i < ghTypes.Count; i++) {
@@ -117,20 +115,12 @@ namespace GsaGH.Components {
               elem2ds.Add(element2dGoo.Value);
               break;
 
-            case GsaElement3dGoo element3dGoo:
-              elem3ds.Add(element3dGoo.Value);
-              break;
-
             case GsaMember1dGoo member1dGoo:
               mem1ds.Add(member1dGoo.Value);
               break;
 
             case GsaMember2dGoo member2dGoo:
               mem2ds.Add(member2dGoo.Value);
-              break;
-
-            case GsaMember3dGoo member3dGoo:
-              mem3ds.Add(member3dGoo.Value);
               break;
 
             default: {
@@ -161,10 +151,6 @@ namespace GsaGH.Components {
           mem2ds = null;
         }
 
-        if (!(mem3ds.Count > 0)) {
-          mem2ds = null;
-        }
-
         if (models is null & elem1ds is null & elem2ds is null & mem1ds is null & mem2ds is null) {
           this.AddRuntimeWarning("Input parameter failed to collect data");
           return;
@@ -181,7 +167,7 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, _lengthUnit);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
         GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
