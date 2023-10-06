@@ -1,10 +1,13 @@
-﻿using OasysUnits;
+﻿using GsaAPI;
+using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   internal static class GridLoadHelper {
+    internal static char ListSeparator = GetListSeparator();
+
     internal static string CreateDefinition(Point3dList controlPoints, Plane plane) {
       string desc = string.Empty;
       for (int i = 0; i < controlPoints.Count; i++) {
@@ -32,8 +35,8 @@ namespace GsaGH.Parameters {
       foreach (string ptStr in pts) {
         if (ptStr != string.Empty) {
           string pt = ptStr.Replace("(", string.Empty).Trim();
-          var x = new Length(double.Parse(pt.Split(',')[0]), lengthUnit);
-          var y = new Length(double.Parse(pt.Split(',')[1]), lengthUnit);
+          var x = new Length(double.Parse(pt.Split(ListSeparator)[0]), lengthUnit);
+          var y = new Length(double.Parse(pt.Split(ListSeparator)[1]), lengthUnit);
           var point = new Point3d(x.As(desiredUnit), y.As(desiredUnit), 0);
           point.Transform(map);
           points.Add(point);
@@ -62,6 +65,14 @@ namespace GsaGH.Parameters {
       }
       definition = definition.Replace("(m)", string.Empty);
       return (lengthUnit, definition);
+    }
+
+    internal static char GetListSeparator() {
+      // this is a hack, because GSA doesn´t use CultureInfo.CurrentCulture.TextInfo.ListSeparator
+      var gridLineLoad = new GridLineLoad {
+        PolyLineDefinition = "(0, 0) (1, 0) (m)"
+      };
+      return gridLineLoad.PolyLineDefinition[2];
     }
   }
 }
