@@ -12,7 +12,12 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error, "Error");
+    }
+
+    [Fact]
+    public void NoRuntimeWarningsTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "Warning");
     }
 
     [Theory]
@@ -47,6 +52,10 @@ namespace IntegrationTests.Parameters {
     [InlineData("Test10Name", "Slabs Material list")]
     [InlineData("Test10Type", "Element")]
     [InlineData("Test10Count", 6)]
+    [InlineData("Test11Id", 5)]
+    [InlineData("Test11Name", "E3d list")]
+    [InlineData("Test11Type", "Element")]
+    [InlineData("Test11Count", 1)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

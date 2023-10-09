@@ -42,16 +42,16 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private string GetPropertyReferenceDefinition(Guid guid) {
-      if (_sections.GuidDictionary.TryGetValue(guid, out int steelId)) {
-        return "PB" + steelId;
+      if (_sections.GuidDictionary.TryGetValue(guid, out int sectionId)) {
+        return "PB" + sectionId;
       }
 
-      if (_prop2ds.GuidDictionary.TryGetValue(guid, out int concreteId)) {
-        return "PA" + concreteId;
+      if (_prop2ds.GuidDictionary.TryGetValue(guid, out int pro2dId)) {
+        return "PA" + pro2dId;
       }
 
-      if (_prop3ds.GuidDictionary.TryGetValue(guid, out int frpId)) {
-        return "PV" + frpId;
+      if (_prop3ds.GuidDictionary.TryGetValue(guid, out int prop3dId)) {
+        return "PV" + prop3dId;
       }
 
       return GetMaterialReferenceDefinition(guid);

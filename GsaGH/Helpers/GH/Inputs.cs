@@ -151,8 +151,8 @@ namespace GsaGH.Helpers.GH {
                   break;
 
                 case GsaProperty3dGoo prop3dGoo:
-                  list.Add(prop3dGoo);
-                  break;
+                  owner.AddRuntimeError($"Unable to reference 3D property in a Member list.");
+                  continue;
 
                 case GsaMember1dGoo member1dGoo:
                   list.Add(member1dGoo);
