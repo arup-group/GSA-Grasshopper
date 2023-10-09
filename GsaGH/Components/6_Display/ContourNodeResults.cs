@@ -498,6 +498,10 @@ namespace GsaGH.Components {
       }
 
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
+      if (nodes.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+        return;
+      }
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = res.XyzResults;

@@ -37,6 +37,7 @@ namespace GsaGH.Parameters {
       set {
         _lengthUnit = value;
         Units.LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
+        _boundingBox = BoundingBox.Empty;
         _analysisLayerPreview = null;
         _designLayerPreview = null;
       }
