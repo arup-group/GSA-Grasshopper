@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
@@ -36,6 +37,8 @@ namespace GsaGH.Parameters {
     internal IQuantity DminZ { get; set; }
     internal IQuantity DminZz { get; set; }
     internal ResultType Type { get; set; }
+    internal List<int> Ids => XyzResults.Keys.ToList();
+
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XxyyzzResults { get; set; }
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
