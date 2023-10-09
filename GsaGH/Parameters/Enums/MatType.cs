@@ -7,7 +7,6 @@
     Glass,
     Frp,
     Timber,
-    Fabric,
-    ReferencedById
+    Fabric
   }
 }
