@@ -75,9 +75,9 @@ namespace GsaGH.Components {
               }
 
             case GsaAnnotationDot annotationDot:
-              AddAnnotation(annotationDot.Location, annotationDot.Text,
-                              annotationDot.Color, path);
+              AddAnnotation(annotationDot.Location, annotationDot.Text, annotationDot.Color, path);
               break;
+
             case GsaAnnotation3d annotation3d:
               AddAnnotation(annotation3d, path);
               break;
@@ -94,7 +94,6 @@ namespace GsaGH.Components {
                 AddAnnotation(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i),
                   e3d.Value.Ids[i].ToString(), Color.Empty, path);
               }
-
               continue;
 
             case MeshResultGoo resMesh:
@@ -107,7 +106,6 @@ namespace GsaGH.Components {
                     resMesh.ElementIds[i].ToString(), Color.Empty, path);
                 }
               }
-
               continue;
 
             case GsaNodeGoo node:
