@@ -177,7 +177,7 @@ namespace GsaGH.Components {
                 foreach (int id in vals[perm - 1].Ids) {
                   ids.Add(id);
                   // there is only one result per node
-                  GsaResultQuantity values = vals[perm - 1].XyzResults[id][0];
+                  GsaResultQuantity values = vals[perm - 1].XxyyzzResults[id][0];
                   rotX.Add(new GH_UnitNumber(values.X));
                   rotY.Add(new GH_UnitNumber(values.Y));
                   rotZ.Add(new GH_UnitNumber(values.Z));
