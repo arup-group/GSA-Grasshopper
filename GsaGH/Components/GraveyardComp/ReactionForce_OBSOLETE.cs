@@ -162,7 +162,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultsValues> vals 
+        List<GsaResultsValues> vals
           = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -188,34 +188,33 @@ namespace GsaGH.Components {
           Parallel.For(0, 2, item => // split into two tasks
           {
             switch (item) {
-              case 0: {
-                  foreach (int key in vals[perm - 1].Ids) {
-                    ids.Add(key);
-                    // there is only one result per node
-                    GsaResultQuantity values = vals[perm - 1].XyzResults[key][0]; 
-                    // use ToUnit to capture changes in dropdown
-                    transX.Add(new GH_UnitNumber(values.X.ToUnit(_forceUnit)));
-                    transY.Add(new GH_UnitNumber(values.Y.ToUnit(_forceUnit)));
-                    transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_forceUnit)));
-                    transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_forceUnit)));
-                  }
-
-                  break;
+              case 0:
+                foreach (int key in vals[perm - 1].Ids) {
+                  ids.Add(key);
+                  // there is only one result per node
+                  GsaResultQuantity values = vals[perm - 1].XyzResults[key][0];
+                  // use ToUnit to capture changes in dropdown
+                  transX.Add(new GH_UnitNumber(values.X.ToUnit(_forceUnit)));
+                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(_forceUnit)));
+                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_forceUnit)));
+                  transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_forceUnit)));
                 }
-              case 1: {
-                  foreach (int key in vals[perm - 1].Ids) {
-                    ids.Add(key);
-                    // there is only one result per node
-                    GsaResultQuantity values = vals[perm - 1].XxyyzzResults[key][0]; 
-                    // use ToUnit to capture changes in dropdown
-                    rotX.Add(new GH_UnitNumber(values.X.ToUnit(_momentUnit)));
-                    rotY.Add(new GH_UnitNumber(values.Y.ToUnit(_momentUnit)));
-                    rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(_momentUnit)));
-                    rotXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_momentUnit)));
-                  }
 
-                  break;
+                break;
+
+              case 1:
+                foreach (int key in vals[perm - 1].Ids) {
+                  ids.Add(key);
+                  // there is only one result per node
+                  GsaResultQuantity values = vals[perm - 1].XxyyzzResults[key][0];
+                  // use ToUnit to capture changes in dropdown
+                  rotX.Add(new GH_UnitNumber(values.X.ToUnit(_momentUnit)));
+                  rotY.Add(new GH_UnitNumber(values.Y.ToUnit(_momentUnit)));
+                  rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(_momentUnit)));
+                  rotXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_momentUnit)));
                 }
+
+                break;
             }
           });
 
