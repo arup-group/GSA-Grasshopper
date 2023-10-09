@@ -197,7 +197,7 @@ namespace GsaGHTests.Parameters {
       GsaAPI.Model assembled = assembly.GetModel();
       Assert.Equal(99, assembled.Sections()[1].MaterialGradeProperty);
       Assert.Equal(7, assembled.Prop2Ds()[1].MaterialGradeProperty);
-      Assert.Equal(42, assembled.Prop3Ds()[1].MaterialGradeProperty);
+      Assert.Equal(42, assembled.Prop3Ds()[1].MaterialAnalysisProperty);
     }
 
     internal static void DuplicateTest(GsaMaterial original) {
