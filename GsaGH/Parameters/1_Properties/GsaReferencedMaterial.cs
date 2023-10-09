@@ -15,7 +15,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return $"Custom ID:{Id} (referenced)";
+      return $"{MaterialType} ID:{Id} (referenced)";
     }
   }
 }

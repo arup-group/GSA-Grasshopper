@@ -124,7 +124,7 @@ namespace GsaGH.Helpers.Assembly {
         int id = ConvertMaterial(material);
 
         // update API prop depending on std material type
-        if (material is GsaCustomMaterial) {
+        if (material.MaterialType == MatType.Custom) {
           prop2d.MaterialGradeProperty = 0;
           prop2d.MaterialAnalysisProperty = id;
         } else {
@@ -143,7 +143,7 @@ namespace GsaGH.Helpers.Assembly {
         int id = ConvertMaterial(material);
 
         // update API prop depending on std material type
-        if (material is GsaCustomMaterial) {
+        if (material.MaterialType == MatType.Custom) {
           prop3d.MaterialGradeProperty = 0;
           prop3d.MaterialAnalysisProperty = id;
         } else {
@@ -162,7 +162,7 @@ namespace GsaGH.Helpers.Assembly {
         int id = ConvertMaterial(material);
 
         // update API prop depending on std material type
-        if (material is GsaCustomMaterial) {
+        if (material.MaterialType == MatType.Custom) {
           section.MaterialGradeProperty = 0;
           section.MaterialAnalysisProperty = id;
         } else {
