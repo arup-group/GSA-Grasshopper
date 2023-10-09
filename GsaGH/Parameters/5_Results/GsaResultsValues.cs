@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
     internal IQuantity DminZ { get; set; }
     internal IQuantity DminZz { get; set; }
     internal ResultType Type { get; set; }
-    internal List<int> Ids => XyzResults.Keys.ToList();
+    internal List<int> Ids => XyzResults.Keys.OrderBy(x => x).ToList();
 
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XxyyzzResults { get; set; }
