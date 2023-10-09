@@ -74,14 +74,6 @@ namespace GsaGH.Components {
                 break;
               }
 
-            case GsaAnnotationDot annotationDot:
-              AddAnnotation(annotationDot.Location, annotationDot.Text, annotationDot.Color, path);
-              break;
-
-            case GsaAnnotation3d annotation3d:
-              AddAnnotation(annotation3d, path);
-              break;
-
             case GsaElement2dGoo e2d:
               Point3dList points = e2d.Value.GetCenterPoints();
               for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
@@ -139,18 +131,6 @@ namespace GsaGH.Components {
             case LineResultGoo resLine:
               AddAnnotation(resLine.Value.PointAt(0.5), resLine.ElementId.ToString(),
                 Color.Empty, path);
-              break;
-
-            case GsaVectorDiagram diagramVector:
-              AddAnnotation(diagramVector.AnchorPoint, string.Empty, Color.Empty, path);
-              break;
-
-            case GsaLineDiagram diagramLine:
-              AddAnnotation(diagramLine.Value.PointAt(0.5), string.Empty, Color.Empty, path);
-              break;
-
-            case GsaArrowheadDiagram arrowhead:
-              // do nothing
               break;
 
             default:
