@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using GsaAPI;
 using GsaAPI.Materials;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using OasysUnits;
 using Xunit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -129,6 +132,18 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
+    public void GetMatTypeTest() {
+      GsaAPI.MaterialType concrete = MaterialType.CONCRETE;
+      Assert.Equal(MatType.Concrete, GsaMaterialFactory.GetMatType(concrete));
+      GsaAPI.MaterialType steel = MaterialType.STEEL;
+      Assert.Equal(MatType.Steel, GsaMaterialFactory.GetMatType(steel));
+      GsaAPI.MaterialType custom = MaterialType.GENERIC;
+      Assert.Equal(MatType.Custom, GsaMaterialFactory.GetMatType(custom));
+      GsaAPI.MaterialType other = MaterialType.NONE;
+      Assert.Equal(MatType.Custom, GsaMaterialFactory.GetMatType(other));
+    }
+
+    [Fact]
     public void NonStandardMaterialException() {
       Assert.Throws<Exception>(() => {
         var mat = (GsaMaterial)GsaMaterialFactory.CreateStandardMaterial(MatType.Custom, "custom");
@@ -140,6 +155,49 @@ namespace GsaGHTests.Parameters {
       Assert.Throws<Exception>(() => {
         List<string> grades = GsaMaterialFactory.GetGradeNames(MatType.Custom);
       });
+    }
+
+    [Fact]
+    public void ReferenceMaterialsTest() {
+      var section = new GsaAPI.Section() {
+        MaterialType = MaterialType.ALUMINIUM,
+        MaterialGradeProperty = 99
+      };
+      var prop2d = new GsaAPI.Prop2D() {
+        MaterialType = MaterialType.TIMBER,
+        MaterialGradeProperty = 7
+      };
+      var prop3d = new GsaAPI.Prop3D() {
+        MaterialType = MaterialType.GENERIC,
+        MaterialGradeProperty = 42
+      };
+      var model = new GsaAPI.Model();
+      model.AddSection(section);
+      model.AddProp2D(prop2d);
+      model.AddProp3D(prop3d);
+
+      var gsaModel = new GsaModel(model);
+      GsaSection modelSection = gsaModel.Sections[1].Value;
+      GsaProperty2d modelProp2d = gsaModel.Prop2ds[1].Value;
+      GsaProperty3d modelProp3d = gsaModel.Prop3ds[1].Value;
+      Assert.Equal(99, modelSection.Material.Id);
+      Assert.Equal(7, modelProp2d.Material.Id);
+      Assert.Equal(42, modelProp3d.Material.Id);
+      Assert.Equal(MatType.Aluminium, modelSection.Material.MaterialType);
+      Assert.Equal(MatType.Timber, modelProp2d.Material.MaterialType);
+      Assert.Equal(MatType.Custom, modelProp3d.Material.MaterialType);
+
+      var assembly = new ModelAssembly(null, null, null, null, null, null, null, null, null,
+        null, null, 
+        new List<GsaSection> { modelSection },
+        new List<GsaProperty2d> { modelProp2d },
+        new List<GsaProperty3d> { modelProp3d },
+        null, null, null, null, null, LengthUnit.Meter, Length.Zero,
+        false, null);
+      GsaAPI.Model assembled = assembly.GetModel();
+      Assert.Equal(99, assembled.Sections()[1].MaterialGradeProperty);
+      Assert.Equal(7, assembled.Prop2Ds()[1].MaterialGradeProperty);
+      Assert.Equal(42, assembled.Prop3Ds()[1].MaterialAnalysisProperty);
     }
 
     internal static void DuplicateTest(GsaMaterial original) {

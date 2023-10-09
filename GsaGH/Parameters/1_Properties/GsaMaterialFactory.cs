@@ -235,6 +235,15 @@ namespace GsaGH.Parameters {
       return GetGradeNames(type, m);
     }
 
+    internal static MatType GetMatType(MaterialType type) {
+      string value = type.ToString();
+      if (Enum.TryParse(value, true, out MatType matType)) {
+        return matType;
+      }
+
+      return MatType.Custom;
+    }
+
     internal static GsaMaterial RecreateForDesignCode(GsaMaterial material, Model model) {
       GsaMaterial recreation = null;
 
