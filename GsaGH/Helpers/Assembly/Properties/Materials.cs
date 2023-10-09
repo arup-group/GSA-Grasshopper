@@ -73,6 +73,10 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private int AddMaterial(GsaMaterial material) {
+      if (material is GsaReferencedMaterial refMat) {
+        return refMat.Id;
+      }
+      
       if (!_materials.ContainsKey(material.Guid)) {
         _materials.Add(material.Guid, material);
       }
@@ -276,6 +280,7 @@ namespace GsaGH.Helpers.Assembly {
       if (value.ToLower() == "custom") {
         value = "generic";
       }
+
       return (MaterialType)Enum.Parse(typeof(MaterialType), value, true);
     }
 

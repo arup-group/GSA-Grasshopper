@@ -41,35 +41,42 @@ namespace GsaGH.Parameters {
         if (AnalysisMaterials.ContainsKey(id)) {
           return AnalysisMaterials[id];
         } else {
-          return new GsaReferencedMaterial(id);
+          return new GsaReferencedMaterial(id, GsaMaterialFactory.GetMatType(type));
         }
       }
 
       id = gradeProp;
       switch (type) {
         case MaterialType.ALUMINIUM:
-          return AluminiumMaterials.TryGetValue(id, out GsaMaterial aluminium) ? aluminium : null;
+          return AluminiumMaterials.TryGetValue(id, out GsaMaterial aluminium) ? aluminium
+            : new GsaReferencedMaterial(id, MatType.Aluminium);
 
         case MaterialType.CONCRETE:
-          return ConcreteMaterials.TryGetValue(id, out GsaMaterial concrete) ? concrete : null;
+          return ConcreteMaterials.TryGetValue(id, out GsaMaterial concrete) ? concrete
+            : new GsaReferencedMaterial(id, MatType.Concrete);
 
         case MaterialType.FABRIC:
-          return FabricMaterials.TryGetValue(id, out GsaMaterial fabric) ? fabric : null;
+          return FabricMaterials.TryGetValue(id, out GsaMaterial fabric) ? fabric
+            : new GsaReferencedMaterial(id, MatType.Fabric);
 
         case MaterialType.FRP:
-          return FrpMaterials.TryGetValue(id, out GsaMaterial frp) ? frp : null;
+          return FrpMaterials.TryGetValue(id, out GsaMaterial frp) ? frp
+            : new GsaReferencedMaterial(id, MatType.Frp);
 
         case MaterialType.GLASS:
-          return GlassMaterials.TryGetValue(id, out GsaMaterial glass) ? glass : null;
+          return GlassMaterials.TryGetValue(id, out GsaMaterial glass) ? glass
+            : new GsaReferencedMaterial(id, MatType.Glass);
 
         case MaterialType.FIRST:
-          return SteelMaterials.TryGetValue(id, out GsaMaterial steel) ? steel : null;
+          return SteelMaterials.TryGetValue(id, out GsaMaterial steel) ? steel 
+            : new GsaReferencedMaterial(id, MatType.Steel);
 
         case MaterialType.TIMBER:
-          return TimberMaterials.TryGetValue(id, out GsaMaterial timber) ? timber : null;
+          return TimberMaterials.TryGetValue(id, out GsaMaterial timber) ? timber 
+            : new GsaReferencedMaterial(id, MatType.Timber);
 
         default:
-          return null;
+          return new GsaReferencedMaterial(id, GsaMaterialFactory.GetMatType(type));
       }
     }
 

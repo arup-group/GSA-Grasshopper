@@ -9,9 +9,9 @@ namespace GsaGH.Parameters {
       set => AnalysisMaterial.Name = value;
     }
 
-    internal GsaReferencedMaterial(int id) {
+    internal GsaReferencedMaterial(int id, MatType type) {
       Id = id;
-      MaterialType = MatType.ReferencedById;
+      MaterialType = type;
     }
 
     public override string ToString() {
