@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -8,7 +7,6 @@ using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  
   public class GsaList_Materials_Test {
     public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
@@ -26,17 +24,16 @@ namespace IntegrationTests.Parameters {
     [Theory]
     [InlineData("List from material Definitions", new string[] {
       "MC1",
-"MC1",
-"MS1",
-"MS1",
-"MP1",
-"MP1",
-"M1",
-"M1",
+      "MC1",
+      "MS1",
+      "MS1",
+      "MP1",
+      "MP1",
+      "M1",
+      "M1",
     })]
-    public void MaterialDefinitionTest(string name, string[] expectedVals) {
-      GH_Document doc = Document;
-      IGH_Param param = Helper.FindParameter(doc, name);
+    public void MaterialDefinitionTest(string groupIdentifier, string[] expectedVals) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       var output = (List<GH_String>)param.VolatileData.get_Branch(0);
       for (int i = 0; i < expectedVals.Length; i++) {
         Assert.Equal(expectedVals[i], output[i].Value);
