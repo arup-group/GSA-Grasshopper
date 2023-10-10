@@ -41,13 +41,11 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(CaseType.AnalysisCase, result.Type);
 
       string nodeList = "442 to 468";
-      Tuple<List<GsaResultsValues>, List<int>> resultValueTuple =
+      List<GsaResultsValues> resultValues =
         result.NodeDisplacementValues(nodeList, LengthUnit.Millimeter);
       
       var expectedIds = result.Model.Model.Nodes(nodeList).Keys.ToList();
-      Assert.Equal(expectedIds, resultValueTuple.Item2);
-
-      List<GsaResultsValues> resultValues = resultValueTuple.Item1;
+      Assert.Equal(expectedIds, resultValues[0].Ids);
 
       List<double> expectedX = ExpectedDisplacementXInMillimeter();
       var actualX = new List<double>();

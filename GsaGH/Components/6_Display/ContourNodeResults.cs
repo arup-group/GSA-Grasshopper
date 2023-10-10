@@ -482,16 +482,12 @@ namespace GsaGH.Components {
       var res = new GsaResultsValues();
       switch (_mode) {
         case FoldMode.Displacement:
-          Tuple<List<GsaResultsValues>, List<int>> nodedisp
-            = result.NodeDisplacementValues(nodeList, _lengthResultUnit);
-          res = nodedisp.Item1[0];
+          res = result.NodeDisplacementValues(nodeList, _lengthResultUnit)[0];
           break;
 
         case FoldMode.Reaction:
-          Tuple<List<GsaResultsValues>, List<int>> resultgetter
-            = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
-          res = resultgetter.Item1[0];
-          nodeList = string.Join(" ", resultgetter.Item2);
+          res = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit)[0];
+          nodeList = string.Join(" ", res.Ids);
           break;
 
         case FoldMode.Footfall:
