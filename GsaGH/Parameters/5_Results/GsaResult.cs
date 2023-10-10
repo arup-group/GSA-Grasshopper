@@ -924,7 +924,7 @@ namespace GsaGH.Parameters {
     /// <param name="nodelist"></param>
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
-    internal Tuple<List<GsaResultsValues>, List<int>> NodeDisplacementValues(
+    internal List<GsaResultsValues> NodeDisplacementValues(
       string nodelist, LengthUnit lengthUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
@@ -940,9 +940,9 @@ namespace GsaGH.Parameters {
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
+        return new List<GsaResultsValues> {
           ACaseNodeDisplacementValues[nodelist],
-        }, Model.Model.Nodes(nodelist).Keys.ToList());
+        };
       }
 
       if (!ComboNodeDisplacementValues.ContainsKey(nodelist)) {
@@ -955,9 +955,7 @@ namespace GsaGH.Parameters {
             SelectedPermutationIds));
       }
 
-      return new Tuple<List<GsaResultsValues>, List<int>>(
-        new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values),
-        Model.Model.Nodes(nodelist).Keys.ToList());
+      return ComboNodeDisplacementValues[nodelist].Values.ToList();
     }
 
     /// <summary>
@@ -995,7 +993,7 @@ namespace GsaGH.Parameters {
     /// <param name="forceUnit"></param>
     /// <param name="momentUnit"></param>
     /// <returns></returns>
-    internal Tuple<List<GsaResultsValues>, List<int>> NodeReactionForceValues(
+    internal List<GsaResultsValues> NodeReactionForceValues(
       string nodelist, ForceUnit forceUnit, MomentUnit momentUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
@@ -1025,9 +1023,9 @@ namespace GsaGH.Parameters {
               momentUnit, supportnodeIDs));
         }
 
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
+        return new List<GsaResultsValues> {
           ACaseNodeReactionForceValues[nodelist],
-        }, ACaseNodeReactionForceValues[nodelist].XyzResults.Keys.OrderBy(x => x).ToList());
+        };
       }
 
       if (!ComboNodeReactionForceValues.ContainsKey(nodelist)) {
@@ -1040,10 +1038,7 @@ namespace GsaGH.Parameters {
             momentUnit, SelectedPermutationIds, supportnodeIDs));
       }
 
-      return new Tuple<List<GsaResultsValues>, List<int>>(
-        new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values),
-        ComboNodeReactionForceValues[nodelist].Values.First().XyzResults.Keys.OrderBy(x => x)
-         .ToList());
+      return ComboNodeReactionForceValues[nodelist].Values.ToList();
     }
 
     /// <summary>
@@ -1055,7 +1050,7 @@ namespace GsaGH.Parameters {
     /// <param name="forceUnit"></param>
     /// <param name="momentUnit"></param>
     /// <returns></returns>
-    internal Tuple<List<GsaResultsValues>, List<int>> SpringReactionForceValues(
+    internal List<GsaResultsValues> SpringReactionForceValues(
       string nodelist, ForceUnit forceUnit, MomentUnit momentUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
@@ -1085,9 +1080,9 @@ namespace GsaGH.Parameters {
               momentUnit, supportnodeIDs));
         }
 
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> {
+        return new List<GsaResultsValues> {
           ACaseNodeReactionForceValues[nodelist],
-        }, ACaseNodeReactionForceValues[nodelist].XyzResults.Keys.OrderBy(x => x).ToList());
+        };
       }
 
       if (!ComboNodeReactionForceValues.ContainsKey(nodelist)) {
@@ -1100,10 +1095,7 @@ namespace GsaGH.Parameters {
             momentUnit, SelectedPermutationIds, supportnodeIDs));
       }
 
-      return new Tuple<List<GsaResultsValues>, List<int>>(
-        new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values),
-        ComboNodeReactionForceValues[nodelist].Values.First().XyzResults.Keys.OrderBy(x => x)
-         .ToList());
+      return ComboNodeReactionForceValues[nodelist].Values.ToList();
     }
   }
 }
