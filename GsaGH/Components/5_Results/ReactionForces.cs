@@ -176,14 +176,12 @@ namespace GsaGH.Components {
           var rotY = new List<GH_UnitNumber>();
           var rotZ = new List<GH_UnitNumber>();
           var rotXyz = new List<GH_UnitNumber>();
-          var ids = new List<int>();
 
           Parallel.For(0, 2, item => // split into two tasks
           {
             switch (item) {
               case 0:
                 foreach (int key in vals[perm - 1].Ids) {
-                  ids.Add(key);
                   // there is only one result per node
                   GsaResultQuantity values = vals[perm - 1].XyzResults[key][0];
                   // use ToUnit to capture changes in dropdown
@@ -192,12 +190,10 @@ namespace GsaGH.Components {
                   transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_forceUnit)));
                   transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_forceUnit)));
                 }
-
                 break;
 
               case 1:
                 foreach (int key in vals[perm - 1].Ids) {
-                  ids.Add(key);
                   // there is only one result per node
                   GsaResultQuantity values = vals[perm - 1].XxyyzzResults[key][0];
                   // use ToUnit to capture changes in dropdown
@@ -206,7 +202,6 @@ namespace GsaGH.Components {
                   rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(_momentUnit)));
                   rotXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_momentUnit)));
                 }
-
                 break;
             }
           });
@@ -219,7 +214,7 @@ namespace GsaGH.Components {
           outRotY.AddRange(rotY, path);
           outRotZ.AddRange(rotZ, path);
           outRotXyz.AddRange(rotXyz, path);
-          outIDs.AddRange(ids, path);
+          outIDs.AddRange(vals[perm - 1].Ids, path);
         }
       }
 
