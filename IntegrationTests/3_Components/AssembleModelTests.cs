@@ -25,7 +25,7 @@ namespace IntegrationTests.Components {
     }
 
     [Theory]
-    [InlineData("HasResult", true)]
+    [InlineData("Assemble", true)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
