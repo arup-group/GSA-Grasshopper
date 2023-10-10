@@ -306,6 +306,10 @@ namespace GsaGH.Components {
               = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
           }
 
+          if (color == Color.Empty) {
+            color = (Color)annotation.Colour;
+          }
+
           diagramAnnotations.Add(new GsaAnnotationGoo(
             new GsaAnnotationDot(location, color, valueToAnnotate)));
         }
