@@ -1,17 +1,21 @@
-﻿using System;
+﻿using GsaAPI;
+using GsaGH.Parameters._5_Results.Quantities;
+using GsaGH.Parameters._5_Results.Values;
+using OasysUnits;
+using Rhino.Geometry;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GsaAPI;
-using OasysUnits;
-using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
-  internal class GsaResultsValues {
-    internal enum ResultType {
+
+
+  public class GsaResultsValues : IResultValues<IQuantity, IQuantity, IDisplacementQuantity> {
+    public enum ResultType {
       Displacement,
       Force,
       Stress,
@@ -19,25 +23,24 @@ namespace GsaGH.Parameters {
       StrainEnergy,
       Footfall,
     }
-
-    internal IQuantity DmaxX { get; set; }
-    internal IQuantity DmaxXx { get; set; }
-    internal IQuantity DmaxXxyyzz { get; set; }
-    internal IQuantity DmaxXyz { get; set; }
-    internal IQuantity DmaxY { get; set; }
-    internal IQuantity DmaxYy { get; set; }
-    internal IQuantity DmaxZ { get; set; }
-    internal IQuantity DmaxZz { get; set; }
-    internal IQuantity DminX { get; set; }
-    internal IQuantity DminXx { get; set; }
-    internal IQuantity DminXxyyzz { get; set; }
-    internal IQuantity DminXyz { get; set; }
-    internal IQuantity DminY { get; set; }
-    internal IQuantity DminYy { get; set; }
-    internal IQuantity DminZ { get; set; }
-    internal IQuantity DminZz { get; set; }
-    internal ResultType Type { get; set; }
-    internal List<int> Ids => XyzResults.Keys.OrderBy(x => x).ToList();
+    public IQuantity DmaxX { get; set; }
+    public IQuantity DmaxXx { get; set; }
+    public IQuantity DmaxXxyyzz { get; set; }
+    public IQuantity DmaxXyz { get; set; }
+    public IQuantity DmaxY { get; set; }
+    public IQuantity DmaxYy { get; set; }
+    public IQuantity DmaxZ { get; set; }
+    public IQuantity DmaxZz { get; set; }
+    public IQuantity DminX { get; set; }
+    public IQuantity DminXx { get; set; }
+    public IQuantity DminXxyyzz { get; set; }
+    public IQuantity DminXyz { get; set; }
+    public IQuantity DminY { get; set; }
+    public IQuantity DminYy { get; set; }
+    public IQuantity DminZ { get; set; }
+    public IQuantity DminZz { get; set; }
+    public ResultType Type { get; set; }
+    public List<int> Ids => XyzResults.Keys.OrderBy(x => x).ToList();
 
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XxyyzzResults { get; set; }
@@ -49,6 +52,7 @@ namespace GsaGH.Parameters {
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XyzResults { get; set; }
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
+    public ConcurrentDictionary<int, ConcurrentDictionary<int, IDisplacementQuantity>> Results { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     internal GsaResultsValues() { }
 

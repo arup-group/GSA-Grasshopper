@@ -1,28 +1,26 @@
 ﻿using GsaAPI;
 using OasysUnits;
-using Rhino.Commands;
 using System;
-using System.IO;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters._5_Results.Quantities {
-  public class GsaDisplacementQuantities {
-    internal Length X { get; set; }
-    internal Length Xyz { get; set; }
-    internal Length Y { get; set; }
-    internal Length Z { get; set; }
-    internal Angle Xx { get; set; }
-    internal Angle Xxyyzz { get; set; }
-    internal Angle Yy { get; set; }
-    internal Angle Zz { get; set; }
+  public class GsaDisplacementQuantity : IDisplacementQuantity {
+    public Length X { get;  private set; }
+    public Length Xyz { get; private set; }
+    public Length Y { get; private set; }
+    public Length Z { get; private set; }
+    public Angle Xx { get; private set; }
+    public Angle Xxyyzz { get; private set; }
+    public Angle Yy { get; private set; }
+    public Angle Zz { get; private set; }
 
-    internal GsaDisplacementQuantities(Double6 result, LengthUnit LUnit, AngleUnit AUnit) {
+    internal GsaDisplacementQuantity(Double6 result, LengthUnit LUnit, AngleUnit AUnit) {
       SetLengthUnit(result, LUnit);
       SetAngleUnit(result, AUnit);
     }
 
-    private void SetLengthUnit(Double6 result, LengthUnit unit) {
+    public void SetLengthUnit(Double6 result, LengthUnit unit) {
       X = new Length(new Length(result.X, LengthUnit.Meter).As(unit), unit);
       Y = new Length(new Length(result.Y, LengthUnit.Meter).As(unit), unit);
       Z = new Length(new Length(result.Z, LengthUnit.Meter).As(unit), unit);
@@ -31,7 +29,7 @@ namespace GsaGH.Parameters._5_Results.Quantities {
       Xyz = new Length(new Length(pyth, LengthUnit.Meter).As(unit), unit);
     }
 
-    private void SetAngleUnit(Double6 result, AngleUnit unit) {
+    public void SetAngleUnit(Double6 result, AngleUnit unit) {
       IQuantity x;
       if (!double.IsNaN(result.XX)) // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
       {

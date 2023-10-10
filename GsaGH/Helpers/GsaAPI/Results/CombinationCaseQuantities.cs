@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Parameters._5_Results.Quantities;
 using OasysUnits;
 using OasysUnits.Units;
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -650,10 +651,10 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="resultLengthUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(
+    internal static ConcurrentDictionary<int, GsaDisplacementValues> GetNodeResultValues(
       ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
       LengthUnit resultLengthUnit, List<int> permutations) {
-      var rs = new ConcurrentDictionary<int, GsaResultsValues>();
+      var rs = new ConcurrentDictionary<int, GsaDisplacementValues>();
 
       if (permutations.Count == 0) {
         permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count)
@@ -664,7 +665,7 @@ namespace GsaGH.Helpers.GsaApi {
 
       Parallel.For(0, permutationCount, index => {
         int permutationId = permutations[index];
-        var r = new GsaResultsValues {
+        var r = new GsaDisplacementValues {
           Type = GsaResultsValues.ResultType.Displacement,
         };
 
@@ -672,17 +673,18 @@ namespace GsaGH.Helpers.GsaApi {
           ReadOnlyCollection<NodeResult> results = globalResults[nodeId];
           NodeResult result = results[permutationId - 1];
           Double6 values = result.Displacement;
+          var quantities = new GsaDisplacementQuantity(values, resultLengthUnit, AngleUnit.Radian);
 
           if (!double.IsNaN(values.X) && !double.IsNaN(values.Y) && !double.IsNaN(values.Z)) {
-            var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
-            xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
-            r.XyzResults.TryAdd(nodeId, xyz);
+            var xyz = new ConcurrentDictionary<int, IDisplacementQuantity>();
+            xyz.TryAdd(0, quantities);
+            r.Results.TryAdd(nodeId, xyz);
           }
 
           if (!double.IsNaN(values.XX) && !double.IsNaN(values.YY) && !double.IsNaN(values.ZZ)) {
-            var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
-            xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
-            r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
+            var xxyyzz = new ConcurrentDictionary<int, IDisplacementQuantity>();
+            xxyyzz.TryAdd(0, quantities);
+            r.Results.TryAdd(nodeId, xxyyzz);
           }
         });
 

@@ -139,8 +139,8 @@ namespace GsaGH.Parameters {
     ///   Append to this dictionary to chache results
     ///   key = elementList
     /// </summary>
-    internal Dictionary<string, GsaResultsValues> ACaseNodeDisplacementValues { get; set; }
-      = new Dictionary<string, GsaResultsValues>();
+    internal Dictionary<string, GsaDisplacementValues> ACaseNodeDisplacementValues { get; set; }
+      = new Dictionary<string, GsaDisplacementValues>();
     /// <summary>
     ///   Analysis Case Node Footfall Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -302,9 +302,9 @@ namespace GsaGH.Parameters {
     ///   key = elementList
     ///   value = Dictionary(permutationID, permutationsResults)
     /// </summary>
-    internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>
+    internal Dictionary<string, ConcurrentDictionary<int, GsaDisplacementValues>>
       ComboNodeDisplacementValues { get; set; }
-      = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+      = new Dictionary<string, ConcurrentDictionary<int, GsaDisplacementValues>>();
     /// <summary>
     ///   Combination Case Node Reaction Force Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -924,7 +924,7 @@ namespace GsaGH.Parameters {
     /// <param name="nodelist"></param>
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
-    internal List<GsaResultsValues> NodeDisplacementValues(
+    internal List<GsaDisplacementValues> NodeDisplacementValues(
       string nodelist, LengthUnit lengthUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
@@ -940,7 +940,7 @@ namespace GsaGH.Parameters {
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 
-        return new List<GsaResultsValues> {
+        return new List<GsaDisplacementValues> {
           ACaseNodeDisplacementValues[nodelist],
         };
       }
